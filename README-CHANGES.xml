@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<c:changelog xmlns:c="http://schemas.io7m.com/changelog/2.0.0">
+  <c:project>io7m-r2</c:project>
+
+  <c:release c:ticket-system="com.github.io7m.r2">
+    <c:date>2015-12-09</c:date>
+    <c:version>0.1.0</c:version>
+    <c:item>
+      <c:date>2015-12-09</c:date>
+      <c:type-code-new/>
+      <c:summary>Initial release.</c:summary>
+    </c:item>
+  </c:release>
+
+  <c:ticket-system xml:id="com.github.io7m.r2">
+    <c:ticket-url>https://github.com/io7m/r2/issues/</c:ticket-url>
+  </c:ticket-system>
+
+</c:changelog>
