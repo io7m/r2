@@ -14,9 +14,39 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.r2.shaders.preprocessor;
+
+import org.immutables.value.Value;
+
+import java.util.Optional;
+
 /**
- * Unit tests for the core.
+ * The type of preprocessor programs.
  */
 
-package com.io7m.r2.tests.core;
+@Value.Immutable public interface R2ShaderPreprocessorProgramType
+{
+  /**
+   * @return The program name
+   */
 
+  @Value.Parameter String getProgramName();
+
+  /**
+   * @return The vertex shader source file
+   */
+
+  @Value.Parameter String getVertexShaderFile();
+
+  /**
+   * @return The geometry shader source file
+   */
+
+  @Value.Parameter Optional<String> getGeometryShaderFile();
+
+  /**
+   * @return The fragment shader source file
+   */
+
+  @Value.Parameter String getFragmentShaderFile();
+}

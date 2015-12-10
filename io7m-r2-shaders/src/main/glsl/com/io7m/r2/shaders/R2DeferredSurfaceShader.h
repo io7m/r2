@@ -27,6 +27,14 @@ struct R2_deferred_surface_parameters_t {
   mat4x4 transform_modelview;  // Object-space to Eye-space matrix
   mat4x4 transform_projection; // Eye-space to Clip-space matrix
   mat3x3 transform_uv;         // UV matrix
+
+  float emission_amount;       // Emission level in the range `[0, 1]`
+
+  vec4  albedo_color;          // Base RGBA albedo color
+  float albedo_mix;            // Albedo color/texture mix
+
+  vec3  specular_color;        // RGB specular color
+  float specular_exponent;     // Specular exponent in the range `[0, 256]`
 };
 
 //

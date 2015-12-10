@@ -15,9 +15,8 @@
  */
 
 /**
- * Shader preprocessor.
+ * Maven plugin.
  */
 
-@com.io7m.jnull.NonNullByDefault @R2ShaderPreprocessorImmutableStyleType
-package com.io7m.r2.shaders.preprocessor;
+@com.io7m.jnull.NonNullByDefault package com.io7m.r2.shaders.maven_plugin;
 

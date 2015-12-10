@@ -14,10 +14,31 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Shader preprocessor.
- */
-
-@com.io7m.jnull.NonNullByDefault @R2ShaderPreprocessorImmutableStyleType
 package com.io7m.r2.shaders.preprocessor;
 
+import org.immutables.value.Value;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Style settings for generated immutable types.
+ */
+
+@Target({ ElementType.PACKAGE, ElementType.TYPE })
+@Retention(RetentionPolicy.CLASS)
+@Value.Style(
+  get = { "is*", "get*" },
+  init = "set*",
+  typeAbstract = { "Abstract*", "*Type" },
+  typeImmutable = "*",
+  typeModifiable = "*Mutable",
+  builder = "builder",
+  build = "build",
+  visibility = Value.Style.ImplementationVisibility.PUBLIC,
+  defaults = @Value.Immutable(copy = false)) @interface R2ShaderPreprocessorImmutableStyleType
+{
+
+}

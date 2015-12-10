@@ -23,6 +23,7 @@ import org.anarres.cpp.LexerException;
 import org.anarres.cpp.Preprocessor;
 import org.anarres.cpp.Source;
 import org.anarres.cpp.Token;
+import org.anarres.cpp.VirtualFileSystem;
 import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -39,14 +40,12 @@ import java.util.stream.Collectors;
 
 public final class R2ShaderPreprocessor implements R2ShaderPreprocessorType
 {
-  private final File root;
-  private final ChrootFileSystem fs;
+  private final VirtualFileSystem fs;
 
   private R2ShaderPreprocessor(
-    final File in_root)
+    final VirtualFileSystem in_fs)
   {
-    this.root = NullCheck.notNull(in_root);
-    this.fs = new ChrootFileSystem(this.root);
+    this.fs = NullCheck.notNull(in_fs);
   }
 
   /**
@@ -58,7 +57,20 @@ public final class R2ShaderPreprocessor implements R2ShaderPreprocessorType
   public static R2ShaderPreprocessorType newPreprocessor(
     final File in_root)
   {
-    return new R2ShaderPreprocessor(in_root);
+    return R2ShaderPreprocessor.newPreprocessorFromFS(
+      new ChrootFileSystem(NullCheck.notNull(in_root)));
+  }
+
+  /**
+   * @param in_fs A file system
+   *
+   * @return A new preprocessor
+   */
+
+  public static R2ShaderPreprocessorType newPreprocessorFromFS(
+    final VirtualFileSystem in_fs)
+  {
+    return new R2ShaderPreprocessor(NullCheck.notNull(in_fs));
   }
 
   @Override public List<String> preprocessFile(final String file)

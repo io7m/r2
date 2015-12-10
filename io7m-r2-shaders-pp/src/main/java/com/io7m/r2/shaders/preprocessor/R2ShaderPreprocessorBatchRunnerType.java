@@ -14,10 +14,32 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Shader preprocessor.
- */
-
-@com.io7m.jnull.NonNullByDefault @R2ShaderPreprocessorImmutableStyleType
 package com.io7m.r2.shaders.preprocessor;
 
+import org.anarres.cpp.LexerException;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Map;
+
+/**
+ * The type of processors that preprocess sets of shader sources.
+ */
+
+public interface R2ShaderPreprocessorBatchRunnerType
+{
+  /**
+   * Process sources.
+   *
+   * @param output  The output directory to which programs will be written
+   * @param sources The input sources to be preprocessed
+   *
+   * @throws IOException    On I/O errors
+   * @throws LexerException On lexical errors
+   */
+
+  void process(
+    Path output,
+    Map<String, R2ShaderPreprocessorProgramType> sources)
+    throws IOException, LexerException;
+}

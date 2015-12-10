@@ -1,0 +1,11 @@
+{
+  "p": {
+    "vertex": "v",
+    "geometry": "g",
+    "fragment": "f"
+  },
+  "q": {
+    "vertex": "v",
+    "fragment": "f"
+  }
+}

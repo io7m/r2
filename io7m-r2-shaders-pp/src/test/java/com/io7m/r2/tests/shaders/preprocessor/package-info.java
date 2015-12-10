@@ -15,9 +15,8 @@
  */
 
 /**
- * Shader preprocessor.
+ * Unit tests for the preprocessor.
  */
 
-@com.io7m.jnull.NonNullByDefault @R2ShaderPreprocessorImmutableStyleType
-package com.io7m.r2.shaders.preprocessor;
+package com.io7m.r2.tests.shaders.preprocessor;
 

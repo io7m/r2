@@ -57,7 +57,8 @@ public final class Main
       final String file_name = args[1];
       final R2ShaderPreprocessorType p =
         R2ShaderPreprocessor.newPreprocessor(root);
-      p.preprocessFile(file_name).stream().forEach(System.out::println);
+      p.preprocessFile(file_name).stream().forEach(System.out::print);
+      System.out.println();
     } catch (final Exception e) {
       Main.LOG.error("Preprocessing failure: ", e);
       System.exit(1);

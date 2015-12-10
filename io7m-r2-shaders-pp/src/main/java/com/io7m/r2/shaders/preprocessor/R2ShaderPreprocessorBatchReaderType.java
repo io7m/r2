@@ -14,9 +14,26 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.r2.shaders.preprocessor;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
 /**
- * Unit tests for the core.
+ * The type of batch readers.
  */
 
-package com.io7m.r2.tests.core;
+public interface R2ShaderPreprocessorBatchReaderType
+{
+  /**
+   * @param s The input stream
+   *
+   * @return A map of all the programs contained within the batch
+   *
+   * @throws IOException On I/O and deserialization errors
+   */
 
+  Map<String, R2ShaderPreprocessorProgramType> readFromStream(InputStream s)
+    throws IOException;
+}

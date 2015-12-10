@@ -61,13 +61,13 @@ public final class R2ShaderChecker implements R2ShaderCheckerType
   {
     try {
       final JCGLVertexShaderType v =
-        this.shaders.shaderCompileVertex("vertex", vertex);
+        this.shaders.shaderCompileVertex("v", vertex);
       final Optional<JCGLGeometryShaderType> g =
-        geom.map(gg -> this.shaders.shaderCompileGeometry("geom", gg));
+        geom.map(gg -> this.shaders.shaderCompileGeometry("g", gg));
       final JCGLFragmentShaderType f =
-        this.shaders.shaderCompileFragment("fragment", frag);
+        this.shaders.shaderCompileFragment("f", frag);
       final JCGLProgramShaderType p =
-        this.shaders.shaderLinkProgram("program", v, g.map(x -> x), f);
+        this.shaders.shaderLinkProgram("p", v, g.map(x -> x), f);
       this.shaders.shaderDeleteProgram(p);
     } catch (final JCGLException e) {
       throw new R2ShaderCheckerException(e);
