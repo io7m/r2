@@ -22,8 +22,11 @@ struct R2_deferred_surface_data_t {
 //
 
 struct R2_deferred_surface_parameters_t {
-  float depth_coefficient; // Logarithmic depth coefficient
-  mat3x3 normal;           // Object-space to Eye-space normal matrix
+  float depth_coefficient;     // Logarithmic depth coefficient
+  mat3x3 transform_normal;     // Object-space to Eye-space normal matrix
+  mat4x4 transform_modelview;  // Object-space to Eye-space matrix
+  mat4x4 transform_projection; // Eye-space to Clip-space matrix
+  mat3x3 transform_uv;         // UV matrix
 };
 
 //

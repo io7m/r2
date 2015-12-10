@@ -19,7 +19,7 @@ R2_deferred_surface_shader_main_gbuffer()
 {
   vec3 normal = R2_normalsBump (
     R2_deferred_surface_textures.normal,
-    R2_deferred_surface_parameters.normal,
+    R2_deferred_surface_parameters.transform_normal,
     R2_deferred_surface_data.normal,
     R2_deferred_surface_data.tangent,
     R2_deferred_surface_data.bitangent,

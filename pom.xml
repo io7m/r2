@@ -18,6 +18,7 @@
     <module>io7m-r2-checkstyle</module>
     <module>io7m-r2-core</module>
     <module>io7m-r2-documentation</module>
+    <module>io7m-r2-shaders-checker</module>
     <module>io7m-r2-shaders-pp</module>
     <module>io7m-r2-shaders</module>
   </modules>
@@ -89,6 +90,17 @@
         <artifactId>io7m-junreachable-core</artifactId>
         <version>[1.0.0, 2.0.0)</version>
       </dependency>
+      <dependency>
+        <groupId>com.io7m.jcanephora</groupId>
+        <artifactId>io7m-jcanephora-core</artifactId>
+        <version>0.40.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jcanephora</groupId>
+        <artifactId>io7m-jcanephora-jogl</artifactId>
+        <version>0.40.0</version>
+      </dependency>
+
       <dependency>
         <groupId>org.anarres</groupId>
         <artifactId>jcpp</artifactId>

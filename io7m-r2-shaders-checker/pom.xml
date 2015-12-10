@@ -10,11 +10,11 @@
     <artifactId>io7m-r2</artifactId>
     <version>0.1.0</version>
   </parent>
-  <artifactId>io7m-r2-shaders-pp</artifactId>
+  <artifactId>io7m-r2-shaders-checker</artifactId>
 
   <packaging>jar</packaging>
-  <name>io7m-r2-shaders-pp</name>
-  <description>3D renderer (Shader preprocessor)</description>
+  <name>io7m-r2-shaders-checker</name>
+  <description>3D renderer (Shader checker)</description>
   <url>http://io7m.github.io/r2/</url>
 
   <scm>
@@ -32,11 +32,21 @@
       <groupId>com.io7m.junreachable</groupId>
       <artifactId>io7m-junreachable-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>io7m-jcanephora-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>io7m-jcanephora-jogl</artifactId>
+    </dependency>
 
     <dependency>
-      <groupId>org.anarres</groupId>
-      <artifactId>jcpp</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>io7m-r2-shaders-pp</artifactId>
+      <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
@@ -78,10 +88,30 @@
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
-                    <Main-Class>com.io7m.r2.shaders.preprocessor.Main</Main-Class>
+                    <Main-Class>com.io7m.r2.shaders.checker.Main</Main-Class>
                   </manifestEntries>
                 </transformer>
               </transformers>
+              <filters>
+                <filter>
+                  <artifact>org.jogamp.gluegen:gluegen-rt</artifact>
+                  <includes>
+                    <include>**</include>
+                  </includes>
+                </filter>
+                <filter>
+                  <artifact>org.jogamp.jogl:jogl-all</artifact>
+                  <includes>
+                    <include>**</include>
+                  </includes>
+                </filter>
+                <filter>
+                  <artifact>org.valid4j:valid4j</artifact>
+                  <includes>
+                    <include>**</include>
+                  </includes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
