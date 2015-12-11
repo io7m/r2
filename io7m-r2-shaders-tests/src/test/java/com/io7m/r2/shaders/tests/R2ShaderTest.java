@@ -14,8 +14,14 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Unit tests for shading code.
- */
+package com.io7m.r2.shaders.tests;
 
-@com.io7m.jnull.NonNullByDefault package com.io7m.r2.tests.shaders;
+import org.junit.After;
+
+public abstract class R2ShaderTest
+{
+  @After public final void onTestCompleted()
+  {
+    R2TestContexts.closeAllContexts();
+  }
+}

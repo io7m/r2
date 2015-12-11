@@ -21,6 +21,7 @@
     <module>io7m-r2-shaders-checker</module>
     <module>io7m-r2-shaders-maven-plugin</module>
     <module>io7m-r2-shaders-pp</module>
+    <module>io7m-r2-shaders-tests</module>
     <module>io7m-r2-shaders</module>
   </modules>
 
@@ -94,12 +95,32 @@
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-core</artifactId>
-        <version>0.40.0</version>
+        <version>0.40.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-jogl</artifactId>
-        <version>0.40.0</version>
+        <version>0.40.1</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jcanephora</groupId>
+        <artifactId>io7m-jcanephora-cursors</artifactId>
+        <version>0.40.1</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jpra</groupId>
+        <artifactId>io7m-jpra-runtime-java</artifactId>
+        <version>0.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jtensors</groupId>
+        <artifactId>io7m-jtensors-core</artifactId>
+        <version>7.0.0-beta0010</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jtensors</groupId>
+        <artifactId>io7m-jtensors-bytebuffered</artifactId>
+        <version>7.0.0-beta0010</version>
       </dependency>
 
       <dependency>
@@ -267,6 +288,11 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>1.7</version>
+        </plugin>
+        <plugin>
+          <groupId>com.io7m.jpra</groupId>
+          <artifactId>io7m-jpra-maven-plugin</artifactId>
+          <version>0.4.0</version>
         </plugin>
 
         <!-- Plugins for the Maven plugin -->

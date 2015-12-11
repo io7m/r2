@@ -10,11 +10,11 @@
     <artifactId>io7m-r2</artifactId>
     <version>0.1.0</version>
   </parent>
-  <artifactId>io7m-r2-shaders</artifactId>
+  <artifactId>io7m-r2-shaders-tests</artifactId>
 
   <packaging>jar</packaging>
-  <name>io7m-r2-shaders</name>
-  <description>3D renderer (Shaders)</description>
+  <name>io7m-r2-shaders-tests</name>
+  <description>3D renderer (Shader test suite)</description>
   <url>http://io7m.github.io/r2/</url>
 
   <scm>
@@ -25,6 +25,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>io7m-r2-shaders</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.io7m.jnull</groupId>
       <artifactId>io7m-jnull-core</artifactId>
     </dependency>
@@ -34,6 +40,21 @@
     </dependency>
 
     <dependency>
+      <groupId>com.io7m.jtensors</groupId>
+      <artifactId>io7m-jtensors-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jtensors</groupId>
+      <artifactId>io7m-jtensors-bytebuffered</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jpra</groupId>
+      <artifactId>io7m-jpra-runtime-java</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.io7m.jcanephora</groupId>
       <artifactId>io7m-jcanephora-core</artifactId>
       <scope>test</scope>
@@ -41,6 +62,11 @@
     <dependency>
       <groupId>com.io7m.jcanephora</groupId>
       <artifactId>io7m-jcanephora-jogl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>io7m-jcanephora-cursors</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -60,18 +86,14 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.github.marschall</groupId>
+      <artifactId>memoryfilesystem</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>${project.build.directory}/generated-glsl</directory>
-      </resource>
-      <resource>
-        <directory>${project.basedir}/src/main/glsl</directory>
-      </resource>
-    </resources>
-
     <plugins>
       <!-- Check style -->
       <plugin>
@@ -79,19 +101,22 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
 
+      <!-- Generate cursors -->
       <plugin>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>io7m-r2-shaders-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <groupId>com.io7m.jpra</groupId>
+        <artifactId>io7m-jpra-maven-plugin</artifactId>
         <executions>
           <execution>
-            <phase>generate-resources</phase>
             <goals>
-              <goal>preprocess</goal>
+              <goal>generate-java</goal>
             </goals>
+            <phase>generate-test-sources</phase>
             <configuration>
-              <batchFile>${project.basedir}/src/main/glsl/com/io7m/r2/shaders/sources/programs.json</batchFile>
-              <targetDirectory>${project.build.directory}/generated-glsl/com/io7m/r2/shaders</targetDirectory>
+              <packages>
+                <package>com.io7m.r2.shaders.tests.cursors</package>
+              </packages>
+              <sourceDirectory>${project.basedir}/src/test/jpra</sourceDirectory>
+              <targetDirectory>${project.build.directory}/generated-test-sources</targetDirectory>
             </configuration>
           </execution>
         </executions>
@@ -103,14 +128,14 @@
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
+            <id>add-test-source</id>
+            <phase>generate-test-sources</phase>
             <goals>
-              <goal>add-source</goal>
+              <goal>add-test-source</goal>
             </goals>
             <configuration>
               <sources>
-                <source>src/main/glsl</source>
+                <source>${project.build.directory}/generated-test-sources</source>
               </sources>
             </configuration>
           </execution>

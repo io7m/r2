@@ -14,14 +14,14 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.shaders;
+package com.io7m.r2.shaders.tests;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.shaders.checker.R2ShaderChecker;
 import com.io7m.r2.shaders.checker.R2ShaderCheckerException;
 import com.io7m.r2.shaders.checker.R2ShaderCheckerType;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class R2ShadersCheckTest
+public final class R2ShadersCheckTest extends R2ShaderTest
 {
   private static final Logger LOG;
 
@@ -45,7 +45,7 @@ public final class R2ShadersCheckTest
     final String v_path = "/com/io7m/r2/shaders/" + name + ".vert";
     final String f_path = "/com/io7m/r2/shaders/" + name + ".frag";
     final R2ShaderCheckerType c = R2ShadersCheckTest.getChecker();
-    final Class<R2ShadersCheckTest> cl = R2ShadersCheckTest.class;
+    final Class<R2Shaders> cl = R2Shaders.class;
     final List<String> vs =
       IOUtils.readLines(cl.getResourceAsStream(v_path))
         .stream()
@@ -67,11 +67,6 @@ public final class R2ShadersCheckTest
   {
     final JCGLContextType c = R2TestContexts.newGL33Context("main", 24, 8);
     return R2ShaderChecker.newChecker(c.contextGetGL33().getShaders());
-  }
-
-  @After public void onTestCompleted()
-  {
-    R2TestContexts.closeAllContexts();
   }
 
   @Test public void testDeferredSurfaceBasic()
