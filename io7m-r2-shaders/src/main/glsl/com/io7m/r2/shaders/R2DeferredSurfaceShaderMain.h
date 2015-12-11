@@ -32,8 +32,15 @@ R2_deferred_surface_shader_main_gbuffer()
     R2_deferred_surface_data.positive_eye_z,
     R2_deferred_surface_parameters.depth_coefficient);
 
+  R2_deferred_surface_derived_t derived =
+    R2_deferred_surface_derived_t (
+      normal,
+      normal_comp
+    );
+
   R2_deferred_surface_output_t o = R2_deferred_main (
     R2_deferred_surface_data,
+    derived,
     R2_deferred_surface_textures,
     R2_deferred_surface_parameters
   );

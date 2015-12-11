@@ -2,5 +2,10 @@
   "R2DeferredSurfaceBasic": {
     "vertex":   "/com/io7m/r2/shaders/R2DeferredSurfaceBasic.vert",
     "fragment": "/com/io7m/r2/shaders/R2DeferredSurfaceBasic.frag"
+  },
+
+  "R2DeferredSurfaceBasicReflective": {
+    "vertex":   "/com/io7m/r2/shaders/R2DeferredSurfaceBasic.vert",
+    "fragment": "/com/io7m/r2/shaders/R2DeferredSurfaceBasicReflective.frag"
   }
 }

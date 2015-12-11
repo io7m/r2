@@ -50,6 +50,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>io7m-r2-shaders-checker</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>

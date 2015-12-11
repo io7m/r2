@@ -18,6 +18,15 @@ struct R2_deferred_surface_data_t {
 };
 
 //
+// Derived surface data that all deferred shaders will receive.
+//
+
+struct R2_deferred_surface_derived_t {
+  vec3 normal_eye;        // Final uncompressed eye-space normal produced by bump/normal mapping
+  vec2 normal_compressed; // Compressed eye-space normal
+};
+
+//
 // Constant surface parameters that all deferred shaders will receive.
 //
 
