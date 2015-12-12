@@ -14,6 +14,16 @@
     "fragment": "/com/io7m/r2/shaders/sources/R2DebugNormalCompression.frag"
   },
 
+  "R2DebugLogDepth": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DebugPositionOnly.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugLogDepth.frag"
+  },
+
+  "R2DebugLogDepthComposed": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DebugPositionOnly.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugLogDepthComposed.frag"
+  },
+
   "R2DebugIdentity": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2DebugPositionOnly.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2DebugIdentity.frag"
