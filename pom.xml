@@ -122,6 +122,16 @@
         <artifactId>io7m-jtensors-bytebuffered</artifactId>
         <version>7.0.0-beta0010</version>
       </dependency>
+      <dependency>
+        <groupId>com.io7m.jtensors</groupId>
+        <artifactId>io7m-jtensors-ieee754b16</artifactId>
+        <version>7.0.0-beta0010</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.ieee754b16</groupId>
+        <artifactId>io7m-ieee754b16-core</artifactId>
+        <version>[1.0.0, 2.0.0)</version>
+      </dependency>
 
       <dependency>
         <groupId>org.anarres</groupId>
