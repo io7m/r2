@@ -18,6 +18,8 @@
     <module>io7m-r2-checkstyle</module>
     <module>io7m-r2-core</module>
     <module>io7m-r2-documentation</module>
+    <module>io7m-r2-meshes</module>
+    <module>io7m-r2-meshes-binary</module>
     <module>io7m-r2-shaders-checker</module>
     <module>io7m-r2-shaders-maven-plugin</module>
     <module>io7m-r2-shaders-pp</module>
@@ -148,6 +150,11 @@
         <groupId>org.immutables</groupId>
         <artifactId>value</artifactId>
         <version>2.1.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.12</version>
       </dependency>
       <dependency>
         <groupId>ch.qos.logback</groupId>
