@@ -10,11 +10,11 @@
     <artifactId>io7m-r2</artifactId>
     <version>0.1.0</version>
   </parent>
-  <artifactId>io7m-r2-meshes</artifactId>
+  <artifactId>io7m-r2-meshes-collada</artifactId>
 
   <packaging>jar</packaging>
-  <name>io7m-r2-meshes</name>
-  <description>3D renderer (Mesh types)</description>
+  <name>io7m-r2-meshes-collada</name>
+  <description>3D renderer (COLLADA imports)</description>
   <url>http://io7m.github.io/r2/</url>
 
   <scm>
@@ -26,7 +26,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>io7m-r2-spaces</artifactId>
+      <artifactId>io7m-r2-meshes</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -39,18 +39,32 @@
       <artifactId>io7m-junreachable-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.io7m.jtensors</groupId>
-      <artifactId>io7m-jtensors-core</artifactId>
+      <groupId>com.io7m.jdae</groupId>
+      <artifactId>io7m-jdae-collada1_4</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jdae</groupId>
+      <artifactId>io7m-jdae-collada1_5</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.immutables</groupId>
-      <artifactId>value</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -61,16 +75,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-
-      <!-- Disable incremental compilation -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <!-- Prevents an endPosTable exception during compilation -->
-          <useIncrementalCompilation>false</useIncrementalCompilation>
-        </configuration>
       </plugin>
     </plugins>
   </build>

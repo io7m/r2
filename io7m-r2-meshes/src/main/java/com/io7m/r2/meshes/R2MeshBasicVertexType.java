@@ -14,9 +14,31 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.r2.meshes;
+
+import org.immutables.value.Value;
+
 /**
- * Common mesh types.
+ * The type of basic mesh vertices.
  */
 
-@com.io7m.jnull.NonNullByDefault @R2MeshImmutableStyleType
-package com.io7m.r2.meshes;
+@Value.Immutable public interface R2MeshBasicVertexType
+{
+  /**
+   * @return The index of the position attribute
+   */
+
+  @Value.Parameter long getPositionIndex();
+
+  /**
+   * @return The index of the normal attribute
+   */
+
+  @Value.Parameter long getNormalIndex();
+
+  /**
+   * @return The index of the UV attribute
+   */
+
+  @Value.Parameter long getUVIndex();
+}

@@ -14,9 +14,31 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.r2.meshes;
+
+import org.immutables.value.Value;
+
 /**
- * Common mesh types.
+ * The type of triangles.
  */
 
-@com.io7m.jnull.NonNullByDefault @R2MeshImmutableStyleType
-package com.io7m.r2.meshes;
+@Value.Immutable public interface R2MeshTriangleType
+{
+  /**
+   * @return The index of the first vertex
+   */
+
+  @Value.Parameter long getV0();
+
+  /**
+   * @return The index of the second vertex
+   */
+
+  @Value.Parameter long getV1();
+
+  /**
+   * @return The index of the third vertex
+   */
+
+  @Value.Parameter long getV2();
+}

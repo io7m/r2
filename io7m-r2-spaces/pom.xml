@@ -10,11 +10,11 @@
     <artifactId>io7m-r2</artifactId>
     <version>0.1.0</version>
   </parent>
-  <artifactId>io7m-r2-meshes</artifactId>
+  <artifactId>io7m-r2-spaces</artifactId>
 
   <packaging>jar</packaging>
-  <name>io7m-r2-meshes</name>
-  <description>3D renderer (Mesh types)</description>
+  <name>io7m-r2-spaces</name>
+  <description>3D renderer (Phantom types for vector spaces)</description>
   <url>http://io7m.github.io/r2/</url>
 
   <scm>
@@ -25,33 +25,12 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>io7m-r2-spaces</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>com.io7m.jnull</groupId>
       <artifactId>io7m-jnull-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.io7m.junreachable</groupId>
       <artifactId>io7m-junreachable-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.jtensors</groupId>
-      <artifactId>io7m-jtensors-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.immutables</groupId>
-      <artifactId>value</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -61,16 +40,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-
-      <!-- Disable incremental compilation -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <!-- Prevents an endPosTable exception during compilation -->
-          <useIncrementalCompilation>false</useIncrementalCompilation>
-        </configuration>
       </plugin>
     </plugins>
   </build>

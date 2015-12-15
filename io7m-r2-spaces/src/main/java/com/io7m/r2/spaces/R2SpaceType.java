@@ -14,9 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.r2.spaces;
+
 /**
- * Common mesh types.
+ * The type of coordinate spaces.
  */
 
-@com.io7m.jnull.NonNullByDefault @R2MeshImmutableStyleType
-package com.io7m.r2.meshes;
+public interface R2SpaceType
+{
+
+}

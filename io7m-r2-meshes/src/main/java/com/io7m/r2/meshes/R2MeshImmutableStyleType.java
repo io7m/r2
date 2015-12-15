@@ -14,9 +14,27 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Common mesh types.
- */
-
-@com.io7m.jnull.NonNullByDefault @R2MeshImmutableStyleType
 package com.io7m.r2.meshes;
+
+import org.immutables.value.Value;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({ ElementType.PACKAGE, ElementType.TYPE })
+@Retention(RetentionPolicy.CLASS)
+@Value.Style(
+  get = { "is*", "get*" },
+  init = "set*",
+  typeAbstract = { "Abstract*", "*Type" },
+  typeImmutable = "*",
+  builder = "builder",
+  build = "build",
+  visibility = Value.Style.ImplementationVisibility.PUBLIC,
+  defaults = @Value.Immutable(prehash = true, builder = false))
+@interface R2MeshImmutableStyleType
+{
+
+}

@@ -15,8 +15,8 @@
  */
 
 /**
- * Common mesh types.
+ * Phantom types for vector spaces.
  */
 
-@com.io7m.jnull.NonNullByDefault @R2MeshImmutableStyleType
-package com.io7m.r2.meshes;
+@com.io7m.jnull.NonNullByDefault
+package com.io7m.r2.spaces;

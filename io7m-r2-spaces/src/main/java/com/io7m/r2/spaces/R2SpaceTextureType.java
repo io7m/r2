@@ -14,9 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+package com.io7m.r2.spaces;
+
 /**
- * Common mesh types.
+ * A type representing the texture space (UV coordinates).
  */
 
-@com.io7m.jnull.NonNullByDefault @R2MeshImmutableStyleType
-package com.io7m.r2.meshes;
+public interface R2SpaceTextureType extends R2SpaceType
+{
+
+}
