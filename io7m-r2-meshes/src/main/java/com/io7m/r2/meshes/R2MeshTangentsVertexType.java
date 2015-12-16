@@ -16,45 +16,41 @@
 
 package com.io7m.r2.meshes;
 
-import com.io7m.jtensors.parameterized.PVectorI2D;
-import com.io7m.jtensors.parameterized.PVectorI3D;
-import com.io7m.r2.spaces.R2SpaceObjectType;
-import com.io7m.r2.spaces.R2SpaceTextureType;
-import it.unimi.dsi.fastutil.BigList;
+import org.immutables.value.Value;
 
 /**
- * The type of basic meshes.
+ * The type of basic mesh vertices.
  */
 
-public interface R2MeshBasicType
+@Value.Immutable public interface R2MeshTangentsVertexType
 {
   /**
-   * @return The list of normal vectors
+   * @return The index of the position attribute
    */
 
-  BigList<PVectorI3D<R2SpaceObjectType>> getNormals();
+  @Value.Parameter long getPositionIndex();
 
   /**
-   * @return The list of position vectors
+   * @return The index of the normal attribute
    */
 
-  BigList<PVectorI3D<R2SpaceObjectType>> getPositions();
+  @Value.Parameter long getNormalIndex();
 
   /**
-   * @return The list of UV vectors
+   * @return The index of the tangent attribute
    */
 
-  BigList<PVectorI2D<R2SpaceTextureType>> getUVs();
+  @Value.Parameter long getTangentIndex();
 
   /**
-   * @return The list of vertices
+   * @return The index of the bitangent attribute
    */
 
-  BigList<R2MeshBasicVertexType> getVertices();
+  @Value.Parameter long getBitangentIndex();
 
   /**
-   * @return The list of triangles
+   * @return The index of the UV attribute
    */
 
-  BigList<R2MeshTriangleType> getTriangles();
+  @Value.Parameter long getUVIndex();
 }

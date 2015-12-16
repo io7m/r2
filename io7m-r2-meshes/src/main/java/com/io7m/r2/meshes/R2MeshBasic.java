@@ -17,16 +17,17 @@
 package com.io7m.r2.meshes;
 
 import com.io7m.jnull.NullCheck;
-import com.io7m.jtensors.parameterized.PVectorI2F;
-import com.io7m.jtensors.parameterized.PVectorI3F;
-import com.io7m.jtensors.parameterized.PVectorReadable2FType;
-import com.io7m.jtensors.parameterized.PVectorReadable3FType;
+import com.io7m.jtensors.parameterized.PVectorI2D;
+import com.io7m.jtensors.parameterized.PVectorI3D;
+import com.io7m.jtensors.parameterized.PVectorReadable2DType;
+import com.io7m.jtensors.parameterized.PVectorReadable3DType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
+import it.unimi.dsi.fastutil.BigList;
+import it.unimi.dsi.fastutil.objects.ObjectBigArrayBigList;
+import it.unimi.dsi.fastutil.objects.ObjectBigList;
+import it.unimi.dsi.fastutil.objects.ObjectBigLists;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -35,18 +36,18 @@ import java.util.NoSuchElementException;
 
 public final class R2MeshBasic implements R2MeshBasicType
 {
-  private final List<PVectorI3F<R2SpaceObjectType>>  positions;
-  private final List<PVectorI3F<R2SpaceObjectType>>  normals;
-  private final List<PVectorI2F<R2SpaceTextureType>> uvs;
-  private final List<R2MeshBasicVertexType>          vertices;
-  private final List<R2MeshTriangleType>             triangles;
+  private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  positions;
+  private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  normals;
+  private final ObjectBigList<PVectorI2D<R2SpaceTextureType>> uvs;
+  private final ObjectBigList<R2MeshBasicVertexType>          vertices;
+  private final ObjectBigList<R2MeshTriangleType>             triangles;
 
   private R2MeshBasic(
-    final List<PVectorI3F<R2SpaceObjectType>> in_positions,
-    final List<PVectorI3F<R2SpaceObjectType>> in_normals,
-    final List<PVectorI2F<R2SpaceTextureType>> in_uvs,
-    final List<R2MeshBasicVertexType> in_vertices,
-    final List<R2MeshTriangleType> in_triangles)
+    final ObjectBigList<PVectorI3D<R2SpaceObjectType>> in_positions,
+    final ObjectBigList<PVectorI3D<R2SpaceObjectType>> in_normals,
+    final ObjectBigList<PVectorI2D<R2SpaceTextureType>> in_uvs,
+    final ObjectBigList<R2MeshBasicVertexType> in_vertices,
+    final ObjectBigList<R2MeshTriangleType> in_triangles)
   {
     this.normals = NullCheck.notNull(in_normals);
     this.positions = NullCheck.notNull(in_positions);
@@ -56,54 +57,69 @@ public final class R2MeshBasic implements R2MeshBasicType
   }
 
   /**
+   * @param v_count A hint to the implementation regarding the number of
+   *                vertices that are expected to be created. The implementation
+   *                will allocate {@code v_count} vertices ahead of time to
+   *                avoid having to perform any internal reallocations during
+   *                building.
+   * @param t_count A hint to the implementation regarding the number of
+   *                triangles that are expected to be created. The
+   *                implementation will allocate {@code t_count} triangles ahead
+   *                of time to avoid having to perform any internal
+   *                reallocations during building.
+   *
    * @return A new mutable mesh builder
    */
 
-  public static R2MeshBasicBuilderType newBuilder()
+  public static R2MeshBasicBuilderType newBuilder(
+    final long v_count,
+    final long t_count)
   {
-    return new Builder();
+    return new Builder(v_count, t_count);
   }
 
-  @Override public List<PVectorI3F<R2SpaceObjectType>> getNormals()
+  @Override public BigList<PVectorI3D<R2SpaceObjectType>> getNormals()
   {
     return this.normals;
   }
 
-  @Override public List<PVectorI3F<R2SpaceObjectType>> getPositions()
+  @Override public BigList<PVectorI3D<R2SpaceObjectType>> getPositions()
   {
     return this.positions;
   }
 
-  @Override public List<PVectorI2F<R2SpaceTextureType>> getUVs()
+  @Override public BigList<PVectorI2D<R2SpaceTextureType>> getUVs()
   {
     return this.uvs;
   }
 
-  @Override public List<R2MeshBasicVertexType> getVertices()
+  @Override public BigList<R2MeshBasicVertexType> getVertices()
   {
     return this.vertices;
   }
 
-  @Override public List<R2MeshTriangleType> getTriangles()
+  @Override public BigList<R2MeshTriangleType> getTriangles()
   {
     return this.triangles;
   }
 
   private static final class Builder implements R2MeshBasicBuilderType
   {
-    private final List<PVectorI3F<R2SpaceObjectType>>  positions;
-    private final List<PVectorI3F<R2SpaceObjectType>>  normals;
-    private final List<PVectorI2F<R2SpaceTextureType>> uvs;
-    private final List<R2MeshBasicVertexType>          vertices;
-    private final List<R2MeshTriangleType>             triangles;
+    private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  positions;
+    private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  normals;
+    private final ObjectBigList<PVectorI2D<R2SpaceTextureType>> uvs;
+    private final ObjectBigList<R2MeshBasicVertexType>          vertices;
+    private final ObjectBigList<R2MeshTriangleType>             triangles;
 
-    Builder()
+    Builder(
+      final long v_count,
+      final long t_count)
     {
-      this.positions = new ArrayList<>();
-      this.normals = new ArrayList<>();
-      this.uvs = new ArrayList<>();
-      this.vertices = new ArrayList<>();
-      this.triangles = new ArrayList<>();
+      this.positions = new ObjectBigArrayBigList<>(v_count);
+      this.normals = new ObjectBigArrayBigList<>(v_count);
+      this.uvs = new ObjectBigArrayBigList<>(v_count);
+      this.vertices = new ObjectBigArrayBigList<>(v_count);
+      this.triangles = new ObjectBigArrayBigList<>(t_count);
     }
 
     @Override public void reset()
@@ -116,24 +132,24 @@ public final class R2MeshBasic implements R2MeshBasicType
     }
 
     @Override
-    public long addPosition(final PVectorReadable3FType<R2SpaceObjectType> p)
+    public long addPosition(final PVectorReadable3DType<R2SpaceObjectType> p)
     {
-      this.positions.add(new PVectorI3F<>(p));
-      return (long) (this.positions.size() - 1);
+      this.positions.add(new PVectorI3D<>(p));
+      return this.positions.size64() - 1L;
     }
 
     @Override
-    public long addNormal(final PVectorReadable3FType<R2SpaceObjectType> n)
+    public long addNormal(final PVectorReadable3DType<R2SpaceObjectType> n)
     {
-      this.normals.add(new PVectorI3F<>(n));
-      return (long) (this.normals.size() - 1);
+      this.normals.add(new PVectorI3D<>(n));
+      return this.normals.size64() - 1L;
     }
 
     @Override
-    public long addUV(final PVectorReadable2FType<R2SpaceTextureType> u)
+    public long addUV(final PVectorReadable2DType<R2SpaceTextureType> u)
     {
-      this.uvs.add(new PVectorI2F<>(u));
-      return (long) (this.uvs.size() - 1);
+      this.uvs.add(new PVectorI2D<>(u));
+      return this.uvs.size64() - 1L;
     }
 
     @Override public long addVertex(
@@ -142,21 +158,18 @@ public final class R2MeshBasic implements R2MeshBasicType
       final long u)
       throws NoSuchElementException
     {
-      if (p < 0L
-          || Long.compareUnsigned(p, (long) this.positions.size()) >= 0) {
+      if (p < 0L || Long.compareUnsigned(p, this.positions.size64()) >= 0) {
         throw new NoSuchElementException("Position");
       }
-
-      if (n < 0L || Long.compareUnsigned(n, (long) this.normals.size()) >= 0) {
+      if (n < 0L || Long.compareUnsigned(n, this.normals.size64()) >= 0) {
         throw new NoSuchElementException("Normal");
       }
-
-      if (u < 0L || Long.compareUnsigned(n, (long) this.uvs.size()) >= 0) {
+      if (u < 0L || Long.compareUnsigned(n, this.uvs.size64()) >= 0) {
         throw new NoSuchElementException("UV");
       }
 
       this.vertices.add(R2MeshBasicVertex.of(p, n, u));
-      return (long) (this.vertices.size() - 1);
+      return this.vertices.size64() - 1L;
     }
 
     @Override public long addTriangle(
@@ -165,31 +178,33 @@ public final class R2MeshBasic implements R2MeshBasicType
       final long v2)
       throws NoSuchElementException
     {
-      if (v0 < 0L
-          || Long.compareUnsigned(v0, (long) this.vertices.size()) >= 0) {
+      if (v0 < 0L || Long.compareUnsigned(v0, this.vertices.size64()) >= 0) {
         throw new NoSuchElementException("Vertex 0");
       }
-      if (v1 < 0L
-          || Long.compareUnsigned(v1, (long) this.vertices.size()) >= 0) {
+      if (v1 < 0L || Long.compareUnsigned(v1, this.vertices.size64()) >= 0) {
         throw new NoSuchElementException("Vertex 1");
       }
-      if (v2 < 0L
-          || Long.compareUnsigned(v0, (long) this.vertices.size()) >= 0) {
+      if (v2 < 0L || Long.compareUnsigned(v2, this.vertices.size64()) >= 0) {
         throw new NoSuchElementException("Vertex 2");
       }
 
       this.triangles.add(R2MeshTriangle.of(v0, v1, v2));
-      return (long) this.triangles.size() - 1L;
+      return this.triangles.size64() - 1L;
     }
 
     @Override public R2MeshBasicType build()
     {
       return new R2MeshBasic(
-        Collections.unmodifiableList(new ArrayList<>(this.positions)),
-        Collections.unmodifiableList(new ArrayList<>(this.normals)),
-        Collections.unmodifiableList(new ArrayList<>(this.uvs)),
-        Collections.unmodifiableList(new ArrayList<>(this.vertices)),
-        Collections.unmodifiableList(new ArrayList<>(this.triangles))
+        ObjectBigLists.unmodifiable(
+          new ObjectBigArrayBigList<>(this.positions)),
+        ObjectBigLists.unmodifiable(
+          new ObjectBigArrayBigList<>(this.normals)),
+        ObjectBigLists.unmodifiable(
+          new ObjectBigArrayBigList<>(this.uvs)),
+        ObjectBigLists.unmodifiable(
+          new ObjectBigArrayBigList<>(this.vertices)),
+        ObjectBigLists.unmodifiable(
+          new ObjectBigArrayBigList<>(this.triangles))
       );
     }
   }

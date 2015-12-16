@@ -153,6 +153,11 @@
       </dependency>
 
       <dependency>
+        <groupId>it.unimi.dsi</groupId>
+        <artifactId>fastutil</artifactId>
+        <version>7.0.7</version>
+      </dependency>
+      <dependency>
         <groupId>org.anarres</groupId>
         <artifactId>jcpp</artifactId>
         <version>1.4.12</version>

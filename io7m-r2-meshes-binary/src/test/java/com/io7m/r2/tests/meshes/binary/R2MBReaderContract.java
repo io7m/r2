@@ -158,9 +158,9 @@ public abstract class R2MBReaderContract
 
         @Override public void onEventVertexNormal(
           final int index,
-          final float x,
-          final float y,
-          final float z)
+          final double x,
+          final double y,
+          final double z)
         {
           Assert.assertFalse(nor_received.get());
           Assert.assertEquals(0L, (long) index);
@@ -172,9 +172,9 @@ public abstract class R2MBReaderContract
 
         @Override public void onEventVertexPosition(
           final int index,
-          final float x,
-          final float y,
-          final float z)
+          final double x,
+          final double y,
+          final double z)
         {
           Assert.assertFalse(pos_received.get());
           Assert.assertEquals(0L, (long) index);
@@ -186,10 +186,10 @@ public abstract class R2MBReaderContract
 
         @Override public void onEventVertexTangent(
           final int index,
-          final float x,
-          final float y,
-          final float z,
-          final float w)
+          final double x,
+          final double y,
+          final double z,
+          final double w)
         {
           Assert.assertFalse(tan_received.get());
           Assert.assertEquals(0L, (long) index);
@@ -202,8 +202,8 @@ public abstract class R2MBReaderContract
 
         @Override public void onEventVertexUV(
           final int index,
-          final float x,
-          final float y)
+          final double x,
+          final double y)
         {
           Assert.assertFalse(uv_received.get());
           Assert.assertEquals(0L, (long) index);
@@ -269,36 +269,36 @@ public abstract class R2MBReaderContract
 
     @Override public void onEventVertexPosition(
       final int index,
-      final float x,
-      final float y,
-      final float z)
+      final double x,
+      final double y,
+      final double z)
     {
 
     }
 
     @Override public void onEventVertexNormal(
       final int index,
-      final float x,
-      final float y,
-      final float z)
+      final double x,
+      final double y,
+      final double z)
     {
 
     }
 
     @Override public void onEventVertexTangent(
       final int index,
-      final float x,
-      final float y,
-      final float z,
-      final float w)
+      final double x,
+      final double y,
+      final double z,
+      final double w)
     {
 
     }
 
     @Override public void onEventVertexUV(
       final int index,
-      final float x,
-      final float y)
+      final double x,
+      final double y)
     {
 
     }

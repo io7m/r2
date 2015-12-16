@@ -18,21 +18,34 @@ package com.io7m.r2.meshes;
 
 import com.io7m.jtensors.parameterized.PVectorI2D;
 import com.io7m.jtensors.parameterized.PVectorI3D;
+import com.io7m.jtensors.parameterized.PVectorI4D;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.BigList;
 
 /**
- * The type of basic meshes.
+ * The type of meshes with tangents.
  */
 
-public interface R2MeshBasicType
+public interface R2MeshTangentsType
 {
   /**
    * @return The list of normal vectors
    */
 
   BigList<PVectorI3D<R2SpaceObjectType>> getNormals();
+
+  /**
+   * @return The list of bitangent vectors
+   */
+
+  BigList<PVectorI3D<R2SpaceObjectType>> getBitangents();
+
+  /**
+   * @return The list of tangent vectors
+   */
+
+  BigList<PVectorI4D<R2SpaceObjectType>> getTangents();
 
   /**
    * @return The list of position vectors
@@ -50,7 +63,7 @@ public interface R2MeshBasicType
    * @return The list of vertices
    */
 
-  BigList<R2MeshBasicVertexType> getVertices();
+  BigList<R2MeshTangentsVertexType> getVertices();
 
   /**
    * @return The list of triangles

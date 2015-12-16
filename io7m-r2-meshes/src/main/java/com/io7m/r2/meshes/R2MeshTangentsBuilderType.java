@@ -18,16 +18,17 @@ package com.io7m.r2.meshes;
 
 import com.io7m.jtensors.parameterized.PVectorReadable2DType;
 import com.io7m.jtensors.parameterized.PVectorReadable3DType;
+import com.io7m.jtensors.parameterized.PVectorReadable4DType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 
 import java.util.NoSuchElementException;
 
 /**
- * The type of mutable builders for basic meshes.
+ * The type of mutable builders for meshes that have tangent vectors.
  */
 
-public interface R2MeshBasicBuilderType
+public interface R2MeshTangentsBuilderType
 {
   /**
    * Clear the contents of the builder
@@ -69,10 +70,34 @@ public interface R2MeshBasicBuilderType
     PVectorReadable2DType<R2SpaceTextureType> u);
 
   /**
+   * Add a tangent vector.
+   *
+   * @param p The position
+   *
+   * @return The index of the added vector
+   */
+
+  long addTangent(
+    PVectorReadable4DType<R2SpaceObjectType> p);
+
+  /**
+   * Add a bitangent vector.
+   *
+   * @param p The position
+   *
+   * @return The index of the added vector
+   */
+
+  long addBitangent(
+    PVectorReadable3DType<R2SpaceObjectType> p);
+
+  /**
    * Add a vertex.
    *
    * @param p The index of the position vector
    * @param n The index of the normal vector
+   * @param t The index of the tangent vector
+   * @param b The index of the bitangent vector
    * @param u The index of the UV vector
    *
    * @return The index of the new vertex
@@ -81,11 +106,15 @@ public interface R2MeshBasicBuilderType
    * @see #addPosition(PVectorReadable3DType)
    * @see #addNormal(PVectorReadable3DType)
    * @see #addUV(PVectorReadable2DType)
+   * @see #addTangent(PVectorReadable4DType)
+   * @see #addBitangent(PVectorReadable3DType)
    */
 
   long addVertex(
     long p,
     long n,
+    long t,
+    long b,
     long u)
     throws NoSuchElementException;
 
@@ -99,7 +128,7 @@ public interface R2MeshBasicBuilderType
    * @return The index of the new triangle
    *
    * @throws NoSuchElementException Iff any of the given vertices do not exist
-   * @see #addVertex(long, long, long)
+   * @see #addVertex(long, long, long, long, long)
    */
 
   long addTriangle(
@@ -109,9 +138,9 @@ public interface R2MeshBasicBuilderType
     throws NoSuchElementException;
 
   /**
-   * @return A basic mesh with all of the data specified so far
+   * @return A mesh with all of the data specified so far
    */
 
-  R2MeshBasicType build();
+  R2MeshTangentsType build();
 
 }

@@ -70,9 +70,9 @@ public interface R2MeshParserListenerType
 
   void onEventVertexPosition(
     int index,
-    float x,
-    float y,
-    float z);
+    double x,
+    double y,
+    double z);
 
   /**
    * A vertex normal was received.
@@ -85,9 +85,9 @@ public interface R2MeshParserListenerType
 
   void onEventVertexNormal(
     int index,
-    float x,
-    float y,
-    float z);
+    double x,
+    double y,
+    double z);
 
   /**
    * A vertex tangent was received.
@@ -101,10 +101,10 @@ public interface R2MeshParserListenerType
 
   void onEventVertexTangent(
     int index,
-    float x,
-    float y,
-    float z,
-    float w);
+    double x,
+    double y,
+    double z,
+    double w);
 
   /**
    * A vertex UV coordinate was received.
@@ -116,8 +116,8 @@ public interface R2MeshParserListenerType
 
   void onEventVertexUV(
     int index,
-    float x,
-    float y);
+    double x,
+    double y);
 
   /**
    * Vertex {@code index} is finished.
