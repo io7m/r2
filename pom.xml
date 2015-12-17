@@ -19,7 +19,6 @@
     <module>io7m-r2-core</module>
     <module>io7m-r2-documentation</module>
     <module>io7m-r2-meshes-binary</module>
-    <module>io7m-r2-meshes-collada</module>
     <module>io7m-r2-meshes</module>
     <module>io7m-r2-shaders-checker</module>
     <module>io7m-r2-shaders-maven-plugin</module>
