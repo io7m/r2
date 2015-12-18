@@ -19,6 +19,7 @@
     <module>io7m-r2-core</module>
     <module>io7m-r2-documentation</module>
     <module>io7m-r2-meshes-binary</module>
+    <module>io7m-r2-meshes-obj</module>
     <module>io7m-r2-meshes</module>
     <module>io7m-r2-shaders-checker</module>
     <module>io7m-r2-shaders-maven-plugin</module>
@@ -150,6 +151,11 @@
         <artifactId>io7m-jranges-core</artifactId>
         <version>[2.0.0, 3.0.0)</version>
       </dependency>
+      <dependency>
+        <groupId>com.io7m.jobj</groupId>
+        <artifactId>io7m-jobj-core</artifactId>
+        <version>0.1.0</version>
+      </dependency>
 
       <dependency>
         <groupId>it.unimi.dsi</groupId>
@@ -196,6 +202,11 @@
         <groupId>com.github.marschall</groupId>
         <artifactId>memoryfilesystem</artifactId>
         <version>0.7.7</version>
+      </dependency>
+      <dependency>
+        <groupId>org.valid4j</groupId>
+        <artifactId>valid4j</artifactId>
+        <version>0.4.0</version>
       </dependency>
 
       <dependency>
