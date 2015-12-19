@@ -130,85 +130,85 @@ public abstract class R2MBReaderContract
           ver_finished_all.set(true);
         }
 
-        @Override public void onEventVertexStarted(final int index)
+        @Override public void onEventVertexStarted(final long index)
         {
           Assert.assertFalse(ver_started.get());
           ver_started.set(true);
         }
 
-        @Override public void onEventVertexFinished(final int index)
+        @Override public void onEventVertexFinished(final long index)
         {
           Assert.assertFalse(ver_finished.get());
           ver_finished.set(true);
         }
 
         @Override public void onEventTriangle(
-          final int index,
-          final int v0,
-          final int v1,
-          final int v2)
+          final long index,
+          final long v0,
+          final long v1,
+          final long v2)
         {
           Assert.assertFalse(tri_received.get());
-          Assert.assertEquals(0L, (long) index);
-          Assert.assertEquals(0L, (long) v0);
-          Assert.assertEquals(1L, (long) v1);
-          Assert.assertEquals(2L, (long) v2);
+          Assert.assertEquals(0L, index);
+          Assert.assertEquals(0L, v0);
+          Assert.assertEquals(1L, v1);
+          Assert.assertEquals(2L, v2);
           tri_received.set(true);
         }
 
         @Override public void onEventVertexNormal(
-          final int index,
+          final long index,
           final double x,
           final double y,
           final double z)
         {
           Assert.assertFalse(nor_received.get());
-          Assert.assertEquals(0L, (long) index);
-          Assert.assertEquals(0.0, (double) x, 0.000001);
-          Assert.assertEquals(0.0, (double) y, 0.000001);
-          Assert.assertEquals(1.0, (double) z, 0.000001);
+          Assert.assertEquals(0L, index);
+          Assert.assertEquals(0.0, x, 0.000001);
+          Assert.assertEquals(0.0, y, 0.000001);
+          Assert.assertEquals(1.0, z, 0.000001);
           nor_received.set(true);
         }
 
         @Override public void onEventVertexPosition(
-          final int index,
+          final long index,
           final double x,
           final double y,
           final double z)
         {
           Assert.assertFalse(pos_received.get());
-          Assert.assertEquals(0L, (long) index);
-          Assert.assertEquals(10.0, (double) x, 0.000001);
-          Assert.assertEquals(20.0, (double) y, 0.000001);
-          Assert.assertEquals(30.0, (double) z, 0.000001);
+          Assert.assertEquals(0L, index);
+          Assert.assertEquals(10.0, x, 0.000001);
+          Assert.assertEquals(20.0, y, 0.000001);
+          Assert.assertEquals(30.0, z, 0.000001);
           pos_received.set(true);
         }
 
         @Override public void onEventVertexTangent(
-          final int index,
+          final long index,
           final double x,
           final double y,
           final double z,
           final double w)
         {
           Assert.assertFalse(tan_received.get());
-          Assert.assertEquals(0L, (long) index);
-          Assert.assertEquals(1.0, (double) x, 0.000001);
-          Assert.assertEquals(0.0, (double) y, 0.000001);
-          Assert.assertEquals(0.0, (double) z, 0.000001);
-          Assert.assertEquals(1.0, (double) w, 0.000001);
+          Assert.assertEquals(0L, index);
+          Assert.assertEquals(1.0, x, 0.000001);
+          Assert.assertEquals(0.0, y, 0.000001);
+          Assert.assertEquals(0.0, z, 0.000001);
+          Assert.assertEquals(1.0, w, 0.000001);
           tan_received.set(true);
         }
 
         @Override public void onEventVertexUV(
-          final int index,
+          final long index,
           final double x,
           final double y)
         {
           Assert.assertFalse(uv_received.get());
-          Assert.assertEquals(0L, (long) index);
-          Assert.assertEquals(2.0, (double) x, 0.000001);
-          Assert.assertEquals(3.0, (double) y, 0.000001);
+          Assert.assertEquals(0L, index);
+          Assert.assertEquals(2.0, x, 0.000001);
+          Assert.assertEquals(3.0, y, 0.000001);
           uv_received.set(true);
         }
 
@@ -262,13 +262,13 @@ public abstract class R2MBReaderContract
       throw new ParseError(message);
     }
 
-    @Override public void onEventVertexStarted(final int index)
+    @Override public void onEventVertexStarted(final long index)
     {
 
     }
 
     @Override public void onEventVertexPosition(
-      final int index,
+      final long index,
       final double x,
       final double y,
       final double z)
@@ -277,7 +277,7 @@ public abstract class R2MBReaderContract
     }
 
     @Override public void onEventVertexNormal(
-      final int index,
+      final long index,
       final double x,
       final double y,
       final double z)
@@ -286,7 +286,7 @@ public abstract class R2MBReaderContract
     }
 
     @Override public void onEventVertexTangent(
-      final int index,
+      final long index,
       final double x,
       final double y,
       final double z,
@@ -296,14 +296,14 @@ public abstract class R2MBReaderContract
     }
 
     @Override public void onEventVertexUV(
-      final int index,
+      final long index,
       final double x,
       final double y)
     {
 
     }
 
-    @Override public void onEventVertexFinished(final int index)
+    @Override public void onEventVertexFinished(final long index)
     {
 
     }
@@ -314,10 +314,10 @@ public abstract class R2MBReaderContract
     }
 
     @Override public void onEventTriangle(
-      final int index,
-      final int v0,
-      final int v1,
-      final int v2)
+      final long index,
+      final long v0,
+      final long v1,
+      final long v2)
     {
 
     }

@@ -103,6 +103,33 @@ public final class R2MeshBasic implements R2MeshBasicType
     return this.triangles;
   }
 
+  @Override public boolean equals(final Object o)
+  {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+
+    final R2MeshBasic that = (R2MeshBasic) o;
+    return this.getPositions().equals(that.getPositions())
+           && this.getNormals().equals(that.getNormals())
+           && this.getUVs().equals(that.getUVs())
+           && this.getVertices().equals(that.getVertices())
+           && this.getTriangles().equals(that.getTriangles());
+  }
+
+  @Override public int hashCode()
+  {
+    int result = this.getPositions().hashCode();
+    result = 31 * result + this.getNormals().hashCode();
+    result = 31 * result + this.uvs.hashCode();
+    result = 31 * result + this.getVertices().hashCode();
+    result = 31 * result + this.getTriangles().hashCode();
+    return result;
+  }
+
   private static final class Builder implements R2MeshBasicBuilderType
   {
     private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  positions;

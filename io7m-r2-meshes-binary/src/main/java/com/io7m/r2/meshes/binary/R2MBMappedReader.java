@@ -43,7 +43,7 @@ import java.util.Optional;
  * A memory-mapped mesh reader.
  */
 
-public final class R2MBMappedReader implements Runnable
+public final class R2MBMappedReader implements R2MBReaderType
 {
   private static final Logger LOG;
 
@@ -73,7 +73,7 @@ public final class R2MBMappedReader implements Runnable
    * @throws IOException On I/O errors
    */
 
-  public static Runnable newMappedReaderForFileChannel(
+  public static R2MBReaderType newMappedReaderForFileChannel(
     final FileChannel in_chan,
     final R2MeshParserListenerType in_listener)
     throws IOException

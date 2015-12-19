@@ -16,13 +16,11 @@
 
 package com.io7m.r2.meshes;
 
-import java.util.Optional;
-
 /**
  * The type of mesh-parsing listeners.
  */
 
-public interface R2MeshParserListenerType
+public interface R2MeshParserListenerType extends R2ErrorConsumerType
 {
   /**
    * The number of vertices was received.
@@ -41,23 +39,12 @@ public interface R2MeshParserListenerType
   void onEventTriangleCount(long count);
 
   /**
-   * An error was encountered during parsing.
-   *
-   * @param e       An exception raised, if any
-   * @param message The error message
-   */
-
-  void onError(
-    Optional<Throwable> e,
-    String message);
-
-  /**
    * Vertex {@code index} is starting.
    *
    * @param index The vertex index
    */
 
-  void onEventVertexStarted(int index);
+  void onEventVertexStarted(long index);
 
   /**
    * A vertex position was received.
@@ -69,7 +56,7 @@ public interface R2MeshParserListenerType
    */
 
   void onEventVertexPosition(
-    int index,
+    long index,
     double x,
     double y,
     double z);
@@ -84,7 +71,7 @@ public interface R2MeshParserListenerType
    */
 
   void onEventVertexNormal(
-    int index,
+    long index,
     double x,
     double y,
     double z);
@@ -100,7 +87,7 @@ public interface R2MeshParserListenerType
    */
 
   void onEventVertexTangent(
-    int index,
+    long index,
     double x,
     double y,
     double z,
@@ -115,7 +102,7 @@ public interface R2MeshParserListenerType
    */
 
   void onEventVertexUV(
-    int index,
+    long index,
     double x,
     double y);
 
@@ -125,7 +112,7 @@ public interface R2MeshParserListenerType
    * @param index The vertex index
    */
 
-  void onEventVertexFinished(int index);
+  void onEventVertexFinished(long index);
 
   /**
    * All vertices have been parsed.
@@ -143,10 +130,10 @@ public interface R2MeshParserListenerType
    */
 
   void onEventTriangle(
-    int index,
-    int v0,
-    int v1,
-    int v2);
+    long index,
+    long v0,
+    long v1,
+    long v2);
 
   /**
    * All triangles have been parsed.

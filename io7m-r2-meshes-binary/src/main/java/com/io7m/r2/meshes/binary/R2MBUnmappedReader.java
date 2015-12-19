@@ -41,7 +41,7 @@ import java.util.Optional;
  * A mesh reader that consumes data from a {@link ReadableByteChannel}.
  */
 
-public final class R2MBUnmappedReader implements Runnable
+public final class R2MBUnmappedReader implements R2MBReaderType
 {
   private final R2MeshParserListenerType listener;
   private final ReadableByteChannel      channel;

@@ -326,6 +326,37 @@ public final class R2MeshTangents implements R2MeshTangentsType
     return this.triangles;
   }
 
+  @Override public boolean equals(final Object o)
+  {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || this.getClass() != o.getClass()) {
+      return false;
+    }
+
+    final R2MeshTangents that = (R2MeshTangents) o;
+    return this.getPositions().equals(that.getPositions())
+           && this.getNormals().equals(that.getNormals())
+           && this.getTangents().equals(that.getTangents())
+           && this.getBitangents().equals(that.getBitangents())
+           && this.getUVs().equals(that.getUVs())
+           && this.getVertices().equals(that.getVertices())
+           && this.getTriangles().equals(that.getTriangles());
+  }
+
+  @Override public int hashCode()
+  {
+    int result = this.getPositions().hashCode();
+    result = 31 * result + this.getNormals().hashCode();
+    result = 31 * result + this.getTangents().hashCode();
+    result = 31 * result + this.getBitangents().hashCode();
+    result = 31 * result + this.uvs.hashCode();
+    result = 31 * result + this.getVertices().hashCode();
+    result = 31 * result + this.getTriangles().hashCode();
+    return result;
+  }
+
   private static final class Builder implements R2MeshTangentsBuilderType
   {
     private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  positions;
