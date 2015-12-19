@@ -76,7 +76,7 @@ public final class R2MBUnmappedReader implements R2MBReaderType
    * @return A new reader
    */
 
-  public static Runnable newReader(
+  public static R2MBReaderType newReader(
     final ReadableByteChannel in_channel,
     final R2MeshParserListenerType in_listener)
   {

@@ -34,6 +34,8 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,6 +43,12 @@ import java.nio.file.Path;
 
 public abstract class R2MBWriterContract
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2MBWriterContract.class);
+  }
+
   @Rule public ExpectedException expected = ExpectedException.none();
 
   protected abstract R2MBWriterType getWriter(
@@ -90,6 +98,8 @@ public abstract class R2MBWriterContract
     final R2MeshTangentsType m = rmb.build();
 
     final Path path = Files.createTempFile("r2mb-writer-", "");
+    R2MBWriterContract.LOG.debug("writing {}", path);
+
     final R2MBWriterType w = this.getWriter(path, m);
     final long s = w.run();
 

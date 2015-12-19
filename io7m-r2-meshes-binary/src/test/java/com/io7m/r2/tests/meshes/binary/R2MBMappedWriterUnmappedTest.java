@@ -18,9 +18,9 @@ package com.io7m.r2.tests.meshes.binary;
 
 import com.io7m.r2.meshes.R2MeshParserListenerType;
 import com.io7m.r2.meshes.R2MeshTangentsType;
-import com.io7m.r2.meshes.binary.R2MBMappedReader;
 import com.io7m.r2.meshes.binary.R2MBMappedWriter;
 import com.io7m.r2.meshes.binary.R2MBReaderType;
+import com.io7m.r2.meshes.binary.R2MBUnmappedReader;
 import com.io7m.r2.meshes.binary.R2MBWriterType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +30,12 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-public final class R2MBMappedWriterTest extends R2MBWriterContract
+public final class R2MBMappedWriterUnmappedTest extends R2MBWriterContract
 {
   private static final Logger LOG;
 
   static {
-    LOG = LoggerFactory.getLogger(R2MBMappedWriterTest.class);
+    LOG = LoggerFactory.getLogger(R2MBMappedWriterUnmappedTest.class);
   }
 
   @Override protected R2MBWriterType getWriter(
@@ -51,7 +51,7 @@ public final class R2MBMappedWriterTest extends R2MBWriterContract
     final R2MeshParserListenerType listener)
     throws IOException
   {
-    return R2MBMappedReader.newMappedReaderForFileChannel(
+    return R2MBUnmappedReader.newReader(
       FileChannel.open(p, StandardOpenOption.READ),
       listener);
   }
