@@ -108,6 +108,11 @@
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
+        <artifactId>io7m-jcanephora-fake</artifactId>
+        <version>0.40.1</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-cursors</artifactId>
         <version>0.40.1</version>
       </dependency>
