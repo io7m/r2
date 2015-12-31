@@ -16,13 +16,35 @@
 
 package com.io7m.r2.core;
 
+/**
+ * The set of opaque instances in a scene.
+ */
+
 public interface R2SceneOpaquesType
 {
+  /**
+   * Remove all instances from the scene.
+   */
+
   void opaquesReset();
+
+  /**
+   * Add a single mesh instance to the scene using the given material.
+   *
+   * @param i   The instance
+   * @param m   The material
+   * @param <M> The type of shader parameters
+   */
 
   <M> void opaquesAddSingleMesh(
     R2InstanceSingleMeshType i,
     R2MaterialOpaqueSingleMeshType<M> m);
+
+  /**
+   * Batch the instances and pass them to the given consumer for rendering.
+   *
+   * @param c The consume
+   */
 
   void opaquesExecute(
     R2SceneOpaquesConsumerType c);

@@ -16,11 +16,30 @@
 
 package com.io7m.r2.core;
 
+/**
+ * The base type of materials. A material associates a shader with a set of
+ * shader parameters.
+ *
+ * @param <M> The type of shader parameters
+ */
+
 public interface R2MaterialType<M>
 {
+  /**
+   * @return The material ID
+   */
+
   long getMaterialID();
 
+  /**
+   * @return The shader parameters
+   */
+
   M getShaderParameters();
+
+  /**
+   * @return The material shader
+   */
 
   R2ShaderType<M> getShader();
 }

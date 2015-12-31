@@ -16,6 +16,7 @@
 
 package com.io7m.r2.meshes;
 
+import com.io7m.jfunctional.PartialFunctionType;
 import com.io7m.jtensors.parameterized.PVectorI2D;
 import com.io7m.jtensors.parameterized.PVectorI3D;
 import com.io7m.jtensors.parameterized.PVectorI4D;
@@ -27,7 +28,7 @@ import it.unimi.dsi.fastutil.BigList;
  * The type of meshes with tangents.
  */
 
-public interface R2MeshTangentsType
+public interface R2MeshTangentsType extends R2MeshType
 {
   /**
    * @return The list of normal vectors
@@ -70,4 +71,13 @@ public interface R2MeshTangentsType
    */
 
   BigList<R2MeshTriangleType> getTriangles();
+
+  @Override
+  default <A, E extends Exception> A matchMesh(
+    final PartialFunctionType<R2MeshBasicType, A, E> on_basic,
+    final PartialFunctionType<R2MeshTangentsType, A, E> on_tangents)
+    throws E
+  {
+    return on_tangents.call(this);
+  }
 }

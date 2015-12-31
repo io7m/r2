@@ -27,5 +27,15 @@
   "R2DebugIdentity": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2DebugPositionOnly.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2DebugIdentity.frag"
+  },
+
+  "R2StencilInstance": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2StencilInstance.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2White.frag"
+  },
+
+  "R2StencilScreen": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2StencilScreen.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2White.frag"
   }
 }

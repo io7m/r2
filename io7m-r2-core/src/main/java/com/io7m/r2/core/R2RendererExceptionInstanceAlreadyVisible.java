@@ -26,6 +26,12 @@ public final class R2RendererExceptionInstanceAlreadyVisible
 {
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
   public R2RendererExceptionInstanceAlreadyVisible(
     final String message)
   {

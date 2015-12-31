@@ -18,8 +18,12 @@
     <module>io7m-r2-checkstyle</module>
     <module>io7m-r2-core</module>
     <module>io7m-r2-documentation</module>
+    <module>io7m-r2-examples-jogl</module>
+    <module>io7m-r2-examples</module>
+    <module>io7m-r2-main</module>
     <module>io7m-r2-meshes-binary</module>
     <module>io7m-r2-meshes-obj</module>
+    <module>io7m-r2-meshes-tools</module>
     <module>io7m-r2-meshes</module>
     <module>io7m-r2-shaders-checker</module>
     <module>io7m-r2-shaders-maven-plugin</module>
@@ -99,22 +103,22 @@
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-core</artifactId>
-        <version>0.40.1</version>
+        <version>0.41.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-jogl</artifactId>
-        <version>0.40.1</version>
+        <version>0.41.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-fake</artifactId>
-        <version>0.40.1</version>
+        <version>0.41.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-cursors</artifactId>
-        <version>0.40.1</version>
+        <version>0.41.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jpra</groupId>
@@ -125,6 +129,12 @@
         <groupId>com.io7m.jtensors</groupId>
         <artifactId>io7m-jtensors-core</artifactId>
         <version>7.0.0-beta0010</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jtensors</groupId>
+        <artifactId>io7m-jtensors-core</artifactId>
+        <version>7.0.0-beta0010</version>
+        <classifier>tests</classifier>
       </dependency>
       <dependency>
         <groupId>com.io7m.jtensors</groupId>
@@ -212,6 +222,11 @@
         <groupId>org.valid4j</groupId>
         <artifactId>valid4j</artifactId>
         <version>0.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.beust</groupId>
+        <artifactId>jcommander</artifactId>
+        <version>1.48</version>
       </dependency>
 
       <dependency>

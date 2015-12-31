@@ -16,7 +16,13 @@
 
 package com.io7m.r2.core;
 
+/**
+ * The type of opaque materials that can be applied to single mesh instances.
+ *
+ * @param <M> The type of shader parameters
+ */
+
 public interface R2MaterialOpaqueSingleMeshType<M> extends R2MaterialType<M>
 {
-
+  // No extra functions
 }

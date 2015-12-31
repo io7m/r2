@@ -16,9 +16,32 @@
 
 package com.io7m.r2.core;
 
-public interface R2ShaderType<M>
+import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
+
+/**
+ * The type of shaders.
+ *
+ * @param <M> The type of parameter data
+ */
+
+public interface R2ShaderType<M> extends R2DeletableType, JCGLResourceUsableType
 {
+  /**
+   * @return The unique shader ID
+   */
+
   long getShaderID();
 
+  /**
+   * @return The shader parameter type
+   */
+
   Class<M> getShaderParametersType();
+
+  /**
+   * @return The compiled shader program
+   */
+
+  JCGLProgramShaderUsableType getShaderProgram();
 }

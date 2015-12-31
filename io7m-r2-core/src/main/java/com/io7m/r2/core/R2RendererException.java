@@ -20,7 +20,7 @@ package com.io7m.r2.core;
  * The type of renderer exceptions.
  */
 
-public abstract class R2RendererException extends RuntimeException
+public abstract class R2RendererException extends R2Exception
 {
   private static final long serialVersionUID = 1L;
 

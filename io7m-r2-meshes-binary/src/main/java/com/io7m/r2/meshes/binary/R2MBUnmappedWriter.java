@@ -41,8 +41,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
@@ -113,6 +115,28 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
     return new R2MBUnmappedWriter(fc, m);
   }
 
+  /**
+   * Construct a new writer for the given stream.
+   *
+   * @param s The output stream
+   * @param m The mesh
+   *
+   * @return A new writer
+   *
+   * @throws IOException On I/O errors
+   */
+
+  public static R2MBWriterType newWriterForOutputStream(
+    final OutputStream s,
+    final R2MeshTangentsType m)
+    throws IOException
+  {
+    NullCheck.notNull(s);
+    NullCheck.notNull(m);
+
+    return new R2MBUnmappedWriter(Channels.newChannel(s), m);
+  }
+
   private static long writeAll(
     final ByteBuffer bh,
     final WritableByteChannel channel)
@@ -129,7 +153,8 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
     return all;
   }
 
-  @Override public long run()
+  @Override
+  public long run()
     throws IOException
   {
     long bc = 0L;
@@ -259,7 +284,8 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
     return bc;
   }
 
-  @Override public void close()
+  @Override
+  public void close()
     throws IOException
   {
     this.channel.close();

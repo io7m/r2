@@ -95,7 +95,8 @@ public final class R2MBUnmappedReader implements R2MBReaderType
     }
   }
 
-  @Override public void run()
+  @Override
+  public void run()
   {
     final long v_count;
     final long t_count;
@@ -143,7 +144,7 @@ public final class R2MBUnmappedReader implements R2MBReaderType
         final VectorReadable4FType v_tan = v.getTangentReadable();
         final VectorReadable2FType v_uv = v.getUvReadable();
 
-        for (int index = 0; index < v_count; ++index) {
+        for (int index = 0; (long) index < v_count; ++index) {
           b.rewind();
           R2MBUnmappedReader.readAll(b, this.channel);
           if (!this.checkSize(b, size, "vertex")) {
@@ -163,11 +164,11 @@ public final class R2MBUnmappedReader implements R2MBReaderType
             b, R2MBTriangleByteBuffered::newValueWithOffset);
         final R2MBTriangleType v = c.getElementView();
 
-        for (int index = 0; index < t_count; ++index) {
+        for (int index = 0; (long) index < t_count; ++index) {
           b.rewind();
           R2MBUnmappedReader.readAll(b, this.channel);
           this.listener.onEventTriangle(
-            index, v.getV0(), v.getV1(), v.getV2());
+            (long) index, (long) v.getV0(), (long) v.getV1(), (long) v.getV2());
         }
       }
 

@@ -16,31 +16,108 @@
 
 package com.io7m.r2.core;
 
+// @formatter:off
+
+/**
+ * <p>The type of consumers of opaque scene instances.</p>
+ *
+ * <p>Instances are batched in a manner that is intended to require the minimum
+ * number of state changes for rendering, based upon the relative cost of state
+ * changes.</p>
+ *
+ * <p>In NVIDIA's <i>Beyond Porting</i> slides, the relative cost of rendering
+ * state changes are given:</p>
+ *
+ * <ul>
+ *   <li>Render target changes - 60,000/second</li>
+ *   <li>Program bindings - 300,000/second</li>
+ *   <li>ROP</li>
+ *   <li>Texture bindings - 1,500,000/second</li>
+ *   <li>Vertex format</li>
+ *   <li>UBO bindings</li>
+ *   <li>Vertex bindings</li>
+ *   <li>Uniform updates - 10,000,000/second</li>
+ * </ul>
+ *
+ * <p>It is beneficial, for example, to organize instances such that shaders
+ * are changed less frequently than array objects, etc.</p>
+ */
+
+// @formatter:on
+
 public interface R2SceneOpaquesConsumerType
 {
+  /**
+   * Called when rendering of instances begins.
+   */
+
   void onStart();
 
-  void onShaderStart(
-    R2ShaderType<?> s);
+  /**
+   * Called when a new shader should be activated.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
 
-  void onMaterialStart(
-    R2ShaderType<?> s,
-    R2MaterialType<?> material);
+  <M> void onShaderStart(
+    R2ShaderType<M> s);
+
+  /**
+   * Called when new material settings should be assigned.
+   *
+   * @param material The current material
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onMaterialStart(
+    R2MaterialType<M> material);
+
+  /**
+   * Called when a new array object should be bound.
+   *
+   * @param i The current instance
+   */
 
   void onInstancesStartArray(
     R2InstanceType i);
 
-  void onInstance(
-    R2ShaderType<?> s,
-    R2MaterialType<?> material,
+  /**
+   * Called when an instance should be rendered.
+   *
+   * @param material The current material
+   * @param i        The current instance
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstance(
+    R2MaterialType<M> material,
     R2InstanceType i);
 
-  void onMaterialFinish(
-    R2ShaderType<?> s,
-    R2MaterialType<?> material);
+  /**
+   * Called after the current set of instances have finished rendering with the
+   * current material.
+   *
+   * @param material The current material
+   * @param <M>      The type of shader parameters
+   */
 
-  void onShaderFinish(
-    R2ShaderType<?> s);
+  <M> void onMaterialFinish(
+    R2MaterialType<M> material);
+
+  /**
+   * Called when the current shader should be deactivated.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
+
+  <M> void onShaderFinish(
+    R2ShaderType<M> s);
+
+  /**
+   * Called when rendering of instances is finished.
+   */
 
   void onFinish();
 

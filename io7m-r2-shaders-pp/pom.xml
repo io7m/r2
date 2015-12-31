@@ -75,6 +75,7 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
       </plugin>
 
+      <!-- Produce preprocessor onejar -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>

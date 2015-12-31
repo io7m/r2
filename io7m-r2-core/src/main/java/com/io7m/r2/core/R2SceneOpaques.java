@@ -72,7 +72,8 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     return new R2SceneOpaques();
   }
 
-  @Override public void opaquesReset()
+  @Override
+  public void opaquesReset()
   {
     this.instance_to_material.clear();
     this.material_to_instances.clear();
@@ -85,7 +86,8 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     R2SceneOpaques.LOG.trace("reset");
   }
 
-  @Override public <M> void opaquesAddSingleMesh(
+  @Override
+  public <M> void opaquesAddSingleMesh(
     final R2InstanceSingleMeshType i,
     final R2MaterialOpaqueSingleMeshType<M> m)
   {
@@ -129,13 +131,15 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     this.shaders.put(s_id, shader);
 
     if (R2SceneOpaques.LOG.isTraceEnabled()) {
-      R2SceneOpaques.LOG.trace                                    (
+      R2SceneOpaques.LOG.trace(
         "opaque add single-mesh (instance {}, material {}, shader {})",
         Long.valueOf(i_id), Long.valueOf(m_id), Long.valueOf(s_id));
     }
   }
 
-  @Override public void opaquesExecute(
+  @Override
+  @SuppressWarnings("unchecked")
+  public void opaquesExecute(
     final R2SceneOpaquesConsumerType c)
   {
     final ObjectIterator<R2ShaderType<?>> s_iter =
@@ -148,7 +152,8 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
      */
 
     while (s_iter.hasNext()) {
-      final R2ShaderType<?> s = s_iter.next();
+      final R2ShaderType<Object> s =
+        (R2ShaderType<Object>) s_iter.next();
       c.onShaderStart(s);
 
       /**
@@ -157,8 +162,9 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
       final LongSet s_materials = this.shader_to_materials.get(s.getShaderID());
       for (final long m_id : s_materials) {
-        final R2MaterialType<?> material = this.materials.get(m_id);
-        c.onMaterialStart(s, material);
+        final R2MaterialType<Object> material =
+          (R2MaterialType<Object>) this.materials.get(m_id);
+        c.onMaterialStart(material);
 
         /**
          * Sort the instances by their array object instances, to allow
@@ -187,10 +193,10 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
             c.onInstancesStartArray(i);
           }
           current_array = next_array;
-          c.onInstance(s, material, i);
+          c.onInstance(material, i);
         }
 
-        c.onMaterialFinish(s, material);
+        c.onMaterialFinish(material);
       }
 
       c.onShaderFinish(s);
@@ -205,7 +211,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     final long im_id)
   {
     this.text.setLength(0);
-    this.text.append                                          (
+    this.text.append(
       "Instance is already visible with different material.\n");
     this.text.append("Instance:         ");
     this.text.append(i.getInstanceID());

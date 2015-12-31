@@ -16,6 +16,10 @@
 
 package com.io7m.r2.core;
 
+/**
+ * The type of single mesh instances.
+ */
+
 public interface R2InstanceSingleMeshType extends R2InstanceType
 {
 

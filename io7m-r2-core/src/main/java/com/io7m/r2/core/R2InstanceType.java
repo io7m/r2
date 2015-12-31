@@ -17,10 +17,36 @@
 package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
+import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
+import com.io7m.r2.spaces.R2SpaceTextureType;
+
+/**
+ * The type of instances.
+ */
 
 public interface R2InstanceType
 {
+  /**
+   * @return The unique instance ID
+   */
+
   long getInstanceID();
 
+  /**
+   * @return The instance array object
+   */
+
   JCGLArrayObjectUsableType getArrayObject();
+
+  /**
+   * @return The instance transform
+   */
+
+  R2TransformReadableType getTransform();
+
+  /**
+   * @return The instance UV matrix
+   */
+
+  PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> getUVMatrix();
 }
