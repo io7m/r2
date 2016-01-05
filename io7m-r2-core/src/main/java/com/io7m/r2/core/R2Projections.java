@@ -16,30 +16,39 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jnull.NullCheck;
+import com.io7m.junreachable.UnreachableCodeException;
+
 /**
- * The base type of materials. A material associates a shader with a set of
- * shader parameters.
- *
- * @param <M> The type of shader parameters
+ * Functions over projections.
  */
 
-public interface R2MaterialType<M>
+public final class R2Projections
 {
+  private R2Projections()
+  {
+    throw new UnreachableCodeException();
+  }
+
+  private static double log2(
+    final double x)
+  {
+    return (StrictMath.log(x) / StrictMath.log(2.0));
+  }
+
   /**
-   * @return The material ID
+   * Calculate a depth coefficient for the given projection.
+   *
+   * @param p The projection
+   *
+   * @return A depth coefficient
    */
 
-  long getMaterialID();
-
-  /**
-   * @return The shader parameters
-   */
-
-  M getShaderParameters();
-
-  /**
-   * @return The material shader
-   */
-
-  R2ShaderUsableType<M> getShader();
+  public static double getDepthCoefficient(
+    final R2ProjectionReadableType p)
+  {
+    NullCheck.notNull(p);
+    final double far = (double) p.projectionGetZFar();
+    return 2.0 / R2Projections.log2(far + 1.0);
+  }
 }

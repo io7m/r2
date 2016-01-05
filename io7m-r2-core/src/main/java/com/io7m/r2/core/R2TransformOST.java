@@ -115,7 +115,10 @@ public final class R2TransformOST implements R2TransformReadableType
     final R2TransformContextType context,
     final PMatrixWritable4x4FType<R2SpaceObjectType, R2SpaceWorldType> m)
   {
-    final Matrix4x4FType accum = context.getTemporaryMatrix4x4();
+    NullCheck.notNull(context);
+    NullCheck.notNull(m);
+
+    final Matrix4x4FType accum = context.getTemporaryMatrix4x4_0();
     MatrixM4x4F.setIdentity(accum);
 
     {
@@ -123,13 +126,13 @@ public final class R2TransformOST implements R2TransformReadableType
     }
 
     {
-      final Matrix4x4FType temporary = context.getTemporaryMatrix4x4();
+      final Matrix4x4FType temporary = context.getTemporaryMatrix4x4_1();
       QuaternionM4F.makeRotationMatrix4x4(this.orientation, temporary);
       MatrixM4x4F.multiply(accum, temporary, accum);
     }
 
     {
-      final Matrix4x4FType temporary = context.getTemporaryMatrix4x4();
+      final Matrix4x4FType temporary = context.getTemporaryMatrix4x4_1();
       MatrixM4x4F.setIdentity(temporary);
       temporary.setR0C0F(this.scale.getXF());
       temporary.setR1C1F(this.scale.getYF());

@@ -18,6 +18,7 @@ package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
+import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import org.valid4j.Assertive;
@@ -82,6 +83,23 @@ public final class R2StencilInstanceShader extends R2AbstractShader<Unit>
   public Class<Unit> getShaderParametersType()
   {
     return Unit.class;
+  }
+
+  @Override
+  public void setMaterialTextures(
+    final JCGLTexturesType g_tex,
+    final Unit values)
+  {
+
+  }
+
+  @Override
+  public void setMaterialValues(
+    final JCGLShadersType g_sh,
+    final JCGLTexturesType g_tex,
+    final Unit values)
+  {
+
   }
 
   @Override

@@ -22,7 +22,12 @@ package com.io7m.r2.core;
  * @param <M> The type of shader parameters
  */
 
-public interface R2MaterialOpaqueSingleMeshType<M> extends R2MaterialType<M>
+public interface R2MaterialOpaqueInstanceSingleType<M> extends R2MaterialType<M>
 {
-  // No extra functions
+  /**
+   * @return The material shader
+   */
+
+  @Override
+  R2ShaderInstanceUsableType<M> getShader();
 }

@@ -16,30 +16,17 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
+
 /**
- * The base type of materials. A material associates a shader with a set of
- * shader parameters.
- *
- * @param <M> The type of shader parameters
+ * The type of usable 2D textures.
  */
 
-public interface R2MaterialType<M>
+public interface R2Texture2DUsableType
 {
   /**
-   * @return The material ID
+   * @return The current texture
    */
 
-  long getMaterialID();
-
-  /**
-   * @return The shader parameters
-   */
-
-  M getShaderParameters();
-
-  /**
-   * @return The material shader
-   */
-
-  R2ShaderUsableType<M> getShader();
+  JCGLTexture2DUsableType get();
 }

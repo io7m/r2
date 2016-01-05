@@ -16,6 +16,8 @@
 
 package com.io7m.r2.examples.jogl;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedI;
+import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
 import com.io7m.jcanephora.core.JCGLExceptionNonCompliant;
 import com.io7m.jcanephora.core.JCGLExceptionUnsupported;
 import com.io7m.jcanephora.core.api.JCGLContextType;
@@ -23,6 +25,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.jogl.JCGLImplementationJOGL;
 import com.io7m.jcanephora.jogl.JCGLImplementationJOGLType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
 import com.io7m.r2.examples.R2ExampleType;
 import com.io7m.r2.main.R2Main;
 import com.io7m.r2.main.R2MainType;
@@ -125,10 +128,11 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
   private static final class ExampleListener implements GLEventListener
   {
-    private final R2ExampleType   example;
-    private       JCGLContextType context;
-    private       int             frame;
-    private       R2MainType      r2_main;
+    private final R2ExampleType              example;
+    private       JCGLContextType            context;
+    private       int                        frame;
+    private       R2MainType                 r2_main;
+    private       AreaInclusiveUnsignedIType area;
 
     ExampleListener(
       final R2ExampleType in_example)
@@ -139,7 +143,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     @Override
     public void init(final GLAutoDrawable drawable)
     {
-
+      this.resize(drawable);
     }
 
     @Override
@@ -174,12 +178,12 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
           final JCGLInterfaceGL33Type g33 = this.context.contextGetGL33();
           this.r2_main = R2Main.newBuilder().build(g33);
-          this.example.onInitialize(g33, this.r2_main);
+          this.example.onInitialize(g33, this.area, this.r2_main);
           return;
         }
 
         final JCGLInterfaceGL33Type g33 = this.context.contextGetGL33();
-        this.example.onRender(g33, this.r2_main, this.frame - 2);
+        this.example.onRender(g33, this.area, this.r2_main, this.frame - 2);
       } catch (final JCGLExceptionUnsupported x) {
         R2JOGLExampleSingleWindowMain.LOG.error("unsupported: ", x);
       } catch (final JCGLExceptionNonCompliant x) {
@@ -197,7 +201,14 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       final int width,
       final int height)
     {
+      this.resize(drawable);
+    }
 
+    private void resize(final GLAutoDrawable drawable)
+    {
+      this.area = AreaInclusiveUnsignedI.of(
+        new UnsignedRangeInclusiveI(0, drawable.getSurfaceWidth() - 1),
+        new UnsignedRangeInclusiveI(0, drawable.getSurfaceHeight() - 1));
     }
   }
 }

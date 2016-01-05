@@ -16,35 +16,14 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.api.JCGLShadersType;
-
 /**
  * The type of shaders for rendering individual instances.
  *
  * @param <M> The type of parameter data
  */
 
-public interface R2ShaderInstanceType<M> extends R2ShaderType<M>
+public interface R2ShaderInstanceType<M> extends R2ShaderType<M>,
+  R2ShaderInstanceUsableType<M>
 {
-  /**
-   * Set matrices relevant to the current observer.
-   *
-   * @param g_sh An OpenGL interface
-   * @param m    The observer matrices
-   */
-
-  void setMatricesView(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m);
-
-  /**
-   * Set matrices relevant to the current instance.
-   *
-   * @param g_sh An OpenGL interface
-   * @param m    The instance matrices
-   */
-
-  void setMatricesInstance(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceValuesType m);
+  // No extra functions
 }

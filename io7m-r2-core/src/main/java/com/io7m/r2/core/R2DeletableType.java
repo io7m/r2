@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 
 /**
@@ -23,7 +24,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
  * perform the deletion.
  */
 
-public interface R2DeletableType
+public interface R2DeletableType extends JCGLResourceUsableType
 {
   /**
    * Delete the current object.

@@ -20,7 +20,8 @@ package com.io7m.r2.core;
  * The type of geometry buffers.
  */
 
-public interface R2GeometryBufferType extends R2GeometryBufferUsableType
+public interface R2GeometryBufferType extends R2GeometryBufferUsableType,
+  R2DeletableType
 {
   // No extra functions
 }

@@ -36,9 +36,9 @@ public interface R2SceneOpaquesType
    * @param <M> The type of shader parameters
    */
 
-  <M> void opaquesAddSingleMesh(
+  <M> void opaquesAddSingleInstance(
     R2InstanceSingleMeshType i,
-    R2MaterialOpaqueSingleMeshType<M> m);
+    R2MaterialOpaqueInstanceSingleType<M> m);
 
   /**
    * Batch the instances and pass them to the given consumer for rendering.
@@ -48,4 +48,10 @@ public interface R2SceneOpaquesType
 
   void opaquesExecute(
     R2SceneOpaquesConsumerType c);
+
+  /**
+   * @return The number of instances in the scene
+   */
+
+  long opaquesCount();
 }

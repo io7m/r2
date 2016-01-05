@@ -17,45 +17,77 @@
 package com.io7m.r2.examples.custom;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
+import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
+import com.io7m.jcanephora.core.api.JCGLClearType;
+import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
 import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
+import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.VectorI3F;
+import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.r2.core.R2DeferredShaderBasic;
+import com.io7m.r2.core.R2DeferredShaderBasicParameters;
+import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferType;
+import com.io7m.r2.core.R2GeometryRendererType;
+import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingleMesh;
 import com.io7m.r2.core.R2InstanceSingleMeshType;
+import com.io7m.r2.core.R2MaterialOpaqueInstanceSingle;
+import com.io7m.r2.core.R2MaterialOpaqueInstanceSingleType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionFOV;
+import com.io7m.r2.core.R2SceneOpaques;
+import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
+import com.io7m.r2.core.R2ShaderInstanceType;
+import com.io7m.r2.core.R2ShaderSourcesResources;
+import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.main.R2MainType;
+import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 // CHECKSTYLE_JAVADOC:OFF
 
-public final class ExampleStencilPositive implements R2ExampleCustomType
+public final class ExampleGeometry0 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
   private R2SceneStencilsType      stencils;
   private R2StencilRendererType    stencil_renderer;
+  private R2GeometryRendererType   geom_renderer;
   private R2MatricesType           matrices;
   private R2ProjectionFOV          projection;
   private R2UnitQuadType           quad;
   private R2InstanceSingleMeshType instance;
+  private R2SceneOpaquesType       opaques;
+  private R2GeometryBufferType     gbuffer;
+  private JCGLClearSpecification clear_spec;
 
-  public ExampleStencilPositive()
+  private R2ShaderInstanceType<R2DeferredShaderBasicParameters>
+              shader;
+  private R2DeferredShaderBasicParameters
+              shader_params;
+  private R2MaterialOpaqueInstanceSingleType<R2DeferredShaderBasicParameters>
+              material;
+
+
+  public ExampleGeometry0()
   {
     this.view = PMatrixHeapArrayM4x4F.newMatrix();
   }
@@ -66,10 +98,13 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     final AreaInclusiveUnsignedIType area,
     final R2MainType m)
   {
+    this.opaques = R2SceneOpaques.newOpaques();
     this.stencils = R2SceneStencils.newMasks();
     this.stencil_renderer = m.getStencilRenderer();
+    this.geom_renderer = m.getGeometryRenderer();
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
+    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -82,11 +117,30 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
     final R2TransformOST transform = R2TransformOST.newTransform();
+    final R2IDPoolType id_pool = m.getIDPool();
     this.instance = R2InstanceSingleMesh.newInstance(
-      m.getIDPool(),
+      id_pool,
       this.quad.getArrayObject(),
       transform,
       PMatrixI3x3F.identity());
+
+    final R2ShaderSourcesType sources =
+      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    this.shader =
+      R2DeferredShaderBasic.newShader(g.getShaders(), sources, id_pool);
+    this.shader_params =
+      R2DeferredShaderBasicParameters.newParameters(m.getTextureDefaults());
+
+    this.material = R2MaterialOpaqueInstanceSingle.newMaterial(
+      id_pool,
+      this.shader,
+      this.shader_params);
+
+    final JCGLClearSpecification.Builder csb = JCGLClearSpecification.builder();
+    csb.setStencilBufferClear(0);
+    csb.setDepthBufferClear(1.0);
+    csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
+    this.clear_spec = csb.build();
   }
 
   @Override
@@ -98,20 +152,34 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
   {
     this.stencils.stencilsReset();
     this.stencils.stencilsSetMode(
-      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_POSITIVE);
-    this.stencils.stencilsAddSingleMesh(this.instance);
+      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
 
-    final JCGLDepthBuffersType g_dep = g.getDepthBuffers();
-    g_dep.depthBufferClear(1.0f);
+    this.opaques.opaquesReset();
+    this.opaques.opaquesAddSingleInstance(this.instance, this.material);
 
-    final JCGLStencilBuffersType g_st = g.getStencilBuffers();
-    g_st.stencilBufferMask(JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-    g_st.stencilBufferClear(0);
+    {
+      final JCGLFramebufferUsableType fb = this.gbuffer.getFramebuffer();
+      final JCGLFramebuffersType g_fb = g.getFramebuffers();
+      final JCGLClearType g_cl = g.getClear();
+      final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
+      final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
+      final JCGLDepthBuffersType g_db = g.getDepthBuffers();
 
-    this.matrices.withObserver(this.view, this.projection, mo -> {
-      this.stencil_renderer.renderStencilsWithBoundBuffer(mo, this.stencils);
-      return Unit.unit();
-    });
+      g_cb.colorBufferMask(true, true, true, true);
+      g_db.depthBufferWriteEnable();
+      g_sb.stencilBufferMask(JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
+
+      g_fb.framebufferDrawBind(fb);
+      g_cl.clear(this.clear_spec);
+
+      this.matrices.withObserver(this.view, this.projection, mo -> {
+        this.stencil_renderer.renderStencilsWithBoundBuffer(mo, this.stencils);
+        this.geom_renderer.renderGeometryWithBoundBuffer(mo, this.opaques);
+        return Unit.unit();
+      });
+
+      g_fb.framebufferDrawUnbind();
+    }
   }
 
   @Override
@@ -119,6 +187,8 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     final JCGLInterfaceGL33Type g,
     final R2MainType m)
   {
-
+    this.quad.delete(g);
+    this.shader.delete(g);
+    this.stencil_renderer.delete(g);
   }
 }

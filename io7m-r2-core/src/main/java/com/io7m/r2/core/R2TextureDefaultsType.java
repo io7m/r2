@@ -17,29 +17,20 @@
 package com.io7m.r2.core;
 
 /**
- * The base type of materials. A material associates a shader with a set of
- * shader parameters.
- *
- * @param <M> The type of shader parameters
+ * Access to default textures for materials.
  */
 
-public interface R2MaterialType<M>
+public interface R2TextureDefaultsType extends R2DeletableType
 {
   /**
-   * @return The material ID
+   * @return A texture representing a flat normal texture
    */
 
-  long getMaterialID();
+  R2Texture2DUsableType getNormalTexture();
 
   /**
-   * @return The shader parameters
+   * @return A texture representing a flat white texture
    */
 
-  M getShaderParameters();
-
-  /**
-   * @return The material shader
-   */
-
-  R2ShaderUsableType<M> getShader();
+  R2Texture2DUsableType getWhiteTexture();
 }

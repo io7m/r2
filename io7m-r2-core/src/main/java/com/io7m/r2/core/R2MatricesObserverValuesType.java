@@ -28,6 +28,12 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 public interface R2MatricesObserverValuesType
 {
   /**
+   * @return The current projection
+   */
+
+  R2ProjectionReadableType getProjection();
+
+  /**
    * @return The current projection matrix for an observer
    */
 

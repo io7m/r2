@@ -25,11 +25,13 @@ import com.io7m.jtensors.MatrixHeapArrayM4x4F;
 
 public final class R2TransformContext implements R2TransformContextType
 {
-  private final Matrix4x4FType m4x4;
+  private final Matrix4x4FType m4x4_0;
+  private final Matrix4x4FType m4x4_1;
 
   private R2TransformContext()
   {
-    this.m4x4 = MatrixHeapArrayM4x4F.newMatrix();
+    this.m4x4_0 = MatrixHeapArrayM4x4F.newMatrix();
+    this.m4x4_1 = MatrixHeapArrayM4x4F.newMatrix();
   }
 
   /**
@@ -42,8 +44,14 @@ public final class R2TransformContext implements R2TransformContextType
   }
 
   @Override
-  public Matrix4x4FType getTemporaryMatrix4x4()
+  public Matrix4x4FType getTemporaryMatrix4x4_0()
   {
-    return this.m4x4;
+    return this.m4x4_0;
+  }
+
+  @Override
+  public Matrix4x4FType getTemporaryMatrix4x4_1()
+  {
+    return this.m4x4_1;
   }
 }

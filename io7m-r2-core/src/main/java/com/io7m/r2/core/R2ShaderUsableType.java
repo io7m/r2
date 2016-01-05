@@ -16,30 +16,32 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
+
 /**
- * The base type of materials. A material associates a shader with a set of
- * shader parameters.
+ * The type of usable shaders.
  *
- * @param <M> The type of shader parameters
+ * @param <M> The type of parameter data
  */
 
-public interface R2MaterialType<M>
+public interface R2ShaderUsableType<M> extends JCGLResourceUsableType
 {
   /**
-   * @return The material ID
+   * @return The unique shader ID
    */
 
-  long getMaterialID();
+  long getShaderID();
 
   /**
-   * @return The shader parameters
+   * @return The shader parameter type
    */
 
-  M getShaderParameters();
+  Class<M> getShaderParametersType();
 
   /**
-   * @return The material shader
+   * @return The compiled shader program
    */
 
-  R2ShaderUsableType<M> getShader();
+  JCGLProgramShaderUsableType getShaderProgram();
 }

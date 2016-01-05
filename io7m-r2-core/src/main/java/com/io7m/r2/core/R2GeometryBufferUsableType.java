@@ -19,7 +19,6 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLResourceSizedType;
 import com.io7m.jcanephora.core.JCGLResourceUsableType;
-import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 
 /**
  * The type of usable geometry buffers.
@@ -32,25 +31,25 @@ public interface R2GeometryBufferUsableType extends JCGLResourceSizedType,
    * @return The albedo/emissive texture
    */
 
-  JCGLTexture2DUsableType getAlbedoEmissiveTexture();
+  R2Texture2DUsableType getAlbedoEmissiveTexture();
 
   /**
    * @return The normal texture
    */
 
-  JCGLTexture2DUsableType getNormalTexture();
+  R2Texture2DUsableType getNormalTexture();
 
   /**
    * @return The specular texture
    */
 
-  JCGLTexture2DUsableType getSpecularTexture();
+  R2Texture2DUsableType getSpecularTexture();
 
   /**
    * @return The depth/stencil texture
    */
 
-  JCGLTexture2DUsableType getDepthTexture();
+  R2Texture2DUsableType getDepthTexture();
 
   /**
    * @return The framebuffer

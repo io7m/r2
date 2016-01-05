@@ -43,7 +43,7 @@ public final class R2SceneStencils implements R2SceneStencilsType
   {
     this.instances = new Long2ReferenceOpenHashMap<>(1024);
     this.instances_sorted = new ObjectArrayList<>();
-    this.mode = R2SceneStencilsMode.STENCIL_MODE_NEGATIVE;
+    this.mode = R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
   }
 
   /**

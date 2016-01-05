@@ -14,32 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.spaces;
 
 /**
- * The base type of materials. A material associates a shader with a set of
- * shader parameters.
- *
- * @param <M> The type of shader parameters
+ * A type representing the linear RGBA color space.
  */
 
-public interface R2MaterialType<M>
+public interface R2SpaceRGBAType extends R2SpaceType
 {
-  /**
-   * @return The material ID
-   */
 
-  long getMaterialID();
-
-  /**
-   * @return The shader parameters
-   */
-
-  M getShaderParameters();
-
-  /**
-   * @return The material shader
-   */
-
-  R2ShaderUsableType<M> getShader();
 }

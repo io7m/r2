@@ -23,5 +23,5 @@ package com.io7m.r2.core;
 public interface R2ProjectionType extends R2ProjectionReadableType,
   R2ProjectionWritableType
 {
-
+  // No extra functions
 }

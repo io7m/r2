@@ -134,17 +134,24 @@ public final class R2StencilRenderer implements R2StencilRendererType
      */
 
     g_st.stencilBufferEnable();
-    g_st.stencilBufferMask(
-      JCGLFaceSelection.FACE_FRONT_AND_BACK,
-      R2Stencils.ALLOW_BIT);
+
     g_st.stencilBufferOperation(
       JCGLFaceSelection.FACE_FRONT_AND_BACK,
       JCGLStencilOperation.STENCIL_OP_KEEP,
       JCGLStencilOperation.STENCIL_OP_KEEP,
       JCGLStencilOperation.STENCIL_OP_REPLACE);
 
+    /**
+     * Allow writing to the {@link R2Stencils#ALLOW_BIT} and
+     * {@link R2Stencils#GEOMETRY_MOST_RECENT_BIT} bits.
+     */
+
+    g_st.stencilBufferMask(
+      JCGLFaceSelection.FACE_FRONT_AND_BACK,
+      R2Stencils.ALLOW_BIT | R2Stencils.GEOMETRY_MOST_RECENT_BIT);
+
     switch (s.stencilsGetMode()) {
-      case STENCIL_MODE_NEGATIVE: {
+      case STENCIL_MODE_INSTANCES_ARE_NEGATIVE: {
 
         /**
          * Set the {@link R2Stencils#ALLOW_BIT} for each pixel in the current
@@ -155,11 +162,11 @@ public final class R2StencilRenderer implements R2StencilRendererType
           JCGLFaceSelection.FACE_FRONT_AND_BACK,
           JCGLStencilFunction.STENCIL_ALWAYS,
           R2Stencils.ALLOW_BIT,
-          0b11111111_11111111_11111111_11111111);
+          R2Stencils.ALLOW_BIT);
 
         break;
       }
-      case STENCIL_MODE_POSITIVE: {
+      case STENCIL_MODE_INSTANCES_ARE_POSITIVE: {
 
         /**
          * Unset the {@link R2Stencils#ALLOW_BIT} for each pixel in the current
@@ -170,11 +177,15 @@ public final class R2StencilRenderer implements R2StencilRendererType
           JCGLFaceSelection.FACE_FRONT_AND_BACK,
           JCGLStencilFunction.STENCIL_ALWAYS,
           0,
-          0b11111111_11111111_11111111_11111111);
+          0);
 
         break;
       }
     }
+
+    /**
+     * Render a screen-sized quad to provide the base stencil value.
+     */
 
     g_sh.shaderActivateProgram(this.program_screen.getShaderProgram());
     g_ao.arrayObjectBind(this.quad.getArrayObject());
@@ -185,7 +196,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     if (s.stencilsCount() > 0L) {
 
       switch (s.stencilsGetMode()) {
-        case STENCIL_MODE_NEGATIVE: {
+        case STENCIL_MODE_INSTANCES_ARE_NEGATIVE: {
 
           /**
            * Each instance will unset the {@link R2Stencils#ALLOW_BIT} for
@@ -196,11 +207,11 @@ public final class R2StencilRenderer implements R2StencilRendererType
             JCGLFaceSelection.FACE_FRONT_AND_BACK,
             JCGLStencilFunction.STENCIL_ALWAYS,
             0,
-            0b11111111_11111111_11111111_11111111);
+            0);
 
           break;
         }
-        case STENCIL_MODE_POSITIVE: {
+        case STENCIL_MODE_INSTANCES_ARE_POSITIVE: {
 
           /**
            * Each instance will set the {@link R2Stencils#ALLOW_BIT} for
@@ -211,7 +222,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
             JCGLFaceSelection.FACE_FRONT_AND_BACK,
             JCGLStencilFunction.STENCIL_ALWAYS,
             R2Stencils.ALLOW_BIT,
-            0b11111111_11111111_11111111_11111111);
+            R2Stencils.ALLOW_BIT);
 
           break;
         }
@@ -230,7 +241,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
   public void delete(final JCGLInterfaceGL33Type gi)
     throws R2Exception
   {
-    if (!this.deleted) {
+    if (!this.isDeleted()) {
       try {
         this.program_instance.delete(gi);
         this.quad.delete(gi);
@@ -240,19 +251,25 @@ public final class R2StencilRenderer implements R2StencilRendererType
     }
   }
 
+  @Override
+  public boolean isDeleted()
+  {
+    return this.deleted;
+  }
+
   private static final class StencilConsumer implements
     R2SceneStencilsConsumerType
   {
-    private final     JCGLInterfaceGL33Type      g;
-    private final     R2ShaderInstanceType<Unit> program;
-    private final     JCGLShadersType            shaders;
-    private final     JCGLArrayObjectsType       array_objects;
-    private final     JCGLDrawType               draw;
-    private @Nullable R2MatricesObserverType     matrices;
+    private final     JCGLInterfaceGL33Type            g;
+    private final     R2ShaderInstanceUsableType<Unit> program;
+    private final     JCGLShadersType                  shaders;
+    private final     JCGLArrayObjectsType             array_objects;
+    private final     JCGLDrawType                     draw;
+    private @Nullable R2MatricesObserverType           matrices;
 
     StencilConsumer(
       final JCGLInterfaceGL33Type in_g,
-      final R2ShaderInstanceType<Unit> in_program)
+      final R2ShaderInstanceUsableType<Unit> in_program)
     {
       this.g = NullCheck.notNull(in_g);
       this.program = NullCheck.notNull(in_program);

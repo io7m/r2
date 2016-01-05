@@ -16,6 +16,7 @@
 
 package com.io7m.r2.examples;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.main.R2MainType;
 
@@ -30,24 +31,28 @@ public interface R2ExampleType
   /**
    * Initialize any resources the example needs. Called once.
    *
-   * @param g An OpenGL interface
-   * @param m The main renderer interface
+   * @param g    An OpenGL interface
+   * @param area The window area
+   * @param m    The main renderer interface
    */
 
   void onInitialize(
     JCGLInterfaceGL33Type g,
+    AreaInclusiveUnsignedIType area,
     R2MainType m);
 
   /**
    * Render the example. Called repeatedly.
    *
    * @param g     An OpenGL interface
+   * @param area  The window area
    * @param m     The main renderer interface
    * @param frame The current frame
    */
 
   void onRender(
     JCGLInterfaceGL33Type g,
+    AreaInclusiveUnsignedIType area,
     R2MainType m,
     int frame);
 

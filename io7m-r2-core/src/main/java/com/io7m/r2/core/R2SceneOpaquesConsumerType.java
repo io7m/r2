@@ -28,19 +28,13 @@ package com.io7m.r2.core;
  * <p>In NVIDIA's <i>Beyond Porting</i> slides, the relative cost of rendering
  * state changes are given:</p>
  *
- * <ul>
- *   <li>Render target changes - 60,000/second</li>
- *   <li>Program bindings - 300,000/second</li>
- *   <li>ROP</li>
- *   <li>Texture bindings - 1,500,000/second</li>
- *   <li>Vertex format</li>
- *   <li>UBO bindings</li>
- *   <li>Vertex bindings</li>
- *   <li>Uniform updates - 10,000,000/second</li>
- * </ul>
+ * <ul><li>Render target changes - 60,000/second</li><li>Program bindings -
+ * 300,000/second</li><li>ROP</li><li>Texture bindings - 1,500,000/second</li>
+ * <li>Vertex format</li><li>UBO bindings</li><li>Vertex bindings</li>
+ * <li>Uniform updates - 10,000,000/second</li></ul>
  *
- * <p>It is beneficial, for example, to organize instances such that shaders
- * are changed less frequently than array objects, etc.</p>
+ * <p>It is beneficial, for example, to organize instances such that shaders are
+ * changed less frequently than array objects, etc.</p>
  */
 
 // @formatter:on
@@ -54,56 +48,58 @@ public interface R2SceneOpaquesConsumerType
   void onStart();
 
   /**
-   * Called when a new shader should be activated.
+   * Called when a new shader should be activated in order to start rendering
+   * single instances.
    *
    * @param s   The shader
    * @param <M> The type of shader parameters
    */
 
-  <M> void onShaderStart(
-    R2ShaderType<M> s);
+  <M> void onInstanceSingleShaderStart(
+    R2ShaderInstanceUsableType<M> s);
 
   /**
-   * Called when new material settings should be assigned.
+   * Called when new material settings should be assigned, for single
+   * instances.
    *
    * @param material The current material
    * @param <M>      The type of shader parameters
    */
 
-  <M> void onMaterialStart(
-    R2MaterialType<M> material);
+  <M> void onInstanceSingleMaterialStart(
+    R2MaterialOpaqueInstanceSingleType<M> material);
 
   /**
-   * Called when a new array object should be bound.
+   * Called when a new array object should be bound, for single instances.
    *
    * @param i The current instance
    */
 
-  void onInstancesStartArray(
+  void onInstanceSingleArrayStart(
     R2InstanceType i);
 
   /**
-   * Called when an instance should be rendered.
+   * Called when a single instance should be rendered.
    *
    * @param material The current material
    * @param i        The current instance
    * @param <M>      The type of shader parameters
    */
 
-  <M> void onInstance(
-    R2MaterialType<M> material,
+  <M> void onInstanceSingle(
+    R2MaterialOpaqueInstanceSingleType<M> material,
     R2InstanceType i);
 
   /**
-   * Called after the current set of instances have finished rendering with the
-   * current material.
+   * Called after the current set of single instances have finished rendering
+   * with the current material.
    *
    * @param material The current material
    * @param <M>      The type of shader parameters
    */
 
-  <M> void onMaterialFinish(
-    R2MaterialType<M> material);
+  <M> void onInstanceSingleMaterialFinish(
+    R2MaterialOpaqueInstanceSingleType<M> material);
 
   /**
    * Called when the current shader should be deactivated.
@@ -112,8 +108,8 @@ public interface R2SceneOpaquesConsumerType
    * @param <M> The type of shader parameters
    */
 
-  <M> void onShaderFinish(
-    R2ShaderType<M> s);
+  <M> void onInstanceSingleShaderFinish(
+    R2ShaderInstanceUsableType<M> s);
 
   /**
    * Called when rendering of instances is finished.

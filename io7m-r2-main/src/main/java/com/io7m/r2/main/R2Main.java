@@ -24,6 +24,8 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.r2.core.R2Exception;
+import com.io7m.r2.core.R2GeometryRenderer;
+import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Matrices;
@@ -32,6 +34,8 @@ import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRenderer;
 import com.io7m.r2.core.R2StencilRendererType;
+import com.io7m.r2.core.R2TextureDefaults;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.shaders.R2Shaders;
 
 import java.util.function.Supplier;
@@ -48,6 +52,8 @@ public final class R2Main implements R2MainType
   private final R2MatricesType             matrices;
   private final JCGLViewMatricesType       view_matrices;
   private final JCGLProjectionMatricesType proj_matrices;
+  private final R2TextureDefaultsType      texture_defaults;
+  private final R2GeometryRendererType     geometry_renderer;
   private       boolean                    deleted;
 
   private R2Main(
@@ -56,7 +62,9 @@ public final class R2Main implements R2MainType
     final R2StencilRendererType in_stencil_renderer,
     final R2MatricesType in_matrices,
     final JCGLViewMatricesType in_view_matrices,
-    final JCGLProjectionMatricesType in_proj_matrices)
+    final JCGLProjectionMatricesType in_proj_matrices,
+    final R2TextureDefaultsType in_texture_defaults,
+    final R2GeometryRendererType in_geometry_renderer)
   {
     this.pool = NullCheck.notNull(in_pool);
     this.sources = NullCheck.notNull(in_sources);
@@ -64,6 +72,8 @@ public final class R2Main implements R2MainType
     this.matrices = NullCheck.notNull(in_matrices);
     this.view_matrices = NullCheck.notNull(in_view_matrices);
     this.proj_matrices = NullCheck.notNull(in_proj_matrices);
+    this.texture_defaults = NullCheck.notNull(in_texture_defaults);
+    this.geometry_renderer = NullCheck.notNull(in_geometry_renderer);
     this.deleted = false;
   }
 
@@ -107,17 +117,36 @@ public final class R2Main implements R2MainType
   }
 
   @Override
+  public R2TextureDefaultsType getTextureDefaults()
+  {
+    return this.texture_defaults;
+  }
+
+  @Override
+  public R2GeometryRendererType getGeometryRenderer()
+  {
+    return this.geometry_renderer;
+  }
+
+  @Override
   public void delete(
     final JCGLInterfaceGL33Type g)
     throws R2Exception
   {
-    if (!this.deleted) {
+    if (!this.isDeleted()) {
       try {
         this.stencil_renderer.delete(g);
+        this.texture_defaults.delete(g);
       } finally {
         this.deleted = true;
       }
     }
+  }
+
+  @Override
+  public boolean isDeleted()
+  {
+    return this.deleted;
   }
 
   private static final class Builder implements R2MainBuilderType
@@ -125,9 +154,11 @@ public final class R2Main implements R2MainType
     private @Nullable R2StencilRendererType      stencil_renderer;
     private @Nullable R2ShaderSourcesType        sources;
     private @Nullable R2IDPoolType               pool;
-    private           R2MatricesType             matrices;
-    private           JCGLViewMatricesType       view_matrices;
-    private           JCGLProjectionMatricesType proj_matrices;
+    private @Nullable R2MatricesType             matrices;
+    private @Nullable JCGLViewMatricesType       view_matrices;
+    private @Nullable JCGLProjectionMatricesType proj_matrices;
+    private @Nullable R2TextureDefaultsType      texture_defaults;
+    private @Nullable R2GeometryRendererType     geometry_renderer;
 
     Builder()
     {
@@ -172,13 +203,25 @@ public final class R2Main implements R2MainType
         Builder.compute(
           this.proj_matrices, JCGLProjectionMatrices::newMatrices);
 
+      final R2TextureDefaultsType ex_texture_defaults =
+        Builder.compute(
+          this.texture_defaults,
+          () -> R2TextureDefaults.newDefaults(g));
+
+      final R2GeometryRendererType ex_geometry_renderer =
+        Builder.compute(
+          this.geometry_renderer,
+          () -> R2GeometryRenderer.newRenderer(g));
+
       return new R2Main(
         ex_pool,
         ex_sources,
         ex_stencil_renderer,
         ex_matrices,
         ex_view_matrices,
-        ex_proj_matrices);
+        ex_proj_matrices,
+        ex_texture_defaults,
+        ex_geometry_renderer);
     }
   }
 }

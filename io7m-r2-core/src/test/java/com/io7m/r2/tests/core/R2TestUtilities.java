@@ -42,6 +42,7 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLIndexBuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
+import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.fake.FakeContext;
 import com.io7m.jcanephora.fake.FakeShaderListenerType;
 import com.io7m.jcanephora.fake.JCGLImplementationFake;
@@ -50,8 +51,11 @@ import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2InstanceSingleMeshType;
-import com.io7m.r2.core.R2MaterialOpaqueSingleMeshType;
-import com.io7m.r2.core.R2ShaderType;
+import com.io7m.r2.core.R2MaterialOpaqueInstanceSingleType;
+import com.io7m.r2.core.R2MatricesInstanceValuesType;
+import com.io7m.r2.core.R2MatricesObserverValuesType;
+import com.io7m.r2.core.R2ShaderInstanceType;
+import com.io7m.r2.core.R2ShaderInstanceUsableType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
@@ -135,14 +139,20 @@ public final class R2TestUtilities
     return ao;
   }
 
-  static R2MaterialOpaqueSingleMeshType<Object> getMaterial(
+  static R2MaterialOpaqueInstanceSingleType<Object> getMaterial(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderType<Object> sh,
+    final R2ShaderInstanceUsableType<Object> sh,
     final Object p,
     final long id)
   {
-    return new R2MaterialOpaqueSingleMeshType<Object>()
+    return new R2MaterialOpaqueInstanceSingleType<Object>()
     {
+      @Override
+      public R2ShaderInstanceUsableType<Object> getShader()
+      {
+        return sh;
+      }
+
       @Override
       public long getMaterialID()
       {
@@ -160,16 +170,10 @@ public final class R2TestUtilities
       {
         return p;
       }
-
-      @Override
-      public R2ShaderType<Object> getShader()
-      {
-        return sh;
-      }
     };
   }
 
-  static R2ShaderType<Object> getShader(
+  static R2ShaderInstanceUsableType<Object> getShaderSingleInstance(
     final JCGLInterfaceGL33Type g,
     final long s_id)
   {
@@ -193,12 +197,39 @@ public final class R2TestUtilities
     final JCGLProgramShaderType pr =
       g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
 
-    return new R2ShaderType<Object>()
+    return new R2ShaderInstanceType<Object>()
     {
       @Override
-      public boolean isDeleted()
+      public void setMaterialTextures(
+        final JCGLTexturesType g_tex,
+        final Object values)
       {
-        return false;
+
+      }
+
+      @Override
+      public void setMaterialValues(
+        final JCGLShadersType g_sh,
+        final JCGLTexturesType g_tex,
+        final Object values)
+      {
+
+      }
+
+      @Override
+      public void setMatricesView(
+        final JCGLShadersType g_sh,
+        final R2MatricesObserverValuesType m)
+      {
+
+      }
+
+      @Override
+      public void setMatricesInstance(
+        final JCGLShadersType g_sh,
+        final R2MatricesInstanceValuesType m)
+      {
+
       }
 
       @Override
@@ -206,6 +237,12 @@ public final class R2TestUtilities
         throws R2Exception
       {
 
+      }
+
+      @Override
+      public boolean isDeleted()
+      {
+        return false;
       }
 
       @Override

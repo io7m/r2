@@ -14,32 +14,18 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.spaces;
 
 /**
- * The base type of materials. A material associates a shader with a set of
- * shader parameters.
+ * A type representing the eye space (for <i>normal</i> vectors).
  *
- * @param <M> The type of shader parameters
+ * This is distinct from {@link R2SpaceEyeType} because normal vectors are
+ * transformed without a translation component, so it's not correct to transform
+ * arbitrary vectors using an {@code <..., RSpaceNormalEyeType>} transform
+ * matrix.
  */
 
-public interface R2MaterialType<M>
+public interface R2SpaceNormalEyeType extends R2SpaceType
 {
-  /**
-   * @return The material ID
-   */
 
-  long getMaterialID();
-
-  /**
-   * @return The shader parameters
-   */
-
-  M getShaderParameters();
-
-  /**
-   * @return The material shader
-   */
-
-  R2ShaderUsableType<M> getShader();
 }

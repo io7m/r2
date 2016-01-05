@@ -27,12 +27,12 @@ public enum R2SceneStencilsMode
    * marking pixels as "disallowed".
    */
 
-  STENCIL_MODE_NEGATIVE,
+  STENCIL_MODE_INSTANCES_ARE_NEGATIVE,
 
   /**
    * The entire screen will be marked as "disallowed", with each rendered
    * stencil marking pixels as "allowed".
    */
 
-  STENCIL_MODE_POSITIVE
+  STENCIL_MODE_INSTANCES_ARE_POSITIVE
 }

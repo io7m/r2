@@ -16,8 +16,10 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jtensors.parameterized.PMatrixDirectReadable3x3FType;
 import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
+import com.io7m.r2.spaces.R2SpaceNormalEyeType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 
 /**
@@ -32,4 +34,11 @@ public interface R2MatricesInstanceValuesType
 
   PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
   getMatrixModelView();
+
+  /**
+   * @return The current normal matrix for an instance
+   */
+
+  PMatrixDirectReadable3x3FType<R2SpaceObjectType, R2SpaceNormalEyeType>
+  getMatrixNormal();
 }

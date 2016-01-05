@@ -20,7 +20,7 @@ package com.io7m.r2.core;
  * The type of renderers that populate geometry buffers.
  */
 
-public interface R2GeometryRendererType
+public interface R2GeometryRendererType extends R2DeletableType
 {
   /**
    * Render the given opaque instances into the given geometry buffer.
@@ -32,7 +32,7 @@ public interface R2GeometryRendererType
 
   void renderGeometry(
     R2GeometryBufferUsableType g,
-    R2MatricesType m,
+    R2MatricesObserverType m,
     R2SceneOpaquesType s);
 
   /**
@@ -43,6 +43,6 @@ public interface R2GeometryRendererType
    */
 
   void renderGeometryWithBoundBuffer(
-    R2MatricesType m,
+    R2MatricesObserverType m,
     R2SceneOpaquesType s);
 }

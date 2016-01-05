@@ -68,6 +68,10 @@
       <groupId>com.io7m.jcanephora</groupId>
       <artifactId>io7m-jcanephora-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>io7m-jcanephora-cursors</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>it.unimi.dsi</groupId>

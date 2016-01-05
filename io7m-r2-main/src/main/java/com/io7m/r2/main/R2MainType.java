@@ -19,9 +19,11 @@ package com.io7m.r2.main;
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jcanephora.core.JCGLViewMatricesType;
 import com.io7m.r2.core.R2DeletableType;
+import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2StencilRendererType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 
 /**
  * User-friendly frontend.
@@ -58,4 +60,16 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2MatricesType getMatrices();
+
+  /**
+   * @return The set of default textures
+   */
+
+  R2TextureDefaultsType getTextureDefaults();
+
+  /**
+   * @return A geometry renderer
+   */
+
+  R2GeometryRendererType getGeometryRenderer();
 }

@@ -31,5 +31,13 @@ public interface R2TransformContextType
    * between all callers of this function.
    */
 
-  Matrix4x4FType getTemporaryMatrix4x4();
+  Matrix4x4FType getTemporaryMatrix4x4_0();
+
+  /**
+   * @return A reference to a temporary 4x4 matrix. Note that this matrix is
+   * <i>not</i> recreated on every call, and the returned matrix is shared
+   * between all callers of this function.
+   */
+
+  Matrix4x4FType getTemporaryMatrix4x4_1();
 }

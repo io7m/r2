@@ -18,55 +18,59 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedI;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
-import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferType;
+import com.io7m.r2.core.R2Texture2DUsableType;
 import org.junit.Assert;
 import org.junit.Test;
 
 public final class R2GeometryBufferTest
 {
-  @Test public void testIdentities()
+  @Test
+  public void testIdentities()
   {
     final JCGLContextType c = R2TestContexts.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
 
+    final AreaInclusiveUnsignedI area = AreaInclusiveUnsignedI.of(
+      new UnsignedRangeInclusiveI(0, 639),
+      new UnsignedRangeInclusiveI(0, 479));
     final R2GeometryBufferType gb =
-      R2GeometryBuffer.newGeometryBuffer      (
-        g,
-        AreaInclusiveUnsignedI.of            (
-          new UnsignedRangeInclusiveI(0, 639),
-          new UnsignedRangeInclusiveI(0, 479)));
+      R2GeometryBuffer.newGeometryBuffer(g, area);
 
     Assert.assertEquals(640L * 480L * 16L, gb.getRange().getInterval());
     Assert.assertFalse(gb.isDeleted());
 
-    final JCGLTexture2DUsableType t_rgba =
+    final R2Texture2DUsableType t_rgba =
       gb.getAlbedoEmissiveTexture();
-    final JCGLTexture2DUsableType t_dept =
+    final R2Texture2DUsableType t_dept =
       gb.getDepthTexture();
-    final JCGLTexture2DUsableType t_spec =
+    final R2Texture2DUsableType t_spec =
       gb.getSpecularTexture();
-    final JCGLTexture2DUsableType t_norm =
+    final R2Texture2DUsableType t_norm =
       gb.getNormalTexture();
     final JCGLFramebufferUsableType fb =
       gb.getFramebuffer();
 
-    Assert.assertEquals        (
+    Assert.assertEquals(
       JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-      t_rgba.textureGetFormat());
-    Assert.assertEquals        (
+      t_rgba.get().textureGetFormat());
+    Assert.assertEquals(
       JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-      t_spec.textureGetFormat());
-    Assert.assertEquals        (
+      t_spec.get().textureGetFormat());
+    Assert.assertEquals(
       JCGLTextureFormat.TEXTURE_FORMAT_RG_16F_4BPP,
-      t_norm.textureGetFormat());
-    Assert.assertEquals        (
+      t_norm.get().textureGetFormat());
+    Assert.assertEquals(
       JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
-      t_dept.textureGetFormat());
+      t_dept.get().textureGetFormat());
+
+    gb.delete(g);
+    Assert.assertTrue(fb.isDeleted());
+    Assert.assertTrue(gb.isDeleted());
   }
 }

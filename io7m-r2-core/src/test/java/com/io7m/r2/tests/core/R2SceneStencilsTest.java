@@ -52,7 +52,7 @@ public final class R2SceneStencilsTest
     final R2SceneStencilsType m = R2SceneStencils.newMasks();
 
     Assert.assertEquals(
-      R2SceneStencilsMode.STENCIL_MODE_NEGATIVE, m.stencilsGetMode());
+      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE, m.stencilsGetMode());
     Assert.assertEquals(0L, m.stencilsCount());
     m.stencilsExecute(new UnreachableConsumer()
     {
@@ -79,13 +79,13 @@ public final class R2SceneStencilsTest
     final R2SceneStencilsType m = R2SceneStencils.newMasks();
 
     Assert.assertEquals(
-      R2SceneStencilsMode.STENCIL_MODE_NEGATIVE, m.stencilsGetMode());
-    m.stencilsSetMode(R2SceneStencilsMode.STENCIL_MODE_POSITIVE);
+      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE, m.stencilsGetMode());
+    m.stencilsSetMode(R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_POSITIVE);
     Assert.assertEquals(
-      R2SceneStencilsMode.STENCIL_MODE_POSITIVE, m.stencilsGetMode());
-    m.stencilsSetMode(R2SceneStencilsMode.STENCIL_MODE_NEGATIVE);
+      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_POSITIVE, m.stencilsGetMode());
+    m.stencilsSetMode(R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
     Assert.assertEquals(
-      R2SceneStencilsMode.STENCIL_MODE_NEGATIVE, m.stencilsGetMode());
+      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE, m.stencilsGetMode());
   }
 
   @Test
