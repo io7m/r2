@@ -109,7 +109,7 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     g_st.stencilBufferClear(0);
 
     this.matrices.withObserver(this.view, this.projection, mo -> {
-      this.stencil_renderer.renderStencilsWithBoundBuffer(mo, this.stencils);
+      this.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, this.stencils);
       return Unit.unit();
     });
   }

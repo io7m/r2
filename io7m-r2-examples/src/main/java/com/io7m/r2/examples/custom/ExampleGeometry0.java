@@ -173,8 +173,10 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       g_cl.clear(this.clear_spec);
 
       this.matrices.withObserver(this.view, this.projection, mo -> {
-        this.stencil_renderer.renderStencilsWithBoundBuffer(mo, this.stencils);
-        this.geom_renderer.renderGeometryWithBoundBuffer(mo, this.opaques);
+        this.stencil_renderer.renderStencilsWithBoundBuffer(
+          g, mo, this.stencils);
+        this.geom_renderer.renderGeometryWithBoundBuffer(
+          g, mo, this.opaques);
         return Unit.unit();
       });
 

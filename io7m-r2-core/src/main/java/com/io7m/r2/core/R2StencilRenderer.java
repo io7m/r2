@@ -52,7 +52,6 @@ public final class R2StencilRenderer implements R2StencilRendererType
   }
 
   private final StencilConsumer            stencil_consumer;
-  private final JCGLInterfaceGL33Type      g;
   private final R2ShaderInstanceType<Unit> program_instance;
   private final R2ShaderScreenType<Unit>   program_screen;
   private final R2UnitQuadType             quad;
@@ -63,7 +62,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     final JCGLInterfaceGL33Type in_g,
     final R2IDPoolType in_pool)
   {
-    this.g = NullCheck.notNull(in_g);
+    NullCheck.notNull(in_g);
     NullCheck.notNull(in_sources);
 
     R2StencilRenderer.LOG.debug("initializing");
@@ -74,8 +73,8 @@ public final class R2StencilRenderer implements R2StencilRendererType
     this.program_screen =
       R2StencilScreenShader.newShader(g_sh, in_sources, in_pool);
 
-    this.stencil_consumer = new StencilConsumer(this.g, this.program_instance);
-    this.quad = R2UnitQuad.newUnitQuad(this.g);
+    this.stencil_consumer = new StencilConsumer(this.program_instance);
+    this.quad = R2UnitQuad.newUnitQuad(in_g);
 
     R2StencilRenderer.LOG.debug("initialized");
   }
@@ -98,22 +97,24 @@ public final class R2StencilRenderer implements R2StencilRendererType
 
   @Override
   public void renderStencilsWithBoundBuffer(
+    final JCGLInterfaceGL33Type g,
     final R2MatricesObserverType m,
     final R2SceneStencilsType s)
   {
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
     Assertive.require(!this.deleted);
 
-    final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
-    final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
-    final JCGLBlendingType g_b = this.g.getBlending();
-    final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
-    final JCGLCullingType g_cu = this.g.getCulling();
-    final JCGLStencilBuffersType g_st = this.g.getStencilBuffers();
-    final JCGLShadersType g_sh = this.g.getShaders();
-    final JCGLDrawType g_dr = this.g.getDraw();
+    final JCGLArrayObjectsType g_ao = g.getArrayObjects();
+    final JCGLDepthBuffersType g_db = g.getDepthBuffers();
+    final JCGLBlendingType g_b = g.getBlending();
+    final JCGLColorBufferMaskingType g_cm = g.getColorBufferMasking();
+    final JCGLCullingType g_cu = g.getCulling();
+    final JCGLStencilBuffersType g_st = g.getStencilBuffers();
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLDrawType g_dr = g.getDraw();
 
     /**
      * Configure state for rendering stencil instances.
@@ -229,9 +230,11 @@ public final class R2StencilRenderer implements R2StencilRendererType
       }
 
       try {
+        this.stencil_consumer.g33 = g;
         this.stencil_consumer.matrices = m;
         s.stencilsExecute(this.stencil_consumer);
       } finally {
+        this.stencil_consumer.g33 = null;
         this.stencil_consumer.matrices = null;
       }
     }
@@ -260,27 +263,26 @@ public final class R2StencilRenderer implements R2StencilRendererType
   private static final class StencilConsumer implements
     R2SceneStencilsConsumerType
   {
-    private final     JCGLInterfaceGL33Type            g;
     private final     R2ShaderInstanceUsableType<Unit> program;
-    private final     JCGLShadersType                  shaders;
-    private final     JCGLArrayObjectsType             array_objects;
-    private final     JCGLDrawType                     draw;
+    private @Nullable JCGLInterfaceGL33Type            g33;
+    private @Nullable JCGLShadersType                  shaders;
+    private @Nullable JCGLArrayObjectsType             array_objects;
+    private @Nullable JCGLDrawType                     draw;
     private @Nullable R2MatricesObserverType           matrices;
 
     StencilConsumer(
-      final JCGLInterfaceGL33Type in_g,
       final R2ShaderInstanceUsableType<Unit> in_program)
     {
-      this.g = NullCheck.notNull(in_g);
       this.program = NullCheck.notNull(in_program);
-      this.shaders = this.g.getShaders();
-      this.array_objects = this.g.getArrayObjects();
-      this.draw = this.g.getDraw();
     }
 
     @Override
     public void onStart()
     {
+      this.shaders = this.g33.getShaders();
+      this.array_objects = this.g33.getArrayObjects();
+      this.draw = this.g33.getDraw();
+
       this.shaders.shaderActivateProgram(this.program.getShaderProgram());
       this.program.setMatricesView(this.shaders, this.matrices);
     }
@@ -310,6 +312,9 @@ public final class R2StencilRenderer implements R2StencilRendererType
     public void onFinish()
     {
       this.shaders.shaderDeactivateProgram();
+      this.shaders = null;
+      this.array_objects = null;
+      this.draw = null;
     }
   }
 }

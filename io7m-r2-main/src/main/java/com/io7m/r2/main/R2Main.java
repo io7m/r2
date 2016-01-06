@@ -211,7 +211,7 @@ public final class R2Main implements R2MainType
       final R2GeometryRendererType ex_geometry_renderer =
         Builder.compute(
           this.geometry_renderer,
-          () -> R2GeometryRenderer.newRenderer(g));
+          R2GeometryRenderer::newRenderer);
 
       return new R2Main(
         ex_pool,
