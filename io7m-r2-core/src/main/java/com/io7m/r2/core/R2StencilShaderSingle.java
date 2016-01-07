@@ -30,14 +30,14 @@ import java.util.Optional;
  * A stencil-only shader implementation.
  */
 
-public final class R2StencilInstanceShader extends R2AbstractShader<Unit>
+public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   implements
-  R2ShaderInstanceType<Unit>
+  R2ShaderSingleType<Unit>
 {
   private final JCGLProgramUniformType u_transform_modelview;
   private final JCGLProgramUniformType u_transform_projection;
 
-  private R2StencilInstanceShader(
+  private R2StencilShaderSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -46,10 +46,10 @@ public final class R2StencilInstanceShader extends R2AbstractShader<Unit>
       in_shaders,
       in_sources,
       in_pool,
-      "R2StencilInstance",
-      "R2StencilInstance.vert",
+      "R2StencilSingle",
+      "R2StencilSingle.vert",
       Optional.empty(),
-      "R2StencilInstance.frag");
+      "R2StencilSingle.frag");
 
     final Map<String, JCGLProgramUniformType> us =
       this.getShaderProgram().getUniforms();
@@ -71,12 +71,12 @@ public final class R2StencilInstanceShader extends R2AbstractShader<Unit>
    * @return A new shader
    */
 
-  public static R2ShaderInstanceType<Unit> newShader(
+  public static R2ShaderSingleType<Unit> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2StencilInstanceShader(in_shaders, in_sources, in_pool);
+    return new R2StencilShaderSingle(in_shaders, in_sources, in_pool);
   }
 
   @Override

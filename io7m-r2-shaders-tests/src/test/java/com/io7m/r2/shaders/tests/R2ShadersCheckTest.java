@@ -69,15 +69,27 @@ public final class R2ShadersCheckTest extends R2ShaderTest
     return R2ShaderChecker.newChecker(c.contextGetGL33().getShaders());
   }
 
-  @Test public void testDeferredSurfaceBasic()
+  @Test public void testDeferredSurfaceBasicSingle()
     throws Exception
   {
-    R2ShadersCheckTest.check("R2DeferredSurfaceBasic");
+    R2ShadersCheckTest.check("R2DeferredSurfaceBasicSingle");
   }
 
-  @Test public void testDeferredSurfaceBasicReflective()
+  @Test public void testStencilSingle()
     throws Exception
   {
-    R2ShadersCheckTest.check("R2DeferredSurfaceBasicReflective");
+    R2ShadersCheckTest.check("R2StencilSingle");
+  }
+
+  @Test public void testStencilScreen()
+    throws Exception
+  {
+    R2ShadersCheckTest.check("R2StencilScreen");
+  }
+
+  @Test public void testDeferredSurfaceBasicReflectiveSingle()
+    throws Exception
+  {
+    R2ShadersCheckTest.check("R2DeferredSurfaceBasicReflectiveSingle");
   }
 }

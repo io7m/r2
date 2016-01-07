@@ -19,15 +19,15 @@ package com.io7m.r2.tests.core;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.core.R2InstanceSingleMeshType;
+import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2InstanceType;
-import com.io7m.r2.core.R2MaterialOpaqueInstanceSingleType;
+import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MaterialType;
 import com.io7m.r2.core.R2RendererExceptionInstanceAlreadyVisible;
 import com.io7m.r2.core.R2SceneOpaques;
 import com.io7m.r2.core.R2SceneOpaquesConsumerType;
 import com.io7m.r2.core.R2SceneOpaquesType;
-import com.io7m.r2.core.R2ShaderInstanceUsableType;
+import com.io7m.r2.core.R2ShaderSingleUsableType;
 import com.io7m.r2.core.R2ShaderUsableType;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -60,13 +60,13 @@ public final class R2SceneOpaquesTest
     final JCGLInterfaceGL33Type g = R2TestUtilities.getGL();
     final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
     final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
-    final R2InstanceSingleMeshType i =
+    final R2InstanceSingleType i =
       R2TestUtilities.getInstance(g, a0, 0L);
-    final R2ShaderInstanceUsableType<Object> s =
+    final R2ShaderSingleUsableType<Object> s =
       R2TestUtilities.getShaderSingleInstance(g, 0L);
-    final R2MaterialOpaqueInstanceSingleType<Object> m0 =
+    final R2MaterialOpaqueSingleType<Object> m0 =
       R2TestUtilities.getMaterial(g, s, new Object(), 0L);
-    final R2MaterialOpaqueInstanceSingleType<Object> m1 =
+    final R2MaterialOpaqueSingleType<Object> m1 =
       R2TestUtilities.getMaterial(g, s, new Object(), 1L);
 
     o.opaquesAddSingleInstance(i, m0);
@@ -109,74 +109,74 @@ public final class R2SceneOpaquesTest
     final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
     final JCGLArrayObjectType a1 = R2TestUtilities.getArrayObject(g);
 
-    final R2InstanceSingleMeshType i0a0 =
+    final R2InstanceSingleType i0a0 =
       R2TestUtilities.getInstance(g, a0, 0L);
-    final R2InstanceSingleMeshType i1a0 =
+    final R2InstanceSingleType i1a0 =
       R2TestUtilities.getInstance(g, a0, 1L);
-    final R2InstanceSingleMeshType i2a0 =
+    final R2InstanceSingleType i2a0 =
       R2TestUtilities.getInstance(g, a0, 2L);
 
-    final R2InstanceSingleMeshType i3a1 =
+    final R2InstanceSingleType i3a1 =
       R2TestUtilities.getInstance(g, a1, 3L);
-    final R2InstanceSingleMeshType i4a1 =
+    final R2InstanceSingleType i4a1 =
       R2TestUtilities.getInstance(g, a1, 4L);
-    final R2InstanceSingleMeshType i5a1 =
+    final R2InstanceSingleType i5a1 =
       R2TestUtilities.getInstance(g, a1, 5L);
 
-    final R2InstanceSingleMeshType i6a0 =
+    final R2InstanceSingleType i6a0 =
       R2TestUtilities.getInstance(g, a0, 6L);
-    final R2InstanceSingleMeshType i7a0 =
+    final R2InstanceSingleType i7a0 =
       R2TestUtilities.getInstance(g, a0, 7L);
-    final R2InstanceSingleMeshType i8a0 =
+    final R2InstanceSingleType i8a0 =
       R2TestUtilities.getInstance(g, a0, 8L);
 
-    final R2InstanceSingleMeshType i9a1 =
+    final R2InstanceSingleType i9a1 =
       R2TestUtilities.getInstance(g, a1, 9L);
-    final R2InstanceSingleMeshType i10a1 =
+    final R2InstanceSingleType i10a1 =
       R2TestUtilities.getInstance(g, a1, 10L);
-    final R2InstanceSingleMeshType i11a1 =
+    final R2InstanceSingleType i11a1 =
       R2TestUtilities.getInstance(g, a1, 11L);
 
-    final R2InstanceSingleMeshType i12a0 =
+    final R2InstanceSingleType i12a0 =
       R2TestUtilities.getInstance(g, a0, 12L);
-    final R2InstanceSingleMeshType i13a0 =
+    final R2InstanceSingleType i13a0 =
       R2TestUtilities.getInstance(g, a0, 13L);
-    final R2InstanceSingleMeshType i14a0 =
+    final R2InstanceSingleType i14a0 =
       R2TestUtilities.getInstance(g, a0, 14L);
 
-    final R2InstanceSingleMeshType i15a1 =
+    final R2InstanceSingleType i15a1 =
       R2TestUtilities.getInstance(g, a1, 15L);
-    final R2InstanceSingleMeshType i16a1 =
+    final R2InstanceSingleType i16a1 =
       R2TestUtilities.getInstance(g, a1, 16L);
-    final R2InstanceSingleMeshType i17a1 =
+    final R2InstanceSingleType i17a1 =
       R2TestUtilities.getInstance(g, a1, 17L);
 
-    final R2InstanceSingleMeshType i18a0 =
+    final R2InstanceSingleType i18a0 =
       R2TestUtilities.getInstance(g, a0, 18L);
-    final R2InstanceSingleMeshType i19a0 =
+    final R2InstanceSingleType i19a0 =
       R2TestUtilities.getInstance(g, a0, 19L);
-    final R2InstanceSingleMeshType i20a0 =
+    final R2InstanceSingleType i20a0 =
       R2TestUtilities.getInstance(g, a0, 20L);
 
-    final R2InstanceSingleMeshType i21a1 =
+    final R2InstanceSingleType i21a1 =
       R2TestUtilities.getInstance(g, a1, 21L);
-    final R2InstanceSingleMeshType i22a1 =
+    final R2InstanceSingleType i22a1 =
       R2TestUtilities.getInstance(g, a1, 22L);
-    final R2InstanceSingleMeshType i23a1 =
+    final R2InstanceSingleType i23a1 =
       R2TestUtilities.getInstance(g, a1, 23L);
 
-    final R2ShaderInstanceUsableType<Object> s0 =
+    final R2ShaderSingleUsableType<Object> s0 =
       R2TestUtilities.getShaderSingleInstance(g, 0L);
-    final R2ShaderInstanceUsableType<Object> s1 =
+    final R2ShaderSingleUsableType<Object> s1 =
       R2TestUtilities.getShaderSingleInstance(g, 1L);
 
-    final R2MaterialOpaqueInstanceSingleType<Object> m0 =
+    final R2MaterialOpaqueSingleType<Object> m0 =
       R2TestUtilities.getMaterial(g, s0, new Object(), 0L);
-    final R2MaterialOpaqueInstanceSingleType<Object> m1 =
+    final R2MaterialOpaqueSingleType<Object> m1 =
       R2TestUtilities.getMaterial(g, s0, new Object(), 1L);
-    final R2MaterialOpaqueInstanceSingleType<Object> m2 =
+    final R2MaterialOpaqueSingleType<Object> m2 =
       R2TestUtilities.getMaterial(g, s1, new Object(), 2L);
-    final R2MaterialOpaqueInstanceSingleType<Object> m3 =
+    final R2MaterialOpaqueSingleType<Object> m3 =
       R2TestUtilities.getMaterial(g, s1, new Object(), 3L);
 
     final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
@@ -233,7 +233,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleShaderStart(
-        final R2ShaderInstanceUsableType<M> s)
+        final R2ShaderSingleUsableType<M> s)
       {
         Assert.assertTrue(this.shader_starts < 2);
 
@@ -246,7 +246,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleMaterialStart(
-        final R2MaterialOpaqueInstanceSingleType<M> material)
+        final R2MaterialOpaqueSingleType<M> material)
       {
         final R2ShaderUsableType<M> s = material.getShader();
         Assert.assertEquals(s, this.current_shader);
@@ -267,7 +267,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingle(
-        final R2MaterialOpaqueInstanceSingleType<M> material,
+        final R2MaterialOpaqueSingleType<M> material,
         final R2InstanceType i)
       {
         Assert.assertEquals(this.current_material, material);
@@ -287,7 +287,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleMaterialFinish(
-        final R2MaterialOpaqueInstanceSingleType<M> material)
+        final R2MaterialOpaqueSingleType<M> material)
       {
         final R2ShaderUsableType<M> s = material.getShader();
         Assert.assertEquals(this.current_material, material);
@@ -302,7 +302,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleShaderFinish(
-        final R2ShaderInstanceUsableType<M> s)
+        final R2ShaderSingleUsableType<M> s)
       {
         Assert.assertEquals(this.current_shader, s);
         R2SceneOpaquesTest.LOG.debug("shader finish {}", s);
@@ -411,11 +411,11 @@ public final class R2SceneOpaquesTest
     final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
     final JCGLArrayObjectType a1 = R2TestUtilities.getArrayObject(g);
 
-    final R2InstanceSingleMeshType i0a0 =
+    final R2InstanceSingleType i0a0 =
       R2TestUtilities.getInstance(g, a0, 0L);
-    final R2ShaderInstanceUsableType<Object> s0 =
+    final R2ShaderSingleUsableType<Object> s0 =
       R2TestUtilities.getShaderSingleInstance(g, 0L);
-    final R2MaterialOpaqueInstanceSingleType<Object> m0 =
+    final R2MaterialOpaqueSingleType<Object> m0 =
       R2TestUtilities.getMaterial(g, s0, new Object(), 0L);
 
     final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
@@ -445,7 +445,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleShaderStart(
-        final R2ShaderInstanceUsableType<M> s)
+        final R2ShaderSingleUsableType<M> s)
       {
         Assert.assertTrue(this.shader_starts < 2);
 
@@ -458,7 +458,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleMaterialStart(
-        final R2MaterialOpaqueInstanceSingleType<M> material)
+        final R2MaterialOpaqueSingleType<M> material)
       {
         final R2ShaderUsableType<M> s = material.getShader();
         Assert.assertEquals(s, this.current_shader);
@@ -478,7 +478,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingle(
-        final R2MaterialOpaqueInstanceSingleType<M> material,
+        final R2MaterialOpaqueSingleType<M> material,
         final R2InstanceType i)
       {
         Assert.assertEquals(this.current_material, material);
@@ -497,7 +497,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleMaterialFinish(
-        final R2MaterialOpaqueInstanceSingleType<M> material)
+        final R2MaterialOpaqueSingleType<M> material)
       {
         final R2ShaderUsableType<M> s = material.getShader();
         Assert.assertEquals(this.current_material, material);
@@ -512,7 +512,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleShaderFinish(
-        final R2ShaderInstanceUsableType<M> s)
+        final R2ShaderSingleUsableType<M> s)
       {
         R2SceneOpaquesTest.LOG.debug("shader finish {}", s);
         ops.add(new Ops.OpShaderFinish(s));
@@ -566,7 +566,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleShaderStart(
-        final R2ShaderInstanceUsableType<M> s)
+        final R2ShaderSingleUsableType<M> s)
       {
         Assert.assertTrue(this.shader_starts < 2);
 
@@ -579,7 +579,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleMaterialStart(
-        final R2MaterialOpaqueInstanceSingleType<M> material)
+        final R2MaterialOpaqueSingleType<M> material)
       {
         final R2ShaderUsableType<M> s = material.getShader();
         Assert.assertEquals(s, this.current_shader);
@@ -599,7 +599,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingle(
-        final R2MaterialOpaqueInstanceSingleType<M> material,
+        final R2MaterialOpaqueSingleType<M> material,
         final R2InstanceType i)
       {
         Assert.assertTrue(this.instance_calls < 24);
@@ -619,7 +619,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleMaterialFinish(
-        final R2MaterialOpaqueInstanceSingleType<M> material)
+        final R2MaterialOpaqueSingleType<M> material)
       {
         final R2ShaderUsableType<M> s = material.getShader();
         Assert.assertEquals(this.current_material, material);
@@ -631,7 +631,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public <M> void onInstanceSingleShaderFinish(
-        final R2ShaderInstanceUsableType<M> s)
+        final R2ShaderSingleUsableType<M> s)
       {
         R2SceneOpaquesTest.LOG.debug("shader finish {}", s);
         ops.add(new Ops.OpShaderFinish(s));
@@ -670,14 +670,14 @@ public final class R2SceneOpaquesTest
 
     @Override
     public <M> void onInstanceSingleShaderStart(
-      final R2ShaderInstanceUsableType<M> s)
+      final R2ShaderSingleUsableType<M> s)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
     public <M> void onInstanceSingleMaterialStart(
-      final R2MaterialOpaqueInstanceSingleType<M> material)
+      final R2MaterialOpaqueSingleType<M> material)
     {
       throw new UnreachableCodeException();
     }
@@ -691,7 +691,7 @@ public final class R2SceneOpaquesTest
 
     @Override
     public <M> void onInstanceSingle(
-      final R2MaterialOpaqueInstanceSingleType<M> material,
+      final R2MaterialOpaqueSingleType<M> material,
       final R2InstanceType i)
     {
       throw new UnreachableCodeException();
@@ -699,14 +699,14 @@ public final class R2SceneOpaquesTest
 
     @Override
     public <M> void onInstanceSingleMaterialFinish(
-      final R2MaterialOpaqueInstanceSingleType<M> material)
+      final R2MaterialOpaqueSingleType<M> material)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
     public <M> void onInstanceSingleShaderFinish(
-      final R2ShaderInstanceUsableType<M> s)
+      final R2ShaderSingleUsableType<M> s)
     {
       throw new UnreachableCodeException();
     }

@@ -37,8 +37,8 @@ public interface R2SceneOpaquesType
    */
 
   <M> void opaquesAddSingleInstance(
-    R2InstanceSingleMeshType i,
-    R2MaterialOpaqueInstanceSingleType<M> m);
+    R2InstanceSingleType i,
+    R2MaterialOpaqueSingleType<M> m);
 
   /**
    * Batch the instances and pass them to the given consumer for rendering.

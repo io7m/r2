@@ -56,7 +56,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleShaderStart(
-    R2ShaderInstanceUsableType<M> s);
+    R2ShaderSingleUsableType<M> s);
 
   /**
    * Called when new material settings should be assigned, for single
@@ -67,7 +67,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleMaterialStart(
-    R2MaterialOpaqueInstanceSingleType<M> material);
+    R2MaterialOpaqueSingleType<M> material);
 
   /**
    * Called when a new array object should be bound, for single instances.
@@ -87,7 +87,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingle(
-    R2MaterialOpaqueInstanceSingleType<M> material,
+    R2MaterialOpaqueSingleType<M> material,
     R2InstanceType i);
 
   /**
@@ -99,7 +99,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleMaterialFinish(
-    R2MaterialOpaqueInstanceSingleType<M> material);
+    R2MaterialOpaqueSingleType<M> material);
 
   /**
    * Called when the current shader should be deactivated.
@@ -109,7 +109,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleShaderFinish(
-    R2ShaderInstanceUsableType<M> s);
+    R2ShaderSingleUsableType<M> s);
 
   /**
    * Called when rendering of instances is finished.

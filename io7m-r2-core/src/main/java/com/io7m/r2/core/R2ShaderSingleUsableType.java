@@ -20,12 +20,12 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 
 /**
- * The type of usable shaders for rendering individual instances.
+ * The type of usable shaders for rendering single instances.
  *
  * @param <M> The type of parameter data
  */
 
-public interface R2ShaderInstanceUsableType<M> extends R2ShaderUsableType<M>
+public interface R2ShaderSingleUsableType<M> extends R2ShaderUsableType<M>
 {
   /**
    * Set material textures. Any textures bound are guaranteed to remain bound

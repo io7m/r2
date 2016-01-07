@@ -51,11 +51,11 @@ public final class R2StencilRenderer implements R2StencilRendererType
     LOG = LoggerFactory.getLogger(R2StencilRenderer.class);
   }
 
-  private final StencilConsumer            stencil_consumer;
-  private final R2ShaderInstanceType<Unit> program_instance;
-  private final R2ShaderScreenType<Unit>   program_screen;
-  private final R2UnitQuadType             quad;
-  private       boolean                    deleted;
+  private final StencilConsumer          stencil_consumer;
+  private final R2ShaderSingleType<Unit> program_instance;
+  private final R2ShaderScreenType<Unit> program_screen;
+  private final R2UnitQuadType           quad;
+  private       boolean                  deleted;
 
   private R2StencilRenderer(
     final R2ShaderSourcesType in_sources,
@@ -69,7 +69,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
 
     final JCGLShadersType g_sh = in_g.getShaders();
     this.program_instance =
-      R2StencilInstanceShader.newShader(g_sh, in_sources, in_pool);
+      R2StencilShaderSingle.newShader(g_sh, in_sources, in_pool);
     this.program_screen =
       R2StencilScreenShader.newShader(g_sh, in_sources, in_pool);
 
@@ -263,15 +263,15 @@ public final class R2StencilRenderer implements R2StencilRendererType
   private static final class StencilConsumer implements
     R2SceneStencilsConsumerType
   {
-    private final     R2ShaderInstanceUsableType<Unit> program;
-    private @Nullable JCGLInterfaceGL33Type            g33;
-    private @Nullable JCGLShadersType                  shaders;
-    private @Nullable JCGLArrayObjectsType             array_objects;
-    private @Nullable JCGLDrawType                     draw;
-    private @Nullable R2MatricesObserverType           matrices;
+    private final     R2ShaderSingleUsableType<Unit> program;
+    private @Nullable JCGLInterfaceGL33Type          g33;
+    private @Nullable JCGLShadersType                shaders;
+    private @Nullable JCGLArrayObjectsType           array_objects;
+    private @Nullable JCGLDrawType                   draw;
+    private @Nullable R2MatricesObserverType         matrices;
 
     StencilConsumer(
-      final R2ShaderInstanceUsableType<Unit> in_program)
+      final R2ShaderSingleUsableType<Unit> in_program)
     {
       this.program = NullCheck.notNull(in_program);
     }

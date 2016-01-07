@@ -26,8 +26,8 @@ import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
-import com.io7m.r2.core.R2InstanceSingleMesh;
-import com.io7m.r2.core.R2InstanceSingleMeshType;
+import com.io7m.r2.core.R2InstanceSingle;
+import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionFOV;
 import com.io7m.r2.core.R2SceneStencils;
@@ -48,12 +48,12 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private R2SceneStencilsType      stencils;
-  private R2StencilRendererType    stencil_renderer;
-  private R2MatricesType           matrices;
-  private R2ProjectionFOV          projection;
-  private R2UnitQuadType           quad;
-  private R2InstanceSingleMeshType instance;
+  private R2SceneStencilsType   stencils;
+  private R2StencilRendererType stencil_renderer;
+  private R2MatricesType        matrices;
+  private R2ProjectionFOV       projection;
+  private R2UnitQuadType        quad;
+  private R2InstanceSingleType  instance;
 
   public ExampleStencilNegative()
   {
@@ -82,7 +82,7 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
     final R2TransformOST transform = R2TransformOST.newTransform();
-    this.instance = R2InstanceSingleMesh.newInstance(
+    this.instance = R2InstanceSingle.newInstance(
       m.getIDPool(),
       this.quad.getArrayObject(),
       transform,

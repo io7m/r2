@@ -206,7 +206,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceSingleShaderStart(
-      final R2ShaderInstanceUsableType<M> s)
+      final R2ShaderSingleUsableType<M> s)
     {
       this.shaders.shaderActivateProgram(s.getShaderProgram());
       s.setMatricesView(this.shaders, this.matrices);
@@ -214,9 +214,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceSingleMaterialStart(
-      final R2MaterialOpaqueInstanceSingleType<M> material)
+      final R2MaterialOpaqueSingleType<M> material)
     {
-      final R2ShaderInstanceUsableType<M> s = material.getShader();
+      final R2ShaderSingleUsableType<M> s = material.getShader();
       final M p = material.getShaderParameters();
       s.setMaterialTextures(this.textures, p);
       s.setMaterialValues(this.shaders, this.textures, p);
@@ -231,11 +231,11 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceSingle(
-      final R2MaterialOpaqueInstanceSingleType<M> material,
+      final R2MaterialOpaqueSingleType<M> material,
       final R2InstanceType i)
     {
       this.matrices.withTransform(i.getTransform(), i.getUVMatrix(), mi -> {
-        final R2ShaderInstanceUsableType<M> s = material.getShader();
+        final R2ShaderSingleUsableType<M> s = material.getShader();
         s.setMatricesInstance(this.shaders, mi);
         this.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         return Unit.unit();
@@ -244,14 +244,14 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceSingleMaterialFinish(
-      final R2MaterialOpaqueInstanceSingleType<M> material)
+      final R2MaterialOpaqueSingleType<M> material)
     {
 
     }
 
     @Override
     public <M> void onInstanceSingleShaderFinish(
-      final R2ShaderInstanceUsableType<M> s)
+      final R2ShaderSingleUsableType<M> s)
     {
       this.shaders.shaderDeactivateProgram();
     }

@@ -19,22 +19,22 @@ package com.io7m.r2.core;
 import com.io7m.jnull.NullCheck;
 
 /**
- * Default implementation of the {@link R2MaterialOpaqueInstanceSingleType}
+ * Default implementation of the {@link R2MaterialOpaqueSingleType}
  * interface.
  *
  * @param <M> The type of shader parameters
  */
 
-public final class R2MaterialOpaqueInstanceSingle<M> implements
-  R2MaterialOpaqueInstanceSingleType<M>
+public final class R2MaterialOpaqueSingle<M> implements
+  R2MaterialOpaqueSingleType<M>
 {
-  private final long                          id;
-  private final M                             params;
-  private final R2ShaderInstanceUsableType<M> shader;
+  private final long                        id;
+  private final M                           params;
+  private final R2ShaderSingleUsableType<M> shader;
 
-  private R2MaterialOpaqueInstanceSingle(
+  private R2MaterialOpaqueSingle(
     final long in_id,
-    final R2ShaderInstanceUsableType<M> in_shader,
+    final R2ShaderSingleUsableType<M> in_shader,
     final M in_params)
   {
     this.params = NullCheck.notNull(in_params);
@@ -53,13 +53,13 @@ public final class R2MaterialOpaqueInstanceSingle<M> implements
    * @return A new material
    */
 
-  public static <M> R2MaterialOpaqueInstanceSingleType<M> newMaterial(
+  public static <M> R2MaterialOpaqueSingleType<M> newMaterial(
     final R2IDPoolType in_pool,
-    final R2ShaderInstanceUsableType<M> in_shader,
+    final R2ShaderSingleUsableType<M> in_shader,
     final M in_params)
   {
     NullCheck.notNull(in_pool);
-    return new R2MaterialOpaqueInstanceSingle<>(
+    return new R2MaterialOpaqueSingle<>(
       in_pool.getFreshID(), in_shader, in_params);
   }
 
@@ -76,7 +76,7 @@ public final class R2MaterialOpaqueInstanceSingle<M> implements
   }
 
   @Override
-  public R2ShaderInstanceUsableType<M> getShader()
+  public R2ShaderSingleUsableType<M> getShader()
   {
     return this.shader;
   }

@@ -50,12 +50,12 @@ import com.io7m.jcanephora.fake.JCGLImplementationFakeType;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.r2.core.R2Exception;
-import com.io7m.r2.core.R2InstanceSingleMeshType;
-import com.io7m.r2.core.R2MaterialOpaqueInstanceSingleType;
+import com.io7m.r2.core.R2InstanceSingleType;
+import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesInstanceValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2ShaderInstanceType;
-import com.io7m.r2.core.R2ShaderInstanceUsableType;
+import com.io7m.r2.core.R2ShaderSingleType;
+import com.io7m.r2.core.R2ShaderSingleUsableType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
@@ -72,12 +72,12 @@ public final class R2TestUtilities
 
   }
 
-  static R2InstanceSingleMeshType getInstance(
+  static R2InstanceSingleType getInstance(
     final JCGLInterfaceGL33Type g,
     final JCGLArrayObjectType ao,
     final long id)
   {
-    return new R2InstanceSingleMeshType()
+    return new R2InstanceSingleType()
     {
       @Override
       public long getInstanceID()
@@ -139,16 +139,16 @@ public final class R2TestUtilities
     return ao;
   }
 
-  static R2MaterialOpaqueInstanceSingleType<Object> getMaterial(
+  static R2MaterialOpaqueSingleType<Object> getMaterial(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderInstanceUsableType<Object> sh,
+    final R2ShaderSingleUsableType<Object> sh,
     final Object p,
     final long id)
   {
-    return new R2MaterialOpaqueInstanceSingleType<Object>()
+    return new R2MaterialOpaqueSingleType<Object>()
     {
       @Override
-      public R2ShaderInstanceUsableType<Object> getShader()
+      public R2ShaderSingleUsableType<Object> getShader()
       {
         return sh;
       }
@@ -173,7 +173,7 @@ public final class R2TestUtilities
     };
   }
 
-  static R2ShaderInstanceUsableType<Object> getShaderSingleInstance(
+  static R2ShaderSingleUsableType<Object> getShaderSingleInstance(
     final JCGLInterfaceGL33Type g,
     final long s_id)
   {
@@ -197,7 +197,7 @@ public final class R2TestUtilities
     final JCGLProgramShaderType pr =
       g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
 
-    return new R2ShaderInstanceType<Object>()
+    return new R2ShaderSingleType<Object>()
     {
       @Override
       public void setMaterialTextures(

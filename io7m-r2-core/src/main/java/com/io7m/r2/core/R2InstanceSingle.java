@@ -22,10 +22,10 @@ import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 
 /**
- * The default implementation of the {@link R2InstanceSingleMeshType} type.
+ * The default implementation of the {@link R2InstanceSingleType} type.
  */
 
-public final class R2InstanceSingleMesh implements R2InstanceSingleMeshType
+public final class R2InstanceSingle implements R2InstanceSingleType
 {
   private final JCGLArrayObjectUsableType array_object;
   private final R2TransformReadableType   transform;
@@ -34,7 +34,7 @@ public final class R2InstanceSingleMesh implements R2InstanceSingleMeshType
   private final PMatrixReadable3x3FType<R2SpaceTextureType,
     R2SpaceTextureType> uv;
 
-  private R2InstanceSingleMesh(
+  private R2InstanceSingle(
     final long in_id,
     final JCGLArrayObjectUsableType in_array_object,
     final R2TransformReadableType in_transform,
@@ -57,13 +57,13 @@ public final class R2InstanceSingleMesh implements R2InstanceSingleMeshType
    * @return A new instance
    */
 
-  public static R2InstanceSingleMeshType newInstance(
+  public static R2InstanceSingleType newInstance(
     final R2IDPoolType in_pool,
     final JCGLArrayObjectUsableType in_array_object,
     final R2TransformReadableType in_transform,
     final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> in_uv)
   {
-    return new R2InstanceSingleMesh(
+    return new R2InstanceSingle(
       NullCheck.notNull(in_pool).getFreshID(),
       in_array_object,
       in_transform,

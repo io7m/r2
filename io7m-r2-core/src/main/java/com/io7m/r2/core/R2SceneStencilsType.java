@@ -55,7 +55,7 @@ public interface R2SceneStencilsType
    */
 
   void stencilsAddSingleMesh(
-    R2InstanceSingleMeshType i);
+    R2InstanceSingleType i);
 
   /**
    * Batch the instances and pass them to the given consumer for rendering.

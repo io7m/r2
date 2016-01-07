@@ -20,7 +20,7 @@ import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.core.R2InstanceSingleMeshType;
+import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2InstanceType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsConsumerType;
@@ -103,18 +103,18 @@ public final class R2SceneStencilsTest
     final JCGLArrayObjectType a1 = R2TestUtilities.getArrayObject(g);
     final JCGLArrayObjectType a2 = R2TestUtilities.getArrayObject(g);
 
-    final R2InstanceSingleMeshType i1a1 =
+    final R2InstanceSingleType i1a1 =
       R2TestUtilities.getInstance(g, a1, 1L);
-    final R2InstanceSingleMeshType i2a1 =
+    final R2InstanceSingleType i2a1 =
       R2TestUtilities.getInstance(g, a1, 2L);
-    final R2InstanceSingleMeshType i3a1 =
+    final R2InstanceSingleType i3a1 =
       R2TestUtilities.getInstance(g, a1, 3L);
 
-    final R2InstanceSingleMeshType i4a2 =
+    final R2InstanceSingleType i4a2 =
       R2TestUtilities.getInstance(g, a2, 4L);
-    final R2InstanceSingleMeshType i5a2 =
+    final R2InstanceSingleType i5a2 =
       R2TestUtilities.getInstance(g, a2, 5L);
-    final R2InstanceSingleMeshType i6a2 =
+    final R2InstanceSingleType i6a2 =
       R2TestUtilities.getInstance(g, a2, 6L);
 
     {
@@ -128,7 +128,7 @@ public final class R2SceneStencilsTest
       Collections.shuffle(ras);
 
       for (final R2InstanceType i : ras) {
-        m.stencilsAddSingleMesh((R2InstanceSingleMeshType) i);
+        m.stencilsAddSingleMesh((R2InstanceSingleType) i);
       }
     }
 

@@ -1,8 +1,11 @@
-#include "R2DeferredSurfaceShaderStart.h"
+#ifndef R2_DEFERRED_SURFACE_BASIC_REFLECTIVE_H
+#define R2_DEFERRED_SURFACE_BASIC_REFLECTIVE_H
+
+#include "R2DeferredSurfaceShaderMain.h"
 #include "R2EnvironmentReflection.h"
 
 //
-// Basic "reflective" deferred surface
+// Basic pseudo-reflective (environment mapped) deferred surface
 //
 
 struct R2_deferred_surface_reflective_textures_t {
@@ -22,7 +25,9 @@ R2_deferred_main (
   const R2_deferred_surface_data_t data,
   const R2_deferred_surface_derived_t derived,
   const R2_deferred_surface_textures_t textures,
-  const R2_deferred_surface_parameters_t params)
+  const R2_deferred_surface_parameters_t params,
+  const R2_deferred_surface_matrices_view_t matrices_view,
+  const R2_deferred_surface_matrices_instance_t matrices_instance)
 {
   vec4 albedo_sample =
     texture (textures.albedo, data.uv);
@@ -56,4 +61,4 @@ R2_deferred_main (
   );
 }
 
-#include "R2DeferredSurfaceShaderMain.h"
+#endif // R2_DEFERRED_SURFACE_BASIC_REFLECTIVE_H

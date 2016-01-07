@@ -28,16 +28,17 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Basic deferred surface shader.
+ * Basic deferred surface shader for single instances.
  */
 
-public final class R2DeferredShaderBasic extends
+public final class R2DeferredShaderBasicSingle extends
   R2AbstractShader<R2DeferredShaderBasicParameters>
-  implements R2ShaderInstanceType<R2DeferredShaderBasicParameters>
+  implements R2ShaderSingleType<R2DeferredShaderBasicParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_normal;
   private final JCGLProgramUniformType u_transform_modelview;
+  private final JCGLProgramUniformType u_transform_view;
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_uv;
   private final JCGLProgramUniformType u_emission_amount;
@@ -50,7 +51,7 @@ public final class R2DeferredShaderBasic extends
   private final JCGLProgramUniformType u_texture_specular;
   private final JCGLProgramUniformType u_texture_emission;
 
-  private R2DeferredShaderBasic(
+  private R2DeferredShaderBasicSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -59,25 +60,29 @@ public final class R2DeferredShaderBasic extends
       in_shaders,
       in_sources,
       in_pool,
-      "R2DeferredSurfaceBasic",
-      "R2DeferredSurfaceBasic.vert",
+      "R2DeferredSurfaceBasicSingle",
+      "R2DeferredSurfaceBasicSingle.vert",
       Optional.empty(),
-      "R2DeferredSurfaceBasic.frag");
+      "R2DeferredSurfaceBasicSingle.frag");
 
     final Map<String, JCGLProgramUniformType> us =
       this.getShaderProgram().getUniforms();
-    Assertive.ensure(us.size() == 14);
+    Assertive.ensure(us.size() == 15, "Expected number of parameters is 15");
+
+    this.u_transform_projection = NullCheck.notNull(
+      us.get("R2_deferred_surface_matrices_view.transform_projection"));
+    this.u_transform_view = NullCheck.notNull(
+      us.get("R2_deferred_surface_matrices_view.transform_view"));
+
+    this.u_transform_normal = NullCheck.notNull(
+      us.get("R2_deferred_surface_matrices_instance.transform_normal"));
+    this.u_transform_modelview = NullCheck.notNull(
+      us.get("R2_deferred_surface_matrices_instance.transform_modelview"));
+    this.u_transform_uv = NullCheck.notNull(
+      us.get("R2_deferred_surface_matrices_instance.transform_uv"));
 
     this.u_depth_coefficient = NullCheck.notNull(
       us.get("R2_deferred_surface_parameters.depth_coefficient"));
-    this.u_transform_normal = NullCheck.notNull(
-      us.get("R2_deferred_surface_parameters.transform_normal"));
-    this.u_transform_modelview = NullCheck.notNull(
-      us.get("R2_deferred_surface_parameters.transform_modelview"));
-    this.u_transform_projection = NullCheck.notNull(
-      us.get("R2_deferred_surface_parameters.transform_projection"));
-    this.u_transform_uv = NullCheck.notNull(
-      us.get("R2_deferred_surface_parameters.transform_uv"));
     this.u_emission_amount = NullCheck.notNull(
       us.get("R2_deferred_surface_parameters.emission_amount"));
     this.u_albedo_color = NullCheck.notNull(
@@ -109,12 +114,12 @@ public final class R2DeferredShaderBasic extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceType<R2DeferredShaderBasicParameters> newShader(
+  public static R2ShaderSingleType<R2DeferredShaderBasicParameters> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2DeferredShaderBasic(in_shaders, in_sources, in_pool);
+    return new R2DeferredShaderBasicSingle(in_shaders, in_sources, in_pool);
   }
 
   @Override
@@ -172,6 +177,8 @@ public final class R2DeferredShaderBasic extends
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
       (float) R2Projections.getDepthCoefficient(m.getProjection()));
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_view, m.getMatrixView());
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_projection, m.getMatrixProjection());
   }

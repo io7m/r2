@@ -17,10 +17,17 @@
 package com.io7m.r2.core;
 
 /**
- * The type of single mesh instances.
+ * The type of opaque materials that can be applied to single instances.
+ *
+ * @param <M> The type of shader parameters
  */
 
-public interface R2InstanceSingleMeshType extends R2InstanceType
+public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
 {
+  /**
+   * @return The material shader
+   */
 
+  @Override
+  R2ShaderSingleUsableType<M> getShader();
 }

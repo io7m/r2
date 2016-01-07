@@ -1,10 +1,10 @@
-#ifndef R2_DEFERRED_SURFACE_SHADER_H
-#define R2_DEFERRED_SURFACE_SHADER_H
+#ifndef R2_DEFERRED_SURFACE_TYPES_H
+#define R2_DEFERRED_SURFACE_TYPES_H
 
 #include "R2DeferredSurfaceOutput.h"
 
 //
-// Interpolated surface data that all deferred shaders will receive.
+// Interpolated surface data that all deferred surface shaders will receive.
 //
 
 struct R2_deferred_surface_data_t {
@@ -18,7 +18,7 @@ struct R2_deferred_surface_data_t {
 };
 
 //
-// Derived surface data that all deferred shaders will receive.
+// Derived surface data that all deferred surface shaders will receive.
 //
 
 struct R2_deferred_surface_derived_t {
@@ -27,15 +27,30 @@ struct R2_deferred_surface_derived_t {
 };
 
 //
-// Constant surface parameters that all deferred shaders will receive.
+// Matrices related to the rendered instance that all deferred surface shaders will receive.
+//
+
+struct R2_deferred_surface_matrices_instance_t {
+  mat4x4 transform_modelview;  // Object-space to Eye-space matrix
+  mat3x3 transform_normal;     // Object-space to Eye-space normal matrix
+  mat3x3 transform_uv;         // UV matrix
+};
+
+//
+// Matrices related to the view that all deferred surface shaders will receive.
+//
+
+struct R2_deferred_surface_matrices_view_t {
+  mat4x4 transform_view;       // World-space to Eye-space matrix
+  mat4x4 transform_projection; // Eye-space to Clip-space matrix
+};
+
+//
+// Constant surface parameters that all deferred surface shaders will receive.
 //
 
 struct R2_deferred_surface_parameters_t {
   float depth_coefficient;     // Logarithmic depth coefficient
-  mat3x3 transform_normal;     // Object-space to Eye-space normal matrix
-  mat4x4 transform_modelview;  // Object-space to Eye-space matrix
-  mat4x4 transform_projection; // Eye-space to Clip-space matrix
-  mat3x3 transform_uv;         // UV matrix
 
   float emission_amount;       // Emission level in the range `[0, 1]`
 
@@ -47,7 +62,7 @@ struct R2_deferred_surface_parameters_t {
 };
 
 //
-// Input textures that all deferred shaders will receive.
+// Input textures that all deferred surface shaders will receive.
 //
 
 struct R2_deferred_surface_textures_t {
@@ -57,4 +72,4 @@ struct R2_deferred_surface_textures_t {
   sampler2D emission;  // R emission level texture
 };
 
-#endif // R2_DEFERRED_SURFACE_SHADER_H
+#endif // R2_DEFERRED_SURFACE_TYPES_H

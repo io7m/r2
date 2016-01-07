@@ -149,6 +149,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     @Override
     public void dispose(final GLAutoDrawable drawable)
     {
+      R2JOGLExampleSingleWindowMain.LOG.debug("finishing example");
       this.example.onFinish(this.context.contextGetGL33(), this.r2_main);
     }
 
@@ -178,7 +179,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
           final JCGLInterfaceGL33Type g33 = this.context.contextGetGL33();
           this.r2_main = R2Main.newBuilder().build(g33);
+
+          R2JOGLExampleSingleWindowMain.LOG.debug("initializing example");
           this.example.onInitialize(g33, this.area, this.r2_main);
+          R2JOGLExampleSingleWindowMain.LOG.debug("initialized example");
           return;
         }
 

@@ -17,13 +17,10 @@
 package com.io7m.r2.core;
 
 /**
- * The type of shaders for rendering individual instances.
- *
- * @param <M> The type of parameter data
+ * The type of single mesh instances.
  */
 
-public interface R2ShaderInstanceType<M> extends R2ShaderType<M>,
-  R2ShaderInstanceUsableType<M>
+public interface R2InstanceSingleType extends R2InstanceType
 {
-  // No extra functions
+
 }

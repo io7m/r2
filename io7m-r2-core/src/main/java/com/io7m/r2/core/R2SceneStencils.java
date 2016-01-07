@@ -81,7 +81,7 @@ public final class R2SceneStencils implements R2SceneStencilsType
 
   @Override
   public void stencilsAddSingleMesh(
-    final R2InstanceSingleMeshType i)
+    final R2InstanceSingleType i)
   {
     NullCheck.notNull(i);
 

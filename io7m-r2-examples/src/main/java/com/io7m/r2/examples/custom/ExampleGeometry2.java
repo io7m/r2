@@ -33,16 +33,16 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVectorM3F;
-import com.io7m.r2.core.R2DeferredShaderBasic;
+import com.io7m.r2.core.R2DeferredShaderBasicSingle;
 import com.io7m.r2.core.R2DeferredShaderBasicParameters;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2InstanceSingleMesh;
-import com.io7m.r2.core.R2InstanceSingleMeshType;
-import com.io7m.r2.core.R2MaterialOpaqueInstanceSingle;
-import com.io7m.r2.core.R2MaterialOpaqueInstanceSingleType;
+import com.io7m.r2.core.R2InstanceSingle;
+import com.io7m.r2.core.R2InstanceSingleType;
+import com.io7m.r2.core.R2MaterialOpaqueSingle;
+import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionFOV;
 import com.io7m.r2.core.R2SceneOpaques;
@@ -50,7 +50,7 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2ShaderInstanceType;
+import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
@@ -75,18 +75,18 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
   private R2MatricesType               matrices;
   private R2ProjectionFOV              projection;
   private R2UnitQuadType               quad;
-  private R2InstanceSingleMeshType     instance_0;
-  private R2InstanceSingleMeshType     instance_1;
+  private R2InstanceSingleType         instance_0;
+  private R2InstanceSingleType         instance_1;
   private R2SceneOpaquesType           opaques;
   private R2GeometryBufferType         gbuffer;
   private JCGLClearSpecification       clear_spec;
   private PVectorM3F<R2SpaceWorldType> instance_1_pos;
 
-  private R2ShaderInstanceType<R2DeferredShaderBasicParameters>
+  private R2ShaderSingleType<R2DeferredShaderBasicParameters>
     shader;
   private R2DeferredShaderBasicParameters
     shader_params;
-  private R2MaterialOpaqueInstanceSingleType<R2DeferredShaderBasicParameters>
+  private R2MaterialOpaqueSingleType<R2DeferredShaderBasicParameters>
     material;
 
   public ExampleGeometry2()
@@ -121,7 +121,7 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
     final R2IDPoolType id_pool = m.getIDPool();
 
     final R2TransformOST transform_0 = R2TransformOST.newTransform();
-    this.instance_0 = R2InstanceSingleMesh.newInstance(
+    this.instance_0 = R2InstanceSingle.newInstance(
       id_pool,
       this.quad.getArrayObject(),
       transform_0,
@@ -129,7 +129,7 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
 
     final R2TransformOST transform_1 = R2TransformOST.newTransform();
     this.instance_1_pos = transform_1.getTranslation();
-    this.instance_1 = R2InstanceSingleMesh.newInstance(
+    this.instance_1 = R2InstanceSingle.newInstance(
       id_pool,
       this.quad.getArrayObject(),
       transform_1,
@@ -138,11 +138,11 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
     final R2ShaderSourcesType sources =
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     this.shader =
-      R2DeferredShaderBasic.newShader(g.getShaders(), sources, id_pool);
+      R2DeferredShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     this.shader_params =
       R2DeferredShaderBasicParameters.newParameters(m.getTextureDefaults());
 
-    this.material = R2MaterialOpaqueInstanceSingle.newMaterial(
+    this.material = R2MaterialOpaqueSingle.newMaterial(
       id_pool,
       this.shader,
       this.shader_params);
