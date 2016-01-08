@@ -86,7 +86,6 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private R2MaterialOpaqueSingleType<R2DeferredShaderBasicParameters>
               material;
 
-
   public ExampleGeometry0()
   {
     this.view = PMatrixHeapArrayM4x4F.newMatrix();

@@ -25,9 +25,16 @@ package com.io7m.r2.core;
  *
  * <p>The primary use case for batched instances is rendering a lot of copies of
  * the same mesh in a single draw call.</p>
+ *
+ * <p>Batched instances may only use orthogonal transforms, to avoid having to
+ * perform a costly matrix inversion on the GPU (to produce a per-instance
+ * normal matrix).</p>
+ *
+ * @param <T> The precise type of transform used for each instance
  */
 
-public interface R2InstanceBatchedType
+public interface R2InstanceBatchedType<T extends
+  R2TransformOrthogonalReadableType>
 {
 
 }

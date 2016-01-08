@@ -16,10 +16,15 @@
 
 package com.io7m.r2.tests.core;
 
-import com.io7m.jtensors.QuaternionM4F;
+import com.io7m.jtensors.Quaternion4FType;
+import com.io7m.jtensors.VectorI2F;
+import com.io7m.jtensors.VectorI3F;
+import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
-import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.jtensors.parameterized.PVector3FType;
+import com.io7m.jtensors.parameterized.PVectorI2F;
+import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.r2.core.R2TransformContext;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2TransformOST;
@@ -36,9 +41,11 @@ public final class R2TransformOSTTest
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
     final R2TransformOST r = R2TransformOST.newTransform();
-    final PVectorM3F<R2SpaceWorldType> t = r.getTranslation();
-    final QuaternionM4F o = r.getOrientation();
+    final PVector3FType<R2SpaceWorldType> t = r.getTranslation();
+    final Quaternion4FType o = r.getOrientation();
     final float s = r.getScale();
+
+    Assert.assertTrue(r.transformHasChanged());
 
     Assert.assertEquals(0.0f, t.getXF(), 0.0f);
     Assert.assertEquals(0.0f, t.getYF(), 0.0f);
@@ -53,6 +60,8 @@ public final class R2TransformOSTTest
 
     final R2TransformContextType c = R2TransformContext.newContext();
     r.transformMakeMatrix4x4F(c, m);
+
+    Assert.assertFalse(r.transformHasChanged());
 
     Assert.assertEquals(1.0f, m.getR0C0F(), 0.0f);
     Assert.assertEquals(0.0f, m.getR1C0F(), 0.0f);
@@ -81,9 +90,11 @@ public final class R2TransformOSTTest
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
     final R2TransformOST r = R2TransformOST.newTransform();
-    final PVectorM3F<R2SpaceWorldType> t = r.getTranslation();
-    final QuaternionM4F o = r.getOrientation();
+    final PVector3FType<R2SpaceWorldType> t = r.getTranslation();
+    final Quaternion4FType o = r.getOrientation();
     r.setScale(2.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
 
     Assert.assertEquals(0.0f, t.getXF(), 0.0f);
     Assert.assertEquals(0.0f, t.getYF(), 0.0f);
@@ -96,6 +107,8 @@ public final class R2TransformOSTTest
 
     final R2TransformContextType c = R2TransformContext.newContext();
     r.transformMakeMatrix4x4F(c, m);
+
+    Assert.assertFalse(r.transformHasChanged());
 
     Assert.assertEquals(2.0f, m.getR0C0F(), 0.0f);
     Assert.assertEquals(0.0f, m.getR1C0F(), 0.0f);
@@ -119,14 +132,177 @@ public final class R2TransformOSTTest
   }
 
   @Test
+  public void testHasChangedTranslation()
+  {
+    final R2TransformContextType c = R2TransformContext.newContext();
+    final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
+      PMatrixHeapArrayM4x4F.newMatrix();
+    final R2TransformOST r = R2TransformOST.newTransform();
+    final PVector3FType<R2SpaceWorldType> t = r.getTranslation();
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    t.setXF(1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    t.setYF(1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    t.setZF(1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    t.set2F(1.0f, 1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    t.set3F(1.0f, 1.0f, 1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    t.copyFrom2F(new VectorI2F(1.0f, 1.0f));
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    t.copyFrom3F(new VectorI3F(1.0f, 1.0f, 1.0f));
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    t.copyFromTyped2F(new PVectorI2F<>(1.0f, 1.0f));
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    t.copyFromTyped3F(new PVectorI3F<>(1.0f, 1.0f, 1.0f));
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+  }
+
+  @Test
+  public void testHasChangedScale()
+  {
+    final R2TransformContextType c = R2TransformContext.newContext();
+    final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
+      PMatrixHeapArrayM4x4F.newMatrix();
+    final R2TransformOST r = R2TransformOST.newTransform();
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    r.setScale(1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+  }
+
+  @Test
+  public void testHasChangedOrientation()
+  {
+    final R2TransformContextType c = R2TransformContext.newContext();
+    final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
+      PMatrixHeapArrayM4x4F.newMatrix();
+    final R2TransformOST r = R2TransformOST.newTransform();
+    final Quaternion4FType o = r.getOrientation();
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.setXF(1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.setYF(1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.setZF(1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.setWF(1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.set2F(1.0f, 1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.set3F(1.0f, 1.0f, 1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.set4F(1.0f, 1.0f, 1.0f, 1.0f);
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.copyFrom2F(new VectorI2F(1.0f, 1.0f));
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.copyFrom3F(new VectorI3F(1.0f, 1.0f, 1.0f));
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+
+    o.copyFrom4F(new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f));
+
+    Assert.assertTrue(r.transformHasChanged());
+    r.transformMakeMatrix4x4F(c, m);
+    Assert.assertFalse(r.transformHasChanged());
+  }
+
+  @Test
   public void testTranslate()
   {
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
     final R2TransformOST r = R2TransformOST.newTransform();
-    final PVectorM3F<R2SpaceWorldType> t = r.getTranslation();
-    final QuaternionM4F o = r.getOrientation();
+    final PVector3FType<R2SpaceWorldType> t = r.getTranslation();
+    final Quaternion4FType o = r.getOrientation();
     final float s = r.getScale();
+
+    Assert.assertTrue(r.transformHasChanged());
 
     t.set3F(5.0f, 0.0f, 0.0f);
 
@@ -143,6 +319,8 @@ public final class R2TransformOSTTest
 
     final R2TransformContextType c = R2TransformContext.newContext();
     r.transformMakeMatrix4x4F(c, m);
+
+    Assert.assertFalse(r.transformHasChanged());
 
     System.out.println(m);
 

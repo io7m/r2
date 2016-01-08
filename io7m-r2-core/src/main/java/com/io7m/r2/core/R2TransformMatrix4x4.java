@@ -39,6 +39,7 @@ public final class R2TransformMatrix4x4 implements
   PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType>
 {
   private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> model;
+  private       boolean                                              changed;
 
   /**
    * Construct a new identity transform.
@@ -47,29 +48,34 @@ public final class R2TransformMatrix4x4 implements
   public R2TransformMatrix4x4()
   {
     this.model = PMatrixHeapArrayM4x4F.newMatrix();
+    this.changed = true;
   }
 
   @Override
   public void setRow0With4F(final VectorReadable4FType v)
   {
+    this.changed = true;
     this.model.setRow0With4F(v);
   }
 
   @Override
   public void setRow1With4F(final VectorReadable4FType v)
   {
+    this.changed = true;
     this.model.setRow1With4F(v);
   }
 
   @Override
   public void setRow2With4F(final VectorReadable4FType v)
   {
+    this.changed = true;
     this.model.setRow2With4F(v);
   }
 
   @Override
   public void setRow3With4F(final VectorReadable4FType v)
   {
+    this.changed = true;
     this.model.setRow3With4F(v);
   }
 
@@ -78,6 +84,7 @@ public final class R2TransformMatrix4x4 implements
     final int row,
     final VectorReadable4FType v)
   {
+    this.changed = true;
     this.model.setRowWith4F(row, v);
   }
 
@@ -86,6 +93,7 @@ public final class R2TransformMatrix4x4 implements
     final int row,
     final VectorReadable4FType v)
   {
+    this.changed = true;
     this.model.setRowWith4FUnsafe(row, v);
   }
 
@@ -94,6 +102,7 @@ public final class R2TransformMatrix4x4 implements
     final int row,
     final VectorReadable3FType v)
   {
+    this.changed = true;
     this.model.setRowWith3F(row, v);
   }
 
@@ -102,6 +111,7 @@ public final class R2TransformMatrix4x4 implements
     final int row,
     final VectorReadable3FType v)
   {
+    this.changed = true;
     this.model.setRowWith3FUnsafe(row, v);
   }
 
@@ -110,6 +120,7 @@ public final class R2TransformMatrix4x4 implements
     final int row,
     final VectorReadable2FType v)
   {
+    this.changed = true;
     this.model.setRowWith2F(row, v);
   }
 
@@ -118,6 +129,7 @@ public final class R2TransformMatrix4x4 implements
     final int row,
     final VectorReadable2FType v)
   {
+    this.changed = true;
     this.model.setRowWith2FUnsafe(row, v);
   }
 
@@ -127,6 +139,7 @@ public final class R2TransformMatrix4x4 implements
     final int column,
     final float value)
   {
+    this.changed = true;
     this.model.setRowColumnF(row, column, value);
   }
 
@@ -147,6 +160,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR0C3F(final float x)
   {
+    this.changed = true;
     this.model.setR0C3F(x);
   }
 
@@ -159,6 +173,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR1C3F(final float x)
   {
+    this.changed = true;
     this.model.setR1C3F(x);
   }
 
@@ -171,6 +186,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR2C3F(final float x)
   {
+    this.changed = true;
     this.model.setR2C3F(x);
   }
 
@@ -183,6 +199,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR3C0F(final float x)
   {
+    this.changed = true;
     this.model.setR3C0F(x);
   }
 
@@ -195,6 +212,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR3C1F(final float x)
   {
+    this.changed = true;
     this.model.setR3C1F(x);
   }
 
@@ -207,6 +225,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR3C2F(final float x)
   {
+    this.changed = true;
     this.model.setR3C2F(x);
   }
 
@@ -219,6 +238,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR3C3F(final float x)
   {
+    this.changed = true;
     this.model.setR3C3F(x);
   }
 
@@ -247,6 +267,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR0C2F(final float x)
   {
+    this.changed = true;
     this.model.setR0C2F(x);
   }
 
@@ -259,6 +280,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR1C2F(final float x)
   {
+    this.changed = true;
     this.model.setR1C2F(x);
   }
 
@@ -271,6 +293,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR2C0F(final float x)
   {
+    this.changed = true;
     this.model.setR2C0F(x);
   }
 
@@ -283,6 +306,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR2C1F(final float x)
   {
+    this.changed = true;
     this.model.setR2C1F(x);
   }
 
@@ -295,6 +319,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR2C2F(final float x)
   {
+    this.changed = true;
     this.model.setR2C2F(x);
   }
 
@@ -323,6 +348,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR0C0F(final float x)
   {
+    this.changed = true;
     this.model.setR0C0F(x);
   }
 
@@ -335,6 +361,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR0C1F(final float x)
   {
+    this.changed = true;
     this.model.setR0C1F(x);
   }
 
@@ -347,6 +374,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR1C0F(final float x)
   {
+    this.changed = true;
     this.model.setR1C0F(x);
   }
 
@@ -359,6 +387,7 @@ public final class R2TransformMatrix4x4 implements
   @Override
   public void setR1C1F(final float x)
   {
+    this.changed = true;
     this.model.setR1C1F(x);
   }
 
@@ -379,6 +408,12 @@ public final class R2TransformMatrix4x4 implements
   }
 
   @Override
+  public boolean transformHasChanged()
+  {
+    return this.changed;
+  }
+
+  @Override
   public void transformMakeMatrix4x4F(
     final R2TransformContextType c,
     final PMatrixWritable4x4FType<R2SpaceObjectType, R2SpaceWorldType> m)
@@ -386,6 +421,7 @@ public final class R2TransformMatrix4x4 implements
     NullCheck.notNull(c);
     NullCheck.notNull(m);
     MatrixM4x4F.copy(this.model, m);
+    this.changed = false;
   }
 
   @Override

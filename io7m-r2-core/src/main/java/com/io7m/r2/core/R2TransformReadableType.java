@@ -27,8 +27,16 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 public interface R2TransformReadableType
 {
   /**
-   * Produce a 4x4 matrix for the current transformation, writing the
-   * resulting matrix to {@code m}.
+   * @return {@code true} iff the transform has changed more recently than the
+   * last call to {@link #transformMakeMatrix4x4F(R2TransformContextType,
+   * PMatrixWritable4x4FType)}
+   */
+
+  boolean transformHasChanged();
+
+  /**
+   * Produce a 4x4 matrix for the current transformation, writing the resulting
+   * matrix to {@code m}.
    *
    * @param context The current transform context
    * @param m       The matrix to which values will be written

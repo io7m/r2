@@ -32,9 +32,9 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
-import com.io7m.jtensors.parameterized.PVectorM3F;
-import com.io7m.r2.core.R2DeferredShaderBasicSingle;
+import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.r2.core.R2DeferredShaderBasicParameters;
+import com.io7m.r2.core.R2DeferredShaderBasicSingle;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2GeometryRendererType;
@@ -69,18 +69,18 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private R2SceneStencilsType          stencils;
-  private R2StencilRendererType        stencil_renderer;
-  private R2GeometryRendererType       geom_renderer;
-  private R2MatricesType               matrices;
-  private R2ProjectionFOV              projection;
-  private R2UnitQuadType               quad;
-  private R2InstanceSingleType         instance_0;
-  private R2InstanceSingleType         instance_1;
-  private R2SceneOpaquesType           opaques;
-  private R2GeometryBufferType         gbuffer;
-  private JCGLClearSpecification       clear_spec;
-  private PVectorM3F<R2SpaceWorldType> instance_1_pos;
+  private R2SceneStencilsType             stencils;
+  private R2StencilRendererType           stencil_renderer;
+  private R2GeometryRendererType          geom_renderer;
+  private R2MatricesType                  matrices;
+  private R2ProjectionFOV                 projection;
+  private R2UnitQuadType                  quad;
+  private R2InstanceSingleType            instance_0;
+  private R2InstanceSingleType            instance_1;
+  private R2SceneOpaquesType              opaques;
+  private R2GeometryBufferType            gbuffer;
+  private JCGLClearSpecification          clear_spec;
+  private PVector3FType<R2SpaceWorldType> instance_1_pos;
 
   private R2ShaderSingleType<R2DeferredShaderBasicParameters>
     shader;

@@ -19,11 +19,15 @@ package com.io7m.r2.core;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.Matrix4x4FType;
 import com.io7m.jtensors.MatrixM4x4F;
+import com.io7m.jtensors.Quaternion4FType;
 import com.io7m.jtensors.QuaternionM4F;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
+import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * <p>A transform represented by an orientation, a scale, and a
@@ -36,18 +40,24 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 public final class R2TransformOST implements
   R2TransformOrthogonalReadableType
 {
-  private final QuaternionM4F                orientation;
-  private final PVectorM3F<R2SpaceWorldType> translation;
-  private       float                        scale;
+  private final Quaternion4FType                orientation;
+  private final PVector3FType<R2SpaceWorldType> translation;
+  private final AtomicBoolean                   changed;
+  private       float                           scale;
 
   private R2TransformOST(
-    final QuaternionM4F in_orientation,
+    final Quaternion4FType in_orientation,
     final float in_scale,
-    final PVectorM3F<R2SpaceWorldType> in_translation)
+    final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    this.orientation = NullCheck.notNull(in_orientation);
-    this.scale = in_scale;
-    this.translation = NullCheck.notNull(in_translation);
+    this.changed = new AtomicBoolean(true);
+    this.orientation =
+      new R2TransformDelegatingTensors.R2QuaternionM4F(
+        this.changed, in_orientation);
+    this.scale = 1.0f;
+    this.translation =
+      new R2TransformDelegatingTensors.R2PVectorM3F<>(
+        this.changed, in_translation);
   }
 
   /**
@@ -63,9 +73,9 @@ public final class R2TransformOST implements
    */
 
   public static R2TransformOST newTransformWith(
-    final QuaternionM4F in_orientation,
+    final Quaternion4FType in_orientation,
     final float in_scale,
-    final PVectorM3F<R2SpaceWorldType> in_translation)
+    final PVector3FType<R2SpaceWorldType> in_translation)
   {
     return new R2TransformOST(in_orientation, in_scale, in_translation);
   }
@@ -91,7 +101,7 @@ public final class R2TransformOST implements
    * @return A quaternion representing the current orientation
    */
 
-  public QuaternionM4F getOrientation()
+  public Quaternion4FType getOrientation()
   {
     return this.orientation;
   }
@@ -114,15 +124,22 @@ public final class R2TransformOST implements
   public void setScale(final float x)
   {
     this.scale = x;
+    this.changed.set(true);
   }
 
   /**
    * @return A translation in world-space
    */
 
-  public PVectorM3F<R2SpaceWorldType> getTranslation()
+  public PVector3FType<R2SpaceWorldType> getTranslation()
   {
     return this.translation;
+  }
+
+  @Override
+  public boolean transformHasChanged()
+  {
+    return this.changed.get();
   }
 
   @Override
@@ -154,5 +171,7 @@ public final class R2TransformOST implements
       temporary.setR2C2F(this.scale);
       MatrixM4x4F.multiply(accum, temporary, m);
     }
+
+    this.changed.set(false);
   }
 }
