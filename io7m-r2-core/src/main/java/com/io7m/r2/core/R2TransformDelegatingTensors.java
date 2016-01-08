@@ -29,6 +29,10 @@ import com.io7m.junreachable.UnreachableCodeException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Tensor implementations used to implement the various transform types.
+ */
+
 final class R2TransformDelegatingTensors
 {
   private R2TransformDelegatingTensors()
