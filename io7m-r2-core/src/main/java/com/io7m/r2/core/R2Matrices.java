@@ -20,12 +20,14 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.MatrixM3x3F;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.parameterized.PMatrix3x3FType;
+import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixDirect3x3FType;
 import com.io7m.jtensors.parameterized.PMatrixDirect4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixDirectM3x3F;
 import com.io7m.jtensors.parameterized.PMatrixDirectM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixDirectReadable3x3FType;
 import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
+import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.jtensors.parameterized.PMatrixReadable4x4FType;
@@ -109,7 +111,7 @@ public final class R2Matrices implements R2MatricesType
 
   private static final class Instance implements R2MatricesInstanceType
   {
-    private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceWorldType>
+    private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType>
       m_model;
     private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceEyeType>
       m_modelview;
@@ -121,7 +123,7 @@ public final class R2Matrices implements R2MatricesType
     Instance()
     {
       this.active = false;
-      this.m_model = PMatrixDirectM4x4F.newMatrix();
+      this.m_model = PMatrixHeapArrayM4x4F.newMatrix();
       this.m_modelview = PMatrixDirectM4x4F.newMatrix();
       this.m_normal = PMatrixDirectM3x3F.newMatrix();
     }
