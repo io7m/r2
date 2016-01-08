@@ -52,7 +52,7 @@ import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
-import com.io7m.r2.core.R2MatricesInstanceValuesType;
+import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSingleUsableType;
@@ -227,7 +227,7 @@ public final class R2TestUtilities
       @Override
       public void setMatricesInstance(
         final JCGLShadersType g_sh,
-        final R2MatricesInstanceValuesType m)
+        final R2MatricesInstanceSingleValuesType m)
       {
 
       }

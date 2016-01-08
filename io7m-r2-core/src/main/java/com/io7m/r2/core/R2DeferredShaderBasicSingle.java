@@ -186,7 +186,7 @@ public final class R2DeferredShaderBasicSingle extends
   @Override
   public void setMatricesInstance(
     final JCGLShadersType g_sh,
-    final R2MatricesInstanceValuesType m)
+    final R2MatricesInstanceSingleValuesType m)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(m);

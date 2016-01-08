@@ -41,6 +41,6 @@ public interface R2MatricesObserverType extends R2MatricesObserverValuesType
   <T> T withTransform(
     R2TransformReadableType t,
     PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv,
-    R2MatricesInstanceFunctionType<T> f)
+    R2MatricesInstanceSingleFunctionType<T> f)
     throws R2Exception;
 }

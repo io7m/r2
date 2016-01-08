@@ -16,22 +16,29 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jtensors.parameterized.PMatrixDirectReadable3x3FType;
+import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
+import com.io7m.r2.spaces.R2SpaceEyeType;
+import com.io7m.r2.spaces.R2SpaceNormalEyeType;
+import com.io7m.r2.spaces.R2SpaceObjectType;
+
 /**
- * The type of functions that take a value of type {@link
- * R2MatricesInstanceType} and yield a value of type {@code T}.
- *
- * @param <T> The type of returned values
+ * Access to the matrices for a given instance.
  */
 
-public interface R2MatricesInstanceFunctionType<T>
+public interface R2MatricesInstanceSingleValuesType
 {
   /**
-   * Apply the function.
-   *
-   * @param o The instance matrices
-   *
-   * @return A value of {@code T}
+   * @return The current modelview matrix for an instance
    */
 
-  T apply(R2MatricesInstanceType o);
+  PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
+  getMatrixModelView();
+
+  /**
+   * @return The current normal matrix for an instance
+   */
+
+  PMatrixDirectReadable3x3FType<R2SpaceObjectType, R2SpaceNormalEyeType>
+  getMatrixNormal();
 }

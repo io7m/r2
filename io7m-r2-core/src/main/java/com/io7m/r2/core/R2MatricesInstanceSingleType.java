@@ -17,10 +17,13 @@
 package com.io7m.r2.core;
 
 /**
- * Access to the matrices for a given instance.
+ * Access to the matrices for a given single instance.
+ *
+ * @see R2InstanceSingleType
  */
 
-public interface R2MatricesInstanceType extends R2MatricesInstanceValuesType
+public interface R2MatricesInstanceSingleType extends
+  R2MatricesInstanceSingleValuesType
 {
-
+  // No extra functions
 }

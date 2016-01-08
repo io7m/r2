@@ -109,7 +109,8 @@ public final class R2Matrices implements R2MatricesType
     }
   }
 
-  private static final class Instance implements R2MatricesInstanceType
+  private static final class InstanceSingle implements
+    R2MatricesInstanceSingleType
   {
     private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType>
       m_model;
@@ -120,7 +121,7 @@ public final class R2Matrices implements R2MatricesType
 
     private boolean active;
 
-    Instance()
+    InstanceSingle()
     {
       this.active = false;
       this.m_model = PMatrixHeapArrayM4x4F.newMatrix();
@@ -152,7 +153,7 @@ public final class R2Matrices implements R2MatricesType
     private final PMatrixDirect4x4FType<R2SpaceEyeType, R2SpaceWorldType>
       m_view_inverse;
 
-    private final Instance                 instance;
+    private final InstanceSingle           instance_single;
     private final R2TransformContextType   context_tr;
     private final MatrixM3x3F.ContextMM3F  context_3f;
     private       boolean                  active;
@@ -165,7 +166,7 @@ public final class R2Matrices implements R2MatricesType
       this.m_projection = PMatrixDirectM4x4F.newMatrix();
       this.m_view = PMatrixDirectM4x4F.newMatrix();
       this.m_view_inverse = PMatrixDirectM4x4F.newMatrix();
-      this.instance = new Instance();
+      this.instance_single = new InstanceSingle();
       this.context_tr = NullCheck.notNull(in_context_tr);
       this.projection = null;
       this.context_3f = new MatrixM3x3F.ContextMM3F();
@@ -205,7 +206,7 @@ public final class R2Matrices implements R2MatricesType
     public <T> T withTransform(
       final R2TransformReadableType t,
       final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv,
-      final R2MatricesInstanceFunctionType<T> f)
+      final R2MatricesInstanceSingleFunctionType<T> f)
       throws R2Exception
     {
       NullCheck.notNull(t);
@@ -215,23 +216,25 @@ public final class R2Matrices implements R2MatricesType
       Assertive.require(this.active, "Observer is active");
 
       try {
-        this.instance.active = true;
+        this.instance_single.active = true;
 
-        t.transformMakeMatrix4x4F(this.context_tr, this.instance.m_model);
+        t.transformMakeMatrix4x4F(
+          this.context_tr,
+          this.instance_single.m_model);
 
         PMatrixM4x4F.multiply(
           this.m_view,
-          this.instance.m_model,
-          this.instance.m_modelview);
+          this.instance_single.m_model,
+          this.instance_single.m_modelview);
 
         R2Matrices.makeNormalMatrix(
           this.context_3f,
-          this.instance.m_modelview,
-          this.instance.m_normal);
+          this.instance_single.m_modelview,
+          this.instance_single.m_normal);
 
-        return f.apply(this.instance);
+        return f.apply(this.instance_single);
       } finally {
-        this.instance.active = false;
+        this.instance_single.active = false;
       }
     }
   }

@@ -73,5 +73,5 @@ public interface R2ShaderSingleUsableType<M> extends R2ShaderUsableType<M>
 
   void setMatricesInstance(
     JCGLShadersType g_sh,
-    R2MatricesInstanceValuesType m);
+    R2MatricesInstanceSingleValuesType m);
 }
