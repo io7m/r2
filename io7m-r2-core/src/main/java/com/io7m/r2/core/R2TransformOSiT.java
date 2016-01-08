@@ -27,16 +27,21 @@ import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
- * A transform represented by an orientation, a scale, and a translation.
+ * <p>A transform represented by an orientation, a scale, and a
+ * translation.</p>
+ *
+ * <p>The transform allows independent scaling on each axis and may therefore
+ * produce matrices that are not orthogonal.</p>
  */
 
-public final class R2TransformOST implements R2TransformReadableType
+public final class R2TransformOSiT implements
+  R2TransformNonOrthogonalReadableType
 {
   private final QuaternionM4F                orientation;
   private final VectorM3F                    scale;
   private final PVectorM3F<R2SpaceWorldType> translation;
 
-  private R2TransformOST(
+  private R2TransformOSiT(
     final QuaternionM4F in_orientation,
     final VectorM3F in_scale,
     final PVectorM3F<R2SpaceWorldType> in_translation)
@@ -58,12 +63,12 @@ public final class R2TransformOST implements R2TransformReadableType
    * @return A new transform
    */
 
-  public static R2TransformOST newTransformWith(
+  public static R2TransformOSiT newTransformWith(
     final QuaternionM4F in_orientation,
     final VectorM3F in_scale,
     final PVectorM3F<R2SpaceWorldType> in_translation)
   {
-    return new R2TransformOST(in_orientation, in_scale, in_translation);
+    return new R2TransformOSiT(in_orientation, in_scale, in_translation);
   }
 
   /**
@@ -74,9 +79,9 @@ public final class R2TransformOST implements R2TransformReadableType
    * @return A new transform
    */
 
-  public static R2TransformOST newTransform()
+  public static R2TransformOSiT newTransform()
   {
-    return new R2TransformOST(
+    return new R2TransformOSiT(
       new QuaternionM4F(),
       new VectorM3F(1.0f, 1.0f, 1.0f),
       new PVectorM3F<>(0.0f, 0.0f, 0.0f)

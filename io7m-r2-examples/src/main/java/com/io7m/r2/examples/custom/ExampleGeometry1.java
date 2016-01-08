@@ -53,7 +53,7 @@ import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.examples.R2ExampleCustomType;
@@ -115,7 +115,7 @@ public final class ExampleGeometry1 implements R2ExampleCustomType
       new VectorI3F(0.0f, 0.0f, 0.0f),
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
-    final R2TransformOST transform = R2TransformOST.newTransform();
+    final R2TransformOSiT transform = R2TransformOSiT.newTransform();
     final R2IDPoolType id_pool = m.getIDPool();
     this.instance = R2InstanceSingle.newInstance(
       id_pool,

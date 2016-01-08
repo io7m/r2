@@ -17,14 +17,15 @@
 package com.io7m.r2.core;
 
 /**
- * The type of instances.
+ * <p>The type of readable and non-orthogonal transforms.</p>
+ *
+ * <p>A transform is considered to be <i>non-orthogonal</i> iff the 4x4 matrix
+ * it produces is not guaranteed to be orthogonal - it may sometimes be
+ * orthogonal but is not guaranteed to be.</p>
  */
 
-public interface R2InstanceType
+public interface R2TransformNonOrthogonalReadableType extends
+  R2TransformReadableType
 {
-  /**
-   * @return The unique instance ID
-   */
-
-  long getInstanceID();
+  // No extra functions
 }

@@ -56,7 +56,7 @@ import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSingleUsableType;
-import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 
@@ -102,7 +102,7 @@ public final class R2TestUtilities
       @Override
       public R2TransformReadableType getTransform()
       {
-        return R2TransformOST.newTransform();
+        return R2TransformOSiT.newTransform();
       }
 
       @Override

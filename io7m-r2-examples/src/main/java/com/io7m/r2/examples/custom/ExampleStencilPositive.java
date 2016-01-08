@@ -34,7 +34,7 @@ import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.examples.R2ExampleCustomType;
@@ -81,7 +81,7 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
       new VectorI3F(0.0f, 0.0f, 0.0f),
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
-    final R2TransformOST transform = R2TransformOST.newTransform();
+    final R2TransformOSiT transform = R2TransformOSiT.newTransform();
     this.instance = R2InstanceSingle.newInstance(
       m.getIDPool(),
       this.quad.getArrayObject(),

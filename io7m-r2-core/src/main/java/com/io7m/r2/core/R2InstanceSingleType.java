@@ -16,11 +16,15 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 
 /**
- * The type of single mesh instances.
+ * <p>The type of single instances.</p>
+ *
+ * <p>A single instance consists of a set of one or more vertex buffers
+ * containing mesh data, a per-instance UV matrix, and a transform.</p>
  */
 
 public interface R2InstanceSingleType extends R2InstanceType
@@ -36,4 +40,10 @@ public interface R2InstanceSingleType extends R2InstanceType
    */
 
   PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> getUVMatrix();
+
+  /**
+   * @return The instance array object
+   */
+
+  JCGLArrayObjectUsableType getArrayObject();
 }

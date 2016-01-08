@@ -17,14 +17,17 @@
 package com.io7m.r2.core;
 
 /**
- * The type of instances.
+ * <p>The type of batched instances.</p>
+ *
+ * <p>A batch consists of a set of one or more vertex buffers containing mesh
+ * data, and a vertex buffer containing a set of transforms - one per rendered
+ * object.</p>
+ *
+ * <p>The primary use case for batched instances is rendering a lot of copies of
+ * the same mesh in a single draw call.</p>
  */
 
-public interface R2InstanceType
+public interface R2InstanceBatchedType
 {
-  /**
-   * @return The unique instance ID
-   */
 
-  long getInstanceID();
 }

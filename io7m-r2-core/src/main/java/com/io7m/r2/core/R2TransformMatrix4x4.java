@@ -31,10 +31,11 @@ import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
- * A simple 4x4 matrix transform.
+ * <p>A simple 4x4 matrix transform.</p>
  */
 
-public final class R2TransformMatrix4x4 implements R2TransformReadableType,
+public final class R2TransformMatrix4x4 implements
+  R2TransformNonOrthogonalReadableType,
   PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType>
 {
   private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> model;
