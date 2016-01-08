@@ -48,11 +48,11 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     instance_materials;
   private final Long2ReferenceOpenHashMap<R2ShaderSingleUsableType<?>>
     instance_shaders;
-  private final Long2ReferenceOpenHashMap<R2InstanceType>
+  private final Long2ReferenceOpenHashMap<R2InstanceSingleType>
     instances;
 
   private final StringBuilder text;
-  private final ObjectArrayList<R2InstanceType> instances_sorted;
+  private final ObjectArrayList<R2InstanceSingleType> instances_sorted;
 
   private R2SceneOpaques()
   {
@@ -185,7 +185,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
         final LongSet m_instances = this.material_to_instances.get(m_id);
         this.instances_sorted.clear();
         for (final long i_id : m_instances) {
-          final R2InstanceType i = this.instances.get(i_id);
+          final R2InstanceSingleType i = this.instances.get(i_id);
           this.instances_sorted.add(i);
         }
 
@@ -197,7 +197,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
         int current_array = -1;
         for (int index = 0; index < this.instances_sorted.size(); ++index) {
-          final R2InstanceType i = this.instances_sorted.get(index);
+          final R2InstanceSingleType i = this.instances_sorted.get(index);
           final JCGLArrayObjectUsableType array_object = i.getArrayObject();
           final int next_array = array_object.getGLName();
           if (next_array != current_array) {

@@ -288,13 +288,13 @@ public final class R2StencilRenderer implements R2StencilRendererType
     }
 
     @Override
-    public void onInstancesStartArray(final R2InstanceType i)
+    public void onInstanceSingleStartArray(final R2InstanceSingleType i)
     {
       this.array_objects.arrayObjectBind(i.getArrayObject());
     }
 
     @Override
-    public void onInstance(final R2InstanceType i)
+    public void onInstanceSingle(final R2InstanceSingleType i)
     {
       final R2TransformReadableType it =
         i.getTransform();

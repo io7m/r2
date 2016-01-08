@@ -99,7 +99,7 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     this.stencils.stencilsReset();
     this.stencils.stencilsSetMode(
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_POSITIVE);
-    this.stencils.stencilsAddSingleMesh(this.instance);
+    this.stencils.stencilsAddSingle(this.instance);
 
     final JCGLDepthBuffersType g_dep = g.getDepthBuffers();
     g_dep.depthBufferClear(1.0f);

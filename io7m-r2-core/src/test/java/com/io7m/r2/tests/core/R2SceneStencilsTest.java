@@ -128,7 +128,7 @@ public final class R2SceneStencilsTest
       Collections.shuffle(ras);
 
       for (final R2InstanceType i : ras) {
-        m.stencilsAddSingleMesh((R2InstanceSingleType) i);
+        m.stencilsAddSingle((R2InstanceSingleType) i);
       }
     }
 
@@ -143,14 +143,14 @@ public final class R2SceneStencilsTest
       }
 
       @Override
-      public void onInstancesStartArray(final R2InstanceType i)
+      public void onInstanceSingleStartArray(final R2InstanceSingleType i)
       {
         R2SceneStencilsTest.LOG.debug("start-array {}", i);
         aos.add(i.getArrayObject());
       }
 
       @Override
-      public void onInstance(final R2InstanceType i)
+      public void onInstanceSingle(final R2InstanceSingleType i)
       {
         R2SceneStencilsTest.LOG.debug("instance {}", i);
         is.add(i);
@@ -220,13 +220,13 @@ public final class R2SceneStencilsTest
     }
 
     @Override
-    public void onInstancesStartArray(final R2InstanceType i)
+    public void onInstanceSingleStartArray(final R2InstanceSingleType i)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
-    public void onInstance(final R2InstanceType i)
+    public void onInstanceSingle(final R2InstanceSingleType i)
     {
       throw new UnreachableCodeException();
     }

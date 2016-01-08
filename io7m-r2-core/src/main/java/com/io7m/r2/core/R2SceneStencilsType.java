@@ -49,12 +49,12 @@ public interface R2SceneStencilsType
   long stencilsCount();
 
   /**
-   * Add a single mesh instance to the scene.
+   * Add a single instance to the scene.
    *
    * @param i The instance
    */
 
-  void stencilsAddSingleMesh(
+  void stencilsAddSingle(
     R2InstanceSingleType i);
 
   /**

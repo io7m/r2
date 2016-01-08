@@ -35,9 +35,11 @@ public final class R2SceneStencils implements R2SceneStencilsType
     LOG = LoggerFactory.getLogger(R2SceneStencils.class);
   }
 
-  private final Long2ReferenceOpenHashMap<R2InstanceType> instances;
-  private final ObjectArrayList<R2InstanceType>           instances_sorted;
-  private       R2SceneStencilsMode                       mode;
+  private final Long2ReferenceOpenHashMap<R2InstanceSingleType> instances;
+  private final ObjectArrayList<R2InstanceSingleType>
+    instances_sorted;
+
+  private R2SceneStencilsMode mode;
 
   private R2SceneStencils()
   {
@@ -80,7 +82,7 @@ public final class R2SceneStencils implements R2SceneStencilsType
   }
 
   @Override
-  public void stencilsAddSingleMesh(
+  public void stencilsAddSingle(
     final R2InstanceSingleType i)
   {
     NullCheck.notNull(i);
@@ -108,7 +110,7 @@ public final class R2SceneStencils implements R2SceneStencilsType
 
     this.instances_sorted.clear();
     for (final long i_id : this.instances.keySet()) {
-      final R2InstanceType i = this.instances.get(i_id);
+      final R2InstanceSingleType i = this.instances.get(i_id);
       this.instances_sorted.add(i);
     }
 
@@ -124,14 +126,14 @@ public final class R2SceneStencils implements R2SceneStencilsType
 
     int current_array = -1;
     for (int index = 0; index < this.instances_sorted.size(); ++index) {
-      final R2InstanceType i = this.instances_sorted.get(index);
+      final R2InstanceSingleType i = this.instances_sorted.get(index);
       final JCGLArrayObjectUsableType array_object = i.getArrayObject();
       final int next_array = array_object.getGLName();
       if (next_array != current_array) {
-        c.onInstancesStartArray(i);
+        c.onInstanceSingleStartArray(i);
       }
       current_array = next_array;
-      c.onInstance(i);
+      c.onInstanceSingle(i);
     }
 
     c.onFinish();

@@ -192,7 +192,7 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
           g, mo, this.stencils);
         this.geom_renderer.renderGeometryWithBoundBuffer(
           g, mo, this.opaques);
-        this.stencils.stencilsAddSingleMesh(this.instance_1);
+        this.stencils.stencilsAddSingle(this.instance_1);
         this.stencil_renderer.renderStencilsWithBoundBuffer(
           g, mo, this.stencils);
         return Unit.unit();

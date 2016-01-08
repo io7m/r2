@@ -259,7 +259,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public void onInstanceSingleArrayStart(
-        final R2InstanceType i)
+        final R2InstanceSingleType i)
       {
         R2SceneOpaquesTest.LOG.debug("instance start array {}", i);
         ops.add(new Ops.OpInstanceStartArray(i));
@@ -268,7 +268,7 @@ public final class R2SceneOpaquesTest
       @Override
       public <M> void onInstanceSingle(
         final R2MaterialOpaqueSingleType<M> material,
-        final R2InstanceType i)
+        final R2InstanceSingleType i)
       {
         Assert.assertEquals(this.current_material, material);
         Assert.assertTrue(this.instance_calls < 24);
@@ -470,7 +470,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public void onInstanceSingleArrayStart(
-        final R2InstanceType i)
+        final R2InstanceSingleType i)
       {
         R2SceneOpaquesTest.LOG.debug("instance start array {}", i);
         ops.add(new Ops.OpInstanceStartArray(i));
@@ -479,7 +479,7 @@ public final class R2SceneOpaquesTest
       @Override
       public <M> void onInstanceSingle(
         final R2MaterialOpaqueSingleType<M> material,
-        final R2InstanceType i)
+        final R2InstanceSingleType i)
       {
         Assert.assertEquals(this.current_material, material);
         Assert.assertTrue(this.instance_calls < 24);
@@ -591,7 +591,7 @@ public final class R2SceneOpaquesTest
 
       @Override
       public void onInstanceSingleArrayStart(
-        final R2InstanceType i)
+        final R2InstanceSingleType i)
       {
         R2SceneOpaquesTest.LOG.debug("instance start array {}", i);
         ops.add(new Ops.OpInstanceStartArray(i));
@@ -600,7 +600,7 @@ public final class R2SceneOpaquesTest
       @Override
       public <M> void onInstanceSingle(
         final R2MaterialOpaqueSingleType<M> material,
-        final R2InstanceType i)
+        final R2InstanceSingleType i)
       {
         Assert.assertTrue(this.instance_calls < 24);
         Assert.assertEquals(this.current_material, material);
@@ -684,7 +684,7 @@ public final class R2SceneOpaquesTest
 
     @Override
     public void onInstanceSingleArrayStart(
-      final R2InstanceType i)
+      final R2InstanceSingleType i)
     {
       throw new UnreachableCodeException();
     }
@@ -692,7 +692,7 @@ public final class R2SceneOpaquesTest
     @Override
     public <M> void onInstanceSingle(
       final R2MaterialOpaqueSingleType<M> material,
-      final R2InstanceType i)
+      final R2InstanceSingleType i)
     {
       throw new UnreachableCodeException();
     }

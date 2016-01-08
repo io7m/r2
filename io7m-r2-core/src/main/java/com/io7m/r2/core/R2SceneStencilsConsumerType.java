@@ -37,15 +37,15 @@ public interface R2SceneStencilsConsumerType
    * @param i The current instance
    */
 
-  void onInstancesStartArray(R2InstanceType i);
+  void onInstanceSingleStartArray(R2InstanceSingleType i);
 
   /**
-   * Called when an instance should be rendered.
+   * Called when a single instance should be rendered.
    *
    * @param i The current instance
    */
 
-  void onInstance(R2InstanceType i);
+  void onInstanceSingle(R2InstanceSingleType i);
 
   /**
    * Called when rendering of stencil instances is finished.

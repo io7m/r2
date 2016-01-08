@@ -224,7 +224,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public void onInstanceSingleArrayStart(
-      final R2InstanceType i)
+      final R2InstanceSingleType i)
     {
       this.array_objects.arrayObjectBind(i.getArrayObject());
     }
@@ -232,7 +232,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     @Override
     public <M> void onInstanceSingle(
       final R2MaterialOpaqueSingleType<M> material,
-      final R2InstanceType i)
+      final R2InstanceSingleType i)
     {
       this.matrices.withTransform(i.getTransform(), i.getUVMatrix(), mi -> {
         final R2ShaderSingleUsableType<M> s = material.getShader();

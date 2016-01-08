@@ -76,7 +76,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   void onInstanceSingleArrayStart(
-    R2InstanceType i);
+    R2InstanceSingleType i);
 
   /**
    * Called when a single instance should be rendered.
@@ -88,7 +88,7 @@ public interface R2SceneOpaquesConsumerType
 
   <M> void onInstanceSingle(
     R2MaterialOpaqueSingleType<M> material,
-    R2InstanceType i);
+    R2InstanceSingleType i);
 
   /**
    * Called after the current set of single instances have finished rendering
