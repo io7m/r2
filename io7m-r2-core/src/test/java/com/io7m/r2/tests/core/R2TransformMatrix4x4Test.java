@@ -37,7 +37,7 @@ public final class R2TransformMatrix4x4Test extends
   {
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
-    final R2TransformMatrix4x4 r = new R2TransformMatrix4x4();
+    final R2TransformMatrix4x4 r = R2TransformMatrix4x4.newIdentityTransform();
 
     final float[][] data = new float[4][4];
 
@@ -63,14 +63,14 @@ public final class R2TransformMatrix4x4Test extends
   @Override
   protected R2TransformMatrix4x4 newMatrix()
   {
-    return new R2TransformMatrix4x4();
+    return R2TransformMatrix4x4.newIdentityTransform();
   }
 
   @Override
   protected R2TransformMatrix4x4 newMatrixFrom(
     final MatrixReadable4x4FType m)
   {
-    final R2TransformMatrix4x4 rm = new R2TransformMatrix4x4();
+    final R2TransformMatrix4x4 rm = R2TransformMatrix4x4.newIdentityTransform();
     MatrixM4x4F.copy(m, rm);
     return rm;
   }

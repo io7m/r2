@@ -29,8 +29,6 @@ import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * <p>A transform represented by an orientation, a scale, and a
  * translation.</p>
@@ -45,32 +43,32 @@ public final class R2TransformOSiT implements
   private final Quaternion4FType                orientation;
   private final Vector3FType                    scale;
   private final PVector3FType<R2SpaceWorldType> translation;
-  private final AtomicBoolean                   changed;
 
   private R2TransformOSiT(
+    final Runnable in_changed,
     final Quaternion4FType in_orientation,
     final Vector3FType in_scale,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
+    NullCheck.notNull(in_changed);
     NullCheck.notNull(in_orientation);
     NullCheck.notNull(in_scale);
     NullCheck.notNull(in_translation);
 
-    this.changed = new AtomicBoolean(true);
     this.orientation =
-      new R2TransformDelegatingTensors.R2QuaternionM4F(
-        this.changed, in_orientation);
+      new R2TransformNotifyingTensors.R2QuaternionM4F(
+        in_changed, in_orientation);
     this.scale =
-      new R2TransformDelegatingTensors.R2VectorM3F(this.changed, in_scale);
+      new R2TransformNotifyingTensors.R2VectorM3F(in_changed, in_scale);
     this.translation =
-      new R2TransformDelegatingTensors.R2PVectorM3F<>(
-        this.changed, in_translation);
+      new R2TransformNotifyingTensors.R2PVectorM3F<>(
+        in_changed, in_translation);
   }
 
   /**
-   * Construct a transform using the given initial values. The given vectors are
-   * not copied; any modifications made to them will be reflected in the
-   * transform.
+   * <p>Construct a transform using the given initial values. The given vectors
+   * are not copied; any modifications made to them will be reflected in the
+   * transform.</p>
    *
    * @param in_orientation The orientation
    * @param in_scale       The scale
@@ -84,13 +82,15 @@ public final class R2TransformOSiT implements
     final Vector3FType in_scale,
     final PVectorM3F<R2SpaceWorldType> in_translation)
   {
-    return new R2TransformOSiT(in_orientation, in_scale, in_translation);
+    return new R2TransformOSiT(
+      () -> {
+      }, in_orientation, in_scale, in_translation);
   }
 
   /**
-   * Construct a transform using the default values: The identity quaternion
+   * <p>Construct a transform using the default values: The identity quaternion
    * {@code (0, 0, 0, 1)} for orientation, the scale vector {@code (1, 1, 1)},
-   * and the translation {@code (0, 0, 0)}.
+   * and the translation {@code (0, 0, 0)}.</p>
    *
    * @return A new transform
    */
@@ -98,6 +98,30 @@ public final class R2TransformOSiT implements
   public static R2TransformOSiT newTransform()
   {
     return new R2TransformOSiT(
+      () -> {
+      },
+      new QuaternionM4F(),
+      new VectorM3F(1.0f, 1.0f, 1.0f),
+      new PVectorM3F<>(0.0f, 0.0f, 0.0f)
+    );
+  }
+
+  /**
+   * <p>Construct a transform using the default values: The identity quaternion
+   * {@code (0, 0, 0, 1)} for orientation, the scale vector {@code (1, 1, 1)},
+   * and the translation {@code (0, 0, 0)}.</p>
+   *
+   * @param in_changed The procedure that will be executed every time the value
+   *                   of this transform is changed
+   *
+   * @return A new transform
+   */
+
+  public static R2TransformOSiT newTransformWithNotifier(
+    final Runnable in_changed)
+  {
+    return new R2TransformOSiT(
+      in_changed,
       new QuaternionM4F(),
       new VectorM3F(1.0f, 1.0f, 1.0f),
       new PVectorM3F<>(0.0f, 0.0f, 0.0f)
@@ -132,12 +156,6 @@ public final class R2TransformOSiT implements
   }
 
   @Override
-  public boolean transformHasChanged()
-  {
-    return this.changed.get();
-  }
-
-  @Override
   public void transformMakeMatrix4x4F(
     final R2TransformContextType context,
     final PMatrixWritable4x4FType<R2SpaceObjectType, R2SpaceWorldType> m)
@@ -166,7 +184,5 @@ public final class R2TransformOSiT implements
       temporary.setR2C2F(this.scale.getZF());
       MatrixM4x4F.multiply(accum, temporary, m);
     }
-
-    this.changed.set(false);
   }
 }

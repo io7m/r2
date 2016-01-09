@@ -27,15 +27,13 @@ import com.io7m.jtensors.parameterized.PVectorReadable2FType;
 import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.junreachable.UnreachableCodeException;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * Tensor implementations used to implement the various transform types.
  */
 
-final class R2TransformDelegatingTensors
+final class R2TransformNotifyingTensors
 {
-  private R2TransformDelegatingTensors()
+  private R2TransformNotifyingTensors()
   {
     throw new UnreachableCodeException();
   }
@@ -43,10 +41,10 @@ final class R2TransformDelegatingTensors
   static final class R2PVectorM3F<T> implements PVector3FType<T>
   {
     private final PVector3FType<T> v;
-    private final AtomicBoolean    changed;
+    private final Runnable    changed;
 
     R2PVectorM3F(
-      final AtomicBoolean in_changed,
+      final Runnable in_changed,
       final PVector3FType<T> in_v)
     {
       this.changed = NullCheck.notNull(in_changed);
@@ -63,7 +61,7 @@ final class R2TransformDelegatingTensors
     public void setZF(final float z)
     {
       this.v.setZF(z);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -76,7 +74,7 @@ final class R2TransformDelegatingTensors
     public void setXF(final float x)
     {
       this.v.setXF(x);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -89,14 +87,14 @@ final class R2TransformDelegatingTensors
     public void setYF(final float y)
     {
       this.v.setYF(y);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
     public void copyFrom3F(final VectorReadable3FType in_v)
     {
       this.v.copyFrom3F(in_v);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -106,14 +104,14 @@ final class R2TransformDelegatingTensors
       final float z)
     {
       this.v.set3F(x, y, z);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
     public void copyFrom2F(final VectorReadable2FType in_v)
     {
       this.v.copyFrom2F(in_v);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -134,21 +132,21 @@ final class R2TransformDelegatingTensors
       final float y)
     {
       this.v.set2F(x, y);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
     public void copyFromTyped3F(final PVectorReadable3FType<T> in_v)
     {
       this.v.copyFromTyped3F(in_v);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
     public void copyFromTyped2F(final PVectorReadable2FType<T> in_v)
     {
       this.v.copyFromTyped2F(in_v);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -161,10 +159,10 @@ final class R2TransformDelegatingTensors
   static final class R2VectorM3F implements Vector3FType
   {
     private final Vector3FType  v;
-    private final AtomicBoolean changed;
+    private final Runnable changed;
 
     R2VectorM3F(
-      final AtomicBoolean in_changed,
+      final Runnable in_changed,
       final Vector3FType in_v)
     {
       this.changed = NullCheck.notNull(in_changed);
@@ -193,7 +191,7 @@ final class R2TransformDelegatingTensors
     public void setZF(final float z)
     {
       this.v.setZF(z);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -206,7 +204,7 @@ final class R2TransformDelegatingTensors
     public void setXF(final float x)
     {
       this.v.setXF(x);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -219,14 +217,14 @@ final class R2TransformDelegatingTensors
     public void setYF(final float y)
     {
       this.v.setYF(y);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
     public void copyFrom3F(final VectorReadable3FType in_v)
     {
       this.v.copyFrom3F(in_v);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -236,14 +234,14 @@ final class R2TransformDelegatingTensors
       final float z)
     {
       this.v.set3F(x, y, z);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
     public void copyFrom2F(final VectorReadable2FType in_v)
     {
       this.v.copyFrom2F(in_v);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -252,7 +250,7 @@ final class R2TransformDelegatingTensors
       final float y)
     {
       this.v.set2F(x, y);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -265,10 +263,10 @@ final class R2TransformDelegatingTensors
   static final class R2QuaternionM4F implements Quaternion4FType
   {
     private final Quaternion4FType q;
-    private final AtomicBoolean    changed;
+    private final Runnable    changed;
 
     R2QuaternionM4F(
-      final AtomicBoolean in_changed,
+      final Runnable in_changed,
       final Quaternion4FType in_q)
     {
       this.changed = NullCheck.notNull(in_changed);
@@ -303,7 +301,7 @@ final class R2TransformDelegatingTensors
     public void setWF(final float w)
     {
       this.q.setWF(w);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -316,7 +314,7 @@ final class R2TransformDelegatingTensors
     public void setZF(final float z)
     {
       this.q.setZF(z);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -329,7 +327,7 @@ final class R2TransformDelegatingTensors
     public void setXF(final float x)
     {
       this.q.setXF(x);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -342,7 +340,7 @@ final class R2TransformDelegatingTensors
     public void setYF(final float y)
     {
       this.q.setYF(y);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -350,7 +348,7 @@ final class R2TransformDelegatingTensors
       final VectorReadable4FType in_v)
     {
       this.q.copyFrom4F(in_v);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -361,14 +359,14 @@ final class R2TransformDelegatingTensors
       final float w)
     {
       this.q.set4F(x, y, z, w);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
     public void copyFrom3F(final VectorReadable3FType in_v)
     {
       this.q.copyFrom3F(in_v);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -378,14 +376,14 @@ final class R2TransformDelegatingTensors
       final float z)
     {
       this.q.set3F(x, y, z);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
     public void copyFrom2F(final VectorReadable2FType in_v)
     {
       this.q.copyFrom2F(in_v);
-      this.changed.set(true);
+      this.changed.run();
     }
 
     @Override
@@ -394,7 +392,7 @@ final class R2TransformDelegatingTensors
       final float y)
     {
       this.q.set2F(x, y);
-      this.changed.set(true);
+      this.changed.run();
     }
   }
 }

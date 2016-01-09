@@ -28,12 +28,13 @@ import com.io7m.jtensors.parameterized.PVectorI2F;
 import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.r2.core.R2TransformContext;
 import com.io7m.r2.core.R2TransformContextType;
-import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class R2TransformOSiTTest
 {
@@ -138,198 +139,204 @@ public final class R2TransformOSiTTest
   @Test
   public void testHasChangedTranslation()
   {
+    final AtomicBoolean changed = new AtomicBoolean(true);
     final R2TransformContextType c = R2TransformContext.newContext();
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
-    final R2TransformOSiT r = R2TransformOSiT.newTransform();
+    final R2TransformOSiT r =
+      R2TransformOSiT.newTransformWithNotifier(() -> changed.set(true));
     final PVector3FType<R2SpaceWorldType> t = r.getTranslation();
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     t.setXF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     t.setYF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     t.setZF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     t.set2F(1.0f, 1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     t.set3F(1.0f, 1.0f, 1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     t.copyFrom2F(new VectorI2F(1.0f, 1.0f));
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     t.copyFrom3F(new VectorI3F(1.0f, 1.0f, 1.0f));
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     t.copyFromTyped2F(new PVectorI2F<>(1.0f, 1.0f));
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     t.copyFromTyped3F(new PVectorI3F<>(1.0f, 1.0f, 1.0f));
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
   }
 
   @Test
   public void testHasChangedScale()
   {
+    final AtomicBoolean changed = new AtomicBoolean(true);
     final R2TransformContextType c = R2TransformContext.newContext();
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
-    final R2TransformOSiT r = R2TransformOSiT.newTransform();
+    final R2TransformOSiT r =
+      R2TransformOSiT.newTransformWithNotifier(() -> changed.set(true));
     final Vector3FType s = r.getScale();
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     s.setXF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     s.setYF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     s.setZF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     s.set2F(1.0f, 1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     s.set3F(1.0f, 1.0f, 1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     s.copyFrom2F(new VectorI2F(1.0f, 1.0f));
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     s.copyFrom3F(new VectorI3F(1.0f, 1.0f, 1.0f));
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
   }
 
   @Test
   public void testHasChangedOrientation()
   {
+    final AtomicBoolean changed = new AtomicBoolean(true);
     final R2TransformContextType c = R2TransformContext.newContext();
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
-    final R2TransformOST r = R2TransformOST.newTransform();
+    final R2TransformOSiT r =
+      R2TransformOSiT.newTransformWithNotifier(() -> changed.set(true));
     final Quaternion4FType o = r.getOrientation();
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.setXF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.setYF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.setZF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.setWF(1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.set2F(1.0f, 1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.set3F(1.0f, 1.0f, 1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.set4F(1.0f, 1.0f, 1.0f, 1.0f);
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.copyFrom2F(new VectorI2F(1.0f, 1.0f));
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.copyFrom3F(new VectorI3F(1.0f, 1.0f, 1.0f));
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
 
     o.copyFrom4F(new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f));
 
-    Assert.assertTrue(r.transformHasChanged());
+    Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);
-    Assert.assertFalse(r.transformHasChanged());
+    changed.set(false);
   }
 }

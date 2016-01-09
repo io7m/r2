@@ -17,24 +17,15 @@
 package com.io7m.r2.core;
 
 /**
- * <p>The type of batched instances.</p>
+ * The type of batched instances that are expected to change often, both in the
+ * number of instances, and the transforms of individual instances.
  *
- * <p>A batch consists of a set of one or more vertex buffers containing mesh
- * data, and a vertex buffer containing a set of transforms - one per rendered
- * object.</p>
- *
- * <p>The primary use case for batched instances is rendering a lot of copies of
- * the same mesh in a single draw call.</p>
- *
- * <p>Batched instances may only use orthogonal transforms, to avoid having to
- * perform a costly matrix inversion on the GPU (to produce a per-instance
- * normal matrix).</p>
- *
- * @param <T> The precise type of transform used for each instance
+ * @param <T> The precise type of per-instance transforms
  */
 
-public interface R2InstanceBatchedType<T extends
-  R2TransformOrthogonalReadableType> extends R2InstanceType
+public interface R2InstanceBatchedDynamicType<T extends
+  R2TransformOrthogonalReadableType> extends
+  R2InstanceBatchedType<T>
 {
 
 }
