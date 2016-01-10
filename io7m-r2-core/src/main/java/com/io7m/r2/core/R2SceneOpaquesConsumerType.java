@@ -48,6 +48,70 @@ public interface R2SceneOpaquesConsumerType
   void onStart();
 
   /**
+   * Called when a batched instance should upload batch data to the GPU.
+   *
+   * @param i The batched instance
+   */
+
+  void onInstanceBatchedUpdate(
+    R2InstanceBatchedType i);
+
+  /**
+   * Called when a new shader should be activated in order to start rendering
+   * batched instances.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
+
+  <M> void onInstanceBatchedShaderStart(
+    R2ShaderBatchedUsableType<M> s);
+
+  /**
+   * Called when new material settings should be assigned, for batched
+   * instances.
+   *
+   * @param material The current material
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstanceBatchedMaterialStart(
+    R2MaterialOpaqueBatchedType<M> material);
+
+  /**
+   * Called when a batched instance should be rendered.
+   *
+   * @param material The current material
+   * @param i        The current instance
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstanceBatched(
+    R2MaterialOpaqueBatchedType<M> material,
+    R2InstanceBatchedType i);
+
+  /**
+   * Called after the current set of batched instances have finished rendering
+   * with the current material.
+   *
+   * @param material The current material
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstanceBatchedMaterialFinish(
+    R2MaterialOpaqueBatchedType<M> material);
+
+  /**
+   * Called when the current shader should be deactivated.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
+
+  <M> void onInstanceBatchedShaderFinish(
+    R2ShaderBatchedUsableType<M> s);
+
+  /**
    * Called when a new shader should be activated in order to start rendering
    * single instances.
    *
@@ -116,5 +180,4 @@ public interface R2SceneOpaquesConsumerType
    */
 
   void onFinish();
-
 }

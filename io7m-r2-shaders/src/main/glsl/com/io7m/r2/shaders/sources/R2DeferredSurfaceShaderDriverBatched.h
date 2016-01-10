@@ -8,10 +8,11 @@
 #include "R2DeferredSurfaceTypes.h"
 #include "R2GBuffer.h"
 
-in      R2_deferred_surface_data_t          R2_deferred_surface_data;
-uniform R2_deferred_surface_textures_t      R2_deferred_surface_textures;
-uniform R2_deferred_surface_parameters_t    R2_deferred_surface_parameters;
-uniform R2_deferred_surface_matrices_view_t R2_deferred_surface_matrices_view;
+uniform R2_deferred_surface_textures_t          R2_deferred_surface_textures;
+uniform R2_deferred_surface_parameters_t        R2_deferred_surface_parameters;
+uniform R2_deferred_surface_matrices_view_t     R2_deferred_surface_matrices_view;
+in      R2_deferred_surface_matrices_instance_t R2_deferred_surface_matrices_instance;
+in      R2_deferred_surface_data_t              R2_deferred_surface_data;
 
 layout(location = 0) out vec4 R2_out_albedo;
 layout(location = 1) out vec2 R2_out_normal;
@@ -22,7 +23,7 @@ R2_deferred_surface_shader_main_gbuffer()
 {
   vec3 normal = R2_normalsBump (
     R2_deferred_surface_textures.normal,
-    R2_deferred_surface_matrices.transform_normal,
+    R2_deferred_surface_matrices_instance.transform_normal,
     R2_deferred_surface_data.normal,
     R2_deferred_surface_data.tangent,
     R2_deferred_surface_data.bitangent,
@@ -46,7 +47,8 @@ R2_deferred_surface_shader_main_gbuffer()
     derived,
     R2_deferred_surface_textures,
     R2_deferred_surface_parameters,
-    R2_deferred_surface_matrices
+    R2_deferred_surface_matrices_view,
+    R2_deferred_surface_matrices_instance
   );
 
   return R2_gbuffer_output_t(

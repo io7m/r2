@@ -29,7 +29,7 @@ import com.io7m.r2.shaders.R2Shaders;
 import org.junit.Assert;
 import org.junit.Test;
 
-public final class R2DeferredShaderBasicTest
+public final class R2DeferredShaderBasicSingleTest
 {
   @Test
   public void testNew()

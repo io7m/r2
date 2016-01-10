@@ -37,6 +37,7 @@ import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
+import com.io7m.junreachable.UnimplementedCodeException;
 import org.valid4j.Assertive;
 
 /**
@@ -202,6 +203,55 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.textures = this.g33.getTextures();
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
+    }
+
+    @Override
+    public void onInstanceBatchedUpdate(
+      final R2InstanceBatchedType i)
+    {
+      // TODO: Generated method stub!
+      throw new UnimplementedCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBatchedShaderStart(
+      final R2ShaderBatchedUsableType<M> s)
+    {
+      // TODO: Generated method stub!
+      throw new UnimplementedCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBatchedMaterialStart(
+      final R2MaterialOpaqueBatchedType<M> material)
+    {
+      // TODO: Generated method stub!
+      throw new UnimplementedCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBatched(
+      final R2MaterialOpaqueBatchedType<M> material,
+      final R2InstanceBatchedType i)
+    {
+      // TODO: Generated method stub!
+      throw new UnimplementedCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBatchedMaterialFinish(
+      final R2MaterialOpaqueBatchedType<M> material)
+    {
+      // TODO: Generated method stub!
+      throw new UnimplementedCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBatchedShaderFinish(
+      final R2ShaderBatchedUsableType<M> s)
+    {
+      // TODO: Generated method stub!
+      throw new UnimplementedCodeException();
     }
 
     @Override

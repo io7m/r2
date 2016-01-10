@@ -16,16 +16,64 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+
 /**
  * The type of batched instances that are expected to change often, both in the
  * number of instances, and the transforms of individual instances.
- *
- * @param <T> The precise type of per-instance transforms
  */
 
-public interface R2InstanceBatchedDynamicType<T extends
-  R2TransformOrthogonalReadableType> extends
-  R2InstanceBatchedType<T>
+public interface R2InstanceBatchedDynamicType extends R2InstanceBatchedType,
+  R2DeletableType
 {
+  /**
+   * @return The maximum number of instances that can be placed into the batch
+   */
 
+  int getMaximumSize();
+
+  /**
+   * @return The current number of instances in the batch
+   */
+
+  int getCurrentSize();
+
+  /**
+   * Disable rendering of all instances
+   */
+
+  void disableAll();
+
+  /**
+   * Enable rendering of an instance with transform {@code t}
+   *
+   * @param t The transform for the instance
+   *
+   * @return The index of the enabled instance
+   *
+   * @throws R2ExceptionBatchIsFull If the batch cannot accept any more
+   *                                instances
+   */
+
+  int enableInstance(R2TransformOrthogonalReadableType t)
+    throws R2ExceptionBatchIsFull;
+
+  /**
+   * Disable rendering of the given instance.
+   *
+   * @param id The index of the instance
+   */
+
+  void disableInstance(int id);
+
+  /**
+   * Update any data required for rendering on the GPU.
+   *
+   * @param context The transform context
+   * @param g       An OpenGL interface
+   */
+
+  void update(
+    JCGLInterfaceGL33Type g,
+    R2TransformContext context);
 }

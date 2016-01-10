@@ -104,18 +104,18 @@ public final class R2SceneStencilsTest
     final JCGLArrayObjectType a2 = R2TestUtilities.getArrayObject(g);
 
     final R2InstanceSingleType i1a1 =
-      R2TestUtilities.getInstance(g, a1, 1L);
+      R2TestUtilities.getInstanceSingle(g, a1, 1L);
     final R2InstanceSingleType i2a1 =
-      R2TestUtilities.getInstance(g, a1, 2L);
+      R2TestUtilities.getInstanceSingle(g, a1, 2L);
     final R2InstanceSingleType i3a1 =
-      R2TestUtilities.getInstance(g, a1, 3L);
+      R2TestUtilities.getInstanceSingle(g, a1, 3L);
 
     final R2InstanceSingleType i4a2 =
-      R2TestUtilities.getInstance(g, a2, 4L);
+      R2TestUtilities.getInstanceSingle(g, a2, 4L);
     final R2InstanceSingleType i5a2 =
-      R2TestUtilities.getInstance(g, a2, 5L);
+      R2TestUtilities.getInstanceSingle(g, a2, 5L);
     final R2InstanceSingleType i6a2 =
-      R2TestUtilities.getInstance(g, a2, 6L);
+      R2TestUtilities.getInstanceSingle(g, a2, 6L);
 
     {
       final List<R2InstanceType> ras = new ArrayList<>(6);

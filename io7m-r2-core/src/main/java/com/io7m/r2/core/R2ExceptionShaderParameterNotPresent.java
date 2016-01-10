@@ -16,24 +16,22 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.JCGLArrayObjectType;
-
 /**
- * <p>The type of batched instances.</p>
- *
- * <p>A batch consists of a set of one or more vertex buffers containing mesh
- * data, and a vertex buffer containing a set of transforms - one per rendered
- * object.</p>
- *
- * <p>The primary use case for batched instances is rendering a lot of copies of
- * the same mesh in a single draw call.</p>
+ * An exception indicating that a shader parameter was not found when one was
+ * expected.
  */
 
-public interface R2InstanceBatchedType extends R2InstanceType
+public final class R2ExceptionShaderParameterNotPresent extends R2Exception
 {
   /**
-   * @return The instance array object
+   * Construct an exception.
+   *
+   * @param message The message
    */
 
-  JCGLArrayObjectType getArrayObject();
+  public R2ExceptionShaderParameterNotPresent(
+    final String message)
+  {
+    super(message);
+  }
 }

@@ -29,7 +29,7 @@ public interface R2SceneOpaquesType
   void opaquesReset();
 
   /**
-   * Add a single mesh instance to the scene using the given material.
+   * Add a single instance to the scene using the given material.
    *
    * @param i   The instance
    * @param m   The material
@@ -39,6 +39,18 @@ public interface R2SceneOpaquesType
   <M> void opaquesAddSingleInstance(
     R2InstanceSingleType i,
     R2MaterialOpaqueSingleType<M> m);
+
+  /**
+   * Add a batched instance to the scene using the given material.
+   *
+   * @param i   The instance
+   * @param m   The material
+   * @param <M> The type of shader parameters
+   */
+
+  <M> void opaquesAddBatchedInstance(
+    R2InstanceBatchedType i,
+    R2MaterialOpaqueBatchedType<M> m);
 
   /**
    * Batch the instances and pass them to the given consumer for rendering.

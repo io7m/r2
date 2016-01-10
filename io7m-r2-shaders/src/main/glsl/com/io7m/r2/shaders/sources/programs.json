@@ -4,6 +4,11 @@
     "fragment": "/com/io7m/r2/shaders/sources/R2DeferredSurfaceBasicSingle.frag"
   },
 
+  "R2DeferredSurfaceBasicBatched": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DeferredSurfaceBatched.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DeferredSurfaceBasicBatched.frag"
+  },
+
   "R2DeferredSurfaceBasicReflectiveSingle": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2DeferredSurfaceSingle.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2DeferredSurfaceBasicReflectiveSingle.frag"

@@ -16,24 +16,18 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.JCGLArrayObjectType;
-
 /**
- * <p>The type of batched instances.</p>
+ * The type of opaque materials that can be applied to batched instances.
  *
- * <p>A batch consists of a set of one or more vertex buffers containing mesh
- * data, and a vertex buffer containing a set of transforms - one per rendered
- * object.</p>
- *
- * <p>The primary use case for batched instances is rendering a lot of copies of
- * the same mesh in a single draw call.</p>
+ * @param <M> The type of shader parameters
  */
 
-public interface R2InstanceBatchedType extends R2InstanceType
+public interface R2MaterialOpaqueBatchedType<M> extends R2MaterialType<M>
 {
   /**
-   * @return The instance array object
+   * @return The material shader
    */
 
-  JCGLArrayObjectType getArrayObject();
+  @Override
+  R2ShaderBatchedUsableType<M> getShader();
 }

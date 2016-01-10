@@ -24,7 +24,7 @@ main (void)
   vec4 position_hom =
     vec4 (R2_vertex_position, 1.0);
   vec4 position_eye =
-    (R2_deferred_surface_matrices_instance.m_modelview * position_hom);
+    (m_modelview * position_hom);
   vec4 position_clip =
     ((R2_deferred_surface_matrices_view.transform_projection * m_modelview) * position_hom);
   vec4 position_clip_log =
