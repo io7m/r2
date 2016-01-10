@@ -59,6 +59,7 @@ import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2ShaderBatchedUsableType;
 import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSingleUsableType;
+import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
@@ -341,6 +342,20 @@ public final class R2TestUtilities
       public JCGLArrayObjectType getArrayObject()
       {
         return a0;
+      }
+
+      @Override
+      public void update(
+        final JCGLInterfaceGL33Type g,
+        final R2TransformContextType context)
+      {
+
+      }
+
+      @Override
+      public int getRenderCount()
+      {
+        return 1;
       }
 
       @Override

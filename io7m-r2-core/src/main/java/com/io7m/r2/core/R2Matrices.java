@@ -109,6 +109,12 @@ public final class R2Matrices implements R2MatricesType
     }
   }
 
+  @Override
+  public R2TransformContextType getTransformContext()
+  {
+    return this.context_tr;
+  }
+
   private static final class InstanceSingle implements
     R2MatricesInstanceSingleType
   {
@@ -236,6 +242,12 @@ public final class R2Matrices implements R2MatricesType
       } finally {
         this.instance_single.active = false;
       }
+    }
+
+    @Override
+    public R2TransformContextType getTransformContext()
+    {
+      return this.context_tr;
     }
   }
 }

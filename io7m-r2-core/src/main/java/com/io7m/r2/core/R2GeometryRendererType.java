@@ -43,9 +43,9 @@ public interface R2GeometryRendererType extends R2DeletableType
    * Render the given opaque instances into the currently bound geometry
    * buffer.
    *
-   * @param g A GL interface
-   * @param m A matrix context
-   * @param s The opaque instances
+   * @param g  A GL interface
+   * @param m  A matrix context
+   * @param s  The opaque instances
    */
 
   void renderGeometryWithBoundBuffer(

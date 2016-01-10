@@ -37,7 +37,6 @@ import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
-import com.io7m.junreachable.UnimplementedCodeException;
 import org.valid4j.Assertive;
 
 /**
@@ -94,6 +93,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
   {
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
@@ -209,24 +209,25 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public void onInstanceBatchedUpdate(
       final R2InstanceBatchedType i)
     {
-      // TODO: Generated method stub!
-      throw new UnimplementedCodeException();
+      i.update(this.g33, this.matrices.getTransformContext());
     }
 
     @Override
     public <M> void onInstanceBatchedShaderStart(
       final R2ShaderBatchedUsableType<M> s)
     {
-      // TODO: Generated method stub!
-      throw new UnimplementedCodeException();
+      this.shaders.shaderActivateProgram(s.getShaderProgram());
+      s.setMatricesView(this.shaders, this.matrices);
     }
 
     @Override
     public <M> void onInstanceBatchedMaterialStart(
       final R2MaterialOpaqueBatchedType<M> material)
     {
-      // TODO: Generated method stub!
-      throw new UnimplementedCodeException();
+      final R2ShaderBatchedUsableType<M> s = material.getShader();
+      final M p = material.getShaderParameters();
+      s.setMaterialTextures(this.textures, p);
+      s.setMaterialValues(this.shaders, this.textures, p);
     }
 
     @Override
@@ -234,24 +235,23 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2MaterialOpaqueBatchedType<M> material,
       final R2InstanceBatchedType i)
     {
-      // TODO: Generated method stub!
-      throw new UnimplementedCodeException();
+      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.draw.drawElementsInstanced(
+        JCGLPrimitives.PRIMITIVE_TRIANGLES, i.getRenderCount());
     }
 
     @Override
     public <M> void onInstanceBatchedMaterialFinish(
       final R2MaterialOpaqueBatchedType<M> material)
     {
-      // TODO: Generated method stub!
-      throw new UnimplementedCodeException();
+
     }
 
     @Override
     public <M> void onInstanceBatchedShaderFinish(
       final R2ShaderBatchedUsableType<M> s)
     {
-      // TODO: Generated method stub!
-      throw new UnimplementedCodeException();
+      this.shaders.shaderDeactivateProgram();
     }
 
     @Override

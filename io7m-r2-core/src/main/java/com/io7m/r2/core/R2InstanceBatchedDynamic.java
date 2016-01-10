@@ -45,7 +45,7 @@ import org.valid4j.Assertive;
  * stores per-instance matrices in a vertex buffer object, and uses an
  * "orphaning" strategy where the entire buffer storage is reallocated and
  * populated on each call to {@link #update(JCGLInterfaceGL33Type,
- * R2TransformContext)}.</p>
+ * R2TransformContextType)}.</p>
  */
 
 public final class R2InstanceBatchedDynamic implements
@@ -162,9 +162,15 @@ public final class R2InstanceBatchedDynamic implements
   }
 
   @Override
-  public int getCurrentSize()
+  public int getEnabledCount()
   {
     return this.max_size - this.free.size();
+  }
+
+  @Override
+  public int getRenderCount()
+  {
+    return this.max_size;
   }
 
   @Override
@@ -187,7 +193,7 @@ public final class R2InstanceBatchedDynamic implements
   {
     NullCheck.notNull(t);
 
-    if (this.getCurrentSize() == this.max_size) {
+    if (this.getEnabledCount() == this.max_size) {
       final StringBuilder sb = new StringBuilder(64);
       sb.append("Batch is full (capacity is ");
       sb.append(this.max_size);
@@ -211,7 +217,7 @@ public final class R2InstanceBatchedDynamic implements
   @Override
   public void update(
     final JCGLInterfaceGL33Type g,
-    final R2TransformContext context)
+    final R2TransformContextType context)
   {
     NullCheck.notNull(context);
     NullCheck.notNull(g);

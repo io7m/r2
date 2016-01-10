@@ -16,29 +16,15 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jtensors.parameterized.PMatrixReadable4x4FType;
-import com.io7m.r2.spaces.R2SpaceEyeType;
-import com.io7m.r2.spaces.R2SpaceWorldType;
-
 /**
- * Matrices.
+ * Base matrix values.
  */
 
-public interface R2MatricesType extends R2MatricesValuesType
+public interface R2MatricesValuesType
 {
   /**
-   * Evaluate matrices for the given observer.
-   *
-   * @param view       The observer's view matrix
-   * @param projection The observer's projection
-   * @param f          The function that will receive the evaluated matrices
-   * @param <T>        The type of returned values
-   *
-   * @return A value of {@code T}
+   * @return The transform context for the matrices
    */
 
-  <T> T withObserver(
-    final PMatrixReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType> view,
-    final R2ProjectionReadableType projection,
-    final R2MatricesObserverFunctionType<T> f);
+  R2TransformContextType getTransformContext();
 }

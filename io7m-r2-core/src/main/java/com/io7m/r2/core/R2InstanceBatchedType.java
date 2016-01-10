@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 
 /**
  * <p>The type of batched instances.</p>
@@ -36,4 +37,21 @@ public interface R2InstanceBatchedType extends R2InstanceType
    */
 
   JCGLArrayObjectType getArrayObject();
+
+  /**
+   * Update any data required for rendering on the GPU.
+   *
+   * @param context The transform context
+   * @param g       An OpenGL interface
+   */
+
+  void update(
+    JCGLInterfaceGL33Type g,
+    R2TransformContextType context);
+
+  /**
+   * @return The number of instances that will be rendered.
+   */
+
+  int getRenderCount();
 }

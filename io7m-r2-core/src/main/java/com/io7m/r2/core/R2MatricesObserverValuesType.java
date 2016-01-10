@@ -25,7 +25,7 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
  * Access to the matrices for a given observer.
  */
 
-public interface R2MatricesObserverValuesType
+public interface R2MatricesObserverValuesType extends R2MatricesValuesType
 {
   /**
    * @return The current projection
