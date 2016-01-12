@@ -118,9 +118,9 @@ public final class ExampleGeometryBatched0 implements R2ExampleCustomType
 
     final R2IDPoolType id_pool = m.getIDPool();
 
-    final int width = 8;
-    final int height = 8;
-    final int depth = 8;
+    final int width = 16;
+    final int height = 16;
+    final int depth = 16;
 
     final int instance_count = width * height * depth;
     this.instance =
@@ -142,7 +142,7 @@ public final class ExampleGeometryBatched0 implements R2ExampleCustomType
           final PVector3FType<R2SpaceWorldType> tr = t.getTranslation();
           final float fx = x - (width / 2);
           final float fy = y - (height / 2);
-          final float fz = -z;
+          final float fz = -z * 1.5f;
           tr.set3F(fx, fy, fz);
           this.transforms[index] = t;
           this.instance.enableInstance(this.transforms[index]);
