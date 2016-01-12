@@ -33,8 +33,8 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.core.R2DeferredShaderBasicParameters;
-import com.io7m.r2.core.R2DeferredShaderBasicSingle;
+import com.io7m.r2.core.R2DeferredSurfaceShaderBasicParameters;
+import com.io7m.r2.core.R2DeferredSurfaceShaderBasicSingle;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2GeometryRendererType;
@@ -82,11 +82,11 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
   private JCGLClearSpecification          clear_spec;
   private PVector3FType<R2SpaceWorldType> instance_1_pos;
 
-  private R2ShaderSingleType<R2DeferredShaderBasicParameters>
+  private R2ShaderSingleType<R2DeferredSurfaceShaderBasicParameters>
     shader;
-  private R2DeferredShaderBasicParameters
+  private R2DeferredSurfaceShaderBasicParameters
     shader_params;
-  private R2MaterialOpaqueSingleType<R2DeferredShaderBasicParameters>
+  private R2MaterialOpaqueSingleType<R2DeferredSurfaceShaderBasicParameters>
     material;
 
   public ExampleGeometry2()
@@ -138,9 +138,9 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
     final R2ShaderSourcesType sources =
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     this.shader =
-      R2DeferredShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
+      R2DeferredSurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     this.shader_params =
-      R2DeferredShaderBasicParameters.newParameters(m.getTextureDefaults());
+      R2DeferredSurfaceShaderBasicParameters.newParameters(m.getTextureDefaults());
 
     this.material = R2MaterialOpaqueSingle.newMaterial(
       id_pool,

@@ -18,8 +18,8 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2DeferredShaderBasicSingle;
-import com.io7m.r2.core.R2DeferredShaderBasicParameters;
+import com.io7m.r2.core.R2DeferredSurfaceShaderBasicSingle;
+import com.io7m.r2.core.R2DeferredSurfaceShaderBasicParameters;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ShaderSingleType;
@@ -29,7 +29,7 @@ import com.io7m.r2.shaders.R2Shaders;
 import org.junit.Assert;
 import org.junit.Test;
 
-public final class R2DeferredShaderBasicSingleTest
+public final class R2DeferredSurfaceShaderBasicSingleTest
 {
   @Test
   public void testNew()
@@ -40,8 +40,8 @@ public final class R2DeferredShaderBasicSingleTest
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderSingleType<R2DeferredShaderBasicParameters> s =
-      R2DeferredShaderBasicSingle.newShader(g.getShaders(), sources, pool);
+    final R2ShaderSingleType<R2DeferredSurfaceShaderBasicParameters> s =
+      R2DeferredSurfaceShaderBasicSingle.newShader(g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

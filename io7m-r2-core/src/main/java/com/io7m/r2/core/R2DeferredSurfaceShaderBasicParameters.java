@@ -28,7 +28,7 @@ import com.io7m.r2.spaces.R2SpaceRGBType;
  * Parameters for the basic deferred shader.
  */
 
-public final class R2DeferredShaderBasicParameters
+public final class R2DeferredSurfaceShaderBasicParameters
 {
   private       float                          emission;
   private       R2Texture2DUsableType          emission_texture;
@@ -40,7 +40,7 @@ public final class R2DeferredShaderBasicParameters
   private       float                          specular_exponent;
   private       R2Texture2DUsableType          normal_texture;
 
-  private R2DeferredShaderBasicParameters(
+  private R2DeferredSurfaceShaderBasicParameters(
     final PVector4FType<R2SpaceRGBAType> in_albedo_color,
     final float in_albedo_mix,
     final R2Texture2DUsableType in_albedo_texture,
@@ -70,12 +70,12 @@ public final class R2DeferredShaderBasicParameters
    * @return A set of default material parameters
    */
 
-  public static R2DeferredShaderBasicParameters newParameters(
+  public static R2DeferredSurfaceShaderBasicParameters newParameters(
     final R2TextureDefaultsType t)
   {
     NullCheck.notNull(t);
 
-    return new R2DeferredShaderBasicParameters(
+    return new R2DeferredSurfaceShaderBasicParameters(
       new PVectorM4F<>(1.0f, 1.0f, 1.0f, 1.0f),
       0.0f,
       t.getWhiteTexture(),

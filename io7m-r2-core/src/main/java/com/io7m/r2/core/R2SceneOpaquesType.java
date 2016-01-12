@@ -55,7 +55,7 @@ public interface R2SceneOpaquesType
   /**
    * Batch the instances and pass them to the given consumer for rendering.
    *
-   * @param c The consume
+   * @param c The consumer
    */
 
   void opaquesExecute(
