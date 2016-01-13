@@ -4,11 +4,7 @@
 /// \file R2ViewRays.h
 /// \brief View ray types
 
-///
-/// The type of view rays used to reconstruct positions during
-/// deferred rendering. The view ray type defines the four near
-/// corners of the view, and the four corresponding rays.
-///
+/// The type of view rays used to reconstruct positions during deferred rendering.
 
 struct R2_view_rays_t {
   /// The bottom left origin

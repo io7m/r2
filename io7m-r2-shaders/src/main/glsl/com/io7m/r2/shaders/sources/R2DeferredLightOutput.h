@@ -4,9 +4,7 @@
 /// \file R2DeferredLightOutput.h
 /// \brief Types describing calculated light contributions
 
-///
 /// The type of light values that all deferred light shaders calculate.
-///
 
 struct R2_deferred_light_output_t {
   /// The diffuse color/intensity (8-bit unsigned)

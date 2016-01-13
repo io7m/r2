@@ -6,9 +6,7 @@
 
 #include "R2DeferredSurfaceOutput.h"
 
-///
 /// Interpolated surface data that all deferred surface shaders will receive.
-///
 
 struct R2_deferred_surface_data_t {
   /// Eye-space surface position
@@ -27,9 +25,7 @@ struct R2_deferred_surface_data_t {
   vec3 bitangent;
 };
 
-///
 /// Derived surface data that all deferred surface shaders will receive.
-///
 
 struct R2_deferred_surface_derived_t {
   /// Final uncompressed eye-space normal produced by bump/normal mapping
@@ -38,9 +34,7 @@ struct R2_deferred_surface_derived_t {
   vec2 normal_compressed;
 };
 
-///
 /// Matrices related to the rendered instance that all deferred surface shaders will receive.
-///
 
 struct R2_deferred_surface_matrices_instance_t {
   /// Object-space to Eye-space matrix
@@ -51,9 +45,7 @@ struct R2_deferred_surface_matrices_instance_t {
   mat3x3 transform_uv;
 };
 
-///
 /// Matrices related to the view that all deferred surface shaders will receive.
-///
 
 struct R2_deferred_surface_matrices_view_t {
   /// World-space to Eye-space matrix
@@ -62,9 +54,7 @@ struct R2_deferred_surface_matrices_view_t {
   mat4x4 transform_projection;
 };
 
-///
 /// Constant surface parameters that all deferred surface shaders will receive.
-///
 
 struct R2_deferred_surface_parameters_t {
   /// Logarithmic depth coefficient
@@ -84,9 +74,7 @@ struct R2_deferred_surface_parameters_t {
   float specular_exponent;
 };
 
-///
 /// Input textures that all deferred surface shaders will receive.
-///
 
 struct R2_deferred_surface_textures_t {
   /// RGBA albedo texture

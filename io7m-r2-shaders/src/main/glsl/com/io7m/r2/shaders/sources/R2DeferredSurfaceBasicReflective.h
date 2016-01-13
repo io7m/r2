@@ -7,13 +7,20 @@
 #include "R2DeferredSurfaceShaderMain.h"
 #include "R2EnvironmentReflection.h"
 
+/// Textures for reflections
+
 struct R2_deferred_surface_reflective_textures_t {
-  samplerCube environment;  // A right-handed cube map
+  /// A right-handed cube map representing the reflected environment
+  samplerCube environment;
 };
 
+/// Parameters for reflections
+
 struct R2_deferred_surface_reflective_parameters_t {
-  mat4x4 transform_view_inverse; // Eye-to-world matrix.
-  float  environment_mix;        // Mix factor in the range `[0, 1]`
+  /// Eye-to-world matrix for transforming reflection vectors.
+  mat4x4 transform_view_inverse;
+  /// Mix factor in the range `[0, 1]`, where 1 indicates a fully reflective surface
+  float  environment_mix;
 };
 
 uniform R2_deferred_surface_reflective_textures_t   R2_deferred_surface_reflective_textures;

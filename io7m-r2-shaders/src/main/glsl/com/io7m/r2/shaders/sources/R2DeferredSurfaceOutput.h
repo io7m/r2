@@ -4,9 +4,7 @@
 /// \file R2DeferredSurfaceOutput.h
 /// \brief Types describing calculated surfaces
 
-///
-/// The type of surface details that all deferred surface shaders calculate.
-///
+/// The type of surface details that all deferred surface shaders are required to calculate.
 
 struct R2_deferred_surface_output_t {
   /// 8-bit unsigned normalized RGB color

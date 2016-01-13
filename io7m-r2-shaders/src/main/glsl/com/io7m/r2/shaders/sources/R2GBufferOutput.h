@@ -4,9 +4,7 @@
 /// \file R2GBufferOutput.h
 /// \brief The G-Buffer format.
 
-///
 /// A type representing the values written to the G-Buffer.
-///
 
 struct R2_gbuffer_output_t {
   /// 8-bit unsigned normalized RGB color
