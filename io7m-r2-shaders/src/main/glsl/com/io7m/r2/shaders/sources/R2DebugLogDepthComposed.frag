@@ -1,3 +1,6 @@
+/// \file R2DebugLogDepthComposed.frag
+/// \brief Writes the logarithmic depth of the fragment to the first fragment output.
+
 #include "R2LogDepth.h"
 
 uniform vec4 data;

@@ -1,4 +1,5 @@
-// A vertex shader for batched instances.
+/// \file R2DeferredSurfaceBatched.vert
+/// \brief A vertex shader for batched instances.
 
 #include "R2LogDepth.h"
 #include "R2Normals.h"

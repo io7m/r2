@@ -60,7 +60,7 @@ struct R2_deferred_surface_parameters_t {
   /// Logarithmic depth coefficient
   float depth_coefficient;
 
-  /// Emission level in the range [0, 1]
+  /// Emission level in the range `[0, 1]`
   float emission_amount;
 
   /// Base RGBA albedo color
@@ -70,7 +70,7 @@ struct R2_deferred_surface_parameters_t {
 
   /// RGB specular color
   vec3  specular_color;
-  /// Specular exponent in the range [0, 256]
+  /// Specular exponent in the range `[0, 256]`
   float specular_exponent;
 };
 

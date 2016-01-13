@@ -1,4 +1,5 @@
-// A vertex shader for single instances.
+/// \file R2DeferredSurfaceSingle.vert
+/// \brief A vertex shader for single instances.
 
 #include "R2LogDepth.h"
 #include "R2Normals.h"

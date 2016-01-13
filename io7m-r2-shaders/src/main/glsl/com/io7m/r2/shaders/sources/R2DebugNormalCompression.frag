@@ -1,3 +1,6 @@
+/// \file R2DebugNormalCompression.frag
+/// \brief Treats the input data as a normal vector, compresses it, and writes it to the first fragment output.
+
 #include "R2Normals.h"
 
 uniform vec4 data;

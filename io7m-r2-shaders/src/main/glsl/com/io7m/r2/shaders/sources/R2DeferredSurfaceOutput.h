@@ -13,7 +13,7 @@ struct R2_deferred_surface_output_t {
   float emission;
   /// 8-bit unsigned normalized RGB specular color
   vec3  specular;
-  /// Specular exponent in the range [0, 256]
+  /// Specular exponent in the range `[0, 256]`
   float specular_exp;
 };
 

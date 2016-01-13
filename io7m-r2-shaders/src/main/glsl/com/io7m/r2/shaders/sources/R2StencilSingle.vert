@@ -1,4 +1,5 @@
-// Single-instance stencil vertex shader.
+/// \file R2StencilSingle.vert
+/// \brief Single-instance stencil vertex shader.
 
 layout(location = 0) in vec3 R2_vertex_position; // Object-space position
 

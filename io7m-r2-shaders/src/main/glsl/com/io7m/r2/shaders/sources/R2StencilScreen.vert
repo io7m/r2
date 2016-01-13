@@ -1,4 +1,5 @@
-// Screen stencil vertex shader.
+/// \file R2StencilScreen.vert
+/// \brief Screen stencil vertex shader.
 
 layout(location = 0) in vec3 R2_vertex_position; // Object-space position
 

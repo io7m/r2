@@ -53,4 +53,10 @@ public interface R2MatricesObserverValuesType extends R2MatricesValuesType
 
   PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType>
   getMatrixViewInverse();
+
+  /**
+   * @return The view rays for the current view
+   */
+
+  R2ViewRaysReadableType getViewRays();
 }

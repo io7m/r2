@@ -16,7 +16,6 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jtensors.VectorReadable4FType;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixReadable4x4FType;
 import com.io7m.r2.spaces.R2SpaceClipType;
@@ -27,7 +26,7 @@ import com.io7m.r2.spaces.R2SpaceEyeType;
  * deferred rendering.
  */
 
-public interface R2ViewRaysType
+public interface R2ViewRaysType extends R2ViewRaysReadableType
 {
   /**
    * Recalculate the view rays given the inverse projection matrix {@code m}.
@@ -39,52 +38,4 @@ public interface R2ViewRaysType
   void recalculate(
     final PMatrixM4x4F.ContextPM4F c,
     final PMatrixReadable4x4FType<R2SpaceClipType, R2SpaceEyeType> m);
-
-  /**
-   * @return The x0y0 origin
-   */
-
-  VectorReadable4FType getOriginX0Y0();
-
-  /**
-   * @return The x0y1 origin
-   */
-
-  VectorReadable4FType getOriginX0Y1();
-
-  /**
-   * @return The x1y0 origin
-   */
-
-  VectorReadable4FType getOriginX1Y0();
-
-  /**
-   * @return The x1y1 origin
-   */
-
-  VectorReadable4FType getOriginX1Y1();
-
-  /**
-   * @return The x0y0 view ray
-   */
-
-  VectorReadable4FType getRayX0Y0();
-
-  /**
-   * @return The x0y1 view ray
-   */
-
-  VectorReadable4FType getRayX0Y1();
-
-  /**
-   * @return The x1y0 view ray
-   */
-
-  VectorReadable4FType getRayX1Y0();
-
-  /**
-   * @return The x1y1 view ray
-   */
-
-  VectorReadable4FType getRayX1Y1();
 }

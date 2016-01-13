@@ -45,13 +45,15 @@ import org.valid4j.Assertive;
 
 public final class R2Matrices implements R2MatricesType
 {
-  private final Observer                observer;
-  private final MatrixM4x4F.ContextMM4F context_m4;
-  private final R2TransformContextType  context_tr;
+  private final Observer                 observer;
+  private final MatrixM4x4F.ContextMM4F  context_m4;
+  private final R2TransformContextType   context_tr;
+  private final PMatrixM4x4F.ContextPM4F context_pm4;
 
   private R2Matrices()
   {
     this.context_m4 = new MatrixM4x4F.ContextMM4F();
+    this.context_pm4 = new PMatrixM4x4F.ContextPM4F();
     this.context_tr = R2TransformContext.newContext();
     this.observer = new Observer(this.context_tr);
   }
@@ -101,7 +103,20 @@ public final class R2Matrices implements R2MatricesType
         this.context_m4,
         this.observer.m_view,
         this.observer.m_view_inverse);
+
+      /**
+       * Produce projection and inverse projection matrices.
+       */
+
       projection.projectionMakeMatrix(this.observer.m_projection);
+      PMatrixM4x4F.invert(
+        this.context_pm4,
+        this.observer.m_projection,
+        this.observer.m_projection_inverse);
+      this.observer.view_rays.recalculate(
+        this.observer.context_p4f,
+        this.observer.m_projection_inverse);
+
       this.observer.projection = projection;
       return f.apply(this.observer);
     } finally {
@@ -154,6 +169,8 @@ public final class R2Matrices implements R2MatricesType
   {
     private final PMatrixDirect4x4FType<R2SpaceEyeType, R2SpaceClipType>
       m_projection;
+    private final PMatrixDirect4x4FType<R2SpaceClipType, R2SpaceEyeType>
+      m_projection_inverse;
     private final PMatrixDirect4x4FType<R2SpaceWorldType, R2SpaceEyeType>
       m_view;
     private final PMatrixDirect4x4FType<R2SpaceEyeType, R2SpaceWorldType>
@@ -162,6 +179,8 @@ public final class R2Matrices implements R2MatricesType
     private final InstanceSingle           instance_single;
     private final R2TransformContextType   context_tr;
     private final MatrixM3x3F.ContextMM3F  context_3f;
+    private final PMatrixM4x4F.ContextPM4F context_p4f;
+    private final R2ViewRaysType           view_rays;
     private       boolean                  active;
     private       R2ProjectionReadableType projection;
 
@@ -170,12 +189,15 @@ public final class R2Matrices implements R2MatricesType
     {
       this.active = false;
       this.m_projection = PMatrixDirectM4x4F.newMatrix();
+      this.m_projection_inverse = PMatrixDirectM4x4F.newMatrix();
       this.m_view = PMatrixDirectM4x4F.newMatrix();
       this.m_view_inverse = PMatrixDirectM4x4F.newMatrix();
       this.instance_single = new InstanceSingle();
       this.context_tr = NullCheck.notNull(in_context_tr);
       this.projection = null;
       this.context_3f = new MatrixM3x3F.ContextMM3F();
+      this.context_p4f = new PMatrixM4x4F.ContextPM4F();
+      this.view_rays = R2ViewRays.newViewRays(this.context_p4f);
     }
 
     @Override
@@ -206,6 +228,13 @@ public final class R2Matrices implements R2MatricesType
     {
       Assertive.require(this.active, "Observer is active");
       return this.m_view_inverse;
+    }
+
+    @Override
+    public R2ViewRaysReadableType getViewRays()
+    {
+      Assertive.require(this.active, "Observer is active");
+      return this.view_rays;
     }
 
     @Override
