@@ -1,9 +1,15 @@
 #ifndef R2_LOG_DEPTH_H
 #define R2_LOG_DEPTH_H
 
-//
-// Logarithmic depth functions.
-//
+/// \file R2LogDepth.h
+/// \brief Logarithmic depth functions.
+
+///
+/// Prepare an eye-space Z value for encoding. See R2_logDepthEncodePartial.
+///
+/// @param z An eye-space Z value
+/// @return The prepared value
+///
 
 float
 R2_logDepthPrepareEyeZ(
@@ -11,6 +17,16 @@ R2_logDepthPrepareEyeZ(
 {
   return 1.0 + (-z);
 }
+
+///
+/// Partially encode the given eye-space Z value. This partial encoding
+/// can be used when performing part of the encoding in a vertex shader
+/// and the rest in a fragment shader (for efficiency reasons).
+///
+/// @param z                 An eye-space Z value
+/// @param depth_coefficient The depth coefficient used to encode \a z
+/// @return The partially encoded depth
+///
 
 float
 R2_logDepthEncodePartial(
@@ -22,6 +38,14 @@ R2_logDepthEncodePartial(
   return log2 (clamp_z) * half_co;
 }
 
+///
+/// Fully encode the given eye-space Z value.
+///
+/// @param z                 An eye-space Z value
+/// @param depth_coefficient The depth coefficient used to encode \a z
+/// @return The fully encoded depth
+///
+
 float
 R2_logDepthEncodeFull(
   const float z,
@@ -31,6 +55,14 @@ R2_logDepthEncodeFull(
   float clamp_z = max (0.000001, z + 1.0);
   return log2 (clamp_z) * half_co;
 }
+
+///
+/// Decode a depth value that was encoded with the given depth coefficient.
+///
+/// @param z                 The depth value
+/// @param depth_coefficient The coefficient used during encoding
+/// @return The original eye-space Z value
+///
 
 float
 R2_logDepthDecode(

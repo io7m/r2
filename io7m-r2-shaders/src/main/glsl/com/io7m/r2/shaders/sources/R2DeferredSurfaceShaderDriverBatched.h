@@ -6,7 +6,10 @@
 #include "R2LogDepth.h"
 #include "R2Normals.h"
 #include "R2DeferredSurfaceTypes.h"
-#include "R2GBuffer.h"
+#include "R2GBufferOutput.h"
+
+/// \file R2DeferredSurfaceShaderDriverBatched.h
+/// \brief A fragment shader driver for batched instance surfaces.
 
 uniform R2_deferred_surface_textures_t          R2_deferred_surface_textures;
 uniform R2_deferred_surface_parameters_t        R2_deferred_surface_parameters;
@@ -42,7 +45,7 @@ R2_deferred_surface_shader_main_gbuffer()
       normal_comp
     );
 
-  R2_deferred_surface_output_t o = R2_deferred_main (
+  R2_deferred_surface_output_t o = R2_deferredSurfaceMain (
     R2_deferred_surface_data,
     derived,
     R2_deferred_surface_textures,

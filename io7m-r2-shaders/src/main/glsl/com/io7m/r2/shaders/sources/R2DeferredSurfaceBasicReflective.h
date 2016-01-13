@@ -1,12 +1,11 @@
 #ifndef R2_DEFERRED_SURFACE_BASIC_REFLECTIVE_H
 #define R2_DEFERRED_SURFACE_BASIC_REFLECTIVE_H
 
+/// \file R2DeferredSurfaceBasicReflective.h
+/// \brief Basic pseudo-reflective (environment mapped) deferred surface implementation
+
 #include "R2DeferredSurfaceShaderMain.h"
 #include "R2EnvironmentReflection.h"
-
-//
-// Basic pseudo-reflective (environment mapped) deferred surface
-//
 
 struct R2_deferred_surface_reflective_textures_t {
   samplerCube environment;  // A right-handed cube map
@@ -21,7 +20,7 @@ uniform R2_deferred_surface_reflective_textures_t   R2_deferred_surface_reflecti
 uniform R2_deferred_surface_reflective_parameters_t R2_deferred_surface_reflective_parameters;
 
 R2_deferred_surface_output_t
-R2_deferred_main (
+R2_deferredSurfaceMain (
   const R2_deferred_surface_data_t data,
   const R2_deferred_surface_derived_t derived,
   const R2_deferred_surface_textures_t textures,

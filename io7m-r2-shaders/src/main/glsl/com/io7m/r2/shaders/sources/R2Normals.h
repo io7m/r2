@@ -1,14 +1,17 @@
 #ifndef R2_NORMALS_H
 #define R2_NORMALS_H
 
-//
-// Functions for transforming normal vectors.
-//
+/// \file R2Normals.h
+/// \brief Functions for transforming normal vectors.
+///
 
-//
-// Compress the (normalized) vector `n` into two elements
-// using a spheremap transform (Lambert Azimuthal Equal-Area).
-//
+///
+/// Compress the (normalized) vector \a n into two elements
+/// using a spheremap transform (Lambert Azimuthal Equal-Area).
+///
+/// @param n A normal vector
+/// @return A compressed normal vector
+///
 
 vec2
 R2_normalsCompress(
@@ -20,10 +23,12 @@ R2_normalsCompress(
   return vec2 (x, y);
 }
 
-//
-// Decompress the given vector, assuming it was encoded with
-// a spheremap transform (Lambert Azimuthal Equal-Area).
-//
+///
+/// Decompress the given vector, assuming it was encoded with
+/// a spheremap transform (Lambert Azimuthal Equal-Area).
+///
+/// @param n The compressed normal vector
+/// @return A decompressed normal vector
 
 vec3
 R2_normalsDecompress(
@@ -41,10 +46,13 @@ R2_normalsDecompress(
   return vec3 (x, y, z);
 }
 
-//
-// Compute a bitangent vector given a normal `n` and tangent vector `t`,
-// assuming a sign `[-1.0, 1.0]` stored in `t.w`.
-//
+///
+/// Compute a bitangent vector given a normal \a n and tangent vector \a t,
+/// assuming a sign [-1.0, 1.0] stored in \a t.w.
+///
+/// @param n A normal vector
+/// @param t A tangent vector
+/// @return A bitangent vector
 
 vec3
 R2_normalsBitangent(
@@ -55,9 +63,12 @@ R2_normalsBitangent(
   return p * t.w;
 }
 
-//
-// Unpack a tangent-space normal vector from the texture `map`.
-//
+///
+/// Unpack a tangent-space normal vector from the texture \a map.
+///
+/// @param map A normal map texture
+/// @param uv  The UV coordinates
+///
 
 vec3
 R2_normalsUnpack(
@@ -68,10 +79,14 @@ R2_normalsUnpack(
   return (rgb * 2.0) + (-1.0);
 }
 
-//
-// Transform the tangent-space vector `m` into the coordinate
-// system given by the orthonormal vectors `{t, b, n}`.
-//
+///
+/// Transform the tangent-space vector \a m into the coordinate
+/// system given by the orthonormal vectors {t, b, n}.
+///
+/// @param m A tangent-space vector
+/// @param t A tangent vector
+/// @param b A bitangent vector
+/// @param n A normal vector
 
 vec3
 R2_normalsTransform(
@@ -84,12 +99,17 @@ R2_normalsTransform(
   return normalize (mat * m);
 }
 
-//
-// Given a texture consisting of normal vectors `t_normal`, object-space
-// normal `n`, object-space tangent `t`, object-space bitangent `b`,
-// and texture coordinates `uv`, unpack and transform a
-// vector from the texture, resulting in an object-space peturbed normal.
-//
+///
+/// Given a texture consisting of normal vectors \a t_normal, object-space
+/// normal \a n, object-space tangent \a t, object-space bitangent \a b,
+/// and texture coordinates \a uv, unpack and transform a
+/// vector from the texture, resulting in an object-space peturbed normal.
+///
+/// @param t_normal A normal map texture
+/// @param n        A normal vector
+/// @param t        A tangent vector
+/// @param b        A bitangent vector
+/// @param uv       A set of UV coordinates
 
 vec3
 R2_normalsBumpLocal(
@@ -106,13 +126,19 @@ R2_normalsBumpLocal(
   return R2_normalsTransform (m, nt, nb, nn);
 }
 
-//
-// Given a texture consisting of normal vectors `t_normal`,
-// an object-to-eye-space matrix `m_normal`, object-space
-// normal `n`, object-space tangent `t`, object-space bitangent `b`,
-// and texture coordinates `uv`, unpack and transform a
-// vector from the texture, and transform it to eye-space.
-//
+///
+/// Given a texture consisting of normal vectors \a t_normal,
+/// an object-to-eye-space matrix \a m_normal, object-space
+/// normal \a n, object-space tangent \a t, object-space bitangent \a b,
+/// and texture coordinates \a uv, unpack and transform a
+/// vector from the texture, and transform it to eye-space.
+///
+/// @param t_normal A normal map texture
+/// @param m_normal A object-to-eye-space matrix
+/// @param n        A normal vector
+/// @param t        A tangent vector
+/// @param b        A bitangent vector
+/// @param uv       A set of UV coordinates
 
 vec3
 R2_normalsBump(

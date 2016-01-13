@@ -1,14 +1,13 @@
 #ifndef R2_DEFERRED_SURFACE_BASIC_H
 #define R2_DEFERRED_SURFACE_BASIC_H
 
+/// \file R2DeferredSurfaceBasic.h
+/// \brief Basic deferred surface implementation
+
 #include "R2DeferredSurfaceShaderMain.h"
 
-//
-// Basic deferred surface
-//
-
 R2_deferred_surface_output_t
-R2_deferred_main (
+R2_deferredSurfaceMain (
   const R2_deferred_surface_data_t data,
   const R2_deferred_surface_derived_t derived,
   const R2_deferred_surface_textures_t textures,
