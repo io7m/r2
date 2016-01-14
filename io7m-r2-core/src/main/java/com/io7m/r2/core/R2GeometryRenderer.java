@@ -106,7 +106,6 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     final JCGLBlendingType g_b = g.getBlending();
     final JCGLColorBufferMaskingType g_cm = g.getColorBufferMasking();
     final JCGLCullingType g_cu = g.getCulling();
-    final JCGLStencilBuffersType g_st = g.getStencilBuffers();
 
     if (s.opaquesCount() > 0L) {
 
@@ -122,38 +121,6 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       g_db.depthClampingEnable();
       g_db.depthBufferWriteEnable();
       g_db.depthBufferTestEnable(JCGLDepthFunction.DEPTH_LESS_THAN);
-
-      /**
-       * Enable writing to the stencil buffer: Affected pixels will have the
-       * {@link R2Stencils#GEOMETRY_BIT} and
-       * {@link R2Stencils#GEOMETRY_MOST_RECENT_BIT} stencil bits set.
-       *
-       * Only pixels with a corresponding {@link R2Stencils#ALLOW_BIT} stencil
-       * bit will be affected by rendering.
-       */
-
-      g_st.stencilBufferEnable();
-
-      g_st.stencilBufferOperation(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK,
-        JCGLStencilOperation.STENCIL_OP_KEEP,
-        JCGLStencilOperation.STENCIL_OP_KEEP,
-        JCGLStencilOperation.STENCIL_OP_REPLACE);
-
-      final int s_write =
-        R2Stencils.GEOMETRY_BIT
-          | R2Stencils.GEOMETRY_MOST_RECENT_BIT
-          | R2Stencils.ALLOW_BIT;
-
-      g_st.stencilBufferMask(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK,
-        s_write);
-
-      g_st.stencilBufferFunction(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK,
-        JCGLStencilFunction.STENCIL_EQUAL,
-        s_write,
-        R2Stencils.ALLOW_BIT);
 
       this.opaque_consumer.g33 = g;
       this.opaque_consumer.matrices = m;
@@ -188,6 +155,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     private @Nullable JCGLTexturesType       textures;
     private @Nullable JCGLArrayObjectsType   array_objects;
     private @Nullable JCGLDrawType           draw;
+    private @Nullable JCGLStencilBuffersType stencils;
 
     private OpaqueConsumer()
     {
@@ -203,6 +171,26 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.textures = this.g33.getTextures();
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
+      this.stencils = this.g33.getStencilBuffers();
+    }
+
+    @Override
+    public void onStartGroup(final int group)
+    {
+      this.stencils.stencilBufferEnable();
+      this.stencils.stencilBufferOperation(
+        JCGLFaceSelection.FACE_FRONT_AND_BACK,
+        JCGLStencilOperation.STENCIL_OP_KEEP,
+        JCGLStencilOperation.STENCIL_OP_KEEP,
+        JCGLStencilOperation.STENCIL_OP_REPLACE);
+      this.stencils.stencilBufferMask(
+        JCGLFaceSelection.FACE_FRONT_AND_BACK,
+        R2Stencils.GROUP_BITS);
+      this.stencils.stencilBufferFunction(
+        JCGLFaceSelection.FACE_FRONT_AND_BACK,
+        JCGLStencilFunction.STENCIL_EQUAL,
+        group | R2Stencils.ALLOW_BIT,
+        R2Stencils.ALLOW_BIT);
     }
 
     @Override
@@ -304,6 +292,12 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderSingleUsableType<M> s)
     {
       this.shaders.shaderDeactivateProgram();
+    }
+
+    @Override
+    public void onFinishGroup(final int group)
+    {
+
     }
 
     @Override

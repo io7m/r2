@@ -32,6 +32,8 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2ShaderBatchedUsableType;
 import com.io7m.r2.core.R2ShaderSingleUsableType;
 import com.io7m.r2.core.R2ShaderUsableType;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import org.hamcrest.core.StringStartsWith;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -218,6 +220,7 @@ public final class R2SceneOpaquesTest
     Assert.assertEquals(7L, (long) a1.getGLName());
 
     Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onStartGroup 1", op.remove(0));
     Assert.assertEquals("onInstanceSingleShaderStart 0", op.remove(0));
     Assert.assertEquals("onInstanceSingleMaterialStart 0 0", op.remove(0));
     Assert.assertEquals("onInstanceSingleArrayStart 4", op.remove(0));
@@ -262,6 +265,7 @@ public final class R2SceneOpaquesTest
     Assert.assertEquals("onInstanceSingle 17", op.remove(0));
     Assert.assertEquals("onInstanceSingleMaterialFinish 1 2", op.remove(0));
     Assert.assertEquals("onInstanceSingleShaderFinish 1", op.remove(0));
+    Assert.assertEquals("onFinishGroup 1", op.remove(0));
     Assert.assertEquals("onFinish", op.remove(0));
     Assert.assertTrue(op.isEmpty());
   }
@@ -291,12 +295,14 @@ public final class R2SceneOpaquesTest
     o.opaquesExecute(cc);
 
     Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onStartGroup 1", op.remove(0));
     Assert.assertEquals("onInstanceSingleShaderStart 0", op.remove(0));
     Assert.assertEquals("onInstanceSingleMaterialStart 0 0", op.remove(0));
     Assert.assertEquals("onInstanceSingleArrayStart 4", op.remove(0));
     Assert.assertEquals("onInstanceSingle 0", op.remove(0));
     Assert.assertEquals("onInstanceSingleMaterialFinish 0 0", op.remove(0));
     Assert.assertEquals("onInstanceSingleShaderFinish 0", op.remove(0));
+    Assert.assertEquals("onFinishGroup 1", op.remove(0));
     Assert.assertEquals("onFinish", op.remove(0));
     Assert.assertTrue(op.isEmpty());
 
@@ -308,6 +314,65 @@ public final class R2SceneOpaquesTest
     Assert.assertTrue(op.isEmpty());
   }
 
+  @Test
+  public void testSingleGroups()
+    throws Exception
+  {
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getGL();
+
+    final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
+    final JCGLArrayObjectType a1 = R2TestUtilities.getArrayObject(g);
+
+    final R2InstanceSingleType i0a0 =
+      R2TestUtilities.getInstanceSingle(g, a0, 0L);
+    final R2InstanceSingleType i0a1 =
+      R2TestUtilities.getInstanceSingle(g, a1, 1L);
+
+    final R2ShaderSingleUsableType<Object> s0 =
+      R2TestUtilities.getShaderSingle(g, 0L);
+    final R2MaterialOpaqueSingleType<Object> m0 =
+      R2TestUtilities.getMaterialSingle(g, s0, new Object(), 0L);
+
+    final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
+    o.opaquesAddSingleInstance(i0a0, m0);
+    o.opaquesAddSingleInstanceInGroup(i0a1, m0, 3);
+    Assert.assertEquals(2L, o.opaquesCount());
+
+    final LoggingConsumer cc = new LoggingConsumer();
+    final List<String> op = cc.ops;
+    o.opaquesExecute(cc);
+
+    Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onStartGroup 1", op.remove(0));
+    Assert.assertEquals("onInstanceSingleShaderStart 0", op.remove(0));
+    Assert.assertEquals("onInstanceSingleMaterialStart 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceSingleArrayStart 4", op.remove(0));
+    Assert.assertEquals("onInstanceSingle 0", op.remove(0));
+    Assert.assertEquals("onInstanceSingleMaterialFinish 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceSingleShaderFinish 0", op.remove(0));
+    Assert.assertEquals("onFinishGroup 1", op.remove(0));
+
+    Assert.assertEquals("onStartGroup 3", op.remove(0));
+    Assert.assertEquals("onInstanceSingleShaderStart 0", op.remove(0));
+    Assert.assertEquals("onInstanceSingleMaterialStart 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceSingleArrayStart 7", op.remove(0));
+    Assert.assertEquals("onInstanceSingle 1", op.remove(0));
+    Assert.assertEquals("onInstanceSingleMaterialFinish 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceSingleShaderFinish 0", op.remove(0));
+    Assert.assertEquals("onFinishGroup 3", op.remove(0));
+
+    Assert.assertEquals("onFinish", op.remove(0));
+    Assert.assertTrue(op.isEmpty());
+
+    o.opaquesReset();
+    o.opaquesExecute(cc);
+
+    Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onFinish", op.remove(0));
+    Assert.assertTrue(op.isEmpty());
+  }
+
+
   private static final class LoggingConsumer implements
     R2SceneOpaquesConsumerType
   {
@@ -315,16 +380,35 @@ public final class R2SceneOpaquesTest
     private       R2ShaderUsableType<?>     shader_current;
     private       R2MaterialType<?>         material_current;
     private       JCGLArrayObjectUsableType array_current;
+    private int group;
 
     LoggingConsumer()
     {
       this.ops = new ArrayList<>(256);
+      this.group = -1;
     }
 
     @Override
     public void onStart()
     {
       this.ops.add("onStart");
+    }
+
+    @Override
+    public void onStartGroup(final int g)
+    {
+      this.group = g;
+      this.ops.add(String.format(
+        "onStartGroup %d", Integer.valueOf(g)));
+    }
+
+    @Override
+    public void onFinishGroup(final int g)
+    {
+      Assert.assertEquals((long) g, (long) this.group);
+      this.group = -1;
+      this.ops.add(String.format(
+        "onFinishGroup %d", Integer.valueOf(g)));
     }
 
     @Override
@@ -526,11 +610,72 @@ public final class R2SceneOpaquesTest
 
     Assert.assertEquals("onStart", op.remove(0));
     Assert.assertEquals("onInstanceBatchedUpdate 0", op.remove(0));
+    Assert.assertEquals("onStartGroup 1", op.remove(0));
     Assert.assertEquals("onInstanceBatchedShaderStart 0", op.remove(0));
     Assert.assertEquals("onInstanceBatchedMaterialStart 0 0", op.remove(0));
     Assert.assertEquals("onInstanceBatched 0", op.remove(0));
     Assert.assertEquals("onInstanceBatchedMaterialFinish 0 0", op.remove(0));
     Assert.assertEquals("onInstanceBatchedShaderFinish 0", op.remove(0));
+    Assert.assertEquals("onFinishGroup 1", op.remove(0));
+    Assert.assertEquals("onFinish", op.remove(0));
+    Assert.assertTrue(op.isEmpty());
+
+    o.opaquesReset();
+    o.opaquesExecute(cc);
+
+    Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onFinish", op.remove(0));
+    Assert.assertTrue(op.isEmpty());
+  }
+
+  @Test
+  public void testBatchedGroups()
+    throws Exception
+  {
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getGL();
+
+    final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
+    final JCGLArrayObjectType a1 = R2TestUtilities.getArrayObject(g);
+
+    final R2InstanceBatchedType i0a0 =
+      R2TestUtilities.getInstanceBatched(g, a0, 0L);
+    final R2InstanceBatchedType i0a1 =
+      R2TestUtilities.getInstanceBatched(g, a1, 1L);
+
+    final R2ShaderBatchedUsableType<Object> s0 =
+      R2TestUtilities.getShaderBatched(g, 0L);
+    final R2MaterialOpaqueBatchedType<Object> m0 =
+      R2TestUtilities.getMaterialBatched(g, s0, new Object(), 0L);
+
+    final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
+    o.opaquesAddBatchedInstance(i0a0, m0);
+    o.opaquesAddBatchedInstanceInGroup(i0a1, m0, 3);
+    Assert.assertEquals(2L, o.opaquesCount());
+
+    final LoggingConsumer cc = new LoggingConsumer();
+    final List<String> op = cc.ops;
+    o.opaquesExecute(cc);
+
+    Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedUpdate 0", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedUpdate 1", op.remove(0));
+
+    Assert.assertEquals("onStartGroup 1", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedShaderStart 0", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedMaterialStart 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceBatched 0", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedMaterialFinish 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedShaderFinish 0", op.remove(0));
+    Assert.assertEquals("onFinishGroup 1", op.remove(0));
+
+    Assert.assertEquals("onStartGroup 3", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedShaderStart 0", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedMaterialStart 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceBatched 1", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedMaterialFinish 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceBatchedShaderFinish 0", op.remove(0));
+    Assert.assertEquals("onFinishGroup 3", op.remove(0));
+
     Assert.assertEquals("onFinish", op.remove(0));
     Assert.assertTrue(op.isEmpty());
 
@@ -662,31 +807,18 @@ public final class R2SceneOpaquesTest
     op.stream().forEach(System.out::println);
 
     Assert.assertEquals("onStart", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 0", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 5", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 10", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 8", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 3", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 20", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 13", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 9", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 16", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 15", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 6", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 1", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 22", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 4", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 23", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 18", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 17", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 11", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 21", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 19", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 12", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 2", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 14", op.remove(0));
-    Assert.assertEquals("onInstanceBatchedUpdate 7", op.remove(0));
 
+    final IntOpenHashSet updates = new IntOpenHashSet();
+    for (int index = 0; index < 24; ++index) {
+      final String cmd = op.remove(0);
+      Assert.assertThat(cmd, new StringStartsWith("onInstanceBatchedUpdate "));
+      final String[] segments = cmd.split("\\s+");
+      final int k = Integer.parseInt(segments[1]);
+      Assert.assertFalse(updates.contains(k));
+      updates.add(k);
+    }
+
+    Assert.assertEquals("onStartGroup 1", op.remove(0));
     Assert.assertEquals("onInstanceBatchedShaderStart 0", op.remove(0));
     Assert.assertEquals("onInstanceBatchedMaterialStart 0 0", op.remove(0));
     Assert.assertEquals("onInstanceBatched 0", op.remove(0));
@@ -724,6 +856,7 @@ public final class R2SceneOpaquesTest
     Assert.assertEquals("onInstanceBatched 13", op.remove(0));
     Assert.assertEquals("onInstanceBatchedMaterialFinish 1 2", op.remove(0));
     Assert.assertEquals("onInstanceBatchedShaderFinish 1", op.remove(0));
+    Assert.assertEquals("onFinishGroup 1", op.remove(0));
     Assert.assertEquals("onFinish", op.remove(0));
     Assert.assertTrue(op.isEmpty());
   }
@@ -733,6 +866,12 @@ public final class R2SceneOpaquesTest
   {
     @Override
     public void onStart()
+    {
+      throw new UnreachableCodeException();
+    }
+
+    @Override
+    public void onStartGroup(final int group)
     {
       throw new UnreachableCodeException();
     }
@@ -819,6 +958,12 @@ public final class R2SceneOpaquesTest
     @Override
     public <M> void onInstanceSingleShaderFinish(
       final R2ShaderSingleUsableType<M> s)
+    {
+      throw new UnreachableCodeException();
+    }
+
+    @Override
+    public void onFinishGroup(final int group)
     {
       throw new UnreachableCodeException();
     }

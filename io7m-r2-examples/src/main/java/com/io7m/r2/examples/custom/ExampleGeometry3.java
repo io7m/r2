@@ -64,7 +64,7 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 
 // CHECKSTYLE_JAVADOC:OFF
 
-public final class ExampleGeometry0 implements R2ExampleCustomType
+public final class ExampleGeometry3 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
@@ -74,19 +74,19 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private R2MatricesType         matrices;
   private R2ProjectionFOV        projection;
   private R2UnitQuadType         quad;
-  private R2InstanceSingleType   instance;
   private R2SceneOpaquesType     opaques;
   private R2GeometryBufferType   gbuffer;
   private JCGLClearSpecification clear_spec;
 
   private R2ShaderSingleType<R2DeferredSurfaceShaderBasicParameters>
-    shader;
+                                 shader;
   private R2DeferredSurfaceShaderBasicParameters
-    shader_params;
+                                 shader_params;
   private R2MaterialOpaqueSingleType<R2DeferredSurfaceShaderBasicParameters>
-    material;
+                                 material;
+  private R2InstanceSingleType[] instances;
 
-  public ExampleGeometry0()
+  public ExampleGeometry3()
   {
     this.view = PMatrixHeapArrayM4x4F.newMatrix();
   }
@@ -115,13 +115,22 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       new VectorI3F(0.0f, 0.0f, 0.0f),
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
-    final R2TransformOSiT transform = R2TransformOSiT.newTransform();
     final R2IDPoolType id_pool = m.getIDPool();
-    this.instance = R2InstanceSingle.newInstance(
-      id_pool,
-      this.quad.getArrayObject(),
-      transform,
-      PMatrixI3x3F.identity());
+
+    this.instances = new R2InstanceSingleType[8];
+    for (int index = 0; index < this.instances.length; ++index) {
+      final R2TransformOSiT tr = R2TransformOSiT.newTransform();
+
+      tr.getScale().set3F(0.25f, 0.25f, 0.25f);
+      tr.getTranslation().set3F(
+        index - (this.instances.length / 2), 0.0f, 0.0f);
+
+      this.instances[index] = R2InstanceSingle.newInstance(
+        id_pool,
+        this.quad.getArrayObject(),
+        tr,
+        PMatrixI3x3F.identity());
+    }
 
     final R2ShaderSourcesType sources =
       R2ShaderSourcesResources.newSources(R2Shaders.class);
@@ -157,7 +166,11 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
 
     this.opaques.opaquesReset();
-    this.opaques.opaquesAddSingleInstance(this.instance, this.material);
+
+    for (int index = 0; index < this.instances.length; ++index) {
+      this.opaques.opaquesAddSingleInstanceInGroup(
+        this.instances[index], this.material, index + 1);
+    }
 
     {
       final JCGLFramebufferUsableType fb = this.gbuffer.getFramebuffer();

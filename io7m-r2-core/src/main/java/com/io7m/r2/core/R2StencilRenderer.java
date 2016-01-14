@@ -143,13 +143,12 @@ public final class R2StencilRenderer implements R2StencilRendererType
       JCGLStencilOperation.STENCIL_OP_REPLACE);
 
     /**
-     * Allow writing to the {@link R2Stencils#ALLOW_BIT} and
-     * {@link R2Stencils#GEOMETRY_MOST_RECENT_BIT} bits.
+     * Allow writing to the {@link R2Stencils#ALLOW_BIT}.
      */
 
     g_st.stencilBufferMask(
       JCGLFaceSelection.FACE_FRONT_AND_BACK,
-      R2Stencils.ALLOW_BIT | R2Stencils.GEOMETRY_MOST_RECENT_BIT);
+      R2Stencils.ALLOW_BIT);
 
     switch (s.stencilsGetMode()) {
       case STENCIL_MODE_INSTANCES_ARE_NEGATIVE: {

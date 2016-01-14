@@ -17,22 +17,18 @@
 package com.io7m.r2.core;
 
 /**
- * An exception indicating an attempt to specify that an instance should be
- * rendered multiple times.
+ * An invalid group number was specified.
  */
 
-public final class R2RendererExceptionInstanceAlreadyVisible
-  extends R2RendererException
+public final class R2ExceptionInvalidGroup extends R2RendererException
 {
-  private static final long serialVersionUID = 1L;
-
   /**
    * Construct an exception.
    *
-   * @param message The message
+   * @param message The cause
    */
 
-  public R2RendererExceptionInstanceAlreadyVisible(
+  public R2ExceptionInvalidGroup(
     final String message)
   {
     super(message);
