@@ -48,6 +48,14 @@ public interface R2SceneOpaquesConsumerType
   void onStart();
 
   /**
+   * Called when rendering of a group begins.
+   *
+   * @param group The group
+   */
+
+  void onStartGroup(int group);
+
+  /**
    * Called when a batched instance should upload batch data to the GPU.
    *
    * @param i The batched instance
@@ -174,6 +182,14 @@ public interface R2SceneOpaquesConsumerType
 
   <M> void onInstanceSingleShaderFinish(
     R2ShaderSingleUsableType<M> s);
+
+  /**
+   * Called when rendering of a group is finished.
+   *
+   * @param group The group
+   */
+
+  void onFinishGroup(int group);
 
   /**
    * Called when rendering of instances is finished.
