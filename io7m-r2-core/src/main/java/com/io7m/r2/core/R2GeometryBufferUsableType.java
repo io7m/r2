@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLResourceSizedType;
 import com.io7m.jcanephora.core.JCGLResourceUsableType;
@@ -56,4 +57,10 @@ public interface R2GeometryBufferUsableType extends JCGLResourceSizedType,
    */
 
   JCGLFramebufferUsableType getFramebuffer();
+
+  /**
+   * @return The viewport area
+   */
+
+  AreaInclusiveUnsignedLType getArea();
 }

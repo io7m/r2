@@ -38,6 +38,7 @@ import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.examples.R2ExampleCustomType;
+import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -62,6 +63,7 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
 
   @Override
   public void onInitialize(
+    final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
     final AreaInclusiveUnsignedIType area,
     final R2MainType m)
@@ -91,6 +93,7 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
 
   @Override
   public void onRender(
+    final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
     final AreaInclusiveUnsignedIType area,
     final R2MainType m,

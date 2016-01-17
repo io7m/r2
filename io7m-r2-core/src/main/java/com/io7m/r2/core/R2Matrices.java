@@ -45,15 +45,11 @@ import org.valid4j.Assertive;
 
 public final class R2Matrices implements R2MatricesType
 {
-  private final Observer                 observer;
-  private final MatrixM4x4F.ContextMM4F  context_m4;
-  private final R2TransformContextType   context_tr;
-  private final PMatrixM4x4F.ContextPM4F context_pm4;
+  private final Observer               observer;
+  private final R2TransformContextType context_tr;
 
   private R2Matrices()
   {
-    this.context_m4 = new MatrixM4x4F.ContextMM4F();
-    this.context_pm4 = new PMatrixM4x4F.ContextPM4F();
     this.context_tr = R2TransformContext.newContext();
     this.observer = new Observer(this.context_tr);
   }
@@ -96,11 +92,16 @@ public final class R2Matrices implements R2MatricesType
     NullCheck.notNull(projection);
     NullCheck.notNull(f);
 
+    if (this.observer.active) {
+      throw new R2RendererExceptionObserverAlreadyActive(
+        "Observer already active");
+    }
+
     try {
       this.observer.active = true;
       MatrixM4x4F.copy(view, this.observer.m_view);
       MatrixM4x4F.invert(
-        this.context_m4,
+        this.context_tr.getContextMM4F(),
         this.observer.m_view,
         this.observer.m_view_inverse);
 
@@ -110,9 +111,14 @@ public final class R2Matrices implements R2MatricesType
 
       projection.projectionMakeMatrix(this.observer.m_projection);
       PMatrixM4x4F.invert(
-        this.context_pm4,
+        this.context_tr.getContextPM4F(),
         this.observer.m_projection,
         this.observer.m_projection_inverse);
+
+      /**
+       * Recalculate view rays for the given projection.
+       */
+
       this.observer.view_rays.recalculate(
         this.observer.context_p4f,
         this.observer.m_projection_inverse);
@@ -249,6 +255,11 @@ public final class R2Matrices implements R2MatricesType
       NullCheck.notNull(f);
 
       Assertive.require(this.active, "Observer is active");
+
+      if (this.instance_single.active) {
+        throw new R2RendererExceptionInstanceAlreadyActive(
+          "Instance already active");
+      }
 
       try {
         this.instance_single.active = true;

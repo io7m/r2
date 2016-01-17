@@ -16,18 +16,39 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
+import com.io7m.jcanephora.core.JCGLResourceSizedType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
+
 /**
- * The type of opaque materials that can be applied to single instances.
- *
- * @param <M> The type of shader parameters
+ * The type of usable light buffers.
  */
 
-public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
+public interface R2LightBufferUsableType extends JCGLResourceSizedType,
+  JCGLResourceUsableType
 {
   /**
-   * @return The material shader
+   * @return The diffuse texture
    */
 
-  @Override
-  R2ShaderInstanceSingleUsableType<M> getShader();
+  R2Texture2DUsableType getDiffuseTexture();
+
+  /**
+   * @return The specular texture
+   */
+
+  R2Texture2DUsableType getSpecularTexture();
+
+  /**
+   * @return The framebuffer
+   */
+
+  JCGLFramebufferUsableType getFramebuffer();
+
+  /**
+   * @return The viewport area
+   */
+
+  AreaInclusiveUnsignedLType getArea();
 }

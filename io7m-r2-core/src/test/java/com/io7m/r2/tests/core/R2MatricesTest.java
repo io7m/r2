@@ -14,20 +14,16 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.core;
 
-/**
- * The type of opaque materials that can be applied to single instances.
- *
- * @param <M> The type of shader parameters
- */
+import com.io7m.r2.core.R2Matrices;
+import com.io7m.r2.core.R2MatricesType;
 
-public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
+public final class R2MatricesTest extends R2MatricesContract
 {
-  /**
-   * @return The material shader
-   */
-
   @Override
-  R2ShaderInstanceSingleUsableType<M> getShader();
+  protected R2MatricesType newMatrices()
+  {
+    return R2Matrices.newMatrices();
+  }
 }

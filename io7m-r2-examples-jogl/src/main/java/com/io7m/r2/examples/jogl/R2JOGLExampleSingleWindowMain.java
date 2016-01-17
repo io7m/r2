@@ -20,12 +20,30 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedI;
 import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
 import com.io7m.jcanephora.core.JCGLExceptionNonCompliant;
 import com.io7m.jcanephora.core.JCGLExceptionUnsupported;
+import com.io7m.jcanephora.core.JCGLTexture2DType;
+import com.io7m.jcanephora.core.JCGLTexture2DUpdateType;
+import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
+import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
+import com.io7m.jcanephora.core.JCGLTextureFormat;
+import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLTextureWrapS;
+import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.jogl.JCGLImplementationJOGL;
 import com.io7m.jcanephora.jogl.JCGLImplementationJOGLType;
+import com.io7m.jcanephora.texture_loader.awt.JCGLAWTTextureDataProvider;
+import com.io7m.jcanephora.texture_loader.core.JCGLTLTextureDataProviderType;
+import com.io7m.jcanephora.texture_loader.core.JCGLTLTextureDataType;
+import com.io7m.jcanephora.texture_loader.core.JCGLTLTextureUpdateProvider;
+import com.io7m.jcanephora.texture_loader.core.JCGLTLTextureUpdateProviderType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
+import com.io7m.r2.core.R2Texture2DStatic;
+import com.io7m.r2.core.R2Texture2DType;
+import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.examples.R2ExampleType;
 import com.io7m.r2.main.R2Main;
 import com.io7m.r2.main.R2MainType;
@@ -42,6 +60,13 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.Animator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * JOGL example frontend.
@@ -133,6 +158,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private       int                        frame;
     private       R2MainType                 r2_main;
     private       AreaInclusiveUnsignedIType area;
+    private       Services                   services;
 
     ExampleListener(
       final R2ExampleType in_example)
@@ -179,15 +205,22 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
           final JCGLInterfaceGL33Type g33 = this.context.contextGetGL33();
           this.r2_main = R2Main.newBuilder().build(g33);
+          this.services = new Services(g33);
 
           R2JOGLExampleSingleWindowMain.LOG.debug("initializing example");
-          this.example.onInitialize(g33, this.area, this.r2_main);
+          this.example.onInitialize(
+            this.services, g33, this.area, this.r2_main);
           R2JOGLExampleSingleWindowMain.LOG.debug("initialized example");
           return;
         }
 
         final JCGLInterfaceGL33Type g33 = this.context.contextGetGL33();
-        this.example.onRender(g33, this.area, this.r2_main, this.frame - 2);
+        this.example.onRender(
+          this.services,
+          g33,
+          this.area,
+          this.r2_main,
+          this.frame - 2);
       } catch (final JCGLExceptionUnsupported x) {
         R2JOGLExampleSingleWindowMain.LOG.error("unsupported: ", x);
       } catch (final JCGLExceptionNonCompliant x) {
@@ -213,6 +246,57 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       this.area = AreaInclusiveUnsignedI.of(
         new UnsignedRangeInclusiveI(0, drawable.getSurfaceWidth() - 1),
         new UnsignedRangeInclusiveI(0, drawable.getSurfaceHeight() - 1));
+    }
+  }
+
+  private static final class Services implements R2ExampleServicesType
+  {
+    private final JCGLTLTextureDataProviderType   data_prov;
+    private final JCGLTLTextureUpdateProviderType update_prov;
+    private final JCGLTexturesType                textures;
+    private final List<JCGLTextureUnitType>       units;
+    private final Map<String, R2Texture2DType>    cache;
+
+    Services(final JCGLInterfaceGL33Type g33)
+    {
+      this.textures = g33.getTextures();
+      this.units = this.textures.textureGetUnits();
+      this.data_prov = JCGLAWTTextureDataProvider.newProvider();
+      this.update_prov = JCGLTLTextureUpdateProvider.newProvider();
+      this.cache = new HashMap<>(128);
+    }
+
+    @Override
+    public R2Texture2DUsableType getTexture2D(
+      final String name)
+    {
+      if (this.cache.containsKey(name)) {
+        return this.cache.get(name);
+      }
+
+      final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
+      try (final InputStream is = c.getResourceAsStream(name)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureUnitType u0 = this.units.get(0);
+        final JCGLTexture2DType t =
+          this.textures.texture2DAllocate(
+            u0,
+            data.getWidth(),
+            data.getHeight(),
+            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+            JCGLTextureWrapS.TEXTURE_WRAP_REPEAT,
+            JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
+            JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
+            JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
+        final JCGLTexture2DUpdateType update =
+          this.update_prov.getTextureUpdate(t, data);
+        this.textures.texture2DUpdate(u0, update);
+        final R2Texture2DType r2 = R2Texture2DStatic.of(t);
+        this.cache.put(name, r2);
+        return r2;
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
     }
   }
 }

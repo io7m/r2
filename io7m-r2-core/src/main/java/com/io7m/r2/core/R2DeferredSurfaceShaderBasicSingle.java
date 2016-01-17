@@ -34,7 +34,7 @@ import java.util.Optional;
 
 public final class R2DeferredSurfaceShaderBasicSingle extends
   R2AbstractShader<R2DeferredSurfaceShaderBasicParameters>
-  implements R2ShaderSingleType<R2DeferredSurfaceShaderBasicParameters>
+  implements R2ShaderInstanceSingleType<R2DeferredSurfaceShaderBasicParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_normal;
@@ -116,7 +116,7 @@ public final class R2DeferredSurfaceShaderBasicSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderSingleType<R2DeferredSurfaceShaderBasicParameters> newShader(
+  public static R2ShaderInstanceSingleType<R2DeferredSurfaceShaderBasicParameters> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)

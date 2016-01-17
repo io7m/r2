@@ -40,49 +40,47 @@ import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import java.util.List;
 
 /**
- * Default implementation of the {@link R2GeometryBufferType} interface.
+ * Default implementation of the {@link R2LightBufferType} interface.
  */
 
-public final class R2GeometryBuffer implements R2GeometryBufferType
+public final class R2LightBuffer implements R2LightBufferType
 {
-  private final R2Texture2DType         t_rgba;
-  private final R2Texture2DType         t_norm;
-  private final R2Texture2DType         t_spec;
-  private final R2Texture2DType         t_depth;
-  private final JCGLFramebufferType     framebuffer;
-  private final UnsignedRangeInclusiveL range;
+  private final R2Texture2DType            t_diffuse;
+  private final R2Texture2DType            t_specular;
+  private final R2Texture2DType            t_depth;
+  private final JCGLFramebufferType        framebuffer;
+  private final UnsignedRangeInclusiveL    range;
+  private final AreaInclusiveUnsignedLType area;
 
-  private R2GeometryBuffer(
+  private R2LightBuffer(
     final JCGLFramebufferType in_framebuffer,
-    final R2Texture2DType in_t_rgba,
-    final R2Texture2DType in_t_norm,
-    final R2Texture2DType in_t_spec,
+    final R2Texture2DType in_t_diffuse,
+    final R2Texture2DType in_t_specular,
     final R2Texture2DType in_t_depth)
   {
     this.framebuffer = NullCheck.notNull(in_framebuffer);
-    this.t_rgba = NullCheck.notNull(in_t_rgba);
-    this.t_norm = NullCheck.notNull(in_t_norm);
-    this.t_spec = NullCheck.notNull(in_t_spec);
+    this.t_diffuse = NullCheck.notNull(in_t_diffuse);
+    this.t_specular = NullCheck.notNull(in_t_specular);
     this.t_depth = NullCheck.notNull(in_t_depth);
 
     long size = 0L;
-    size += this.t_rgba.get().getRange().getInterval();
-    size += this.t_norm.get().getRange().getInterval();
-    size += this.t_spec.get().getRange().getInterval();
+    size += this.t_diffuse.get().getRange().getInterval();
+    size += this.t_specular.get().getRange().getInterval();
     size += this.t_depth.get().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
+    this.area = in_t_diffuse.get().textureGetArea();
   }
 
   /**
-   * Construct a new geometry buffer.
+   * Construct a new light buffer.
    *
    * @param g    A graphics interface
    * @param area The inclusive area of the buffer
    *
-   * @return A new geometry buffer
+   * @return A new light buffer
    */
 
-  public static R2GeometryBufferType newGeometryBuffer(
+  public static R2LightBufferType newLightBuffer(
     final JCGLInterfaceGL33Type g,
     final AreaInclusiveUnsignedIType area)
   {
@@ -99,7 +97,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
     final UnsignedRangeInclusiveI range_x = area.getRangeX();
     final UnsignedRangeInclusiveI range_y = area.getRangeY();
 
-    final JCGLTexture2DType t_rgba =
+    final JCGLTexture2DType t_diffuse =
       g_t.texture2DAllocate(
         u_0,
         (long) range_x.getInterval(),
@@ -121,18 +119,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
         JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
         JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-    final JCGLTexture2DType t_norm =
-      g_t.texture2DAllocate(
-        u_0,
-        (long) range_x.getInterval(),
-        (long) range_y.getInterval(),
-        JCGLTextureFormat.TEXTURE_FORMAT_RG_16F_4BPP,
-        JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
-        JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
-
-    final JCGLTexture2DType t_spec =
+    final JCGLTexture2DType t_specular =
       g_t.texture2DAllocate(
         u_0,
         (long) range_x.getInterval(),
@@ -146,42 +133,28 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
     g_t.textureUnitUnbind(u_0);
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), t_rgba);
-    fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), t_norm);
-    fbb.attachColorTexture2DAt(points.get(2), buffers.get(2), t_spec);
+    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), t_diffuse);
+    fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), t_specular);
     fbb.attachDepthStencilTexture2D(t_depth);
 
     final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
-    return new R2GeometryBuffer(
+    return new R2LightBuffer(
       fb,
-      R2Texture2DStatic.of(t_rgba),
-      R2Texture2DStatic.of(t_norm),
-      R2Texture2DStatic.of(t_spec),
+      R2Texture2DStatic.of(t_diffuse),
+      R2Texture2DStatic.of(t_specular),
       R2Texture2DStatic.of(t_depth));
   }
 
   @Override
-  public R2Texture2DUsableType getAlbedoEmissiveTexture()
+  public R2Texture2DUsableType getDiffuseTexture()
   {
-    return this.t_rgba;
-  }
-
-  @Override
-  public R2Texture2DUsableType getNormalTexture()
-  {
-    return this.t_norm;
+    return this.t_diffuse;
   }
 
   @Override
   public R2Texture2DUsableType getSpecularTexture()
   {
-    return this.t_spec;
-  }
-
-  @Override
-  public R2Texture2DUsableType getDepthTexture()
-  {
-    return this.t_depth;
+    return this.t_specular;
   }
 
   @Override
@@ -193,7 +166,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
   @Override
   public AreaInclusiveUnsignedLType getArea()
   {
-    return this.t_rgba.get().textureGetArea();
+    return this.area;
   }
 
   @Override
@@ -213,10 +186,9 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
     throws R2Exception
   {
     if (!this.isDeleted()) {
-      this.t_rgba.delete(g);
+      this.t_diffuse.delete(g);
       this.t_depth.delete(g);
-      this.t_norm.delete(g);
-      this.t_spec.delete(g);
+      this.t_specular.delete(g);
 
       final JCGLFramebuffersType g_fb = g.getFramebuffers();
       g_fb.framebufferDelete(this.framebuffer);

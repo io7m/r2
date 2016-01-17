@@ -29,6 +29,36 @@ public interface R2SceneOpaqueLightsType
   void opaqueLightsReset();
 
   /**
+   * Add a light to the scene, lighting instances that were in group {@code
+   * group}.
+   *
+   * @param light  The light
+   * @param shader The light shader
+   * @param group  The group
+   * @param <L>    The precise type of light
+   */
+
+  <L extends R2LightSingleType> void opaqueLightsAddSingleWithGroup(
+    L light,
+    R2ShaderLightSingleUsableType<L> shader,
+    int group);
+
+  /**
+   * Add a light to the scene, lighting instances that were in group {@code 1}.
+   *
+   * @param light  The light
+   * @param shader The light shader
+   * @param <L>    The precise type of light
+   */
+
+  default <L extends R2LightSingleType> void opaqueLightsAddSingle(
+    final L light,
+    final R2ShaderLightSingleUsableType<L> shader)
+  {
+    this.opaqueLightsAddSingleWithGroup(light, shader, 1);
+  }
+
+  /**
    * Batch the lights and pass them to the given consumer for rendering.
    *
    * @param c The consumer

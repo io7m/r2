@@ -14,16 +14,33 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.core;
 
-/**
- * The type of shaders for rendering single instances.
- *
- * @param <M> The type of parameter data
- */
+import com.io7m.r2.core.R2ExceptionInvalidGroup;
+import com.io7m.r2.core.R2Stencils;
+import org.junit.Assert;
+import org.junit.Test;
 
-public interface R2ShaderSingleType<M> extends R2ShaderType<M>,
-  R2ShaderSingleUsableType<M>
+public final class R2StencilsTest
 {
-  // No extra functions
+  @Test(expected = R2ExceptionInvalidGroup.class)
+  public void testInvalidGroup0()
+  {
+    R2Stencils.checkValidGroup(0);
+  }
+
+  @Test(expected = R2ExceptionInvalidGroup.class)
+  public void testInvalidGroup1()
+  {
+    R2Stencils.checkValidGroup(128);
+  }
+
+  @Test
+  public void testValidGroup()
+  {
+    for (int index = 1; index <= 127; ++index) {
+      Assert.assertEquals(
+        (long) index, (long) R2Stencils.checkValidGroup(index));
+    }
+  }
 }

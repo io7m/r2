@@ -40,16 +40,24 @@ import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceBatchedDynamic;
 import com.io7m.r2.core.R2InstanceBatchedDynamicType;
+import com.io7m.r2.core.R2LightBuffer;
+import com.io7m.r2.core.R2LightBufferType;
+import com.io7m.r2.core.R2LightDirectionalSingle;
+import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2MaterialOpaqueBatched;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionFOV;
+import com.io7m.r2.core.R2SceneOpaqueLights;
+import com.io7m.r2.core.R2SceneOpaqueLightsType;
 import com.io7m.r2.core.R2SceneOpaques;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShaderBatchedType;
+import com.io7m.r2.core.R2ShaderLightDirectionalSpecularSingle;
+import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
@@ -65,30 +73,37 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 
 // CHECKSTYLE_JAVADOC:OFF
 
-public final class ExampleGeometryBatched0 implements R2ExampleCustomType
+public final class ExampleLightDirectional0 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
   private       R2TransformOST[]                                  transforms;
 
-  private R2SceneStencilsType          stencils;
-  private R2StencilRendererType        stencil_renderer;
-  private R2GeometryRendererType       geom_renderer;
-  private R2MatricesType               matrices;
-  private R2ProjectionFOV              projection;
-  private R2UnitQuadType               quad;
+  private JCGLClearSpecification light_clear_spec;
+  private R2SceneStencilsType stencils;
+  private R2StencilRendererType stencil_renderer;
+  private R2GeometryRendererType geom_renderer;
+  private R2LightRendererType light_renderer;
+  private R2MatricesType matrices;
+  private R2ProjectionFOV projection;
+  private R2UnitQuadType quad;
   private R2InstanceBatchedDynamicType instance;
-  private R2SceneOpaquesType           opaques;
-  private R2GeometryBufferType         gbuffer;
-  private JCGLClearSpecification       clear_spec;
+  private R2SceneOpaquesType opaques;
+  private R2SceneOpaqueLightsType lights;
+  private R2GeometryBufferType gbuffer;
+  private R2LightBufferType lbuffer;
+  private JCGLClearSpecification geom_clear_spec;
 
   private R2ShaderBatchedType<R2DeferredSurfaceShaderBasicParameters>
-    shader;
+    geom_shader;
   private R2DeferredSurfaceShaderBasicParameters
-    shader_params;
+    geom_shader_params;
   private R2MaterialOpaqueBatchedType<R2DeferredSurfaceShaderBasicParameters>
-    material;
+    geom_material;
 
-  public ExampleGeometryBatched0()
+  private R2ShaderLightSingleType<R2LightDirectionalSingle> light_shader;
+  private R2LightDirectionalSingle                          light;
+
+  public ExampleLightDirectional0()
   {
     this.view = PMatrixHeapArrayM4x4F.newMatrix();
   }
@@ -101,12 +116,15 @@ public final class ExampleGeometryBatched0 implements R2ExampleCustomType
     final R2MainType m)
   {
     this.opaques = R2SceneOpaques.newOpaques();
+    this.lights = R2SceneOpaqueLights.newLights();
     this.stencils = R2SceneStencils.newMasks();
     this.stencil_renderer = m.getStencilRenderer();
     this.geom_renderer = m.getGeometryRenderer();
+    this.light_renderer = m.getLightRenderer();
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
     this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
+    this.lbuffer = R2LightBuffer.newLightBuffer(g, area);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -155,19 +173,42 @@ public final class ExampleGeometryBatched0 implements R2ExampleCustomType
 
     final R2ShaderSourcesType sources =
       R2ShaderSourcesResources.newSources(R2Shaders.class);
-    this.shader =
-      R2DeferredSurfaceShaderBasicBatched.newShader(g.getShaders(), sources, id_pool);
-    this.shader_params =
-      R2DeferredSurfaceShaderBasicParameters.newParameters(m.getTextureDefaults());
 
-    this.material = R2MaterialOpaqueBatched.newMaterial(
-      id_pool, this.shader, this.shader_params);
+    this.geom_shader =
+      R2DeferredSurfaceShaderBasicBatched.newShader(
+        g.getShaders(),
+        sources,
+        id_pool);
+    this.geom_shader_params =
+      R2DeferredSurfaceShaderBasicParameters.newParameters(
+        m.getTextureDefaults());
 
-    final JCGLClearSpecification.Builder csb = JCGLClearSpecification.builder();
-    csb.setStencilBufferClear(0);
-    csb.setDepthBufferClear(1.0);
-    csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
-    this.clear_spec = csb.build();
+    this.geom_material = R2MaterialOpaqueBatched.newMaterial(
+      id_pool, this.geom_shader, this.geom_shader_params);
+
+    this.light_shader =
+      R2ShaderLightDirectionalSpecularSingle.newShader(
+        g.getShaders(), sources, id_pool);
+    this.light =
+      R2LightDirectionalSingle.newLight(this.quad, id_pool);
+    this.light.getColor().set3F(1.0f, 0.0f, 0.0f);
+    this.light.setIntensity(0.25f);
+
+    {
+      final JCGLClearSpecification.Builder csb =
+        JCGLClearSpecification.builder();
+      csb.setStencilBufferClear(0);
+      csb.setDepthBufferClear(1.0);
+      csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
+      this.geom_clear_spec = csb.build();
+    }
+
+    {
+      final JCGLClearSpecification.Builder csb =
+        JCGLClearSpecification.builder();
+      csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 1.0f));
+      this.light_clear_spec = csb.build();
+    }
   }
 
   @Override
@@ -183,32 +224,53 @@ public final class ExampleGeometryBatched0 implements R2ExampleCustomType
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
 
     this.opaques.opaquesReset();
-    this.opaques.opaquesAddBatchedInstance(this.instance, this.material);
+    this.opaques.opaquesAddBatchedInstance(this.instance, this.geom_material);
+
+    this.lights.opaqueLightsReset();
+    this.lights.opaqueLightsAddSingle(this.light, this.light_shader);
 
     {
-      final JCGLFramebufferUsableType fb = this.gbuffer.getFramebuffer();
+      final JCGLFramebufferUsableType gbuffer_fb =
+        this.gbuffer.getFramebuffer();
+      final JCGLFramebufferUsableType lbuffer_fb =
+        this.lbuffer.getFramebuffer();
+
       final JCGLFramebuffersType g_fb = g.getFramebuffers();
       final JCGLClearType g_cl = g.getClear();
       final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
       final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
       final JCGLDepthBuffersType g_db = g.getDepthBuffers();
 
-      g_cb.colorBufferMask(true, true, true, true);
-      g_db.depthBufferWriteEnable();
-      g_sb.stencilBufferMask(JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-
-      g_fb.framebufferDrawBind(fb);
-      g_cl.clear(this.clear_spec);
-
       this.matrices.withObserver(this.view, this.projection, mo -> {
+        g_fb.framebufferDrawBind(gbuffer_fb);
+        g_cb.colorBufferMask(true, true, true, true);
+        g_db.depthBufferWriteEnable();
+        g_sb.stencilBufferMask(
+          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
+        g_cl.clear(this.geom_clear_spec);
+
         this.stencil_renderer.renderStencilsWithBoundBuffer(
           g, mo, this.stencils);
         this.geom_renderer.renderGeometryWithBoundBuffer(
           g, mo, this.opaques);
+        g_fb.framebufferDrawUnbind();
+
+        g_fb.framebufferDrawBind(lbuffer_fb);
+        g_cb.colorBufferMask(true, true, true, true);
+        g_db.depthBufferWriteEnable();
+        g_sb.stencilBufferMask(
+          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
+        g_cl.clear(this.light_clear_spec);
+
+        this.light_renderer.renderLightsWithBoundBuffer(
+          g,
+          this.gbuffer,
+          this.lbuffer.getArea(),
+          mo,
+          this.lights);
+        g_fb.framebufferDrawUnbind();
         return Unit.unit();
       });
-
-      g_fb.framebufferDrawUnbind();
     }
   }
 
@@ -218,7 +280,7 @@ public final class ExampleGeometryBatched0 implements R2ExampleCustomType
     final R2MainType m)
   {
     this.quad.delete(g);
-    this.shader.delete(g);
+    this.geom_shader.delete(g);
     this.stencil_renderer.delete(g);
   }
 }

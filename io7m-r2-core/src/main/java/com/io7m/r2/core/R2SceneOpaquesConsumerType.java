@@ -128,7 +128,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleShaderStart(
-    R2ShaderSingleUsableType<M> s);
+    R2ShaderInstanceSingleUsableType<M> s);
 
   /**
    * Called when new material settings should be assigned, for single
@@ -181,7 +181,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleShaderFinish(
-    R2ShaderSingleUsableType<M> s);
+    R2ShaderInstanceSingleUsableType<M> s);
 
   /**
    * Called when rendering of a group is finished.

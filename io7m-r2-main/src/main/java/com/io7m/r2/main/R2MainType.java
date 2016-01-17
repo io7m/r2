@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.JCGLViewMatricesType;
 import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
@@ -72,4 +73,10 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2GeometryRendererType getGeometryRenderer();
+
+  /**
+   * @return A light renderer
+   */
+
+  R2LightRendererType getLightRenderer();
 }

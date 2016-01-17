@@ -31,12 +31,14 @@ public interface R2ExampleType
   /**
    * Initialize any resources the example needs. Called once.
    *
+   * @param serv Example services
    * @param g    An OpenGL interface
    * @param area The window area
    * @param m    The main renderer interface
    */
 
   void onInitialize(
+    R2ExampleServicesType serv,
     JCGLInterfaceGL33Type g,
     AreaInclusiveUnsignedIType area,
     R2MainType m);
@@ -44,6 +46,7 @@ public interface R2ExampleType
   /**
    * Render the example. Called repeatedly.
    *
+   * @param serv  Example services
    * @param g     An OpenGL interface
    * @param area  The window area
    * @param m     The main renderer interface
@@ -51,6 +54,7 @@ public interface R2ExampleType
    */
 
   void onRender(
+    R2ExampleServicesType serv,
     JCGLInterfaceGL33Type g,
     AreaInclusiveUnsignedIType area,
     R2MainType m,

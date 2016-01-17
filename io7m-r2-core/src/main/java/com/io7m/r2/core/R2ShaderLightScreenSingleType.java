@@ -17,17 +17,16 @@
 package com.io7m.r2.core;
 
 /**
- * The type of opaque materials that can be applied to single instances.
+ * The type of single-instance light shaders that operate on full-screen quads.
  *
  * @param <M> The type of shader parameters
  */
 
-public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
+public interface R2ShaderLightScreenSingleType<M extends R2LightSingleType>
+  extends
+  R2ShaderLightSingleType<M>,
+  R2ShaderScreenType<M>,
+  R2ShaderLightScreenSingleUsableType<M>
 {
-  /**
-   * @return The material shader
-   */
-
-  @Override
-  R2ShaderInstanceSingleUsableType<M> getShader();
+  // No extra functions
 }

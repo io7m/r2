@@ -16,18 +16,17 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
+
 /**
- * The type of opaque materials that can be applied to single instances.
- *
- * @param <M> The type of shader parameters
+ * The type of single-instance lights.
  */
 
-public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
+public interface R2LightSingleType extends R2LightType
 {
   /**
-   * @return The material shader
+   * @return The array object that will be used to render the light geometry
    */
 
-  @Override
-  R2ShaderInstanceSingleUsableType<M> getShader();
+  JCGLArrayObjectUsableType getArrayObject();
 }

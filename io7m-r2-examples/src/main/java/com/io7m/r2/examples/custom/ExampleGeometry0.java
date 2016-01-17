@@ -49,7 +49,7 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2ShaderSingleType;
+import com.io7m.r2.core.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
@@ -57,6 +57,7 @@ import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.examples.R2ExampleCustomType;
+import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -79,7 +80,7 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private R2GeometryBufferType   gbuffer;
   private JCGLClearSpecification clear_spec;
 
-  private R2ShaderSingleType<R2DeferredSurfaceShaderBasicParameters>
+  private R2ShaderInstanceSingleType<R2DeferredSurfaceShaderBasicParameters>
     shader;
   private R2DeferredSurfaceShaderBasicParameters
     shader_params;
@@ -93,6 +94,7 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
 
   @Override
   public void onInitialize(
+    final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
     final AreaInclusiveUnsignedIType area,
     final R2MainType m)
@@ -147,6 +149,7 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
 
   @Override
   public void onRender(
+    final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
     final AreaInclusiveUnsignedIType area,
     final R2MainType m,

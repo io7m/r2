@@ -17,6 +17,8 @@
 package com.io7m.r2.core;
 
 import com.io7m.jtensors.Matrix4x4FType;
+import com.io7m.jtensors.MatrixM4x4F;
+import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 
 /**
  * The storage required for producing transform matrices without allocating
@@ -25,6 +27,18 @@ import com.io7m.jtensors.Matrix4x4FType;
 
 public interface R2TransformContextType
 {
+  /**
+   * @return Preallocated storage for mutable matrices
+   */
+
+  PMatrixM4x4F.ContextPM4F getContextPM4F();
+
+  /**
+   * @return Preallocated storage for mutable matrices
+   */
+
+  MatrixM4x4F.ContextMM4F getContextMM4F();
+
   /**
    * @return A reference to a temporary 4x4 matrix. Note that this matrix is
    * <i>not</i> recreated on every call, and the returned matrix is shared

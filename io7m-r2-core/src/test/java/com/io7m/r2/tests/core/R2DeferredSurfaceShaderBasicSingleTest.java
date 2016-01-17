@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2DeferredSurfaceShaderBasicSingle;
 import com.io7m.r2.core.R2DeferredSurfaceShaderBasicParameters;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2ShaderSingleType;
+import com.io7m.r2.core.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.shaders.R2Shaders;
@@ -40,7 +40,7 @@ public final class R2DeferredSurfaceShaderBasicSingleTest
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderSingleType<R2DeferredSurfaceShaderBasicParameters> s =
+    final R2ShaderInstanceSingleType<R2DeferredSurfaceShaderBasicParameters> s =
       R2DeferredSurfaceShaderBasicSingle.newShader(g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

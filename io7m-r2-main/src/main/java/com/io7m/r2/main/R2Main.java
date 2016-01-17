@@ -28,6 +28,8 @@ import com.io7m.r2.core.R2GeometryRenderer;
 import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2LightRenderer;
+import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2Matrices;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
@@ -54,6 +56,7 @@ public final class R2Main implements R2MainType
   private final JCGLProjectionMatricesType proj_matrices;
   private final R2TextureDefaultsType      texture_defaults;
   private final R2GeometryRendererType     geometry_renderer;
+  private final R2LightRendererType        light_renderer;
   private       boolean                    deleted;
 
   private R2Main(
@@ -64,7 +67,8 @@ public final class R2Main implements R2MainType
     final JCGLViewMatricesType in_view_matrices,
     final JCGLProjectionMatricesType in_proj_matrices,
     final R2TextureDefaultsType in_texture_defaults,
-    final R2GeometryRendererType in_geometry_renderer)
+    final R2GeometryRendererType in_geometry_renderer,
+    final R2LightRendererType in_light_renderer)
   {
     this.pool = NullCheck.notNull(in_pool);
     this.sources = NullCheck.notNull(in_sources);
@@ -74,6 +78,7 @@ public final class R2Main implements R2MainType
     this.proj_matrices = NullCheck.notNull(in_proj_matrices);
     this.texture_defaults = NullCheck.notNull(in_texture_defaults);
     this.geometry_renderer = NullCheck.notNull(in_geometry_renderer);
+    this.light_renderer = NullCheck.notNull(in_light_renderer);
     this.deleted = false;
   }
 
@@ -129,6 +134,12 @@ public final class R2Main implements R2MainType
   }
 
   @Override
+  public R2LightRendererType getLightRenderer()
+  {
+    return this.light_renderer;
+  }
+
+  @Override
   public void delete(
     final JCGLInterfaceGL33Type g)
     throws R2Exception
@@ -159,6 +170,7 @@ public final class R2Main implements R2MainType
     private @Nullable JCGLProjectionMatricesType proj_matrices;
     private @Nullable R2TextureDefaultsType      texture_defaults;
     private @Nullable R2GeometryRendererType     geometry_renderer;
+    private @Nullable R2LightRendererType        light_renderer;
 
     Builder()
     {
@@ -213,6 +225,10 @@ public final class R2Main implements R2MainType
           this.geometry_renderer,
           R2GeometryRenderer::newRenderer);
 
+      final R2LightRendererType ex_light_renderer = Builder.compute(
+        this.light_renderer,
+        R2LightRenderer::newRenderer);
+
       return new R2Main(
         ex_pool,
         ex_sources,
@@ -221,7 +237,8 @@ public final class R2Main implements R2MainType
         ex_view_matrices,
         ex_proj_matrices,
         ex_texture_defaults,
-        ex_geometry_renderer);
+        ex_geometry_renderer,
+        ex_light_renderer);
     }
   }
 }

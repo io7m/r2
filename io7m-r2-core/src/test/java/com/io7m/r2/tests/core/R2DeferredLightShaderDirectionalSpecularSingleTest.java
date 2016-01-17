@@ -18,11 +18,11 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2LightDirectionalSingle;
-import com.io7m.r2.core.R2DeferredLightShaderDirectionalSingle;
+import com.io7m.r2.core.R2ShaderLightDirectionalSpecularSingle;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2ShaderScreenType;
+import com.io7m.r2.core.R2LightDirectionalSingle;
+import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.shaders.R2Shaders;
@@ -40,8 +40,8 @@ public final class R2DeferredLightShaderDirectionalSpecularSingleTest
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderScreenType<R2LightDirectionalSingle> s =
-      R2DeferredLightShaderDirectionalSingle.newShader(
+    final R2ShaderLightSingleType<R2LightDirectionalSingle> s =
+      R2ShaderLightDirectionalSpecularSingle.newShader(
         g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

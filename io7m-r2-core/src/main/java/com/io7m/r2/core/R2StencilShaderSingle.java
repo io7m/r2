@@ -32,7 +32,7 @@ import java.util.Optional;
 
 public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   implements
-  R2ShaderSingleType<Unit>
+  R2ShaderInstanceSingleType<Unit>
 {
   private final JCGLProgramUniformType u_transform_modelview;
   private final JCGLProgramUniformType u_transform_projection;
@@ -71,7 +71,7 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
    * @return A new shader
    */
 
-  public static R2ShaderSingleType<Unit> newShader(
+  public static R2ShaderInstanceSingleType<Unit> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)

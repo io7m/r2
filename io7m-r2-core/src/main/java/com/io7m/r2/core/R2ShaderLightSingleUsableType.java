@@ -16,18 +16,42 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.api.JCGLShadersType;
+import com.io7m.jcanephora.core.api.JCGLTexturesType;
+
 /**
- * The type of opaque materials that can be applied to single instances.
+ * The type of usable single-instance light shaders.
  *
  * @param <M> The type of shader parameters
  */
 
-public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
+public interface R2ShaderLightSingleUsableType<M extends R2LightSingleType>
+  extends
+  R2ShaderUsableType<M>, R2ShaderGBufferConsumerType
 {
   /**
-   * @return The material shader
+   * Set light values.
+   *
+   * @param g_sh   An OpenGL interface
+   * @param g_tex  An OpenGL interface
+   * @param values The light parameters
    */
 
-  @Override
-  R2ShaderInstanceSingleUsableType<M> getShader();
+  void setLightValues(
+    JCGLShadersType g_sh,
+    JCGLTexturesType g_tex,
+    M values);
+
+  /**
+   * Set light values related to the current view.
+   *
+   * @param g_sh   An OpenGL interface
+   * @param m      The current view matrices and values
+   * @param values The light parameters
+   */
+
+  void setLightViewDependentValues(
+    JCGLShadersType g_sh,
+    R2MatricesObserverValuesType m,
+    M values);
 }

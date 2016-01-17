@@ -14,20 +14,23 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.examples;
+
+import com.io7m.r2.core.R2Texture2DUsableType;
 
 /**
- * The type of opaque materials that can be applied to single instances.
- *
- * @param <M> The type of shader parameters
+ * Services provided to examples.
  */
 
-public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
+public interface R2ExampleServicesType
 {
   /**
-   * @return The material shader
+   * Load a texture by name from the example resources.
+   *
+   * @param name The texture file name
+   *
+   * @return A 2D texture
    */
 
-  @Override
-  R2ShaderInstanceSingleUsableType<M> getShader();
+  R2Texture2DUsableType getTexture2D(String name);
 }

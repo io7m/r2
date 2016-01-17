@@ -25,7 +25,8 @@ import com.io7m.jcanephora.core.api.JCGLTexturesType;
  * @param <M> The type of parameter data
  */
 
-public interface R2ShaderSingleUsableType<M> extends R2ShaderUsableType<M>
+public interface R2ShaderInstanceSingleUsableType<M> extends
+  R2ShaderUsableType<M>
 {
   /**
    * Set material textures. Any textures bound are guaranteed to remain bound

@@ -17,17 +17,24 @@
 package com.io7m.r2.core;
 
 /**
- * The type of opaque materials that can be applied to single instances.
- *
- * @param <M> The type of shader parameters
+ * An exception indicating an attempt to start a new set of observer matrices
+ * when an observer is already active.
  */
 
-public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
+public final class R2RendererExceptionObserverAlreadyActive
+  extends R2RendererException
 {
+  private static final long serialVersionUID = 1L;
+
   /**
-   * @return The material shader
+   * Construct an exception.
+   *
+   * @param message The message
    */
 
-  @Override
-  R2ShaderInstanceSingleUsableType<M> getShader();
+  public R2RendererExceptionObserverAlreadyActive(
+    final String message)
+  {
+    super(message);
+  }
 }

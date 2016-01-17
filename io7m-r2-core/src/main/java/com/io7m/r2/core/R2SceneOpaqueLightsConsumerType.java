@@ -43,4 +43,62 @@ public interface R2SceneOpaqueLightsConsumerType
    */
 
   void onFinish();
+
+  /**
+   * Called when rendering of a group begins.
+   *
+   * @param group The group
+   */
+
+  void onStartGroup(int group);
+
+  /**
+   * Called when a new shader should be activated in order to start rendering
+   * single lights.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
+
+  <M extends R2LightSingleType> void onLightSingleShaderStart(
+    R2ShaderLightSingleUsableType<M> s);
+
+  /**
+   * Called when a new array object should be bound, for single instances.
+   *
+   * @param i The current instance
+   */
+
+  void onLightSingleArrayStart(
+    R2LightSingleType i);
+
+  /**
+   * Called when a single light should be rendered.
+   *
+   * @param <M> The type of shader parameters
+   * @param s   The current shader
+   * @param i   The current instance
+   */
+
+  <M extends R2LightSingleType> void onLightSingle(
+    R2ShaderLightSingleUsableType<M> s,
+    M i);
+
+  /**
+   * Called when the current shader should be deactivated.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
+
+  <M extends R2LightSingleType> void onLightSingleShaderFinish(
+    R2ShaderLightSingleUsableType<M> s);
+
+  /**
+   * Called when rendering of a group is finished.
+   *
+   * @param group The group
+   */
+
+  void onFinishGroup(int group);
 }
