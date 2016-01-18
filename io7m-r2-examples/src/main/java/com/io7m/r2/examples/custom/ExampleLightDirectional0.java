@@ -182,7 +182,6 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
     this.geom_shader_params =
       R2DeferredSurfaceShaderBasicParameters.newParameters(
         m.getTextureDefaults());
-
     this.geom_material = R2MaterialOpaqueBatched.newMaterial(
       id_pool, this.geom_shader, this.geom_shader_params);
 
