@@ -103,37 +103,37 @@
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-core</artifactId>
-        <version>0.44.0</version>
+        <version>0.44.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-texture-loader-core</artifactId>
-        <version>0.44.0</version>
+        <version>0.44.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-texture-loader-awt</artifactId>
-        <version>0.44.0</version>
+        <version>0.44.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-jogl</artifactId>
-        <version>0.44.0</version>
+        <version>0.44.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-fake</artifactId>
-        <version>0.44.0</version>
+        <version>0.44.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-cursors</artifactId>
-        <version>0.44.0</version>
+        <version>0.44.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jpra</groupId>
         <artifactId>io7m-jpra-runtime-java</artifactId>
-        <version>0.4.0</version>
+        <version>0.4.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jtensors</groupId>
@@ -371,7 +371,7 @@
         <plugin>
           <groupId>com.io7m.jpra</groupId>
           <artifactId>io7m-jpra-maven-plugin</artifactId>
-          <version>0.4.0</version>
+          <version>0.4.1</version>
         </plugin>
 
         <!-- Plugins for the Maven plugin -->
