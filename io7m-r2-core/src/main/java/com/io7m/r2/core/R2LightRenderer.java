@@ -310,10 +310,14 @@ public final class R2LightRenderer implements R2LightRendererType
       s.setLightValues(this.shaders, this.textures, i);
 
       final R2TransformReadableType tr = R2TransformOST.newTransform();
-      this.matrices.withTransform(tr, PMatrixI3x3F.identity(), mi -> {
-        this.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-        return Unit.unit();
-      });
+      this.matrices.withTransform(
+        tr,
+        PMatrixI3x3F.identity(),
+        this,
+        (mi, t) -> {
+          t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+          return Unit.unit();
+        });
     }
 
     @Override

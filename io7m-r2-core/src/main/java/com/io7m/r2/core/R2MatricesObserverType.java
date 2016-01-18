@@ -31,16 +31,19 @@ public interface R2MatricesObserverType extends R2MatricesObserverValuesType
    * @param t   The transform
    * @param uv  The UV matrix
    * @param f   The function that will receive matrices
-   * @param <T> The type of returned values
+   * @param x   A context value passed to {@code f}
+   * @param <A> The type of consumed values
+   * @param <B> The type of returned values
    *
-   * @return A value of {@code T}
+   * @return A value of {@code B}
    *
    * @throws R2Exception If {@code f} raises {@link R2Exception}
    */
 
-  <T> T withTransform(
+  <A, B> B withTransform(
     R2TransformReadableType t,
     PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv,
-    R2MatricesInstanceSingleFunctionType<T> f)
+    A x,
+    R2MatricesInstanceSingleFunctionType<A, B> f)
     throws R2Exception;
 }

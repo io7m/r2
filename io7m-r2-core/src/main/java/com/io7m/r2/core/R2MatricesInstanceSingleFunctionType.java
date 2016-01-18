@@ -18,20 +18,24 @@ package com.io7m.r2.core;
 
 /**
  * The type of functions that take a value of type {@link
- * R2MatricesInstanceSingleType} and yield a value of type {@code T}.
+ * R2MatricesInstanceSingleType} and yield a value of type {@code B}.
  *
- * @param <T> The type of returned values
+ * @param <A> The type of consumed values
+ * @param <B> The type of returned values
  */
 
-public interface R2MatricesInstanceSingleFunctionType<T>
+public interface R2MatricesInstanceSingleFunctionType<A, B>
 {
   /**
    * Apply the function.
    *
    * @param o The instance matrices
+   * @param x A consumed value
    *
-   * @return A value of {@code T}
+   * @return A value of {@code B}
    */
 
-  T apply(R2MatricesInstanceSingleType o);
+  B apply(
+    R2MatricesInstanceSingleType o,
+    A x);
 }

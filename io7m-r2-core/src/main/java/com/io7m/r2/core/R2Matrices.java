@@ -83,13 +83,15 @@ public final class R2Matrices implements R2MatricesType
   }
 
   @Override
-  public <T> T withObserver(
+  public <A, B> B withObserver(
     final PMatrixReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType> view,
     final R2ProjectionReadableType projection,
-    final R2MatricesObserverFunctionType<T> f)
+    final A x,
+    final R2MatricesObserverFunctionType<A, B> f)
   {
     NullCheck.notNull(view);
     NullCheck.notNull(projection);
+    NullCheck.notNull(x);
     NullCheck.notNull(f);
 
     if (this.observer.active) {
@@ -124,7 +126,7 @@ public final class R2Matrices implements R2MatricesType
         this.observer.m_projection_inverse);
 
       this.observer.projection = projection;
-      return f.apply(this.observer);
+      return f.apply(this.observer, x);
     } finally {
       this.observer.active = false;
     }
@@ -244,14 +246,16 @@ public final class R2Matrices implements R2MatricesType
     }
 
     @Override
-    public <T> T withTransform(
+    public <A, B> B withTransform(
       final R2TransformReadableType t,
       final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv,
-      final R2MatricesInstanceSingleFunctionType<T> f)
+      final A x,
+      final R2MatricesInstanceSingleFunctionType<A, B> f)
       throws R2Exception
     {
       NullCheck.notNull(t);
       NullCheck.notNull(uv);
+      NullCheck.notNull(x);
       NullCheck.notNull(f);
 
       Assertive.require(this.active, "Observer is active");
@@ -278,7 +282,7 @@ public final class R2Matrices implements R2MatricesType
           this.instance_single.m_modelview,
           this.instance_single.m_normal);
 
-        return f.apply(this.instance_single);
+        return f.apply(this.instance_single, x);
       } finally {
         this.instance_single.active = false;
       }

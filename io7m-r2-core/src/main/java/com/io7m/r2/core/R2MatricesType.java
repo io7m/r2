@@ -32,13 +32,16 @@ public interface R2MatricesType extends R2MatricesValuesType
    * @param view       The observer's view matrix
    * @param projection The observer's projection
    * @param f          The function that will receive the evaluated matrices
-   * @param <T>        The type of returned values
+   * @param x          A context value passed to {@code f}
+   * @param <A>        The type of consumed values
+   * @param <B>        The type of returned values
    *
-   * @return A value of {@code T}
+   * @return A value of {@code B}
    */
 
-  <T> T withObserver(
+  <A, B> B withObserver(
     final PMatrixReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType> view,
     final R2ProjectionReadableType projection,
-    final R2MatricesObserverFunctionType<T> f);
+    final A x,
+    final R2MatricesObserverFunctionType<A, B> f);
 }

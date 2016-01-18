@@ -190,14 +190,11 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
       g_fb.framebufferDrawBind(fb);
       g_cl.clear(this.clear_spec);
 
-      this.matrices.withObserver(this.view, this.projection, mo -> {
-        this.stencil_renderer.renderStencilsWithBoundBuffer(
-          g, mo, this.stencils);
-        this.geom_renderer.renderGeometryWithBoundBuffer(
-          g, mo, this.opaques);
-        this.stencils.stencilsAddSingle(this.instance_1);
-        this.stencil_renderer.renderStencilsWithBoundBuffer(
-          g, mo, this.stencils);
+      this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+        t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
+        t.geom_renderer.renderGeometryWithBoundBuffer(g, mo, t.opaques);
+        t.stencils.stencilsAddSingle(t.instance_1);
+        t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
         return Unit.unit();
       });
 

@@ -111,8 +111,8 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
     g_st.stencilBufferMask(JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
     g_st.stencilBufferClear(0);
 
-    this.matrices.withObserver(this.view, this.projection, mo -> {
-      this.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, this.stencils);
+    this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+      t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
       return Unit.unit();
     });
   }

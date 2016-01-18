@@ -300,9 +300,9 @@ public final class R2StencilRenderer implements R2StencilRendererType
       final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
         i.getUVMatrix();
 
-      this.matrices.withTransform(it, uv, mi -> {
-        this.program.setMatricesInstance(this.shaders, mi);
-        this.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+      this.matrices.withTransform(it, uv, this, (mi, t) -> {
+        t.program.setMatricesInstance(t.shaders, mi);
+        t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         return Unit.unit();
       });
     }

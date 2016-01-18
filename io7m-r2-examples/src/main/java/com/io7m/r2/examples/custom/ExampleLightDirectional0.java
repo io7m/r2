@@ -229,29 +229,27 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
     this.lights.opaqueLightsAddSingle(this.light, this.light_shader);
 
     {
-      final JCGLFramebufferUsableType gbuffer_fb =
-        this.gbuffer.getFramebuffer();
-      final JCGLFramebufferUsableType lbuffer_fb =
-        this.lbuffer.getFramebuffer();
+      this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+        final JCGLFramebufferUsableType gbuffer_fb =
+          t.gbuffer.getFramebuffer();
+        final JCGLFramebufferUsableType lbuffer_fb =
+          t.lbuffer.getFramebuffer();
 
-      final JCGLFramebuffersType g_fb = g.getFramebuffers();
-      final JCGLClearType g_cl = g.getClear();
-      final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
-      final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
-      final JCGLDepthBuffersType g_db = g.getDepthBuffers();
+        final JCGLFramebuffersType g_fb = g.getFramebuffers();
+        final JCGLClearType g_cl = g.getClear();
+        final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
+        final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
+        final JCGLDepthBuffersType g_db = g.getDepthBuffers();
 
-      this.matrices.withObserver(this.view, this.projection, mo -> {
         g_fb.framebufferDrawBind(gbuffer_fb);
         g_cb.colorBufferMask(true, true, true, true);
         g_db.depthBufferWriteEnable();
         g_sb.stencilBufferMask(
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-        g_cl.clear(this.geom_clear_spec);
+        g_cl.clear(t.geom_clear_spec);
 
-        this.stencil_renderer.renderStencilsWithBoundBuffer(
-          g, mo, this.stencils);
-        this.geom_renderer.renderGeometryWithBoundBuffer(
-          g, mo, this.opaques);
+        t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
+        t.geom_renderer.renderGeometryWithBoundBuffer(g, mo, t.opaques);
         g_fb.framebufferDrawUnbind();
 
         g_fb.framebufferDrawBind(lbuffer_fb);
@@ -259,14 +257,14 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
         g_db.depthBufferWriteEnable();
         g_sb.stencilBufferMask(
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-        g_cl.clear(this.light_clear_spec);
+        g_cl.clear(t.light_clear_spec);
 
-        this.light_renderer.renderLightsWithBoundBuffer(
+        t.light_renderer.renderLightsWithBoundBuffer(
           g,
-          this.gbuffer,
-          this.lbuffer.getArea(),
+          t.gbuffer,
+          t.lbuffer.getArea(),
           mo,
-          this.lights);
+          t.lights);
         g_fb.framebufferDrawUnbind();
         return Unit.unit();
       });

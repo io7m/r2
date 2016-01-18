@@ -149,12 +149,12 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   private static final class OpaqueConsumer implements
     R2SceneOpaquesConsumerType
   {
-    private @Nullable JCGLInterfaceGL33Type  g33;
+    private @Nullable JCGLInterfaceGL33Type g33;
     private @Nullable R2MatricesObserverType matrices;
-    private @Nullable JCGLShadersType        shaders;
-    private @Nullable JCGLTexturesType       textures;
-    private @Nullable JCGLArrayObjectsType   array_objects;
-    private @Nullable JCGLDrawType           draw;
+    private @Nullable JCGLShadersType shaders;
+    private @Nullable JCGLTexturesType textures;
+    private @Nullable JCGLArrayObjectsType array_objects;
+    private @Nullable JCGLDrawType draw;
     private @Nullable JCGLStencilBuffersType stencils;
 
     private OpaqueConsumer()
@@ -272,12 +272,16 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2MaterialOpaqueSingleType<M> material,
       final R2InstanceSingleType i)
     {
-      this.matrices.withTransform(i.getTransform(), i.getUVMatrix(), mi -> {
-        final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
-        s.setMatricesInstance(this.shaders, mi);
-        this.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-        return Unit.unit();
-      });
+      this.matrices.withTransform(
+        i.getTransform(),
+        i.getUVMatrix(),
+        this,
+        (mi, t) -> {
+          final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+          s.setMatricesInstance(t.shaders, mi);
+          t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+          return Unit.unit();
+        });
     }
 
     @Override

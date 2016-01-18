@@ -18,6 +18,7 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
+import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixI4x4F;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
@@ -51,7 +52,8 @@ public abstract class R2MatricesContract
     final Integer r = m.withObserver(
       PMatrixI4x4F.identity(),
       R2ProjectionOrthographic.newFrustum(pm),
-      mm -> Integer.valueOf(23));
+      Unit.unit(),
+      (mm, u0) -> Integer.valueOf(23));
 
     Assert.assertEquals(Integer.valueOf(23), r);
   }
@@ -65,7 +67,8 @@ public abstract class R2MatricesContract
     final R2MatricesObserverType r = m.withObserver(
       PMatrixI4x4F.identity(),
       R2ProjectionOrthographic.newFrustum(pm),
-      mm -> mm);
+      Unit.unit(),
+      (mm, u0) -> mm);
 
     this.expected.expect(RequireViolation.class);
     r.getMatrixProjection();
@@ -80,7 +83,8 @@ public abstract class R2MatricesContract
     final R2MatricesObserverType r = m.withObserver(
       PMatrixI4x4F.identity(),
       R2ProjectionOrthographic.newFrustum(pm),
-      mm -> mm);
+      Unit.unit(),
+      (mm, u0) -> mm);
 
     this.expected.expect(RequireViolation.class);
     r.getMatrixView();
@@ -95,7 +99,8 @@ public abstract class R2MatricesContract
     final R2MatricesObserverType r = m.withObserver(
       PMatrixI4x4F.identity(),
       R2ProjectionOrthographic.newFrustum(pm),
-      mm -> mm);
+      Unit.unit(),
+      (mm, u0) -> mm);
 
     this.expected.expect(RequireViolation.class);
     r.getMatrixViewInverse();
@@ -110,7 +115,8 @@ public abstract class R2MatricesContract
     final R2MatricesObserverType r = m.withObserver(
       PMatrixI4x4F.identity(),
       R2ProjectionOrthographic.newFrustum(pm),
-      mm -> mm);
+      Unit.unit(),
+      (mm, u0) -> mm);
 
     this.expected.expect(RequireViolation.class);
     r.getViewRays();
@@ -131,9 +137,11 @@ public abstract class R2MatricesContract
     m.withObserver(
       PMatrixI4x4F.identity(),
       pp,
-      mm -> m.withObserver(PMatrixI4x4F.identity(), pp, mk -> {
-        throw new UnreachableCodeException();
-      }));
+      Unit.unit(),
+      (mm, u0) -> m.withObserver(
+        PMatrixI4x4F.identity(), pp, u0, (mk, u1) -> {
+          throw new UnreachableCodeException();
+        }));
   }
 
   @Test
@@ -150,7 +158,8 @@ public abstract class R2MatricesContract
     final Integer r = m.withObserver(
       PMatrixI4x4F.identity(),
       R2ProjectionOrthographic.newFrustum(pm),
-      mm -> mm.withTransform(t, uv, mi -> Integer.valueOf(23))
+      Unit.unit(),
+      (mm, u0) -> mm.withTransform(t, uv, u0, (mi, u1) -> Integer.valueOf(23))
     );
 
     Assert.assertEquals(Integer.valueOf(23), r);
@@ -173,8 +182,9 @@ public abstract class R2MatricesContract
     m.withObserver(
       PMatrixI4x4F.identity(),
       R2ProjectionOrthographic.newFrustum(pm),
-      mm -> mm.withTransform(t, uv, mi ->
-        mm.withTransform(t, uv, mk -> {
+      Unit.unit(),
+      (mm, u0) -> mm.withTransform(t, uv, u0, (mi, u1) ->
+        mm.withTransform(t, uv, u1, (mk, u2) -> {
           throw new UnreachableCodeException();
         }))
     );
