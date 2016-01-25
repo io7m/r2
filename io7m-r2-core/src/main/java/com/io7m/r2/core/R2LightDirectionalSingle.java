@@ -113,4 +113,10 @@ public final class R2LightDirectionalSingle implements R2LightScreenSingleType
   {
     return this.quad.getArrayObject();
   }
+
+  @Override
+  public R2TransformReadableType getTransform()
+  {
+    return R2TransformIdentity.getInstance();
+  }
 }

@@ -185,7 +185,7 @@ public final class R2UnitQuad implements R2UnitQuadType
       final JCGLArrayObjectBuilderType aob = g_ao.arrayObjectNewBuilder();
       aob.setIndexBuffer(i);
       aob.setAttributeFloatingPoint(
-        0,
+        R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
         a,
         3,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -193,7 +193,7 @@ public final class R2UnitQuad implements R2UnitQuadType
         (long) R2VertexPUNT16ByteBuffered.metaPositionStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        1,
+        R2AttributeConventions.UV_ATTRIBUTE_INDEX,
         a,
         2,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -201,7 +201,7 @@ public final class R2UnitQuad implements R2UnitQuadType
         (long) R2VertexPUNT16ByteBuffered.metaUvStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        2,
+        R2AttributeConventions.NORMAL_ATTRIBUTE_INDEX,
         a,
         3,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -209,7 +209,7 @@ public final class R2UnitQuad implements R2UnitQuadType
         (long) R2VertexPUNT16ByteBuffered.metaNormalStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        3,
+        R2AttributeConventions.TANGENT4_ATTRIBUTE_INDEX,
         a,
         4,
         JCGLScalarType.TYPE_HALF_FLOAT,

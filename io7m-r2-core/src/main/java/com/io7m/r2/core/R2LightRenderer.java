@@ -167,7 +167,6 @@ public final class R2LightRenderer implements R2LightRendererType
       g_cm.colorBufferMask(true, true, true, true);
       g_db.depthClampingEnable();
       g_db.depthBufferWriteDisable();
-      g_db.depthBufferTestEnable(JCGLDepthFunction.DEPTH_GREATER_THAN_OR_EQUAL);
 
       this.light_consumer.g33 = g;
       this.light_consumer.gbuffer = gbuffer;
@@ -199,6 +198,11 @@ public final class R2LightRenderer implements R2LightRendererType
     private           JCGLTextureUnitType        unit_specular;
     private           JCGLTextureUnitType        unit_depth;
 
+
+    private R2LightSingleType                                light;
+    private R2ShaderLightSingleUsableType<R2LightSingleType> light_shader;
+    private JCGLDepthBuffersType                             depth;
+
     LightConsumer()
     {
 
@@ -215,6 +219,7 @@ public final class R2LightRenderer implements R2LightRendererType
       this.draw = this.g33.getDraw();
       this.stencils = this.g33.getStencilBuffers();
       this.culling = this.g33.getCulling();
+      this.depth = this.g33.getDepthBuffers();
 
       final List<JCGLTextureUnitType> units = this.textures.textureGetUnits();
       this.unit_albedo = units.get(0);
@@ -287,37 +292,60 @@ public final class R2LightRenderer implements R2LightRendererType
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <M extends R2LightSingleType> void onLightSingle(
       final R2ShaderLightSingleUsableType<M> s,
       final M i)
     {
-      /**
-       * For full-screen quads, the front faces should be rendered. For
-       * everything else, render only back faces.
-       */
+      this.light = i;
+      this.light_shader = (R2ShaderLightSingleUsableType<R2LightSingleType>) s;
 
-      if (i instanceof R2LightScreenSingleType) {
-        this.culling.cullingEnable(
-          JCGLFaceSelection.FACE_BACK,
-          JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
-      } else {
-        this.culling.cullingEnable(
-          JCGLFaceSelection.FACE_FRONT,
-          JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
+      try {
+
+        /**
+         * For full-screen quads, the front faces should be rendered. For
+         * everything else, render only back faces.
+         *
+         * Additionally, screen-based lights will render a light volume on
+         * the near plane: Light volume fragments will have a depth less than
+         * or equal to any geometry and therefore depth testing must reflect
+         * this. For other types of lights, the fragments of the back faces of
+         * the light volume will have a depth greater than or equal to the
+         * geometry fragments that should be affected.
+         */
+
+        if (i instanceof R2LightScreenSingleType) {
+          this.culling.cullingEnable(
+            JCGLFaceSelection.FACE_BACK,
+            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
+          this.depth.depthBufferTestEnable(
+            JCGLDepthFunction.DEPTH_LESS_THAN_OR_EQUAL);
+        } else {
+          this.culling.cullingEnable(
+            JCGLFaceSelection.FACE_FRONT,
+            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
+          this.depth.depthBufferTestEnable(
+            JCGLDepthFunction.DEPTH_GREATER_THAN_OR_EQUAL);
+        }
+
+        s.setLightViewDependentValues(this.shaders, this.matrices, i);
+        s.setLightValues(this.shaders, this.textures, i);
+
+        this.matrices.withTransform(
+          i.getTransform(),
+          PMatrixI3x3F.identity(),
+          this,
+          (mi, t) -> {
+            t.light_shader.setLightTransformDependentValues(
+              t.shaders, mi, t.light);
+            t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+            return Unit.unit();
+          });
+
+      } finally {
+        this.light = null;
+        this.light_shader = null;
       }
-
-      s.setLightViewDependentValues(this.shaders, this.matrices, i);
-      s.setLightValues(this.shaders, this.textures, i);
-
-      final R2TransformReadableType tr = R2TransformOST.newTransform();
-      this.matrices.withTransform(
-        tr,
-        PMatrixI3x3F.identity(),
-        this,
-        (mi, t) -> {
-          t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-          return Unit.unit();
-        });
     }
 
     @Override

@@ -44,6 +44,9 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
   R2AbstractShader<R2LightDirectionalSingle>
   implements R2ShaderLightScreenSingleType<R2LightDirectionalSingle>
 {
+  private final JCGLProgramUniformType          u_transform_modelview;
+  private final JCGLProgramUniformType          u_transform_projection;
+  private final JCGLProgramUniformType          u_transform_projection_inverse;
   private final JCGLProgramUniformType          u_depth_coefficient;
   private final JCGLProgramUniformType          u_view_rays_origin_x0y0;
   private final JCGLProgramUniformType          u_view_rays_origin_x1y0;
@@ -87,8 +90,8 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     final Map<String, JCGLProgramUniformType> us = p.getUniforms();
     Assertive.ensure(
-      us.size() == 18,
-      "Expected number of parameters is 18 (got %d)",
+      us.size() == 21,
+      "Expected number of parameters is 21 (got %d)",
       Integer.valueOf(us.size()));
 
     this.u_light_directional_color =
@@ -100,6 +103,16 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
     this.u_light_directional_intensity =
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_directional.intensity");
+
+    this.u_transform_modelview =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_light_matrices.transform_modelview");
+    this.u_transform_projection =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_light_matrices.transform_projection");
+    this.u_transform_projection_inverse =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_light_matrices.transform_projection_inverse");
 
     this.u_gbuffer_albedo =
       R2ShaderParameters.getUniformChecked(
@@ -271,6 +284,15 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
       this.u_view_rays_ray_x1y1, view_rays.getRayX1Y1());
 
     /**
+     * Upload the projections for the light volume.
+     */
+
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_projection, m.getMatrixProjection());
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+
+    /**
      * Upload the scene's depth coefficient.
      */
 
@@ -297,5 +319,15 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
 
     g_sh.shaderUniformPutVector3f(
       this.u_light_directional_direction, this.direction_eye3);
+  }
+
+  @Override
+  public void setLightTransformDependentValues(
+    final JCGLShadersType g_sh,
+    final R2MatricesInstanceSingleValuesType m,
+    final R2LightDirectionalSingle values)
+  {
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_modelview, m.getMatrixModelView());
   }
 }

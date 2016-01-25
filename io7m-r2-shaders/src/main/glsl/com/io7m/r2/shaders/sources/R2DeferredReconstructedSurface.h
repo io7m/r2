@@ -58,8 +58,10 @@ R2_deferredSurfaceReconstruct(
   // Reconstruct the eye-space Z from the depth texture
   float log_depth =
     texture (gbuffer.depth, screen_uv).x;
-  float eye_z =
+  float eye_z_positive =
     R2_logDepthDecode (log_depth, depth_coefficient);
+  float eye_z =
+    -eye_z_positive;
 
   // Reconstruct the full eye-space position
   vec4 position_eye =

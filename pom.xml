@@ -21,7 +21,9 @@
     <module>io7m-r2-examples-jogl</module>
     <module>io7m-r2-examples</module>
     <module>io7m-r2-main</module>
+    <module>io7m-r2-meshes-arrayobject</module>
     <module>io7m-r2-meshes-binary</module>
+    <module>io7m-r2-meshes-defaults</module>
     <module>io7m-r2-meshes-obj</module>
     <module>io7m-r2-meshes-tools</module>
     <module>io7m-r2-meshes</module>
@@ -31,6 +33,8 @@
     <module>io7m-r2-shaders-tests</module>
     <module>io7m-r2-shaders</module>
     <module>io7m-r2-spaces</module>
+    <module>io7m-r2-tests-jogl</module>
+    <module>io7m-r2-tests</module>
   </modules>
 
   <properties>
@@ -103,32 +107,32 @@
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-core</artifactId>
-        <version>0.44.1</version>
+        <version>0.45.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-texture-loader-core</artifactId>
-        <version>0.44.1</version>
+        <version>0.45.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-texture-loader-awt</artifactId>
-        <version>0.44.1</version>
+        <version>0.45.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-jogl</artifactId>
-        <version>0.44.1</version>
+        <version>0.45.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-fake</artifactId>
-        <version>0.44.1</version>
+        <version>0.45.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-cursors</artifactId>
-        <version>0.44.1</version>
+        <version>0.45.0</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jpra</groupId>

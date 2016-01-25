@@ -7,6 +7,13 @@
   (field tangent  [vector [float 16] 4])
 ])
 
+(record R2VertexPUNT32 [
+  (field position [vector [float 32] 3])
+  (field uv       [vector [float 32] 2])
+  (field normal   [vector [float 32] 3])
+  (field tangent  [vector [float 32] 4])
+])
+
 (record R2VertexP32UNT16 [
   (field position [vector [float 32] 3])
   (field uv       [vector [float 16] 2])

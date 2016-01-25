@@ -21,8 +21,6 @@ import com.io7m.jtensors.parameterized.PVectorReadable3DType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 
-import java.util.NoSuchElementException;
-
 /**
  * The type of mutable builders for basic meshes.
  */
@@ -77,7 +75,12 @@ public interface R2MeshBasicBuilderType
    *
    * @return The index of the new vertex
    *
-   * @throws NoSuchElementException Iff any of the given indices do not exist
+   * @throws R2MeshExceptionMissingPosition Iff no position vector exists for
+   *                                        {@code p}
+   * @throws R2MeshExceptionMissingNormal   Iff no normal vector exists for
+   *                                        {@code n}
+   * @throws R2MeshExceptionMissingUV       Iff no UV vector exists for {@code
+   *                                        u}
    * @see #addPosition(PVectorReadable3DType)
    * @see #addNormal(PVectorReadable3DType)
    * @see #addUV(PVectorReadable2DType)
@@ -87,7 +90,10 @@ public interface R2MeshBasicBuilderType
     long p,
     long n,
     long u)
-    throws NoSuchElementException;
+    throws
+    R2MeshExceptionMissingPosition,
+    R2MeshExceptionMissingNormal,
+    R2MeshExceptionMissingUV;
 
   /**
    * Add a triangle.
@@ -98,7 +104,8 @@ public interface R2MeshBasicBuilderType
    *
    * @return The index of the new triangle
    *
-   * @throws NoSuchElementException Iff any of the given vertices do not exist
+   * @throws R2MeshExceptionMissingVertex Iff any of the given vertices do not
+   *                                      exist
    * @see #addVertex(long, long, long)
    */
 
@@ -106,7 +113,7 @@ public interface R2MeshBasicBuilderType
     long v0,
     long v1,
     long v2)
-    throws NoSuchElementException;
+    throws R2MeshExceptionMissingVertex;
 
   /**
    * @return A basic mesh with all of the data specified so far

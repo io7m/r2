@@ -23,7 +23,8 @@ import java.util.Optional;
  * R2MeshTangentsType} on successful parse completions.
  */
 
-public interface R2MeshTangentsAdapterType extends R2MeshParserListenerType
+public interface R2MeshTangentsAdapterType extends
+  R2MeshParserInterleavedListenerType
 {
   /**
    * @return The mesh generated iff the parse completed without errors.

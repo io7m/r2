@@ -23,7 +23,7 @@ import com.io7m.jpra.runtime.java.JPRACursor1DType;
 import com.io7m.jtensors.VectorReadable2FType;
 import com.io7m.jtensors.VectorReadable3FType;
 import com.io7m.jtensors.VectorReadable4FType;
-import com.io7m.r2.meshes.R2MeshParserListenerType;
+import com.io7m.r2.meshes.R2MeshParserInterleavedListenerType;
 import com.io7m.r2.meshes.binary.r2mb.R2MBHeaderByteBuffered;
 import com.io7m.r2.meshes.binary.r2mb.R2MBHeaderType;
 import com.io7m.r2.meshes.binary.r2mb.R2MBTriangleByteBuffered;
@@ -43,15 +43,15 @@ import java.util.Optional;
 
 public final class R2MBUnmappedReader implements R2MBReaderType
 {
-  private final R2MeshParserListenerType listener;
-  private final ReadableByteChannel      channel;
-  private final ByteBuffer               buffer_header;
-  private final ByteBuffer               buffer_vertex;
-  private final ByteBuffer               buffer_tri;
+  private final R2MeshParserInterleavedListenerType listener;
+  private final ReadableByteChannel                 channel;
+  private final ByteBuffer                          buffer_header;
+  private final ByteBuffer                          buffer_vertex;
+  private final ByteBuffer                          buffer_tri;
 
   private R2MBUnmappedReader(
     final ReadableByteChannel in_channel,
-    final R2MeshParserListenerType in_listener)
+    final R2MeshParserInterleavedListenerType in_listener)
   {
     this.channel = NullCheck.notNull(in_channel);
     this.listener = NullCheck.notNull(in_listener);
@@ -78,7 +78,7 @@ public final class R2MBUnmappedReader implements R2MBReaderType
 
   public static R2MBReaderType newReader(
     final ReadableByteChannel in_channel,
-    final R2MeshParserListenerType in_listener)
+    final R2MeshParserInterleavedListenerType in_listener)
   {
     return new R2MBUnmappedReader(in_channel, in_listener);
   }
@@ -102,14 +102,14 @@ public final class R2MBUnmappedReader implements R2MBReaderType
     final long t_count;
 
     try {
+      this.listener.onEventStart();
+
       final ByteBuffer bh = this.buffer_header;
       R2MBUnmappedReader.readAll(bh, this.channel);
 
       {
         if (!this.checkSize(
-          bh,
-          R2MBHeaderByteBuffered.sizeInOctets(),
-          "header")) {
+          bh, R2MBHeaderByteBuffered.sizeInOctets(), "header")) {
           return;
         }
 
@@ -173,9 +173,10 @@ public final class R2MBUnmappedReader implements R2MBReaderType
       }
 
       this.listener.onEventTrianglesFinished();
-
-    } catch (final IOException e) {
+    } catch (final Throwable e) {
       this.listener.onError(Optional.of(e), e.getMessage());
+    } finally {
+      this.listener.onEventFinished();
     }
   }
 

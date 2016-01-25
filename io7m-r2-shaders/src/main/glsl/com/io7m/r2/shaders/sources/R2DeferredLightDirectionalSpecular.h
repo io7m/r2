@@ -30,4 +30,4 @@ R2_deferredLightMain(
   return R2_deferred_light_output_t (diffuse, specular);
 }
 
-#endif
+#endif // R2_DEFERRED_LIGHT_DIRECTIONAL_SPECULAR_H

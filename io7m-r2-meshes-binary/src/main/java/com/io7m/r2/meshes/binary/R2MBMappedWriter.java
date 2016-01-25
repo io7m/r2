@@ -243,6 +243,7 @@ public final class R2MBMappedWriter implements R2MBWriterType
         this.mesh.getTriangles();
 
       for (long index = 0L; index < t_count; ++index) {
+        c.setElementIndex((int) index);
         final R2MeshTriangleType t = m_tri.get(index);
         v.setV0((int) (t.getV0() & 0xFFFFFFFFL));
         v.setV1((int) (t.getV1() & 0xFFFFFFFFL));

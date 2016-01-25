@@ -223,6 +223,14 @@ public final class R2Matrices implements R2MatricesType
     }
 
     @Override
+    public PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType>
+    getMatrixProjectionInverse()
+    {
+      Assertive.require(this.active, "Observer is active");
+      return this.m_projection_inverse;
+    }
+
+    @Override
     public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType>
     getMatrixView()
     {

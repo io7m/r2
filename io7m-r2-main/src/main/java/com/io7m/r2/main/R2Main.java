@@ -98,6 +98,12 @@ public final class R2Main implements R2MainType
   }
 
   @Override
+  public R2ShaderSourcesType getShaderSources()
+  {
+    return this.sources;
+  }
+
+  @Override
   public JCGLViewMatricesType getViewMatrices()
   {
     return this.view_matrices;

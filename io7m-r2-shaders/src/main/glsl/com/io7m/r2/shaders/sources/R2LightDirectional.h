@@ -4,8 +4,6 @@
 /// \file R2LightDirectional.h
 /// \brief Functions and types related to directional lighting
 
-#include "R2Light.h"
-
 /// Vectors used when calculating directional lighting
 
 struct R2_light_directional_vectors_t {

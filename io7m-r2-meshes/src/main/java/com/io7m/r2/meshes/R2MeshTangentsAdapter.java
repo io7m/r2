@@ -30,7 +30,7 @@ import org.valid4j.Assertive;
 import java.util.Optional;
 
 /**
- * An implementation of the {@link R2MeshParserListenerType} interface that
+ * An implementation of the {@link R2MeshParserInterleavedListenerType} interface that
  * produces a value of type {@link R2MeshTangentsType} after parsing has
  * completed.
  */
@@ -83,6 +83,12 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
   @Override public Optional<R2MeshTangentsType> getMesh()
   {
     return this.mesh;
+  }
+
+  @Override
+  public void onEventStart()
+  {
+
   }
 
   @Override public void onEventVertexCount(final long count)
@@ -209,6 +215,12 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
   }
 
   @Override public void onEventTrianglesFinished()
+  {
+    Assertive.require(this.state == State.RUNNING);
+  }
+
+  @Override
+  public void onEventFinished()
   {
     Assertive.require(this.state == State.RUNNING);
     this.state = State.FINISHED;

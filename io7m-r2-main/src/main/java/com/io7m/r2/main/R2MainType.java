@@ -23,6 +23,7 @@ import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2MatricesType;
+import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 
@@ -37,6 +38,12 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2IDPoolType getIDPool();
+
+  /**
+   * @return The default set of shader sources
+   */
+
+  R2ShaderSourcesType getShaderSources();
 
   /**
    * @return Access to functions to produce view matrices

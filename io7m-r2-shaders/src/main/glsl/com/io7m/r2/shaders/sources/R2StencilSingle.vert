@@ -3,9 +3,13 @@
 
 layout(location = 0) in vec3 R2_vertex_position; // Object-space position
 
+/// Parameters for stencil instances
+
 struct R2_stencil_parameters_t {
-  mat4x4 transform_modelview;  // Object-space to Eye-space matrix
-  mat4x4 transform_projection; // Eye-space to Clip-space matrix
+  /// Object-space to Eye-space matrix
+  mat4x4 transform_modelview;
+  /// Eye-space to Clip-space matrix
+  mat4x4 transform_projection;
 };
 
 uniform R2_stencil_parameters_t R2_stencil_parameters;

@@ -31,6 +31,8 @@ import it.unimi.dsi.fastutil.BigList;
 import it.unimi.dsi.fastutil.objects.ObjectBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.ObjectBigList;
 import it.unimi.dsi.fastutil.objects.ObjectBigLists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.NoSuchElementException;
 
@@ -40,6 +42,12 @@ import java.util.NoSuchElementException;
 
 public final class R2MeshTangents implements R2MeshTangentsType
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2MeshTangents.class);
+  }
+
   private final BigList<PVectorI3D<R2SpaceObjectType>>  positions;
   private final BigList<PVectorI3D<R2SpaceObjectType>>  normals;
   private final BigList<PVectorI4D<R2SpaceObjectType>>  tangents;
@@ -64,6 +72,24 @@ public final class R2MeshTangents implements R2MeshTangentsType
     this.uvs = NullCheck.notNull(in_uvs);
     this.vertices = NullCheck.notNull(in_vertices);
     this.triangles = NullCheck.notNull(in_triangles);
+
+    if (R2MeshTangents.LOG.isTraceEnabled()) {
+      R2MeshTangents.LOG.trace("allocated mesh");
+      R2MeshTangents.LOG.trace(
+        "mesh positions:  {}", Long.valueOf(this.positions.size64()));
+      R2MeshTangents.LOG.trace(
+        "mesh normals:    {}", Long.valueOf(this.normals.size64()));
+      R2MeshTangents.LOG.trace(
+        "mesh tangents:   {}", Long.valueOf(this.tangents.size64()));
+      R2MeshTangents.LOG.trace(
+        "mesh bitangents: {}", Long.valueOf(this.bitangents.size64()));
+      R2MeshTangents.LOG.trace(
+        "mesh uvs:        {}", Long.valueOf(this.uvs.size64()));
+      R2MeshTangents.LOG.trace(
+        "mesh vertices:   {}", Long.valueOf(this.vertices.size64()));
+      R2MeshTangents.LOG.trace(
+        "mesh triangles:  {}", Long.valueOf(this.triangles.size64()));
+    }
   }
 
   /**
@@ -101,6 +127,8 @@ public final class R2MeshTangents implements R2MeshTangentsType
   {
     final R2MeshBasicType m = NullCheck.notNull(in_m);
 
+    R2MeshTangents.LOG.debug("generating tangents");
+
     final BigList<PVectorI3D<R2SpaceObjectType>> positions = m.getPositions();
     final BigList<PVectorI3D<R2SpaceObjectType>> normals = m.getNormals();
     final BigList<PVectorI2D<R2SpaceTextureType>> uvs = m.getUVs();
@@ -131,6 +159,13 @@ public final class R2MeshTangents implements R2MeshTangentsType
      */
 
     for (final R2MeshTriangleType triangle : triangles) {
+      R2MeshTangents.checkTriangleVertices(
+        triangle.getV0(),
+        triangle.getV1(),
+        triangle.getV2(),
+        vertices.size64(),
+        triangles);
+
       final R2MeshBasicVertexType v0 = vertices.get(triangle.getV0());
       final R2MeshBasicVertexType v1 = vertices.get(triangle.getV1());
       final R2MeshBasicVertexType v2 = vertices.get(triangle.getV2());
@@ -291,42 +326,95 @@ public final class R2MeshTangents implements R2MeshTangentsType
       triangles);
   }
 
-  @Override public BigList<PVectorI3D<R2SpaceObjectType>> getNormals()
+  private static void checkTriangleVertices(
+    final long v0,
+    final long v1,
+    final long v2,
+    final long vertices_max,
+    final BigList<R2MeshTriangleType> triangles)
+  {
+    if (R2MeshTangents.LOG.isTraceEnabled()) {
+      R2MeshTangents.LOG.trace(
+        "check triangle: {} {} {}",
+        Long.valueOf(v0),
+        Long.valueOf(v1),
+        Long.valueOf(v2));
+    }
+
+    if (v0 < 0L || Long.compareUnsigned(v0, vertices_max) >= 0) {
+      throw new R2MeshExceptionMissingVertex(
+        "Vertex 0: " + Long.toString(v0));
+    }
+    if (v1 < 0L || Long.compareUnsigned(v1, vertices_max) >= 0) {
+      throw new R2MeshExceptionMissingVertex(
+        "Vertex 1: " + Long.toString(v1));
+    }
+    if (v2 < 0L || Long.compareUnsigned(v2, vertices_max) >= 0) {
+      throw new R2MeshExceptionMissingVertex(
+        "Vertex 2: " + Long.toString(v2));
+    }
+
+    if (v0 == v1 || v1 == v2 || v0 == v2) {
+      final StringBuilder sb = new StringBuilder(128);
+      sb.append("Malformed triangle.\n");
+      sb.append("Duplicate vertex indices.\n");
+      sb.append("Triangle: ");
+      sb.append(triangles.size64());
+      sb.append("\n");
+      sb.append("Indices: ");
+      sb.append(v0);
+      sb.append(" ");
+      sb.append(v1);
+      sb.append(" ");
+      sb.append(v2);
+      throw new R2MeshExceptionMalformedTriangle(sb.toString());
+    }
+  }
+
+  @Override
+  public BigList<PVectorI3D<R2SpaceObjectType>> getNormals()
   {
     return this.normals;
   }
 
-  @Override public BigList<PVectorI3D<R2SpaceObjectType>> getBitangents()
+  @Override
+  public BigList<PVectorI3D<R2SpaceObjectType>> getBitangents()
   {
     return this.bitangents;
   }
 
-  @Override public BigList<PVectorI4D<R2SpaceObjectType>> getTangents()
+  @Override
+  public BigList<PVectorI4D<R2SpaceObjectType>> getTangents()
   {
     return this.tangents;
   }
 
-  @Override public BigList<PVectorI3D<R2SpaceObjectType>> getPositions()
+  @Override
+  public BigList<PVectorI3D<R2SpaceObjectType>> getPositions()
   {
     return this.positions;
   }
 
-  @Override public BigList<PVectorI2D<R2SpaceTextureType>> getUVs()
+  @Override
+  public BigList<PVectorI2D<R2SpaceTextureType>> getUVs()
   {
     return this.uvs;
   }
 
-  @Override public BigList<R2MeshTangentsVertexType> getVertices()
+  @Override
+  public BigList<R2MeshTangentsVertexType> getVertices()
   {
     return this.vertices;
   }
 
-  @Override public BigList<R2MeshTriangleType> getTriangles()
+  @Override
+  public BigList<R2MeshTriangleType> getTriangles()
   {
     return this.triangles;
   }
 
-  @Override public boolean equals(final Object o)
+  @Override
+  public boolean equals(final Object o)
   {
     if (this == o) {
       return true;
@@ -337,15 +425,16 @@ public final class R2MeshTangents implements R2MeshTangentsType
 
     final R2MeshTangents that = (R2MeshTangents) o;
     return this.getPositions().equals(that.getPositions())
-           && this.getNormals().equals(that.getNormals())
-           && this.getTangents().equals(that.getTangents())
-           && this.getBitangents().equals(that.getBitangents())
-           && this.getUVs().equals(that.getUVs())
-           && this.getVertices().equals(that.getVertices())
-           && this.getTriangles().equals(that.getTriangles());
+      && this.getNormals().equals(that.getNormals())
+      && this.getTangents().equals(that.getTangents())
+      && this.getBitangents().equals(that.getBitangents())
+      && this.getUVs().equals(that.getUVs())
+      && this.getVertices().equals(that.getVertices())
+      && this.getTriangles().equals(that.getTriangles());
   }
 
-  @Override public int hashCode()
+  @Override
+  public int hashCode()
   {
     int result = this.getPositions().hashCode();
     result = 31 * result + this.getNormals().hashCode();
@@ -380,7 +469,8 @@ public final class R2MeshTangents implements R2MeshTangentsType
       this.triangles = new ObjectBigArrayBigList<>(t_count);
     }
 
-    @Override public void reset()
+    @Override
+    public void reset()
     {
       this.positions.clear();
       this.normals.clear();
@@ -426,7 +516,8 @@ public final class R2MeshTangents implements R2MeshTangentsType
       return this.bitangents.size64() - 1L;
     }
 
-    @Override public long addVertex(
+    @Override
+    public long addVertex(
       final long p,
       final long n,
       final long t,
@@ -435,50 +526,44 @@ public final class R2MeshTangents implements R2MeshTangentsType
       throws NoSuchElementException
     {
       if (p < 0L || Long.compareUnsigned(p, this.positions.size64()) >= 0) {
-        throw new NoSuchElementException("Position");
+        throw new R2MeshExceptionMissingPosition(Long.toString(p));
       }
 
       if (n < 0L || Long.compareUnsigned(n, this.normals.size64()) >= 0) {
-        throw new NoSuchElementException("Normal");
+        throw new R2MeshExceptionMissingNormal(Long.toString(n));
       }
 
       if (t < 0L || Long.compareUnsigned(t, this.tangents.size64()) >= 0) {
-        throw new NoSuchElementException("Tangents");
+        throw new R2MeshExceptionMissingTangent(Long.toString(t));
       }
 
       if (b < 0L || Long.compareUnsigned(b, this.bitangents.size64()) >= 0) {
-        throw new NoSuchElementException("Bitangents");
+        throw new R2MeshExceptionMissingBitangent(Long.toString(b));
       }
 
       if (u < 0L || Long.compareUnsigned(u, this.uvs.size64()) >= 0) {
-        throw new NoSuchElementException("UV");
+        throw new R2MeshExceptionMissingUV(Long.toString(u));
       }
 
       this.vertices.add(R2MeshTangentsVertex.of(p, n, t, b, u));
       return this.vertices.size64() - 1L;
     }
 
-    @Override public long addTriangle(
+    @Override
+    public long addTriangle(
       final long v0,
       final long v1,
       final long v2)
       throws NoSuchElementException
     {
-      if (v0 < 0L || Long.compareUnsigned(v0, this.vertices.size64()) >= 0) {
-        throw new NoSuchElementException("Vertex 0");
-      }
-      if (v1 < 0L || Long.compareUnsigned(v1, this.vertices.size64()) >= 0) {
-        throw new NoSuchElementException("Vertex 1");
-      }
-      if (v2 < 0L || Long.compareUnsigned(v2, this.vertices.size64()) >= 0) {
-        throw new NoSuchElementException("Vertex 2");
-      }
-
+      R2MeshTangents.checkTriangleVertices(
+        v0, v1, v2, this.vertices.size64(), this.triangles);
       this.triangles.add(R2MeshTriangle.of(v0, v1, v2));
       return this.triangles.size64() - 1L;
     }
 
-    @Override public R2MeshTangentsType build()
+    @Override
+    public R2MeshTangentsType build()
     {
       final ObjectBigList<PVectorI3D<R2SpaceObjectType>> p = this.positions;
 

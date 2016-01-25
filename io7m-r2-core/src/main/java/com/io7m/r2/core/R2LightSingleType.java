@@ -29,4 +29,10 @@ public interface R2LightSingleType extends R2LightType
    */
 
   JCGLArrayObjectUsableType getArrayObject();
+
+  /**
+   * @return The transform for the light geometry
+   */
+
+  R2TransformReadableType getTransform();
 }
