@@ -18,8 +18,8 @@ package com.io7m.r2.tests.core.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ShaderBatchedType;
@@ -42,8 +42,8 @@ public abstract class R2DeferredSurfaceShaderBasicBatchedContract extends
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderBatchedType<R2DeferredSurfaceShaderBasicParameters> s =
-      R2DeferredSurfaceShaderBasicBatched.newShader(
+    final R2ShaderBatchedType<R2SurfaceShaderBasicParameters> s =
+      R2SurfaceShaderBasicBatched.newShader(
         g.getShaders(),
         sources,
         pool);

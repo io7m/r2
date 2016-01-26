@@ -32,8 +32,8 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2GeometryRendererType;
@@ -56,7 +56,7 @@ import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShaderBatchedType;
-import com.io7m.r2.core.shaders.R2ShaderLightDirectionalSpecularSingle;
+import com.io7m.r2.core.shaders.R2LightShaderDirectionalSpecularSingle;
 import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
@@ -93,11 +93,11 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
   private R2LightBufferType lbuffer;
   private JCGLClearSpecification geom_clear_spec;
 
-  private R2ShaderBatchedType<R2DeferredSurfaceShaderBasicParameters>
+  private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
     geom_shader;
-  private R2DeferredSurfaceShaderBasicParameters
+  private R2SurfaceShaderBasicParameters
     geom_shader_params;
-  private R2MaterialOpaqueBatchedType<R2DeferredSurfaceShaderBasicParameters>
+  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters>
     geom_material;
 
   private R2ShaderLightSingleType<R2LightDirectionalSingle> light_shader;
@@ -175,18 +175,18 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
       R2ShaderSourcesResources.newSources(R2Shaders.class);
 
     this.geom_shader =
-      R2DeferredSurfaceShaderBasicBatched.newShader(
+      R2SurfaceShaderBasicBatched.newShader(
         g.getShaders(),
         sources,
         id_pool);
     this.geom_shader_params =
-      R2DeferredSurfaceShaderBasicParameters.newParameters(
+      R2SurfaceShaderBasicParameters.newParameters(
         m.getTextureDefaults());
     this.geom_material = R2MaterialOpaqueBatched.newMaterial(
       id_pool, this.geom_shader, this.geom_shader_params);
 
     this.light_shader =
-      R2ShaderLightDirectionalSpecularSingle.newShader(
+      R2LightShaderDirectionalSpecularSingle.newShader(
         g.getShaders(), sources, id_pool);
     this.light =
       R2LightDirectionalSingle.newLight(this.quad, id_pool);
