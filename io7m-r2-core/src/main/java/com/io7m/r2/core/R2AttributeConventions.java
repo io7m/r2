@@ -48,6 +48,34 @@ public final class R2AttributeConventions
 
   public static final int TANGENT4_ATTRIBUTE_INDEX = 3;
 
+  /**
+   * The attribute index used to deliver column 0 of the model matrix for
+   * batched instances.
+   */
+
+  public static final int BATCHED_MODEL_MATRIX_COLUMN_0_ATTRIBUTE_INDEX = 4;
+
+  /**
+   * The attribute index used to deliver column 1 of the model matrix for
+   * batched instances.
+   */
+
+  public static final int BATCHED_MODEL_MATRIX_COLUMN_1_ATTRIBUTE_INDEX = 5;
+
+  /**
+   * The attribute index used to deliver column 2 of the model matrix for
+   * batched instances.
+   */
+
+  public static final int BATCHED_MODEL_MATRIX_COLUMN_2_ATTRIBUTE_INDEX = 6;
+
+  /**
+   * The attribute index used to deliver column 3 of the model matrix for
+   * batched instances.
+   */
+
+  public static final int BATCHED_MODEL_MATRIX_COLUMN_3_ATTRIBUTE_INDEX = 7;
+
   private R2AttributeConventions()
   {
     throw new UnreachableCodeException();

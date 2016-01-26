@@ -87,6 +87,11 @@ public final class R2InstanceBatchedDynamic implements
     JCGLArrayObjectType vao = null;
 
     try {
+
+      /**
+       * Allocate a buffer to store one model matrix per instance.
+       */
+
       vbo = g_ab.arrayBufferAllocate(
         16L * 4L * (long) count, JCGLUsageHint.USAGE_DYNAMIC_DRAW);
       g_ab.arrayBufferUnbind();
@@ -95,20 +100,49 @@ public final class R2InstanceBatchedDynamic implements
         g_ao.arrayObjectNewBuilderFromObject(o);
 
       o.getIndexBufferBound().ifPresent(aob::setIndexBuffer);
+      aob.setStrictChecking(true);
 
       final int stride = 16 * 4;
       long offset = 0L;
       aob.setAttributeFloatingPointWithDivisor(
-        4, vbo, 4, JCGLScalarType.TYPE_FLOAT, stride, offset, false, 1);
+        R2AttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_0_ATTRIBUTE_INDEX,
+        vbo,
+        4,
+        JCGLScalarType.TYPE_FLOAT,
+        stride,
+        offset,
+        false,
+        1);
       offset += 4L * 4L;
       aob.setAttributeFloatingPointWithDivisor(
-        5, vbo, 4, JCGLScalarType.TYPE_FLOAT, stride, offset, false, 1);
+        R2AttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_1_ATTRIBUTE_INDEX,
+        vbo,
+        4,
+        JCGLScalarType.TYPE_FLOAT,
+        stride,
+        offset,
+        false,
+        1);
       offset += 4L * 4L;
       aob.setAttributeFloatingPointWithDivisor(
-        6, vbo, 4, JCGLScalarType.TYPE_FLOAT, stride, offset, false, 1);
+        R2AttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_2_ATTRIBUTE_INDEX,
+        vbo,
+        4,
+        JCGLScalarType.TYPE_FLOAT,
+        stride,
+        offset,
+        false,
+        1);
       offset += 4L * 4L;
       aob.setAttributeFloatingPointWithDivisor(
-        7, vbo, 4, JCGLScalarType.TYPE_FLOAT, stride, offset, false, 1);
+        R2AttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_3_ATTRIBUTE_INDEX,
+        vbo,
+        4,
+        JCGLScalarType.TYPE_FLOAT,
+        stride,
+        offset,
+        false,
+        1);
 
       vao = g_ao.arrayObjectAllocate(aob);
       g_ao.arrayObjectUnbind();
