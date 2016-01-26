@@ -23,6 +23,8 @@ struct R2_surface_reflective_parameters_t {
   float  environment_mix;
 };
 
+uniform R2_surface_textures_t              R2_surface_textures;
+uniform R2_surface_parameters_t            R2_surface_parameters;
 uniform R2_surface_reflective_textures_t   R2_surface_reflective_textures;
 uniform R2_surface_reflective_parameters_t R2_surface_reflective_parameters;
 
@@ -30,15 +32,15 @@ R2_surface_output_t
 R2_deferredSurfaceMain (
   const R2_vertex_data_t data,
   const R2_surface_derived_t derived,
-  const R2_surface_textures_t textures,
-  const R2_surface_parameters_t params,
   const R2_surface_matrices_view_t matrices_view,
   const R2_surface_matrices_instance_t matrices_instance)
 {
   vec4 albedo_sample =
-    texture (textures.albedo, data.uv);
+    texture (R2_surface_textures.albedo, data.uv);
   vec4 albedo =
-    mix (params.albedo_color, albedo_sample, params.albedo_mix * albedo_sample.w);
+    mix (R2_surface_parameters.albedo_color,
+         albedo_sample,
+         R2_surface_parameters.albedo_mix * albedo_sample.w);
 
   vec4 environment_sample =
     R2_environmentReflection (
@@ -51,20 +53,22 @@ R2_deferredSurfaceMain (
   vec4 surface =
     mix (albedo, environment_sample, R2_surface_reflective_parameters.environment_mix);
 
+  float emission_sample =
+    texture (R2_surface_textures.emission, data.uv).x;
   float emission =
-    params.emission_amount * texture (textures.emission, data.uv).x;
+    R2_surface_parameters.emission_amount * emission_sample;
 
   vec3 specular_sample =
-    texture (textures.specular, data.uv).xyz;
+    texture (R2_surface_textures.specular, data.uv).xyz;
   vec3 specular =
-    specular_sample * params.specular_color;
+    specular_sample * R2_surface_parameters.specular_color;
 
   return R2_surface_output_t (
     surface.xyz,
     emission,
     derived.normal_eye,
     specular,
-    params.specular_exponent
+    R2_surface_parameters.specular_exponent
   );
 }
 

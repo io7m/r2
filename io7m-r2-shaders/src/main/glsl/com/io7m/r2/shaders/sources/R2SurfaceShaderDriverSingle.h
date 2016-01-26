@@ -10,8 +10,6 @@
 #include "R2GBufferOutput.h"
 
 in      R2_vertex_data_t               R2_vertex_data;
-uniform R2_surface_textures_t          R2_surface_textures;
-uniform R2_surface_parameters_t        R2_surface_parameters;
 uniform R2_surface_matrices_instance_t R2_surface_matrices_instance;
 uniform R2_surface_matrices_view_t     R2_surface_matrices_view;
 
@@ -46,8 +44,6 @@ R2_surface_shader_main_gbuffer()
   R2_surface_output_t o = R2_deferredSurfaceMain (
     R2_vertex_data,
     derived,
-    R2_surface_textures,
-    R2_surface_parameters,
     R2_surface_matrices_view,
     R2_surface_matrices_instance
   );

@@ -6,34 +6,39 @@
 
 #include "R2SurfaceShaderMain.h"
 
+uniform R2_surface_textures_t   R2_surface_textures;
+uniform R2_surface_parameters_t R2_surface_parameters;
+
 R2_surface_output_t
 R2_deferredSurfaceMain (
   const R2_vertex_data_t data,
   const R2_surface_derived_t derived,
-  const R2_surface_textures_t textures,
-  const R2_surface_parameters_t params,
   const R2_surface_matrices_view_t matrices_view,
   const R2_surface_matrices_instance_t matrices_instance)
 {
   vec4 albedo_sample =
-    texture (textures.albedo, data.uv);
+    texture (R2_surface_textures.albedo, data.uv);
   vec4 surface =
-    mix (params.albedo_color, albedo_sample, params.albedo_mix * albedo_sample.w);
+    mix (R2_surface_parameters.albedo_color,
+         albedo_sample,
+         R2_surface_parameters.albedo_mix * albedo_sample.w);
 
+  float emission_sample =
+    texture (R2_surface_textures.emission, data.uv).x;
   float emission =
-    params.emission_amount * texture (textures.emission, data.uv).x;
+    R2_surface_parameters.emission_amount * emission_sample;
 
   vec3 specular_sample =
-    texture (textures.specular, data.uv).xyz;
+    texture (R2_surface_textures.specular, data.uv).xyz;
   vec3 specular =
-    specular_sample * params.specular_color;
+    specular_sample * R2_surface_parameters.specular_color;
 
   return R2_surface_output_t (
     surface.xyz,
     emission,
     derived.normal_eye,
     specular,
-    params.specular_exponent
+    R2_surface_parameters.specular_exponent
   );
 }
 
