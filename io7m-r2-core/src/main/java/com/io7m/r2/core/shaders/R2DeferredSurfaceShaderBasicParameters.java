@@ -14,13 +14,15 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVector4FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
+import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.spaces.R2SpaceRGBAType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
 

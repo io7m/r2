@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
@@ -29,6 +29,18 @@ import com.io7m.jtensors.parameterized.PVector4FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2GeometryBufferUsableType;
+import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2LightSphericalSingleType;
+import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
+import com.io7m.r2.core.R2MatricesObserverValuesType;
+import com.io7m.r2.core.R2Projections;
+import com.io7m.r2.core.R2ShaderLightSingleType;
+import com.io7m.r2.core.R2ShaderParameters;
+import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.R2TransformContextType;
+import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.valid4j.Assertive;
@@ -37,39 +49,42 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Directional light shader for single lights.
+ * Spherical light shader for single lights.
  */
 
-public final class R2ShaderLightDirectionalSpecularSingle extends
-  R2AbstractShader<R2LightDirectionalSingle>
-  implements R2ShaderLightScreenSingleType<R2LightDirectionalSingle>
+public final class R2ShaderLightSphericalSpecularSingle extends
+  R2AbstractShader<R2LightSphericalSingleType>
+  implements R2ShaderLightSingleType<R2LightSphericalSingleType>
 {
-  private final JCGLProgramUniformType          u_transform_modelview;
-  private final JCGLProgramUniformType          u_transform_projection;
-  private final JCGLProgramUniformType          u_transform_projection_inverse;
-  private final JCGLProgramUniformType          u_depth_coefficient;
-  private final JCGLProgramUniformType          u_view_rays_origin_x0y0;
-  private final JCGLProgramUniformType          u_view_rays_origin_x1y0;
-  private final JCGLProgramUniformType          u_view_rays_origin_x0y1;
-  private final JCGLProgramUniformType          u_view_rays_origin_x1y1;
-  private final JCGLProgramUniformType          u_view_rays_ray_x0y0;
-  private final JCGLProgramUniformType          u_view_rays_ray_x1y0;
-  private final JCGLProgramUniformType          u_view_rays_ray_x0y1;
-  private final JCGLProgramUniformType          u_view_rays_ray_x1y1;
-  private final JCGLProgramUniformType          u_gbuffer_albedo;
-  private final JCGLProgramUniformType          u_gbuffer_normal;
-  private final JCGLProgramUniformType          u_gbuffer_specular;
-  private final JCGLProgramUniformType          u_gbuffer_depth;
-  private final JCGLProgramUniformType          u_viewport_inverse_width;
-  private final JCGLProgramUniformType          u_viewport_inverse_height;
-  private final JCGLProgramUniformType          u_light_directional_color;
-  private final JCGLProgramUniformType          u_light_directional_direction;
-  private final JCGLProgramUniformType          u_light_directional_intensity;
-  private final PVector4FType<R2SpaceEyeType>   direction_eye;
-  private final PVector3FType<R2SpaceEyeType>   direction_eye3;
-  private final PVector4FType<R2SpaceWorldType> direction_world;
+  private final JCGLProgramUniformType u_transform_projection_inverse;
+  private final JCGLProgramUniformType u_transform_modelview;
+  private final JCGLProgramUniformType u_transform_projection;
+  private final JCGLProgramUniformType u_depth_coefficient;
+  private final JCGLProgramUniformType u_view_rays_origin_x0y0;
+  private final JCGLProgramUniformType u_view_rays_origin_x1y0;
+  private final JCGLProgramUniformType u_view_rays_origin_x0y1;
+  private final JCGLProgramUniformType u_view_rays_origin_x1y1;
+  private final JCGLProgramUniformType u_view_rays_ray_x0y0;
+  private final JCGLProgramUniformType u_view_rays_ray_x1y0;
+  private final JCGLProgramUniformType u_view_rays_ray_x0y1;
+  private final JCGLProgramUniformType u_view_rays_ray_x1y1;
+  private final JCGLProgramUniformType u_gbuffer_albedo;
+  private final JCGLProgramUniformType u_gbuffer_normal;
+  private final JCGLProgramUniformType u_gbuffer_specular;
+  private final JCGLProgramUniformType u_gbuffer_depth;
+  private final JCGLProgramUniformType u_viewport_inverse_width;
+  private final JCGLProgramUniformType u_viewport_inverse_height;
+  private final JCGLProgramUniformType u_light_spherical_color;
+  private final JCGLProgramUniformType u_light_spherical_intensity;
+  private final JCGLProgramUniformType u_light_spherical_position;
+  private final JCGLProgramUniformType u_light_spherical_inverse_range;
+  private final JCGLProgramUniformType u_light_spherical_inverse_falloff;
 
-  private R2ShaderLightDirectionalSpecularSingle(
+  private final PVector4FType<R2SpaceEyeType>   position_eye;
+  private final PVector3FType<R2SpaceEyeType>   position_eye3;
+  private final PVector4FType<R2SpaceWorldType> position_world;
+
+  private R2ShaderLightSphericalSpecularSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -78,31 +93,33 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
       in_shaders,
       in_sources,
       in_pool,
-      "R2DeferredLightDirectionalSpecularSingle",
-      "R2DeferredLightDirectionalSpecularSingle.vert",
+      "R2DeferredLightSphericalSpecularSingle",
+      "R2DeferredLightSphericalSpecularSingle.vert",
       Optional.empty(),
-      "R2DeferredLightDirectionalSpecularSingle.frag");
-
-    this.direction_eye = new PVectorM4F<>();
-    this.direction_eye3 = new PVectorM3F<>();
-    this.direction_world = new PVectorM4F<>();
+      "R2DeferredLightSphericalSpecularSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     final Map<String, JCGLProgramUniformType> us = p.getUniforms();
     Assertive.ensure(
-      us.size() == 21,
-      "Expected number of parameters is 21 (got %d)",
+      us.size() == 23,
+      "Expected number of parameters is 23 (got %d)",
       Integer.valueOf(us.size()));
 
-    this.u_light_directional_color =
+    this.u_light_spherical_color =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_directional.color");
-    this.u_light_directional_direction =
+        p, "R2_light_spherical.color");
+    this.u_light_spherical_intensity =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_directional.direction");
-    this.u_light_directional_intensity =
+        p, "R2_light_spherical.intensity");
+    this.u_light_spherical_position =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_directional.intensity");
+        p, "R2_light_spherical.position");
+    this.u_light_spherical_inverse_range =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_light_spherical.inverse_range");
+    this.u_light_spherical_inverse_falloff =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_light_spherical.inverse_falloff");
 
     this.u_transform_modelview =
       R2ShaderParameters.getUniformChecked(
@@ -163,6 +180,10 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
     this.u_view_rays_ray_x1y1 =
       R2ShaderParameters.getUniformChecked(
         p, "R2_deferred_light_view_rays.ray_x1y1");
+
+    this.position_eye = new PVectorM4F<>();
+    this.position_eye3 = new PVectorM3F<>();
+    this.position_world = new PVectorM4F<>();
   }
 
   /**
@@ -175,37 +196,41 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderLightSingleType<R2LightDirectionalSingle>
+  public static R2ShaderLightSingleType<R2LightSphericalSingleType>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2ShaderLightDirectionalSpecularSingle(
+    return new R2ShaderLightSphericalSpecularSingle(
       in_shaders, in_sources, in_pool);
   }
 
   @Override
-  public Class<R2LightDirectionalSingle>
+  public Class<R2LightSphericalSingleType>
   getShaderParametersType()
   {
-    return R2LightDirectionalSingle.class;
+    return R2LightSphericalSingleType.class;
   }
 
   @Override
   public void setLightValues(
     final JCGLShadersType g_sh,
     final JCGLTexturesType g_tex,
-    final R2LightDirectionalSingle values)
+    final R2LightSphericalSingleType values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(g_tex);
     NullCheck.notNull(values);
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_directional_color, values.getColor());
+      this.u_light_spherical_color, values.getColor());
     g_sh.shaderUniformPutFloat(
-      this.u_light_directional_intensity, values.getIntensity());
+      this.u_light_spherical_intensity, values.getIntensity());
+    g_sh.shaderUniformPutFloat(
+      this.u_light_spherical_inverse_falloff, 1.0f / values.getFalloff());
+    g_sh.shaderUniformPutFloat(
+      this.u_light_spherical_inverse_range, 1.0f / values.getRadius());
   }
 
   @Override
@@ -254,7 +279,7 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
   public void setLightViewDependentValues(
     final JCGLShadersType g_sh,
     final R2MatricesObserverValuesType m,
-    final R2LightDirectionalSingle values)
+    final R2LightSphericalSingleType values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(m);
@@ -284,15 +309,6 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
       this.u_view_rays_ray_x1y1, view_rays.getRayX1Y1());
 
     /**
-     * Upload the projections for the light volume.
-     */
-
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
-
-    /**
      * Upload the scene's depth coefficient.
      */
 
@@ -301,31 +317,40 @@ public final class R2ShaderLightDirectionalSpecularSingle extends
       (float) R2Projections.getDepthCoefficient(m.getProjection()));
 
     /**
-     * Transform the light's direction to eye-space and upload it.
+     * Upload the projection for the light volume.
      */
 
-    final PVector3FType<R2SpaceWorldType> direction = values.getDirection();
-    this.direction_world.copyFrom3F(direction);
-    this.direction_world.setWF(0.0f);
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_projection, m.getMatrixProjection());
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+
+    /**
+     * Transform the light's position to eye-space and upload it.
+     */
+
+    final PVector3FType<R2SpaceWorldType> position = values.getPosition();
+    this.position_world.copyFrom3F(position);
+    this.position_world.setWF(1.0f);
 
     final R2TransformContextType trc = m.getTransformContext();
     PMatrixM4x4F.multiplyVector4F(
       trc.getContextPM4F(),
       m.getMatrixView(),
-      this.direction_world,
-      this.direction_eye);
+      this.position_world,
+      this.position_eye);
 
-    this.direction_eye3.copyFrom3F(this.direction_eye);
+    this.position_eye3.copyFrom3F(this.position_eye);
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_directional_direction, this.direction_eye3);
+      this.u_light_spherical_position, this.position_eye3);
   }
 
   @Override
   public void setLightTransformDependentValues(
     final JCGLShadersType g_sh,
     final R2MatricesInstanceSingleValuesType m,
-    final R2LightDirectionalSingle values)
+    final R2LightSphericalSingleType values)
   {
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_modelview, m.getMatrixModelView());

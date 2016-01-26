@@ -18,8 +18,8 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2DeferredSurfaceShaderBasicParameters;
-import com.io7m.r2.core.R2DeferredSurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicSingle;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ShaderInstanceSingleType;

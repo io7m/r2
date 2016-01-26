@@ -14,10 +14,14 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jfunctional.Unit;
+import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2ShaderScreenType;
+import com.io7m.r2.core.R2ShaderSourcesType;
 
 import java.util.Optional;
 
@@ -25,10 +29,10 @@ import java.util.Optional;
  * A stencil-only shader implementation.
  */
 
-public final class R2StencilScreenShader extends R2AbstractShader<Unit>
+public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
   implements R2ShaderScreenType<Unit>
 {
-  private R2StencilScreenShader(
+  private R2StencilShaderScreen(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -58,7 +62,7 @@ public final class R2StencilScreenShader extends R2AbstractShader<Unit>
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2StencilScreenShader(in_shaders, in_sources, in_pool);
+    return new R2StencilShaderScreen(in_shaders, in_sources, in_pool);
   }
 
   @Override

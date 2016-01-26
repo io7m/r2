@@ -14,13 +14,19 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
+import com.io7m.r2.core.R2MatricesObserverValuesType;
+import com.io7m.r2.core.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.R2ShaderSourcesType;
 import org.valid4j.Assertive;
 
 import java.util.Map;

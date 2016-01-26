@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2ShaderLightSingleType;
-import com.io7m.r2.core.R2ShaderLightSphericalSpecularSingle;
+import com.io7m.r2.core.shaders.R2ShaderLightSphericalSpecularSingle;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.shaders.R2Shaders;

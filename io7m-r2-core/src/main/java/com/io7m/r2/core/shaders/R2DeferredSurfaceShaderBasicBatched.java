@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
@@ -22,6 +22,13 @@ import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2MatricesObserverValuesType;
+import com.io7m.r2.core.R2Projections;
+import com.io7m.r2.core.R2ShaderBatchedType;
+import com.io7m.r2.core.R2ShaderParameters;
+import com.io7m.r2.core.R2ShaderSourcesType;
 import org.valid4j.Assertive;
 
 import java.util.List;
@@ -29,19 +36,16 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Basic deferred surface shader for single instances.
+ * Basic deferred surface shader for batched instances.
  */
 
-public final class R2DeferredSurfaceShaderBasicSingle extends
+public final class R2DeferredSurfaceShaderBasicBatched extends
   R2AbstractShader<R2DeferredSurfaceShaderBasicParameters>
-  implements R2ShaderInstanceSingleType<R2DeferredSurfaceShaderBasicParameters>
+  implements R2ShaderBatchedType<R2DeferredSurfaceShaderBasicParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
-  private final JCGLProgramUniformType u_transform_normal;
-  private final JCGLProgramUniformType u_transform_modelview;
   private final JCGLProgramUniformType u_transform_view;
   private final JCGLProgramUniformType u_transform_projection;
-  private final JCGLProgramUniformType u_transform_uv;
   private final JCGLProgramUniformType u_emission_amount;
   private final JCGLProgramUniformType u_albedo_color;
   private final JCGLProgramUniformType u_albedo_mix;
@@ -52,7 +56,7 @@ public final class R2DeferredSurfaceShaderBasicSingle extends
   private final JCGLProgramUniformType u_texture_specular;
   private final JCGLProgramUniformType u_texture_emission;
 
-  private R2DeferredSurfaceShaderBasicSingle(
+  private R2DeferredSurfaceShaderBasicBatched(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -61,50 +65,57 @@ public final class R2DeferredSurfaceShaderBasicSingle extends
       in_shaders,
       in_sources,
       in_pool,
-      "R2DeferredSurfaceBasicSingle",
-      "R2DeferredSurfaceBasicSingle.vert",
+      "R2DeferredSurfaceBasicBatched",
+      "R2DeferredSurfaceBasicBatched.vert",
       Optional.empty(),
-      "R2DeferredSurfaceBasicSingle.frag");
+      "R2DeferredSurfaceBasicBatched.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     final Map<String, JCGLProgramUniformType> us = p.getUniforms();
-    Assertive.ensure(us.size() == 15, "Expected number of parameters is 15");
+    Assertive.ensure(
+      us.size() == 12,
+      "Expected number of parameters is 12 (got %d)",
+      Integer.valueOf(us.size()));
 
-    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_matrices_view.transform_projection");
-    this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_matrices_view.transform_view");
+    this.u_transform_projection =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_matrices_view.transform_projection");
+    this.u_transform_view =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_matrices_view.transform_view");
 
-    this.u_transform_normal = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_matrices_instance.transform_normal");
-    this.u_transform_modelview = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_matrices_instance.transform_modelview");
-    this.u_transform_uv = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_matrices_instance.transform_uv");
+    this.u_depth_coefficient =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_parameters.depth_coefficient");
+    this.u_emission_amount =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_parameters.emission_amount");
+    this.u_albedo_color =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_parameters.albedo_color");
+    this.u_albedo_mix =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_parameters.albedo_mix");
+    this.u_specular_color =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_parameters.specular_color");
+    this.u_specular_exponent =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_parameters.specular_exponent");
 
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_parameters.depth_coefficient");
-    this.u_emission_amount = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_parameters.emission_amount");
-    this.u_albedo_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_parameters.albedo_color");
-    this.u_albedo_mix = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_parameters.albedo_mix");
-    this.u_specular_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_parameters.specular_color");
-    this.u_specular_exponent = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_parameters.specular_exponent");
-
-    this.u_texture_albedo = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_textures.albedo");
-    this.u_texture_normal = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_textures.normal");
-    this.u_texture_specular = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_textures.specular");
-    this.u_texture_emission = R2ShaderParameters.getUniformChecked(
-      p, "R2_deferred_surface_textures.emission");
+    this.u_texture_albedo =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_textures.albedo");
+    this.u_texture_normal =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_textures.normal");
+    this.u_texture_specular =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_textures.specular");
+    this.u_texture_emission =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_deferred_surface_textures.emission");
   }
-
 
   /**
    * Construct a new shader.
@@ -116,12 +127,12 @@ public final class R2DeferredSurfaceShaderBasicSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleType<R2DeferredSurfaceShaderBasicParameters> newShader(
+  public static R2ShaderBatchedType<R2DeferredSurfaceShaderBasicParameters> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2DeferredSurfaceShaderBasicSingle(in_shaders, in_sources, in_pool);
+    return new R2DeferredSurfaceShaderBasicBatched(in_shaders, in_sources, in_pool);
   }
 
   @Override
@@ -183,20 +194,6 @@ public final class R2DeferredSurfaceShaderBasicSingle extends
       this.u_transform_view, m.getMatrixView());
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_projection, m.getMatrixProjection());
-  }
-
-  @Override
-  public void setMatricesInstance(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
-    g_sh.shaderUniformPutMatrix3x3f(
-      this.u_transform_normal, m.getMatrixNormal());
   }
 
   @Override

@@ -34,6 +34,8 @@ import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
+import com.io7m.r2.core.shaders.R2StencilShaderScreen;
+import com.io7m.r2.core.shaders.R2StencilShaderSingle;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +73,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     this.program_instance =
       R2StencilShaderSingle.newShader(g_sh, in_sources, in_pool);
     this.program_screen =
-      R2StencilScreenShader.newShader(g_sh, in_sources, in_pool);
+      R2StencilShaderScreen.newShader(g_sh, in_sources, in_pool);
 
     this.stencil_consumer = new StencilConsumer(this.program_instance);
     this.quad = R2UnitQuad.newUnitQuad(in_g);
