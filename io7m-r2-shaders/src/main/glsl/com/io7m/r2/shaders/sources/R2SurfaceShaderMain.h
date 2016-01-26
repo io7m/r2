@@ -22,7 +22,7 @@
 
 R2_surface_output_t
 R2_deferredSurfaceMain (
-  const R2_surface_data_t data,
+  const R2_vertex_data_t data,
   const R2_surface_derived_t derived,
   const R2_surface_textures_t textures,
   const R2_surface_parameters_t params,

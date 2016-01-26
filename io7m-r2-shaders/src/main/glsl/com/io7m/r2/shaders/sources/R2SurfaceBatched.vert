@@ -6,8 +6,8 @@
 #include "R2SurfaceTypes.h"
 #include "R2SurfaceVertexBatched.h"
 
-out     R2_surface_data_t              R2_surface_data;
-out     R2_surface_matrices_instance_t R2_surface_matrices_instance;
+out R2_vertex_data_t               R2_surface_data;
+out R2_surface_matrices_instance_t R2_surface_matrices_instance;
 
 uniform R2_surface_parameters_t    R2_surface_parameters;
 uniform R2_surface_matrices_view_t R2_surface_matrices_view;
@@ -48,7 +48,7 @@ main (void)
     m_uv
   );
 
-  R2_surface_data = R2_surface_data_t (
+  R2_surface_data = R2_vertex_data_t (
     position_eye,
     position_clip,
     positive_eye_z,

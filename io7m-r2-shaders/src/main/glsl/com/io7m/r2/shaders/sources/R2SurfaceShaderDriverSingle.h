@@ -9,7 +9,7 @@
 #include "R2SurfaceTypes.h"
 #include "R2GBufferOutput.h"
 
-in      R2_surface_data_t              R2_surface_data;
+in      R2_vertex_data_t               R2_surface_data;
 uniform R2_surface_textures_t          R2_surface_textures;
 uniform R2_surface_parameters_t        R2_surface_parameters;
 uniform R2_surface_matrices_instance_t R2_surface_matrices_instance;

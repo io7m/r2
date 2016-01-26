@@ -6,9 +6,9 @@
 
 #include "R2SurfaceOutput.h"
 
-/// Interpolated surface data that all deferred surface shaders will receive.
+/// Interpolated vertex data that all deferred surface shaders will receive.
 
-struct R2_surface_data_t {
+struct R2_vertex_data_t {
   /// Eye-space surface position
   vec4 position_eye;
   /// Clip-space surface position
