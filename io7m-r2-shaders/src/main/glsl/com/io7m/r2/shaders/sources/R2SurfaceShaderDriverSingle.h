@@ -55,7 +55,7 @@ R2_surface_shader_main_gbuffer()
   return R2_gbuffer_output_t(
     o.albedo,
     o.emission,
-    normal_comp,
+    o.normal,
     o.specular,
     o.specular_exp / 256.0,
     depth_log

@@ -17,7 +17,7 @@ struct R2_surface_data_t {
   float positive_eye_z;
   /// Object-space UV
   vec2 uv;
-  /// Object-space normal
+  /// Object-space vertex normal
   vec3 normal;
   /// Tangent vector
   vec3 tangent;

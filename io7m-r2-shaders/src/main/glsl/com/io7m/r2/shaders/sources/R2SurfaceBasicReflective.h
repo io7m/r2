@@ -62,6 +62,7 @@ R2_deferredSurfaceMain (
   return R2_surface_output_t (
     surface.xyz,
     emission,
+    derived.normal_eye,
     specular,
     params.specular_exponent
   );

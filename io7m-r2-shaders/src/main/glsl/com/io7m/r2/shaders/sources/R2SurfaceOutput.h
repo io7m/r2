@@ -11,6 +11,8 @@ struct R2_surface_output_t {
   vec3  albedo;
   /// 8-bit unsigned normalized emission level
   float emission;
+  /// Eye-space normal vector
+  vec3 normal;
   /// 8-bit unsigned normalized RGB specular color
   vec3  specular;
   /// Specular exponent in the range `[0, 256]`
