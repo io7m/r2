@@ -16,11 +16,24 @@
 
 package com.io7m.r2.core.cursors;
 
-import com.io7m.jcanephora.core.JCGLScalarType;
 import net.jcip.annotations.ThreadSafe;
 
-@FunctionalInterface @ThreadSafe
+/**
+ * The type of functions that, given a user-defined value of type {@code T},
+ * yield a new cursor.
+ *
+ * @param <T> The type of user-defined values
+ */
+
+@FunctionalInterface
+@ThreadSafe
 public interface R2VertexCursorProducerType<T>
 {
+  /**
+   * @param ctx A user-defined value
+   *
+   * @return A new cursor
+   */
+
   R2VertexCursorType newCursor(T ctx);
 }

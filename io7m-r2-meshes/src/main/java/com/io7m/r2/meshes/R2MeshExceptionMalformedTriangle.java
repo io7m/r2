@@ -16,8 +16,18 @@
 
 package com.io7m.r2.meshes;
 
+/**
+ * An exception resulting from an attempt to specify a malformed triangle.
+ */
+
 public final class R2MeshExceptionMalformedTriangle extends R2MeshException
 {
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
   public R2MeshExceptionMalformedTriangle(final String message)
   {
     super(message);

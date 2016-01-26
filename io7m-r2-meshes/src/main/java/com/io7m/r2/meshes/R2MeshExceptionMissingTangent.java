@@ -16,8 +16,18 @@
 
 package com.io7m.r2.meshes;
 
+/**
+ * An exception resulting from a missing tangent vector in a mesh.
+ */
+
 public final class R2MeshExceptionMissingTangent extends R2MeshException
 {
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
   public R2MeshExceptionMissingTangent(final String message)
   {
     super(message);

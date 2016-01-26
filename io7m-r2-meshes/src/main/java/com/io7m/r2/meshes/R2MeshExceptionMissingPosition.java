@@ -16,8 +16,18 @@
 
 package com.io7m.r2.meshes;
 
+/**
+ * An exception resulting from a missing position vector in a mesh.
+ */
+
 public final class R2MeshExceptionMissingPosition extends R2MeshException
 {
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
   public R2MeshExceptionMissingPosition(final String message)
   {
     super(message);

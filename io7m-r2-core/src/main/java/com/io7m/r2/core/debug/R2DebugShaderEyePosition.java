@@ -30,6 +30,7 @@ import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2Projections;
+import com.io7m.r2.core.R2ShaderGBufferConsumerType;
 import com.io7m.r2.core.R2ShaderParameters;
 import com.io7m.r2.core.R2ShaderScreenType;
 import com.io7m.r2.core.R2ShaderSourcesType;
@@ -43,9 +44,9 @@ import java.util.Optional;
  * A shader that recovers the eye-space position of the g-buffer surface.
  */
 
-public final class R2ShaderDebugEyePosition extends
+public final class R2DebugShaderEyePosition extends
   R2AbstractShader<Unit>
-  implements R2ShaderScreenType<Unit>
+  implements R2ShaderScreenType<Unit>, R2ShaderGBufferConsumerType
 {
   private final JCGLProgramUniformType u_gbuffer_albedo;
   private final JCGLProgramUniformType u_gbuffer_normal;
@@ -63,7 +64,7 @@ public final class R2ShaderDebugEyePosition extends
   private final JCGLProgramUniformType u_view_rays_ray_x0y1;
   private final JCGLProgramUniformType u_view_rays_ray_x1y1;
 
-  private R2ShaderDebugEyePosition(
+  private R2DebugShaderEyePosition(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -145,14 +146,15 @@ public final class R2ShaderDebugEyePosition extends
    * @return A new shader
    */
 
-  public static R2ShaderDebugEyePosition newShader(
+  public static R2DebugShaderEyePosition newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2ShaderDebugEyePosition(in_shaders, in_sources, in_pool);
+    return new R2DebugShaderEyePosition(in_shaders, in_sources, in_pool);
   }
 
+  @Override
   public void setGBuffer(
     final JCGLShadersType g_sh,
     final JCGLTexturesType g_tex,
@@ -200,6 +202,13 @@ public final class R2ShaderDebugEyePosition extends
   {
     return Unit.class;
   }
+
+  /**
+   * Set any view-dependent values.
+   *
+   * @param g_sh A shader interface
+   * @param m    View matrices
+   */
 
   public void setViewDependentValues(
     final JCGLShadersType g_sh,

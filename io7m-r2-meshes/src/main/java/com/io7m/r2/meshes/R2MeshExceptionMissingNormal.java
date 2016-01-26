@@ -16,8 +16,18 @@
 
 package com.io7m.r2.meshes;
 
+/**
+ * An exception resulting from a missing normal vector in a mesh.
+ */
+
 public final class R2MeshExceptionMissingNormal extends R2MeshException
 {
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
   public R2MeshExceptionMissingNormal(final String message)
   {
     super(message);

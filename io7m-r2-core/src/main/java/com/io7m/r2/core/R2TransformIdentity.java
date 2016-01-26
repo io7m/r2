@@ -21,6 +21,10 @@ import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
+/**
+ * A transform that always yields an identity matrix.
+ */
+
 public final class R2TransformIdentity implements
   R2TransformOrthogonalReadableType
 {
@@ -30,6 +34,10 @@ public final class R2TransformIdentity implements
   {
 
   }
+
+  /**
+   * @return The identity transform
+   */
 
   public static R2TransformOrthogonalReadableType getInstance()
   {

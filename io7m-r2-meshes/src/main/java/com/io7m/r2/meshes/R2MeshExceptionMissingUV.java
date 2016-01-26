@@ -16,8 +16,18 @@
 
 package com.io7m.r2.meshes;
 
+/**
+ * An exception resulting from a missing UV vector in a mesh.
+ */
+
 public final class R2MeshExceptionMissingUV extends R2MeshException
 {
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
   public R2MeshExceptionMissingUV(final String message)
   {
     super(message);

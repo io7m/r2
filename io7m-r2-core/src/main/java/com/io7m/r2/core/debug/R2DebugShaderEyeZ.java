@@ -30,6 +30,7 @@ import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2Projections;
+import com.io7m.r2.core.R2ShaderGBufferConsumerType;
 import com.io7m.r2.core.R2ShaderParameters;
 import com.io7m.r2.core.R2ShaderScreenType;
 import com.io7m.r2.core.R2ShaderSourcesType;
@@ -42,9 +43,9 @@ import java.util.Optional;
  * A shader that recovers the eye-space Z value of the g-buffer surface.
  */
 
-public final class R2ShaderDebugEyeZ extends
+public final class R2DebugShaderEyeZ extends
   R2AbstractShader<Unit>
-  implements R2ShaderScreenType<Unit>
+  implements R2ShaderScreenType<Unit>, R2ShaderGBufferConsumerType
 {
   private final JCGLProgramUniformType u_gbuffer_albedo;
   private final JCGLProgramUniformType u_gbuffer_normal;
@@ -54,7 +55,7 @@ public final class R2ShaderDebugEyeZ extends
   private final JCGLProgramUniformType u_viewport_inverse_height;
   private final JCGLProgramUniformType u_depth_coefficient;
 
-  private R2ShaderDebugEyeZ(
+  private R2DebugShaderEyeZ(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -100,6 +101,25 @@ public final class R2ShaderDebugEyeZ extends
         p, "R2_depth_coefficient");
   }
 
+  /**
+   * Construct a new shader.
+   *
+   * @param in_shaders A shader interface
+   * @param in_sources Shader sources
+   * @param in_pool    The ID pool
+   *
+   * @return A new shader
+   */
+
+  public static R2DebugShaderEyeZ newShader(
+    final JCGLShadersType in_shaders,
+    final R2ShaderSourcesType in_sources,
+    final R2IDPoolType in_pool)
+  {
+    return new R2DebugShaderEyeZ(in_shaders, in_sources, in_pool);
+  }
+
+  @Override
   public void setGBuffer(
     final JCGLShadersType g_sh,
     final JCGLTexturesType g_tex,
@@ -141,30 +161,19 @@ public final class R2ShaderDebugEyeZ extends
       (float) (1.0 / (double) range_y.getInterval()));
   }
 
-  /**
-   * Construct a new shader.
-   *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
-   *
-   * @return A new shader
-   */
-
-  public static R2ShaderDebugEyeZ newShader(
-    final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
-    final R2IDPoolType in_pool)
-  {
-    return new R2ShaderDebugEyeZ(in_shaders, in_sources, in_pool);
-  }
-
   @Override
   public Class<Unit>
   getShaderParametersType()
   {
     return Unit.class;
   }
+
+  /**
+   * Set any view-dependent values.
+   *
+   * @param g_sh A shader interface
+   * @param m    View matrices
+   */
 
   public void setViewDependentValues(
     final JCGLShadersType g_sh,

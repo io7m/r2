@@ -23,6 +23,14 @@ import com.io7m.r2.meshes.R2MeshParserInterleavedListenerType;
 
 import java.util.Optional;
 
+/**
+ * The type of synchronous adapters that accept mesh data from a parser and
+ * construct buffers on the GPU.
+ *
+ * In this case, synchronous refers to the fact that the GPU operations will
+ * occur on the same thread that is performing I/O and parsing.
+ */
+
 public interface R2MeshArrayObjectSynchronousAdapterType extends
   R2MeshParserInterleavedListenerType
 {

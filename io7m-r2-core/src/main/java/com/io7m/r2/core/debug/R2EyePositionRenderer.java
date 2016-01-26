@@ -64,14 +64,14 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_STENCIL);
   }
 
-  private final R2ShaderDebugEyePosition shader;
+  private final R2DebugShaderEyePosition shader;
 
   private R2EyePositionRenderer(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    this.shader = R2ShaderDebugEyePosition.newShader(
+    this.shader = R2DebugShaderEyePosition.newShader(
       in_shaders, in_sources, in_pool);
   }
 

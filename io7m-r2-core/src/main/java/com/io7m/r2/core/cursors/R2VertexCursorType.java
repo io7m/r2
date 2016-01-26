@@ -16,13 +16,35 @@
 
 package com.io7m.r2.core.cursors;
 
+/**
+ * The type of cursors for writing to standard vertices.
+ */
+
 public interface R2VertexCursorType
 {
+  /**
+   * Set the position vector for vertex {@code index}.
+   *
+   * @param index The vertex index
+   * @param x     The X coordinate value
+   * @param y     The Y coordinate value
+   * @param z     The Z coordinate value
+   */
+
   void setPosition(
     long index,
     double x,
     double y,
     double z);
+
+  /**
+   * Set the normal vector for vertex {@code index}.
+   *
+   * @param index The vertex index
+   * @param x     The X coordinate value
+   * @param y     The Y coordinate value
+   * @param z     The Z coordinate value
+   */
 
   void setNormal(
     long index,
@@ -30,10 +52,28 @@ public interface R2VertexCursorType
     double y,
     double z);
 
+  /**
+   * Set the UV vector for vertex {@code index}.
+   *
+   * @param index The vertex index
+   * @param x     The X coordinate value
+   * @param y     The Y coordinate value
+   */
+
   void setUV(
     long index,
     double x,
     double y);
+
+  /**
+   * Set the tangent4 vector for vertex {@code index}.
+   *
+   * @param index The vertex index
+   * @param x     The X coordinate value
+   * @param y     The Y coordinate value
+   * @param z     The Z coordinate value
+   * @param w     The tangent sign
+   */
 
   void setTangent4(
     long index,

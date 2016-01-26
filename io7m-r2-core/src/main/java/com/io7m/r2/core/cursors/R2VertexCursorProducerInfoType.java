@@ -19,24 +19,68 @@ package com.io7m.r2.core.cursors;
 import com.io7m.jcanephora.core.JCGLScalarType;
 import net.jcip.annotations.ThreadSafe;
 
+/**
+ * Information about cursors that can be produced by a {@link
+ * R2VertexCursorProducerType} implementation.
+ */
+
 @ThreadSafe
 public interface R2VertexCursorProducerInfoType
 {
+  /**
+   * @return The scalar type used to hold the elements of position vectors
+   */
+
   JCGLScalarType getPositionElementType();
+
+  /**
+   * @return The offset in octets of the position vector from the start of each
+   * vertex
+   */
 
   long getPositionOffset();
 
+  /**
+   * @return The scalar type used to hold the elements of normal vectors
+   */
+
   JCGLScalarType getNormalElementType();
+
+  /**
+   * @return The offset in octets of the normal vector from the start of each
+   * vertex
+   */
 
   long getNormalOffset();
 
+  /**
+   * @return The scalar type used to hold the elements of UV vectors
+   */
+
   JCGLScalarType getUVElementType();
+
+  /**
+   * @return The offset in octets of the UV vector from the start of each vertex
+   */
 
   long getUVOffset();
 
+  /**
+   * @return The scalar type used to hold the elements of tangent vectors
+   */
+
   JCGLScalarType getTangent4ElementType();
 
+  /**
+   * @return The offset in octets of the tangent4 vector from the start of each
+   * vertex
+   */
+
   long getTangent4Offset();
+
+  /**
+   * @return The size in octets of one vertex
+   */
 
   long getVertexSize();
 }

@@ -63,14 +63,14 @@ public final class R2EyeZRenderer implements R2EyeZRendererType
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_STENCIL);
   }
 
-  private final R2ShaderDebugEyeZ shader;
+  private final R2DebugShaderEyeZ shader;
 
   private R2EyeZRenderer(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    this.shader = R2ShaderDebugEyeZ.newShader(in_shaders, in_sources, in_pool);
+    this.shader = R2DebugShaderEyeZ.newShader(in_shaders, in_sources, in_pool);
   }
 
   /**

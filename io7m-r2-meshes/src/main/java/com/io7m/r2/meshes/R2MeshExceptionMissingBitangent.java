@@ -16,8 +16,18 @@
 
 package com.io7m.r2.meshes;
 
+/**
+ * An exception resulting from a missing bitangent vector in a mesh.
+ */
+
 public final class R2MeshExceptionMissingBitangent extends R2MeshException
 {
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
   public R2MeshExceptionMissingBitangent(final String message)
   {
     super(message);
