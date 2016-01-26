@@ -9,7 +9,7 @@
 #include "R2SurfaceTypes.h"
 #include "R2GBufferOutput.h"
 
-in      R2_vertex_data_t               R2_surface_data;
+in      R2_vertex_data_t               R2_vertex_data;
 uniform R2_surface_textures_t          R2_surface_textures;
 uniform R2_surface_parameters_t        R2_surface_parameters;
 uniform R2_surface_matrices_instance_t R2_surface_matrices_instance;
@@ -25,16 +25,16 @@ R2_surface_shader_main_gbuffer()
   vec3 normal = R2_normalsBump (
     R2_surface_textures.normal,
     R2_surface_matrices_instance.transform_normal,
-    R2_surface_data.normal,
-    R2_surface_data.tangent,
-    R2_surface_data.bitangent,
-    R2_surface_data.uv
+    R2_vertex_data.normal,
+    R2_vertex_data.tangent,
+    R2_vertex_data.bitangent,
+    R2_vertex_data.uv
   );
 
   vec2 normal_comp = R2_normalsCompress (normal);
 
   float depth_log = R2_logDepthEncodePartial (
-    R2_surface_data.positive_eye_z,
+    R2_vertex_data.positive_eye_z,
     R2_surface_parameters.depth_coefficient);
 
   R2_surface_derived_t derived =
@@ -44,7 +44,7 @@ R2_surface_shader_main_gbuffer()
     );
 
   R2_surface_output_t o = R2_deferredSurfaceMain (
-    R2_surface_data,
+    R2_vertex_data,
     derived,
     R2_surface_textures,
     R2_surface_parameters,

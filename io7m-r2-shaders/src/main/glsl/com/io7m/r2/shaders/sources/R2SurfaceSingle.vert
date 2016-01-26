@@ -6,7 +6,7 @@
 #include "R2SurfaceTypes.h"
 #include "R2SurfaceVertex.h"
 
-out     R2_vertex_data_t       R2_surface_data;
+out     R2_vertex_data_t               R2_vertex_data;
 uniform R2_surface_parameters_t        R2_surface_parameters;
 uniform R2_surface_matrices_view_t     R2_surface_matrices_view;
 uniform R2_surface_matrices_instance_t R2_surface_matrices_instance;
@@ -34,7 +34,7 @@ main (void)
   vec3 normal    = R2_vertex_normal;
   vec3 bitangent = R2_normalsBitangent (normal, tangent4);
 
-  R2_surface_data = R2_vertex_data_t (
+  R2_vertex_data = R2_vertex_data_t (
     position_eye,
     position_clip,
     positive_eye_z,
