@@ -14,10 +14,13 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.jogl;
+package com.io7m.r2.tests.jogl.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
-import com.io7m.r2.tests.core.R2DeferredLightShaderDirectionalSpecularSingleContract;
+import com.io7m.r2.tests.core.shaders.R2DeferredLightShaderDirectionalSpecularSingleContract;
+
+
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
 public final class R2DeferredLightShaderDirectionalSpecularSingleTest extends
   R2DeferredLightShaderDirectionalSpecularSingleContract

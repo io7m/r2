@@ -14,22 +14,23 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.core;
+package com.io7m.r2.tests.core.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicParameters;
+import com.io7m.jfunctional.Unit;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2ShaderBatchedType;
+import com.io7m.r2.core.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.R2StencilShaderSingle;
 import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Assert;
 import org.junit.Test;
 
-public abstract class R2DeferredSurfaceShaderBasicBatchedContract extends
+public abstract class R2StencilShaderSingleContract extends
   R2JCGLContract
 {
   @Test
@@ -41,8 +42,8 @@ public abstract class R2DeferredSurfaceShaderBasicBatchedContract extends
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderBatchedType<R2DeferredSurfaceShaderBasicParameters> s =
-      R2DeferredSurfaceShaderBasicBatched.newShader(
+    final R2ShaderInstanceSingleType<Unit> s =
+      R2StencilShaderSingle.newShader(
         g.getShaders(),
         sources,
         pool);

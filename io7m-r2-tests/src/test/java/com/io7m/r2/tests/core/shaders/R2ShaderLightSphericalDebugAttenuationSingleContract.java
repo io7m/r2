@@ -14,22 +14,23 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.core;
+package com.io7m.r2.tests.core.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.R2DeferredSurfaceShaderBasicSingle;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.R2LightSphericalSingleType;
+import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.debug.R2ShaderLightSphericalDebugAttenuationSingle;
 import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Assert;
 import org.junit.Test;
 
-public abstract class R2DeferredSurfaceShaderBasicSingleContract extends
+public abstract class R2ShaderLightSphericalDebugAttenuationSingleContract extends
   R2JCGLContract
 {
   @Test
@@ -41,8 +42,8 @@ public abstract class R2DeferredSurfaceShaderBasicSingleContract extends
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceSingleType<R2DeferredSurfaceShaderBasicParameters> s =
-      R2DeferredSurfaceShaderBasicSingle.newShader(
+    final R2ShaderLightSingleType<R2LightSphericalSingleType> s =
+      R2ShaderLightSphericalDebugAttenuationSingle.newShader(
         g.getShaders(),
         sources,
         pool);
