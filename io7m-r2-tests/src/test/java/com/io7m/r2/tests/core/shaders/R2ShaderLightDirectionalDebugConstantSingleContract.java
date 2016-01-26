@@ -24,7 +24,7 @@ import com.io7m.r2.core.R2LightDirectionalSingle;
 import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
-import com.io7m.r2.core.debug.R2ShaderLightDirectionalDebugConstantSingle;
+import com.io7m.r2.core.debug.R2DebugShaderLightDirectionalConstantSingle;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Assert;
@@ -43,7 +43,7 @@ public abstract class R2ShaderLightDirectionalDebugConstantSingleContract extend
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderLightSingleType<R2LightDirectionalSingle> s =
-      R2ShaderLightDirectionalDebugConstantSingle.newShader(
+      R2DebugShaderLightDirectionalConstantSingle.newShader(
         g.getShaders(),
         sources,
         pool);

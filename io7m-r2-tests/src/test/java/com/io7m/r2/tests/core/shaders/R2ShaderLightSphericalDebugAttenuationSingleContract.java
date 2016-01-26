@@ -24,7 +24,7 @@ import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
-import com.io7m.r2.core.debug.R2ShaderLightSphericalDebugAttenuationSingle;
+import com.io7m.r2.core.debug.R2DebugShaderLightSphericalAttenuationSingle;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Assert;
@@ -43,7 +43,7 @@ public abstract class R2ShaderLightSphericalDebugAttenuationSingleContract exten
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderLightSingleType<R2LightSphericalSingleType> s =
-      R2ShaderLightSphericalDebugAttenuationSingle.newShader(
+      R2DebugShaderLightSphericalAttenuationSingle.newShader(
         g.getShaders(),
         sources,
         pool);
