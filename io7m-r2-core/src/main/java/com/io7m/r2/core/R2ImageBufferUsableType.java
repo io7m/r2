@@ -16,27 +16,33 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
+import com.io7m.jcanephora.core.JCGLResourceSizedType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
+
 /**
- * Access to default textures for materials.
+ * The type of usable image buffers.
  */
 
-public interface R2TextureDefaultsType extends R2DeletableType
+public interface R2ImageBufferUsableType extends JCGLResourceSizedType,
+  JCGLResourceUsableType
 {
   /**
-   * @return A texture representing a flat normal texture
+   * @return The diffuse texture
    */
 
-  R2Texture2DUsableType getNormalTexture();
+  R2Texture2DUsableType getRGBATexture();
 
   /**
-   * @return A texture representing a flat white texture
+   * @return The framebuffer
    */
 
-  R2Texture2DUsableType getWhiteTexture();
+  JCGLFramebufferUsableType getFramebuffer();
 
   /**
-   * @return A texture representing a flat black texture
+   * @return The viewport area
    */
 
-  R2Texture2DUsableType getBlackTexture();
+  AreaInclusiveUnsignedLType getArea();
 }

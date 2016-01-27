@@ -63,6 +63,8 @@ import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
+import com.io7m.r2.core.filters.R2FilterLightApplicator;
+import com.io7m.r2.core.filters.R2FilterLightApplicatorType;
 import com.io7m.r2.core.shaders.R2LightShaderSphericalSpecularSingle;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
@@ -95,6 +97,7 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
   private R2GeometryBufferType gbuffer;
   private R2LightBufferType lbuffer;
   private JCGLClearSpecification geom_clear_spec;
+  private JCGLClearSpecification screen_clear_spec;
 
   private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
     geom_shader;
@@ -106,6 +109,8 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
   private R2ShaderLightSingleType<R2LightSphericalSingleType> light_shader;
   private R2LightSphericalSingleType                          light;
   private R2UnitSphereType                                    sphere;
+  private R2FilterLightApplicatorType                         filter;
+
 
   public ExampleLightSpherical1()
   {
@@ -202,6 +207,10 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
     this.light.getPosition().set3F(0.0f, 0.0f, 1.0f);
     this.light.setRadius(4.0f);
 
+    this.filter =
+      R2FilterLightApplicator.newFilter(
+        sources, m.getTextureDefaults(), g, id_pool, this.quad);
+
     {
       final JCGLClearSpecification.Builder csb =
         JCGLClearSpecification.builder();
@@ -209,6 +218,15 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
       csb.setDepthBufferClear(1.0);
       csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
       this.geom_clear_spec = csb.build();
+    }
+
+    {
+      final JCGLClearSpecification.Builder csb =
+        JCGLClearSpecification.builder();
+      csb.setStencilBufferClear(0);
+      csb.setDepthBufferClear(1.0);
+      csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
+      this.screen_clear_spec = csb.build();
     }
 
     {
@@ -275,6 +293,15 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
           mo,
           t.lights);
         g_fb.framebufferDrawUnbind();
+
+        g_cb.colorBufferMask(true, true, true, true);
+        g_db.depthBufferWriteEnable();
+        g_sb.stencilBufferMask(
+          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
+        g_cl.clear(t.screen_clear_spec);
+
+        this.filter.runLightApplicatorWithBoundBuffer(
+          g, this.gbuffer, this.lbuffer);
         return Unit.unit();
       });
     }

@@ -52,13 +52,16 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
 
   private final R2Texture2DType normal;
   private final R2Texture2DType white;
+  private final R2Texture2DType black;
 
   private R2TextureDefaults(
     final R2Texture2DType in_white,
-    final R2Texture2DType in_normal)
+    final R2Texture2DType in_normal,
+    final R2Texture2DType in_black)
   {
     this.white = NullCheck.notNull(in_white);
     this.normal = NullCheck.notNull(in_normal);
+    this.black = NullCheck.notNull(in_black);
   }
 
   /**
@@ -81,8 +84,11 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
       R2TextureDefaults.newTextureRGB(g_tx, unit0, 0.5, 0.5, 1.0);
     final R2Texture2DType t_w =
       R2TextureDefaults.newTextureRGB(g_tx, unit0, 1.0, 1.0, 1.0);
+    final R2Texture2DType t_b =
+      R2TextureDefaults.newTextureRGB(g_tx, unit0, 0.0, 0.0, 0.0);
 
-    return new R2TextureDefaults(t_w, t_n);
+    g_tx.textureUnitUnbind(unit0);
+    return new R2TextureDefaults(t_w, t_n, t_b);
   }
 
   private static R2Texture2DType newTextureRGB(
@@ -133,12 +139,19 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
   }
 
   @Override
+  public R2Texture2DUsableType getBlackTexture()
+  {
+    return this.black;
+  }
+
+  @Override
   public void delete(final JCGLInterfaceGL33Type g)
     throws R2Exception
   {
     if (!this.normal.isDeleted()) {
       this.normal.delete(g);
       this.white.delete(g);
+      this.black.delete(g);
     }
   }
 

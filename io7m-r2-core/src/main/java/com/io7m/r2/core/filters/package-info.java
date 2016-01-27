@@ -14,29 +14,9 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
-
 /**
- * Access to default textures for materials.
+ * Default provided filters.
  */
 
-public interface R2TextureDefaultsType extends R2DeletableType
-{
-  /**
-   * @return A texture representing a flat normal texture
-   */
+@com.io7m.jnull.NonNullByDefault package com.io7m.r2.core.filters;
 
-  R2Texture2DUsableType getNormalTexture();
-
-  /**
-   * @return A texture representing a flat white texture
-   */
-
-  R2Texture2DUsableType getWhiteTexture();
-
-  /**
-   * @return A texture representing a flat black texture
-   */
-
-  R2Texture2DUsableType getBlackTexture();
-}

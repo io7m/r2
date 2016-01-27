@@ -14,29 +14,19 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl;
 
-/**
- * Access to default textures for materials.
- */
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.R2ImageBufferContract;
 
-public interface R2TextureDefaultsType extends R2DeletableType
+public final class R2ImageBufferTest extends R2ImageBufferContract
 {
-  /**
-   * @return A texture representing a flat normal texture
-   */
-
-  R2Texture2DUsableType getNormalTexture();
-
-  /**
-   * @return A texture representing a flat white texture
-   */
-
-  R2Texture2DUsableType getWhiteTexture();
-
-  /**
-   * @return A texture representing a flat black texture
-   */
-
-  R2Texture2DUsableType getBlackTexture();
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }
