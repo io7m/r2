@@ -5,18 +5,18 @@
 #include "R2Normals.h"
 #include "R2SurfaceTypes.h"
 #include "R2SurfaceVertexBatched.h"
+#include "R2View.h"
 
 out R2_vertex_data_t               R2_vertex_data;
 out R2_surface_matrices_instance_t R2_surface_matrices_instance;
 
-uniform R2_surface_parameters_t    R2_surface_parameters;
-uniform R2_surface_matrices_view_t R2_surface_matrices_view;
+uniform R2_view_t R2_view;
 
 void
 main (void)
 {
   mat4x4 m_modelview =
-    (R2_surface_matrices_view.transform_view * R2_vertex_transform_model);
+    (R2_view.transform_view * R2_vertex_transform_model);
   mat3x3 m_normal =
     transpose (mat3x3 (m_modelview));
   mat3x3 m_uv =
@@ -27,11 +27,11 @@ main (void)
   vec4 position_eye =
     (m_modelview * position_hom);
   vec4 position_clip =
-    ((R2_surface_matrices_view.transform_projection * m_modelview) * position_hom);
+    ((R2_view.transform_projection * m_modelview) * position_hom);
   vec4 position_clip_log =
     vec4 (
       position_clip.xy,
-      R2_logDepthEncodeFull (position_clip.w, R2_surface_parameters.depth_coefficient),
+      R2_logDepthEncodeFull (position_clip.w, R2_view.depth_coefficient),
       position_clip.w);
 
   float positive_eye_z = R2_logDepthPrepareEyeZ (position_eye.z);

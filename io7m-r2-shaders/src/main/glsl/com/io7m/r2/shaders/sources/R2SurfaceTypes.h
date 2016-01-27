@@ -34,6 +34,13 @@ struct R2_surface_derived_t {
   vec2 normal_compressed;
 };
 
+/// Textures that are required by all surfaces
+
+struct R2_surface_textures_t {
+  /// RGB normal map texture
+  sampler2D normal;
+};
+
 /// Matrices related to the rendered instance that all deferred surface shaders will receive.
 
 struct R2_surface_matrices_instance_t {
@@ -43,48 +50,6 @@ struct R2_surface_matrices_instance_t {
   mat3x3 transform_normal;
   /// UV matrix
   mat3x3 transform_uv;
-};
-
-/// Matrices related to the view that all deferred surface shaders will receive.
-
-struct R2_surface_matrices_view_t {
-  /// World-space to Eye-space matrix
-  mat4x4 transform_view;
-  /// Eye-space to Clip-space matrix
-  mat4x4 transform_projection;
-};
-
-/// Constant surface parameters that all deferred surface shaders will receive.
-
-struct R2_surface_parameters_t {
-  /// Logarithmic depth coefficient
-  float depth_coefficient;
-
-  /// Emission level in the range `[0, 1]`
-  float emission_amount;
-
-  /// Base RGBA albedo color
-  vec4  albedo_color;
-  /// Albedo color/texture mix
-  float albedo_mix;
-
-  /// RGB specular color
-  vec3  specular_color;
-  /// Specular exponent in the range `[0, 256]`
-  float specular_exponent;
-};
-
-/// Input textures that all deferred surface shaders will receive.
-
-struct R2_surface_textures_t {
-  /// RGBA albedo texture
-  sampler2D albedo;
-  /// RGB normal map texture
-  sampler2D normal;
-  /// RGB specular map texture
-  sampler2D specular;
-  /// R emission level texture
-  sampler2D emission;
 };
 
 #endif // R2_SURFACE_TYPES_H

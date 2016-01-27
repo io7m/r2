@@ -8,10 +8,12 @@
 #include "R2Normals.h"
 #include "R2SurfaceTypes.h"
 #include "R2GBufferOutput.h"
+#include "R2View.h"
 
 in      R2_vertex_data_t               R2_vertex_data;
 uniform R2_surface_matrices_instance_t R2_surface_matrices_instance;
-uniform R2_surface_matrices_view_t     R2_surface_matrices_view;
+uniform R2_surface_textures_t          R2_surface_textures;
+uniform R2_view_t                      R2_view;
 
 layout(location = 0) out vec4 R2_out_albedo;
 layout(location = 1) out vec2 R2_out_normal;
@@ -33,7 +35,7 @@ R2_surface_shader_main_gbuffer()
 
   float depth_log = R2_logDepthEncodePartial (
     R2_vertex_data.positive_eye_z,
-    R2_surface_parameters.depth_coefficient);
+    R2_view.depth_coefficient);
 
   R2_surface_derived_t derived =
     R2_surface_derived_t (
@@ -44,7 +46,8 @@ R2_surface_shader_main_gbuffer()
   R2_surface_output_t o = R2_deferredSurfaceMain (
     R2_vertex_data,
     derived,
-    R2_surface_matrices_view,
+    R2_surface_textures,
+    R2_view,
     R2_surface_matrices_instance
   );
 

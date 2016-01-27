@@ -79,9 +79,11 @@ public final class R2SurfaceShaderBasicSingle extends
     Assertive.ensure(us.size() == 15, "Expected number of parameters is 15");
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_matrices_view.transform_projection");
+      p, "R2_view.transform_projection");
     this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_matrices_view.transform_view");
+      p, "R2_view.transform_view");
+    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
+      p, "R2_view.depth_coefficient");
 
     this.u_transform_normal = R2ShaderParameters.getUniformChecked(
       p, "R2_surface_matrices_instance.transform_normal");
@@ -90,27 +92,26 @@ public final class R2SurfaceShaderBasicSingle extends
     this.u_transform_uv = R2ShaderParameters.getUniformChecked(
       p, "R2_surface_matrices_instance.transform_uv");
 
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_parameters.depth_coefficient");
     this.u_emission_amount = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_parameters.emission_amount");
+      p, "R2_basic_surface_parameters.emission_amount");
     this.u_albedo_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_parameters.albedo_color");
+      p, "R2_basic_surface_parameters.albedo_color");
     this.u_albedo_mix = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_parameters.albedo_mix");
+      p, "R2_basic_surface_parameters.albedo_mix");
     this.u_specular_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_parameters.specular_color");
+      p, "R2_basic_surface_parameters.specular_color");
     this.u_specular_exponent = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_parameters.specular_exponent");
+      p, "R2_basic_surface_parameters.specular_exponent");
 
-    this.u_texture_albedo = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_textures.albedo");
     this.u_texture_normal = R2ShaderParameters.getUniformChecked(
       p, "R2_surface_textures.normal");
+
+    this.u_texture_albedo = R2ShaderParameters.getUniformChecked(
+      p, "R2_basic_surface_textures.albedo");
     this.u_texture_specular = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_textures.specular");
+      p, "R2_basic_surface_textures.specular");
     this.u_texture_emission = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_textures.emission");
+      p, "R2_basic_surface_textures.emission");
   }
 
 
