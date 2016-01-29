@@ -24,26 +24,21 @@ layout(location = 2) out vec4 R2_out_specular;
 R2_gbuffer_output_t
 R2_surface_shader_main_gbuffer()
 {
-  vec3 normal = R2_normalsBump (
+  vec3 normal_bumped = R2_normalsBump (
     R2_surface_textures.normal,
     R2_surface_matrices_instance.transform_normal,
-    R2_vertex_data.normal,
+    R2_vertex_data.normal_vertex,
     R2_vertex_data.tangent,
     R2_vertex_data.bitangent,
     R2_vertex_data.uv
   );
-
-  vec2 normal_comp = R2_normalsCompress (normal);
 
   float depth_log = R2_logDepthEncodePartial (
     R2_vertex_data.positive_eye_z,
     R2_view.depth_coefficient);
 
   R2_surface_derived_t derived =
-    R2_surface_derived_t (
-      normal,
-      normal_comp
-    );
+    R2_surface_derived_t (normal_bumped);
 
   R2_surface_output_t o = R2_deferredSurfaceMain (
     R2_vertex_data,
@@ -56,7 +51,7 @@ R2_surface_shader_main_gbuffer()
   return R2_gbuffer_output_t(
     o.albedo,
     o.emission,
-    normal_comp,
+    R2_normalsCompress (o.normal),
     o.specular,
     o.specular_exp / 256.0,
     depth_log

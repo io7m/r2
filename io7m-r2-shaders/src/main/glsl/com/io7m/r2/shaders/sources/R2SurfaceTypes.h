@@ -18,7 +18,7 @@ struct R2_vertex_data_t {
   /// Object-space UV
   vec2 uv;
   /// Object-space vertex normal
-  vec3 normal;
+  vec3 normal_vertex;
   /// Tangent vector
   vec3 tangent;
   /// Bitangent vector
@@ -29,9 +29,7 @@ struct R2_vertex_data_t {
 
 struct R2_surface_derived_t {
   /// Final uncompressed eye-space normal produced by bump/normal mapping
-  vec3 normal_eye;
-  /// Compressed eye-space normal
-  vec2 normal_compressed;
+  vec3 normal_bumped;
 };
 
 /// Textures that are required by all surfaces
