@@ -22,6 +22,8 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jnull.NullCheck;
 
+import java.util.function.BiFunction;
+
 /**
  * A simple static texture.
  */
@@ -70,5 +72,13 @@ public final class R2Texture2DStatic implements R2Texture2DType
   public boolean isDeleted()
   {
     return this.texture.isDeleted();
+  }
+
+  @Override
+  public <A, B> B matchTexture(
+    final A context,
+    final BiFunction<A, R2Texture2DUsableType, B> on_2d)
+  {
+    return on_2d.apply(context, this);
   }
 }

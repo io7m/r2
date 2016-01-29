@@ -16,17 +16,28 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
+
+import java.util.function.BiFunction;
 
 /**
- * The type of usable 2D textures.
+ * The type of usable textures.
  */
 
-public interface R2Texture2DUsableType extends R2TextureUsableType
+public interface R2TextureUsableType extends JCGLResourceUsableType
 {
   /**
-   * @return The current texture
+   * Match on the type of texture.
+   *
+   * @param context A user-defined context value
+   * @param on_2d   Evaluated on values of type {@link R2Texture2DUsableType}
+   * @param <A>     The type of context values
+   * @param <B>     The type of returned values
+   *
+   * @return The value returned by one of the given functions
    */
 
-  JCGLTexture2DUsableType get();
+  <A, B> B matchTexture(
+    A context,
+    BiFunction<A, R2Texture2DUsableType, B> on_2d);
 }

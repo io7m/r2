@@ -16,17 +16,15 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
-
 /**
- * The type of usable 2D textures.
+ * The type of texture unit allocators.
  */
 
-public interface R2Texture2DUsableType extends R2TextureUsableType
+public interface R2TextureUnitAllocatorType
 {
   /**
-   * @return The current texture
+   * @return The root texture unit context, which always has no textures bound
    */
 
-  JCGLTexture2DUsableType get();
+  R2TextureUnitContextParentType getRootContext();
 }

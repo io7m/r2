@@ -16,17 +16,22 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
-
 /**
- * The type of usable 2D textures.
+ * An exception indicating that an attempt was made to reserve too many
+ * texture units.
  */
 
-public interface R2Texture2DUsableType extends R2TextureUsableType
+public final class R2ExceptionTextureUnitExhausted extends R2Exception
 {
   /**
-   * @return The current texture
+   * Construct an exception.
+   *
+   * @param message The message
    */
 
-  JCGLTexture2DUsableType get();
+  public R2ExceptionTextureUnitExhausted(
+    final String message)
+  {
+    super(message);
+  }
 }

@@ -1,0 +1,269 @@
+/*
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+ * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
+
+package com.io7m.r2.core;
+
+import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jfunctional.Unit;
+import com.io7m.jnull.NullCheck;
+import com.io7m.jnull.Nullable;
+import com.io7m.jranges.RangeCheck;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.valid4j.Assertive;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * The default implementation of the {@link R2TextureUnitAllocatorType}
+ * interface.
+ */
+
+public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
+{
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2TextureUnitAllocator.class);
+  }
+
+  private final List<JCGLTextureUnitType> units;
+  private final Context                   root;
+  private final Deque<Context>            contexts_active;
+  private final Deque<Context>            contexts_free;
+
+  private R2TextureUnitAllocator(
+    final int stack_depth,
+    final List<JCGLTextureUnitType> in_units)
+  {
+    RangeCheck.checkGreaterInteger(
+      stack_depth,
+      "Stack depth",
+      1,
+      "Minimum stack depth");
+
+    this.units = NullCheck.notNullAll(in_units);
+    this.contexts_active = new ArrayDeque<>(stack_depth);
+    this.contexts_free = new ArrayDeque<>(stack_depth);
+    this.root = new Context();
+    this.contexts_active.push(this.root);
+
+    for (int index = 0; index < stack_depth - 1; ++index) {
+      this.contexts_free.push(new Context());
+    }
+  }
+
+  /**
+   * Create a new allocator that will preallocate a stack of {@code depth}
+   * contexts.
+   *
+   * @param depth    The initial stack depth
+   * @param in_units The texture units
+   *
+   * @return A new allocator
+   */
+
+  public static R2TextureUnitAllocatorType newAllocatorWithStack(
+    final int depth,
+    final List<JCGLTextureUnitType> in_units)
+  {
+    return new R2TextureUnitAllocator(depth, in_units);
+  }
+
+  @Override
+  public R2TextureUnitContextParentType getRootContext()
+  {
+    return this.root;
+  }
+
+  private Context getCurrent()
+  {
+    return this.contexts_active.peek();
+  }
+
+  private Context contextFresh()
+  {
+    final Context c;
+    if (!this.contexts_free.isEmpty()) {
+      c = this.contexts_free.pop();
+    } else {
+      c = new Context();
+    }
+    this.contexts_active.push(c);
+    return c;
+  }
+
+  private void contextPop(
+    final JCGLTexturesType g,
+    final Context c)
+  {
+    NullCheck.notNull(g);
+    NullCheck.notNull(c);
+
+    final Context c_this = R2TextureUnitAllocator.this.contexts_active.pop();
+    Assertive.ensure(Objects.equals(c_this, c));
+    R2TextureUnitAllocator.this.contexts_free.push(c_this);
+
+    final Context c_prev = R2TextureUnitAllocator.this.contexts_active.peek();
+    c_prev.activate(g);
+  }
+
+  private final class Context implements R2TextureUnitContextType
+  {
+    private final     R2TextureUsableType[] bindings;
+    private           int                   next;
+    private @Nullable JCGLTexturesType      g3;
+    private @Nullable JCGLTextureUnitType   unit;
+
+    Context()
+    {
+      this.bindings =
+        new R2TextureUsableType[R2TextureUnitAllocator.this.units.size()];
+      this.next = 0;
+    }
+
+    private void copyFrom(final Context c)
+    {
+      this.next = c.next;
+      for (int index = 0; index < this.bindings.length; ++index) {
+        this.bindings[index] = c.bindings[index];
+      }
+    }
+
+    @Override
+    public R2TextureUnitContextType unitContextNew()
+    {
+      if (!this.isCurrent()) {
+        throw new R2ExceptionTextureUnitContextNotActive(
+          "Context not current");
+      }
+
+      final Context c = R2TextureUnitAllocator.this.contextFresh();
+      c.copyFrom(this);
+      return c;
+    }
+
+    @Override
+    public R2TextureUnitContextType unitContextNewWithReserved(final int r)
+    {
+      this.checkTextureUnitsRequired(this.next + r);
+      return this.unitContextNew();
+    }
+
+    private void checkTextureUnitsRequired(final int required)
+    {
+      if (required > R2TextureUnitAllocator.this.units.size()) {
+        final StringBuilder sb = new StringBuilder(128);
+        sb.append("Out of texture units.");
+        sb.append("Required:  ");
+        sb.append(required);
+        sb.append("\n");
+        sb.append("Available: ");
+        sb.append(R2TextureUnitAllocator.this.units.size());
+        sb.append("\n");
+        throw new R2ExceptionTextureUnitExhausted(sb.toString());
+      }
+    }
+
+    private boolean isCurrent()
+    {
+      return Objects.equals(this, R2TextureUnitAllocator.this.getCurrent());
+    }
+
+    private void activate(final JCGLTexturesType g)
+    {
+      NullCheck.notNull(g);
+
+      R2TextureUnitAllocator.LOG.trace("make current");
+
+      final List<JCGLTextureUnitType> us = R2TextureUnitAllocator.this.units;
+      this.g3 = g;
+      for (int index = 0; index < this.bindings.length; ++index) {
+        this.unit = us.get(index);
+        final R2TextureUsableType t = this.bindings[index];
+        if (t == null) {
+          if (R2TextureUnitAllocator.LOG.isTraceEnabled()) {
+            R2TextureUnitAllocator.LOG.trace(
+              "[{}]: set unbound",
+              Integer.valueOf(this.unit.unitGetIndex()));
+          }
+          g.textureUnitUnbind(this.unit);
+        } else {
+          if (t.isDeleted()) {
+            if (R2TextureUnitAllocator.LOG.isTraceEnabled()) {
+              R2TextureUnitAllocator.LOG.trace(
+                "[{}]: set unbound (deleted)",
+                Integer.valueOf(this.unit.unitGetIndex()));
+            }
+            g.textureUnitUnbind(this.unit);
+            this.bindings[index] = null;
+          } else {
+            t.matchTexture(this, (a, t2d) -> {
+              if (R2TextureUnitAllocator.LOG.isTraceEnabled()) {
+                R2TextureUnitAllocator.LOG.trace(
+                  "[{}]: set 2D",
+                  Integer.valueOf(this.unit.unitGetIndex()));
+              }
+
+              a.g3.texture2DBind(a.unit, t2d.get());
+              return Unit.unit();
+            });
+          }
+        }
+        this.unit = null;
+      }
+      this.g3 = null;
+    }
+
+    @Override
+    public JCGLTextureUnitType unitContextBindTexture2D(
+      final JCGLTexturesType g,
+      final R2Texture2DUsableType t)
+    {
+      NullCheck.notNull(g);
+      NullCheck.notNull(t);
+
+      if (!this.isCurrent()) {
+        throw new R2ExceptionTextureUnitContextNotActive(
+          "Context not current");
+      }
+
+      this.checkTextureUnitsRequired(this.next + 1);
+
+      final List<JCGLTextureUnitType> us = R2TextureUnitAllocator.this.units;
+      final JCGLTextureUnitType u = us.get(this.next);
+      g.texture2DBind(u, t.get());
+      this.bindings[this.next] = t;
+      ++this.next;
+      return u;
+    }
+
+    @Override
+    public void unitContextFinish(final JCGLTexturesType g)
+    {
+      if (!this.isCurrent()) {
+        throw new R2ExceptionTextureUnitContextNotActive(
+          "Context not current");
+      }
+
+      R2TextureUnitAllocator.this.contextPop(g, this);
+    }
+  }
+}
