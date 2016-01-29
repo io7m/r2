@@ -49,7 +49,7 @@ R2_deferredSurfaceMain (
     R2_environmentReflection (
       R2_surface_reflective_textures.environment,
       data.position_eye.xyz,
-      derived.normal_eye,
+      derived.normal_bumped,
       R2_surface_reflective_parameters.transform_view_inverse
     );
 
