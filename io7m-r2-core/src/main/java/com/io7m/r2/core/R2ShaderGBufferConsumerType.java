@@ -18,7 +18,6 @@ package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
 
 /**
  * The type of shaders that consume G-Buffers.
@@ -30,7 +29,6 @@ public interface R2ShaderGBufferConsumerType
    * Set the shader values related to the given G-Buffer.
    *
    * @param g_sh          An OpenGL interface
-   * @param g_tex         An OpenGL interface
    * @param g             The G-Buffer
    * @param unit_albedo   The texture unit to which the G-Buffer's
    *                      albedo/emissive texture is bound
@@ -44,7 +42,6 @@ public interface R2ShaderGBufferConsumerType
 
   void setGBuffer(
     JCGLShadersType g_sh,
-    JCGLTexturesType g_tex,
     R2GeometryBufferUsableType g,
     JCGLTextureUnitType unit_albedo,
     JCGLTextureUnitType unit_specular,

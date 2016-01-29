@@ -31,6 +31,7 @@ public interface R2LightRendererType extends R2DeletableType
    * @param g       A GL interface
    * @param gbuffer The populated geometry buffer
    * @param lbuffer The light buffer
+   * @param uc      A texture unit context
    * @param m       A matrix context
    * @param s       The opaque lights
    */
@@ -39,6 +40,7 @@ public interface R2LightRendererType extends R2DeletableType
     JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
     R2LightBufferUsableType lbuffer,
+    R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2SceneOpaqueLightsType s);
 
@@ -48,6 +50,7 @@ public interface R2LightRendererType extends R2DeletableType
    * @param g            A GL interface
    * @param gbuffer      The populated geometry buffer
    * @param lbuffer_area The area of the currently bound framebuffer
+   * @param uc           A texture unit context
    * @param m            A matrix context
    * @param s            The opaque lights
    */
@@ -56,6 +59,7 @@ public interface R2LightRendererType extends R2DeletableType
     JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
     AreaInclusiveUnsignedLType lbuffer_area,
+    R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2SceneOpaqueLightsType s);
 }

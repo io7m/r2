@@ -66,11 +66,13 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   public void renderGeometry(
     final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
+    final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(gbuffer);
+    NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
@@ -81,7 +83,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     try {
       g_fb.framebufferDrawBind(gb_fb);
-      this.renderGeometryWithBoundBuffer(g, m, s);
+      this.renderGeometryWithBoundBuffer(g, uc, m, s);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -90,10 +92,12 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   @Override
   public void renderGeometryWithBoundBuffer(
     final JCGLInterfaceGL33Type g,
+    final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
   {
     NullCheck.notNull(g);
+    NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
@@ -124,9 +128,11 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
       this.opaque_consumer.g33 = g;
       this.opaque_consumer.matrices = m;
+      this.opaque_consumer.texture_context = uc;
       try {
         s.opaquesExecute(this.opaque_consumer);
       } finally {
+        this.opaque_consumer.texture_context = null;
         this.opaque_consumer.matrices = null;
         this.opaque_consumer.g33 = null;
       }
@@ -149,13 +155,15 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   private static final class OpaqueConsumer implements
     R2SceneOpaquesConsumerType
   {
-    private @Nullable JCGLInterfaceGL33Type g33;
-    private @Nullable R2MatricesObserverType matrices;
-    private @Nullable JCGLShadersType shaders;
-    private @Nullable JCGLTexturesType textures;
-    private @Nullable JCGLArrayObjectsType array_objects;
-    private @Nullable JCGLDrawType draw;
-    private @Nullable JCGLStencilBuffersType stencils;
+    private @Nullable JCGLInterfaceGL33Type          g33;
+    private @Nullable R2MatricesObserverType         matrices;
+    private @Nullable JCGLShadersType                shaders;
+    private @Nullable JCGLTexturesType               textures;
+    private @Nullable JCGLArrayObjectsType           array_objects;
+    private @Nullable JCGLDrawType                   draw;
+    private @Nullable JCGLStencilBuffersType         stencils;
+    private @Nullable R2TextureUnitContextParentType texture_context;
+    private @Nullable R2TextureUnitContextType       material_texture_context;
 
     private OpaqueConsumer()
     {
@@ -212,10 +220,12 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceBatchedMaterialStart(
       final R2MaterialOpaqueBatchedType<M> material)
     {
+      this.material_texture_context = this.texture_context.unitContextNew();
+
       final R2ShaderBatchedUsableType<M> s = material.getShader();
       final M p = material.getShaderParameters();
-      s.setMaterialTextures(this.textures, p);
-      s.setMaterialValues(this.shaders, this.textures, p);
+      s.setMaterialTextures(this.textures, this.material_texture_context, p);
+      s.setMaterialValues(this.shaders, p);
     }
 
     @Override
@@ -232,7 +242,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceBatchedMaterialFinish(
       final R2MaterialOpaqueBatchedType<M> material)
     {
-
+      this.material_texture_context.unitContextFinish(this.textures);
+      this.material_texture_context = null;
     }
 
     @Override
@@ -254,10 +265,12 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceSingleMaterialStart(
       final R2MaterialOpaqueSingleType<M> material)
     {
+      this.material_texture_context = this.texture_context.unitContextNew();
+
       final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
       final M p = material.getShaderParameters();
-      s.setMaterialTextures(this.textures, p);
-      s.setMaterialValues(this.shaders, this.textures, p);
+      s.setMaterialTextures(this.textures, this.material_texture_context, p);
+      s.setMaterialValues(this.shaders, p);
     }
 
     @Override
@@ -288,7 +301,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceSingleMaterialFinish(
       final R2MaterialOpaqueSingleType<M> material)
     {
-
+      this.material_texture_context.unitContextFinish(this.textures);
+      this.material_texture_context = null;
     }
 
     @Override

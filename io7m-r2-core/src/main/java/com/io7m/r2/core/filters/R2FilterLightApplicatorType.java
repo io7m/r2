@@ -21,6 +21,7 @@ import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2ImageBufferUsableType;
 import com.io7m.r2.core.R2LightBufferUsableType;
+import com.io7m.r2.core.R2TextureUnitContextParentType;
 
 /**
  * The type of filters that combine geometry buffers and light buffers into lit
@@ -37,6 +38,7 @@ public interface R2FilterLightApplicatorType extends R2FilterType
    * be written to {@code ibuffer}.
    *
    * @param g       A GL interface
+   * @param uc      A texture unit context
    * @param gbuffer A geometry buffer
    * @param lbuffer A light buffer
    * @param ibuffer An image buffer
@@ -44,6 +46,7 @@ public interface R2FilterLightApplicatorType extends R2FilterType
 
   void runLightApplicator(
     JCGLInterfaceGL33Type g,
+    R2TextureUnitContextParentType uc,
     R2GeometryBufferUsableType gbuffer,
     R2LightBufferUsableType lbuffer,
     R2ImageBufferUsableType ibuffer);
@@ -54,12 +57,14 @@ public interface R2FilterLightApplicatorType extends R2FilterType
    * framebuffer.
    *
    * @param g       A GL interface
+   * @param uc      A texture unit context
    * @param gbuffer A geometry buffer
    * @param lbuffer A light buffer
    */
 
   void runLightApplicatorWithBoundBuffer(
     JCGLInterfaceGL33Type g,
+    R2TextureUnitContextParentType uc,
     R2GeometryBufferUsableType gbuffer,
     R2LightBufferUsableType lbuffer);
 }

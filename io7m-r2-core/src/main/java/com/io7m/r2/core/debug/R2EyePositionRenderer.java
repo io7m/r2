@@ -41,12 +41,13 @@ import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.R2TextureUnitContextParentType;
+import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -111,12 +112,14 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
     final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
     final R2EyeZBufferUsableType zbuffer,
+    final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2UnitQuadUsableType q)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(zbuffer);
+    NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(q);
 
@@ -127,7 +130,8 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
 
     try {
       g_fb.framebufferDrawBind(lb_fb);
-      this.renderEyePositionWithBoundBuffer(g, gbuffer, zbuffer.getArea(), m, q);
+      this.renderEyePositionWithBoundBuffer(
+        g, gbuffer, zbuffer.getArea(), uc, m, q);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -138,12 +142,14 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
     final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
     final AreaInclusiveUnsignedLType zbuffer_area,
+    final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2UnitQuadUsableType q)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(zbuffer_area);
+    NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(q);
 
@@ -179,59 +185,56 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
      * Bind G-buffer.
      */
 
-    final List<JCGLTextureUnitType> units = g_tex.textureGetUnits();
-    final JCGLTextureUnitType unit_albedo = units.get(0);
-    final JCGLTextureUnitType unit_normals = units.get(1);
-    final JCGLTextureUnitType unit_specular = units.get(2);
-    final JCGLTextureUnitType unit_depth = units.get(3);
-
-    g_tex.texture2DBind(
-      unit_albedo, gbuffer.getAlbedoEmissiveTexture().get());
-    g_tex.texture2DBind(
-      unit_normals, gbuffer.getNormalTexture().get());
-    g_tex.texture2DBind(
-      unit_depth, gbuffer.getDepthTexture().get());
-    g_tex.texture2DBind(
-      unit_specular, gbuffer.getSpecularTexture().get());
-
-    g_b.blendingDisable();
-    g_cm.colorBufferMask(true, true, true, true);
-    g_cu.cullingDisable();
-    g_db.depthClampingEnable();
-    g_db.depthBufferWriteDisable();
-    g_db.depthBufferTestDisable();
-    g_st.stencilBufferDisable();
+    final R2TextureUnitContextType tc = uc.unitContextNew();
 
     try {
-      g_sh.shaderActivateProgram(this.shader.getShaderProgram());
-      g_ao.arrayObjectBind(q.getArrayObject());
 
-      this.shader.setViewDependentValues(g_sh, m);
-      this.shader.setGBuffer(
-        g_sh,
-        g_tex,
-        gbuffer,
-        unit_albedo,
-        unit_specular,
-        unit_depth,
-        unit_normals);
+      final JCGLTextureUnitType unit_albedo =
+        tc.unitContextBindTexture2D(g_tex, gbuffer.getAlbedoEmissiveTexture());
+      final JCGLTextureUnitType unit_normals =
+        tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture());
+      final JCGLTextureUnitType unit_specular =
+        tc.unitContextBindTexture2D(g_tex, gbuffer.getSpecularTexture());
+      final JCGLTextureUnitType unit_depth =
+        tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
 
-      m.withTransform(
-        R2TransformIdentity.getInstance(),
-        PMatrixI3x3F.identity(),
-        this,
-        (mi, t) -> {
-          g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-          return Unit.unit();
-        });
+      g_b.blendingDisable();
+      g_cm.colorBufferMask(true, true, true, true);
+      g_cu.cullingDisable();
+      g_db.depthClampingEnable();
+      g_db.depthBufferWriteDisable();
+      g_db.depthBufferTestDisable();
+      g_st.stencilBufferDisable();
+
+      try {
+        g_sh.shaderActivateProgram(this.shader.getShaderProgram());
+        g_ao.arrayObjectBind(q.getArrayObject());
+
+        this.shader.setViewDependentValues(g_sh, m);
+        this.shader.setGBuffer(
+          g_sh,
+          gbuffer,
+          unit_albedo,
+          unit_specular,
+          unit_depth,
+          unit_normals);
+
+        m.withTransform(
+          R2TransformIdentity.getInstance(),
+          PMatrixI3x3F.identity(),
+          this,
+          (mi, t) -> {
+            g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+            return Unit.unit();
+          });
+
+      } finally {
+        g_ao.arrayObjectUnbind();
+        g_sh.shaderDeactivateProgram();
+      }
 
     } finally {
-      g_ao.arrayObjectUnbind();
-      g_sh.shaderDeactivateProgram();
-      g_tex.textureUnitUnbind(unit_albedo);
-      g_tex.textureUnitUnbind(unit_normals);
-      g_tex.textureUnitUnbind(unit_depth);
-      g_tex.textureUnitUnbind(unit_specular);
+      tc.unitContextFinish(g_tex);
     }
   }
 }

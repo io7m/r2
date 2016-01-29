@@ -46,7 +46,6 @@ import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -98,12 +97,14 @@ public final class R2LightRenderer implements R2LightRendererType
     final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
     final R2LightBufferUsableType lbuffer,
+    final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaqueLightsType s)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer);
+    NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
@@ -114,7 +115,7 @@ public final class R2LightRenderer implements R2LightRendererType
 
     try {
       g_fb.framebufferDrawBind(lb_fb);
-      this.renderLightsWithBoundBuffer(g, gbuffer, lbuffer.getArea(), m, s);
+      this.renderLightsWithBoundBuffer(g, gbuffer, lbuffer.getArea(), uc, m, s);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -125,12 +126,14 @@ public final class R2LightRenderer implements R2LightRendererType
     final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
     final AreaInclusiveUnsignedLType lbuffer_area,
+    final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaqueLightsType s)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer_area);
+    NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
@@ -171,12 +174,14 @@ public final class R2LightRenderer implements R2LightRendererType
       this.light_consumer.g33 = g;
       this.light_consumer.gbuffer = gbuffer;
       this.light_consumer.matrices = m;
+      this.light_consumer.texture_context = uc;
       try {
         s.opaqueLightsExecute(this.light_consumer);
       } finally {
         this.light_consumer.matrices = null;
         this.light_consumer.gbuffer = null;
         this.light_consumer.g33 = null;
+        this.light_consumer.texture_context = null;
       }
     }
   }
@@ -184,24 +189,25 @@ public final class R2LightRenderer implements R2LightRendererType
   private static final class LightConsumer implements
     R2SceneOpaqueLightsConsumerType
   {
-    private @Nullable JCGLInterfaceGL33Type      g33;
-    private @Nullable JCGLCullingType            culling;
-    private @Nullable R2MatricesObserverType     matrices;
-    private @Nullable JCGLShadersType            shaders;
-    private @Nullable JCGLTexturesType           textures;
-    private @Nullable JCGLArrayObjectsType       array_objects;
-    private @Nullable JCGLDrawType               draw;
-    private @Nullable JCGLStencilBuffersType     stencils;
-    private @Nullable R2GeometryBufferUsableType gbuffer;
-    private           JCGLTextureUnitType        unit_albedo;
-    private           JCGLTextureUnitType        unit_normals;
-    private           JCGLTextureUnitType        unit_specular;
-    private           JCGLTextureUnitType        unit_depth;
-
+    private @Nullable JCGLInterfaceGL33Type          g33;
+    private @Nullable JCGLCullingType                culling;
+    private @Nullable R2MatricesObserverType         matrices;
+    private @Nullable JCGLShadersType                shaders;
+    private @Nullable JCGLTexturesType               textures;
+    private @Nullable JCGLArrayObjectsType           array_objects;
+    private @Nullable JCGLDrawType                   draw;
+    private @Nullable JCGLStencilBuffersType         stencils;
+    private @Nullable R2GeometryBufferUsableType     gbuffer;
+    private @Nullable JCGLTextureUnitType            unit_albedo;
+    private @Nullable JCGLTextureUnitType            unit_normals;
+    private @Nullable JCGLTextureUnitType            unit_specular;
+    private @Nullable JCGLTextureUnitType            unit_depth;
+    private @Nullable R2TextureUnitContextParentType texture_context;
 
     private R2LightSingleType                                light;
     private R2ShaderLightSingleUsableType<R2LightSingleType> light_shader;
     private JCGLDepthBuffersType                             depth;
+    private R2TextureUnitContextType                         light_base_context;
 
     LightConsumer()
     {
@@ -221,29 +227,32 @@ public final class R2LightRenderer implements R2LightRendererType
       this.culling = this.g33.getCulling();
       this.depth = this.g33.getDepthBuffers();
 
-      final List<JCGLTextureUnitType> units = this.textures.textureGetUnits();
-      this.unit_albedo = units.get(0);
-      this.unit_normals = units.get(1);
-      this.unit_specular = units.get(2);
-      this.unit_depth = units.get(3);
+      /**
+       * Create a new texture context and bind the geometry buffer textures
+       * to it.
+       */
 
-      this.textures.texture2DBind(
-        this.unit_albedo, this.gbuffer.getAlbedoEmissiveTexture().get());
-      this.textures.texture2DBind(
-        this.unit_normals, this.gbuffer.getNormalTexture().get());
-      this.textures.texture2DBind(
-        this.unit_depth, this.gbuffer.getDepthTexture().get());
-      this.textures.texture2DBind(
-        this.unit_specular, this.gbuffer.getSpecularTexture().get());
+      this.light_base_context =
+        this.texture_context.unitContextNew();
+      this.unit_albedo =
+        this.light_base_context.unitContextBindTexture2D(
+          this.textures, this.gbuffer.getAlbedoEmissiveTexture());
+      this.unit_normals =
+        this.light_base_context.unitContextBindTexture2D(
+          this.textures, this.gbuffer.getNormalTexture());
+      this.unit_specular =
+        this.light_base_context.unitContextBindTexture2D(
+          this.textures, this.gbuffer.getSpecularTexture());
+      this.unit_depth =
+        this.light_base_context.unitContextBindTexture2D(
+          this.textures, this.gbuffer.getDepthTexture());
     }
 
     @Override
     public void onFinish()
     {
-      this.textures.textureUnitUnbind(this.unit_albedo);
-      this.textures.textureUnitUnbind(this.unit_normals);
-      this.textures.textureUnitUnbind(this.unit_depth);
-      this.textures.textureUnitUnbind(this.unit_specular);
+      this.light_base_context.unitContextFinish(this.textures);
+      this.light_base_context = null;
 
       this.array_objects = null;
       this.shaders = null;
@@ -277,7 +286,6 @@ public final class R2LightRenderer implements R2LightRendererType
       this.shaders.shaderActivateProgram(s.getShaderProgram());
       s.setGBuffer(
         this.shaders,
-        this.textures,
         this.gbuffer,
         this.unit_albedo,
         this.unit_specular,

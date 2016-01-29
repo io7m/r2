@@ -27,6 +27,7 @@ import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import org.valid4j.Assertive;
 
 import java.util.Map;
@@ -94,6 +95,7 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   @Override
   public void setMaterialTextures(
     final JCGLTexturesType g_tex,
+    final R2TextureUnitContextMutableType tc,
     final Unit values)
   {
 
@@ -102,7 +104,6 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   @Override
   public void setMaterialValues(
     final JCGLShadersType g_sh,
-    final JCGLTexturesType g_tex,
     final Unit values)
   {
 

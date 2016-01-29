@@ -26,6 +26,7 @@ import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.r2.core.R2ExceptionTextureUnitContextLimitReached;
 import com.io7m.r2.core.R2ExceptionTextureUnitContextNotActive;
 import com.io7m.r2.core.R2ExceptionTextureUnitExhausted;
 import com.io7m.r2.core.R2Texture2DStatic;
@@ -60,6 +61,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
   }
 
   protected abstract R2TextureUnitAllocatorType newAllocator(
+    final int max_depth,
     final List<JCGLTextureUnitType> u);
 
   @Test
@@ -83,7 +85,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
       Assert.assertFalse(g_tx.textureUnitIsBound(us.get(index)));
     }
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(2, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
 
@@ -122,7 +124,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
       Assert.assertFalse(g_tx.textureUnitIsBound(us.get(index)));
     }
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(2, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNewWithReserved(16);
 
@@ -159,7 +161,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
 
     final R2Texture2DType rt0 = R2Texture2DStatic.of(t0);
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(2, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
 
@@ -192,7 +194,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
 
     final R2Texture2DType rt0 = R2Texture2DStatic.of(t0);
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(2, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
 
@@ -232,7 +234,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
       Assert.assertFalse(g_tx.textureUnitIsBound(us.get(index)));
     }
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(3, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
 
@@ -284,7 +286,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
       Assert.assertFalse(g_tx.textureUnitIsBound(us.get(index)));
     }
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(3, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
 
@@ -334,7 +336,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
     final JCGLTexturesType g_tx = g33.getTextures();
     final List<JCGLTextureUnitType> us = g_tx.textureGetUnits();
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(10, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
     final R2TextureUnitContextType c_1 = c_0.unitContextNew();
@@ -358,6 +360,24 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
   }
 
   @Test
+  public final void testUsageBigStackExceeded()
+  {
+    final JCGLContextType gc = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
+    final JCGLTexturesType g_tx = g33.getTextures();
+    final List<JCGLTextureUnitType> us = g_tx.textureGetUnits();
+
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(4, us);
+    final R2TextureUnitContextParentType c_root = alloc.getRootContext();
+    final R2TextureUnitContextType c_0 = c_root.unitContextNew();
+    final R2TextureUnitContextType c_1 = c_0.unitContextNew();
+    final R2TextureUnitContextType c_2 = c_1.unitContextNew();
+
+    this.expected.expect(R2ExceptionTextureUnitContextLimitReached.class);
+    c_2.unitContextNew();
+  }
+
+  @Test
   public final void testBindError0()
   {
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
@@ -365,7 +385,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
     final JCGLTexturesType g_tx = g33.getTextures();
     final List<JCGLTextureUnitType> us = g_tx.textureGetUnits();
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(2, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
 
@@ -387,7 +407,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
     final JCGLTexturesType g_tx = g33.getTextures();
     final List<JCGLTextureUnitType> us = g_tx.textureGetUnits();
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(2, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
 
@@ -403,7 +423,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
     final JCGLTexturesType g_tx = g33.getTextures();
     final List<JCGLTextureUnitType> us = g_tx.textureGetUnits();
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(3, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
     final R2TextureUnitContextType c_1 = c_0.unitContextNew();
@@ -420,7 +440,7 @@ public abstract class R2TextureUnitAllocatorContract extends R2JCGLContract
     final JCGLTexturesType g_tx = g33.getTextures();
     final List<JCGLTextureUnitType> us = g_tx.textureGetUnits();
 
-    final R2TextureUnitAllocatorType alloc = this.newAllocator(us);
+    final R2TextureUnitAllocatorType alloc = this.newAllocator(2, us);
     final R2TextureUnitContextParentType c_root = alloc.getRootContext();
     final R2TextureUnitContextType c_0 = c_root.unitContextNew();
     c_0.unitContextFinish(g_tx);

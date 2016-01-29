@@ -32,6 +32,8 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.r2.core.R2TextureUnitAllocator;
+import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.R2GeometryBuffer;
@@ -88,15 +90,16 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
                                     shader;
   private R2SurfaceShaderBasicParameters
-                                    shader_params;
+                                     shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-                                    material;
-  private R2UnitSphereType          sphere;
-  private R2InstanceSingleType      instance;
-  private R2EyePositionRendererType eye_renderer;
-  private R2EyePositionBufferType   pbuffer;
-  private JCGLClearSpecification    geom_clear_spec;
-  private JCGLClearSpecification    eye_clear_spec;
+                                     material;
+  private R2UnitSphereType           sphere;
+  private R2InstanceSingleType       instance;
+  private R2EyePositionRendererType  eye_renderer;
+  private R2EyePositionBufferType    pbuffer;
+  private JCGLClearSpecification     geom_clear_spec;
+  private JCGLClearSpecification     eye_clear_spec;
+  private R2TextureUnitAllocatorType textures;
 
   public ExampleEyePosition0()
   {
@@ -122,6 +125,8 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
     this.quad = R2UnitQuad.newUnitQuad(g);
     this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
     this.pbuffer = R2EyePositionBuffer.newEyePositionBuffer(g, area);
+    this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
+      4, g.getTextures().textureGetUnits());
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -214,7 +219,8 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
         g_cl.clear(t.geom_clear_spec);
 
         t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
-        t.geom_renderer.renderGeometryWithBoundBuffer(g, mo, t.opaques);
+        t.geom_renderer.renderGeometryWithBoundBuffer(
+          g, t.textures.getRootContext(), mo, t.opaques);
         g_fb.framebufferDrawUnbind();
 
         g_fb.framebufferDrawBind(zbuffer_fb);
@@ -228,6 +234,7 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
           g,
           t.gbuffer,
           t.pbuffer.getArea(),
+          t.textures.getRootContext(),
           mo,
           this.quad);
         g_fb.framebufferDrawUnbind();

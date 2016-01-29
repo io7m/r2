@@ -29,9 +29,10 @@ public final class R2TextureUnitAllocatorTest extends
 {
   @Override
   protected R2TextureUnitAllocatorType newAllocator(
+    final int max_depth,
     final List<JCGLTextureUnitType> u)
   {
-    return R2TextureUnitAllocator.newAllocatorWithStack(2, u);
+    return R2TextureUnitAllocator.newAllocatorWithStack(max_depth, u);
   }
 
   @Override

@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2MatricesObserverType;
+import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 
 /**
@@ -36,6 +37,7 @@ public interface R2EyeZRendererType extends R2DeletableType
    * @param g       A GL interface
    * @param gbuffer The populated geometry buffer
    * @param zbuffer The eye-Z buffer
+   * @param uc      A texture unit context
    * @param m       A matrix context
    * @param q       The unit quad used for the full-screen pass
    */
@@ -44,6 +46,7 @@ public interface R2EyeZRendererType extends R2DeletableType
     JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
     R2EyeZBufferUsableType zbuffer,
+    R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2UnitQuadUsableType q);
 
@@ -53,6 +56,7 @@ public interface R2EyeZRendererType extends R2DeletableType
    * @param g            A GL interface
    * @param gbuffer      The populated geometry buffer
    * @param zbuffer_area The area of the currently bound framebuffer
+   * @param uc           A texture unit context
    * @param m            A matrix context
    * @param q            The unit quad used for the full-screen pass
    */
@@ -61,6 +65,7 @@ public interface R2EyeZRendererType extends R2DeletableType
     JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
     AreaInclusiveUnsignedLType zbuffer_area,
+    R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2UnitQuadUsableType q);
 }

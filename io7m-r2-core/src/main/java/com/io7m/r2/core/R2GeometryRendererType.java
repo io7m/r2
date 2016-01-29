@@ -29,6 +29,7 @@ public interface R2GeometryRendererType extends R2DeletableType
    *
    * @param g       A GL interface
    * @param gbuffer The geometry buffer
+   * @param uc      A texture unit context
    * @param m       A matrix context
    * @param s       The opaque instances
    */
@@ -36,6 +37,7 @@ public interface R2GeometryRendererType extends R2DeletableType
   void renderGeometry(
     JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
+    R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2SceneOpaquesType s);
 
@@ -44,12 +46,14 @@ public interface R2GeometryRendererType extends R2DeletableType
    * buffer.
    *
    * @param g  A GL interface
+   * @param uc A texture unit context
    * @param m  A matrix context
    * @param s  The opaque instances
    */
 
   void renderGeometryWithBoundBuffer(
     JCGLInterfaceGL33Type g,
+    R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2SceneOpaquesType s);
 }

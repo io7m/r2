@@ -16,21 +16,25 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 
 /**
- * The type of child texture unit contexts.
+ * The type of texture unit contexts that can have new textures bound.
  */
 
-public interface R2TextureUnitContextChildType extends
-  R2TextureUnitContextMutableType
+public interface R2TextureUnitContextMutableType
 {
   /**
-   * Finish the texture unit context. Subsequent calls to any methods on this
-   * context will raise {@link R2ExceptionTextureUnitContextNotActive}.
+   * Allocate a texture unit and bind the given texture to it.
    *
    * @param g A texture interface
+   * @param t A texture
+   *
+   * @return A texture unit
    */
 
-  void unitContextFinish(JCGLTexturesType g);
+  JCGLTextureUnitType unitContextBindTexture2D(
+    JCGLTexturesType g,
+    R2Texture2DUsableType t);
 }

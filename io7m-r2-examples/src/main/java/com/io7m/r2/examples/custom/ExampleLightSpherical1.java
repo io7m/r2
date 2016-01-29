@@ -59,6 +59,8 @@ import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
+import com.io7m.r2.core.R2TextureUnitAllocator;
+import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
@@ -110,6 +112,7 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
   private R2LightSphericalSingleType                          light;
   private R2UnitSphereType                                    sphere;
   private R2FilterLightApplicatorType                         filter;
+  private R2TextureUnitAllocatorType                          textures;
 
 
   public ExampleLightSpherical1()
@@ -135,6 +138,8 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
     this.quad = R2UnitQuad.newUnitQuad(g);
     this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
     this.lbuffer = R2LightBuffer.newLightBuffer(g, area);
+    this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
+      4, g.getTextures().textureGetUnits());
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -276,7 +281,8 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
         g_cl.clear(t.geom_clear_spec);
 
         t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
-        t.geom_renderer.renderGeometryWithBoundBuffer(g, mo, t.opaques);
+        t.geom_renderer.renderGeometryWithBoundBuffer(
+          g, t.textures.getRootContext(), mo, t.opaques);
         g_fb.framebufferDrawUnbind();
 
         g_fb.framebufferDrawBind(lbuffer_fb);
@@ -290,6 +296,7 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
           g,
           t.gbuffer,
           t.lbuffer.getArea(),
+          t.textures.getRootContext(),
           mo,
           t.lights);
         g_fb.framebufferDrawUnbind();
@@ -301,7 +308,7 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
         g_cl.clear(t.screen_clear_spec);
 
         this.filter.runLightApplicatorWithBoundBuffer(
-          g, this.gbuffer, this.lbuffer);
+          g, t.textures.getRootContext(), this.gbuffer, this.lbuffer);
         return Unit.unit();
       });
     }

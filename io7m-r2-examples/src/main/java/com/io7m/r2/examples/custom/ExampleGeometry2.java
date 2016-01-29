@@ -33,6 +33,8 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVector3FType;
+import com.io7m.r2.core.R2TextureUnitAllocator;
+import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.R2GeometryBuffer;
@@ -84,11 +86,12 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
   private PVector3FType<R2SpaceWorldType> instance_1_pos;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
-    shader;
+                                     shader;
   private R2SurfaceShaderBasicParameters
-    shader_params;
+                                     shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-    material;
+                                     material;
+  private R2TextureUnitAllocatorType textures;
 
   public ExampleGeometry2()
   {
@@ -109,6 +112,8 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
     this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
+    this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
+      4, g.getTextures().textureGetUnits());
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -192,7 +197,8 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
 
       this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
-        t.geom_renderer.renderGeometryWithBoundBuffer(g, mo, t.opaques);
+        t.geom_renderer.renderGeometryWithBoundBuffer(
+          g, t.textures.getRootContext(), mo, t.opaques);
         t.stencils.stencilsAddSingle(t.instance_1);
         t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
         return Unit.unit();

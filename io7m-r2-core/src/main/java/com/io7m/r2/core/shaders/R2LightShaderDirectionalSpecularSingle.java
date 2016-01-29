@@ -224,7 +224,6 @@ public final class R2LightShaderDirectionalSpecularSingle extends
   @Override
   public void setGBuffer(
     final JCGLShadersType g_sh,
-    final JCGLTexturesType g_tex,
     final R2GeometryBufferUsableType g,
     final JCGLTextureUnitType unit_albedo,
     final JCGLTextureUnitType unit_specular,
@@ -232,7 +231,6 @@ public final class R2LightShaderDirectionalSpecularSingle extends
     final JCGLTextureUnitType unit_normals)
   {
     NullCheck.notNull(g_sh);
-    NullCheck.notNull(g_tex);
     NullCheck.notNull(g);
     NullCheck.notNull(unit_albedo);
     NullCheck.notNull(unit_depth);

@@ -16,21 +16,22 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-
 /**
- * The type of child texture unit contexts.
+ * An exception indicating that an attempt was made to create a new texture
+ * unit context beyond the allowed limit on the number of contexts.
  */
 
-public interface R2TextureUnitContextChildType extends
-  R2TextureUnitContextMutableType
+public final class R2ExceptionTextureUnitContextLimitReached extends R2Exception
 {
   /**
-   * Finish the texture unit context. Subsequent calls to any methods on this
-   * context will raise {@link R2ExceptionTextureUnitContextNotActive}.
+   * Construct an exception.
    *
-   * @param g A texture interface
+   * @param message The message
    */
 
-  void unitContextFinish(JCGLTexturesType g);
+  public R2ExceptionTextureUnitContextLimitReached(
+    final String message)
+  {
+    super(message);
+  }
 }

@@ -71,20 +71,21 @@ public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
   }
 
   /**
-   * Create a new allocator that will preallocate a stack of {@code depth}
-   * contexts.
+   * Create a new allocator that will allocate a stack of {@code max_depth}
+   * contexts. The number of contexts (including the initial root context)
+   * will not be allowed to exceed {@code max_depth}).
    *
-   * @param depth    The initial stack depth
+   * @param max_depth    The maximum stack depth
    * @param in_units The texture units
    *
    * @return A new allocator
    */
 
   public static R2TextureUnitAllocatorType newAllocatorWithStack(
-    final int depth,
+    final int max_depth,
     final List<JCGLTextureUnitType> in_units)
   {
-    return new R2TextureUnitAllocator(depth, in_units);
+    return new R2TextureUnitAllocator(max_depth, in_units);
   }
 
   @Override
@@ -100,14 +101,14 @@ public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
 
   private Context contextFresh()
   {
-    final Context c;
     if (!this.contexts_free.isEmpty()) {
-      c = this.contexts_free.pop();
+      final Context c = this.contexts_free.pop();
+      this.contexts_active.push(c);
+      return c;
     } else {
-      c = new Context();
+      throw new R2ExceptionTextureUnitContextLimitReached(
+        "Stack limit reached: " + this.contexts_active.size());
     }
-    this.contexts_active.push(c);
-    return c;
   }
 
   private void contextPop(
@@ -155,6 +156,7 @@ public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
           "Context not current");
       }
 
+      R2TextureUnitAllocator.LOG.trace("new context");
       final Context c = R2TextureUnitAllocator.this.contextFresh();
       c.copyFrom(this);
       return c;
@@ -247,6 +249,10 @@ public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
 
       this.checkTextureUnitsRequired(this.next + 1);
 
+      if (R2TextureUnitAllocator.LOG.isTraceEnabled()) {
+        R2TextureUnitAllocator.LOG.trace("bind {}", t.get());
+      }
+
       final List<JCGLTextureUnitType> us = R2TextureUnitAllocator.this.units;
       final JCGLTextureUnitType u = us.get(this.next);
       g.texture2DBind(u, t.get());
@@ -263,6 +269,7 @@ public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
           "Context not current");
       }
 
+      R2TextureUnitAllocator.LOG.trace("finish");
       R2TextureUnitAllocator.this.contextPop(g, this);
     }
   }

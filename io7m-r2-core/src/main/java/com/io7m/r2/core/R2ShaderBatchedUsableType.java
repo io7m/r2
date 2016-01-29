@@ -28,29 +28,29 @@ import com.io7m.jcanephora.core.api.JCGLTexturesType;
 public interface R2ShaderBatchedUsableType<M> extends R2ShaderUsableType<M>
 {
   /**
-   * Set material textures. Any textures bound are guaranteed to remain bound
-   * until at least the next call to {@link #setMaterialValues(JCGLShadersType,
-   * JCGLTexturesType, Object)}.
+   * Set material textures. Any textures bound in the context are guaranteed to
+   * remain bound until at least the next call to {@link
+   * #setMaterialValues(JCGLShadersType, Object)}
    *
+   * @param tc     A texture unit context
    * @param g_tex  An OpenGL interface
    * @param values The material parameters
    */
 
   void setMaterialTextures(
     JCGLTexturesType g_tex,
+    R2TextureUnitContextMutableType tc,
     M values);
 
   /**
    * Set material values.
    *
    * @param g_sh   An OpenGL interface
-   * @param g_tex  An OpenGL interface
    * @param values The material parameters
    */
 
   void setMaterialValues(
     JCGLShadersType g_sh,
-    JCGLTexturesType g_tex,
     M values);
 
   /**

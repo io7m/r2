@@ -27,9 +27,9 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ShaderParameters;
 import com.io7m.r2.core.R2ShaderScreenType;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import org.valid4j.Assertive;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,6 +44,9 @@ public final class R2ShaderFilterLightApplicator extends
   private final JCGLProgramUniformType u_texture_albedo;
   private final JCGLProgramUniformType u_texture_specular;
   private final JCGLProgramUniformType u_texture_diffuse;
+  private JCGLTextureUnitType unit_albedo;
+  private JCGLTextureUnitType unit_diffuse;
+  private JCGLTextureUnitType unit_specular;
 
   private R2ShaderFilterLightApplicator(
     final JCGLShadersType in_shaders,
@@ -107,41 +110,45 @@ public final class R2ShaderFilterLightApplicator extends
    * Bind any textures needed for execution.
    *
    * @param g_tex  A texture interface
+   * @param uc  A texture interface
    * @param values The parameters
    */
 
   public void setTextures(
     final JCGLTexturesType g_tex,
+    final R2TextureUnitContextMutableType uc,
     final R2ShaderFilterLightApplicatorParameters values)
   {
-    NullCheck.notNull(g_tex);
+    NullCheck.notNull(uc);
     NullCheck.notNull(values);
 
-    final List<JCGLTextureUnitType> units = g_tex.textureGetUnits();
-    g_tex.texture2DBind(units.get(0), values.getAlbedoTexture().get());
-    g_tex.texture2DBind(units.get(1), values.getDiffuseTexture().get());
-    g_tex.texture2DBind(units.get(2), values.getSpecularTexture().get());
+    this.unit_albedo =
+      uc.unitContextBindTexture2D(g_tex, values.getAlbedoTexture());
+    this.unit_diffuse =
+      uc.unitContextBindTexture2D(g_tex, values.getDiffuseTexture());
+    this.unit_specular =
+      uc.unitContextBindTexture2D(g_tex, values.getSpecularTexture());
   }
 
   /**
    * Set any shader parameters needed for execution.
    *
    * @param g_sh   A shader interface
-   * @param g_tex  A texture interface
    * @param values The parameters
    */
 
   public void setValues(
     final JCGLShadersType g_sh,
-    final JCGLTexturesType g_tex,
     final R2ShaderFilterLightApplicatorParameters values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);
 
-    final List<JCGLTextureUnitType> units = g_tex.textureGetUnits();
-    g_sh.shaderUniformPutTexture2DUnit(this.u_texture_albedo, units.get(0));
-    g_sh.shaderUniformPutTexture2DUnit(this.u_texture_diffuse, units.get(1));
-    g_sh.shaderUniformPutTexture2DUnit(this.u_texture_specular, units.get(2));
+    g_sh.shaderUniformPutTexture2DUnit(
+      this.u_texture_albedo, this.unit_albedo);
+    g_sh.shaderUniformPutTexture2DUnit(
+      this.u_texture_diffuse, this.unit_diffuse);
+    g_sh.shaderUniformPutTexture2DUnit(
+      this.u_texture_specular, this.unit_specular);
   }
 }

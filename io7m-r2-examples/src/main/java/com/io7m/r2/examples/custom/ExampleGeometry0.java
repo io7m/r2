@@ -32,8 +32,6 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2GeometryRendererType;
@@ -53,9 +51,13 @@ import com.io7m.r2.core.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
+import com.io7m.r2.core.R2TextureUnitAllocator;
+import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
@@ -81,11 +83,12 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private JCGLClearSpecification clear_spec;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
-    shader;
+                                     shader;
   private R2SurfaceShaderBasicParameters
-    shader_params;
+                                     shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-    material;
+                                     material;
+  private R2TextureUnitAllocatorType textures;
 
   public ExampleGeometry0()
   {
@@ -106,6 +109,8 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
     this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
+    this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
+      4, g.getTextures().textureGetUnits());
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -179,7 +184,8 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
 
       this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
-        t.geom_renderer.renderGeometryWithBoundBuffer(g, mo, t.opaques);
+        t.geom_renderer.renderGeometryWithBoundBuffer(
+          g, t.textures.getRootContext(), mo, t.opaques);
         return Unit.unit();
       });
 

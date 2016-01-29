@@ -17,7 +17,6 @@
 package com.io7m.r2.core.filters;
 
 import com.io7m.jcanephora.core.JCGLPrimitives;
-import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
 import com.io7m.jcanephora.core.api.JCGLCullingType;
@@ -36,9 +35,9 @@ import com.io7m.r2.core.R2ImageBufferUsableType;
 import com.io7m.r2.core.R2LightBufferUsableType;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureDefaultsType;
+import com.io7m.r2.core.R2TextureUnitContextParentType;
+import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-
-import java.util.List;
 
 /**
  * The default implementation of the {@link R2FilterLightApplicatorType}
@@ -103,11 +102,13 @@ public final class R2FilterLightApplicator implements
   @Override
   public void runLightApplicator(
     final JCGLInterfaceGL33Type g,
+    final R2TextureUnitContextParentType uc,
     final R2GeometryBufferUsableType gbuffer,
     final R2LightBufferUsableType lbuffer,
     final R2ImageBufferUsableType ibuffer)
   {
     NullCheck.notNull(g);
+    NullCheck.notNull(uc);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer);
     NullCheck.notNull(ibuffer);
@@ -116,7 +117,7 @@ public final class R2FilterLightApplicator implements
 
     try {
       g_fb.framebufferDrawBind(ibuffer.getFramebuffer());
-      this.runLightApplicatorWithBoundBuffer(g, gbuffer, lbuffer);
+      this.runLightApplicatorWithBoundBuffer(g, uc, gbuffer, lbuffer);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -125,10 +126,12 @@ public final class R2FilterLightApplicator implements
   @Override
   public void runLightApplicatorWithBoundBuffer(
     final JCGLInterfaceGL33Type g,
+    final R2TextureUnitContextParentType uc,
     final R2GeometryBufferUsableType gbuffer,
     final R2LightBufferUsableType lbuffer)
   {
     NullCheck.notNull(g);
+    NullCheck.notNull(uc);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer);
 
@@ -153,25 +156,26 @@ public final class R2FilterLightApplicator implements
     g_cu.cullingDisable();
     g_cm.colorBufferMask(true, true, true, true);
 
-    this.params.setAlbedoTexture(gbuffer.getAlbedoEmissiveTexture());
-    this.params.setDiffuseTexture(lbuffer.getDiffuseTexture());
-    this.params.setSpecularTexture(lbuffer.getSpecularTexture());
-
+    final R2TextureUnitContextType c = uc.unitContextNew();
     try {
-      g_sh.shaderActivateProgram(this.shader.getShaderProgram());
-      this.shader.setTextures(g_tx, this.params);
-      this.shader.setValues(g_sh, g_tx, this.params);
+      this.params.setAlbedoTexture(gbuffer.getAlbedoEmissiveTexture());
+      this.params.setDiffuseTexture(lbuffer.getDiffuseTexture());
+      this.params.setSpecularTexture(lbuffer.getSpecularTexture());
 
-      g_ao.arrayObjectBind(this.quad.getArrayObject());
-      g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-    } finally {
-      g_ao.arrayObjectUnbind();
-      g_sh.shaderDeactivateProgram();
+      try {
+        g_sh.shaderActivateProgram(this.shader.getShaderProgram());
+        this.shader.setTextures(g_tx, c, this.params);
+        this.shader.setValues(g_sh, this.params);
 
-      final List<JCGLTextureUnitType> units = g_tx.textureGetUnits();
-      for (int index = 0; index < units.size(); ++index) {
-        g_tx.textureUnitUnbind(units.get(0));
+        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+      } finally {
+        g_ao.arrayObjectUnbind();
+        g_sh.shaderDeactivateProgram();
       }
+
+    } finally {
+      c.unitContextFinish(g_tx);
     }
   }
 

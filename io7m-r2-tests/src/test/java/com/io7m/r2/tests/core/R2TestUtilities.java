@@ -63,6 +63,7 @@ import com.io7m.r2.core.R2ShaderBatchedUsableType;
 import com.io7m.r2.core.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.R2ShaderLightSingleUsableType;
+import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2TransformOSiT;
@@ -211,6 +212,7 @@ public final class R2TestUtilities
       @Override
       public void setMaterialTextures(
         final JCGLTexturesType g_tex,
+        final R2TextureUnitContextMutableType tc,
         final Object values)
       {
 
@@ -219,7 +221,6 @@ public final class R2TestUtilities
       @Override
       public void setMaterialValues(
         final JCGLShadersType g_sh,
-        final JCGLTexturesType g_tex,
         final Object values)
       {
 
@@ -400,6 +401,7 @@ public final class R2TestUtilities
       @Override
       public void setMaterialTextures(
         final JCGLTexturesType g_tex,
+        final R2TextureUnitContextMutableType tc,
         final Object values)
       {
 
@@ -408,7 +410,6 @@ public final class R2TestUtilities
       @Override
       public void setMaterialValues(
         final JCGLShadersType g_sh,
-        final JCGLTexturesType g_tex,
         final Object values)
       {
 
@@ -516,6 +517,18 @@ public final class R2TestUtilities
     return new R2ShaderLightSingleUsableType<R2LightSingleType>()
     {
       @Override
+      public void setGBuffer(
+        final JCGLShadersType g_sh,
+        final R2GeometryBufferUsableType g,
+        final JCGLTextureUnitType unit_albedo,
+        final JCGLTextureUnitType unit_specular,
+        final JCGLTextureUnitType unit_depth,
+        final JCGLTextureUnitType unit_normals)
+      {
+
+      }
+
+      @Override
       public void setLightValues(
         final JCGLShadersType g_sh,
         final JCGLTexturesType g_tex,
@@ -538,19 +551,6 @@ public final class R2TestUtilities
         final JCGLShadersType g_sh,
         final R2MatricesInstanceSingleValuesType m,
         final R2LightSingleType values)
-      {
-
-      }
-
-      @Override
-      public void setGBuffer(
-        final JCGLShadersType g_sh,
-        final JCGLTexturesType g_tex,
-        final R2GeometryBufferUsableType g,
-        final JCGLTextureUnitType unit_albedo,
-        final JCGLTextureUnitType unit_specular,
-        final JCGLTextureUnitType unit_depth,
-        final JCGLTextureUnitType unit_normals)
       {
 
       }
