@@ -27,15 +27,12 @@ import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jfunctional.Unit;
+import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2GeometryRendererType;
@@ -58,14 +55,20 @@ import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShaderBatchedType;
-import com.io7m.r2.core.shaders.R2LightShaderDirectionalSpecularSingle;
 import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
+import com.io7m.r2.core.R2TextureUnitAllocator;
+import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
+import com.io7m.r2.core.filters.R2FilterLightApplicator;
+import com.io7m.r2.core.filters.R2FilterLightApplicatorType;
+import com.io7m.r2.core.shaders.R2LightShaderDirectionalSpecularSingle;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
@@ -80,20 +83,22 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
   private       R2TransformOST[]                                  transforms;
 
-  private JCGLClearSpecification light_clear_spec;
-  private R2SceneStencilsType stencils;
-  private R2StencilRendererType stencil_renderer;
-  private R2GeometryRendererType geom_renderer;
-  private R2LightRendererType light_renderer;
-  private R2MatricesType matrices;
-  private R2ProjectionFOV projection;
-  private R2UnitQuadType quad;
+
+  private R2SceneStencilsType          stencils;
+  private R2StencilRendererType        stencil_renderer;
+  private R2GeometryRendererType       geom_renderer;
+  private R2LightRendererType          light_renderer;
+  private R2MatricesType               matrices;
+  private R2ProjectionFOV              projection;
+  private R2UnitQuadType               quad;
   private R2InstanceBatchedDynamicType instance;
-  private R2SceneOpaquesType opaques;
-  private R2SceneOpaqueLightsType lights;
-  private R2GeometryBufferType gbuffer;
-  private R2LightBufferType lbuffer;
-  private JCGLClearSpecification geom_clear_spec;
+  private R2SceneOpaquesType           opaques;
+  private R2SceneOpaqueLightsType      lights;
+  private R2GeometryBufferType         gbuffer;
+  private R2LightBufferType            lbuffer;
+  private JCGLClearSpecification       geom_clear_spec;
+  private JCGLClearSpecification       screen_clear_spec;
+  private JCGLClearSpecification       light_clear_spec;
 
   private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
     geom_shader;
@@ -105,6 +110,7 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
   private R2ShaderLightSingleType<R2LightDirectionalSingle> light_shader;
   private R2LightDirectionalSingle                          light;
   private R2TextureUnitAllocatorType                        textures;
+  private R2FilterLightApplicatorType                       filter;
 
   public ExampleLightDirectional0()
   {
@@ -198,6 +204,10 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
     this.light.getColor().set3F(1.0f, 0.0f, 0.0f);
     this.light.setIntensity(0.25f);
 
+    this.filter =
+      R2FilterLightApplicator.newFilter(
+        sources, m.getTextureDefaults(), g, id_pool, this.quad);
+
     {
       final JCGLClearSpecification.Builder csb =
         JCGLClearSpecification.builder();
@@ -205,6 +215,15 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
       csb.setDepthBufferClear(1.0);
       csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
       this.geom_clear_spec = csb.build();
+    }
+
+    {
+      final JCGLClearSpecification.Builder csb =
+        JCGLClearSpecification.builder();
+      csb.setStencilBufferClear(0);
+      csb.setDepthBufferClear(1.0);
+      csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
+      this.screen_clear_spec = csb.build();
     }
 
     {
@@ -232,6 +251,16 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
 
     this.lights.opaqueLightsReset();
     this.lights.opaqueLightsAddSingle(this.light, this.light_shader);
+
+    if (serv.isFreeCameraEnabled()) {
+      MatrixM4x4F.copy(serv.getFreeCameraViewMatrix(), this.view);
+    } else {
+      m.getViewMatrices().lookAt(
+        this.view,
+        new VectorI3F(0.0f, 0.0f, 5.0f),
+        new VectorI3F(0.0f, 0.0f, 0.0f),
+        new VectorI3F(0.0f, 1.0f, 0.0f));
+    }
 
     {
       this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
@@ -273,6 +302,15 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
           mo,
           t.lights);
         g_fb.framebufferDrawUnbind();
+
+        g_cb.colorBufferMask(true, true, true, true);
+        g_db.depthBufferWriteEnable();
+        g_sb.stencilBufferMask(
+          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
+        g_cl.clear(t.screen_clear_spec);
+
+        this.filter.runLightApplicatorWithBoundBuffer(
+          g, t.textures.getRootContext(), this.gbuffer, this.lbuffer);
         return Unit.unit();
       });
     }
