@@ -18,6 +18,17 @@ package com.io7m.r2.examples.jogl;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedI;
 import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jcamera.JCameraContext;
+import com.io7m.jcamera.JCameraFPSStyle;
+import com.io7m.jcamera.JCameraFPSStyleInput;
+import com.io7m.jcamera.JCameraFPSStyleInputType;
+import com.io7m.jcamera.JCameraFPSStyleIntegrator;
+import com.io7m.jcamera.JCameraFPSStyleIntegratorType;
+import com.io7m.jcamera.JCameraFPSStyleMouseRegion;
+import com.io7m.jcamera.JCameraFPSStyleSnapshot;
+import com.io7m.jcamera.JCameraFPSStyleType;
+import com.io7m.jcamera.JCameraRotationCoefficients;
+import com.io7m.jcamera.JCameraScreenOrigin;
 import com.io7m.jcanephora.core.JCGLExceptionNonCompliant;
 import com.io7m.jcanephora.core.JCGLExceptionUnsupported;
 import com.io7m.jcanephora.core.JCGLTexture2DType;
@@ -39,6 +50,9 @@ import com.io7m.jcanephora.texture_loader.core.JCGLTLTextureDataType;
 import com.io7m.jcanephora.texture_loader.core.JCGLTLTextureUpdateProvider;
 import com.io7m.jcanephora.texture_loader.core.JCGLTLTextureUpdateProviderType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jtensors.parameterized.PMatrixDirect4x4FType;
+import com.io7m.jtensors.parameterized.PMatrixDirectM4x4F;
+import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
 import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
@@ -47,7 +61,15 @@ import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.examples.R2ExampleType;
 import com.io7m.r2.main.R2Main;
 import com.io7m.r2.main.R2MainType;
+import com.io7m.r2.spaces.R2SpaceEyeType;
+import com.io7m.r2.spaces.R2SpaceWorldType;
 import com.jogamp.nativewindow.WindowClosingProtocol;
+import com.jogamp.newt.Window;
+import com.jogamp.newt.event.InputEvent;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
+import com.jogamp.newt.event.MouseAdapter;
+import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
@@ -121,7 +143,11 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       win.setSize(640, 480);
       win.setDefaultCloseOperation(
         WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE);
-      win.addGLEventListener(new ExampleListener(example));
+
+      final ExampleListener el = new ExampleListener(win, example);
+      win.addGLEventListener(el);
+      win.addKeyListener(el);
+      win.addMouseListener(el);
 
       final Animator anim = new Animator(win);
 
@@ -151,19 +177,50 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     }
   }
 
-  private static final class ExampleListener implements GLEventListener
+  private static final class ExampleListener extends MouseAdapter implements
+    GLEventListener,
+    KeyListener
   {
     private final R2ExampleType              example;
+    private final GLWindow                   window;
     private       JCGLContextType            context;
     private       int                        frame;
     private       R2MainType                 r2_main;
     private       AreaInclusiveUnsignedIType area;
     private       Services                   services;
+    private       boolean                    want_cursor_warp;
 
     ExampleListener(
+      final GLWindow in_window,
       final R2ExampleType in_example)
     {
+      this.window = NullCheck.notNull(in_window);
       this.example = NullCheck.notNull(in_example);
+      this.want_cursor_warp = false;
+    }
+
+    @Override
+    public void mouseMoved(final MouseEvent e)
+    {
+      assert e != null;
+
+      /**
+       * If the camera is enabled, get the rotation coefficients for the mouse
+       * movement.
+       */
+
+      if (this.services != null) {
+        if (this.services.camera_enabled) {
+          this.services.camera_mouse_region.getCoefficients(
+            (float) e.getX(),
+            (float) e.getY(),
+            this.services.camera_rotations);
+          this.services.camera_input.addRotationAroundHorizontal(
+            this.services.camera_rotations.getHorizontal());
+          this.services.camera_input.addRotationAroundVertical(
+            this.services.camera_rotations.getVertical());
+        }
+      }
     }
 
     @Override
@@ -183,6 +240,14 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     public void display(final GLAutoDrawable drawable)
     {
       try {
+
+        /**
+         * On the first frame, clear the screen. The second frame does
+         * potentially very-long running resource initialization, so clearing
+         * the frame here prevents the user from seeing the raw uncleared
+         * contents of whatever was in memory for the framebuffer.
+         */
+
         if (this.frame == 0) {
           final GL gl = drawable.getGL();
           gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -193,6 +258,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           return;
         }
 
+        /**
+         * On the second frame, initialize all resources for the example.
+         */
 
         if (this.frame == 1) {
           final JCGLImplementationJOGLType g =
@@ -205,7 +273,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
           final JCGLInterfaceGL33Type g33 = this.context.contextGetGL33();
           this.r2_main = R2Main.newBuilder().build(g33);
-          this.services = new Services(g33);
+          this.services = new Services(this.window, g33);
 
           R2JOGLExampleSingleWindowMain.LOG.debug("initializing example");
           this.example.onInitialize(
@@ -214,6 +282,19 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           return;
         }
 
+        /**
+         * Integrate the camera for the current frame.
+         */
+
+        if (this.services.camera_enabled) {
+          this.services.integrateCamera();
+          this.want_cursor_warp = true;
+        }
+
+        /**
+         * Render the current example.
+         */
+
         final JCGLInterfaceGL33Type g33 = this.context.contextGetGL33();
         this.example.onRender(
           this.services,
@@ -221,6 +302,20 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           this.area,
           this.r2_main,
           this.frame - 2);
+
+        /**
+         * The camera has requested that the cursor be warped to the center
+         * of the screen.
+         */
+
+        if (this.want_cursor_warp) {
+          final Window w = this.window;
+          if (w != null) {
+            w.warpPointer(w.getWidth() / 2, w.getHeight() / 2);
+            this.want_cursor_warp = false;
+          }
+        }
+
       } catch (final JCGLExceptionUnsupported x) {
         R2JOGLExampleSingleWindowMain.LOG.error("unsupported: ", x);
       } catch (final JCGLExceptionNonCompliant x) {
@@ -247,6 +342,165 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         new UnsignedRangeInclusiveI(0, drawable.getSurfaceWidth() - 1),
         new UnsignedRangeInclusiveI(0, drawable.getSurfaceHeight() - 1));
     }
+
+    @Override
+    public void keyPressed(final KeyEvent e)
+    {
+      assert e != null;
+
+      /**
+       * Services are not available until the second frame. As unlikely as it
+       * is that the user will be able to press a key in the 1/60th of a second
+       * before they're available...
+       */
+
+      if (this.services == null) {
+        return;
+      }
+
+      /**
+       * Ignore events that are the result of keyboard auto-repeat. This means
+       * there's one single event when a key is pressed, and another when it is
+       * released (as opposed to an endless stream of both when the key is held
+       * down).
+       */
+
+      if ((e.getModifiers() & InputEvent.AUTOREPEAT_MASK) == InputEvent
+        .AUTOREPEAT_MASK) {
+        return;
+      }
+
+      switch (e.getKeyCode()) {
+
+        /**
+         * Standard WASD camera controls, with E and Q moving up and down,
+         * respectively.
+         */
+
+        case KeyEvent.VK_A: {
+          this.services.camera_input.setMovingLeft(true);
+          break;
+        }
+        case KeyEvent.VK_W: {
+          this.services.camera_input.setMovingForward(true);
+          break;
+        }
+        case KeyEvent.VK_S: {
+          this.services.camera_input.setMovingBackward(true);
+          break;
+        }
+        case KeyEvent.VK_D: {
+          this.services.camera_input.setMovingRight(true);
+          break;
+        }
+        case KeyEvent.VK_E: {
+          this.services.camera_input.setMovingUp(true);
+          break;
+        }
+        case KeyEvent.VK_Q: {
+          this.services.camera_input.setMovingDown(true);
+          break;
+        }
+      }
+    }
+
+    @Override
+    public void keyReleased(final KeyEvent e)
+    {
+      assert e != null;
+
+      /**
+       * Services are not available until the second frame. As unlikely as it
+       * is that the user will be able to press a key in the 1/60th of a second
+       * before they're available...
+       */
+
+      if (this.services == null) {
+        return;
+      }
+
+      /**
+       * Ignore events that are the result of keyboard auto-repeat. This means
+       * there's one single event when a key is pressed, and another when it is
+       * released (as opposed to an endless stream of both when the key is held
+       * down).
+       */
+
+      if ((e.getModifiers() & InputEvent.AUTOREPEAT_MASK) == InputEvent
+        .AUTOREPEAT_MASK) {
+        return;
+      }
+
+      switch (e.getKeyCode()) {
+
+        /**
+         * Pressing 'M' enables/disables the camera.
+         */
+
+        case KeyEvent.VK_M: {
+          this.toggleCameraEnabled();
+          break;
+        }
+
+        /**
+         * Pressing 'P' makes the mouse cursor visible/invisible.
+         */
+
+        case KeyEvent.VK_P: {
+          R2JOGLExampleSingleWindowMain.LOG.debug(
+            "Making pointer {}\n",
+            this.window.isPointerVisible() ? "invisible" : "visible");
+          this.window.setPointerVisible(!this.window.isPointerVisible());
+          break;
+        }
+
+        /**
+         * Standard WASD camera controls, with E and Q moving up and down,
+         * respectively.
+         */
+
+        case KeyEvent.VK_A: {
+          this.services.camera_input.setMovingLeft(false);
+          break;
+        }
+        case KeyEvent.VK_W: {
+          this.services.camera_input.setMovingForward(false);
+          break;
+        }
+        case KeyEvent.VK_S: {
+          this.services.camera_input.setMovingBackward(false);
+          break;
+        }
+        case KeyEvent.VK_D: {
+          this.services.camera_input.setMovingRight(false);
+          break;
+        }
+        case KeyEvent.VK_E: {
+          this.services.camera_input.setMovingUp(false);
+          break;
+        }
+        case KeyEvent.VK_Q: {
+          this.services.camera_input.setMovingDown(false);
+          break;
+        }
+      }
+    }
+
+    private void toggleCameraEnabled()
+    {
+      if (this.services.camera_enabled) {
+        R2JOGLExampleSingleWindowMain.LOG.debug("Disabling camera");
+        this.window.confinePointer(false);
+      } else {
+        R2JOGLExampleSingleWindowMain.LOG.debug("Enabling camera");
+        this.window.confinePointer(true);
+        this.want_cursor_warp = true;
+        this.services.camera_input.setRotationHorizontal(0.0F);
+        this.services.camera_input.setRotationVertical(0.0F);
+      }
+
+      this.services.camera_enabled = !this.services.camera_enabled;
+    }
   }
 
   private static final class Services implements R2ExampleServicesType
@@ -256,14 +510,43 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private final JCGLTexturesType                textures;
     private final List<JCGLTextureUnitType>       units;
     private final Map<String, R2Texture2DType>    cache;
+    private final JCameraFPSStyleType             camera;
+    private final JCameraFPSStyleInputType        camera_input;
+    private final JCameraFPSStyleIntegratorType   camera_integrator;
+    private final PMatrixDirect4x4FType<R2SpaceWorldType, R2SpaceEyeType>
+                                                  camera_matrix;
+    private final JCameraContext                  camera_ctx;
+    private final JCameraFPSStyleMouseRegion      camera_mouse_region;
+    private final JCameraRotationCoefficients     camera_rotations;
+    private       long                            camera_time_then;
+    private       double                          camera_time_accum;
+    private       JCameraFPSStyleSnapshot         camera_snap_current;
+    private       JCameraFPSStyleSnapshot         camera_snap_prev;
+    private       boolean                         camera_enabled;
 
-    Services(final JCGLInterfaceGL33Type g33)
+    Services(
+      final GLWindow win,
+      final JCGLInterfaceGL33Type g33)
     {
       this.textures = g33.getTextures();
       this.units = this.textures.textureGetUnits();
       this.data_prov = JCGLAWTTextureDataProvider.newProvider();
       this.update_prov = JCGLTLTextureUpdateProvider.newProvider();
       this.cache = new HashMap<>(128);
+
+      this.camera = JCameraFPSStyle.newCamera();
+      this.camera_ctx = new JCameraContext();
+      this.camera_matrix = PMatrixDirectM4x4F.newMatrix();
+      this.camera_input = JCameraFPSStyleInput.newInput();
+      this.camera_integrator =
+        JCameraFPSStyleIntegrator.newIntegrator(this.camera, this.camera_input);
+      this.camera_time_then = System.nanoTime();
+      this.camera_enabled = false;
+      this.camera_mouse_region = JCameraFPSStyleMouseRegion.newRegion(
+        JCameraScreenOrigin.SCREEN_ORIGIN_TOP_LEFT,
+        (float) win.getWidth(),
+        (float) win.getHeight());
+      this.camera_rotations = new JCameraRotationCoefficients();
     }
 
     @Override
@@ -297,6 +580,58 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       } catch (final IOException e) {
         throw new UncheckedIOException(e);
       }
+    }
+
+    @Override
+    public boolean isFreeCameraEnabled()
+    {
+      return this.camera_enabled;
+    }
+
+    @Override
+    public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType>
+    getFreeCameraViewMatrix()
+    {
+      return this.camera_matrix;
+    }
+
+    void integrateCamera()
+    {
+      /**
+       * Integrate the camera as many times as necessary for each rendering
+       * frame interval.
+       */
+
+      final long time_now = System.nanoTime();
+      final long time_diff = time_now - this.camera_time_then;
+      final double time_diff_s = (double) time_diff / 1000000000.0;
+      this.camera_time_accum = this.camera_time_accum + time_diff_s;
+      this.camera_time_then = time_now;
+
+      final float sim_delta = 1.0f / 60.0f;
+      while (this.camera_time_accum >= (double) sim_delta) {
+        this.camera_integrator.integrate(sim_delta);
+        this.camera_snap_prev = this.camera_snap_current;
+        this.camera_snap_current = this.camera.cameraMakeSnapshot();
+        this.camera_time_accum -= (double) sim_delta;
+      }
+
+      /**
+       * Determine how far the current time is between the current camera state
+       * and the next, and use that value to interpolate between the two saved
+       * states.
+       */
+
+      final float alpha = (float) (this.camera_time_accum / (double) sim_delta);
+      final JCameraFPSStyleSnapshot snap_interpolated =
+        JCameraFPSStyleSnapshot.interpolate(
+          this.camera_snap_prev,
+          this.camera_snap_current,
+          alpha);
+
+      snap_interpolated.cameraMakeViewPMatrix(
+        this.camera_ctx,
+        this.camera_matrix);
     }
   }
 }

@@ -16,7 +16,10 @@
 
 package com.io7m.r2.examples;
 
+import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.spaces.R2SpaceEyeType;
+import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
  * Services provided to examples.
@@ -33,4 +36,20 @@ public interface R2ExampleServicesType
    */
 
   R2Texture2DUsableType getTexture2D(String name);
+
+  /**
+   * @return {@code true} Iff the free camera is enabled
+   */
+
+  boolean isFreeCameraEnabled();
+
+  /**
+   * Get access to the view matrix for the free camera. This matrix is only
+   * updated when {@link #isFreeCameraEnabled()} returns {@code true}.
+   *
+   * @return The current free camera view matrix
+   */
+
+  PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType>
+  getFreeCameraViewMatrix();
 }

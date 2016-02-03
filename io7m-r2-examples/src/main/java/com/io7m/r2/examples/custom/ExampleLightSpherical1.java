@@ -27,6 +27,7 @@ import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jfunctional.Unit;
+import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
@@ -145,12 +146,6 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
       m.getProjectionMatrices(),
       (float) Math.toRadians(90.0f), 640.0f / 480.0f, 0.01f, 1000.0f);
 
-    m.getViewMatrices().lookAt(
-      this.view,
-      new VectorI3F(0.0f, 0.0f, 5.0f),
-      new VectorI3F(0.0f, 0.0f, 0.0f),
-      new VectorI3F(0.0f, 1.0f, 0.0f));
-
     final R2IDPoolType id_pool = m.getIDPool();
 
     final int width = 16;
@@ -259,6 +254,16 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
 
     this.lights.opaqueLightsReset();
     this.lights.opaqueLightsAddSingle(this.light, this.light_shader);
+
+    if (serv.isFreeCameraEnabled()) {
+      MatrixM4x4F.copy(serv.getFreeCameraViewMatrix(), this.view);
+    } else {
+      m.getViewMatrices().lookAt(
+        this.view,
+        new VectorI3F(0.0f, 0.0f, 5.0f),
+        new VectorI3F(0.0f, 0.0f, 0.0f),
+        new VectorI3F(0.0f, 1.0f, 0.0f));
+    }
 
     {
       this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
