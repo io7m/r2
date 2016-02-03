@@ -51,7 +51,7 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
@@ -82,7 +82,7 @@ public final class ExampleGeometry1 implements R2ExampleCustomType
   private R2GeometryBufferType   gbuffer;
   private JCGLClearSpecification clear_spec;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
+  private R2ShaderSingleType<R2SurfaceShaderBasicParameters>
                                      shader;
   private R2SurfaceShaderBasicParameters
                                      shader_params;

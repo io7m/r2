@@ -25,7 +25,7 @@ import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import org.valid4j.Assertive;
@@ -39,7 +39,7 @@ import java.util.Optional;
 
 public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   implements
-  R2ShaderInstanceSingleType<Unit>
+  R2ShaderSingleType<Unit>
 {
   private final JCGLProgramUniformType u_transform_modelview;
   private final JCGLProgramUniformType u_transform_projection;
@@ -78,7 +78,7 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleType<Unit> newShader(
+  public static R2ShaderSingleType<Unit> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)

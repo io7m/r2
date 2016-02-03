@@ -60,8 +60,8 @@ import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2ShaderBatchedUsableType;
-import com.io7m.r2.core.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.R2ShaderInstanceSingleUsableType;
+import com.io7m.r2.core.R2ShaderSingleType;
+import com.io7m.r2.core.R2ShaderSingleUsableType;
 import com.io7m.r2.core.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
@@ -151,14 +151,14 @@ public final class R2TestUtilities
 
   static R2MaterialOpaqueSingleType<Object> getMaterialSingle(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderInstanceSingleUsableType<Object> sh,
+    final R2ShaderSingleUsableType<Object> sh,
     final Object p,
     final long id)
   {
     return new R2MaterialOpaqueSingleType<Object>()
     {
       @Override
-      public R2ShaderInstanceSingleUsableType<Object> getShader()
+      public R2ShaderSingleUsableType<Object> getShader()
       {
         return sh;
       }
@@ -183,7 +183,7 @@ public final class R2TestUtilities
     };
   }
 
-  static R2ShaderInstanceSingleUsableType<Object> getShaderSingle(
+  static R2ShaderSingleUsableType<Object> getShaderSingle(
     final JCGLInterfaceGL33Type g,
     final long s_id)
   {
@@ -207,7 +207,7 @@ public final class R2TestUtilities
     final JCGLProgramShaderType pr =
       g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
 
-    return new R2ShaderInstanceSingleType<Object>()
+    return new R2ShaderSingleType<Object>()
     {
       @Override
       public void setMaterialTextures(

@@ -52,7 +52,7 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
@@ -85,7 +85,7 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
   private JCGLClearSpecification          clear_spec;
   private PVector3FType<R2SpaceWorldType> instance_1_pos;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
+  private R2ShaderSingleType<R2SurfaceShaderBasicParameters>
                                      shader;
   private R2SurfaceShaderBasicParameters
                                      shader_params;

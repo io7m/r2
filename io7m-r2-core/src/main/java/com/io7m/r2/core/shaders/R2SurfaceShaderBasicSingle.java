@@ -27,7 +27,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderParameters;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
@@ -42,7 +42,7 @@ import java.util.Optional;
 
 public final class R2SurfaceShaderBasicSingle extends
   R2AbstractShader<R2SurfaceShaderBasicParameters>
-  implements R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
+  implements R2ShaderSingleType<R2SurfaceShaderBasicParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_normal;
@@ -129,7 +129,7 @@ public final class R2SurfaceShaderBasicSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> newShader(
+  public static R2ShaderSingleType<R2SurfaceShaderBasicParameters> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)

@@ -81,7 +81,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
     final long i_id = i.getInstanceID();
     final long m_id = m.getMaterialID();
-    final R2ShaderInstanceSingleUsableType<?> shader = m.getShader();
+    final R2ShaderSingleUsableType<?> shader = m.getShader();
     final long s_id = shader.getShaderID();
 
     /**
@@ -330,12 +330,12 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
        * For each single instance shader {@code s}...
        */
 
-      final ObjectIterator<R2ShaderInstanceSingleUsableType<?>> bs_iter =
+      final ObjectIterator<R2ShaderSingleUsableType<?>> bs_iter =
         g.instance_shaders.values().iterator();
 
       while (bs_iter.hasNext()) {
-        final R2ShaderInstanceSingleUsableType<Object> s =
-          (R2ShaderInstanceSingleUsableType<Object>) bs_iter.next();
+        final R2ShaderSingleUsableType<Object> s =
+          (R2ShaderSingleUsableType<Object>) bs_iter.next();
 
         c.onInstanceSingleShaderStart(s);
 
@@ -458,7 +458,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
         shader_to_materials;
       private final Long2ReferenceOpenHashMap<R2MaterialOpaqueSingleType<?>>
         instance_materials;
-      private final Long2ReferenceOpenHashMap<R2ShaderInstanceSingleUsableType<?>>
+      private final Long2ReferenceOpenHashMap<R2ShaderSingleUsableType<?>>
         instance_shaders;
       private final Long2ReferenceOpenHashMap<R2InstanceSingleType>
         instances;

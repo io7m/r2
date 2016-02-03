@@ -22,8 +22,8 @@ package com.io7m.r2.core;
  * @param <M> The type of parameter data
  */
 
-public interface R2ShaderInstanceSingleType<M> extends R2ShaderType<M>,
-  R2ShaderInstanceSingleUsableType<M>
+public interface R2ShaderSingleType<M> extends R2ShaderType<M>,
+  R2ShaderSingleUsableType<M>
 {
   // No extra functions
 }

@@ -21,7 +21,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jfunctional.Unit;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.shaders.R2StencilShaderSingle;
@@ -42,7 +42,7 @@ public abstract class R2StencilShaderSingleContract extends
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceSingleType<Unit> s =
+    final R2ShaderSingleType<Unit> s =
       R2StencilShaderSingle.newShader(
         g.getShaders(),
         sources,
