@@ -8,7 +8,6 @@
 uniform float               R2_light_depth_coefficient;
 uniform R2_light_matrices_t R2_light_matrices;
 
-out vec4  R2_light_volume_position_eye;
 out float R2_light_volume_positive_eye_z;
 
 void
