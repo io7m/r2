@@ -17,8 +17,9 @@ main (void)
 {
   mat4x4 m_modelview =
     (R2_view.transform_view * R2_vertex_transform_model);
+  // Batched transforms are guaranteed to be orthogonal
   mat3x3 m_normal =
-    transpose (mat3x3 (m_modelview));
+    mat3x3 (m_modelview);
   mat3x3 m_uv =
     mat3x3 (1.0); // Identity matrix
 
