@@ -27,6 +27,7 @@ import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jfunctional.Unit;
+import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
@@ -196,6 +197,16 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
 
     this.opaques.opaquesReset();
     this.opaques.opaquesAddSingleInstance(this.instance, this.material);
+
+    if (serv.isFreeCameraEnabled()) {
+      MatrixM4x4F.copy(serv.getFreeCameraViewMatrix(), this.view);
+    } else {
+      m.getViewMatrices().lookAt(
+        this.view,
+        new VectorI3F(0.0f, 0.0f, 5.0f),
+        new VectorI3F(0.0f, 0.0f, 0.0f),
+        new VectorI3F(0.0f, 1.0f, 0.0f));
+    }
 
     {
       final JCGLFramebufferUsableType fb = this.gbuffer.getFramebuffer();

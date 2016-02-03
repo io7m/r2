@@ -16,6 +16,7 @@
 
 package com.io7m.r2.examples;
 
+import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -36,6 +37,16 @@ public interface R2ExampleServicesType
    */
 
   R2Texture2DUsableType getTexture2D(String name);
+
+  /**
+   * Load a mesh by name from the example resources.
+   *
+   * @param name The mesh file name
+   *
+   * @return A mesh
+   */
+
+  JCGLArrayObjectType getMesh(String name);
 
   /**
    * @return {@code true} Iff the free camera is enabled

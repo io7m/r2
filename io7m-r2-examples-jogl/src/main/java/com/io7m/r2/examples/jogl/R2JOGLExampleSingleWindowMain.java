@@ -29,6 +29,7 @@ import com.io7m.jcamera.JCameraFPSStyleSnapshot;
 import com.io7m.jcamera.JCameraFPSStyleType;
 import com.io7m.jcamera.JCameraRotationCoefficients;
 import com.io7m.jcamera.JCameraScreenOrigin;
+import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLExceptionNonCompliant;
 import com.io7m.jcanephora.core.JCGLExceptionUnsupported;
 import com.io7m.jcanephora.core.JCGLTexture2DType;
@@ -39,7 +40,12 @@ import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLTextureWrapS;
 import com.io7m.jcanephora.core.JCGLTextureWrapT;
+import com.io7m.jcanephora.core.JCGLUnsignedType;
+import com.io7m.jcanephora.core.JCGLUsageHint;
+import com.io7m.jcanephora.core.api.JCGLArrayBuffersType;
+import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.jcanephora.core.api.JCGLIndexBuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.jogl.JCGLImplementationJOGL;
@@ -57,10 +63,15 @@ import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
 import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.cursors.R2VertexCursorPUNT32;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.examples.R2ExampleType;
 import com.io7m.r2.main.R2Main;
 import com.io7m.r2.main.R2MainType;
+import com.io7m.r2.meshes.arrayobject.R2MeshArrayObjectSynchronousAdapter;
+import com.io7m.r2.meshes.arrayobject.R2MeshArrayObjectSynchronousAdapterType;
+import com.io7m.r2.meshes.binary.R2MBReaderType;
+import com.io7m.r2.meshes.binary.R2MBUnmappedReader;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import com.jogamp.nativewindow.WindowClosingProtocol;
@@ -86,9 +97,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.channels.Channels;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 /**
  * JOGL example frontend.
@@ -505,36 +518,47 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
   private static final class Services implements R2ExampleServicesType
   {
-    private final JCGLTLTextureDataProviderType   data_prov;
-    private final JCGLTLTextureUpdateProviderType update_prov;
-    private final JCGLTexturesType                textures;
-    private final List<JCGLTextureUnitType>       units;
-    private final Map<String, R2Texture2DType>    cache;
-    private final JCameraFPSStyleType             camera;
-    private final JCameraFPSStyleInputType        camera_input;
-    private final JCameraFPSStyleIntegratorType   camera_integrator;
+    private final JCGLTLTextureDataProviderType    data_prov;
+    private final JCGLTLTextureUpdateProviderType  update_prov;
+    private final JCGLTexturesType                 textures;
+    private final List<JCGLTextureUnitType>        units;
+    private final Map<String, R2Texture2DType>     texture_cache;
+    private final Map<String, JCGLArrayObjectType> mesh_cache;
+    private final JCameraFPSStyleType              camera;
+    private final JCameraFPSStyleInputType         camera_input;
+    private final JCameraFPSStyleIntegratorType    camera_integrator;
     private final PMatrixDirect4x4FType<R2SpaceWorldType, R2SpaceEyeType>
-                                                  camera_matrix;
-    private final JCameraContext                  camera_ctx;
-    private final JCameraFPSStyleMouseRegion      camera_mouse_region;
-    private final JCameraRotationCoefficients     camera_rotations;
-    private       long                            camera_time_then;
-    private       double                          camera_time_accum;
-    private       JCameraFPSStyleSnapshot         camera_snap_current;
-    private       JCameraFPSStyleSnapshot         camera_snap_prev;
-    private       boolean                         camera_enabled;
+                                                   camera_matrix;
+    private final JCameraContext                   camera_ctx;
+    private final JCameraFPSStyleMouseRegion       camera_mouse_region;
+    private final JCameraRotationCoefficients      camera_rotations;
+    private       long                             camera_time_then;
+    private       double                           camera_time_accum;
+    private       JCameraFPSStyleSnapshot          camera_snap_current;
+    private       JCameraFPSStyleSnapshot          camera_snap_prev;
+    private       boolean                          camera_enabled;
+    private       JCGLArrayObjectsType             array_objects;
+    private       JCGLArrayBuffersType             array_buffers;
+    private       JCGLIndexBuffersType             index_buffers;
 
     Services(
       final GLWindow win,
       final JCGLInterfaceGL33Type g33)
     {
       this.textures = g33.getTextures();
+      this.array_buffers = g33.getArrayBuffers();
+      this.array_objects = g33.getArrayObjects();
+      this.index_buffers = g33.getIndexBuffers();
+
       this.units = this.textures.textureGetUnits();
       this.data_prov = JCGLAWTTextureDataProvider.newProvider();
       this.update_prov = JCGLTLTextureUpdateProvider.newProvider();
-      this.cache = new HashMap<>(128);
+      this.texture_cache = new HashMap<>(128);
+      this.mesh_cache = new HashMap<>(128);
 
       this.camera = JCameraFPSStyle.newCamera();
+      this.camera.cameraSetPosition3f(0.0f, 0.0f, 5.0f);
+
       this.camera_ctx = new JCameraContext();
       this.camera_matrix = PMatrixDirectM4x4F.newMatrix();
       this.camera_input = JCameraFPSStyleInput.newInput();
@@ -549,12 +573,24 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       this.camera_rotations = new JCameraRotationCoefficients();
     }
 
+    private static InputStream getMeshStream(
+      final String name,
+      final Class<R2ExampleServicesType> c)
+      throws IOException
+    {
+      if (name.endsWith(".r2z")) {
+        return new GZIPInputStream(c.getResourceAsStream(name));
+      }
+
+      return c.getResourceAsStream(name);
+    }
+
     @Override
     public R2Texture2DUsableType getTexture2D(
       final String name)
     {
-      if (this.cache.containsKey(name)) {
-        return this.cache.get(name);
+      if (this.texture_cache.containsKey(name)) {
+        return this.texture_cache.get(name);
       }
 
       final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
@@ -575,8 +611,51 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           this.update_prov.getTextureUpdate(t, data);
         this.textures.texture2DUpdate(u0, update);
         final R2Texture2DType r2 = R2Texture2DStatic.of(t);
-        this.cache.put(name, r2);
+        this.texture_cache.put(name, r2);
         return r2;
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+    }
+
+    @Override
+    public JCGLArrayObjectType getMesh(final String name)
+    {
+      if (this.mesh_cache.containsKey(name)) {
+        return this.mesh_cache.get(name);
+      }
+
+      final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
+      try (final InputStream is = this.getMeshStream(name, c)) {
+
+        final R2MeshArrayObjectSynchronousAdapterType adapter =
+          R2MeshArrayObjectSynchronousAdapter.newAdapter(
+            this.array_objects,
+            this.array_buffers,
+            this.index_buffers,
+            JCGLUsageHint.USAGE_STATIC_DRAW,
+            JCGLUnsignedType.TYPE_UNSIGNED_SHORT,
+            JCGLUsageHint.USAGE_STATIC_DRAW,
+            R2VertexCursorPUNT32.getInstance(),
+            R2VertexCursorPUNT32.getInstance());
+
+        final R2MBReaderType r =
+          R2MBUnmappedReader.newReader(Channels.newChannel(is), adapter);
+
+        r.run();
+
+        if (adapter.hasFailed()) {
+          adapter.getErrorException().ifPresent(x -> {
+            throw new RuntimeException(
+              "Failed to load " + name + ": " + adapter.getErrorMessage(), x);
+          });
+          throw new RuntimeException(
+            "Failed to load " + name + ": " + adapter.getErrorMessage());
+        }
+
+        final JCGLArrayObjectType ao = adapter.getArrayObject();
+        this.mesh_cache.put(name, ao);
+        return ao;
       } catch (final IOException e) {
         throw new UncheckedIOException(e);
       }
