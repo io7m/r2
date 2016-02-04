@@ -15,8 +15,6 @@ struct R2_light_positional_vectors_t {
   vec3 light_to_surface;
   /// The surface normal (referred to as `N` in most texts)
   vec3 normal;
-  /// Reflection between observer and normal (referred to as `R` in most texts)
-  vec3 reflection;
   /// The distance between the surface and light source
   float distance;
 };
@@ -55,14 +53,12 @@ R2_lightPositionalVectors (
   vec3 light_to_surface    = normalize (position_diff);
   vec3 surface_to_light    = -light_to_surface;
   float distance           = length (position_diff);
-  vec3 reflection          = reflect (observer_to_surface, n);
 
   return R2_light_positional_vectors_t (
     observer_to_surface,
     surface_to_light,
     light_to_surface,
     n,
-    reflection,
     distance
   );
 }

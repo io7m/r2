@@ -38,8 +38,10 @@ R2_lightSphericalSpecularPhongTerm (
   const vec3 specular_color,
   const float specular_exponent)
 {
+  vec3 reflection =
+    reflect (v.observer_to_surface, v.normal);
   float base_factor =
-    max (0.0, dot (v.reflection, v.surface_to_light));
+    max (0.0, dot (reflection, v.surface_to_light));
   float factor =
     pow (base_factor, specular_exponent);
   vec3 color =
