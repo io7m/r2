@@ -20,7 +20,7 @@ R2_deferredLightMain(
     R2_light_spherical, vectors.distance);
 
   vec3 diffuse =
-    R2_lightSphericalDiffuseTerm(R2_light_spherical, vectors);
+    R2_lightSphericalDiffuseLambertTerm(R2_light_spherical, vectors);
   vec3 specular =
     R2_lightSphericalSpecularTerm(
       R2_light_spherical,

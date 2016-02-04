@@ -20,7 +20,7 @@ R2_deferredLightMain(
     R2_light_spherical, vectors.distance);
 
   vec3 diffuse =
-    R2_lightSphericalDiffuseTerm(R2_light_spherical, vectors);
+    R2_lightSphericalDiffuseLambertTerm(R2_light_spherical, vectors);
 
   return R2_light_output_t(
     diffuse * attenuation, vec3 (0.0));

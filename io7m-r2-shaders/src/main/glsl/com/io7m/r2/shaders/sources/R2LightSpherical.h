@@ -6,7 +6,7 @@
 
 #include "R2LightPositional.h"
 
-/// Calculate the diffuse term for a spherical light.
+/// Calculate the Lambert diffuse term for a spherical light.
 ///
 /// @param light The light parameters
 /// @param v     The calculated light vectors
@@ -14,7 +14,7 @@
 /// @return The diffuse term
 
 vec3
-R2_lightSphericalDiffuseTerm (
+R2_lightSphericalDiffuseLambertTerm (
   const R2_light_positional_t light,
   const R2_light_positional_vectors_t v)
 {
