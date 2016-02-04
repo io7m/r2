@@ -53,7 +53,7 @@ import java.util.Optional;
  * highlights.
  */
 
-public final class R2LightShaderSphericalDiffuseOnlySingle extends
+public final class R2LightShaderSphericalLambertSingle extends
   R2AbstractShader<R2LightSphericalSingleType>
   implements R2ShaderLightSingleType<R2LightSphericalSingleType>
 {
@@ -85,7 +85,7 @@ public final class R2LightShaderSphericalDiffuseOnlySingle extends
   private final PVector3FType<R2SpaceEyeType>   position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
 
-  private R2LightShaderSphericalDiffuseOnlySingle(
+  private R2LightShaderSphericalLambertSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -94,10 +94,10 @@ public final class R2LightShaderSphericalDiffuseOnlySingle extends
       in_shaders,
       in_sources,
       in_pool,
-      "R2LightSphericalDiffuseOnlySingle",
-      "R2LightSphericalDiffuseOnlySingle.vert",
+      "R2LightSphericalLambertSingle",
+      "R2LightSphericalLambertSingle.vert",
       Optional.empty(),
-      "R2LightSphericalDiffuseOnlySingle.frag");
+      "R2LightSphericalLambertSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     final Map<String, JCGLProgramUniformType> us = p.getUniforms();
@@ -203,7 +203,7 @@ public final class R2LightShaderSphericalDiffuseOnlySingle extends
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2LightShaderSphericalDiffuseOnlySingle(
+    return new R2LightShaderSphericalLambertSingle(
       in_shaders, in_sources, in_pool);
   }
 

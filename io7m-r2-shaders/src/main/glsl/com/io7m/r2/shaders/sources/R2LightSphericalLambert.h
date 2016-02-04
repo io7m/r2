@@ -1,8 +1,8 @@
-#ifndef R2_LIGHT_SPHERICAL_SPECULAR_H
-#define R2_LIGHT_SPHERICAL_SPECULAR_H
+#ifndef R2_LIGHT_SPHERICAL_LAMBERT_H
+#define R2_LIGHT_SPHERICAL_LAMBERT_H
 
-/// \file R2LightSphericalSpecular.h
-/// \brief A spherical light with Phong specular highlights
+/// \file R2LightSphericalLambert.h
+/// \brief A spherical light with no specular highlights
 
 #include "R2LightShaderMain.h"
 #include "R2LightPositional.h"
@@ -21,15 +21,9 @@ R2_deferredLightMain(
 
   vec3 diffuse =
     R2_lightSphericalDiffuseLambertTerm(R2_light_spherical, vectors);
-  vec3 specular =
-    R2_lightSphericalSpecularPhongTerm(
-      R2_light_spherical,
-      vectors,
-      surface.specular,
-      surface.specular_exponent);
 
   return R2_light_output_t(
-    diffuse * attenuation, specular * attenuation);
+    diffuse * attenuation, vec3 (0.0));
 }
 
-#endif // R2_LIGHT_SPHERICAL_SPECULAR_H
+#endif // R2_LIGHT_SPHERICAL_LAMBERT_H

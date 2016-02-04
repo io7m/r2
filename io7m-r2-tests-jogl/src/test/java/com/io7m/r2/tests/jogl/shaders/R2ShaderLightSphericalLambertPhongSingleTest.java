@@ -17,13 +17,14 @@
 package com.io7m.r2.tests.jogl.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
-import com.io7m.r2.tests.core.shaders.R2DeferredLightShaderSphericalSpecularSingleContract;
 
 
+import com.io7m.r2.tests.core.shaders
+  .R2ShaderLightSphericalLambertPhongSingleContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public final class R2DeferredLightShaderSphericalSpecularSingleTest extends
-  R2DeferredLightShaderSphericalSpecularSingleContract
+public final class R2ShaderLightSphericalLambertPhongSingleTest extends
+  R2ShaderLightSphericalLambertPhongSingleContract
 {
   @Override
   protected JCGLContextType newGL33Context(

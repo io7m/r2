@@ -60,7 +60,7 @@ import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShaderBatchedType;
 import com.io7m.r2.core.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.R2LightShaderSphericalSpecularSingle;
+import com.io7m.r2.core.shaders.R2LightShaderSphericalLambertPhongSingle;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
@@ -196,7 +196,7 @@ public final class ExampleLightSpherical0 implements R2ExampleCustomType
       id_pool, this.geom_shader, this.geom_shader_params);
 
     this.light_shader =
-      R2LightShaderSphericalSpecularSingle.newShader(
+      R2LightShaderSphericalLambertPhongSingle.newShader(
         g.getShaders(), sources, id_pool);
     this.light =
       R2LightSphericalSimpleSingle.newLight(this.sphere, id_pool);

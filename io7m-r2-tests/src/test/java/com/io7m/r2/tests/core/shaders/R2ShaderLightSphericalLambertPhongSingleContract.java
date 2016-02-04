@@ -22,15 +22,15 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.R2LightShaderSphericalSpecularSingle;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.R2LightShaderSphericalLambertPhongSingle;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Assert;
 import org.junit.Test;
 
-public abstract class R2DeferredLightShaderSphericalSpecularSingleContract extends
+public abstract class R2ShaderLightSphericalLambertPhongSingleContract extends
   R2JCGLContract
 {
   @Test
@@ -43,8 +43,10 @@ public abstract class R2DeferredLightShaderSphericalSpecularSingleContract exten
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderLightSingleType<R2LightSphericalSingleType> s =
-      R2LightShaderSphericalSpecularSingle.newShader(
-        g.getShaders(), sources, pool);
+      R2LightShaderSphericalLambertPhongSingle.newShader(
+        g.getShaders(),
+        sources,
+        pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

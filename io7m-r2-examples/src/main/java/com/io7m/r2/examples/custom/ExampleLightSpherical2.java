@@ -69,7 +69,7 @@ import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.filters.R2FilterLightApplicator;
 import com.io7m.r2.core.filters.R2FilterLightApplicatorType;
-import com.io7m.r2.core.shaders.R2LightShaderSphericalSpecularSingle;
+import com.io7m.r2.core.shaders.R2LightShaderSphericalLambertPhongSingle;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.examples.R2ExampleCustomType;
@@ -172,7 +172,7 @@ public final class ExampleLightSpherical2 implements R2ExampleCustomType
       id_pool, this.geom_shader, this.geom_shader_params);
 
     this.light_shader =
-      R2LightShaderSphericalSpecularSingle.newShader(
+      R2LightShaderSphericalLambertPhongSingle.newShader(
         g.getShaders(), sources, id_pool);
     this.light =
       R2LightSphericalSimpleSingle.newLight(this.sphere, id_pool);

@@ -52,7 +52,7 @@ import java.util.Optional;
  * Spherical light shader for single lights.
  */
 
-public final class R2LightShaderSphericalSpecularSingle extends
+public final class R2LightShaderSphericalLambertPhongSingle extends
   R2AbstractShader<R2LightSphericalSingleType>
   implements R2ShaderLightSingleType<R2LightSphericalSingleType>
 {
@@ -84,7 +84,7 @@ public final class R2LightShaderSphericalSpecularSingle extends
   private final PVector3FType<R2SpaceEyeType>   position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
 
-  private R2LightShaderSphericalSpecularSingle(
+  private R2LightShaderSphericalLambertPhongSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -93,10 +93,10 @@ public final class R2LightShaderSphericalSpecularSingle extends
       in_shaders,
       in_sources,
       in_pool,
-      "R2LightSphericalSpecularSingle",
-      "R2LightSphericalSpecularSingle.vert",
+      "R2LightSphericalLambertPhongSingle",
+      "R2LightSphericalLambertPhongSingle.vert",
       Optional.empty(),
-      "R2LightSphericalSpecularSingle.frag");
+      "R2LightSphericalLambertPhongSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     final Map<String, JCGLProgramUniformType> us = p.getUniforms();
@@ -202,7 +202,7 @@ public final class R2LightShaderSphericalSpecularSingle extends
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2LightShaderSphericalSpecularSingle(
+    return new R2LightShaderSphericalLambertPhongSingle(
       in_shaders, in_sources, in_pool);
   }
 

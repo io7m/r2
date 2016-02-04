@@ -32,20 +32,24 @@ import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
-import com.io7m.jtensors.parameterized.PVector3FType;
+import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceBatchedDynamic;
 import com.io7m.r2.core.R2InstanceBatchedDynamicType;
+import com.io7m.r2.core.R2InstanceSingle;
+import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightBuffer;
 import com.io7m.r2.core.R2LightBufferType;
+import com.io7m.r2.core.R2LightDirectionalSingle;
 import com.io7m.r2.core.R2LightRendererType;
-import com.io7m.r2.core.R2LightSphericalSimpleSingle;
-import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueBatched;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
+import com.io7m.r2.core.R2MaterialOpaqueSingle;
+import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionFOV;
 import com.io7m.r2.core.R2SceneOpaqueLights;
@@ -57,6 +61,7 @@ import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShaderBatchedType;
 import com.io7m.r2.core.R2ShaderLightSingleType;
+import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
@@ -68,9 +73,10 @@ import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.filters.R2FilterLightApplicator;
 import com.io7m.r2.core.filters.R2FilterLightApplicatorType;
-import com.io7m.r2.core.shaders.R2LightShaderSphericalLambertPhongSingle;
+import com.io7m.r2.core.shaders.R2LightShaderDirectionalSpecularSingle;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
@@ -81,42 +87,46 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 
 // CHECKSTYLE_JAVADOC:OFF
 
-public final class ExampleLightSpherical1 implements R2ExampleCustomType
+public final class ExampleLightDirectional2 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
-  private       R2TransformOST[]                                  transforms;
 
-  private JCGLClearSpecification light_clear_spec;
-  private R2SceneStencilsType stencils;
-  private R2StencilRendererType stencil_renderer;
+  private R2SceneStencilsType    stencils;
+  private R2StencilRendererType  stencil_renderer;
   private R2GeometryRendererType geom_renderer;
-  private R2LightRendererType light_renderer;
-  private R2MatricesType matrices;
-  private R2ProjectionFOV projection;
-  private R2UnitQuadType quad;
-  private R2InstanceBatchedDynamicType instance;
-  private R2SceneOpaquesType opaques;
-  private R2SceneOpaqueLightsType lights;
-  private R2GeometryBufferType gbuffer;
-  private R2LightBufferType lbuffer;
-  private JCGLClearSpecification geom_clear_spec;
-  private JCGLClearSpecification screen_clear_spec;
+  private R2MatricesType         matrices;
+  private R2ProjectionFOV        projection;
+  private R2UnitQuadType         quad;
+  private R2SceneOpaquesType     opaques;
+  private R2GeometryBufferType   gbuffer;
+  private JCGLClearSpecification clear_spec;
 
-  private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
-    geom_shader;
+  private R2ShaderSingleType<R2SurfaceShaderBasicParameters>
+                                                              shader;
   private R2SurfaceShaderBasicParameters
-    geom_shader_params;
-  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters>
-    geom_material;
+                                                              shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
+                                                                      material;
+  private R2UnitSphereType                                            sphere;
+  private R2InstanceSingleType                                        instance;
+  private R2TextureUnitAllocatorType                                  textures;
+  private R2InstanceBatchedDynamicType                                batched_instance;
+  private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>         batched_shader;
+  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_material;
 
-  private R2ShaderLightSingleType<R2LightSphericalSingleType> light_shader;
-  private R2LightSphericalSingleType                          light;
-  private R2UnitSphereType                                    sphere;
-  private R2FilterLightApplicatorType                         filter;
-  private R2TextureUnitAllocatorType                          textures;
 
 
-  public ExampleLightSpherical1()
+  private R2ShaderLightSingleType<R2LightDirectionalSingle> light_shader;
+  private R2LightDirectionalSingle                          light;
+  private R2FilterLightApplicatorType                       filter;
+  private JCGLClearSpecification                            geom_clear_spec;
+  private JCGLClearSpecification                            screen_clear_spec;
+  private JCGLClearSpecification                            light_clear_spec;
+  private R2SceneOpaqueLightsType                           lights;
+  private R2LightRendererType                               light_renderer;
+  private R2LightBufferType                                 lbuffer;
+
+  public ExampleLightDirectional2()
   {
     this.view = PMatrixHeapArrayM4x4F.newMatrix();
   }
@@ -146,66 +156,70 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
       m.getProjectionMatrices(),
       (float) Math.toRadians(90.0f), 640.0f / 480.0f, 0.01f, 1000.0f);
 
+    m.getViewMatrices().lookAt(
+      this.view,
+      new VectorI3F(0.0f, 0.0f, 5.0f),
+      new VectorI3F(0.0f, 0.0f, 0.0f),
+      new VectorI3F(0.0f, 1.0f, 0.0f));
+
     final R2IDPoolType id_pool = m.getIDPool();
 
-    final int width = 16;
-    final int height = 16;
-    final int depth = 16;
+    this.sphere = R2UnitSphere.newUnitSphere8(g);
+    this.quad = R2UnitQuad.newUnitQuad(g);
 
-    final int instance_count = width * height * depth;
-    this.instance =
-      R2InstanceBatchedDynamic.newBatch(
-        id_pool,
-        g.getArrayBuffers(),
-        g.getArrayObjects(),
-        this.quad.getArrayObject(),
-        instance_count);
+    final R2TransformOST tr = R2TransformOST.newTransform();
+    tr.getTranslation().set3F(1.0f, 0.0f, 0.0f);
+    this.instance = R2InstanceSingle.newInstance(
+      id_pool,
+      this.sphere.getArrayObject(),
+      tr,
+      PMatrixI3x3F.identity());
 
-    this.transforms = new R2TransformOST[instance_count];
+    this.batched_instance = R2InstanceBatchedDynamic.newBatch(
+      id_pool,
+      g.getArrayBuffers(),
+      g.getArrayObjects(),
+      this.sphere.getArrayObject(),
+      1);
 
-    int index = 0;
-    for (int x = 0; x < width; ++x) {
-      for (int y = 0; y < height; ++y) {
-        for (int z = 0; z < depth; ++z) {
-          final R2TransformOST t = R2TransformOST.newTransform();
-          t.setScale(0.2f);
-          final PVector3FType<R2SpaceWorldType> tr = t.getTranslation();
-          final float fx = x - (width / 2);
-          final float fy = y - (height / 2);
-          final float fz = -z * 1.5f;
-          tr.set3F(fx, fy, fz);
-          this.transforms[index] = t;
-          this.instance.enableInstance(this.transforms[index]);
-          ++index;
-        }
-      }
-    }
+    final R2TransformOST batched_transform = R2TransformOST.newTransform();
+    batched_transform.getTranslation().set3F(-1.0f, 0.0f, 0.0f);
+    this.batched_instance.enableInstance(batched_transform);
 
     final R2ShaderSourcesType sources =
       R2ShaderSourcesResources.newSources(R2Shaders.class);
 
-    this.geom_shader =
-      R2SurfaceShaderBasicBatched.newShader(
+    this.shader_params =
+      R2SurfaceShaderBasicParameters.newParameters(m.getTextureDefaults());
+
+    this.shader =
+      R2SurfaceShaderBasicSingle.newShader(
         g.getShaders(),
         sources,
         id_pool);
-    this.geom_shader_params =
-      R2SurfaceShaderBasicParameters.newParameters(
-        m.getTextureDefaults());
-    this.geom_shader_params.getSpecularColor().set3F(1.0f, 1.0f, 1.0f);
-    this.geom_shader_params.setSpecularExponent(32.0f);
-    this.geom_material = R2MaterialOpaqueBatched.newMaterial(
-      id_pool, this.geom_shader, this.geom_shader_params);
+
+    this.batched_shader =
+      R2SurfaceShaderBasicBatched.newShader(g.getShaders(), sources, id_pool);
+
+    this.batched_material = R2MaterialOpaqueBatched.newMaterial(
+      id_pool,
+      this.batched_shader,
+      this.shader_params);
+
+    this.material = R2MaterialOpaqueSingle.newMaterial(
+      id_pool,
+      this.shader,
+      this.shader_params);
 
     this.light_shader =
-      R2LightShaderSphericalLambertPhongSingle.newShader(
+      R2LightShaderDirectionalSpecularSingle.newShader(
         g.getShaders(), sources, id_pool);
     this.light =
-      R2LightSphericalSimpleSingle.newLight(this.sphere, id_pool);
-    this.light.getColor().set3F(1.0f, 1.0f, 1.0f);
-    this.light.setIntensity(1.0f);
-    this.light.getPosition().set3F(0.0f, 0.0f, 1.0f);
-    this.light.setRadius(4.0f);
+      R2LightDirectionalSingle.newLight(this.quad, id_pool);
+    this.light.getColor().set3F(1.0f, 0.0f, 0.0f);
+    this.light.getDirection().set3F(-0.4f, -0.3f, -0.2f);
+    PVectorM3F.normalizeInPlace(this.light.getDirection());
+    this.light.setIntensity(0.25f);
 
     this.filter =
       R2FilterLightApplicator.newFilter(
@@ -250,7 +264,9 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
 
     this.opaques.opaquesReset();
-    this.opaques.opaquesAddBatchedInstance(this.instance, this.geom_material);
+    this.opaques.opaquesAddSingleInstance(this.instance, this.material);
+    this.opaques.opaquesAddBatchedInstance(
+      this.batched_instance, this.batched_material);
 
     this.lights.opaqueLightsReset();
     this.lights.opaqueLightsAddSingle(this.light, this.light_shader);
@@ -325,7 +341,7 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
     final R2MainType m)
   {
     this.quad.delete(g);
-    this.geom_shader.delete(g);
+    this.shader.delete(g);
     this.stencil_renderer.delete(g);
   }
 }
