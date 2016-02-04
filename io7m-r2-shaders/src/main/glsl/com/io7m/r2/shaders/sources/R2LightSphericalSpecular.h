@@ -22,7 +22,7 @@ R2_deferredLightMain(
   vec3 diffuse =
     R2_lightSphericalDiffuseLambertTerm(R2_light_spherical, vectors);
   vec3 specular =
-    R2_lightSphericalSpecularTerm(
+    R2_lightSphericalSpecularPhongTerm(
       R2_light_spherical,
       vectors,
       surface.specular,

@@ -22,7 +22,7 @@ R2_lightSphericalDiffuseLambertTerm (
   return (light.color * light.intensity) * factor;
 }
 
-/// Calculate the specular term for a spherical light
+/// Calculate the specular Phong term for a spherical light
 ///
 /// @param light             The light parameters
 /// @param v                 The calculated light vectors
@@ -32,7 +32,7 @@ R2_lightSphericalDiffuseLambertTerm (
 /// @return The specular term
 
 vec3
-R2_lightSphericalSpecularTerm (
+R2_lightSphericalSpecularPhongTerm (
   const R2_light_positional_t light,
   const R2_light_positional_vectors_t v,
   const vec3 specular_color,
