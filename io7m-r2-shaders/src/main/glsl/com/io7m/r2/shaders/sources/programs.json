@@ -4,6 +4,11 @@
     "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalLambertPhongSingle.frag"
   },
 
+  "R2LightSphericalLambertBlinnPhongSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalLambertBlinnPhongSingle.frag"
+  },
+
   "R2LightSphericalLambertSingle": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalLambertSingle.frag"

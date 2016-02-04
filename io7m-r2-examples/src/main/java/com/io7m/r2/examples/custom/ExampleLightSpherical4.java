@@ -75,7 +75,7 @@ import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.filters.R2FilterLightApplicator;
 import com.io7m.r2.core.filters.R2FilterLightApplicatorType;
-import com.io7m.r2.core.shaders.R2LightShaderSphericalLambertPhongSingle;
+import com.io7m.r2.core.shaders.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
@@ -89,7 +89,7 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 
 // CHECKSTYLE_JAVADOC:OFF
 
-public final class ExampleLightSpherical3 implements R2ExampleCustomType
+public final class ExampleLightSpherical4 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
@@ -127,7 +127,7 @@ public final class ExampleLightSpherical3 implements R2ExampleCustomType
   private R2ShaderBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
 
-  public ExampleLightSpherical3()
+  public ExampleLightSpherical4()
   {
     this.view = PMatrixHeapArrayM4x4F.newMatrix();
   }
@@ -224,7 +224,7 @@ public final class ExampleLightSpherical3 implements R2ExampleCustomType
       id_pool, this.batched_geom_shader, this.geom_shader_params);
 
     this.light_shader =
-      R2LightShaderSphericalLambertPhongSingle.newShader(
+      R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
         g.getShaders(), sources, id_pool);
     this.light =
       R2LightSphericalSimpleSingle.newLight(this.sphere, id_pool);
