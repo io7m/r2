@@ -25,22 +25,28 @@ import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
 import com.io7m.r2.core.R2ImageBuffer;
 import com.io7m.r2.core.R2ImageBufferType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.R2TextureUnitAllocator;
+import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ImageBufferContract extends R2JCGLContract
 {
   @Test
-  public void testIdentities()
+  public final void testIdentities()
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
+    final R2TextureUnitAllocatorType a =
+      R2TextureUnitAllocator.newAllocatorWithStack(
+        4, g.getTextures().textureGetUnits());
 
     final AreaInclusiveUnsignedI area = AreaInclusiveUnsignedI.of(
       new UnsignedRangeInclusiveI(0, 639),
       new UnsignedRangeInclusiveI(0, 479));
     final R2ImageBufferType gb =
-      R2ImageBuffer.newImageBuffer(g, area);
+      R2ImageBuffer.newImageBuffer(
+        g.getFramebuffers(), g.getTextures(), a.getRootContext(), area);
 
     Assert.assertEquals(640L * 480L * 4L, gb.getRange().getInterval());
     Assert.assertFalse(gb.isDeleted());

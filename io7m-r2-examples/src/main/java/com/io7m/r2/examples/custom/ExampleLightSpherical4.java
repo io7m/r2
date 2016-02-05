@@ -67,8 +67,6 @@ import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
@@ -93,21 +91,21 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private JCGLClearSpecification light_clear_spec;
-  private R2SceneStencilsType stencils;
-  private R2StencilRendererType stencil_renderer;
-  private R2GeometryRendererType geom_renderer;
-  private R2LightRendererType light_renderer;
-  private R2MatricesType matrices;
-  private R2ProjectionFOV projection;
-  private R2UnitQuadType quad;
-  private R2InstanceSingleType instance;
-  private R2SceneOpaquesType opaques;
+  private JCGLClearSpecification  light_clear_spec;
+  private R2SceneStencilsType     stencils;
+  private R2StencilRendererType   stencil_renderer;
+  private R2GeometryRendererType  geom_renderer;
+  private R2LightRendererType     light_renderer;
+  private R2MatricesType          matrices;
+  private R2ProjectionFOV         projection;
+  private R2UnitQuadType          quad;
+  private R2InstanceSingleType    instance;
+  private R2SceneOpaquesType      opaques;
   private R2SceneOpaqueLightsType lights;
-  private R2GeometryBufferType gbuffer;
-  private R2LightBufferType lbuffer;
-  private JCGLClearSpecification geom_clear_spec;
-  private JCGLClearSpecification screen_clear_spec;
+  private R2GeometryBufferType    gbuffer;
+  private R2LightBufferType       lbuffer;
+  private JCGLClearSpecification  geom_clear_spec;
+  private JCGLClearSpecification  screen_clear_spec;
 
   private R2ShaderSingleType<R2SurfaceShaderBasicParameters>
     geom_shader;
@@ -116,16 +114,19 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
     geom_material;
 
-  private R2ShaderLightSingleType<R2LightSphericalSingleType> light_shader;
-  private R2LightSphericalSingleType                          light;
-  private R2UnitSphereType                                    sphere;
-  private R2FilterLightApplicatorType                         filter;
-  private R2TextureUnitAllocatorType                          textures;
-  private R2InstanceBatchedDynamicType                        batched_instance;
+  private R2ShaderLightSingleType<R2LightSphericalSingleType>
+                                      light_shader;
+  private R2LightSphericalSingleType  light;
+  private R2UnitSphereType            sphere;
+  private R2FilterLightApplicatorType filter;
+  private R2InstanceBatchedDynamicType
+                                      batched_instance;
   private R2TransformOST[]
-                                                              batched_transforms;
-  private R2ShaderBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
-  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
+                                      batched_transforms;
+  private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
+                                      batched_geom_shader;
+  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters>
+                                      batched_geom_material;
 
   public ExampleLightSpherical4()
   {
@@ -148,10 +149,16 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     this.light_renderer = m.getLightRenderer();
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
-    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
-    this.lbuffer = R2LightBuffer.newLightBuffer(g, area);
-    this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
-      4, g.getTextures().textureGetUnits());
+    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
+      g.getFramebuffers(),
+      g.getTextures(),
+      m.getTextureUnitAllocator().getRootContext(),
+      area);
+    this.lbuffer = R2LightBuffer.newLightBuffer(
+      g.getFramebuffers(),
+      g.getTextures(),
+      m.getTextureUnitAllocator().getRootContext(),
+      area);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -315,7 +322,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
         t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g, t.textures.getRootContext(), mo, t.opaques);
+          g, m.getTextureUnitAllocator().getRootContext(), mo, t.opaques);
         g_fb.framebufferDrawUnbind();
 
         g_fb.framebufferDrawBind(lbuffer_fb);
@@ -329,7 +336,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           g,
           t.gbuffer,
           t.lbuffer.getArea(),
-          t.textures.getRootContext(),
+          m.getTextureUnitAllocator().getRootContext(),
           mo,
           t.lights);
         g_fb.framebufferDrawUnbind();
@@ -341,7 +348,10 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         g_cl.clear(t.screen_clear_spec);
 
         this.filter.runLightApplicatorWithBoundBuffer(
-          g, t.textures.getRootContext(), this.gbuffer, this.lbuffer);
+          g,
+          m.getTextureUnitAllocator().getRootContext(),
+          this.gbuffer,
+          this.lbuffer);
         return Unit.unit();
       });
     }

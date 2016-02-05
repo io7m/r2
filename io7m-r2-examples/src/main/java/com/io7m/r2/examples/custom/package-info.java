@@ -18,5 +18,6 @@
  * Custom examples.
  */
 
-@com.io7m.jnull.NonNullByDefault package com.io7m.r2.examples.custom;
+@com.io7m.jnull.NonNullByDefault
+package com.io7m.r2.examples.custom;
 

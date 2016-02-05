@@ -16,8 +16,15 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLTexture2DType;
+import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
+import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
+import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLTextureWrapS;
+import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jfunctional.Pair;
 
 /**
  * The type of texture unit contexts that can have new textures bound.
@@ -37,4 +44,14 @@ public interface R2TextureUnitContextMutableType
   JCGLTextureUnitType unitContextBindTexture2D(
     JCGLTexturesType g,
     R2Texture2DUsableType t);
+
+  Pair<JCGLTextureUnitType, R2Texture2DType> unitContextAllocateTexture2D(
+    JCGLTexturesType g,
+    long width,
+    long height,
+    JCGLTextureFormat format,
+    JCGLTextureWrapS wrap_s,
+    JCGLTextureWrapT wrap_t,
+    JCGLTextureFilterMinification min_filter,
+    JCGLTextureFilterMagnification mag_filter);
 }
