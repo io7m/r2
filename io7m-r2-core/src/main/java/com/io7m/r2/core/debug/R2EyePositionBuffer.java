@@ -23,7 +23,6 @@ import com.io7m.jcanephora.core.JCGLFramebufferColorAttachmentPointType;
 import com.io7m.jcanephora.core.JCGLFramebufferDrawBufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
-import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
@@ -33,13 +32,15 @@ import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2Exception;
-import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.R2TextureUnitContextParentType;
+import com.io7m.r2.core.R2TextureUnitContextType;
 
 import java.util.List;
 
@@ -74,62 +75,64 @@ public final class R2EyePositionBuffer implements R2EyePositionBufferType
   /**
    * Construct a new eye-space position buffer.
    *
-   * @param g    A graphics interface
+   * @param g_fb A framebuffer interface
+   * @param g_t  A texture interface
+   * @param tc   A texture unit context
    * @param area The inclusive area of the buffer
    *
    * @return A new eye-space position buffer
    */
 
   public static R2EyePositionBufferType newEyePositionBuffer(
-    final JCGLInterfaceGL33Type g,
+    final JCGLFramebuffersType g_fb,
+    final JCGLTexturesType g_t,
+    final R2TextureUnitContextParentType tc,
     final AreaInclusiveUnsignedIType area)
   {
-    final JCGLFramebuffersType g_fb = g.getFramebuffers();
-    final JCGLTexturesType g_t = g.getTextures();
     final List<JCGLFramebufferColorAttachmentPointType> points =
       g_fb.framebufferGetColorAttachments();
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
-    final List<JCGLTextureUnitType> units =
-      g_t.textureGetUnits();
-    final JCGLTextureUnitType u_0 = units.get(0);
 
     final UnsignedRangeInclusiveI range_x = area.getRangeX();
     final UnsignedRangeInclusiveI range_y = area.getRangeY();
 
-    final JCGLTexture2DType t_eye =
-      g_t.texture2DAllocate(
-        u_0,
-        (long) range_x.getInterval(),
-        (long) range_y.getInterval(),
-        JCGLTextureFormat.TEXTURE_FORMAT_RGBA_32F_16BPP,
-        JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
-        JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+    final R2TextureUnitContextType cc = tc.unitContextNewWithReserved(2);
+    try {
+      final Pair<JCGLTextureUnitType, R2Texture2DType> p_eye =
+        cc.unitContextAllocateTexture2D(
+          g_t,
+          (long) range_x.getInterval(),
+          (long) range_y.getInterval(),
+          JCGLTextureFormat.TEXTURE_FORMAT_RGBA_32F_16BPP,
+          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-    final JCGLTexture2DType t_depth =
-      g_t.texture2DAllocate(
-        u_0,
-        (long) range_x.getInterval(),
-        (long) range_y.getInterval(),
-        JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
-        JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
-        JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+      final Pair<JCGLTextureUnitType, R2Texture2DType> p_depth =
+        cc.unitContextAllocateTexture2D(
+          g_t,
+          (long) range_x.getInterval(),
+          (long) range_y.getInterval(),
+          JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
+          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-    g_t.textureUnitUnbind(u_0);
+      final R2Texture2DType rt_eye = p_eye.getRight();
+      final R2Texture2DType rt_depth = p_depth.getRight();
 
-    final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), t_eye);
-    fbb.attachDepthStencilTexture2D(t_depth);
+      final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
+      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_eye.get());
+      fbb.attachDepthStencilTexture2D(rt_depth.get());
 
-    final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
-    return new R2EyePositionBuffer(
-      fb,
-      R2Texture2DStatic.of(t_eye),
-      R2Texture2DStatic.of(t_depth));
+      final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
+      return new R2EyePositionBuffer(fb, rt_eye, rt_depth);
+    } finally {
+      cc.unitContextFinish(g_t);
+    }
   }
 
   @Override

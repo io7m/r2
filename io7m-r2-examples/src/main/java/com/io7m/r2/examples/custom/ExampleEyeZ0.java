@@ -33,10 +33,6 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2GeometryRendererType;
@@ -56,6 +52,8 @@ import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
+import com.io7m.r2.core.R2TextureUnitAllocator;
+import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2UnitQuad;
@@ -65,6 +63,8 @@ import com.io7m.r2.core.debug.R2EyeZBuffer;
 import com.io7m.r2.core.debug.R2EyeZBufferType;
 import com.io7m.r2.core.debug.R2EyeZRenderer;
 import com.io7m.r2.core.debug.R2EyeZRendererType;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
@@ -124,10 +124,19 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
     this.geom_renderer = m.getGeometryRenderer();
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
-    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
-    this.zbuffer = R2EyeZBuffer.newEyeZBuffer(g, area);
     this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
       4, g.getTextures().textureGetUnits());
+
+    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
+      g.getFramebuffers(),
+      g.getTextures(),
+      this.textures.getRootContext(),
+      area);
+    this.zbuffer = R2EyeZBuffer.newEyeZBuffer(
+      g.getFramebuffers(),
+      g.getTextures(),
+      this.textures.getRootContext(),
+      area);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),

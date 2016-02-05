@@ -51,8 +51,6 @@ import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2UnitQuad;
@@ -85,14 +83,13 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
   private JCGLClearSpecification clear_spec;
 
   private R2ShaderSingleType<R2SurfaceShaderBasicParameters>
-                                     shader;
+                               shader;
   private R2SurfaceShaderBasicParameters
-                                     shader_params;
+                               shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-                                     material;
-  private R2UnitSphereType           sphere;
-  private R2InstanceSingleType       instance;
-  private R2TextureUnitAllocatorType textures;
+                               material;
+  private R2UnitSphereType     sphere;
+  private R2InstanceSingleType instance;
 
   public ExampleGeometry4()
   {
@@ -112,9 +109,11 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
     this.geom_renderer = m.getGeometryRenderer();
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
-    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
-    this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
-      4, g.getTextures().textureGetUnits());
+    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
+      g.getFramebuffers(),
+      g.getTextures(),
+      m.getTextureUnitAllocator().getRootContext(),
+      area);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -193,7 +192,7 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
       this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g, t.textures.getRootContext(), mo, t.opaques);
+          g, m.getTextureUnitAllocator().getRootContext(), mo, t.opaques);
         return Unit.unit();
       });
 

@@ -59,8 +59,6 @@ import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
@@ -109,7 +107,6 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
 
   private R2ShaderLightSingleType<R2LightDirectionalSingle> light_shader;
   private R2LightDirectionalSingle                          light;
-  private R2TextureUnitAllocatorType                        textures;
   private R2FilterLightApplicatorType                       filter;
 
   public ExampleLightDirectional0()
@@ -132,10 +129,16 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
     this.light_renderer = m.getLightRenderer();
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
-    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(g, area);
-    this.lbuffer = R2LightBuffer.newLightBuffer(g, area);
-    this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
-      4, g.getTextures().textureGetUnits());
+    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
+      g.getFramebuffers(),
+      g.getTextures(),
+      m.getTextureUnitAllocator().getRootContext(),
+      area);
+    this.lbuffer = R2LightBuffer.newLightBuffer(
+      g.getFramebuffers(),
+      g.getTextures(),
+      m.getTextureUnitAllocator().getRootContext(),
+      area);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -284,7 +287,7 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
 
         t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g, t.textures.getRootContext(), mo, t.opaques);
+          g, m.getTextureUnitAllocator().getRootContext(), mo, t.opaques);
         g_fb.framebufferDrawUnbind();
 
         g_fb.framebufferDrawBind(lbuffer_fb);
@@ -298,7 +301,7 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
           g,
           t.gbuffer,
           t.lbuffer.getArea(),
-          t.textures.getRootContext(),
+          m.getTextureUnitAllocator().getRootContext(),
           mo,
           t.lights);
         g_fb.framebufferDrawUnbind();
@@ -310,7 +313,10 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
         g_cl.clear(t.screen_clear_spec);
 
         this.filter.runLightApplicatorWithBoundBuffer(
-          g, t.textures.getRootContext(), this.gbuffer, this.lbuffer);
+          g,
+          m.getTextureUnitAllocator().getRootContext(),
+          this.gbuffer,
+          this.lbuffer);
         return Unit.unit();
       });
     }
