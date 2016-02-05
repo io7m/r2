@@ -16,11 +16,17 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLTexture2DType;
+
 /**
  * The type of 2D textures.
  */
 
 public interface R2Texture2DType extends R2Texture2DUsableType, R2DeletableType
 {
+  /**
+   * @return The current texture
+   */
 
+  JCGLTexture2DType getReal();
 }

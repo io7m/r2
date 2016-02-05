@@ -16,8 +16,15 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLTexture2DType;
+import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
+import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
+import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLTextureWrapS;
+import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jfunctional.Pair;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -260,6 +267,49 @@ public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
       ++this.next;
       return u;
     }
+
+    @Override
+    public Pair<JCGLTextureUnitType, R2Texture2DType>
+    unitContextAllocateTexture2D(
+      final JCGLTexturesType g,
+      final long width,
+      final long height,
+      final JCGLTextureFormat format,
+      final JCGLTextureWrapS wrap_s,
+      final JCGLTextureWrapT wrap_t,
+      final JCGLTextureFilterMinification min_filter,
+      final JCGLTextureFilterMagnification mag_filter)
+    {
+      NullCheck.notNull(g);
+      NullCheck.notNull(format);
+      NullCheck.notNull(wrap_s);
+      NullCheck.notNull(wrap_t);
+      NullCheck.notNull(min_filter);
+      NullCheck.notNull(mag_filter);
+
+      if (!this.isCurrent()) {
+        throw new R2ExceptionTextureUnitContextNotActive(
+          "Context not current");
+      }
+
+      this.checkTextureUnitsRequired(this.next + 1);
+
+      if (R2TextureUnitAllocator.LOG.isTraceEnabled()) {
+        R2TextureUnitAllocator.LOG.trace("allocate 2d");
+      }
+
+      final List<JCGLTextureUnitType> us = R2TextureUnitAllocator.this.units;
+      final JCGLTextureUnitType u = us.get(this.next);
+      final JCGLTexture2DType t = g.texture2DAllocate(
+        u, width, height, format, wrap_s, wrap_t, min_filter, mag_filter);
+
+      final R2Texture2DType rt = R2Texture2DStatic.of(t);
+      g.texture2DBind(u, t);
+      this.bindings[this.next] = rt;
+      ++this.next;
+      return Pair.pair(u, rt);
+    }
+
 
     @Override
     public void unitContextFinish(final JCGLTexturesType g)

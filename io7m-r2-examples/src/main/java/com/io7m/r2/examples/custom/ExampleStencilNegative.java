@@ -49,12 +49,12 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private R2SceneStencilsType   stencils;
+  private R2SceneStencilsType stencils;
   private R2StencilRendererType stencil_renderer;
-  private R2MatricesType        matrices;
-  private R2ProjectionFOV       projection;
-  private R2UnitQuadType        quad;
-  private R2InstanceSingleType  instance;
+  private R2MatricesType matrices;
+  private R2ProjectionFOV projection;
+  private R2UnitQuadType quad;
+  private R2InstanceSingleType instance;
 
   public ExampleStencilNegative()
   {

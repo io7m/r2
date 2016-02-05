@@ -23,7 +23,6 @@ import com.io7m.jcanephora.core.JCGLFramebufferColorAttachmentPointType;
 import com.io7m.jcanephora.core.JCGLFramebufferDrawBufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
-import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
@@ -33,6 +32,7 @@ import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
@@ -66,47 +66,50 @@ public final class R2ImageBuffer implements R2ImageBufferType
   /**
    * Construct a new image buffer.
    *
-   * @param g    A graphics interface
+   * @param g_fb A framebuffer interface
+   * @param g_t  A texture interface
+   * @param tc   A texture unit context
    * @param area The inclusive area of the buffer
    *
    * @return A new image buffer
    */
 
   public static R2ImageBufferType newImageBuffer(
-    final JCGLInterfaceGL33Type g,
+    final JCGLFramebuffersType g_fb,
+    final JCGLTexturesType g_t,
+    final R2TextureUnitContextParentType tc,
     final AreaInclusiveUnsignedIType area)
   {
-    final JCGLFramebuffersType g_fb = g.getFramebuffers();
-    final JCGLTexturesType g_t = g.getTextures();
     final List<JCGLFramebufferColorAttachmentPointType> points =
       g_fb.framebufferGetColorAttachments();
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
-    final List<JCGLTextureUnitType> units =
-      g_t.textureGetUnits();
-    final JCGLTextureUnitType u_0 = units.get(0);
 
     final UnsignedRangeInclusiveI range_x = area.getRangeX();
     final UnsignedRangeInclusiveI range_y = area.getRangeY();
 
-    final JCGLTexture2DType t_rgba =
-      g_t.texture2DAllocate(
-        u_0,
-        (long) range_x.getInterval(),
-        (long) range_y.getInterval(),
-        JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-        JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
-        JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+    final R2TextureUnitContextType cc = tc.unitContextNew();
+    try {
+      final Pair<JCGLTextureUnitType, R2Texture2DType> p =
+        cc.unitContextAllocateTexture2D(
+          g_t,
+          (long) range_x.getInterval(),
+          (long) range_y.getInterval(),
+          JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-    g_t.textureUnitUnbind(u_0);
+      final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
+      final R2Texture2DType rt = p.getRight();
+      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt.get());
 
-    final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), t_rgba);
-
-    final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
-    return new R2ImageBuffer(fb, R2Texture2DStatic.of(t_rgba));
+      final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
+      return new R2ImageBuffer(fb, rt);
+    } finally {
+      cc.unitContextFinish(g_t);
+    }
   }
 
 

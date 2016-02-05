@@ -26,6 +26,7 @@ import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
+import com.io7m.r2.core.R2TextureUnitAllocatorType;
 
 /**
  * User-friendly frontend.
@@ -68,6 +69,12 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2MatricesType getMatrices();
+
+  /**
+   * @return The texture unit allocator
+   */
+
+  R2TextureUnitAllocatorType getTextureUnitAllocator();
 
   /**
    * @return The set of default textures

@@ -81,4 +81,10 @@ public final class R2Texture2DStatic implements R2Texture2DType
   {
     return on_2d.apply(context, this);
   }
+
+  @Override
+  public JCGLTexture2DType getReal()
+  {
+    return this.texture;
+  }
 }
