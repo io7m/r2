@@ -33,6 +33,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
@@ -164,6 +165,7 @@ public final class R2EyeZRenderer implements R2EyeZRendererType
     final JCGLShadersType g_sh = g.getShaders();
     final JCGLDrawType g_dr = g.getDraw();
     final JCGLStencilBuffersType g_st = g.getStencilBuffers();
+    final JCGLViewportsType g_v = g.getViewports();
 
     /**
      * Copy the contents of the depth/stencil attachment of the G-Buffer to
@@ -202,6 +204,7 @@ public final class R2EyeZRenderer implements R2EyeZRendererType
       g_db.depthBufferWriteDisable();
       g_db.depthBufferTestDisable();
       g_st.stencilBufferDisable();
+      g_v.viewportSet(zbuffer_area);
 
       try {
         g_sh.shaderActivateProgram(this.shader.getShaderProgram());

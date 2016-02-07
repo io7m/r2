@@ -16,7 +16,6 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
@@ -44,6 +43,22 @@ public interface R2TextureUnitContextMutableType
   JCGLTextureUnitType unitContextBindTexture2D(
     JCGLTexturesType g,
     R2Texture2DUsableType t);
+
+  /**
+   * Allocate a 2D texture using the given parameters, binding it to a freshly
+   * allocated texture unit.
+   *
+   * @param g          A texture interface
+   * @param width      The width of the texture
+   * @param height     The height of the texture
+   * @param format     The texture format
+   * @param wrap_s     The wrapping mode on the S axis
+   * @param wrap_t     The wrapping mode on the T axis
+   * @param min_filter The magnification filter
+   * @param mag_filter The minification filter
+   *
+   * @return A pair consisting of the allocated texture and texture unit
+   */
 
   Pair<JCGLTextureUnitType, R2Texture2DType> unitContextAllocateTexture2D(
     JCGLTexturesType g,

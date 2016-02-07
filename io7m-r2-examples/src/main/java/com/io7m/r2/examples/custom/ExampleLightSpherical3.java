@@ -16,7 +16,7 @@
 
 package com.io7m.r2.examples.custom;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
@@ -137,7 +137,7 @@ public final class ExampleLightSpherical3 implements R2ExampleCustomType
   public void onInitialize(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m)
   {
     this.sphere = R2UnitSphere.newUnitSphere8(g);
@@ -274,7 +274,7 @@ public final class ExampleLightSpherical3 implements R2ExampleCustomType
   public void onRender(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m,
     final int frame)
   {
@@ -320,9 +320,17 @@ public final class ExampleLightSpherical3 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.geom_clear_spec);
 
-        t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
+        t.stencil_renderer.renderStencilsWithBoundBuffer(
+          g,
+          mo,
+          t.gbuffer.getArea(),
+          t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g, m.getTextureUnitAllocator().getRootContext(), mo, t.opaques);
+          g,
+          t.gbuffer.getArea(),
+          m.getTextureUnitAllocator().getRootContext(),
+          mo,
+          t.opaques);
         g_fb.framebufferDrawUnbind();
 
         g_fb.framebufferDrawBind(lbuffer_fb);
@@ -351,7 +359,8 @@ public final class ExampleLightSpherical3 implements R2ExampleCustomType
           g,
           m.getTextureUnitAllocator().getRootContext(),
           this.gbuffer,
-          this.lbuffer);
+          this.lbuffer,
+          area);
         return Unit.unit();
       });
     }

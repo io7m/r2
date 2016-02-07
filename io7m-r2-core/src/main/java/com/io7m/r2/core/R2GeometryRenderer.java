@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFaceWindingOrder;
@@ -34,6 +35,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -83,7 +85,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     try {
       g_fb.framebufferDrawBind(gb_fb);
-      this.renderGeometryWithBoundBuffer(g, uc, m, s);
+      this.renderGeometryWithBoundBuffer(g, gbuffer.getArea(), uc, m, s);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -92,6 +94,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   @Override
   public void renderGeometryWithBoundBuffer(
     final JCGLInterfaceGL33Type g,
+    final AreaInclusiveUnsignedLType area,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
@@ -110,6 +113,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     final JCGLBlendingType g_b = g.getBlending();
     final JCGLColorBufferMaskingType g_cm = g.getColorBufferMasking();
     final JCGLCullingType g_cu = g.getCulling();
+    final JCGLViewportsType g_v = g.getViewports();
 
     if (s.opaquesCount() > 0L) {
 
@@ -125,6 +129,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       g_db.depthClampingEnable();
       g_db.depthBufferWriteEnable();
       g_db.depthBufferTestEnable(JCGLDepthFunction.DEPTH_LESS_THAN);
+      g_v.viewportSet(area);
 
       this.opaque_consumer.g33 = g;
       this.opaque_consumer.matrices = m;

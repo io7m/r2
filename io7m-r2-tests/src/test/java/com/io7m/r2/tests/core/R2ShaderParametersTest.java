@@ -142,6 +142,12 @@ public final class R2ShaderParametersTest
       }
 
       @Override
+      public int getSize()
+      {
+        return 1;
+      }
+
+      @Override
       public int getGLName()
       {
         return 0;

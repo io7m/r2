@@ -190,6 +190,11 @@
         <artifactId>io7m-jcamera-core</artifactId>
         <version>0.4.0-SNAPSHOT</version>
       </dependency>
+      <dependency>
+        <groupId>com.io7m.jinterp</groupId>
+        <artifactId>io7m-jinterp-core</artifactId>
+        <version>[1.0.0, 2.0.0)</version>
+      </dependency>
 
       <dependency>
         <groupId>it.unimi.dsi</groupId>

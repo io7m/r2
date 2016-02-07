@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.filters;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
@@ -60,11 +61,13 @@ public interface R2FilterLightApplicatorType extends R2FilterType
    * @param uc      A texture unit context
    * @param gbuffer A geometry buffer
    * @param lbuffer A light buffer
+   * @param area    The current framebuffer viewport
    */
 
   void runLightApplicatorWithBoundBuffer(
     JCGLInterfaceGL33Type g,
     R2TextureUnitContextParentType uc,
     R2GeometryBufferUsableType gbuffer,
-    R2LightBufferUsableType lbuffer);
+    R2LightBufferUsableType lbuffer,
+    AreaInclusiveUnsignedLType area);
 }

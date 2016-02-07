@@ -1,6 +1,3 @@
-#ifndef R2_DEBUG_EYE_POSITION_RECONSTRUCTION_H
-#define R2_DEBUG_EYE_POSITION_RECONSTRUCTION_H
-
 /// \file R2DebugEyePositionReconstruction.frag
 /// \brief A fragment shader driver for reconstructing eye-space positions.
 
@@ -37,4 +34,3 @@ main (void)
     R2_positionReconstructFromEyeZ (eye_z, screen_uv, R2_view_rays);
 }
 
-#endif // R2_DEBUG_EYE_POSITION_RECONSTRUCTION_H

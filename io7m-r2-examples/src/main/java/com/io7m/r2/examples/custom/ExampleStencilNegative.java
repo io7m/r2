@@ -16,7 +16,7 @@
 
 package com.io7m.r2.examples.custom;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
@@ -65,7 +65,7 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
   public void onInitialize(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m)
   {
     this.stencils = R2SceneStencils.newMasks();
@@ -95,7 +95,7 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
   public void onRender(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m,
     final int frame)
   {
@@ -112,7 +112,7 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
     g_st.stencilBufferClear(0);
 
     this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
-      t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
+      t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, area, t.stencils);
       return Unit.unit();
     });
   }

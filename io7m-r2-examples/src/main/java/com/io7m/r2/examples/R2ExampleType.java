@@ -16,7 +16,7 @@
 
 package com.io7m.r2.examples;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.main.R2MainType;
 
@@ -40,7 +40,7 @@ public interface R2ExampleType
   void onInitialize(
     R2ExampleServicesType serv,
     JCGLInterfaceGL33Type g,
-    AreaInclusiveUnsignedIType area,
+    AreaInclusiveUnsignedLType area,
     R2MainType m);
 
   /**
@@ -56,7 +56,7 @@ public interface R2ExampleType
   void onRender(
     R2ExampleServicesType serv,
     JCGLInterfaceGL33Type g,
-    AreaInclusiveUnsignedIType area,
+    AreaInclusiveUnsignedLType area,
     R2MainType m,
     int frame);
 

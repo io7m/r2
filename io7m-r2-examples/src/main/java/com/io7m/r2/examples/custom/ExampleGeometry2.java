@@ -16,7 +16,7 @@
 
 package com.io7m.r2.examples.custom;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
@@ -99,7 +99,7 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
   public void onInitialize(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m)
   {
     this.opaques = R2SceneOpaques.newOpaques();
@@ -164,7 +164,7 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
   public void onRender(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m,
     final int frame)
   {
@@ -195,11 +195,23 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
       g_cl.clear(this.clear_spec);
 
       this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
-        t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
+        t.stencil_renderer.renderStencilsWithBoundBuffer(
+          g,
+          mo,
+          t.gbuffer.getArea(),
+          t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g, m.getTextureUnitAllocator().getRootContext(), mo, t.opaques);
+          g,
+          t.gbuffer.getArea(),
+          m.getTextureUnitAllocator().getRootContext(),
+          mo,
+          t.opaques);
         t.stencils.stencilsAddSingle(t.instance_1);
-        t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
+        t.stencil_renderer.renderStencilsWithBoundBuffer(
+          g,
+          mo,
+          t.gbuffer.getArea(),
+          t.stencils);
         return Unit.unit();
       });
 

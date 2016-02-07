@@ -16,12 +16,12 @@
 
 package com.io7m.r2.tests.core;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedI;
+import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2ImageBuffer;
 import com.io7m.r2.core.R2ImageBufferType;
 import com.io7m.r2.core.R2Texture2DUsableType;
@@ -41,9 +41,9 @@ public abstract class R2ImageBufferContract extends R2JCGLContract
       R2TextureUnitAllocator.newAllocatorWithStack(
         4, g.getTextures().textureGetUnits());
 
-    final AreaInclusiveUnsignedI area = AreaInclusiveUnsignedI.of(
-      new UnsignedRangeInclusiveI(0, 639),
-      new UnsignedRangeInclusiveI(0, 479));
+    final AreaInclusiveUnsignedL area = AreaInclusiveUnsignedL.of(
+      new UnsignedRangeInclusiveL(0L, 639L),
+      new UnsignedRangeInclusiveL(0L, 479L));
     final R2ImageBufferType gb =
       R2ImageBuffer.newImageBuffer(
         g.getFramebuffers(), g.getTextures(), a.getRootContext(), area);

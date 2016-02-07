@@ -16,7 +16,7 @@
 
 package com.io7m.r2.examples.custom;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
@@ -71,6 +71,8 @@ import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
+import com.io7m.r2.core.debug.R2FilterTextureShow;
+import com.io7m.r2.core.debug.R2FilterTextureShowType;
 import com.io7m.r2.core.filters.R2FilterLightApplicator;
 import com.io7m.r2.core.filters.R2FilterLightApplicatorType;
 import com.io7m.r2.core.shaders.R2LightShaderSphericalLambertBlinnPhongSingle;
@@ -127,6 +129,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
                                       batched_geom_shader;
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters>
                                       batched_geom_material;
+  private JCGLClearSpecification      ssao_clear_spec;
+  private R2FilterTextureShowType     filter_show;
 
   public ExampleLightSpherical4()
   {
@@ -137,7 +141,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
   public void onInitialize(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m)
   {
     this.sphere = R2UnitSphere.newUnitSphere8(g);
@@ -159,6 +163,12 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       g.getTextures(),
       m.getTextureUnitAllocator().getRootContext(),
       area);
+
+    this.filter_show = R2FilterTextureShow.newFilter(
+      m.getShaderSources(),
+      g,
+      m.getIDPool(),
+      this.quad);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -268,13 +278,20 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 1.0f));
       this.light_clear_spec = csb.build();
     }
+
+    {
+      final JCGLClearSpecification.Builder csb =
+        JCGLClearSpecification.builder();
+      csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 1.0f));
+      this.ssao_clear_spec = csb.build();
+    }
   }
 
   @Override
   public void onRender(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m,
     final int frame)
   {
@@ -320,9 +337,17 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.geom_clear_spec);
 
-        t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
+        t.stencil_renderer.renderStencilsWithBoundBuffer(
+          g,
+          mo,
+          t.gbuffer.getArea(),
+          t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g, m.getTextureUnitAllocator().getRootContext(), mo, t.opaques);
+          g,
+          t.gbuffer.getArea(),
+          m.getTextureUnitAllocator().getRootContext(),
+          mo,
+          t.opaques);
         g_fb.framebufferDrawUnbind();
 
         g_fb.framebufferDrawBind(lbuffer_fb);
@@ -351,7 +376,9 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           g,
           m.getTextureUnitAllocator().getRootContext(),
           this.gbuffer,
-          this.lbuffer);
+          this.lbuffer,
+          area);
+
         return Unit.unit();
       });
     }

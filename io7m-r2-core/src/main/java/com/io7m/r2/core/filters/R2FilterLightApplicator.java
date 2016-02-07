@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.filters;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLPrimitives;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
@@ -27,6 +28,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
@@ -117,7 +119,8 @@ public final class R2FilterLightApplicator implements
 
     try {
       g_fb.framebufferDrawBind(ibuffer.getFramebuffer());
-      this.runLightApplicatorWithBoundBuffer(g, uc, gbuffer, lbuffer);
+      this.runLightApplicatorWithBoundBuffer(
+        g, uc, gbuffer, lbuffer, ibuffer.getArea());
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -128,12 +131,14 @@ public final class R2FilterLightApplicator implements
     final JCGLInterfaceGL33Type g,
     final R2TextureUnitContextParentType uc,
     final R2GeometryBufferUsableType gbuffer,
-    final R2LightBufferUsableType lbuffer)
+    final R2LightBufferUsableType lbuffer,
+    final AreaInclusiveUnsignedLType area)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(uc);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer);
+    NullCheck.notNull(area);
 
     final JCGLDepthBuffersType g_db = g.getDepthBuffers();
     final JCGLCullingType g_cu = g.getCulling();
@@ -143,6 +148,7 @@ public final class R2FilterLightApplicator implements
     final JCGLDrawType g_dr = g.getDraw();
     final JCGLArrayObjectsType g_ao = g.getArrayObjects();
     final JCGLTexturesType g_tx = g.getTextures();
+    final JCGLViewportsType g_v = g.getViewports();
 
     if (g_db.depthBufferGetBits() > 0) {
       g_db.depthBufferTestDisable();
@@ -155,6 +161,7 @@ public final class R2FilterLightApplicator implements
 
     g_cu.cullingDisable();
     g_cm.colorBufferMask(true, true, true, true);
+    g_v.viewportSet(area);
 
     final R2TextureUnitContextType c = uc.unitContextNew();
     try {

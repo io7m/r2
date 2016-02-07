@@ -16,8 +16,8 @@
 
 package com.io7m.r2.examples.jogl;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedI;
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedL;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcamera.JCameraContext;
 import com.io7m.jcamera.JCameraFPSStyle;
 import com.io7m.jcamera.JCameraFPSStyleInput;
@@ -59,7 +59,7 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixDirect4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixDirectM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2Texture2DUsableType;
@@ -199,7 +199,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private       JCGLContextType            context;
     private       int                        frame;
     private       R2MainType                 r2_main;
-    private       AreaInclusiveUnsignedIType area;
+    private       AreaInclusiveUnsignedLType area;
     private       Services                   services;
     private       boolean                    want_cursor_warp;
 
@@ -351,9 +351,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
     private void resize(final GLAutoDrawable drawable)
     {
-      this.area = AreaInclusiveUnsignedI.of(
-        new UnsignedRangeInclusiveI(0, drawable.getSurfaceWidth() - 1),
-        new UnsignedRangeInclusiveI(0, drawable.getSurfaceHeight() - 1));
+      this.area = AreaInclusiveUnsignedL.of(
+        new UnsignedRangeInclusiveL(0, drawable.getSurfaceWidth() - 1),
+        new UnsignedRangeInclusiveL(0, drawable.getSurfaceHeight() - 1));
     }
 
     @Override

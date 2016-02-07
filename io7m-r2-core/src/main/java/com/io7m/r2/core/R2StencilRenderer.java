@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFaceWindingOrder;
 import com.io7m.jcanephora.core.JCGLPrimitives;
@@ -30,6 +31,7 @@ import com.io7m.jcanephora.core.api.JCGLDrawType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
+import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -101,10 +103,12 @@ public final class R2StencilRenderer implements R2StencilRendererType
   public void renderStencilsWithBoundBuffer(
     final JCGLInterfaceGL33Type g,
     final R2MatricesObserverType m,
+    final AreaInclusiveUnsignedLType area,
     final R2SceneStencilsType s)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(m);
+    NullCheck.notNull(area);
     NullCheck.notNull(s);
 
     Assertive.require(!this.deleted);
@@ -117,6 +121,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     final JCGLStencilBuffersType g_st = g.getStencilBuffers();
     final JCGLShadersType g_sh = g.getShaders();
     final JCGLDrawType g_dr = g.getDraw();
+    final JCGLViewportsType g_v = g.getViewports();
 
     /**
      * Configure state for rendering stencil instances.
@@ -130,6 +135,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     g_db.depthClampingEnable();
     g_db.depthBufferWriteDisable();
     g_db.depthBufferTestDisable();
+    g_v.viewportSet(area);
 
     /**
      * Populate the stencil buffer with the values required for each
