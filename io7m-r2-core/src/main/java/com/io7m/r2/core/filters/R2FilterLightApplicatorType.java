@@ -16,58 +16,20 @@
 
 package com.io7m.r2.core.filters;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2FilterType;
-import com.io7m.r2.core.R2GeometryBufferUsableType;
+import com.io7m.r2.core.R2FilterWithoutViewType;
 import com.io7m.r2.core.R2ImageBufferUsableType;
-import com.io7m.r2.core.R2LightBufferUsableType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
 
 /**
  * The type of filters that combine geometry buffers and light buffers into lit
  * images.
  *
- * @see R2GeometryBufferUsableType
- * @see R2LightBufferUsableType
+ * @see com.io7m.r2.core.R2GeometryBufferUsableType
+ * @see com.io7m.r2.core.R2LightBufferUsableType
  */
 
-public interface R2FilterLightApplicatorType extends R2FilterType
+public interface R2FilterLightApplicatorType extends
+  R2FilterWithoutViewType<R2ImageBufferUsableType,
+    R2FilterLightApplicatorParameters>
 {
-  /**
-   * Run the filter on the given geometry and light buffers. The lit image will
-   * be written to {@code ibuffer}.
-   *
-   * @param g       A GL interface
-   * @param uc      A texture unit context
-   * @param gbuffer A geometry buffer
-   * @param lbuffer A light buffer
-   * @param ibuffer An image buffer
-   */
-
-  void runLightApplicator(
-    JCGLInterfaceGL33Type g,
-    R2TextureUnitContextParentType uc,
-    R2GeometryBufferUsableType gbuffer,
-    R2LightBufferUsableType lbuffer,
-    R2ImageBufferUsableType ibuffer);
-
-  /**
-   * Run the filter on the given geometry and light buffers. The lit image will
-   * be written to the first draw buffer of whatever is the currently bound
-   * framebuffer.
-   *
-   * @param g       A GL interface
-   * @param uc      A texture unit context
-   * @param gbuffer A geometry buffer
-   * @param lbuffer A light buffer
-   * @param area    The current framebuffer viewport
-   */
-
-  void runLightApplicatorWithBoundBuffer(
-    JCGLInterfaceGL33Type g,
-    R2TextureUnitContextParentType uc,
-    R2GeometryBufferUsableType gbuffer,
-    R2LightBufferUsableType lbuffer,
-    AreaInclusiveUnsignedLType area);
+  // No extra methods.
 }

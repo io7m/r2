@@ -18,15 +18,12 @@ package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
-import com.io7m.jcanephora.core.JCGLResourceSizedType;
-import com.io7m.jcanephora.core.JCGLResourceUsableType;
 
 /**
  * The type of usable image buffers.
  */
 
-public interface R2ImageBufferUsableType extends JCGLResourceSizedType,
-  JCGLResourceUsableType
+public interface R2ImageBufferUsableType extends R2RenderTargetUsableType
 {
   /**
    * @return The diffuse texture

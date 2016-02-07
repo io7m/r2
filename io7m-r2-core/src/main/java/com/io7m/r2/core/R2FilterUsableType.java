@@ -17,11 +17,23 @@
 package com.io7m.r2.core;
 
 /**
- * The type of light buffers.
+ * The type of usable filters.
+ *
+ * @param <T> The type of render target to which the filter expects to render
+ * @param <P> The type of filter parameters
  */
 
-public interface R2LightBufferType extends R2LightBufferUsableType,
-  R2RenderTargetType
+public interface R2FilterUsableType<T extends R2RenderTargetUsableType, P>
 {
-  // No extra functions
+  /**
+   * @return The parameter type
+   */
+
+  Class<P> getParametersType();
+
+  /**
+   * @return The render target type
+   */
+
+  Class<T> getRenderTargetType();
 }

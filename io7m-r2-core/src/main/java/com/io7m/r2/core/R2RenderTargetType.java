@@ -17,11 +17,10 @@
 package com.io7m.r2.core;
 
 /**
- * The type of light buffers.
+ * The type of render targets.
  */
 
-public interface R2LightBufferType extends R2LightBufferUsableType,
-  R2RenderTargetType
+public interface R2RenderTargetType extends R2DeletableType
 {
-  // No extra functions
+
 }

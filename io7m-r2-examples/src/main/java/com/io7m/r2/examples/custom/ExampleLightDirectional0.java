@@ -63,6 +63,7 @@ import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.filters.R2FilterLightApplicator;
+import com.io7m.r2.core.filters.R2FilterLightApplicatorParameters;
 import com.io7m.r2.core.filters.R2FilterLightApplicatorType;
 import com.io7m.r2.core.shaders.R2LightShaderDirectionalSpecularSingle;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
@@ -107,7 +108,8 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
 
   private R2ShaderLightSingleType<R2LightDirectionalSingle> light_shader;
   private R2LightDirectionalSingle                          light;
-  private R2FilterLightApplicatorType                       filter;
+  private R2FilterLightApplicatorType                       filter_light;
+  private R2FilterLightApplicatorParameters filter_light_params;
 
   public ExampleLightDirectional0()
   {
@@ -207,9 +209,12 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
     this.light.getColor().set3F(1.0f, 0.0f, 0.0f);
     this.light.setIntensity(0.25f);
 
-    this.filter =
+    this.filter_light =
       R2FilterLightApplicator.newFilter(
         sources, m.getTextureDefaults(), g, id_pool, this.quad);
+    this.filter_light_params =
+      R2FilterLightApplicatorParameters.newParameters(
+        this.gbuffer, this.lbuffer);
 
     {
       final JCGLClearSpecification.Builder csb =
@@ -320,12 +325,12 @@ public final class ExampleLightDirectional0 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-        this.filter.runLightApplicatorWithBoundBuffer(
+        t.filter_light.runFilterWithBoundBuffer(
           g,
           m.getTextureUnitAllocator().getRootContext(),
-          this.gbuffer,
-          this.lbuffer,
+          t.filter_light_params,
           area);
+
         return Unit.unit();
       });
     }

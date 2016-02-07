@@ -16,12 +16,15 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLResourceSizedType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
+
 /**
- * The type of light buffers.
+ * The type of usable render targets.
  */
 
-public interface R2LightBufferType extends R2LightBufferUsableType,
-  R2RenderTargetType
+public interface R2RenderTargetUsableType extends JCGLResourceUsableType,
+  JCGLResourceSizedType
 {
-  // No extra functions
+
 }

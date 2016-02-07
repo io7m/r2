@@ -16,8 +16,8 @@
 
 package com.io7m.r2.core.filters;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 
 /**
@@ -26,7 +26,7 @@ import com.io7m.r2.core.R2Texture2DUsableType;
  * @see R2FilterSSAOType
  */
 
-public final class R2SSAOParameters
+public final class R2FilterSSAOParameters
 {
   /**
    * The default occlusion power.
@@ -47,36 +47,59 @@ public final class R2SSAOParameters
   private float                      power;
   private R2Texture2DUsableType      noise;
   private R2SSAOKernelType           kernel;
-  private AreaInclusiveUnsignedLType viewport;
   private float                      sample_radius;
+  private R2GeometryBufferUsableType gbuffer;
 
-  private R2SSAOParameters(
+  private R2FilterSSAOParameters(
+    final R2GeometryBufferUsableType in_gbuffer,
     final R2SSAOKernelType in_kernel,
-    final R2Texture2DUsableType in_noise,
-    final AreaInclusiveUnsignedLType in_viewport)
+    final R2Texture2DUsableType in_noise)
   {
+    this.gbuffer = NullCheck.notNull(in_gbuffer);
     this.kernel = NullCheck.notNull(in_kernel);
     this.noise = NullCheck.notNull(in_noise);
-    this.sample_radius = R2SSAOParameters.DEFAULT_SAMPLE_RADIUS;
-    this.power = R2SSAOParameters.DEFAULT_POWER;
+    this.sample_radius = R2FilterSSAOParameters.DEFAULT_SAMPLE_RADIUS;
+    this.power = R2FilterSSAOParameters.DEFAULT_POWER;
   }
 
   /**
    * Construct new parameters.
    *
-   * @param in_kernel   An SSAO kernel
-   * @param in_noise    The noise texture
-   * @param in_viewport The viewport for the occlusion buffer
+   * @param in_gbuffer A G-Buffer
+   * @param in_kernel  An SSAO kernel
+   * @param in_noise   The noise texture
    *
    * @return A new set of parameters
    */
 
-  public static R2SSAOParameters newParameters(
+  public static R2FilterSSAOParameters newParameters(
+    final R2GeometryBufferUsableType in_gbuffer,
     final R2SSAOKernelType in_kernel,
-    final R2Texture2DUsableType in_noise,
-    final AreaInclusiveUnsignedLType in_viewport)
+    final R2Texture2DUsableType in_noise)
   {
-    return new R2SSAOParameters(in_kernel, in_noise, in_viewport);
+    return new R2FilterSSAOParameters(in_gbuffer, in_kernel, in_noise);
+  }
+
+  /**
+   * @return The G-buffer that will be used as the source for calculating
+   * occlusion
+   */
+
+  public R2GeometryBufferUsableType getGBuffer()
+  {
+    return this.gbuffer;
+  }
+
+  /**
+   * Set the  G-buffer that will be used as the source for calculating
+   * occlusion.
+   *
+   * @param g The G-Buffer
+   */
+
+  public void setGBuffer(final R2GeometryBufferUsableType g)
+  {
+    this.gbuffer = NullCheck.notNull(g);
   }
 
   /**
@@ -164,26 +187,5 @@ public final class R2SSAOParameters
   public void setNoiseTexture(final R2Texture2DUsableType n)
   {
     this.noise = NullCheck.notNull(n);
-  }
-
-  /**
-   * @return The current viewport for the ambient occlusion buffer
-   */
-
-  public AreaInclusiveUnsignedLType getViewport()
-  {
-    return this.viewport;
-  }
-
-  /**
-   * Set the viewport size for the ambient occlusion buffer
-   *
-   * @param v The viewport
-   */
-
-  public void setViewport(
-    final AreaInclusiveUnsignedLType v)
-  {
-    this.viewport = NullCheck.notNull(v);
   }
 }

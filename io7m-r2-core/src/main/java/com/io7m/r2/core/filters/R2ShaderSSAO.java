@@ -47,8 +47,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderSSAO extends
-  R2AbstractShader<R2SSAOParameters>
-  implements R2ShaderScreenType<R2SSAOParameters>,
+  R2AbstractShader<R2ShaderSSAOParameters>
+  implements R2ShaderScreenType<R2ShaderSSAOParameters>,
   R2ShaderGBufferConsumerType
 {
   private final VectorM2F              noise_uv_scale;
@@ -186,10 +186,10 @@ public final class R2ShaderSSAO extends
   }
 
   @Override
-  public Class<R2SSAOParameters>
+  public Class<R2ShaderSSAOParameters>
   getShaderParametersType()
   {
-    return R2SSAOParameters.class;
+    return R2ShaderSSAOParameters.class;
   }
 
   /**
@@ -203,7 +203,7 @@ public final class R2ShaderSSAO extends
   public void setTextures(
     final JCGLTexturesType g_tex,
     final R2TextureUnitContextMutableType uc,
-    final R2SSAOParameters values)
+    final R2ShaderSSAOParameters values)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(values);
@@ -275,7 +275,7 @@ public final class R2ShaderSSAO extends
 
   public void setValues(
     final JCGLShadersType g_sh,
-    final R2SSAOParameters values)
+    final R2ShaderSSAOParameters values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);

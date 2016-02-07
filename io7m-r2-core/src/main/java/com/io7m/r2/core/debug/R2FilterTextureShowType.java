@@ -16,32 +16,17 @@
 
 package com.io7m.r2.core.debug;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2FilterType;
+import com.io7m.r2.core.R2FilterWithoutViewType;
+import com.io7m.r2.core.R2ImageBufferUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
 
 /**
  * The type of filters that display fullscreen quads textured with the given
  * texture.
  */
 
-public interface R2FilterTextureShowType extends R2FilterType
+public interface R2FilterTextureShowType extends
+  R2FilterWithoutViewType<R2ImageBufferUsableType, R2Texture2DUsableType>
 {
-  /**
-   * Run the filter. The texture will be written to the first draw buffer of
-   * whatever is the currently bound framebuffer.
-   *
-   * @param g    A GL interface
-   * @param uc   A texture unit context
-   * @param area The current framebuffer viewport
-   * @param t    A texture
-   */
-
-  void runShowWithBoundBuffer(
-    JCGLInterfaceGL33Type g,
-    R2TextureUnitContextParentType uc,
-    AreaInclusiveUnsignedLType area,
-    R2Texture2DUsableType t);
+  // No extra methods
 }

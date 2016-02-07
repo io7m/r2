@@ -22,7 +22,7 @@ package com.io7m.r2.core;
 
 public interface R2AmbientOcclusionBufferType extends
   R2AmbientOcclusionBufferUsableType,
-  R2DeletableType
+  R2RenderTargetType
 {
   // No extra functions
 }

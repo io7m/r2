@@ -66,6 +66,7 @@ import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2DebugShaderLightSphericalAttenuationSingle;
 import com.io7m.r2.core.filters.R2FilterLightApplicator;
+import com.io7m.r2.core.filters.R2FilterLightApplicatorParameters;
 import com.io7m.r2.core.filters.R2FilterLightApplicatorType;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
@@ -84,21 +85,21 @@ public final class ExampleLightAttenuation0 implements R2ExampleCustomType
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
   private       R2TransformOST[]                                  transforms;
 
-  private JCGLClearSpecification light_clear_spec;
-  private R2SceneStencilsType stencils;
-  private R2StencilRendererType stencil_renderer;
-  private R2GeometryRendererType geom_renderer;
-  private R2LightRendererType light_renderer;
-  private R2MatricesType matrices;
-  private R2ProjectionFOV projection;
-  private R2UnitQuadType quad;
+  private JCGLClearSpecification       light_clear_spec;
+  private R2SceneStencilsType          stencils;
+  private R2StencilRendererType        stencil_renderer;
+  private R2GeometryRendererType       geom_renderer;
+  private R2LightRendererType          light_renderer;
+  private R2MatricesType               matrices;
+  private R2ProjectionFOV              projection;
+  private R2UnitQuadType               quad;
   private R2InstanceBatchedDynamicType instance;
-  private R2SceneOpaquesType opaques;
-  private R2SceneOpaqueLightsType lights;
-  private R2GeometryBufferType gbuffer;
-  private R2LightBufferType lbuffer;
-  private JCGLClearSpecification geom_clear_spec;
-  private JCGLClearSpecification screen_clear_spec;
+  private R2SceneOpaquesType           opaques;
+  private R2SceneOpaqueLightsType      lights;
+  private R2GeometryBufferType         gbuffer;
+  private R2LightBufferType            lbuffer;
+  private JCGLClearSpecification       geom_clear_spec;
+  private JCGLClearSpecification       screen_clear_spec;
 
   private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
     geom_shader;
@@ -110,7 +111,9 @@ public final class ExampleLightAttenuation0 implements R2ExampleCustomType
   private R2ShaderLightSingleType<R2LightSphericalSingleType> light_shader;
   private R2LightSphericalSingleType                          light;
   private R2UnitSphereType                                    sphere;
-  private R2FilterLightApplicatorType                         filter;
+
+  private R2FilterLightApplicatorType       filter_light;
+  private R2FilterLightApplicatorParameters filter_light_params;
 
   public ExampleLightAttenuation0()
   {
@@ -209,9 +212,12 @@ public final class ExampleLightAttenuation0 implements R2ExampleCustomType
     this.light.getPosition().set3F(0.0f, 0.0f, 1.0f);
     this.light.setRadius(4.0f);
 
-    this.filter =
+    this.filter_light =
       R2FilterLightApplicator.newFilter(
         sources, m.getTextureDefaults(), g, id_pool, this.quad);
+    this.filter_light_params =
+      R2FilterLightApplicatorParameters.newParameters(
+        this.gbuffer, this.lbuffer);
 
     {
       final JCGLClearSpecification.Builder csb =
@@ -322,12 +328,12 @@ public final class ExampleLightAttenuation0 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-        this.filter.runLightApplicatorWithBoundBuffer(
+        t.filter_light.runFilterWithBoundBuffer(
           g,
           m.getTextureUnitAllocator().getRootContext(),
-          this.gbuffer,
-          this.lbuffer,
+          t.filter_light_params,
           area);
+
         return Unit.unit();
       });
     }

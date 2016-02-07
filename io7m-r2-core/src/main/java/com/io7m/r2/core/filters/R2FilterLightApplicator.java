@@ -49,18 +49,16 @@ import com.io7m.r2.core.R2UnitQuadUsableType;
 public final class R2FilterLightApplicator implements
   R2FilterLightApplicatorType
 {
+  private R2ShaderFilterLightApplicatorParameters shader_params;
   private final R2ShaderFilterLightApplicator           shader;
   private final R2UnitQuadUsableType                    quad;
-  private final R2ShaderFilterLightApplicatorParameters params;
 
   private R2FilterLightApplicator(
-    final R2ShaderFilterLightApplicatorParameters p,
     final R2ShaderFilterLightApplicator in_shader,
     final R2UnitQuadUsableType in_quad)
   {
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
-    this.params = NullCheck.notNull(p);
   }
 
   /**
@@ -88,56 +86,74 @@ public final class R2FilterLightApplicator implements
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_quad);
 
-    final R2ShaderFilterLightApplicatorParameters p =
-      R2ShaderFilterLightApplicatorParameters.newParameters(
-        in_textures);
-
     final R2ShaderFilterLightApplicator s =
       R2ShaderFilterLightApplicator.newShader(
         in_g.getShaders(),
         in_sources,
         in_pool);
 
-    return new R2FilterLightApplicator(p, s, in_quad);
+    return new R2FilterLightApplicator(s, in_quad);
   }
 
   @Override
-  public void runLightApplicator(
+  public void delete(final JCGLInterfaceGL33Type g)
+    throws R2Exception
+  {
+    if (!this.isDeleted()) {
+      this.shader.delete(g);
+    }
+  }
+
+  @Override
+  public boolean isDeleted()
+  {
+    return this.shader.isDeleted();
+  }
+
+  @Override
+  public Class<R2FilterLightApplicatorParameters> getParametersType()
+  {
+    return R2FilterLightApplicatorParameters.class;
+  }
+
+  @Override
+  public Class<R2ImageBufferUsableType> getRenderTargetType()
+  {
+    return R2ImageBufferUsableType.class;
+  }
+
+  @Override
+  public void runFilter(
     final JCGLInterfaceGL33Type g,
     final R2TextureUnitContextParentType uc,
-    final R2GeometryBufferUsableType gbuffer,
-    final R2LightBufferUsableType lbuffer,
-    final R2ImageBufferUsableType ibuffer)
+    final R2FilterLightApplicatorParameters parameters,
+    final R2ImageBufferUsableType target)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(uc);
-    NullCheck.notNull(gbuffer);
-    NullCheck.notNull(lbuffer);
-    NullCheck.notNull(ibuffer);
+    NullCheck.notNull(parameters);
+    NullCheck.notNull(target);
 
     final JCGLFramebuffersType g_fb = g.getFramebuffers();
 
     try {
-      g_fb.framebufferDrawBind(ibuffer.getFramebuffer());
-      this.runLightApplicatorWithBoundBuffer(
-        g, uc, gbuffer, lbuffer, ibuffer.getArea());
+      g_fb.framebufferDrawBind(target.getFramebuffer());
+      this.runFilterWithBoundBuffer(g, uc, parameters, target.getArea());
     } finally {
       g_fb.framebufferDrawUnbind();
     }
   }
 
   @Override
-  public void runLightApplicatorWithBoundBuffer(
+  public void runFilterWithBoundBuffer(
     final JCGLInterfaceGL33Type g,
     final R2TextureUnitContextParentType uc,
-    final R2GeometryBufferUsableType gbuffer,
-    final R2LightBufferUsableType lbuffer,
+    final R2FilterLightApplicatorParameters parameters,
     final AreaInclusiveUnsignedLType area)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(uc);
-    NullCheck.notNull(gbuffer);
-    NullCheck.notNull(lbuffer);
+    NullCheck.notNull(parameters);
     NullCheck.notNull(area);
 
     final JCGLDepthBuffersType g_db = g.getDepthBuffers();
@@ -165,14 +181,25 @@ public final class R2FilterLightApplicator implements
 
     final R2TextureUnitContextType c = uc.unitContextNew();
     try {
-      this.params.setAlbedoTexture(gbuffer.getAlbedoEmissiveTexture());
-      this.params.setDiffuseTexture(lbuffer.getDiffuseTexture());
-      this.params.setSpecularTexture(lbuffer.getSpecularTexture());
+      final R2GeometryBufferUsableType gb = parameters.getGBuffer();
+      final R2LightBufferUsableType lb = parameters.getLightBuffer();
+
+      if (this.shader_params == null) {
+        this.shader_params =
+          R2ShaderFilterLightApplicatorParameters.newParameters(
+          gb.getAlbedoEmissiveTexture(),
+          lb.getDiffuseTexture(),
+          lb.getSpecularTexture());
+      }
+
+      this.shader_params.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
+      this.shader_params.setDiffuseTexture(lb.getDiffuseTexture());
+      this.shader_params.setSpecularTexture(lb.getSpecularTexture());
 
       try {
         g_sh.shaderActivateProgram(this.shader.getShaderProgram());
-        this.shader.setTextures(g_tx, c, this.params);
-        this.shader.setValues(g_sh, this.params);
+        this.shader.setTextures(g_tx, c, this.shader_params);
+        this.shader.setValues(g_sh, this.shader_params);
 
         g_ao.arrayObjectBind(this.quad.getArrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -184,20 +211,5 @@ public final class R2FilterLightApplicator implements
     } finally {
       c.unitContextFinish(g_tx);
     }
-  }
-
-  @Override
-  public void delete(final JCGLInterfaceGL33Type g)
-    throws R2Exception
-  {
-    if (!this.isDeleted()) {
-      this.shader.delete(g);
-    }
-  }
-
-  @Override
-  public boolean isDeleted()
-  {
-    return this.shader.isDeleted();
   }
 }

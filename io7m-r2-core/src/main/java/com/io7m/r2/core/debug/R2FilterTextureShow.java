@@ -23,6 +23,7 @@ import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
 import com.io7m.jcanephora.core.api.JCGLCullingType;
 import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
+import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
@@ -31,6 +32,7 @@ import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2ImageBufferUsableType;
 import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
@@ -86,11 +88,60 @@ public final class R2FilterTextureShow implements R2FilterTextureShowType
   }
 
   @Override
-  public void runShowWithBoundBuffer(
+  public void delete(final JCGLInterfaceGL33Type g)
+    throws R2Exception
+  {
+    if (!this.isDeleted()) {
+      this.shader.delete(g);
+    }
+  }
+
+  @Override
+  public boolean isDeleted()
+  {
+    return this.shader.isDeleted();
+  }
+
+  @Override
+  public Class<R2Texture2DUsableType> getParametersType()
+  {
+    return R2Texture2DUsableType.class;
+  }
+
+  @Override
+  public Class<R2ImageBufferUsableType> getRenderTargetType()
+  {
+    return R2ImageBufferUsableType.class;
+  }
+
+  @Override
+  public void runFilter(
     final JCGLInterfaceGL33Type g,
     final R2TextureUnitContextParentType uc,
-    final AreaInclusiveUnsignedLType area,
-    final R2Texture2DUsableType t)
+    final R2Texture2DUsableType t,
+    final R2ImageBufferUsableType target)
+  {
+    NullCheck.notNull(g);
+    NullCheck.notNull(uc);
+    NullCheck.notNull(t);
+    NullCheck.notNull(target);
+
+    final JCGLFramebuffersType g_fb = g.getFramebuffers();
+
+    try {
+      g_fb.framebufferDrawBind(target.getFramebuffer());
+      this.runFilterWithBoundBuffer(g, uc, t, target.getArea());
+    } finally {
+      g_fb.framebufferDrawUnbind();
+    }
+  }
+
+  @Override
+  public void runFilterWithBoundBuffer(
+    final JCGLInterfaceGL33Type g,
+    final R2TextureUnitContextParentType uc,
+    final R2Texture2DUsableType t,
+    final AreaInclusiveUnsignedLType area)
   {
     NullCheck.notNull(g);
     NullCheck.notNull(uc);
@@ -137,20 +188,5 @@ public final class R2FilterTextureShow implements R2FilterTextureShowType
     } finally {
       c.unitContextFinish(g_tx);
     }
-  }
-
-  @Override
-  public void delete(final JCGLInterfaceGL33Type g)
-    throws R2Exception
-  {
-    if (!this.isDeleted()) {
-      this.shader.delete(g);
-    }
-  }
-
-  @Override
-  public boolean isDeleted()
-  {
-    return this.shader.isDeleted();
   }
 }

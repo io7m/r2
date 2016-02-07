@@ -47,7 +47,6 @@ import com.io7m.r2.core.R2InstanceBatchedDynamic;
 import com.io7m.r2.core.R2InstanceBatchedDynamicType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueBatched;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingle;
@@ -60,7 +59,6 @@ import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShaderBatchedType;
-import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
@@ -72,13 +70,11 @@ import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2FilterTextureShow;
 import com.io7m.r2.core.debug.R2FilterTextureShowType;
-import com.io7m.r2.core.filters.R2FilterLightApplicator;
-import com.io7m.r2.core.filters.R2FilterLightApplicatorType;
 import com.io7m.r2.core.filters.R2FilterSSAO;
+import com.io7m.r2.core.filters.R2FilterSSAOParameters;
 import com.io7m.r2.core.filters.R2FilterSSAOType;
 import com.io7m.r2.core.filters.R2SSAOKernel;
 import com.io7m.r2.core.filters.R2SSAONoiseTexture;
-import com.io7m.r2.core.filters.R2SSAOParameters;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
@@ -96,7 +92,6 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private JCGLClearSpecification light_clear_spec;
   private R2SceneStencilsType    stencils;
   private R2StencilRendererType  stencil_renderer;
   private R2GeometryRendererType geom_renderer;
@@ -116,24 +111,20 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
     geom_material;
 
-  private R2ShaderLightSingleType<R2LightSphericalSingleType>
-                                       light_shader;
-  private R2LightSphericalSingleType   light;
   private R2UnitSphereType             sphere;
-  private R2FilterLightApplicatorType  filter;
-  private R2InstanceBatchedDynamicType
-                                       batched_instance;
+  private R2InstanceBatchedDynamicType batched_instance;
   private R2TransformOST[]
                                        batched_transforms;
   private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
                                        batched_geom_shader;
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters>
                                        batched_geom_material;
-  private R2FilterSSAOType             filter_ssao;
+
   private R2AmbientOcclusionBufferType abuffer;
   private JCGLClearSpecification       ssao_clear_spec;
   private R2FilterTextureShowType      filter_show;
-  private R2SSAOParameters             params_ssao;
+  private R2FilterSSAOParameters       filter_ssao_params;
+  private R2FilterSSAOType             filter_ssao;
 
   public ExampleSSAO0()
   {
@@ -170,11 +161,12 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         new UnsignedRangeInclusiveL(0L, area.getRangeY().getUpper() / 2L)
       ));
 
-    this.params_ssao = R2SSAOParameters.newParameters(
+    this.filter_ssao_params = R2FilterSSAOParameters.newParameters(
+      this.gbuffer,
       R2SSAOKernel.newKernel(32),
       R2SSAONoiseTexture.new4x4Noise(
-        g.getTextures(), unit_allocator.getRootContext()),
-      this.abuffer.getArea());
+        g.getTextures(), unit_allocator.getRootContext())
+    );
 
     this.filter_ssao = R2FilterSSAO.newFilter(
       m.getShaderSources(),
@@ -258,10 +250,6 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         id_pool);
     this.batched_geom_material = R2MaterialOpaqueBatched.newMaterial(
       id_pool, this.batched_geom_shader, this.geom_shader_params);
-
-    this.filter =
-      R2FilterLightApplicator.newFilter(
-        sources, m.getTextureDefaults(), g, id_pool, this.quad);
 
     {
       final JCGLClearSpecification.Builder csb =
@@ -353,12 +341,11 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         g_cb.colorBufferMask(true, true, true, true);
         g_cl.clear(t.ssao_clear_spec);
 
-        t.filter_ssao.runSSAOWithBoundBuffer(
+        t.filter_ssao.runFilterWithBoundBuffer(
           g,
-          t.params_ssao,
           m.getTextureUnitAllocator().getRootContext(),
           mo,
-          t.gbuffer,
+          t.filter_ssao_params,
           t.abuffer.getArea());
         g_fb.framebufferDrawUnbind();
 
@@ -368,11 +355,11 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-        this.filter_show.runShowWithBoundBuffer(
+        t.filter_show.runFilterWithBoundBuffer(
           g,
           m.getTextureUnitAllocator().getRootContext(),
-          area,
-          this.abuffer.getAmbientOcclusionTexture());
+          t.abuffer.getAmbientOcclusionTexture(),
+          area);
 
         return Unit.unit();
       });

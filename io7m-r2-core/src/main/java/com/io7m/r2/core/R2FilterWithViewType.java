@@ -17,11 +17,16 @@
 package com.io7m.r2.core;
 
 /**
- * The type of light buffers.
+ * The type of filters that require access to the view values that created the
+ * filtered scene.
+ *
+ * @param <T> The type of render target to which the filter expects to render
+ * @param <P> The type of filter parameters
  */
 
-public interface R2LightBufferType extends R2LightBufferUsableType,
-  R2RenderTargetType
+public interface R2FilterWithViewType<T extends
+  R2RenderTargetUsableType, P> extends
+  R2FilterWithViewUsableType<T, P>, R2FilterType<T, P>
 {
-  // No extra functions
+
 }

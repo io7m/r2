@@ -21,7 +21,7 @@ package com.io7m.r2.core;
  */
 
 public interface R2GeometryBufferType extends R2GeometryBufferUsableType,
-  R2DeletableType
+  R2RenderTargetType
 {
   // No extra functions
 }

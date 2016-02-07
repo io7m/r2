@@ -18,7 +18,6 @@ package com.io7m.r2.core.filters;
 
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureDefaultsType;
 
 /**
  * The parameters used for light application.
@@ -45,19 +44,20 @@ public final class R2ShaderFilterLightApplicatorParameters
   /**
    * Construct new parameters using a default set of textures.
    *
-   * @param in_defaults The texture defaults
+   * @param in_albedo   The albedo texture
+   * @param in_diffuse  The diffuse light term
+   * @param in_specular The specular light term
    *
    * @return A new set of parameters
    */
 
   public static R2ShaderFilterLightApplicatorParameters newParameters(
-    final R2TextureDefaultsType in_defaults)
+    final R2Texture2DUsableType in_albedo,
+    final R2Texture2DUsableType in_diffuse,
+    final R2Texture2DUsableType in_specular)
   {
-    NullCheck.notNull(in_defaults);
     return new R2ShaderFilterLightApplicatorParameters(
-      in_defaults.getWhiteTexture(),
-      in_defaults.getWhiteTexture(),
-      in_defaults.getBlackTexture());
+      in_albedo, in_diffuse, in_specular);
   }
 
   /**

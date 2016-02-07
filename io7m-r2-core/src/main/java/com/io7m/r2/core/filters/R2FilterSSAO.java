@@ -31,6 +31,7 @@ import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jnull.Nullable;
 import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
@@ -47,8 +48,9 @@ import com.io7m.r2.core.R2UnitQuadUsableType;
 
 public final class R2FilterSSAO implements R2FilterSSAOType
 {
-  private final R2ShaderSSAO         shader;
-  private final R2UnitQuadUsableType quad;
+  private final     R2ShaderSSAO           shader;
+  private final     R2UnitQuadUsableType   quad;
+  private @Nullable R2ShaderSSAOParameters shader_params;
 
   private R2FilterSSAO(
     final R2ShaderSSAO in_shader,
@@ -93,46 +95,71 @@ public final class R2FilterSSAO implements R2FilterSSAOType
   }
 
   @Override
-  public void runSSAO(
-    final JCGLInterfaceGL33Type g,
-    final R2SSAOParameters p,
-    final R2TextureUnitContextParentType uc,
-    final R2MatricesObserverValuesType m,
-    final R2GeometryBufferUsableType gbuffer,
-    final R2AmbientOcclusionBufferUsableType abuffer)
+  public void delete(final JCGLInterfaceGL33Type g)
+    throws R2Exception
   {
     NullCheck.notNull(g);
-    NullCheck.notNull(p);
+
+    if (!this.isDeleted()) {
+      this.shader.delete(g);
+    }
+  }
+
+  @Override
+  public boolean isDeleted()
+  {
+    return this.shader.isDeleted();
+  }
+
+  @Override
+  public Class<R2FilterSSAOParameters> getParametersType()
+  {
+    return R2FilterSSAOParameters.class;
+  }
+
+  @Override
+  public Class<R2AmbientOcclusionBufferUsableType> getRenderTargetType()
+  {
+    return R2AmbientOcclusionBufferUsableType.class;
+  }
+
+  @Override
+  public void runFilter(
+    final JCGLInterfaceGL33Type g,
+    final R2TextureUnitContextParentType uc,
+    final R2MatricesObserverValuesType m,
+    final R2FilterSSAOParameters parameters,
+    final R2AmbientOcclusionBufferUsableType target)
+  {
+    NullCheck.notNull(g);
     NullCheck.notNull(uc);
     NullCheck.notNull(m);
-    NullCheck.notNull(gbuffer);
-    NullCheck.notNull(abuffer);
+    NullCheck.notNull(parameters);
+    NullCheck.notNull(target);
 
     final JCGLFramebuffersType g_fb = g.getFramebuffers();
 
     try {
-      g_fb.framebufferDrawBind(abuffer.getFramebuffer());
-      this.runSSAOWithBoundBuffer(g, p, uc, m, gbuffer, abuffer.getArea());
+      g_fb.framebufferDrawBind(target.getFramebuffer());
+      this.runFilterWithBoundBuffer(g, uc, m, parameters, target.getArea());
     } finally {
       g_fb.framebufferDrawUnbind();
     }
   }
 
   @Override
-  public void runSSAOWithBoundBuffer(
+  public void runFilterWithBoundBuffer(
     final JCGLInterfaceGL33Type g,
-    final R2SSAOParameters p,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverValuesType m,
-    final R2GeometryBufferUsableType gbuffer,
-    final AreaInclusiveUnsignedLType abuffer_area)
+    final R2FilterSSAOParameters parameters,
+    final AreaInclusiveUnsignedLType area)
   {
     NullCheck.notNull(g);
-    NullCheck.notNull(p);
     NullCheck.notNull(uc);
     NullCheck.notNull(m);
-    NullCheck.notNull(gbuffer);
-    NullCheck.notNull(abuffer_area);
+    NullCheck.notNull(parameters);
+    NullCheck.notNull(area);
 
     final JCGLDepthBuffersType g_db = g.getDepthBuffers();
     final JCGLCullingType g_cu = g.getCulling();
@@ -155,27 +182,39 @@ public final class R2FilterSSAO implements R2FilterSSAOType
 
     g_cu.cullingDisable();
     g_cm.colorBufferMask(true, true, true, true);
-    g_v.viewportSet(abuffer_area);
+    g_v.viewportSet(area);
 
     final R2TextureUnitContextType c = uc.unitContextNew();
     try {
-      p.setViewport(abuffer_area);
+      if (this.shader_params == null) {
+        this.shader_params = R2ShaderSSAOParameters.newParameters(
+          parameters.getKernel(),
+          parameters.getNoiseTexture(),
+          area);
+      }
+
+      final R2ShaderSSAOParameters sp = NullCheck.notNull(this.shader_params);
+      sp.setKernel(parameters.getKernel());
+      sp.setNoiseTexture(parameters.getNoiseTexture());
+      sp.setViewport(area);
+
+      final R2GeometryBufferUsableType gb = parameters.getGBuffer();
 
       final JCGLTextureUnitType ua =
-        c.unitContextBindTexture2D(g_tx, gbuffer.getAlbedoEmissiveTexture());
+        c.unitContextBindTexture2D(g_tx, gb.getAlbedoEmissiveTexture());
       final JCGLTextureUnitType us =
-        c.unitContextBindTexture2D(g_tx, gbuffer.getSpecularTexture());
+        c.unitContextBindTexture2D(g_tx, gb.getSpecularTexture());
       final JCGLTextureUnitType ud =
-        c.unitContextBindTexture2D(g_tx, gbuffer.getDepthTexture());
+        c.unitContextBindTexture2D(g_tx, gb.getDepthTexture());
       final JCGLTextureUnitType un =
-        c.unitContextBindTexture2D(g_tx, gbuffer.getNormalTexture());
+        c.unitContextBindTexture2D(g_tx, gb.getNormalTexture());
 
       try {
         g_sh.shaderActivateProgram(this.shader.getShaderProgram());
-        this.shader.setGBuffer(g_sh, gbuffer, ua, us, ud, un);
-        this.shader.setTextures(g_tx, c, p);
+        this.shader.setGBuffer(g_sh, gb, ua, us, ud, un);
+        this.shader.setTextures(g_tx, c, sp);
         this.shader.setViewDependentValues(g_sh, m);
-        this.shader.setValues(g_sh, p);
+        this.shader.setValues(g_sh, sp);
 
         g_ao.arrayObjectBind(this.quad.getArrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -187,22 +226,5 @@ public final class R2FilterSSAO implements R2FilterSSAOType
     } finally {
       c.unitContextFinish(g_tx);
     }
-  }
-
-  @Override
-  public void delete(final JCGLInterfaceGL33Type g)
-    throws R2Exception
-  {
-    NullCheck.notNull(g);
-
-    if (!this.isDeleted()) {
-      this.shader.delete(g);
-    }
-  }
-
-  @Override
-  public boolean isDeleted()
-  {
-    return this.shader.isDeleted();
   }
 }
