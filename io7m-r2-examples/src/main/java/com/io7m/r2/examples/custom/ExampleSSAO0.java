@@ -325,12 +325,10 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         g_cl.clear(t.geom_clear_spec);
 
         t.stencil_renderer.renderStencilsWithBoundBuffer(
-          g,
           mo,
           t.gbuffer.getArea(),
           t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g,
           t.gbuffer.getArea(),
           m.getTextureUnitAllocator().getRootContext(),
           mo,

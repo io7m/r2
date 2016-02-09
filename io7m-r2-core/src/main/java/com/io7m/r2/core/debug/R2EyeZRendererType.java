@@ -17,7 +17,6 @@
 package com.io7m.r2.core.debug;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2MatricesObserverType;
@@ -33,8 +32,7 @@ public interface R2EyeZRendererType extends R2DeletableType
 {
   /**
    * Reconstruct the eye-space Z value of every fragment in the given G-Buffer.
-   *
-   * @param g       A GL interface
+
    * @param gbuffer The populated geometry buffer
    * @param zbuffer The eye-Z buffer
    * @param uc      A texture unit context
@@ -43,7 +41,6 @@ public interface R2EyeZRendererType extends R2DeletableType
    */
 
   void renderEyeZ(
-    JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
     R2EyeZBufferUsableType zbuffer,
     R2TextureUnitContextParentType uc,
@@ -52,8 +49,7 @@ public interface R2EyeZRendererType extends R2DeletableType
 
   /**
    * Reconstruct the eye-space Z value of every fragment in the given G-Buffer.
-   *
-   * @param g            A GL interface
+
    * @param gbuffer      The populated geometry buffer
    * @param zbuffer_area The area of the currently bound framebuffer
    * @param uc           A texture unit context
@@ -62,7 +58,6 @@ public interface R2EyeZRendererType extends R2DeletableType
    */
 
   void renderEyeZWithBoundBuffer(
-    JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
     AreaInclusiveUnsignedLType zbuffer_area,
     R2TextureUnitContextParentType uc,

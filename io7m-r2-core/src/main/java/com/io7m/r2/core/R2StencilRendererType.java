@@ -17,7 +17,6 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 
 /**
  * The type of stencil renderers.
@@ -28,14 +27,12 @@ public interface R2StencilRendererType extends R2DeletableType
   /**
    * Render the given stencil instances into the currently bound framebuffer.
    *
-   * @param g    A GL interface
    * @param m    A matrix context
    * @param area The current viewport
    * @param s    The stencil instances
    */
 
   void renderStencilsWithBoundBuffer(
-    JCGLInterfaceGL33Type g,
     R2MatricesObserverType m,
     AreaInclusiveUnsignedLType area,
     R2SceneStencilsType s);

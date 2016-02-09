@@ -17,7 +17,6 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 
 /**
  * The type of renderers that populate light buffers.
@@ -28,7 +27,6 @@ public interface R2LightRendererType extends R2DeletableType
   /**
    * Render the given lights into the given light buffer.
    *
-   * @param g       A GL interface
    * @param gbuffer The populated geometry buffer
    * @param lbuffer The light buffer
    * @param uc      A texture unit context
@@ -37,7 +35,6 @@ public interface R2LightRendererType extends R2DeletableType
    */
 
   void renderLights(
-    JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
     R2LightBufferUsableType lbuffer,
     R2TextureUnitContextParentType uc,
@@ -47,7 +44,6 @@ public interface R2LightRendererType extends R2DeletableType
   /**
    * Render the given lights into the currently bound light buffer.
    *
-   * @param g            A GL interface
    * @param gbuffer      The populated geometry buffer
    * @param lbuffer_area The area of the currently bound framebuffer
    * @param uc           A texture unit context
@@ -56,7 +52,6 @@ public interface R2LightRendererType extends R2DeletableType
    */
 
   void renderLightsWithBoundBuffer(
-    JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
     AreaInclusiveUnsignedLType lbuffer_area,
     R2TextureUnitContextParentType uc,
