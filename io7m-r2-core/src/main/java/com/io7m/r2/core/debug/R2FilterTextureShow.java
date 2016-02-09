@@ -47,11 +47,14 @@ public final class R2FilterTextureShow implements R2FilterTextureShowType
 {
   private final R2ShaderFilterTextureShow shader;
   private final R2UnitQuadUsableType      quad;
+  private final JCGLInterfaceGL33Type     g;
 
   private R2FilterTextureShow(
+    final JCGLInterfaceGL33Type in_g,
     final R2ShaderFilterTextureShow in_shader,
     final R2UnitQuadUsableType in_quad)
   {
+    this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
   }
@@ -84,15 +87,15 @@ public final class R2FilterTextureShow implements R2FilterTextureShowType
         in_sources,
         in_pool);
 
-    return new R2FilterTextureShow(s, in_quad);
+    return new R2FilterTextureShow(in_g, s, in_quad);
   }
 
   @Override
-  public void delete(final JCGLInterfaceGL33Type g)
+  public void delete(final JCGLInterfaceGL33Type gx)
     throws R2Exception
   {
     if (!this.isDeleted()) {
-      this.shader.delete(g);
+      this.shader.delete(gx);
     }
   }
 
@@ -116,21 +119,19 @@ public final class R2FilterTextureShow implements R2FilterTextureShowType
 
   @Override
   public void runFilter(
-    final JCGLInterfaceGL33Type g,
     final R2TextureUnitContextParentType uc,
     final R2Texture2DUsableType t,
     final R2ImageBufferUsableType target)
   {
-    NullCheck.notNull(g);
     NullCheck.notNull(uc);
     NullCheck.notNull(t);
     NullCheck.notNull(target);
 
-    final JCGLFramebuffersType g_fb = g.getFramebuffers();
+    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
     try {
       g_fb.framebufferDrawBind(target.getFramebuffer());
-      this.runFilterWithBoundBuffer(g, uc, t, target.getArea());
+      this.runFilterWithBoundBuffer(uc, t, target.getArea());
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -138,25 +139,23 @@ public final class R2FilterTextureShow implements R2FilterTextureShowType
 
   @Override
   public void runFilterWithBoundBuffer(
-    final JCGLInterfaceGL33Type g,
     final R2TextureUnitContextParentType uc,
     final R2Texture2DUsableType t,
     final AreaInclusiveUnsignedLType area)
   {
-    NullCheck.notNull(g);
     NullCheck.notNull(uc);
     NullCheck.notNull(t);
     NullCheck.notNull(area);
 
-    final JCGLDepthBuffersType g_db = g.getDepthBuffers();
-    final JCGLCullingType g_cu = g.getCulling();
-    final JCGLColorBufferMaskingType g_cm = g.getColorBufferMasking();
-    final JCGLStencilBuffersType g_st = g.getStencilBuffers();
-    final JCGLShadersType g_sh = g.getShaders();
-    final JCGLDrawType g_dr = g.getDraw();
-    final JCGLArrayObjectsType g_ao = g.getArrayObjects();
-    final JCGLTexturesType g_tx = g.getTextures();
-    final JCGLViewportsType g_v = g.getViewports();
+    final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
+    final JCGLCullingType g_cu = this.g.getCulling();
+    final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
+    final JCGLStencilBuffersType g_st = this.g.getStencilBuffers();
+    final JCGLShadersType g_sh = this.g.getShaders();
+    final JCGLDrawType g_dr = this.g.getDraw();
+    final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
+    final JCGLTexturesType g_tx = this.g.getTextures();
+    final JCGLViewportsType g_v = this.g.getViewports();
 
     if (g_db.depthBufferGetBits() > 0) {
       g_db.depthBufferTestDisable();

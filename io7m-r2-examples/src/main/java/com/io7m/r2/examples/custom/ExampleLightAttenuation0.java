@@ -294,12 +294,10 @@ public final class ExampleLightAttenuation0 implements R2ExampleCustomType
         g_cl.clear(t.geom_clear_spec);
 
         t.stencil_renderer.renderStencilsWithBoundBuffer(
-          g,
           mo,
           t.gbuffer.getArea(),
           t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g,
           t.gbuffer.getArea(),
           m.getTextureUnitAllocator().getRootContext(),
           mo,
@@ -314,7 +312,6 @@ public final class ExampleLightAttenuation0 implements R2ExampleCustomType
         g_cl.clear(t.light_clear_spec);
 
         t.light_renderer.renderLightsWithBoundBuffer(
-          g,
           t.gbuffer,
           t.lbuffer.getArea(),
           m.getTextureUnitAllocator().getRootContext(),
@@ -329,7 +326,6 @@ public final class ExampleLightAttenuation0 implements R2ExampleCustomType
         g_cl.clear(t.screen_clear_spec);
 
         t.filter_light.runFilterWithBoundBuffer(
-          g,
           m.getTextureUnitAllocator().getRootContext(),
           t.filter_light_params,
           area);

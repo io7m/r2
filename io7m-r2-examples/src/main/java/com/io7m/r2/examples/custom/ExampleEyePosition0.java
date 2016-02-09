@@ -118,9 +118,7 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
     this.stencils = R2SceneStencils.newMasks();
     this.stencil_renderer = m.getStencilRenderer();
     this.eye_renderer = R2EyePositionRenderer.newRenderer(
-      g.getShaders(),
-      m.getShaderSources(),
-      m.getIDPool());
+      g, m.getShaderSources(), m.getIDPool());
     this.geom_renderer = m.getGeometryRenderer();
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
@@ -238,12 +236,10 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
         g_cl.clear(t.geom_clear_spec);
 
         t.stencil_renderer.renderStencilsWithBoundBuffer(
-          g,
           mo,
           t.gbuffer.getArea(),
           t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g,
           t.gbuffer.getArea(),
           t.textures.getRootContext(),
           mo,
@@ -258,7 +254,6 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
         g_cl.clear(t.eye_clear_spec);
 
         t.eye_renderer.renderEyePositionWithBoundBuffer(
-          g,
           t.gbuffer,
           t.pbuffer.getArea(),
           t.textures.getRootContext(),

@@ -196,19 +196,16 @@ public final class ExampleGeometry2 implements R2ExampleCustomType
 
       this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         t.stencil_renderer.renderStencilsWithBoundBuffer(
-          g,
           mo,
           t.gbuffer.getArea(),
           t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g,
           t.gbuffer.getArea(),
           m.getTextureUnitAllocator().getRootContext(),
           mo,
           t.opaques);
         t.stencils.stencilsAddSingle(t.instance_1);
         t.stencil_renderer.renderStencilsWithBoundBuffer(
-          g,
           mo,
           t.gbuffer.getArea(),
           t.stencils);

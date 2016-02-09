@@ -58,16 +58,20 @@ public final class R2StencilRenderer implements R2StencilRendererType
   private final StencilConsumer          stencil_consumer;
   private final R2ShaderSingleType<Unit> program_instance;
   private final R2ShaderScreenType<Unit> program_screen;
-  private final R2UnitQuadType           quad;
+  private final R2UnitQuadUsableType     quad;
+  private final JCGLInterfaceGL33Type    g;
   private       boolean                  deleted;
 
   private R2StencilRenderer(
     final R2ShaderSourcesType in_sources,
     final JCGLInterfaceGL33Type in_g,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_g);
     NullCheck.notNull(in_sources);
+    this.g = NullCheck.notNull(in_g);
+    NullCheck.notNull(in_pool);
+    this.quad = NullCheck.notNull(in_quad);
 
     R2StencilRenderer.LOG.debug("initializing");
 
@@ -78,7 +82,6 @@ public final class R2StencilRenderer implements R2StencilRendererType
       R2StencilShaderScreen.newShader(g_sh, in_sources, in_pool);
 
     this.stencil_consumer = new StencilConsumer(this.program_instance);
-    this.quad = R2UnitQuad.newUnitQuad(in_g);
 
     R2StencilRenderer.LOG.debug("initialized");
   }
@@ -87,6 +90,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
    * @param in_sources Shader source access
    * @param in_g       An OpenGL interface
    * @param in_pool    The ID pool
+   * @param in_quad    A unit quad
    *
    * @return A new renderer
    */
@@ -94,34 +98,33 @@ public final class R2StencilRenderer implements R2StencilRendererType
   public static R2StencilRendererType newRenderer(
     final R2ShaderSourcesType in_sources,
     final JCGLInterfaceGL33Type in_g,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2UnitQuadUsableType in_quad)
   {
-    return new R2StencilRenderer(in_sources, in_g, in_pool);
+    return new R2StencilRenderer(in_sources, in_g, in_pool, in_quad);
   }
 
   @Override
   public void renderStencilsWithBoundBuffer(
-    final JCGLInterfaceGL33Type g,
     final R2MatricesObserverType m,
     final AreaInclusiveUnsignedLType area,
     final R2SceneStencilsType s)
   {
-    NullCheck.notNull(g);
     NullCheck.notNull(m);
     NullCheck.notNull(area);
     NullCheck.notNull(s);
 
     Assertive.require(!this.deleted);
 
-    final JCGLArrayObjectsType g_ao = g.getArrayObjects();
-    final JCGLDepthBuffersType g_db = g.getDepthBuffers();
-    final JCGLBlendingType g_b = g.getBlending();
-    final JCGLColorBufferMaskingType g_cm = g.getColorBufferMasking();
-    final JCGLCullingType g_cu = g.getCulling();
-    final JCGLStencilBuffersType g_st = g.getStencilBuffers();
-    final JCGLShadersType g_sh = g.getShaders();
-    final JCGLDrawType g_dr = g.getDraw();
-    final JCGLViewportsType g_v = g.getViewports();
+    final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
+    final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
+    final JCGLBlendingType g_b = this.g.getBlending();
+    final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
+    final JCGLCullingType g_cu = this.g.getCulling();
+    final JCGLStencilBuffersType g_st = this.g.getStencilBuffers();
+    final JCGLShadersType g_sh = this.g.getShaders();
+    final JCGLDrawType g_dr = this.g.getDraw();
+    final JCGLViewportsType g_v = this.g.getViewports();
 
     /**
      * Configure state for rendering stencil instances.
@@ -237,7 +240,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
       }
 
       try {
-        this.stencil_consumer.g33 = g;
+        this.stencil_consumer.g33 = this.g;
         this.stencil_consumer.matrices = m;
         s.stencilsExecute(this.stencil_consumer);
       } finally {
@@ -254,7 +257,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     if (!this.isDeleted()) {
       try {
         this.program_instance.delete(gi);
-        this.quad.delete(gi);
+        this.program_screen.delete(gi);
       } finally {
         this.deleted = true;
       }

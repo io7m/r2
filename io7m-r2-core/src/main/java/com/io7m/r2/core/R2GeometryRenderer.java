@@ -47,32 +47,37 @@ import org.valid4j.Assertive;
 
 public final class R2GeometryRenderer implements R2GeometryRendererType
 {
-  private final OpaqueConsumer opaque_consumer;
-  private       boolean        deleted;
+  private final OpaqueConsumer        opaque_consumer;
+  private final JCGLInterfaceGL33Type g;
+  private       boolean               deleted;
 
-  private R2GeometryRenderer()
+  private R2GeometryRenderer(final JCGLInterfaceGL33Type in_g)
   {
-    this.opaque_consumer = new OpaqueConsumer();
+    this.g = NullCheck.notNull(in_g);
+    this.opaque_consumer = new OpaqueConsumer(this.g);
   }
 
   /**
+   * Construct a new renderer.
+   *
+   * @param in_g An OpenGL interface
+   *
    * @return A new renderer
    */
 
-  public static R2GeometryRendererType newRenderer()
+  public static R2GeometryRendererType newRenderer(
+    final JCGLInterfaceGL33Type in_g)
   {
-    return new R2GeometryRenderer();
+    return new R2GeometryRenderer(in_g);
   }
 
   @Override
   public void renderGeometry(
-    final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
   {
-    NullCheck.notNull(g);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(uc);
     NullCheck.notNull(m);
@@ -81,11 +86,11 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
     final JCGLFramebufferUsableType gb_fb = gbuffer.getFramebuffer();
-    final JCGLFramebuffersType g_fb = g.getFramebuffers();
+    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
     try {
       g_fb.framebufferDrawBind(gb_fb);
-      this.renderGeometryWithBoundBuffer(g, gbuffer.getArea(), uc, m, s);
+      this.renderGeometryWithBoundBuffer(gbuffer.getArea(), uc, m, s);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -93,27 +98,25 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
   @Override
   public void renderGeometryWithBoundBuffer(
-    final JCGLInterfaceGL33Type g,
     final AreaInclusiveUnsignedLType area,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
   {
-    NullCheck.notNull(g);
     NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final JCGLFramebuffersType g_fb = g.getFramebuffers();
+    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
     Assertive.require(g_fb.framebufferDrawAnyIsBound());
 
-    final JCGLDepthBuffersType g_db = g.getDepthBuffers();
-    final JCGLBlendingType g_b = g.getBlending();
-    final JCGLColorBufferMaskingType g_cm = g.getColorBufferMasking();
-    final JCGLCullingType g_cu = g.getCulling();
-    final JCGLViewportsType g_v = g.getViewports();
+    final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
+    final JCGLBlendingType g_b = this.g.getBlending();
+    final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
+    final JCGLCullingType g_cu = this.g.getCulling();
+    final JCGLViewportsType g_v = this.g.getViewports();
 
     if (s.opaquesCount() > 0L) {
 
@@ -131,7 +134,6 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       g_db.depthBufferTestEnable(JCGLDepthFunction.DEPTH_LESS_THAN);
       g_v.viewportSet(area);
 
-      this.opaque_consumer.g33 = g;
       this.opaque_consumer.matrices = m;
       this.opaque_consumer.texture_context = uc;
       try {
@@ -139,7 +141,6 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       } finally {
         this.opaque_consumer.texture_context = null;
         this.opaque_consumer.matrices = null;
-        this.opaque_consumer.g33 = null;
       }
     }
   }
@@ -160,31 +161,32 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   private static final class OpaqueConsumer implements
     R2SceneOpaquesConsumerType
   {
-    private @Nullable JCGLInterfaceGL33Type          g33;
+    private final JCGLInterfaceGL33Type  g33;
+    private final JCGLShadersType        shaders;
+    private final JCGLTexturesType       textures;
+    private final JCGLArrayObjectsType   array_objects;
+    private final JCGLDrawType           draw;
+    private final JCGLStencilBuffersType stencils;
+
     private @Nullable R2MatricesObserverType         matrices;
-    private @Nullable JCGLShadersType                shaders;
-    private @Nullable JCGLTexturesType               textures;
-    private @Nullable JCGLArrayObjectsType           array_objects;
-    private @Nullable JCGLDrawType                   draw;
-    private @Nullable JCGLStencilBuffersType         stencils;
     private @Nullable R2TextureUnitContextParentType texture_context;
     private @Nullable R2TextureUnitContextType       material_texture_context;
 
-    private OpaqueConsumer()
+    private OpaqueConsumer(
+      final JCGLInterfaceGL33Type g)
     {
-
+      this.g33 = NullCheck.notNull(g);
+      this.shaders = this.g33.getShaders();
+      this.textures = this.g33.getTextures();
+      this.array_objects = this.g33.getArrayObjects();
+      this.draw = this.g33.getDraw();
+      this.stencils = this.g33.getStencilBuffers();
     }
 
     @Override
     public void onStart()
     {
       Assertive.require(this.g33 != null);
-
-      this.shaders = this.g33.getShaders();
-      this.textures = this.g33.getTextures();
-      this.array_objects = this.g33.getArrayObjects();
-      this.draw = this.g33.getDraw();
-      this.stencils = this.g33.getStencilBuffers();
     }
 
     @Override
@@ -326,10 +328,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     @Override
     public void onFinish()
     {
-      this.array_objects = null;
-      this.shaders = null;
-      this.draw = null;
-      this.textures = null;
+
     }
   }
 }

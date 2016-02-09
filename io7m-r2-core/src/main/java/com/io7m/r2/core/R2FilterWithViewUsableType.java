@@ -17,7 +17,6 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 
 /**
  * The type of usable filters that require access to the view values that
@@ -35,7 +34,6 @@ public interface R2FilterWithViewUsableType<T extends
    * Run the filter for the given parameters. The output will be written to
    * {@code target}.
    *
-   * @param g          A GL interface
    * @param uc         A texture unit context
    * @param m          The view matrices used to construct the scene
    * @param parameters The filter parameters
@@ -43,7 +41,6 @@ public interface R2FilterWithViewUsableType<T extends
    */
 
   void runFilter(
-    JCGLInterfaceGL33Type g,
     R2TextureUnitContextParentType uc,
     R2MatricesObserverValuesType m,
     P parameters,
@@ -54,7 +51,6 @@ public interface R2FilterWithViewUsableType<T extends
    * currently bound render target (which is expected to be of type {@code T}
    * for correct results).
    *
-   * @param g          A GL interface
    * @param uc         A texture unit context
    * @param m          The view matrices used to construct the scene
    * @param parameters The filter parameters
@@ -62,7 +58,6 @@ public interface R2FilterWithViewUsableType<T extends
    */
 
   void runFilterWithBoundBuffer(
-    JCGLInterfaceGL33Type g,
     R2TextureUnitContextParentType uc,
     R2MatricesObserverValuesType m,
     P parameters,
