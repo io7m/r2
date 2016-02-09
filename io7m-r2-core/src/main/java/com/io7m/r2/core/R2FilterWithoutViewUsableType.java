@@ -17,7 +17,6 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 
 /**
  * The type of usable filters that do not require access to the view values that
@@ -35,14 +34,12 @@ public interface R2FilterWithoutViewUsableType<T extends
    * Run the filter for the given parameters. The output will be written to
    * {@code target}.
    *
-   * @param g          A GL interface
    * @param uc         A texture unit context
    * @param parameters The filter parameters
    * @param target     The render target
    */
 
   void runFilter(
-    JCGLInterfaceGL33Type g,
     R2TextureUnitContextParentType uc,
     P parameters,
     T target);
@@ -52,14 +49,12 @@ public interface R2FilterWithoutViewUsableType<T extends
    * currently bound render target (which is expected to be of type {@code T}
    * for correct results).
    *
-   * @param g          A GL interface
    * @param uc         A texture unit context
    * @param parameters The filter parameters
    * @param area       The size of the current viewport
    */
 
   void runFilterWithBoundBuffer(
-    JCGLInterfaceGL33Type g,
     R2TextureUnitContextParentType uc,
     P parameters,
     AreaInclusiveUnsignedLType area);

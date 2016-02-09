@@ -342,7 +342,6 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         g_cl.clear(t.ssao_clear_spec);
 
         t.filter_ssao.runFilterWithBoundBuffer(
-          g,
           m.getTextureUnitAllocator().getRootContext(),
           mo,
           t.filter_ssao_params,
@@ -356,7 +355,6 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         g_cl.clear(t.screen_clear_spec);
 
         t.filter_show.runFilterWithBoundBuffer(
-          g,
           m.getTextureUnitAllocator().getRootContext(),
           t.abuffer.getAmbientOcclusionTexture(),
           area);

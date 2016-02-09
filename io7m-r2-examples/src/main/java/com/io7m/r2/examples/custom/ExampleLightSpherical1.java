@@ -328,10 +328,10 @@ public final class ExampleLightSpherical1 implements R2ExampleCustomType
         g_cl.clear(t.screen_clear_spec);
 
         t.filter_light.runFilterWithBoundBuffer(
-          g,
           m.getTextureUnitAllocator().getRootContext(),
           t.filter_light_params,
           area);
+
         return Unit.unit();
       });
     }

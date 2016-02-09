@@ -49,14 +49,17 @@ import com.io7m.r2.core.R2UnitQuadUsableType;
 public final class R2FilterLightApplicator implements
   R2FilterLightApplicatorType
 {
-  private R2ShaderFilterLightApplicatorParameters shader_params;
+  private final JCGLInterfaceGL33Type                   g;
   private final R2ShaderFilterLightApplicator           shader;
   private final R2UnitQuadUsableType                    quad;
+  private       R2ShaderFilterLightApplicatorParameters shader_params;
 
   private R2FilterLightApplicator(
+    final JCGLInterfaceGL33Type in_g,
     final R2ShaderFilterLightApplicator in_shader,
     final R2UnitQuadUsableType in_quad)
   {
+    this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
   }
@@ -92,15 +95,15 @@ public final class R2FilterLightApplicator implements
         in_sources,
         in_pool);
 
-    return new R2FilterLightApplicator(s, in_quad);
+    return new R2FilterLightApplicator(in_g, s, in_quad);
   }
 
   @Override
-  public void delete(final JCGLInterfaceGL33Type g)
+  public void delete(final JCGLInterfaceGL33Type gx)
     throws R2Exception
   {
     if (!this.isDeleted()) {
-      this.shader.delete(g);
+      this.shader.delete(gx);
     }
   }
 
@@ -124,21 +127,19 @@ public final class R2FilterLightApplicator implements
 
   @Override
   public void runFilter(
-    final JCGLInterfaceGL33Type g,
     final R2TextureUnitContextParentType uc,
     final R2FilterLightApplicatorParameters parameters,
     final R2ImageBufferUsableType target)
   {
-    NullCheck.notNull(g);
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
     NullCheck.notNull(target);
 
-    final JCGLFramebuffersType g_fb = g.getFramebuffers();
+    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
     try {
       g_fb.framebufferDrawBind(target.getFramebuffer());
-      this.runFilterWithBoundBuffer(g, uc, parameters, target.getArea());
+      this.runFilterWithBoundBuffer(uc, parameters, target.getArea());
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -146,25 +147,23 @@ public final class R2FilterLightApplicator implements
 
   @Override
   public void runFilterWithBoundBuffer(
-    final JCGLInterfaceGL33Type g,
     final R2TextureUnitContextParentType uc,
     final R2FilterLightApplicatorParameters parameters,
     final AreaInclusiveUnsignedLType area)
   {
-    NullCheck.notNull(g);
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
     NullCheck.notNull(area);
 
-    final JCGLDepthBuffersType g_db = g.getDepthBuffers();
-    final JCGLCullingType g_cu = g.getCulling();
-    final JCGLColorBufferMaskingType g_cm = g.getColorBufferMasking();
-    final JCGLStencilBuffersType g_st = g.getStencilBuffers();
-    final JCGLShadersType g_sh = g.getShaders();
-    final JCGLDrawType g_dr = g.getDraw();
-    final JCGLArrayObjectsType g_ao = g.getArrayObjects();
-    final JCGLTexturesType g_tx = g.getTextures();
-    final JCGLViewportsType g_v = g.getViewports();
+    final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
+    final JCGLCullingType g_cu = this.g.getCulling();
+    final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
+    final JCGLStencilBuffersType g_st = this.g.getStencilBuffers();
+    final JCGLShadersType g_sh = this.g.getShaders();
+    final JCGLDrawType g_dr = this.g.getDraw();
+    final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
+    final JCGLTexturesType g_tx = this.g.getTextures();
+    final JCGLViewportsType g_v = this.g.getViewports();
 
     if (g_db.depthBufferGetBits() > 0) {
       g_db.depthBufferTestDisable();
@@ -187,9 +186,9 @@ public final class R2FilterLightApplicator implements
       if (this.shader_params == null) {
         this.shader_params =
           R2ShaderFilterLightApplicatorParameters.newParameters(
-          gb.getAlbedoEmissiveTexture(),
-          lb.getDiffuseTexture(),
-          lb.getSpecularTexture());
+            gb.getAlbedoEmissiveTexture(),
+            lb.getDiffuseTexture(),
+            lb.getSpecularTexture());
       }
 
       this.shader_params.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
