@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
-import com.io7m.r2.core.filters.R2ShaderSSAO;
+import com.io7m.r2.core.shaders.R2ShaderSSAO;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Assert;

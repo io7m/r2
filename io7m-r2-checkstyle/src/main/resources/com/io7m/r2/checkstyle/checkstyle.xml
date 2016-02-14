@@ -56,7 +56,9 @@
     <module name="ClassFanOutComplexity">
       <property name="max" value="125"/>
     </module>
-    <module name="ClassTypeParameterName"/>
+    <module name="ClassTypeParameterName">
+      <property name="format" value="^[A-Z][A-Z0-9]*$"/>
+    </module>
     <module name="ConstantName"/>
     <module name="CovariantEquals"/>
     <module name="CyclomaticComplexity">
@@ -180,7 +182,7 @@
       <property name="format" value="^([a-z][a-z0-9_]*|_)$"/>
     </module>
     <module name="ParameterNumber">
-      <property name="max" value="10"/>
+      <property name="max" value="32"/>
     </module>
     <module name="ParenPad"/>
     <module name="RedundantImport"/>

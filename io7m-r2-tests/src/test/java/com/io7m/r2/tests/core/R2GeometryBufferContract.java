@@ -23,6 +23,7 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureUnitAllocator;
@@ -46,7 +47,10 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
       new UnsignedRangeInclusiveL(0L, 479L));
     final R2GeometryBufferType gb =
       R2GeometryBuffer.newGeometryBuffer(
-        g.getFramebuffers(), g.getTextures(), tc.getRootContext(), area);
+        g.getFramebuffers(),
+        g.getTextures(),
+        tc.getRootContext(),
+        R2GeometryBufferDescription.of(area));
 
     Assert.assertEquals(640L * 480L * 16L, gb.getRange().getInterval());
     Assert.assertFalse(gb.isDeleted());
@@ -60,7 +64,7 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
     final R2Texture2DUsableType t_norm =
       gb.getNormalTexture();
     final JCGLFramebufferUsableType fb =
-      gb.getFramebuffer();
+      gb.getPrimaryFramebuffer();
 
     Assert.assertEquals(
       JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,

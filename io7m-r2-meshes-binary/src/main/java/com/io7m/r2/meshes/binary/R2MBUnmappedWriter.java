@@ -39,6 +39,7 @@ import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.BigList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.valid4j.Assertive;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -212,42 +213,107 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
       for (long index = 0L; index < v_count; ++index) {
         this.buffer_vertex.rewind();
 
+        final Long bi = Long.valueOf(index);
         final R2MeshTangentsVertexType vv = vertices.get(index);
 
         {
           final PVectorI3D<R2SpaceObjectType> k =
             m_pos.get(vv.getPositionIndex());
-          v_pos.set3F(
-            (float) k.getXD(),
-            (float) k.getYD(),
-            (float) k.getZD());
+
+          final double x = k.getXD();
+          final double y = k.getYD();
+          final double z = k.getZD();
+
+          Assertive.ensure(
+            Double.isFinite(x), "Position [%d].x must be finite", bi);
+          Assertive.ensure(
+            Double.isFinite(y), "Position [%d].y must be finite", bi);
+          Assertive.ensure(
+            Double.isFinite(z), "Position [%d].z must be finite", bi);
+
+          Assertive.ensure(
+            !Double.isNaN(x), "Position [%d].x must be a valid number", bi);
+          Assertive.ensure(
+            !Double.isNaN(y), "Position [%d].y must be a valid number", bi);
+          Assertive.ensure(
+            !Double.isNaN(z), "Position [%d].z must be a valid number", bi);
+
+          v_pos.set3F((float) x, (float) y, (float) z);
         }
 
         {
           final PVectorI3D<R2SpaceObjectType> k =
             m_nor.get(vv.getNormalIndex());
-          v_nor.set3F(
-            (float) k.getXD(),
-            (float) k.getYD(),
-            (float) k.getZD());
+
+          final double x = k.getXD();
+          final double y = k.getYD();
+          final double z = k.getZD();
+
+          Assertive.ensure(
+            Double.isFinite(x), "Normal [%d].x must be finite", bi);
+          Assertive.ensure(
+            Double.isFinite(y), "Normal [%d].y must be finite", bi);
+          Assertive.ensure(
+            Double.isFinite(z), "Normal [%d].z must be finite", bi);
+
+          Assertive.ensure(
+            !Double.isNaN(x), "Normal [%d].x must be a valid number", bi);
+          Assertive.ensure(
+            !Double.isNaN(y), "Normal [%d].y must be a valid number", bi);
+          Assertive.ensure(
+            !Double.isNaN(z), "Normal [%d].z must be a valid number", bi);
+
+          v_nor.set3F((float) x, (float) y, (float) z);
         }
 
         {
           final PVectorI4D<R2SpaceObjectType> k =
             m_tan.get(vv.getTangentIndex());
-          v_tan.set4F(
-            (float) k.getXD(),
-            (float) k.getYD(),
-            (float) k.getZD(),
-            (float) k.getWD());
+
+          final double x = k.getXD();
+          final double y = k.getYD();
+          final double z = k.getZD();
+          final double w = k.getWD();
+
+          Assertive.ensure(
+            Double.isFinite(x), "Tangent [%d].x must be finite", bi);
+          Assertive.ensure(
+            Double.isFinite(y), "Tangent [%d].y must be finite", bi);
+          Assertive.ensure(
+            Double.isFinite(z), "Tangent [%d].z must be finite", bi);
+          Assertive.ensure(
+            Double.isFinite(w), "Tangent [%d].w must be finite", bi);
+
+          Assertive.ensure(
+            !Double.isNaN(x), "Tangent [%d].x must be a valid number", bi);
+          Assertive.ensure(
+            !Double.isNaN(y), "Tangent [%d].y must be a valid number", bi);
+          Assertive.ensure(
+            !Double.isNaN(z), "Tangent [%d].z must be a valid number", bi);
+          Assertive.ensure(
+            !Double.isNaN(w), "Tangent [%d].w must be a valid number", bi);
+
+          v_tan.set4F((float) x, (float) y, (float) z, (float) w);
         }
 
         {
           final PVectorI2D<R2SpaceTextureType> k =
             m_uv.get(vv.getUVIndex());
-          v_uv.set2F(
-            (float) k.getXD(),
-            (float) k.getYD());
+
+          final double x = k.getXD();
+          final double y = k.getYD();
+
+          Assertive.ensure(
+            Double.isFinite(x), "UV [%d].x must be finite", bi);
+          Assertive.ensure(
+            Double.isFinite(y), "UV [%d].y must be finite", bi);
+
+          Assertive.ensure(
+            !Double.isNaN(x), "UV [%d].x must be a valid number", bi);
+          Assertive.ensure(
+            !Double.isNaN(y), "UV [%d].y must be a valid number", bi);
+
+          v_uv.set2F((float) x, (float) y);
         }
 
         bc += R2MBUnmappedWriter.writeAll(this.buffer_vertex, this.channel);

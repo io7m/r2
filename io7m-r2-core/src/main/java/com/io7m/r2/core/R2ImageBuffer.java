@@ -43,22 +43,23 @@ import java.util.List;
 
 public final class R2ImageBuffer implements R2ImageBufferType
 {
-  private final R2Texture2DType            t_rgba;
-  private final JCGLFramebufferType        framebuffer;
-  private final UnsignedRangeInclusiveL    range;
-  private final AreaInclusiveUnsignedLType area;
+  private final R2Texture2DType              t_rgba;
+  private final JCGLFramebufferType          framebuffer;
+  private final UnsignedRangeInclusiveL      range;
+  private final R2ImageBufferDescriptionType desc;
 
   private R2ImageBuffer(
     final JCGLFramebufferType in_framebuffer,
+    final R2ImageBufferDescriptionType in_desc,
     final R2Texture2DType in_t_rgba)
   {
     this.framebuffer = NullCheck.notNull(in_framebuffer);
+    this.desc = NullCheck.notNull(in_desc);
     this.t_rgba = NullCheck.notNull(in_t_rgba);
 
     long size = 0L;
     size += this.t_rgba.get().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
-    this.area = in_t_rgba.get().textureGetArea();
   }
 
   /**
@@ -67,7 +68,7 @@ public final class R2ImageBuffer implements R2ImageBufferType
    * @param g_fb A framebuffer interface
    * @param g_t  A texture interface
    * @param tc   A texture unit context
-   * @param area The inclusive area of the buffer
+   * @param desc The image buffer description
    *
    * @return A new image buffer
    */
@@ -76,13 +77,19 @@ public final class R2ImageBuffer implements R2ImageBufferType
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_t,
     final R2TextureUnitContextParentType tc,
-    final AreaInclusiveUnsignedLType area)
+    final R2ImageBufferDescriptionType desc)
   {
+    NullCheck.notNull(g_fb);
+    NullCheck.notNull(g_t);
+    NullCheck.notNull(tc);
+    NullCheck.notNull(desc);
+
     final List<JCGLFramebufferColorAttachmentPointType> points =
       g_fb.framebufferGetColorAttachments();
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
+    final AreaInclusiveUnsignedLType area = desc.getArea();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -104,7 +111,7 @@ public final class R2ImageBuffer implements R2ImageBufferType
       fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt.get());
 
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
-      return new R2ImageBuffer(fb, rt);
+      return new R2ImageBuffer(fb, desc, rt);
     } finally {
       cc.unitContextFinish(g_t);
     }
@@ -118,7 +125,7 @@ public final class R2ImageBuffer implements R2ImageBufferType
   }
 
   @Override
-  public JCGLFramebufferUsableType getFramebuffer()
+  public JCGLFramebufferUsableType getPrimaryFramebuffer()
   {
     return this.framebuffer;
   }
@@ -126,7 +133,13 @@ public final class R2ImageBuffer implements R2ImageBufferType
   @Override
   public AreaInclusiveUnsignedLType getArea()
   {
-    return this.area;
+    return this.desc.getArea();
+  }
+
+  @Override
+  public R2ImageBufferDescriptionType getDescription()
+  {
+    return this.desc;
   }
 
   @Override

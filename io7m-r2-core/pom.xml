@@ -76,6 +76,10 @@
       <groupId>com.io7m.jinterp</groupId>
       <artifactId>io7m-jinterp-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.jpuddle</groupId>
+      <artifactId>io7m-jpuddle-core</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>it.unimi.dsi</groupId>
@@ -88,6 +92,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.immutables</groupId>
+      <artifactId>value</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -137,6 +147,7 @@
             </goals>
             <phase>generate-sources</phase>
             <configuration>
+              <targetDirectory>${project.build.directory}/generated-sources/cursors</targetDirectory>
               <packages>
                 <package>com.io7m.r2.core.cursors</package>
               </packages>

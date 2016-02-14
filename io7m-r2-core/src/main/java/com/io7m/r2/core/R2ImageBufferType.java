@@ -21,7 +21,7 @@ package com.io7m.r2.core;
  */
 
 public interface R2ImageBufferType extends R2ImageBufferUsableType,
-  R2RenderTargetType
+  R2RenderTargetType<R2ImageBufferDescriptionType>
 {
   // No extra functions
 }

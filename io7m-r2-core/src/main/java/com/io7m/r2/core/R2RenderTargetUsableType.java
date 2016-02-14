@@ -16,15 +16,38 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLResourceSizedType;
 import com.io7m.jcanephora.core.JCGLResourceUsableType;
 
 /**
  * The type of usable render targets.
+ *
+ * @param <D> The precise type of render target description used to produce
+ *            render targets of this type
  */
 
-public interface R2RenderTargetUsableType extends JCGLResourceUsableType,
+public interface R2RenderTargetUsableType<D extends
+  R2RenderTargetDescriptionType> extends
+  JCGLResourceUsableType,
   JCGLResourceSizedType
 {
+  /**
+   * @return The framebuffer
+   */
 
+  JCGLFramebufferUsableType getPrimaryFramebuffer();
+
+  /**
+   * @return The viewport area
+   */
+
+  AreaInclusiveUnsignedLType getArea();
+
+  /**
+   * @return The description used to create the render target
+   */
+
+  D getDescription();
 }

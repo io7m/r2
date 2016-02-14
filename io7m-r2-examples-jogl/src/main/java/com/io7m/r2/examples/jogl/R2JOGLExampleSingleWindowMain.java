@@ -153,9 +153,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       final GLProfile pro = GLProfile.get(GLProfile.GL3);
       final GLCapabilities caps = new GLCapabilities(pro);
       final GLWindow win = GLWindow.create(caps);
-      win.setSize(640, 480);
+      win.setSize(1024, 768);
       win.setDefaultCloseOperation(
         WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE);
+      win.setTitle("R2");
 
       final ExampleListener el = new ExampleListener(win, example);
       win.addGLEventListener(el);
@@ -532,14 +533,14 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private final JCameraContext                   camera_ctx;
     private final JCameraFPSStyleMouseRegion       camera_mouse_region;
     private final JCameraRotationCoefficients      camera_rotations;
+    private final JCGLArrayObjectsType             array_objects;
+    private final JCGLArrayBuffersType             array_buffers;
+    private final JCGLIndexBuffersType             index_buffers;
     private       long                             camera_time_then;
     private       double                           camera_time_accum;
     private       JCameraFPSStyleSnapshot          camera_snap_current;
     private       JCameraFPSStyleSnapshot          camera_snap_prev;
     private       boolean                          camera_enabled;
-    private       JCGLArrayObjectsType             array_objects;
-    private       JCGLArrayBuffersType             array_buffers;
-    private       JCGLIndexBuffersType             index_buffers;
 
     Services(
       final GLWindow win,
@@ -605,8 +606,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
             JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
             JCGLTextureWrapS.TEXTURE_WRAP_REPEAT,
             JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
-            JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
-            JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
+            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+            JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
         final JCGLTexture2DUpdateType update =
           this.update_prov.getTextureUpdate(t, data);
         this.textures.texture2DUpdate(u0, update);
@@ -625,8 +626,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         return this.mesh_cache.get(name);
       }
 
+      R2JOGLExampleSingleWindowMain.LOG.debug("loading mesh {}", name);
+
       final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
-      try (final InputStream is = this.getMeshStream(name, c)) {
+      try (final InputStream is = Services.getMeshStream(name, c)) {
 
         final R2MeshArrayObjectSynchronousAdapterType adapter =
           R2MeshArrayObjectSynchronousAdapter.newAdapter(

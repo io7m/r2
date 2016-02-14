@@ -118,7 +118,7 @@ public final class R2LightRenderer implements R2LightRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final JCGLFramebufferUsableType lb_fb = lbuffer.getFramebuffer();
+    final JCGLFramebufferUsableType lb_fb = lbuffer.getPrimaryFramebuffer();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
     try {
@@ -146,7 +146,7 @@ public final class R2LightRenderer implements R2LightRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final JCGLFramebufferUsableType gb_fb = gbuffer.getFramebuffer();
+    final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
     final JCGLViewportsType g_v = this.g.getViewports();
 
@@ -183,12 +183,14 @@ public final class R2LightRenderer implements R2LightRendererType
       this.light_consumer.gbuffer = gbuffer;
       this.light_consumer.matrices = m;
       this.light_consumer.texture_context = uc;
+      this.light_consumer.viewport = lbuffer_area;
       try {
         s.opaqueLightsExecute(this.light_consumer);
       } finally {
         this.light_consumer.matrices = null;
         this.light_consumer.gbuffer = null;
         this.light_consumer.texture_context = null;
+        this.light_consumer.viewport = null;
       }
     }
   }
@@ -216,6 +218,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private R2LightSingleType                                light;
     private R2ShaderLightSingleUsableType<R2LightSingleType> light_shader;
     private R2TextureUnitContextType                         light_base_context;
+    private AreaInclusiveUnsignedLType                       viewport;
 
     LightConsumer(final JCGLInterfaceGL33Type in_g)
     {
@@ -315,44 +318,58 @@ public final class R2LightRenderer implements R2LightRendererType
       try {
 
         /**
-         * For full-screen quads, the front faces should be rendered. For
-         * everything else, render only back faces.
-         *
-         * Additionally, screen-based lights will render a light volume on
-         * the near plane: Light volume fragments will have a depth less than
-         * or equal to any geometry and therefore depth testing must reflect
-         * this. For other types of lights, the fragments of the back faces of
-         * the light volume will have a depth greater than or equal to the
-         * geometry fragments that should be affected.
+         * Create a new texture context for this particular light.
          */
 
-        if (i instanceof R2LightScreenSingleType) {
-          this.culling.cullingEnable(
-            JCGLFaceSelection.FACE_BACK,
-            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
-          this.depth.depthBufferTestEnable(
-            JCGLDepthFunction.DEPTH_LESS_THAN_OR_EQUAL);
-        } else {
-          this.culling.cullingEnable(
-            JCGLFaceSelection.FACE_FRONT,
-            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
-          this.depth.depthBufferTestEnable(
-            JCGLDepthFunction.DEPTH_GREATER_THAN_OR_EQUAL);
+        final R2TextureUnitContextType uc =
+          this.light_base_context.unitContextNew();
+
+        try {
+
+          /**
+           * For full-screen quads, the front faces should be rendered. For
+           * everything else, render only back faces.
+           *
+           * Additionally, screen-based lights will render a light volume on
+           * the near plane: Light volume fragments will have a depth less than
+           * or equal to any geometry and therefore depth testing must reflect
+           * this. For other types of lights, the fragments of the back faces of
+           * the light volume will have a depth greater than or equal to the
+           * geometry fragments that should be affected.
+           */
+
+          if (i instanceof R2LightScreenSingleType) {
+            this.culling.cullingEnable(
+              JCGLFaceSelection.FACE_BACK,
+              JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
+            this.depth.depthBufferTestDisable();
+          } else {
+            this.culling.cullingEnable(
+              JCGLFaceSelection.FACE_FRONT,
+              JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
+            this.depth.depthBufferTestEnable(
+              JCGLDepthFunction.DEPTH_GREATER_THAN_OR_EQUAL);
+          }
+
+          s.setLightTextures(this.textures, uc, i);
+          s.setLightViewDependentValues(
+            this.shaders, this.matrices, this.viewport, i);
+          s.setLightValues(this.shaders, this.textures, i);
+
+          this.matrices.withTransform(
+            i.getTransform(),
+            PMatrixI3x3F.identity(),
+            this,
+            (mi, t) -> {
+              t.light_shader.setLightTransformDependentValues(
+                t.shaders, mi, t.light);
+              t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+              return Unit.unit();
+            });
+
+        } finally {
+          uc.unitContextFinish(this.textures);
         }
-
-        s.setLightViewDependentValues(this.shaders, this.matrices, i);
-        s.setLightValues(this.shaders, this.textures, i);
-
-        this.matrices.withTransform(
-          i.getTransform(),
-          PMatrixI3x3F.identity(),
-          this,
-          (mi, t) -> {
-            t.light_shader.setLightTransformDependentValues(
-              t.shaders, mi, t.light);
-            t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-            return Unit.unit();
-          });
 
       } finally {
         this.light = null;

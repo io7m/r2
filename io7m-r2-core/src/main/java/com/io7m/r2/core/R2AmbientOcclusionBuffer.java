@@ -45,16 +45,19 @@ import java.util.List;
 public final class R2AmbientOcclusionBuffer implements
   R2AmbientOcclusionBufferType
 {
-  private final R2Texture2DType         t_occ;
-  private final JCGLFramebufferType     framebuffer;
-  private final UnsignedRangeInclusiveL range;
+  private final R2Texture2DType                         t_occ;
+  private final JCGLFramebufferType                     framebuffer;
+  private final UnsignedRangeInclusiveL                 range;
+  private final R2AmbientOcclusionBufferDescriptionType desc;
 
   private R2AmbientOcclusionBuffer(
     final JCGLFramebufferType in_framebuffer,
-    final R2Texture2DType in_t_occ)
+    final R2Texture2DType in_t_occ,
+    final R2AmbientOcclusionBufferDescriptionType in_desc)
   {
     this.framebuffer = NullCheck.notNull(in_framebuffer);
     this.t_occ = NullCheck.notNull(in_t_occ);
+    this.desc = NullCheck.notNull(in_desc);
 
     long size = 0L;
     size += this.t_occ.get().getRange().getInterval();
@@ -67,7 +70,7 @@ public final class R2AmbientOcclusionBuffer implements
    * @param g_fb A framebuffer interface
    * @param g_t  A texture interface
    * @param tc   A texture unit context
-   * @param area The inclusive area of the buffer
+   * @param d    The buffer description
    *
    * @return A new ambient occlusion buffer
    */
@@ -76,13 +79,14 @@ public final class R2AmbientOcclusionBuffer implements
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_t,
     final R2TextureUnitContextParentType tc,
-    final AreaInclusiveUnsignedLType area)
+    final R2AmbientOcclusionBufferDescriptionType d)
   {
     final List<JCGLFramebufferColorAttachmentPointType> points =
       g_fb.framebufferGetColorAttachments();
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
+    final AreaInclusiveUnsignedLType area = d.getArea();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -103,8 +107,12 @@ public final class R2AmbientOcclusionBuffer implements
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
       fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_occ.get());
 
+      final com.io7m.r2.core.R2AmbientOcclusionBufferDescription.Builder ab =
+        com.io7m.r2.core.R2AmbientOcclusionBufferDescription.builder();
+      ab.from(d);
+
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
-      return new R2AmbientOcclusionBuffer(fb, rt_occ);
+      return new R2AmbientOcclusionBuffer(fb, rt_occ, ab.build());
     } finally {
       cc.unitContextFinish(g_t);
     }
@@ -117,7 +125,7 @@ public final class R2AmbientOcclusionBuffer implements
   }
 
   @Override
-  public JCGLFramebufferUsableType getFramebuffer()
+  public JCGLFramebufferUsableType getPrimaryFramebuffer()
   {
     return this.framebuffer;
   }
@@ -126,6 +134,12 @@ public final class R2AmbientOcclusionBuffer implements
   public AreaInclusiveUnsignedLType getArea()
   {
     return this.t_occ.get().textureGetArea();
+  }
+
+  @Override
+  public R2AmbientOcclusionBufferDescriptionType getDescription()
+  {
+    return this.desc;
   }
 
   @Override

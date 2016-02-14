@@ -43,15 +43,16 @@ import java.util.List;
 
 public final class R2LightBuffer implements R2LightBufferType
 {
-  private final R2Texture2DType            t_diffuse;
-  private final R2Texture2DType            t_specular;
-  private final R2Texture2DType            t_depth;
-  private final JCGLFramebufferType        framebuffer;
-  private final UnsignedRangeInclusiveL    range;
-  private final AreaInclusiveUnsignedLType area;
+  private final R2Texture2DType              t_diffuse;
+  private final R2Texture2DType              t_specular;
+  private final R2Texture2DType              t_depth;
+  private final JCGLFramebufferType          framebuffer;
+  private final UnsignedRangeInclusiveL      range;
+  private final R2LightBufferDescriptionType desc;
 
   private R2LightBuffer(
     final JCGLFramebufferType in_framebuffer,
+    final R2LightBufferDescriptionType in_desc,
     final R2Texture2DType in_t_diffuse,
     final R2Texture2DType in_t_specular,
     final R2Texture2DType in_t_depth)
@@ -60,13 +61,13 @@ public final class R2LightBuffer implements R2LightBufferType
     this.t_diffuse = NullCheck.notNull(in_t_diffuse);
     this.t_specular = NullCheck.notNull(in_t_specular);
     this.t_depth = NullCheck.notNull(in_t_depth);
+    this.desc = NullCheck.notNull(in_desc);
 
     long size = 0L;
     size += this.t_diffuse.get().getRange().getInterval();
     size += this.t_specular.get().getRange().getInterval();
     size += this.t_depth.get().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
-    this.area = in_t_diffuse.get().textureGetArea();
   }
 
   /**
@@ -75,7 +76,7 @@ public final class R2LightBuffer implements R2LightBufferType
    * @param g_fb A framebuffer interface
    * @param g_t  A texture interface
    * @param tc   A texture unit context
-   * @param area The inclusive area of the buffer
+   * @param desc The light buffer description
    *
    * @return A new light buffer
    */
@@ -84,13 +85,19 @@ public final class R2LightBuffer implements R2LightBufferType
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_t,
     final R2TextureUnitContextParentType tc,
-    final AreaInclusiveUnsignedLType area)
+    final R2LightBufferDescriptionType desc)
   {
+    NullCheck.notNull(g_fb);
+    NullCheck.notNull(g_t);
+    NullCheck.notNull(tc);
+    NullCheck.notNull(desc);
+
     final List<JCGLFramebufferColorAttachmentPointType> points =
       g_fb.framebufferGetColorAttachments();
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
+    final AreaInclusiveUnsignedLType area = desc.getArea();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -139,7 +146,7 @@ public final class R2LightBuffer implements R2LightBufferType
       fbb.attachDepthStencilTexture2D(rt_depth.get());
 
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
-      return new R2LightBuffer(fb, rt_diff, rt_spec, rt_depth);
+      return new R2LightBuffer(fb, desc, rt_diff, rt_spec, rt_depth);
     } finally {
       cc.unitContextFinish(g_t);
     }
@@ -158,7 +165,7 @@ public final class R2LightBuffer implements R2LightBufferType
   }
 
   @Override
-  public JCGLFramebufferUsableType getFramebuffer()
+  public JCGLFramebufferUsableType getPrimaryFramebuffer()
   {
     return this.framebuffer;
   }
@@ -166,7 +173,13 @@ public final class R2LightBuffer implements R2LightBufferType
   @Override
   public AreaInclusiveUnsignedLType getArea()
   {
-    return this.area;
+    return this.desc.getArea();
+  }
+
+  @Override
+  public R2LightBufferDescriptionType getDescription()
+  {
+    return this.desc;
   }
 
   @Override

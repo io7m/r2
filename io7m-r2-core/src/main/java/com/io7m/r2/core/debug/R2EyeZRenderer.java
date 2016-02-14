@@ -152,7 +152,7 @@ public final class R2EyeZRenderer implements R2EyeZRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final JCGLFramebufferUsableType gb_fb = gbuffer.getFramebuffer();
+    final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
 
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();

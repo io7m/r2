@@ -27,6 +27,7 @@ import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jfunctional.Unit;
+import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.VectorI4F;
@@ -34,8 +35,8 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
-import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
@@ -51,13 +52,8 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
-import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2TransformReadableType;
-import com.io7m.r2.core.R2UnitQuad;
-import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2EyePositionBuffer;
 import com.io7m.r2.core.debug.R2EyePositionBufferType;
@@ -79,28 +75,26 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private R2SceneStencilsType    stencils;
-  private R2StencilRendererType  stencil_renderer;
-  private R2GeometryRendererType geom_renderer;
-  private R2MatricesType         matrices;
-  private R2ProjectionFOV        projection;
-  private R2UnitQuadType         quad;
-  private R2SceneOpaquesType     opaques;
-  private R2GeometryBufferType   gbuffer;
+  private R2SceneStencilsType     stencils;
+  private R2ProjectionFOV         projection;
+  private R2SceneOpaquesType      opaques;
+  private R2GeometryBufferType    gbuffer;
+  private R2EyePositionBufferType pbuffer;
 
   private R2ShaderSingleType<R2SurfaceShaderBasicParameters>
-                                     shader;
+                                    shader;
   private R2SurfaceShaderBasicParameters
-                                     shader_params;
+                                    shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-                                     material;
-  private R2UnitSphereType           sphere;
-  private R2InstanceSingleType       instance;
-  private R2EyePositionRendererType  eye_renderer;
-  private R2EyePositionBufferType    pbuffer;
-  private JCGLClearSpecification     geom_clear_spec;
-  private JCGLClearSpecification     eye_clear_spec;
-  private R2TextureUnitAllocatorType textures;
+                                    material;
+  private R2UnitSphereType          sphere;
+  private R2InstanceSingleType      instance;
+  private R2EyePositionRendererType eye_renderer;
+
+  private JCGLClearSpecification geom_clear_spec;
+  private JCGLClearSpecification eye_clear_spec;
+
+  private R2MainType main;
 
   public ExampleEyePosition0()
   {
@@ -114,25 +108,28 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
     final AreaInclusiveUnsignedLType area,
     final R2MainType m)
   {
+    this.main = NullCheck.notNull(m);
     this.opaques = R2SceneOpaques.newOpaques();
     this.stencils = R2SceneStencils.newMasks();
-    this.stencil_renderer = m.getStencilRenderer();
     this.eye_renderer = R2EyePositionRenderer.newRenderer(
       g, m.getShaderSources(), m.getIDPool());
-    this.geom_renderer = m.getGeometryRenderer();
-    this.matrices = m.getMatrices();
-    this.quad = R2UnitQuad.newUnitQuad(g);
-    this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
-      4, g.getTextures().textureGetUnits());
-    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
-      g.getFramebuffers(),
-      g.getTextures(),
-      this.textures.getRootContext(),
-      area);
+
+    {
+      final R2GeometryBufferDescription.Builder gdb =
+        R2GeometryBufferDescription.builder();
+      gdb.setArea(area);
+
+      this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
+        g.getFramebuffers(),
+        g.getTextures(),
+        m.getTextureUnitAllocator().getRootContext(),
+        gdb.build());
+    }
+
     this.pbuffer = R2EyePositionBuffer.newEyePositionBuffer(
       g.getFramebuffers(),
       g.getTextures(),
-      this.textures.getRootContext(),
+      m.getTextureUnitAllocator().getRootContext(),
       area);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
@@ -148,7 +145,6 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
     final R2IDPoolType id_pool = m.getIDPool();
 
     this.sphere = R2UnitSphere.newUnitSphere8(g);
-    this.quad = R2UnitQuad.newUnitQuad(g);
 
     final R2TransformReadableType tr = R2TransformOST.newTransform();
     this.instance = R2InstanceSingle.newInstance(
@@ -215,16 +211,17 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
     }
 
     {
-      final JCGLFramebufferUsableType fb = this.gbuffer.getFramebuffer();
       final JCGLFramebuffersType g_fb = g.getFramebuffers();
       final JCGLClearType g_cl = g.getClear();
       final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
       final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
       final JCGLDepthBuffersType g_db = g.getDepthBuffers();
 
-      this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+      final R2MatricesType matrices = m.getMatrices();
+
+      matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         final JCGLFramebufferUsableType gbuffer_fb =
-          t.gbuffer.getFramebuffer();
+          t.gbuffer.getPrimaryFramebuffer();
         final JCGLFramebufferUsableType zbuffer_fb =
           t.pbuffer.getFramebuffer();
 
@@ -235,13 +232,13 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.geom_clear_spec);
 
-        t.stencil_renderer.renderStencilsWithBoundBuffer(
+        t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
           mo,
           t.gbuffer.getArea(),
           t.stencils);
-        t.geom_renderer.renderGeometryWithBoundBuffer(
+        t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
           t.gbuffer.getArea(),
-          t.textures.getRootContext(),
+          t.main.getTextureUnitAllocator().getRootContext(),
           mo,
           t.opaques);
         g_fb.framebufferDrawUnbind();
@@ -256,9 +253,9 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
         t.eye_renderer.renderEyePositionWithBoundBuffer(
           t.gbuffer,
           t.pbuffer.getArea(),
-          t.textures.getRootContext(),
+          t.main.getTextureUnitAllocator().getRootContext(),
           mo,
-          this.quad);
+          t.main.getUnitQuad());
         g_fb.framebufferDrawUnbind();
         return Unit.unit();
       });
@@ -272,8 +269,7 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
     final JCGLInterfaceGL33Type g,
     final R2MainType m)
   {
-    this.quad.delete(g);
     this.shader.delete(g);
-    this.stencil_renderer.delete(g);
+    this.eye_renderer.delete(g);
   }
 }

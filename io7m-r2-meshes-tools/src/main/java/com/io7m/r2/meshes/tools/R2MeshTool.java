@@ -167,6 +167,68 @@ public final class R2MeshTool implements Runnable
       final R2MeshType m)
     {
       R2MeshTool.LOG.info("{}: loaded {}", p, name);
+
+      m.matchMesh(
+        basic -> {
+          R2MeshTool.LOG.info(
+            "{}: basic mesh",
+            name);
+          R2MeshTool.LOG.info(
+            "{}: {} positions",
+            name,
+            Long.valueOf(basic.getPositions().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} normals",
+            name,
+            Long.valueOf(basic.getNormals().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} uvs",
+            name,
+            Long.valueOf(basic.getUVs().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} unique vertices",
+            name,
+            Long.valueOf(basic.getVertices().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} triangles",
+            name,
+            Long.valueOf(basic.getTriangles().size64()));
+          return Unit.unit();
+        },
+        with_tangents -> {
+          R2MeshTool.LOG.info(
+            "{}: mesh with tangents",
+            name);
+          R2MeshTool.LOG.info(
+            "{}: {} positions",
+            name,
+            Long.valueOf(with_tangents.getPositions().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} normals",
+            name,
+            Long.valueOf(with_tangents.getNormals().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} uvs",
+            name,
+            Long.valueOf(with_tangents.getUVs().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} tangents",
+            name,
+            Long.valueOf(with_tangents.getTangents().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} bitangents",
+            name,
+            Long.valueOf(with_tangents.getBitangents().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} unique vertices",
+            name,
+            Long.valueOf(with_tangents.getVertices().size64()));
+          R2MeshTool.LOG.info(
+            "{}: {} triangles",
+            name,
+            Long.valueOf(with_tangents.getTriangles().size64()));
+          return Unit.unit();
+        });
     }
 
     @Override

@@ -195,6 +195,11 @@
         <artifactId>io7m-jinterp-core</artifactId>
         <version>[1.0.0, 2.0.0)</version>
       </dependency>
+      <dependency>
+        <groupId>com.io7m.jpuddle</groupId>
+        <artifactId>io7m-jpuddle-core</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+      </dependency>
 
       <dependency>
         <groupId>it.unimi.dsi</groupId>

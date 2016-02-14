@@ -85,7 +85,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final JCGLFramebufferUsableType gb_fb = gbuffer.getFramebuffer();
+    final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
     try {

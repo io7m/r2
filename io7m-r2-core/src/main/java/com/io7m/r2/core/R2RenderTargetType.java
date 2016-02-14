@@ -18,9 +18,13 @@ package com.io7m.r2.core;
 
 /**
  * The type of render targets.
+ *
+ * @param <D> The precise type of render target description used to produce
+ *           render targets of this type
  */
 
-public interface R2RenderTargetType extends R2DeletableType
+public interface R2RenderTargetType<D extends R2RenderTargetDescriptionType>
+  extends R2DeletableType, R2RenderTargetUsableType<D>
 {
-
+  // No extra methods
 }

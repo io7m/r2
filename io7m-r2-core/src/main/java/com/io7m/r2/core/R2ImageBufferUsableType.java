@@ -16,30 +16,16 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
-
 /**
  * The type of usable image buffers.
  */
 
-public interface R2ImageBufferUsableType extends R2RenderTargetUsableType
+public interface R2ImageBufferUsableType
+  extends R2RenderTargetUsableType<R2ImageBufferDescriptionType>
 {
   /**
    * @return The diffuse texture
    */
 
   R2Texture2DUsableType getRGBATexture();
-
-  /**
-   * @return The framebuffer
-   */
-
-  JCGLFramebufferUsableType getFramebuffer();
-
-  /**
-   * @return The viewport area
-   */
-
-  AreaInclusiveUnsignedLType getArea();
 }

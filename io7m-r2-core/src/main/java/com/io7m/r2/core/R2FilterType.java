@@ -17,14 +17,13 @@
 package com.io7m.r2.core;
 
 /**
- * The type of filters.
+ * The type of image filters.
  *
- * @param <T> The type of render target to which the filter expects to render
- * @param <P> The type of filter parameters
+ * @param <P> The precise type of parameters
  */
 
-public interface R2FilterType<T extends R2RenderTargetUsableType, P> extends
-  R2DeletableType, R2FilterUsableType<T, P>
+public interface R2FilterType<P>
+  extends R2DeletableType, R2FilterUsableType<P>
 {
   // No extra methods
 }

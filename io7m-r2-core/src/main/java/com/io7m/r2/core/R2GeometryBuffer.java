@@ -43,21 +43,24 @@ import java.util.List;
 
 public final class R2GeometryBuffer implements R2GeometryBufferType
 {
-  private final R2Texture2DType         t_rgba;
-  private final R2Texture2DType         t_norm;
-  private final R2Texture2DType         t_spec;
-  private final R2Texture2DType         t_depth;
-  private final JCGLFramebufferType     framebuffer;
-  private final UnsignedRangeInclusiveL range;
+  private final R2Texture2DType                 t_rgba;
+  private final R2Texture2DType                 t_norm;
+  private final R2Texture2DType                 t_spec;
+  private final R2Texture2DType                 t_depth;
+  private final JCGLFramebufferType             framebuffer;
+  private final UnsignedRangeInclusiveL         range;
+  private final R2GeometryBufferDescriptionType desc;
 
   private R2GeometryBuffer(
     final JCGLFramebufferType in_framebuffer,
+    final R2GeometryBufferDescriptionType in_desc,
     final R2Texture2DType in_t_rgba,
     final R2Texture2DType in_t_norm,
     final R2Texture2DType in_t_spec,
     final R2Texture2DType in_t_depth)
   {
     this.framebuffer = NullCheck.notNull(in_framebuffer);
+    this.desc = NullCheck.notNull(in_desc);
     this.t_rgba = NullCheck.notNull(in_t_rgba);
     this.t_norm = NullCheck.notNull(in_t_norm);
     this.t_spec = NullCheck.notNull(in_t_spec);
@@ -77,7 +80,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
    * @param g_fb A framebuffer interface
    * @param g_t  A texture interface
    * @param tc   A texture unit context
-   * @param area The inclusive area of the buffer
+   * @param desc The geometry buffer description
    *
    * @return A new geometry buffer
    */
@@ -86,13 +89,19 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_t,
     final R2TextureUnitContextParentType tc,
-    final AreaInclusiveUnsignedLType area)
+    final R2GeometryBufferDescriptionType desc)
   {
+    NullCheck.notNull(g_fb);
+    NullCheck.notNull(g_t);
+    NullCheck.notNull(tc);
+    NullCheck.notNull(desc);
+
     final List<JCGLFramebufferColorAttachmentPointType> points =
       g_fb.framebufferGetColorAttachments();
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
+    final AreaInclusiveUnsignedLType area = desc.getArea();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -154,7 +163,8 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
       fbb.attachDepthStencilTexture2D(rt_depth.get());
 
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
-      return new R2GeometryBuffer(fb, rt_rgba, rt_norm, rt_spec, rt_depth);
+      return new R2GeometryBuffer(
+        fb, desc, rt_rgba, rt_norm, rt_spec, rt_depth);
     } finally {
       cc.unitContextFinish(g_t);
     }
@@ -185,7 +195,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
   }
 
   @Override
-  public JCGLFramebufferUsableType getFramebuffer()
+  public JCGLFramebufferUsableType getPrimaryFramebuffer()
   {
     return this.framebuffer;
   }
@@ -194,6 +204,12 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
   public AreaInclusiveUnsignedLType getArea()
   {
     return this.t_rgba.get().textureGetArea();
+  }
+
+  @Override
+  public R2GeometryBufferDescriptionType getDescription()
+  {
+    return this.desc;
   }
 
   @Override

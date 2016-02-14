@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
-import com.io7m.r2.core.filters.R2ShaderFilterLightApplicator;
+import com.io7m.r2.core.shaders.R2ShaderLightApplicator;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Assert;
@@ -40,8 +40,8 @@ public abstract class R2ShaderFilterLightApplicatorContract extends
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderFilterLightApplicator s =
-      R2ShaderFilterLightApplicator.newShader(
+    final R2ShaderLightApplicator s =
+      R2ShaderLightApplicator.newShader(
         g.getShaders(),
         sources,
         pool);

@@ -23,6 +23,7 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2LightBuffer;
+import com.io7m.r2.core.R2LightBufferDescription;
 import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureUnitAllocator;
@@ -44,9 +45,13 @@ public abstract class R2LightBufferContract extends R2JCGLContract
     final AreaInclusiveUnsignedL area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
+
     final R2LightBufferType gb =
       R2LightBuffer.newLightBuffer(
-        g.getFramebuffers(), g.getTextures(), tc.getRootContext(), area);
+        g.getFramebuffers(),
+        g.getTextures(),
+        tc.getRootContext(),
+        R2LightBufferDescription.of(area));
 
     Assert.assertEquals(640L * 480L * 12L, gb.getRange().getInterval());
     Assert.assertFalse(gb.isDeleted());
@@ -56,7 +61,7 @@ public abstract class R2LightBufferContract extends R2JCGLContract
     final R2Texture2DUsableType t_spec =
       gb.getSpecularTexture();
     final JCGLFramebufferUsableType fb =
-      gb.getFramebuffer();
+      gb.getPrimaryFramebuffer();
 
     Assert.assertEquals(
       JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,

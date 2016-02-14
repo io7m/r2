@@ -17,23 +17,22 @@
 package com.io7m.r2.core;
 
 /**
- * The type of usable filters.
+ * The type of usable image filters.
  *
- * @param <T> The type of render target to which the filter expects to render
- * @param <P> The type of filter parameters
+ * @param <P> The precise type of parameters
  */
 
-public interface R2FilterUsableType<T extends R2RenderTargetUsableType, P>
+public interface R2FilterUsableType<P>
 {
   /**
-   * @return The parameter type
+   * Run the filter for the given parameters. The output will be written to
+   * {@code destination}.
+   *
+   * @param uc          A texture unit context
+   * @param parameters  The filter parameters
    */
 
-  Class<P> getParametersType();
-
-  /**
-   * @return The render target type
-   */
-
-  Class<T> getRenderTargetType();
+  void runFilter(
+    final R2TextureUnitContextParentType uc,
+    final P parameters);
 }

@@ -16,31 +16,22 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
-
 /**
  * The type of usable ambient occlusion buffers.
  */
 
 public interface R2AmbientOcclusionBufferUsableType extends
-  R2RenderTargetUsableType
+  R2RenderTargetUsableType<R2AmbientOcclusionBufferDescriptionType>
 {
+  /**
+   * @return The buffer description
+   */
+
+  R2AmbientOcclusionBufferDescriptionType getDescription();
+
   /**
    * @return The ambient occlusion texture
    */
 
   R2Texture2DUsableType getAmbientOcclusionTexture();
-
-  /**
-   * @return The framebuffer
-   */
-
-  JCGLFramebufferUsableType getFramebuffer();
-
-  /**
-   * @return The viewport area
-   */
-
-  AreaInclusiveUnsignedLType getArea();
 }

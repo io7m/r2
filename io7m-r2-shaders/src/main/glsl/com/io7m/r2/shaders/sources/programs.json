@@ -1,4 +1,9 @@
 {
+  "R2LightAmbientSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightAmbientSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightAmbientSingle.frag"
+  },
+
   "R2LightSphericalLambertPhongSingle": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalLambertPhongSingle.frag"
@@ -90,17 +95,27 @@
   },
 
   "R2FilterLightApplicator" : {
-    "vertex":   "/com/io7m/r2/shaders/sources/R2FilterLightApplicator.vert",
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2FilterLightApplicator.frag"
   },
 
   "R2FilterTextureShow" : {
-    "vertex":   "/com/io7m/r2/shaders/sources/R2FilterTextureShow.vert",
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2FilterTextureShow.frag"
   },
 
+  "R2FilterBoxBlurHorizontal4f" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterBoxBlurHorizontal4f.frag"
+  },
+
+  "R2FilterBoxBlurVertical4f" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterBoxBlurVertical4f.frag"
+  },
+
   "R2SSAO" : {
-    "vertex":   "/com/io7m/r2/shaders/sources/R2SSAO.vert",
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2SSAO.frag"
   }
 }

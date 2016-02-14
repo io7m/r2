@@ -147,6 +147,8 @@ public final class R2Matrices implements R2MatricesType
       m_modelview;
     private final PMatrixDirect3x3FType<R2SpaceObjectType, R2SpaceNormalEyeType>
       m_normal;
+    private final PMatrixDirect3x3FType<R2SpaceTextureType, R2SpaceTextureType>
+      m_uv;
 
     private boolean active;
 
@@ -156,6 +158,7 @@ public final class R2Matrices implements R2MatricesType
       this.m_model = PMatrixHeapArrayM4x4F.newMatrix();
       this.m_modelview = PMatrixDirectM4x4F.newMatrix();
       this.m_normal = PMatrixDirectM3x3F.newMatrix();
+      this.m_uv = PMatrixDirectM3x3F.newMatrix();
     }
 
     @Override
@@ -170,6 +173,13 @@ public final class R2Matrices implements R2MatricesType
       R2SpaceNormalEyeType> getMatrixNormal()
     {
       return this.m_normal;
+    }
+
+    @Override
+    public PMatrixDirectReadable3x3FType<R2SpaceTextureType,
+      R2SpaceTextureType> getMatrixUV()
+    {
+      return this.m_uv;
     }
   }
 
@@ -289,6 +299,8 @@ public final class R2Matrices implements R2MatricesType
           this.context_3f,
           this.instance_single.m_modelview,
           this.instance_single.m_normal);
+
+        MatrixM3x3F.copy(uv, this.instance_single.m_uv);
 
         return f.apply(this.instance_single, x);
       } finally {

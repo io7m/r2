@@ -19,6 +19,9 @@ package com.io7m.r2.meshes;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.OrthonormalizedI3D;
 import com.io7m.jtensors.VectorI3D;
+import com.io7m.jtensors.VectorReadable2DType;
+import com.io7m.jtensors.VectorReadable3DType;
+import com.io7m.jtensors.VectorReadable4DType;
 import com.io7m.jtensors.parameterized.PVectorI2D;
 import com.io7m.jtensors.parameterized.PVectorI3D;
 import com.io7m.jtensors.parameterized.PVectorI4D;
@@ -33,6 +36,7 @@ import it.unimi.dsi.fastutil.objects.ObjectBigList;
 import it.unimi.dsi.fastutil.objects.ObjectBigLists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.valid4j.Assertive;
 
 import java.util.NoSuchElementException;
 
@@ -158,7 +162,8 @@ public final class R2MeshTangents implements R2MeshTangentsType
      * Generate initial tangent and bitangent vectors.
      */
 
-    for (final R2MeshTriangleType triangle : triangles) {
+    for (long tri_index = 0L; tri_index < triangles.size64(); ++tri_index) {
+      final R2MeshTriangleType triangle = triangles.get(tri_index);
       R2MeshTangents.checkTriangleVertices(
         triangle.getV0(),
         triangle.getV1(),
@@ -177,6 +182,10 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final PVectorI3D<R2SpaceObjectType> v2p =
         positions.get(v2.getPositionIndex());
 
+      R2MeshTangents.checkVector3D(v0p, "Position", v0.getPositionIndex());
+      R2MeshTangents.checkVector3D(v1p, "Position", v1.getPositionIndex());
+      R2MeshTangents.checkVector3D(v2p, "Position", v2.getPositionIndex());
+
       /**
        * Fetch whatever tangent and bitangent vectors are currently
        * at the same array index as the normal vectors.
@@ -189,6 +198,10 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final PVectorI4D<R2SpaceObjectType> v2t =
         tangents.get(v2.getNormalIndex());
 
+      R2MeshTangents.checkVector4D(v0t, "Tangent", v0.getNormalIndex());
+      R2MeshTangents.checkVector4D(v1t, "Tangent", v1.getNormalIndex());
+      R2MeshTangents.checkVector4D(v2t, "Tangent", v2.getNormalIndex());
+
       final PVectorI3D<R2SpaceObjectType> v0b =
         bitangents.get(v0.getNormalIndex());
       final PVectorI3D<R2SpaceObjectType> v1b =
@@ -196,9 +209,26 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final PVectorI3D<R2SpaceObjectType> v2b =
         bitangents.get(v2.getNormalIndex());
 
+      R2MeshTangents.checkVector3D(v0b, "Bitangent", v0.getNormalIndex());
+      R2MeshTangents.checkVector3D(v1b, "Bitangent", v1.getNormalIndex());
+      R2MeshTangents.checkVector3D(v2b, "Bitangent", v2.getNormalIndex());
+
       final PVectorI2D<R2SpaceTextureType> v0u = uvs.get(v0.getUVIndex());
       final PVectorI2D<R2SpaceTextureType> v1u = uvs.get(v1.getUVIndex());
       final PVectorI2D<R2SpaceTextureType> v2u = uvs.get(v2.getUVIndex());
+
+      R2MeshTangents.checkVector2D(v0u, "UV", v0.getUVIndex());
+      R2MeshTangents.checkVector2D(v1u, "UV", v1.getUVIndex());
+      R2MeshTangents.checkVector2D(v2u, "UV", v2.getUVIndex());
+
+      /**
+       * In the case where, for example, two vertices in a triangle share the
+       * same UV coordinates, it's simply not possible to generate a reasonable
+       * tangent vector.
+       */
+
+      R2MeshTangents.checkTriangleUVs(
+        tri_index, triangle, v0, v1, v2, v0u, v1u, v2u);
 
       final double x1 = v1p.getXD() - v0p.getXD();
       final double x2 = v2p.getXD() - v0p.getXD();
@@ -215,7 +245,16 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final double t1 = v1u.getYD() - v0u.getYD();
       final double t2 = v2u.getYD() - v0u.getYD();
 
-      final double r = 1.0 / ((s1 * t2) - (s2 * t1));
+      final double d = (s1 * t2) - (s2 * t1);
+
+      /**
+       * Typically caused by triangle vertices sharing the same UV
+       * coordinate. Should be prevented by earlier checks.
+       */
+
+      Assertive.ensure(d != 0.0, "d (%f) must be != 0.0", Double.valueOf(d));
+
+      final double r = 1.0 / d;
 
       final double tx = ((t2 * x1) - (t1 * x2)) * r;
       final double ty = ((t2 * y1) - (t1 * y2)) * r;
@@ -244,6 +283,13 @@ public final class R2MeshTangents implements R2MeshTangentsType
           v2t.getZD() + tz,
           1.0);
 
+      R2MeshTangents.checkVector4D(
+        v0t_acc, "Generated Tangent", v0.getNormalIndex());
+      R2MeshTangents.checkVector4D(
+        v1t_acc, "Generated Tangent", v1.getNormalIndex());
+      R2MeshTangents.checkVector4D(
+        v2t_acc, "Generated Tangent", v2.getNormalIndex());
+
       tangents.set(v0.getNormalIndex(), v0t_acc);
       tangents.set(v1.getNormalIndex(), v1t_acc);
       tangents.set(v2.getNormalIndex(), v2t_acc);
@@ -254,6 +300,13 @@ public final class R2MeshTangents implements R2MeshTangentsType
         new PVectorI3D<>(v1b.getXD() + bx, v1b.getYD() + by, v1b.getZD() + bz);
       final PVectorI3D<R2SpaceObjectType> v2b_acc =
         new PVectorI3D<>(v2b.getXD() + bx, v2b.getYD() + by, v2b.getZD() + bz);
+
+      R2MeshTangents.checkVector3D(
+        v0b_acc, "Generated Bitangent", v0.getNormalIndex());
+      R2MeshTangents.checkVector3D(
+        v1b_acc, "Generated Bitangent", v1.getNormalIndex());
+      R2MeshTangents.checkVector3D(
+        v2b_acc, "Generated Bitangent", v2.getNormalIndex());
 
       bitangents.set(v0.getNormalIndex(), v0b_acc);
       bitangents.set(v1.getNormalIndex(), v1b_acc);
@@ -283,6 +336,9 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final VectorI3D ot = o.getV1();
       final VectorI3D ob = o.getV2();
 
+      R2MeshTangents.checkVector3D(ot, "Orthonormalized Tangent", index);
+      R2MeshTangents.checkVector3D(ob, "Orthonormalized Bitangent", index);
+
       /**
        * Invert the bitangent if the resulting coordinate system is not
        * right-handed (and save the fact that the inversion occurred in the w
@@ -298,6 +354,9 @@ public final class R2MeshTangents implements R2MeshTangentsType
         rt = new PVectorI4D<>(ot.getXD(), ot.getYD(), ot.getZD(), 1.0);
         rb = new PVectorI3D<>(ob.getXD(), ob.getYD(), ob.getZD());
       }
+
+      R2MeshTangents.checkVector4D(rt, "Final Tangent", index);
+      R2MeshTangents.checkVector3D(rb, "Final Bitangent", index);
 
       tangents.set(index, rt);
       bitangents.set(index, rb);
@@ -324,6 +383,136 @@ public final class R2MeshTangents implements R2MeshTangentsType
       uvs,
       tan_vertices,
       triangles);
+  }
+
+  /**
+   * Check that a given triangle does not have at least two UV
+   * coordinates that are the same.
+   */
+
+  private static void checkTriangleUVs(
+    final long tri_index,
+    final R2MeshTriangleType triangle,
+    final R2MeshBasicVertexType v0,
+    final R2MeshBasicVertexType v1,
+    final R2MeshBasicVertexType v2,
+    final PVectorI2D<R2SpaceTextureType> v0u,
+    final PVectorI2D<R2SpaceTextureType> v1u,
+    final PVectorI2D<R2SpaceTextureType> v2u)
+  {
+    final boolean sharing =
+      (v0.getUVIndex() == v1.getUVIndex())
+      || (v1.getUVIndex() == v2.getUVIndex())
+      || (v0.getUVIndex() == v2.getUVIndex());
+
+    if (sharing) {
+      final StringBuilder sb = new StringBuilder(128);
+      sb.append(
+        "At least two vertices of a triangle are sharing UV coordinates.");
+      sb.append(System.lineSeparator());
+
+      sb.append(
+        "It is not possible to generate tangent vectors for this mesh.");
+      sb.append(System.lineSeparator());
+
+      sb.append("Triangle: ");
+      sb.append(tri_index);
+      sb.append(System.lineSeparator());
+
+      sb.append("Triangle vertices: ");
+      sb.append(triangle.getV0());
+      sb.append(" ");
+      sb.append(triangle.getV1());
+      sb.append(" ");
+      sb.append(triangle.getV2());
+      sb.append(System.lineSeparator());
+
+      sb.append("UV of V0: ");
+      sb.append(v0.getUVIndex());
+      sb.append(" (");
+      sb.append(v0u);
+      sb.append(")");
+      sb.append(System.lineSeparator());
+
+      sb.append("UV of V1: ");
+      sb.append(v1.getUVIndex());
+      sb.append(" (");
+      sb.append(v1u);
+      sb.append(")");
+      sb.append(System.lineSeparator());
+
+      sb.append("UV of V2: ");
+      sb.append(v2.getUVIndex());
+      sb.append(" (");
+      sb.append(v2u);
+      sb.append(")");
+      sb.append(System.lineSeparator());
+
+      throw new R2MeshExceptionMalformedTriangle(sb.toString());
+    }
+  }
+
+  private static void checkVector2D(
+    final VectorReadable2DType v,
+    final String name,
+    final long index)
+  {
+    final Long bi = Long.valueOf(index);
+    Assertive.ensure(
+      Double.isFinite(v.getXD()), "%s [%d].x must be finite", name, bi);
+    Assertive.ensure(
+      Double.isFinite(v.getYD()), "%s [%d].y must be finite", name, bi);
+
+    Assertive.ensure(
+      !Double.isNaN(v.getXD()), "%s [%d].x must be a valid number", name, bi);
+    Assertive.ensure(
+      !Double.isNaN(v.getYD()), "%s [%d].y must be a valid number", name, bi);
+  }
+
+  private static void checkVector4D(
+    final VectorReadable4DType v,
+    final String name,
+    final long index)
+  {
+    final Long bi = Long.valueOf(index);
+    Assertive.ensure(
+      Double.isFinite(v.getXD()), "%s [%d].x must be finite", name, bi);
+    Assertive.ensure(
+      Double.isFinite(v.getYD()), "%s [%d].y must be finite", name, bi);
+    Assertive.ensure(
+      Double.isFinite(v.getZD()), "%s [%d].z must be finite", name, bi);
+    Assertive.ensure(
+      Double.isFinite(v.getWD()), "%s [%d].w must be finite", name, bi);
+
+    Assertive.ensure(
+      !Double.isNaN(v.getXD()), "%s [%d].x must be a valid number", name, bi);
+    Assertive.ensure(
+      !Double.isNaN(v.getYD()), "%s [%d].y must be a valid number", name, bi);
+    Assertive.ensure(
+      !Double.isNaN(v.getZD()), "%s [%d].z must be a valid number", name, bi);
+    Assertive.ensure(
+      !Double.isNaN(v.getWD()), "%s [%d].w must be a valid number", name, bi);
+  }
+
+  private static void checkVector3D(
+    final VectorReadable3DType v,
+    final String name,
+    final long index)
+  {
+    final Long bi = Long.valueOf(index);
+    Assertive.ensure(
+      Double.isFinite(v.getXD()), "%s [%d].x must be finite", name, bi);
+    Assertive.ensure(
+      Double.isFinite(v.getYD()), "%s [%d].y must be finite", name, bi);
+    Assertive.ensure(
+      Double.isFinite(v.getZD()), "%s [%d].z must be finite", name, bi);
+
+    Assertive.ensure(
+      !Double.isNaN(v.getXD()), "%s [%d].x must be a valid number", name, bi);
+    Assertive.ensure(
+      !Double.isNaN(v.getYD()), "%s [%d].y must be a valid number", name, bi);
+    Assertive.ensure(
+      !Double.isNaN(v.getZD()), "%s [%d].z must be a valid number", name, bi);
   }
 
   private static void checkTriangleVertices(

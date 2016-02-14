@@ -154,7 +154,7 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final JCGLFramebufferUsableType gb_fb = gbuffer.getFramebuffer();
+    final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
 
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
