@@ -171,6 +171,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     private @Nullable R2MatricesObserverType         matrices;
     private @Nullable R2TextureUnitContextParentType texture_context;
     private @Nullable R2TextureUnitContextType       material_texture_context;
+    private @Nullable R2MaterialOpaqueSingleType<?>  material_single;
 
     private OpaqueConsumer(
       final JCGLInterfaceGL33Type g)
@@ -272,6 +273,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceSingleMaterialStart(
       final R2MaterialOpaqueSingleType<M> material)
     {
+      this.material_single = material;
       this.material_texture_context = this.texture_context.unitContextNew();
 
       final R2ShaderSingleUsableType<M> s = material.getShader();
@@ -297,7 +299,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
         i.getUVMatrix(),
         this,
         (mi, t) -> {
-          final R2ShaderSingleUsableType<M> s = material.getShader();
+          final R2ShaderSingleUsableType<?> s = t.material_single.getShader();
           s.setMatricesInstance(t.shaders, mi);
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
           return Unit.unit();
@@ -328,7 +330,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     @Override
     public void onFinish()
     {
-
+      this.material_single = null;
     }
   }
 }

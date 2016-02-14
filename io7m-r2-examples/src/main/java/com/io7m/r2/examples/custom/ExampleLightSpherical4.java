@@ -81,6 +81,7 @@ import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitSphereType;
@@ -185,12 +186,14 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     R2AmbientOcclusionBufferUsableType,
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferUsableType>
-              filter_blur_ssao_params;
+    filter_blur_ssao_params;
 
   private R2LightAmbientSingle
     light_ambient;
   private R2ShaderLightSingleType<R2LightAmbientSingle>
     light_ambient_shader;
+
+  private JCGLInterfaceGL33Type      g;
 
   public ExampleLightSpherical4()
   {
@@ -527,12 +530,14 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
   @Override
   public void onRender(
-    final R2ExampleServicesType serv,
-    final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedLType area,
-    final R2MainType m,
+    final R2ExampleServicesType servx,
+    final JCGLInterfaceGL33Type gx,
+    final AreaInclusiveUnsignedLType areax,
+    final R2MainType mx,
     final int frame)
   {
+    this.g = gx;
+
     this.stencils.stencilsReset();
     this.stencils.stencilsSetMode(
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
@@ -547,10 +552,10 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       this.light_ambient, this.light_ambient_shader);
     this.lights.opaqueLightsAddSingle(this.light, this.light_shader);
 
-    if (serv.isFreeCameraEnabled()) {
-      MatrixM4x4F.copy(serv.getFreeCameraViewMatrix(), this.view);
+    if (servx.isFreeCameraEnabled()) {
+      MatrixM4x4F.copy(servx.getFreeCameraViewMatrix(), this.view);
     } else {
-      m.getViewMatrices().lookAt(
+      mx.getViewMatrices().lookAt(
         this.view,
         new VectorI3F(0.0f, 0.0f, 5.0f),
         new VectorI3F(0.0f, 0.0f, 0.0f),
@@ -558,21 +563,21 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     }
 
     {
-      final R2MatricesType matrices = m.getMatrices();
+      final R2MatricesType matrices = mx.getMatrices();
 
       matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         final R2TextureUnitContextParentType uc =
-          m.getTextureUnitAllocator().getRootContext();
+          t.main.getTextureUnitAllocator().getRootContext();
         final JCGLFramebufferUsableType gbuffer_fb =
           t.gbuffer.getPrimaryFramebuffer();
         final JCGLFramebufferUsableType lbuffer_fb =
           t.lbuffer.getPrimaryFramebuffer();
 
-        final JCGLFramebuffersType g_fb = g.getFramebuffers();
-        final JCGLClearType g_cl = g.getClear();
-        final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
-        final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
-        final JCGLDepthBuffersType g_db = g.getDepthBuffers();
+        final JCGLFramebuffersType g_fb = t.g.getFramebuffers();
+        final JCGLClearType g_cl = t.g.getClear();
+        final JCGLColorBufferMaskingType g_cb = t.g.getColorBufferMasking();
+        final JCGLStencilBuffersType g_sb = t.g.getStencilBuffers();
+        final JCGLDepthBuffersType g_db = t.g.getDepthBuffers();
 
         g_fb.framebufferDrawBind(gbuffer_fb);
         g_cb.colorBufferMask(true, true, true, true);
@@ -581,12 +586,12 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.geom_clear_spec);
 
-        m.getStencilRenderer().renderStencilsWithBoundBuffer(
+        t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
           mo,
           t.gbuffer.getArea(),
           t.stencils);
 
-        m.getGeometryRenderer().renderGeometryWithBoundBuffer(
+        t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
           t.gbuffer.getArea(),
           uc,
           mo,
@@ -604,7 +609,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.light_clear_spec);
 
-        m.getLightRenderer().renderLightsWithBoundBuffer(
+        t.main.getLightRenderer().renderLightsWithBoundBuffer(
           t.gbuffer,
           t.lbuffer.getArea(),
           uc,
@@ -628,9 +633,9 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
   @Override
   public void onFinish(
-    final JCGLInterfaceGL33Type g,
+    final JCGLInterfaceGL33Type gx,
     final R2MainType m)
   {
-    this.geom_shader.delete(g);
+    this.geom_shader.delete(gx);
   }
 }
