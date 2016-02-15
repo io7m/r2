@@ -13,5 +13,5 @@ out vec4 R2_out_rgba;
 void
 main (void)
 {
-  R2_out_rgba = R2_box_blur_horizontal_4f (R2_texture, R2_uv, R2_blur_size);
+  R2_out_rgba = R2_boxBlurHorizontal4f (R2_texture, R2_uv, R2_blur_size);
 }

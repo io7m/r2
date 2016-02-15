@@ -1,5 +1,5 @@
-/// \file R2FilterBoxBlurHorizontal4f.frag
-/// \brief Horizontal RGBA box blur filter
+/// \file R2FilterBoxBlurVertical4f.frag
+/// \brief Vertical RGBA box blur filter
 
 #include "R2BoxBlur.h"
 
@@ -13,5 +13,5 @@ out vec4 R2_out_rgba;
 void
 main (void)
 {
-  R2_out_rgba = R2_box_blur_vertical_4f (R2_texture, R2_uv, R2_blur_size);
+  R2_out_rgba = R2_boxBlurVertical4f (R2_texture, R2_uv, R2_blur_size);
 }
