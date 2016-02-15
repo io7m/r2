@@ -1,8 +1,8 @@
 #ifndef R2_LIGHT_SPHERICAL_LAMBERT_BLINN_PHONG_H
 #define R2_LIGHT_SPHERICAL_LAMBERT_BLINN_PHONG_H
 
-/// \file R2LightSphericalLambertPhong.h
-/// \brief A spherical light with Phong specular highlights
+/// \file R2LightSphericalLambertBlinnPhong.h
+/// \brief A spherical light with Blinn-Phong specular highlights
 
 #include "R2LightShaderMain.h"
 #include "R2LightPositional.h"
