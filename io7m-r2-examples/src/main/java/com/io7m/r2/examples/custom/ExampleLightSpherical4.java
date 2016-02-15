@@ -81,7 +81,6 @@ import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitSphereType;
@@ -193,7 +192,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
   private R2ShaderLightSingleType<R2LightAmbientSingle>
     light_ambient_shader;
 
-  private JCGLInterfaceGL33Type      g;
+  private JCGLInterfaceGL33Type g;
 
   public ExampleLightSpherical4()
   {
@@ -203,13 +202,13 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
   @Override
   public void onInitialize(
     final R2ExampleServicesType serv,
-    final JCGLInterfaceGL33Type g,
+    final JCGLInterfaceGL33Type gx,
     final AreaInclusiveUnsignedLType area,
     final R2MainType m)
   {
     this.main = NullCheck.notNull(m);
 
-    this.sphere = R2UnitSphere.newUnitSphere8(g);
+    this.sphere = R2UnitSphere.newUnitSphere8(gx);
     this.opaques = R2SceneOpaques.newOpaques();
     this.lights = R2SceneOpaqueLights.newLights();
     this.stencils = R2SceneStencils.newMasks();
@@ -224,8 +223,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
       this.abuffer =
         R2AmbientOcclusionBuffer.newAmbientOcclusionBuffer(
-          g.getFramebuffers(),
-          g.getTextures(),
+          gx.getFramebuffers(),
+          gx.getTextures(),
           this.main.getTextureUnitAllocator().getRootContext(),
           b.build());
     }
@@ -236,8 +235,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       b.setArea(area);
 
       this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
-        g.getFramebuffers(),
-        g.getTextures(),
+        gx.getFramebuffers(),
+        gx.getTextures(),
         m.getTextureUnitAllocator().getRootContext(),
         b.build());
     }
@@ -248,8 +247,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       b.setArea(area);
 
       this.lbuffer = R2LightBuffer.newLightBuffer(
-        g.getFramebuffers(),
-        g.getTextures(),
+        gx.getFramebuffers(),
+        gx.getTextures(),
         m.getTextureUnitAllocator().getRootContext(),
         b.build());
     }
@@ -260,8 +259,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       b.setArea(area);
 
       this.ibuffer = R2ImageBuffer.newImageBuffer(
-        g.getFramebuffers(),
-        g.getTextures(),
+        gx.getFramebuffers(),
+        gx.getTextures(),
         m.getTextureUnitAllocator().getRootContext(),
         b.build());
     }
@@ -345,20 +344,20 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     this.filter_ssao_params.setGeometryBuffer(this.gbuffer);
     this.filter_ssao_params.setNoiseTexture(
       R2SSAONoiseTexture.new4x4Noise(
-        g.getTextures(),
+        gx.getTextures(),
         this.main.getTextureUnitAllocator().getRootContext()));
     this.filter_ssao_params.setOutputBuffer(this.abuffer);
 
     this.filter_ssao = R2FilterSSAO.newFilter(
       m.getShaderSources(),
-      g,
+      gx,
       this.main.getTextureUnitAllocator().getRootContext(),
       m.getIDPool(),
       m.getUnitQuad());
 
     {
       this.pool_ssao =
-        R2AmbientOcclusionBufferPool.newPool(g, 614400L, 6144000L);
+        R2AmbientOcclusionBufferPool.newPool(gx, 614400L, 6144000L);
     }
 
     {
@@ -375,7 +374,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
       this.filter_blur_ssao = R2FilterBoxBlur.newFilter(
         m.getShaderSources(),
-        g,
+        gx,
         m.getTextureDefaults(),
         this.pool_ssao,
         m.getIDPool(),
@@ -385,7 +384,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
     this.filter_show =
       R2FilterShowTextures.newFilter(
-        g, m.getShaderSources(), m.getIDPool(), m.getUnitQuad());
+        gx, m.getShaderSources(), m.getIDPool(), m.getUnitQuad());
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -408,8 +407,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     this.batched_instance =
       R2InstanceBatchedDynamic.newBatch(
         id_pool,
-        g.getArrayBuffers(),
-        g.getArrayObjects(),
+        gx.getArrayBuffers(),
+        gx.getArrayObjects(),
         this.sphere.getArrayObject(),
         instance_count);
 
@@ -438,7 +437,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
     this.geom_shader =
       R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(),
+        gx.getShaders(),
         sources,
         id_pool);
     this.geom_shader_params =
@@ -457,14 +456,14 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
     this.batched_geom_shader =
       R2SurfaceShaderBasicBatched.newShader(
-        g.getShaders(),
+        gx.getShaders(),
         sources,
         id_pool);
     this.batched_geom_material = R2MaterialOpaqueBatched.newMaterial(
       id_pool, this.batched_geom_shader, this.geom_shader_params);
 
     this.light_ambient_shader =
-      R2LightShaderAmbientSingle.newShader(g.getShaders(), sources, id_pool);
+      R2LightShaderAmbientSingle.newShader(gx.getShaders(), sources, id_pool);
     this.light_ambient =
       R2LightAmbientSingle.newLight(
         m.getUnitQuad(), id_pool, m.getTextureDefaults());
@@ -475,7 +474,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
     this.light_shader =
       R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
-        g.getShaders(), sources, id_pool);
+        gx.getShaders(), sources, id_pool);
     this.light =
       R2LightSphericalSimpleSingle.newLight(this.sphere, id_pool);
     this.light.getColor().set3F(1.0f, 1.0f, 1.0f);
@@ -487,7 +486,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       R2FilterLightApplicator.newFilter(
         sources,
         m.getTextureDefaults(),
-        g,
+        gx,
         id_pool,
         m.getUnitQuad());
 
