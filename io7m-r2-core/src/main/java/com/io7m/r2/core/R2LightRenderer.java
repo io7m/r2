@@ -330,12 +330,9 @@ public final class R2LightRenderer implements R2LightRendererType
            * For full-screen quads, the front faces should be rendered. For
            * everything else, render only back faces.
            *
-           * Additionally, screen-based lights will render a light volume on
-           * the near plane: Light volume fragments will have a depth less than
-           * or equal to any geometry and therefore depth testing must reflect
-           * this. For other types of lights, the fragments of the back faces of
-           * the light volume will have a depth greater than or equal to the
-           * geometry fragments that should be affected.
+           * The fragments of the back faces of the light volume will have a
+           * depth greater than or equal to the geometry fragments that
+           * should be affected.
            */
 
           if (i instanceof R2LightScreenSingleType) {

@@ -33,23 +33,28 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.R2ShaderTextureShow;
+import com.io7m.r2.core.shaders.R2ShaderTextureShowParametersMutable;
+
+import java.util.Optional;
 
 /**
- * A filter that displays a texture on the currently bound framebuffer.
+ * A compositor filter that combines textures.
  */
 
-public final class R2FilterShowTextures implements
-  R2FilterType<R2FilterShowTexturesParametersType>
+public final class R2FilterCompositor implements
+  R2FilterType<R2FilterCompositorParametersType>
 {
-  private final R2ShaderTextureShow   shader;
-  private final R2UnitQuadUsableType  quad;
-  private final JCGLInterfaceGL33Type g;
+  private final JCGLInterfaceGL33Type                g;
+  private final R2ShaderTextureShow                  shader;
+  private final R2UnitQuadUsableType                 quad;
+  private final R2ShaderTextureShowParametersMutable shader_params;
 
-  private R2FilterShowTextures(
+  private R2FilterCompositor(
     final JCGLInterfaceGL33Type in_g,
     final R2ShaderTextureShow in_shader,
     final R2UnitQuadUsableType in_quad)
@@ -57,37 +62,41 @@ public final class R2FilterShowTextures implements
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
+    this.shader_params = R2ShaderTextureShowParametersMutable.create();
   }
-
 
   /**
    * Construct a new filter.
    *
-   * @param in_g       A GL interface
-   * @param in_pool    The ID pool
-   * @param in_sources Shader sources
-   * @param in_quad    A unit quad
+   * @param in_sources  Shader sources
+   * @param in_textures A texture interface
+   * @param in_g        A GL interface
+   * @param in_pool     An ID pool
+   * @param in_quad     A unit quad
    *
    * @return A new filter
    */
 
-  public static R2FilterType<R2FilterShowTexturesParametersType>
+  public static R2FilterType<R2FilterCompositorParametersType>
   newFilter(
-    final JCGLInterfaceGL33Type in_g,
     final R2ShaderSourcesType in_sources,
+    final R2TextureDefaultsType in_textures,
+    final JCGLInterfaceGL33Type in_g,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_g);
     NullCheck.notNull(in_sources);
+    NullCheck.notNull(in_textures);
+    NullCheck.notNull(in_g);
     NullCheck.notNull(in_pool);
+    NullCheck.notNull(in_quad);
 
     final R2ShaderTextureShow s = R2ShaderTextureShow.newShader(
       in_g.getShaders(),
       in_sources,
       in_pool);
 
-    return new R2FilterShowTextures(in_g, s, in_quad);
+    return new R2FilterCompositor(in_g, s, in_quad);
   }
 
   @Override
@@ -105,10 +114,11 @@ public final class R2FilterShowTextures implements
     return this.shader.isDeleted();
   }
 
+
   @Override
   public void runFilter(
     final R2TextureUnitContextParentType uc,
-    final R2FilterShowTexturesParametersType parameters)
+    final R2FilterCompositorParametersType parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
@@ -133,7 +143,6 @@ public final class R2FilterShowTextures implements
       g_st.stencilBufferDisable();
     }
 
-    g_b.blendingDisable();
     g_cu.cullingDisable();
     g_cm.colorBufferMask(true, true, true, true);
 
@@ -141,12 +150,31 @@ public final class R2FilterShowTextures implements
       g_sh.shaderActivateProgram(this.shader.getShaderProgram());
       g_ao.arrayObjectBind(this.quad.getArrayObject());
 
-      for (final R2FilterShowTextureItemType i : parameters.getItems()) {
+      for (final R2FilterCompositorItemType i : parameters.getItems()) {
+        final Optional<R2FilterCompositorBlendingType> blend_opt =
+          i.getBlending();
+        if (blend_opt.isPresent()) {
+          final R2FilterCompositorBlendingType blend = blend_opt.get();
+          g_b.blendingEnableSeparateWithEquationSeparate(
+            blend.getBlendFunctionSourceRGB(),
+            blend.getBlendFunctionSourceAlpha(),
+            blend.getBlendFunctionTargetRGB(),
+            blend.getBlendFunctionTargetAlpha(),
+            blend.getBlendEquationRGB(),
+            blend.getBlendEquationAlpha());
+        } else {
+          g_b.blendingDisable();
+        }
+
         final R2TextureUnitContextType c = uc.unitContextNew();
         try {
           g_v.viewportSet(i.getOutputViewport());
-          this.shader.setTextures(g_tx, c, i.getTexture());
-          this.shader.setValues(g_sh, i.getTexture());
+
+          this.shader_params.setIntensity(i.getIntensity());
+          this.shader_params.setTexture(i.getTexture());
+          this.shader.setTextures(g_tx, c, this.shader_params);
+          this.shader.setValues(g_sh, this.shader_params);
+
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         } finally {
           c.unitContextFinish(g_tx);
@@ -157,7 +185,5 @@ public final class R2FilterShowTextures implements
       g_ao.arrayObjectUnbind();
       g_sh.shaderDeactivateProgram();
     }
-
-
   }
 }

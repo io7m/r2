@@ -16,32 +16,24 @@
 
 package com.io7m.r2.core.filters;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
+import java.util.List;
+
 /**
- * A single texture that will be rendered to some subset of the current
- * viewport.
+ * Parameters for filters that render textures to the current framebuffer.
  */
 
 @Value.Immutable
 @Value.Modifiable
 @R2ImmutableStyleType
-public interface R2FilterShowTextureItemType
+public interface R2FilterCompositorParametersType
 {
   /**
-   * @return The texture that will be rendered
+   * @return The list of textures that should be displayed, in draw order
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getTexture();
-
-  /**
-   * @return The area of the viewport to which the texture will be rendered
-   */
-
-  @Value.Parameter
-  AreaInclusiveUnsignedLType getOutputViewport();
+  List<R2FilterCompositorItemType> getItems();
 }

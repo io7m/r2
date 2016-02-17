@@ -183,6 +183,8 @@ public final class R2FilterSSAO implements
         sp.setKernel(parameters.getKernel());
         sp.setNoiseTexture(parameters.getNoiseTexture());
         sp.setViewport(destination.getArea());
+        sp.setSampleRadius(parameters.getSampleRadius());
+        sp.setPower(parameters.getExponent());
 
         final R2GeometryBufferUsableType gb = parameters.getGeometryBuffer();
 

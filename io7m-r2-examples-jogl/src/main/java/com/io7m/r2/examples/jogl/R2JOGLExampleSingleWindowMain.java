@@ -182,6 +182,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         }
       });
 
+      anim.setUpdateFPSFrames(60 * 10, System.out);
       anim.start();
       win.setVisible(true);
     } catch (final InstantiationException e) {

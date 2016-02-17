@@ -27,7 +27,6 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ShaderParameters;
 import com.io7m.r2.core.R2ShaderScreenType;
 import com.io7m.r2.core.R2ShaderSourcesType;
-import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import org.valid4j.Assertive;
 
@@ -39,10 +38,11 @@ import java.util.Optional;
  */
 
 public final class R2ShaderTextureShow extends
-  R2AbstractShader<R2Texture2DUsableType>
-  implements R2ShaderScreenType<R2Texture2DUsableType>
+  R2AbstractShader<R2ShaderTextureShowParametersType>
+  implements R2ShaderScreenType<R2ShaderTextureShowParametersType>
 {
   private final JCGLProgramUniformType u_texture;
+  private final JCGLProgramUniformType u_intensity;
   private       JCGLTextureUnitType    unit_texture;
 
   private R2ShaderTextureShow(
@@ -62,12 +62,14 @@ public final class R2ShaderTextureShow extends
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     final Map<String, JCGLProgramUniformType> us = p.getUniforms();
     Assertive.ensure(
-      us.size() == 1,
-      "Expected number of parameters is 1 (got %d)",
+      us.size() == 2,
+      "Expected number of parameters is 2 (got %d)",
       Integer.valueOf(us.size()));
 
     this.u_texture =
       R2ShaderParameters.getUniformChecked(p, "R2_texture");
+    this.u_intensity =
+      R2ShaderParameters.getUniformChecked(p, "R2_intensity");
   }
 
   /**
@@ -90,10 +92,10 @@ public final class R2ShaderTextureShow extends
   }
 
   @Override
-  public Class<R2Texture2DUsableType>
+  public Class<R2ShaderTextureShowParametersType>
   getShaderParametersType()
   {
-    return R2Texture2DUsableType.class;
+    return R2ShaderTextureShowParametersType.class;
   }
 
   /**
@@ -107,13 +109,13 @@ public final class R2ShaderTextureShow extends
   public void setTextures(
     final JCGLTexturesType g_tex,
     final R2TextureUnitContextMutableType uc,
-    final R2Texture2DUsableType c)
+    final R2ShaderTextureShowParametersType c)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(c);
 
     this.unit_texture =
-      uc.unitContextBindTexture2D(g_tex, c);
+      uc.unitContextBindTexture2D(g_tex, c.getTexture());
   }
 
   /**
@@ -125,12 +127,14 @@ public final class R2ShaderTextureShow extends
 
   public void setValues(
     final JCGLShadersType g_sh,
-    final R2Texture2DUsableType values)
+    final R2ShaderTextureShowParametersType values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture, this.unit_texture);
+    g_sh.shaderUniformPutFloat(
+      this.u_intensity, values.getIntensity());
   }
 }

@@ -14,26 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.filters;
+package com.io7m.r2.tests.jogl.shaders;
 
-import com.io7m.r2.core.R2ImmutableStyleType;
-import org.immutables.value.Value;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.shaders.R2ShaderFilterBilateralBlurDepthAwareHorizontal4fContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-import java.util.List;
-
-/**
- * Parameters for filters that render textures to the current framebuffer.
- */
-
-@Value.Immutable
-@Value.Modifiable
-@R2ImmutableStyleType
-public interface R2FilterShowTexturesParametersType
+public final class R2ShaderFilterBilateralBlurDepthAwareHorizontal4fTest extends
+  R2ShaderFilterBilateralBlurDepthAwareHorizontal4fContract
 {
-  /**
-   * @return The list of textures that should be displayed, in draw order
-   */
-
-  @Value.Parameter
-  List<R2FilterShowTextureItemType> getItems();
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }

@@ -37,7 +37,7 @@ import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 
 /**
- * Functions for allocating 4x4 noise textures for rotating SSAO kernels.
+ * Functions for allocating noise textures for rotating SSAO kernels.
  */
 
 public final class R2SSAONoiseTexture
@@ -48,7 +48,7 @@ public final class R2SSAONoiseTexture
   }
 
   /**
-   * Construct a new 4x4 noise texture.
+   * Construct a new noise texture.
    *
    * @param gt A texture interface
    * @param tc A texture unit allocator
@@ -56,7 +56,7 @@ public final class R2SSAONoiseTexture
    * @return A new texture
    */
 
-  public static R2Texture2DType new4x4Noise(
+  public static R2Texture2DType newNoiseTexture(
     final JCGLTexturesType gt,
     final R2TextureUnitContextParentType tc)
   {
@@ -65,11 +65,13 @@ public final class R2SSAONoiseTexture
 
     final R2TextureUnitContextType cc = tc.unitContextNew();
     try {
+      final long size = 64L;
+
       final Pair<JCGLTextureUnitType, R2Texture2DType> p =
         cc.unitContextAllocateTexture2D(
           gt,
-          4L,
-          4L,
+          size,
+          size,
           JCGLTextureFormat.TEXTURE_FORMAT_RGB_8_3BPP,
           JCGLTextureWrapS.TEXTURE_WRAP_REPEAT,
           JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
@@ -81,15 +83,18 @@ public final class R2SSAONoiseTexture
         JCGLTextureUpdates.newUpdateReplacingAll2D(rt.get());
       final JPRACursor2DType<JCGLRGB8Type> c =
         JPRACursor2DByteBufferedUnchecked.newCursor(
-          tu.getData(), 4, 4, JCGLRGB8ByteBuffered::newValueWithOffset);
+          tu.getData(),
+          (int) size,
+          (int) size,
+          JCGLRGB8ByteBuffered::newValueWithOffset);
 
       final JCGLRGB8Type uv = c.getElementView();
-      for (int y = 0; y < 4; ++y) {
-        for (int x = 0; x < 4; ++x) {
+      for (int y = 0; y < (int) size; ++y) {
+        for (int x = 0; x < (int) size; ++x) {
           c.setElementPosition(x, y);
           uv.setR((Math.random() * 2.0) - 1.0);
           uv.setG((Math.random() * 2.0) - 1.0);
-          uv.setB(0.0);
+          uv.setB(1.0);
         }
       }
 

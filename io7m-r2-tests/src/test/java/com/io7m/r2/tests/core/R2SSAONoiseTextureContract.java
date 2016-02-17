@@ -40,11 +40,11 @@ public abstract class R2SSAONoiseTextureContract extends R2JCGLContract
       R2TextureUnitAllocator.newAllocatorWithStack(32, gt.textureGetUnits());
 
     final R2Texture2DType tt =
-      R2SSAONoiseTexture.new4x4Noise(gt, tc.getRootContext());
+      R2SSAONoiseTexture.newNoiseTexture(gt, tc.getRootContext());
 
     final JCGLTexture2DUsableType t = tt.get();
-    Assert.assertEquals(4L, t.textureGetWidth());
-    Assert.assertEquals(4L, t.textureGetWidth());
+    Assert.assertEquals(64L, t.textureGetWidth());
+    Assert.assertEquals(64L, t.textureGetWidth());
     Assert.assertEquals(
       JCGLTextureFormat.TEXTURE_FORMAT_RGB_8_3BPP, t.textureGetFormat());
   }

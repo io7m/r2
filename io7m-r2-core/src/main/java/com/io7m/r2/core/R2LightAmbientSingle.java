@@ -95,7 +95,7 @@ public final class R2LightAmbientSingle implements R2LightScreenSingleType
   public void setIntensity(
     final float i)
   {
-    this.intensity = i;
+    this.intensity = Math.max(0.0f, i);
   }
 
   /**
