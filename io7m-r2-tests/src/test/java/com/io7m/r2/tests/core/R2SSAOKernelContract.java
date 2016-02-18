@@ -45,6 +45,12 @@ public abstract class R2SSAOKernelContract
     final VectorM3F v = new VectorM3F();
     for (int index = 0; index < 128; ++index) {
       k.getSample(index, v);
+      System.out.printf(
+        "%f,%f,%f\n",
+        Float.valueOf(v.getXF()),
+        Float.valueOf(v.getYF()),
+        Float.valueOf(v.getZF()));
+
       final float mag = VectorM3F.magnitude(v);
       Assert.assertTrue(mag > 0.1);
       Assert.assertTrue(mag <= 1.0);

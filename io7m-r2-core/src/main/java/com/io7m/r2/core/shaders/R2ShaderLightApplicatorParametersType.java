@@ -14,18 +14,39 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
+import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
 /**
- * The type of light buffer descriptions.
+ * Parameters for the light applicator shader
  */
 
 @Value.Immutable
+@Value.Modifiable
 @R2ImmutableStyleType
-public interface R2LightBufferDescriptionType extends
-  R2RenderTargetDescriptionType
+public interface R2ShaderLightApplicatorParametersType
 {
-  // No extra methods
+  /**
+   * @return The texture that contains the surface albedo term
+   */
+
+  @Value.Parameter
+  R2Texture2DUsableType getAlbedoTexture();
+
+  /**
+   * @return The texture that contains the diffuse lighting term
+   */
+
+  @Value.Parameter
+  R2Texture2DUsableType getDiffuseTexture();
+
+  /**
+   * @return The texture that contains the specular lighting term
+   */
+
+  @Value.Parameter
+  R2Texture2DUsableType getSpecularTexture();
 }

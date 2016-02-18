@@ -27,5 +27,5 @@ import org.immutables.value.Value;
 public interface R2ImageBufferDescriptionType extends
   R2RenderTargetDescriptionType
 {
-
+  // No extra methods
 }

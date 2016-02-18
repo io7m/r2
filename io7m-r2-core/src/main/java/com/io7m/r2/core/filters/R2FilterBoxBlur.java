@@ -48,7 +48,7 @@ import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.R2ShaderFilterBoxBlurHorizontal4f;
-import com.io7m.r2.core.shaders.R2ShaderFilterBoxBlurParameters;
+import com.io7m.r2.core.shaders.R2ShaderFilterBoxBlurParametersMutable;
 import com.io7m.r2.core.shaders.R2ShaderFilterBoxBlurVertical4f;
 import org.valid4j.Assertive;
 
@@ -82,20 +82,19 @@ public final class R2FilterBoxBlur<
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_COLOR);
   }
 
-  private final R2ShaderFilterBoxBlurHorizontal4f   shader_blur_h;
-  private final R2ShaderFilterBoxBlurVertical4f     shader_blur_v;
-  private final JCGLInterfaceGL33Type               g;
-  private final R2RenderTargetPoolUsableType<DD, D> render_target_pool;
-  private final R2UnitQuadUsableType                quad;
-  private final R2ShaderFilterBoxBlurParameters     shader_params;
+  private final R2ShaderFilterBoxBlurHorizontal4f      shader_blur_h;
+  private final R2ShaderFilterBoxBlurVertical4f        shader_blur_v;
+  private final JCGLInterfaceGL33Type                  g;
+  private final R2RenderTargetPoolUsableType<DD, D>    render_target_pool;
+  private final R2UnitQuadUsableType                   quad;
+  private final R2ShaderFilterBoxBlurParametersMutable shader_params;
 
   private R2FilterBoxBlur(
     final JCGLInterfaceGL33Type in_g,
     final R2RenderTargetPoolUsableType<DD, D> in_rtp_pool,
     final R2UnitQuadUsableType in_quad,
     final R2ShaderFilterBoxBlurHorizontal4f in_shader_blur_h,
-    final R2ShaderFilterBoxBlurVertical4f in_shader_blur_v,
-    final R2ShaderFilterBoxBlurParameters in_params)
+    final R2ShaderFilterBoxBlurVertical4f in_shader_blur_v)
   {
     this.g =
       NullCheck.notNull(in_g);
@@ -108,7 +107,7 @@ public final class R2FilterBoxBlur<
     this.quad =
       NullCheck.notNull(in_quad);
     this.shader_params =
-      NullCheck.notNull(in_params);
+      R2ShaderFilterBoxBlurParametersMutable.create();
   }
 
   /**
@@ -154,16 +153,13 @@ public final class R2FilterBoxBlur<
       R2ShaderFilterBoxBlurHorizontal4f.newShader(g_sh, in_sources, in_id_pool);
     final R2ShaderFilterBoxBlurVertical4f s_blur_v =
       R2ShaderFilterBoxBlurVertical4f.newShader(g_sh, in_sources, in_id_pool);
-    final R2ShaderFilterBoxBlurParameters params =
-      R2ShaderFilterBoxBlurParameters.newParameters(in_tex_defaults);
 
     return new R2FilterBoxBlur<>(
       in_g,
       in_rtp_pool,
       in_quad,
       s_blur_h,
-      s_blur_v,
-      params);
+      s_blur_v);
   }
 
   @Override
@@ -427,7 +423,7 @@ public final class R2FilterBoxBlur<
         final UnsignedRangeInclusiveL range_x =
           source_area.getRangeX();
 
-        this.shader_params.setBlurSize(
+        this.shader_params.setBlurRadius(
           (float) range_x.getInterval() / parameters.getBlurSize());
         this.shader_params.setTexture(source_texture);
 
@@ -494,7 +490,7 @@ public final class R2FilterBoxBlur<
         final UnsignedRangeInclusiveL range_y =
           source_area.getRangeY();
 
-        this.shader_params.setBlurSize(
+        this.shader_params.setBlurRadius(
           (float) range_y.getInterval() / parameters.getBlurSize());
         this.shader_params.setTexture(source_texture);
 

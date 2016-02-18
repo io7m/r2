@@ -38,8 +38,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderLightApplicator extends
-  R2AbstractShader<R2ShaderLightApplicatorParameters>
-  implements R2ShaderScreenType<R2ShaderLightApplicatorParameters>
+  R2AbstractShader<R2ShaderLightApplicatorParametersType>
+  implements R2ShaderScreenType<R2ShaderLightApplicatorParametersType>
 {
   private final JCGLProgramUniformType u_texture_albedo;
   private final JCGLProgramUniformType u_texture_specular;
@@ -100,10 +100,10 @@ public final class R2ShaderLightApplicator extends
   }
 
   @Override
-  public Class<R2ShaderLightApplicatorParameters>
+  public Class<R2ShaderLightApplicatorParametersType>
   getShaderParametersType()
   {
-    return R2ShaderLightApplicatorParameters.class;
+    return R2ShaderLightApplicatorParametersType.class;
   }
 
   /**
@@ -117,7 +117,7 @@ public final class R2ShaderLightApplicator extends
   public void setTextures(
     final JCGLTexturesType g_tex,
     final R2TextureUnitContextMutableType uc,
-    final R2ShaderLightApplicatorParameters values)
+    final R2ShaderLightApplicatorParametersType values)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(values);
@@ -139,7 +139,7 @@ public final class R2ShaderLightApplicator extends
 
   public void setValues(
     final JCGLShadersType g_sh,
-    final R2ShaderLightApplicatorParameters values)
+    final R2ShaderLightApplicatorParametersType values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);

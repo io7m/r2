@@ -38,8 +38,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterBoxBlurVertical4f extends
-  R2AbstractShader<R2ShaderFilterBoxBlurParameters>
-  implements R2ShaderScreenType<R2ShaderFilterBoxBlurParameters>
+  R2AbstractShader<R2ShaderFilterBoxBlurParametersType>
+  implements R2ShaderScreenType<R2ShaderFilterBoxBlurParametersType>
 {
   private final JCGLProgramUniformType u_texture;
   private final JCGLProgramUniformType u_blur_size;
@@ -93,10 +93,10 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
   }
 
   @Override
-  public Class<R2ShaderFilterBoxBlurParameters>
+  public Class<R2ShaderFilterBoxBlurParametersType>
   getShaderParametersType()
   {
-    return R2ShaderFilterBoxBlurParameters.class;
+    return R2ShaderFilterBoxBlurParametersType.class;
   }
 
   /**
@@ -110,7 +110,7 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
   public void setTextures(
     final JCGLTexturesType g_tex,
     final R2TextureUnitContextMutableType uc,
-    final R2ShaderFilterBoxBlurParameters values)
+    final R2ShaderFilterBoxBlurParametersType values)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(values);
@@ -128,12 +128,12 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
 
   public void setValues(
     final JCGLShadersType g_sh,
-    final R2ShaderFilterBoxBlurParameters values)
+    final R2ShaderFilterBoxBlurParametersType values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);
 
     g_sh.shaderUniformPutTexture2DUnit(this.u_texture, this.unit_texture);
-    g_sh.shaderUniformPutFloat(this.u_blur_size, values.getBlurSize());
+    g_sh.shaderUniformPutFloat(this.u_blur_size, values.getBlurRadius());
   }
 }

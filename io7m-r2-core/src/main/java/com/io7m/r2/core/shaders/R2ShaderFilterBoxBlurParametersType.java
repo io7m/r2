@@ -14,18 +14,35 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
+import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
 /**
- * The type of light buffer descriptions.
+ * Parameters for box blur shaders
  */
 
 @Value.Immutable
+@Value.Modifiable
 @R2ImmutableStyleType
-public interface R2LightBufferDescriptionType extends
-  R2RenderTargetDescriptionType
+public interface R2ShaderFilterBoxBlurParametersType
 {
-  // No extra methods
+  /**
+   * @return The texture that contains occlusion values
+   */
+
+  @Value.Parameter
+  R2Texture2DUsableType getTexture();
+
+  /**
+   * @return The blur radius
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default float getBlurRadius() {
+    return 1.0f;
+  }
 }

@@ -40,7 +40,7 @@ import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.R2ShaderLightApplicator;
-import com.io7m.r2.core.shaders.R2ShaderLightApplicatorParameters;
+import com.io7m.r2.core.shaders.R2ShaderLightApplicatorParametersMutable;
 
 /**
  * A trivial filter that combines a geometry buffer and a light buffer into a
@@ -53,10 +53,10 @@ import com.io7m.r2.core.shaders.R2ShaderLightApplicatorParameters;
 public final class R2FilterLightApplicator implements
   R2FilterType<R2FilterLightApplicatorParametersType>
 {
-  private final JCGLInterfaceGL33Type             g;
-  private final R2ShaderLightApplicator           shader;
-  private final R2UnitQuadUsableType              quad;
-  private       R2ShaderLightApplicatorParameters shader_params;
+  private final JCGLInterfaceGL33Type                    g;
+  private final R2ShaderLightApplicator                  shader;
+  private final R2UnitQuadUsableType                     quad;
+  private final R2ShaderLightApplicatorParametersMutable shader_params;
 
   private R2FilterLightApplicator(
     final JCGLInterfaceGL33Type in_g,
@@ -66,6 +66,7 @@ public final class R2FilterLightApplicator implements
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
+    this.shader_params = R2ShaderLightApplicatorParametersMutable.create();
   }
 
   /**
@@ -158,14 +159,6 @@ public final class R2FilterLightApplicator implements
         parameters.getLightBuffer();
       final R2GeometryBufferUsableType gb =
         parameters.getGeometryBuffer();
-
-      if (this.shader_params == null) {
-        this.shader_params =
-          R2ShaderLightApplicatorParameters.newParameters(
-            gb.getAlbedoEmissiveTexture(),
-            lb.getDiffuseTexture(),
-            lb.getSpecularTexture());
-      }
 
       this.shader_params.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
       this.shader_params.setDiffuseTexture(lb.getDiffuseTexture());

@@ -48,8 +48,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderSSAO extends
-  R2AbstractShader<R2ShaderSSAOParameters>
-  implements R2ShaderScreenType<R2ShaderSSAOParameters>,
+  R2AbstractShader<R2ShaderSSAOParametersType>
+  implements R2ShaderScreenType<R2ShaderSSAOParametersType>,
   R2ShaderGBufferConsumerType
 {
   private final VectorM2F              noise_uv_scale;
@@ -187,10 +187,10 @@ public final class R2ShaderSSAO extends
   }
 
   @Override
-  public Class<R2ShaderSSAOParameters>
+  public Class<R2ShaderSSAOParametersType>
   getShaderParametersType()
   {
-    return R2ShaderSSAOParameters.class;
+    return R2ShaderSSAOParametersType.class;
   }
 
   /**
@@ -204,7 +204,7 @@ public final class R2ShaderSSAO extends
   public void setTextures(
     final JCGLTexturesType g_tex,
     final R2TextureUnitContextMutableType uc,
-    final R2ShaderSSAOParameters values)
+    final R2ShaderSSAOParametersType values)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(values);
@@ -276,7 +276,7 @@ public final class R2ShaderSSAO extends
 
   public void setValues(
     final JCGLShadersType g_sh,
-    final R2ShaderSSAOParameters values)
+    final R2ShaderSSAOParametersType values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);
@@ -298,7 +298,7 @@ public final class R2ShaderSSAO extends
     g_sh.shaderUniformPutFloat(
       this.u_ssao_sample_radius, values.getSampleRadius());
     g_sh.shaderUniformPutFloat(
-      this.u_ssao_power, values.getPower());
+      this.u_ssao_power, values.getExponent());
 
     final R2SSAOKernelReadableType k = values.getKernel();
     if (this.shouldSetKernel(k)) {
