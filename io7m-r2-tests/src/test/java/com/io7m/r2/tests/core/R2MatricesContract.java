@@ -19,18 +19,24 @@ package com.io7m.r2.tests.core;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jfunctional.Unit;
+import com.io7m.jtensors.parameterized.PMatrix4x4FType;
+import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixI4x4F;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2MatricesType;
+import com.io7m.r2.core.R2ProjectionFrustum;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2RendererExceptionInstanceAlreadyActive;
 import com.io7m.r2.core.R2RendererExceptionObserverAlreadyActive;
+import com.io7m.r2.core.R2RendererExceptionProjectiveAlreadyActive;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2TransformReadableType;
+import com.io7m.r2.spaces.R2SpaceLightEyeType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
+import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -187,6 +193,132 @@ public abstract class R2MatricesContract
         mm.withTransform(t, uv, u1, (mk, u2) -> {
           throw new UnreachableCodeException();
         }))
+    );
+  }
+
+  @Test
+  public final void testMatricesObserverProjectiveCalled()
+  {
+    final R2MatricesType m = this.newMatrices();
+    final JCGLProjectionMatricesType pm =
+      JCGLProjectionMatrices.newMatrices();
+    final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
+      PMatrixI3x3F.identity();
+    final R2TransformReadableType t =
+      R2TransformOST.newTransform();
+
+    final R2ProjectionFrustum pp =
+      R2ProjectionFrustum.newFrustum(pm);
+    final PMatrix4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> pv =
+      PMatrixHeapArrayM4x4F.newMatrix();
+
+    final Integer r = m.withObserver(
+      PMatrixI4x4F.identity(),
+      R2ProjectionOrthographic.newFrustum(pm),
+      Unit.unit(),
+      (mm, u0) ->
+        mm.withProjectiveLight(
+          pp, pv, Integer.valueOf(23), (mp, u1) ->
+            u1)
+    );
+
+    Assert.assertEquals(Integer.valueOf(23), r);
+  }
+
+  @Test
+  public final void testMatricesObserverProjectiveCalledTwice()
+  {
+    final R2MatricesType m = this.newMatrices();
+    final JCGLProjectionMatricesType pm =
+      JCGLProjectionMatrices.newMatrices();
+    final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
+      PMatrixI3x3F.identity();
+    final R2TransformReadableType t =
+      R2TransformOST.newTransform();
+
+    final R2ProjectionFrustum pp =
+      R2ProjectionFrustum.newFrustum(pm);
+    final PMatrix4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> pv =
+      PMatrixHeapArrayM4x4F.newMatrix();
+
+    this.expected.expect(R2RendererExceptionProjectiveAlreadyActive.class);
+    this.expected.expectMessage("Projective already active");
+
+    m.withObserver(
+      PMatrixI4x4F.identity(),
+      R2ProjectionOrthographic.newFrustum(pm),
+      Unit.unit(),
+      (mm, u0) ->
+        mm.withProjectiveLight(
+          pp, pv, Integer.valueOf(23), (mp, u1) ->
+            mm.withProjectiveLight(
+              pp,
+              pv,
+              Integer.valueOf(24),
+              (mpx, u1x) -> u1))
+    );
+  }
+
+  @Test
+  public final void testMatricesObserverProjectiveInstanceActive()
+  {
+    final R2MatricesType m = this.newMatrices();
+    final JCGLProjectionMatricesType pm =
+      JCGLProjectionMatrices.newMatrices();
+    final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
+      PMatrixI3x3F.identity();
+    final R2TransformReadableType t =
+      R2TransformOST.newTransform();
+
+    final R2ProjectionFrustum pp =
+      R2ProjectionFrustum.newFrustum(pm);
+    final PMatrix4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> pv =
+      PMatrixHeapArrayM4x4F.newMatrix();
+
+    this.expected.expect(R2RendererExceptionProjectiveAlreadyActive.class);
+    this.expected.expectMessage("Projective already active");
+
+    m.withObserver(
+      PMatrixI4x4F.identity(),
+      R2ProjectionOrthographic.newFrustum(pm),
+      Unit.unit(),
+      (mm, u0) ->
+        mm.withProjectiveLight(
+          pp, pv, Integer.valueOf(23), (mp, u1) ->
+            mm.withTransform(t, uv, Integer.valueOf(64), (mpx, ux) -> ux))
+    );
+  }
+
+  @Test
+  public final void testMatricesObserverInstanceProjectiveActive()
+  {
+    final R2MatricesType m = this.newMatrices();
+    final JCGLProjectionMatricesType pm =
+      JCGLProjectionMatrices.newMatrices();
+    final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
+      PMatrixI3x3F.identity();
+    final R2TransformReadableType t =
+      R2TransformOST.newTransform();
+
+    final R2ProjectionFrustum pp =
+      R2ProjectionFrustum.newFrustum(pm);
+    final PMatrix4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> pv =
+      PMatrixHeapArrayM4x4F.newMatrix();
+
+    this.expected.expect(R2RendererExceptionInstanceAlreadyActive.class);
+    this.expected.expectMessage("Instance already active");
+
+    final Integer r = m.withObserver(
+      PMatrixI4x4F.identity(),
+      R2ProjectionOrthographic.newFrustum(pm),
+      Unit.unit(),
+      (mm, u0) ->
+        mm.withTransform(t, uv, u0, (mi, u1) ->
+          mm.withProjectiveLight(
+            pp,
+            pv,
+            Integer.valueOf(23),
+            (mpx, mvx) -> mvx))
     );
   }
 }

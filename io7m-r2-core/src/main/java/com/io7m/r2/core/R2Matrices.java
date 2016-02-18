@@ -33,6 +33,8 @@ import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.jtensors.parameterized.PMatrixReadable4x4FType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
+import com.io7m.r2.spaces.R2SpaceLightClipType;
+import com.io7m.r2.spaces.R2SpaceLightEyeType;
 import com.io7m.r2.spaces.R2SpaceNormalEyeType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
@@ -138,6 +140,67 @@ public final class R2Matrices implements R2MatricesType
     return this.context_tr;
   }
 
+  private static final class ProjectiveLight implements
+    R2MatricesProjectiveLightType
+  {
+    private final PMatrixDirect4x4FType<
+      R2SpaceEyeType,
+      R2SpaceLightEyeType>
+      m_projective_eye_to_light_eye;
+
+    private final PMatrixDirect4x4FType<
+      R2SpaceLightEyeType,
+      R2SpaceLightClipType>
+      m_projective_projection;
+
+    private final PMatrixDirect4x4FType<
+      R2SpaceWorldType,
+      R2SpaceLightEyeType>
+      m_projective_view;
+
+    private boolean          active;
+    private R2ProjectionType projection;
+
+    ProjectiveLight()
+    {
+      this.active = false;
+      this.m_projective_eye_to_light_eye = PMatrixDirectM4x4F.newMatrix();
+      this.m_projective_projection = PMatrixDirectM4x4F.newMatrix();
+      this.m_projective_view = PMatrixDirectM4x4F.newMatrix();
+    }
+
+    @Override
+    public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceLightEyeType>
+    getMatrixProjectiveEyeToLightEye()
+    {
+      Assertive.require(this.active, "Projective is active");
+      return this.m_projective_eye_to_light_eye;
+    }
+
+    @Override
+    public PMatrixDirectReadable4x4FType<R2SpaceLightEyeType,
+      R2SpaceLightClipType> getMatrixProjectiveProjection()
+    {
+      Assertive.require(this.active, "Projective is active");
+      return this.m_projective_projection;
+    }
+
+    @Override
+    public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceLightEyeType>
+    getMatrixProjectiveView()
+    {
+      Assertive.require(this.active, "Projective is active");
+      return this.m_projective_view;
+    }
+
+    @Override
+    public R2ProjectionType getProjectiveProjection()
+    {
+      Assertive.require(this.active, "Projective is active");
+      return this.projection;
+    }
+  }
+
   private static final class InstanceSingle implements
     R2MatricesInstanceSingleType
   {
@@ -165,6 +228,7 @@ public final class R2Matrices implements R2MatricesType
     public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
     getMatrixModelView()
     {
+      Assertive.require(this.active, "Instance is active");
       return this.m_modelview;
     }
 
@@ -172,6 +236,7 @@ public final class R2Matrices implements R2MatricesType
     public PMatrixDirectReadable3x3FType<R2SpaceObjectType,
       R2SpaceNormalEyeType> getMatrixNormal()
     {
+      Assertive.require(this.active, "Instance is active");
       return this.m_normal;
     }
 
@@ -179,6 +244,7 @@ public final class R2Matrices implements R2MatricesType
     public PMatrixDirectReadable3x3FType<R2SpaceTextureType,
       R2SpaceTextureType> getMatrixUV()
     {
+      Assertive.require(this.active, "Instance is active");
       return this.m_uv;
     }
   }
@@ -199,6 +265,7 @@ public final class R2Matrices implements R2MatricesType
     private final MatrixM3x3F.ContextMM3F  context_3f;
     private final PMatrixM4x4F.ContextPM4F context_p4f;
     private final R2ViewRaysType           view_rays;
+    private final ProjectiveLight          projective;
     private       boolean                  active;
     private       R2ProjectionReadableType projection;
 
@@ -211,6 +278,7 @@ public final class R2Matrices implements R2MatricesType
       this.m_view = PMatrixDirectM4x4F.newMatrix();
       this.m_view_inverse = PMatrixDirectM4x4F.newMatrix();
       this.instance_single = new InstanceSingle();
+      this.projective = new ProjectiveLight();
       this.context_tr = NullCheck.notNull(in_context_tr);
       this.projection = null;
       this.context_3f = new MatrixM3x3F.ContextMM3F();
@@ -221,6 +289,7 @@ public final class R2Matrices implements R2MatricesType
     @Override
     public R2ProjectionReadableType getProjection()
     {
+      Assertive.require(this.active, "Observer is active");
       return this.projection;
     }
 
@@ -278,6 +347,11 @@ public final class R2Matrices implements R2MatricesType
 
       Assertive.require(this.active, "Observer is active");
 
+      if (this.projective.active) {
+        throw new R2RendererExceptionProjectiveAlreadyActive(
+          "Projective already active");
+      }
+
       if (this.instance_single.active) {
         throw new R2RendererExceptionInstanceAlreadyActive(
           "Instance already active");
@@ -305,6 +379,48 @@ public final class R2Matrices implements R2MatricesType
         return f.apply(this.instance_single, x);
       } finally {
         this.instance_single.active = false;
+      }
+    }
+
+    @Override
+    public <A, B> B withProjectiveLight(
+      final R2ProjectionReadableType p,
+      final PMatrixReadable4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> view,
+      final A x,
+      final R2MatricesProjectiveLightFunctionType<A, B> f)
+      throws R2Exception
+    {
+      NullCheck.notNull(p);
+      NullCheck.notNull(view);
+      NullCheck.notNull(x);
+      NullCheck.notNull(f);
+
+      Assertive.require(this.active, "Observer is active");
+
+      if (this.instance_single.active) {
+        throw new R2RendererExceptionInstanceAlreadyActive(
+          "Instance already active");
+      }
+
+      if (this.projective.active) {
+        throw new R2RendererExceptionProjectiveAlreadyActive(
+          "Projective already active");
+      }
+
+      try {
+        this.projective.active = true;
+
+        MatrixM4x4F.copy(view, this.projective.m_projective_view);
+        p.projectionMakeMatrix(this.m_projection);
+
+        PMatrixM4x4F.multiply(
+          this.projective.m_projective_view,
+          this.m_view_inverse,
+          this.projective.m_projective_eye_to_light_eye);
+
+        return f.apply(this.projective, x);
+      } finally {
+        this.projective.active = false;
       }
     }
 

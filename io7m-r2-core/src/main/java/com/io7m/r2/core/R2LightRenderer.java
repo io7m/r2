@@ -348,10 +348,12 @@ public final class R2LightRenderer implements R2LightRendererType
               JCGLDepthFunction.DEPTH_GREATER_THAN_OR_EQUAL);
           }
 
-          s.setLightTextures(this.textures, uc, i);
+          s.setLightTextures(
+            this.textures, uc, i);
           s.setLightViewDependentValues(
             this.shaders, this.matrices, this.viewport, i);
-          s.setLightValues(this.shaders, this.textures, i);
+          s.setLightValues(
+            this.shaders, this.textures, i);
 
           this.matrices.withTransform(
             i.getTransform(),
