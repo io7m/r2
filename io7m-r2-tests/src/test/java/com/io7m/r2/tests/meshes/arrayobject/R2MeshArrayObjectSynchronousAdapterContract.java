@@ -31,6 +31,7 @@ import com.io7m.r2.meshes.R2MeshParserInterleavedListenerType;
 import com.io7m.r2.meshes.arrayobject.R2MeshArrayObjectSynchronousAdapter;
 import com.io7m.r2.meshes.arrayobject.R2MeshArrayObjectSynchronousAdapterType;
 import com.io7m.r2.meshes.binary.R2MBReaderType;
+import com.io7m.r2.meshes.binary.R2MBUnmappedReader;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import org.hamcrest.core.StringStartsWith;
 import org.junit.Assert;
@@ -40,6 +41,8 @@ import org.junit.rules.ExpectedException;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
@@ -50,6 +53,37 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
   protected abstract R2MBReaderType getMeshReader(
     String name,
     R2MeshParserInterleavedListenerType listener);
+
+  @Test
+  public final void testHalls() throws Exception
+  {
+    final JCGLContextType c = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type gi = c.contextGetGL33();
+
+    final R2VertexCursorP32UNT16 ci = R2VertexCursorP32UNT16.getInstance();
+    final R2MeshArrayObjectSynchronousAdapterType adapter =
+      R2MeshArrayObjectSynchronousAdapter.newAdapter(
+        gi.getArrayObjects(),
+        gi.getArrayBuffers(),
+        gi.getIndexBuffers(),
+        JCGLUsageHint.USAGE_STATIC_DRAW,
+        JCGLUnsignedType.TYPE_UNSIGNED_INT,
+        JCGLUsageHint.USAGE_DYNAMIC_DRAW,
+        ci,
+        ci);
+
+    final R2MBReaderType reader = R2MBUnmappedReader.newReader(
+      Files.newByteChannel(Paths.get("/tmp/h2.r2b")),
+      adapter);
+    reader.run();
+
+    if (adapter.hasFailed()) {
+      final Optional<Throwable> error_opt = adapter.getErrorException();
+      error_opt.ifPresent(Throwable::printStackTrace);
+    }
+
+    Assert.assertFalse(adapter.hasFailed());
+  }
 
   @Test
   public final void testOneTriOK_0()

@@ -39,6 +39,7 @@ import org.valid4j.Assertive;
 
 import java.nio.ByteBuffer;
 import java.util.Optional;
+import java.util.OptionalLong;
 
 /**
  * The default implementation of the
@@ -55,23 +56,25 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     LOG = LoggerFactory.getLogger(R2MeshArrayObjectSynchronousAdapter.class);
   }
 
-  private final JCGLArrayObjectsType                      g_ao;
-  private final JCGLArrayBuffersType                      g_ab;
-  private final JCGLIndexBuffersType                      g_ib;
-  private final JCGLUsageHint                             array_usage;
-  private final JCGLUnsignedType                          index_type;
-  private final JCGLUsageHint                             index_usage;
-  private final R2VertexCursorProducerType<ByteBuffer>    cursor_producer;
-  private final R2VertexCursorProducerInfoType            cursor_info;
-  private       boolean                                   failed;
-  private       JCGLArrayBufferType                       array_buffer;
-  private       JCGLIndexBufferType                       index_buffer;
-  private       JCGLArrayObjectType                       array_object;
-  private       JCGLBufferUpdateType<JCGLArrayBufferType> array_update;
-  private       JCGLBufferUpdateType<JCGLIndexBufferType> index_update;
-  private       R2VertexCursorType                        array_cursor;
-  private       Optional<Throwable>                       error_ex;
-  private       String                                    error_message;
+  private final JCGLArrayObjectsType                   g_ao;
+  private final JCGLArrayBuffersType                   g_ab;
+  private final JCGLIndexBuffersType                   g_ib;
+  private final JCGLUsageHint                          array_usage;
+  private       JCGLUnsignedType                       index_type_actual;
+  private final JCGLUsageHint                          index_usage;
+  private final R2VertexCursorProducerType<ByteBuffer> cursor_producer;
+  private final R2VertexCursorProducerInfoType         cursor_info;
+  private final JCGLUnsignedType                       index_type_minimum;
+  private       boolean                                failed;
+  private       JCGLArrayBufferType                    array_buffer;
+  private       JCGLIndexBufferType                    index_buffer;
+  private JCGLArrayObjectType                       array_object;
+  private JCGLBufferUpdateType<JCGLArrayBufferType> array_update;
+  private JCGLBufferUpdateType<JCGLIndexBufferType> index_update;
+  private R2VertexCursorType                        array_cursor;
+  private Optional<Throwable>                       error_ex;
+  private String                                    error_message;
+  private OptionalLong                              vertex_count;
 
   private R2MeshArrayObjectSynchronousAdapter(
     final JCGLArrayObjectsType in_g_ao,
@@ -87,10 +90,11 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     this.g_ab = NullCheck.notNull(in_g_ab);
     this.g_ib = NullCheck.notNull(in_g_ib);
     this.array_usage = NullCheck.notNull(in_array_usage);
-    this.index_type = NullCheck.notNull(in_index_type);
+    this.index_type_minimum = NullCheck.notNull(in_index_type);
     this.index_usage = NullCheck.notNull(in_index_usage);
     this.cursor_info = NullCheck.notNull(in_cursor_info);
     this.cursor_producer = NullCheck.notNull(in_cursor_producer);
+    this.vertex_count = OptionalLong.empty();
     this.failed = false;
   }
 
@@ -147,6 +151,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     Assertive.ensure(this.array_object == null);
     Assertive.ensure(this.index_buffer == null);
 
+    this.vertex_count = OptionalLong.of(count);
+
     this.array_buffer =
       this.g_ab.arrayBufferAllocate(
         count * this.cursor_info.getVertexSize(),
@@ -165,11 +171,15 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     Assertive.ensure(this.array_buffer != null);
     Assertive.ensure(this.array_object == null);
     Assertive.ensure(this.index_buffer == null);
+    Assertive.ensure(this.vertex_count.isPresent());
 
-    final JCGLUnsignedType it =
-      R2IndexBuffers.getTypeForCount(this.index_type, count);
+    this.index_type_actual =
+      R2IndexBuffers.getTypeForCount(
+        this.index_type_minimum, this.vertex_count.getAsLong());
+
     this.index_buffer =
-      this.g_ib.indexBufferAllocate(count * 3L, it, this.index_usage);
+      this.g_ib.indexBufferAllocate(
+        count * 3L, this.index_type_actual, this.index_usage);
     this.g_ib.indexBufferUnbind();
 
     final JCGLArrayObjectBuilderType aob = this.g_ao.arrayObjectNewBuilder();
@@ -330,26 +340,35 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     }
 
     final ByteBuffer data = this.index_update.getData();
-    switch (this.index_type) {
+    switch (this.index_type_actual) {
       case TYPE_UNSIGNED_BYTE: {
         final long offset = index * 3L;
-        data.put((int) offset, (byte) (v0 & 0xffL));
-        data.put((int) offset + 1, (byte) (v1 & 0xffL));
-        data.put((int) offset + 2, (byte) (v2 & 0xffL));
+        final byte v0i = (byte) (v0 & 0xffL);
+        final byte v1i = (byte) (v1 & 0xffL);
+        final byte v2i = (byte) (v2 & 0xffL);
+        data.put((int) offset, v0i);
+        data.put((int) offset + 1, v1i);
+        data.put((int) offset + 2, v2i);
         break;
       }
       case TYPE_UNSIGNED_INT: {
         final long offset = index * (3L * 4L);
-        data.putInt((int) offset, (int) (v0 & 0xffffffffL));
-        data.putInt((int) offset + 4, (int) (v1 & 0xffffffffL));
-        data.putInt((int) offset + 8, (int) (v2 & 0xffffffffL));
+        final int v0i = (int) (v0 & 0xffffffffL);
+        final int v1i = (int) (v1 & 0xffffffffL);
+        final int v2i = (int) (v2 & 0xffffffffL);
+        data.putInt((int) offset, v0i);
+        data.putInt((int) offset + 4, v1i);
+        data.putInt((int) offset + 8, v2i);
         break;
       }
       case TYPE_UNSIGNED_SHORT: {
         final long offset = index * (3L * 2L);
-        data.putShort((int) offset, (short) (v0 & 0xffffL));
-        data.putShort((int) offset + 2, (short) (v1 & 0xffffL));
-        data.putShort((int) offset + 4, (short) (v2 & 0xffffL));
+        final short v0i = (short) (v0 & 0xffffL);
+        final short v1i = (short) (v1 & 0xffffL);
+        final short v2i = (short) (v2 & 0xffffL);
+        data.putShort((int) offset, v0i);
+        data.putShort((int) offset + 2, v1i);
+        data.putShort((int) offset + 4, v2i);
         break;
       }
     }

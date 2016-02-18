@@ -21,7 +21,7 @@ package com.io7m.r2.core;
  */
 
 public interface R2LightBufferType extends R2LightBufferUsableType,
-  R2DeletableType
+  R2RenderTargetType<R2LightBufferDescriptionType>
 {
   // No extra functions
 }

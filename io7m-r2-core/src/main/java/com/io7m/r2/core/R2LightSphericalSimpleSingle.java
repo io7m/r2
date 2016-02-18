@@ -112,7 +112,7 @@ public final class R2LightSphericalSimpleSingle implements
   public void setIntensity(
     final float i)
   {
-    this.intensity = i;
+    this.intensity = Math.max(0.0f, i);
   }
 
   @Override

@@ -27,6 +27,7 @@ import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
+import com.io7m.r2.core.R2UnitQuadUsableType;
 
 /**
  * User-friendly frontend.
@@ -93,4 +94,10 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2LightRendererType getLightRenderer();
+
+  /**
+   * @return A default unit quad
+   */
+
+  R2UnitQuadUsableType getUnitQuad();
 }

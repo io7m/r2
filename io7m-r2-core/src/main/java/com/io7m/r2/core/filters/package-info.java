@@ -15,7 +15,7 @@
  */
 
 /**
- * Default provided filters.
+ * Default provided image filters.
  */
 
 @com.io7m.jnull.NonNullByDefault package com.io7m.r2.core.filters;

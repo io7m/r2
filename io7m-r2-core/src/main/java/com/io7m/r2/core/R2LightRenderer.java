@@ -39,6 +39,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -62,21 +63,29 @@ public final class R2LightRenderer implements R2LightRendererType
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_STENCIL);
   }
 
-  private final LightConsumer light_consumer;
-  private       boolean       deleted;
+  private final LightConsumer         light_consumer;
+  private final JCGLInterfaceGL33Type g;
+  private       boolean               deleted;
 
-  private R2LightRenderer()
+  private R2LightRenderer(final JCGLInterfaceGL33Type in_g)
   {
-    this.light_consumer = new LightConsumer();
+    this.g = NullCheck.notNull(in_g);
+    this.light_consumer = new LightConsumer(this.g);
   }
 
   /**
+   * Construct a new renderer.
+   *
+   * @param in_g An OpenGL interface
+   *
    * @return A new renderer
    */
 
-  public static R2LightRendererType newRenderer()
+  public static R2LightRendererType newRenderer(
+    final JCGLInterfaceGL33Type
+      in_g)
   {
-    return new R2LightRenderer();
+    return new R2LightRenderer(in_g);
   }
 
   @Override
@@ -94,14 +103,13 @@ public final class R2LightRenderer implements R2LightRendererType
 
   @Override
   public void renderLights(
-    final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
     final R2LightBufferUsableType lbuffer,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaqueLightsType s)
   {
-    NullCheck.notNull(g);
+    NullCheck.notNull(this.g);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer);
     NullCheck.notNull(uc);
@@ -110,12 +118,12 @@ public final class R2LightRenderer implements R2LightRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final JCGLFramebufferUsableType lb_fb = lbuffer.getFramebuffer();
-    final JCGLFramebuffersType g_fb = g.getFramebuffers();
+    final JCGLFramebufferUsableType lb_fb = lbuffer.getPrimaryFramebuffer();
+    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
     try {
       g_fb.framebufferDrawBind(lb_fb);
-      this.renderLightsWithBoundBuffer(g, gbuffer, lbuffer.getArea(), uc, m, s);
+      this.renderLightsWithBoundBuffer(gbuffer, lbuffer.getArea(), uc, m, s);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -123,14 +131,13 @@ public final class R2LightRenderer implements R2LightRendererType
 
   @Override
   public void renderLightsWithBoundBuffer(
-    final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
     final AreaInclusiveUnsignedLType lbuffer_area,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaqueLightsType s)
   {
-    NullCheck.notNull(g);
+    NullCheck.notNull(this.g);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer_area);
     NullCheck.notNull(uc);
@@ -139,8 +146,9 @@ public final class R2LightRenderer implements R2LightRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final JCGLFramebufferUsableType gb_fb = gbuffer.getFramebuffer();
-    final JCGLFramebuffersType g_fb = g.getFramebuffers();
+    final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
+    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
+    final JCGLViewportsType g_v = this.g.getViewports();
 
     /**
      * Copy the contents of the depth/stencil attachment of the G-Buffer to
@@ -161,27 +169,28 @@ public final class R2LightRenderer implements R2LightRendererType
        * Configure state for light geometry rendering.
        */
 
-      final JCGLDepthBuffersType g_db = g.getDepthBuffers();
-      final JCGLBlendingType g_b = g.getBlending();
-      final JCGLColorBufferMaskingType g_cm = g.getColorBufferMasking();
+      final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
+      final JCGLBlendingType g_b = this.g.getBlending();
+      final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
 
       g_b.blendingEnable(
         JCGLBlendFunction.BLEND_ONE, JCGLBlendFunction.BLEND_ONE);
       g_cm.colorBufferMask(true, true, true, true);
       g_db.depthClampingEnable();
       g_db.depthBufferWriteDisable();
+      g_v.viewportSet(lbuffer_area);
 
-      this.light_consumer.g33 = g;
       this.light_consumer.gbuffer = gbuffer;
       this.light_consumer.matrices = m;
       this.light_consumer.texture_context = uc;
+      this.light_consumer.viewport = lbuffer_area;
       try {
         s.opaqueLightsExecute(this.light_consumer);
       } finally {
         this.light_consumer.matrices = null;
         this.light_consumer.gbuffer = null;
-        this.light_consumer.g33 = null;
         this.light_consumer.texture_context = null;
+        this.light_consumer.viewport = null;
       }
     }
   }
@@ -189,14 +198,16 @@ public final class R2LightRenderer implements R2LightRendererType
   private static final class LightConsumer implements
     R2SceneOpaqueLightsConsumerType
   {
-    private @Nullable JCGLInterfaceGL33Type          g33;
-    private @Nullable JCGLCullingType                culling;
+    private final JCGLInterfaceGL33Type  g33;
+    private final JCGLCullingType        culling;
+    private final JCGLShadersType        shaders;
+    private final JCGLTexturesType       textures;
+    private final JCGLArrayObjectsType   array_objects;
+    private final JCGLDrawType           draw;
+    private final JCGLDepthBuffersType   depth;
+    private final JCGLStencilBuffersType stencils;
+
     private @Nullable R2MatricesObserverType         matrices;
-    private @Nullable JCGLShadersType                shaders;
-    private @Nullable JCGLTexturesType               textures;
-    private @Nullable JCGLArrayObjectsType           array_objects;
-    private @Nullable JCGLDrawType                   draw;
-    private @Nullable JCGLStencilBuffersType         stencils;
     private @Nullable R2GeometryBufferUsableType     gbuffer;
     private @Nullable JCGLTextureUnitType            unit_albedo;
     private @Nullable JCGLTextureUnitType            unit_normals;
@@ -206,18 +217,12 @@ public final class R2LightRenderer implements R2LightRendererType
 
     private R2LightSingleType                                light;
     private R2ShaderLightSingleUsableType<R2LightSingleType> light_shader;
-    private JCGLDepthBuffersType                             depth;
     private R2TextureUnitContextType                         light_base_context;
+    private AreaInclusiveUnsignedLType                       viewport;
 
-    LightConsumer()
+    LightConsumer(final JCGLInterfaceGL33Type in_g)
     {
-
-    }
-
-    @Override
-    public void onStart()
-    {
-      Assertive.require(this.g33 != null);
+      this.g33 = NullCheck.notNull(in_g);
 
       this.shaders = this.g33.getShaders();
       this.textures = this.g33.getTextures();
@@ -226,6 +231,13 @@ public final class R2LightRenderer implements R2LightRendererType
       this.stencils = this.g33.getStencilBuffers();
       this.culling = this.g33.getCulling();
       this.depth = this.g33.getDepthBuffers();
+    }
+
+    @Override
+    public void onStart()
+    {
+      Assertive.require(this.g33 != null);
+
 
       /**
        * Create a new texture context and bind the geometry buffer textures
@@ -253,11 +265,6 @@ public final class R2LightRenderer implements R2LightRendererType
     {
       this.light_base_context.unitContextFinish(this.textures);
       this.light_base_context = null;
-
-      this.array_objects = null;
-      this.shaders = null;
-      this.draw = null;
-      this.textures = null;
     }
 
     @Override
@@ -311,44 +318,55 @@ public final class R2LightRenderer implements R2LightRendererType
       try {
 
         /**
-         * For full-screen quads, the front faces should be rendered. For
-         * everything else, render only back faces.
-         *
-         * Additionally, screen-based lights will render a light volume on
-         * the near plane: Light volume fragments will have a depth less than
-         * or equal to any geometry and therefore depth testing must reflect
-         * this. For other types of lights, the fragments of the back faces of
-         * the light volume will have a depth greater than or equal to the
-         * geometry fragments that should be affected.
+         * Create a new texture context for this particular light.
          */
 
-        if (i instanceof R2LightScreenSingleType) {
-          this.culling.cullingEnable(
-            JCGLFaceSelection.FACE_BACK,
-            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
-          this.depth.depthBufferTestEnable(
-            JCGLDepthFunction.DEPTH_LESS_THAN_OR_EQUAL);
-        } else {
-          this.culling.cullingEnable(
-            JCGLFaceSelection.FACE_FRONT,
-            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
-          this.depth.depthBufferTestEnable(
-            JCGLDepthFunction.DEPTH_GREATER_THAN_OR_EQUAL);
+        final R2TextureUnitContextType uc =
+          this.light_base_context.unitContextNew();
+
+        try {
+
+          /**
+           * For full-screen quads, the front faces should be rendered. For
+           * everything else, render only back faces.
+           *
+           * The fragments of the back faces of the light volume will have a
+           * depth greater than or equal to the geometry fragments that
+           * should be affected.
+           */
+
+          if (i instanceof R2LightScreenSingleType) {
+            this.culling.cullingEnable(
+              JCGLFaceSelection.FACE_BACK,
+              JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
+            this.depth.depthBufferTestDisable();
+          } else {
+            this.culling.cullingEnable(
+              JCGLFaceSelection.FACE_FRONT,
+              JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
+            this.depth.depthBufferTestEnable(
+              JCGLDepthFunction.DEPTH_GREATER_THAN_OR_EQUAL);
+          }
+
+          s.setLightTextures(this.textures, uc, i);
+          s.setLightViewDependentValues(
+            this.shaders, this.matrices, this.viewport, i);
+          s.setLightValues(this.shaders, this.textures, i);
+
+          this.matrices.withTransform(
+            i.getTransform(),
+            PMatrixI3x3F.identity(),
+            this,
+            (mi, t) -> {
+              t.light_shader.setLightTransformDependentValues(
+                t.shaders, mi, t.light);
+              t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+              return Unit.unit();
+            });
+
+        } finally {
+          uc.unitContextFinish(this.textures);
         }
-
-        s.setLightViewDependentValues(this.shaders, this.matrices, i);
-        s.setLightValues(this.shaders, this.textures, i);
-
-        this.matrices.withTransform(
-          i.getTransform(),
-          PMatrixI3x3F.identity(),
-          this,
-          (mi, t) -> {
-            t.light_shader.setLightTransformDependentValues(
-              t.shaders, mi, t.light);
-            t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-            return Unit.unit();
-          });
 
       } finally {
         this.light = null;

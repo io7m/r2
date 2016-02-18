@@ -216,6 +216,8 @@ public final class R2SurfaceShaderBasicSingle extends
       this.u_transform_modelview, m.getMatrixModelView());
     g_sh.shaderUniformPutMatrix3x3f(
       this.u_transform_normal, m.getMatrixNormal());
+    g_sh.shaderUniformPutMatrix3x3f(
+      this.u_transform_uv, m.getMatrixUV());
   }
 
   @Override

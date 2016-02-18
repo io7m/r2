@@ -40,6 +40,9 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitAllocator;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
+import com.io7m.r2.core.R2UnitQuad;
+import com.io7m.r2.core.R2UnitQuadType;
+import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.shaders.R2Shaders;
 
 import java.util.function.Supplier;
@@ -60,6 +63,7 @@ public final class R2Main implements R2MainType
   private final R2GeometryRendererType     geometry_renderer;
   private final R2LightRendererType        light_renderer;
   private final R2TextureUnitAllocatorType texture_allocator;
+  private final R2UnitQuadType             unit_quad;
   private       boolean                    deleted;
 
   private R2Main(
@@ -72,7 +76,8 @@ public final class R2Main implements R2MainType
     final R2TextureUnitAllocatorType in_texture_allocator,
     final R2TextureDefaultsType in_texture_defaults,
     final R2GeometryRendererType in_geometry_renderer,
-    final R2LightRendererType in_light_renderer)
+    final R2LightRendererType in_light_renderer,
+    final R2UnitQuadType in_unit_quad)
   {
     this.pool = NullCheck.notNull(in_pool);
     this.sources = NullCheck.notNull(in_sources);
@@ -84,6 +89,7 @@ public final class R2Main implements R2MainType
     this.texture_defaults = NullCheck.notNull(in_texture_defaults);
     this.geometry_renderer = NullCheck.notNull(in_geometry_renderer);
     this.light_renderer = NullCheck.notNull(in_light_renderer);
+    this.unit_quad = NullCheck.notNull(in_unit_quad);
     this.deleted = false;
   }
 
@@ -157,6 +163,12 @@ public final class R2Main implements R2MainType
   }
 
   @Override
+  public R2UnitQuadUsableType getUnitQuad()
+  {
+    return this.unit_quad;
+  }
+
+  @Override
   public void delete(
     final JCGLInterfaceGL33Type g)
     throws R2Exception
@@ -164,6 +176,9 @@ public final class R2Main implements R2MainType
     if (!this.isDeleted()) {
       try {
         this.stencil_renderer.delete(g);
+        this.geometry_renderer.delete(g);
+        this.light_renderer.delete(g);
+        this.unit_quad.delete(g);
         this.texture_defaults.delete(g);
       } finally {
         this.deleted = true;
@@ -189,6 +204,7 @@ public final class R2Main implements R2MainType
     private @Nullable R2GeometryRendererType     geometry_renderer;
     private @Nullable R2LightRendererType        light_renderer;
     private @Nullable R2TextureUnitAllocatorType texture_unit_alloc;
+    private           R2UnitQuadType             unit_quad;
 
     Builder()
     {
@@ -218,10 +234,14 @@ public final class R2Main implements R2MainType
           this.sources,
           () -> R2ShaderSourcesResources.newSources(R2Shaders.class));
 
+      final R2UnitQuadType ex_quad = Builder.compute(
+        this.unit_quad,
+        () -> R2UnitQuad.newUnitQuad(g));
+
       final R2StencilRendererType ex_stencil_renderer =
         Builder.compute(
           this.stencil_renderer,
-          () -> R2StencilRenderer.newRenderer(ex_sources, g, ex_pool));
+          () -> R2StencilRenderer.newRenderer(ex_sources, g, ex_pool, ex_quad));
 
       final R2MatricesType ex_matrices =
         Builder.compute(this.matrices, R2Matrices::newMatrices);
@@ -250,11 +270,11 @@ public final class R2Main implements R2MainType
       final R2GeometryRendererType ex_geometry_renderer =
         Builder.compute(
           this.geometry_renderer,
-          R2GeometryRenderer::newRenderer);
+          () -> R2GeometryRenderer.newRenderer(g));
 
       final R2LightRendererType ex_light_renderer = Builder.compute(
         this.light_renderer,
-        R2LightRenderer::newRenderer);
+        () -> R2LightRenderer.newRenderer(g));
 
       return new R2Main(
         ex_pool,
@@ -266,7 +286,8 @@ public final class R2Main implements R2MainType
         ex_unit_alloc,
         ex_texture_defaults,
         ex_geometry_renderer,
-        ex_light_renderer);
+        ex_light_renderer,
+        ex_quad);
     }
   }
 }

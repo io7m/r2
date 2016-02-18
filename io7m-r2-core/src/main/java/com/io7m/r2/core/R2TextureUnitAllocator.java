@@ -112,10 +112,10 @@ public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
       final Context c = this.contexts_free.pop();
       this.contexts_active.push(c);
       return c;
-    } else {
-      throw new R2ExceptionTextureUnitContextLimitReached(
-        "Stack limit reached: " + this.contexts_active.size());
     }
+
+    throw new R2ExceptionTextureUnitContextLimitReached(
+      "Stack limit reached: " + this.contexts_active.size());
   }
 
   private void contextPop(
@@ -228,7 +228,7 @@ public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
               if (R2TextureUnitAllocator.LOG.isTraceEnabled()) {
                 R2TextureUnitAllocator.LOG.trace(
                   "[{}]: set 2D",
-                  Integer.valueOf(this.unit.unitGetIndex()));
+                  Integer.valueOf(a.unit.unitGetIndex()));
               }
 
               a.g3.texture2DBind(a.unit, t2d.get());

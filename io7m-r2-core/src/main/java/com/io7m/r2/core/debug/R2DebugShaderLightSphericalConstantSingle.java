@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.debug;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
@@ -37,6 +38,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderParameters;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -152,6 +154,17 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
   }
 
   @Override
+  public void setLightTextures(
+    final JCGLTexturesType g_tex,
+    final R2TextureUnitContextMutableType uc,
+    final R2LightSphericalSingleType values)
+  {
+    NullCheck.notNull(g_tex);
+    NullCheck.notNull(uc);
+    NullCheck.notNull(values);
+  }
+
+  @Override
   public void setLightValues(
     final JCGLShadersType g_sh,
     final JCGLTexturesType g_tex,
@@ -192,11 +205,13 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
   public void setLightViewDependentValues(
     final JCGLShadersType g_sh,
     final R2MatricesObserverValuesType m,
+    final AreaInclusiveUnsignedLType viewport,
     final R2LightSphericalSingleType values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(m);
     NullCheck.notNull(values);
+    NullCheck.notNull(viewport);
 
     /**
      * Upload the scene's depth coefficient.

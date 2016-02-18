@@ -16,7 +16,7 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 
 /**
  * The type of renderers that populate geometry buffers.
@@ -27,7 +27,6 @@ public interface R2GeometryRendererType extends R2DeletableType
   /**
    * Render the given opaque instances into the given geometry buffer.
    *
-   * @param g       A GL interface
    * @param gbuffer The geometry buffer
    * @param uc      A texture unit context
    * @param m       A matrix context
@@ -35,7 +34,6 @@ public interface R2GeometryRendererType extends R2DeletableType
    */
 
   void renderGeometry(
-    JCGLInterfaceGL33Type g,
     R2GeometryBufferUsableType gbuffer,
     R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
@@ -45,14 +43,14 @@ public interface R2GeometryRendererType extends R2DeletableType
    * Render the given opaque instances into the currently bound geometry
    * buffer.
    *
-   * @param g  A GL interface
-   * @param uc A texture unit context
-   * @param m  A matrix context
-   * @param s  The opaque instances
+   * @param area The current viewport
+   * @param uc   A texture unit context
+   * @param m    A matrix context
+   * @param s    The opaque instances
    */
 
   void renderGeometryWithBoundBuffer(
-    JCGLInterfaceGL33Type g,
+    AreaInclusiveUnsignedLType area,
     R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2SceneOpaquesType s);

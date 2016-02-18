@@ -16,6 +16,7 @@
 
 package com.io7m.r2.tests.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLArrayBufferUsableType;
 import com.io7m.jcanephora.core.JCGLArrayObjectBuilderType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
@@ -60,9 +61,9 @@ import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2ShaderBatchedUsableType;
+import com.io7m.r2.core.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSingleUsableType;
-import com.io7m.r2.core.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2TransformIdentity;
@@ -529,6 +530,15 @@ public final class R2TestUtilities
       }
 
       @Override
+      public void setLightTextures(
+        final JCGLTexturesType g_tex,
+        final R2TextureUnitContextMutableType uc,
+        final R2LightSingleType values)
+      {
+
+      }
+
+      @Override
       public void setLightValues(
         final JCGLShadersType g_sh,
         final JCGLTexturesType g_tex,
@@ -541,6 +551,7 @@ public final class R2TestUtilities
       public void setLightViewDependentValues(
         final JCGLShadersType g_sh,
         final R2MatricesObserverValuesType m,
+        final AreaInclusiveUnsignedLType viewport,
         final R2LightSingleType values)
       {
 

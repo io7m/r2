@@ -16,8 +16,8 @@
 
 package com.io7m.r2.examples.jogl;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedI;
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedL;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcamera.JCameraContext;
 import com.io7m.jcamera.JCameraFPSStyle;
 import com.io7m.jcamera.JCameraFPSStyleInput;
@@ -59,7 +59,7 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixDirect4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixDirectM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveI;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2Texture2DUsableType;
@@ -153,9 +153,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       final GLProfile pro = GLProfile.get(GLProfile.GL3);
       final GLCapabilities caps = new GLCapabilities(pro);
       final GLWindow win = GLWindow.create(caps);
-      win.setSize(640, 480);
+      win.setSize(1024, 768);
       win.setDefaultCloseOperation(
         WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE);
+      win.setTitle("R2");
 
       final ExampleListener el = new ExampleListener(win, example);
       win.addGLEventListener(el);
@@ -181,6 +182,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         }
       });
 
+      anim.setUpdateFPSFrames(60 * 10, System.out);
       anim.start();
       win.setVisible(true);
     } catch (final InstantiationException e) {
@@ -199,7 +201,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private       JCGLContextType            context;
     private       int                        frame;
     private       R2MainType                 r2_main;
-    private       AreaInclusiveUnsignedIType area;
+    private       AreaInclusiveUnsignedLType area;
     private       Services                   services;
     private       boolean                    want_cursor_warp;
 
@@ -351,9 +353,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
     private void resize(final GLAutoDrawable drawable)
     {
-      this.area = AreaInclusiveUnsignedI.of(
-        new UnsignedRangeInclusiveI(0, drawable.getSurfaceWidth() - 1),
-        new UnsignedRangeInclusiveI(0, drawable.getSurfaceHeight() - 1));
+      this.area = AreaInclusiveUnsignedL.of(
+        new UnsignedRangeInclusiveL(0, drawable.getSurfaceWidth() - 1),
+        new UnsignedRangeInclusiveL(0, drawable.getSurfaceHeight() - 1));
     }
 
     @Override
@@ -532,14 +534,14 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private final JCameraContext                   camera_ctx;
     private final JCameraFPSStyleMouseRegion       camera_mouse_region;
     private final JCameraRotationCoefficients      camera_rotations;
+    private final JCGLArrayObjectsType             array_objects;
+    private final JCGLArrayBuffersType             array_buffers;
+    private final JCGLIndexBuffersType             index_buffers;
     private       long                             camera_time_then;
     private       double                           camera_time_accum;
     private       JCameraFPSStyleSnapshot          camera_snap_current;
     private       JCameraFPSStyleSnapshot          camera_snap_prev;
     private       boolean                          camera_enabled;
-    private       JCGLArrayObjectsType             array_objects;
-    private       JCGLArrayBuffersType             array_buffers;
-    private       JCGLIndexBuffersType             index_buffers;
 
     Services(
       final GLWindow win,
@@ -605,8 +607,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
             JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
             JCGLTextureWrapS.TEXTURE_WRAP_REPEAT,
             JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
-            JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
-            JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
+            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+            JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
         final JCGLTexture2DUpdateType update =
           this.update_prov.getTextureUpdate(t, data);
         this.textures.texture2DUpdate(u0, update);
@@ -625,8 +627,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         return this.mesh_cache.get(name);
       }
 
+      R2JOGLExampleSingleWindowMain.LOG.debug("loading mesh {}", name);
+
       final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
-      try (final InputStream is = this.getMeshStream(name, c)) {
+      try (final InputStream is = Services.getMeshStream(name, c)) {
 
         final R2MeshArrayObjectSynchronousAdapterType adapter =
           R2MeshArrayObjectSynchronousAdapter.newAdapter(

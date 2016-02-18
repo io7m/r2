@@ -16,7 +16,7 @@
 
 package com.io7m.r2.examples.custom;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
@@ -33,6 +33,7 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
@@ -100,7 +101,7 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
   public void onInitialize(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m)
   {
     this.opaques = R2SceneOpaques.newOpaques();
@@ -109,11 +110,18 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
     this.geom_renderer = m.getGeometryRenderer();
     this.matrices = m.getMatrices();
     this.quad = R2UnitQuad.newUnitQuad(g);
-    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
-      g.getFramebuffers(),
-      g.getTextures(),
-      m.getTextureUnitAllocator().getRootContext(),
-      area);
+
+    {
+      final R2GeometryBufferDescription.Builder gdb =
+        R2GeometryBufferDescription.builder();
+      gdb.setArea(area);
+
+      this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
+        g.getFramebuffers(),
+        g.getTextures(),
+        m.getTextureUnitAllocator().getRootContext(),
+        gdb.build());
+    }
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -163,7 +171,7 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
   public void onRender(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m,
     final int frame)
   {
@@ -175,7 +183,8 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
     this.opaques.opaquesAddSingleInstance(this.instance, this.material);
 
     {
-      final JCGLFramebufferUsableType fb = this.gbuffer.getFramebuffer();
+      final JCGLFramebufferUsableType fb =
+        this.gbuffer.getPrimaryFramebuffer();
       final JCGLFramebuffersType g_fb = g.getFramebuffers();
       final JCGLClearType g_cl = g.getClear();
       final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
@@ -190,9 +199,15 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
       g_cl.clear(this.clear_spec);
 
       this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
-        t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
+        t.stencil_renderer.renderStencilsWithBoundBuffer(
+          mo,
+          t.gbuffer.getArea(),
+          t.stencils);
         t.geom_renderer.renderGeometryWithBoundBuffer(
-          g, m.getTextureUnitAllocator().getRootContext(), mo, t.opaques);
+          t.gbuffer.getArea(),
+          m.getTextureUnitAllocator().getRootContext(),
+          mo,
+          t.opaques);
         return Unit.unit();
       });
 

@@ -39,6 +39,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderParameters;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -214,6 +215,17 @@ public final class R2LightShaderSphericalLambertBlinnPhongSingle extends
   }
 
   @Override
+  public void setLightTextures(
+    final JCGLTexturesType g_tex,
+    final R2TextureUnitContextMutableType uc,
+    final R2LightSphericalSingleType values)
+  {
+    NullCheck.notNull(g_tex);
+    NullCheck.notNull(uc);
+    NullCheck.notNull(values);
+  }
+
+  @Override
   public void setLightValues(
     final JCGLShadersType g_sh,
     final JCGLTexturesType g_tex,
@@ -277,11 +289,26 @@ public final class R2LightShaderSphericalLambertBlinnPhongSingle extends
   public void setLightViewDependentValues(
     final JCGLShadersType g_sh,
     final R2MatricesObserverValuesType m,
+    final AreaInclusiveUnsignedLType viewport,
     final R2LightSphericalSingleType values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(m);
     NullCheck.notNull(values);
+    NullCheck.notNull(viewport);
+
+    /**
+     * Upload the viewport.
+     */
+
+    final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
+    final UnsignedRangeInclusiveL range_y = viewport.getRangeY();
+    g_sh.shaderUniformPutFloat(
+      this.u_viewport_inverse_width,
+      (float) (1.0 / (double) range_x.getInterval()));
+    g_sh.shaderUniformPutFloat(
+      this.u_viewport_inverse_height,
+      (float) (1.0 / (double) range_y.getInterval()));
 
     /**
      * Upload the current view rays.

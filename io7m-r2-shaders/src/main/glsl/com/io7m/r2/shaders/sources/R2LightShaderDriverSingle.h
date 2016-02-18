@@ -46,9 +46,9 @@ main (void)
 
   // Evaluate light
   R2_light_output_t o = R2_deferredLightMain (surface);
-  R2_out_diffuse               = vec4 (o.diffuse, 1.0);
-  R2_out_specular              = vec4 (o.specular, 1.0);
-  gl_FragDepth                 = depth_log;
+  R2_out_diffuse      = vec4 (o.diffuse, 1.0);
+  R2_out_specular     = vec4 (o.specular, 1.0);
+  gl_FragDepth        = depth_log;
 }
 
 #endif // R2_LIGHT_SHADER_DRIVER_SINGLE_H

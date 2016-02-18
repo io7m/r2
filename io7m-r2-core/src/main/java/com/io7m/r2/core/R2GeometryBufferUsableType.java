@@ -16,17 +16,12 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
-import com.io7m.jcanephora.core.JCGLResourceSizedType;
-import com.io7m.jcanephora.core.JCGLResourceUsableType;
-
 /**
  * The type of usable geometry buffers.
  */
 
-public interface R2GeometryBufferUsableType extends JCGLResourceSizedType,
-  JCGLResourceUsableType
+public interface R2GeometryBufferUsableType
+  extends R2RenderTargetUsableType<R2GeometryBufferDescriptionType>
 {
   /**
    * @return The albedo/emissive texture
@@ -51,16 +46,4 @@ public interface R2GeometryBufferUsableType extends JCGLResourceSizedType,
    */
 
   R2Texture2DUsableType getDepthTexture();
-
-  /**
-   * @return The framebuffer
-   */
-
-  JCGLFramebufferUsableType getFramebuffer();
-
-  /**
-   * @return The viewport area
-   */
-
-  AreaInclusiveUnsignedLType getArea();
 }

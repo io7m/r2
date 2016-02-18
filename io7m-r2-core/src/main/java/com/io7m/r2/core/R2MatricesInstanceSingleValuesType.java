@@ -21,6 +21,7 @@ import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceNormalEyeType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
+import com.io7m.r2.spaces.R2SpaceTextureType;
 
 /**
  * Access to the matrices for a given instance.
@@ -41,4 +42,11 @@ public interface R2MatricesInstanceSingleValuesType
 
   PMatrixDirectReadable3x3FType<R2SpaceObjectType, R2SpaceNormalEyeType>
   getMatrixNormal();
+
+  /**
+   * @return The current UV matrix for an instance
+   */
+
+  PMatrixDirectReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType>
+  getMatrixUV();
 }

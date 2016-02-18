@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 
@@ -29,6 +30,19 @@ public interface R2ShaderLightSingleUsableType<M extends R2LightSingleType>
   extends
   R2ShaderUsableType<M>, R2ShaderGBufferConsumerType
 {
+  /**
+   * Bind any textures needed for execution.
+   *
+   * @param g_tex  A texture interface
+   * @param uc     A texture interface
+   * @param values The parameters
+   */
+
+  void setLightTextures(
+    JCGLTexturesType g_tex,
+    R2TextureUnitContextMutableType uc,
+    M values);
+
   /**
    * Set light values.
    *
@@ -45,14 +59,16 @@ public interface R2ShaderLightSingleUsableType<M extends R2LightSingleType>
   /**
    * Set light values related to the current view.
    *
-   * @param g_sh   An OpenGL interface
-   * @param m      The current view matrices and values
-   * @param values The light parameters
+   * @param g_sh     An OpenGL interface
+   * @param m        The current view matrices and values
+   * @param viewport The current viewport
+   * @param values   The light parameters
    */
 
   void setLightViewDependentValues(
     JCGLShadersType g_sh,
     R2MatricesObserverValuesType m,
+    AreaInclusiveUnsignedLType viewport,
     M values);
 
   /**

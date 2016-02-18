@@ -16,7 +16,7 @@
 
 package com.io7m.r2.examples.custom;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
@@ -27,6 +27,7 @@ import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jfunctional.Unit;
+import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.VectorI4F;
@@ -34,8 +35,8 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
-import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
@@ -51,13 +52,8 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShaderSingleType;
 import com.io7m.r2.core.R2ShaderSourcesResources;
 import com.io7m.r2.core.R2ShaderSourcesType;
-import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2TransformReadableType;
-import com.io7m.r2.core.R2UnitQuad;
-import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2EyeZBuffer;
 import com.io7m.r2.core.debug.R2EyeZBufferType;
@@ -80,11 +76,7 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
   private R2SceneStencilsType    stencils;
-  private R2StencilRendererType  stencil_renderer;
-  private R2GeometryRendererType geom_renderer;
-  private R2MatricesType         matrices;
   private R2ProjectionFOV        projection;
-  private R2UnitQuadType         quad;
   private R2SceneOpaquesType     opaques;
   private R2GeometryBufferType   gbuffer;
 
@@ -100,7 +92,7 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
   private R2EyeZBufferType           zbuffer;
   private JCGLClearSpecification     geom_clear_spec;
   private JCGLClearSpecification     eye_clear_spec;
-  private R2TextureUnitAllocatorType textures;
+  private R2MainType main;
 
   public ExampleEyeZ0()
   {
@@ -111,31 +103,32 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
   public void onInitialize(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m)
   {
+    this.main = NullCheck.notNull(m);
+
     this.opaques = R2SceneOpaques.newOpaques();
     this.stencils = R2SceneStencils.newMasks();
-    this.stencil_renderer = m.getStencilRenderer();
     this.eye_renderer = R2EyeZRenderer.newRenderer(
-      g.getShaders(),
-      m.getShaderSources(),
-      m.getIDPool());
-    this.geom_renderer = m.getGeometryRenderer();
-    this.matrices = m.getMatrices();
-    this.quad = R2UnitQuad.newUnitQuad(g);
-    this.textures = R2TextureUnitAllocator.newAllocatorWithStack(
-      4, g.getTextures().textureGetUnits());
+      g, m.getShaderSources(), m.getIDPool());
 
-    this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
-      g.getFramebuffers(),
-      g.getTextures(),
-      this.textures.getRootContext(),
-      area);
+    {
+      final R2GeometryBufferDescription.Builder gdb =
+        R2GeometryBufferDescription.builder();
+      gdb.setArea(area);
+
+      this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
+        g.getFramebuffers(),
+        g.getTextures(),
+        m.getTextureUnitAllocator().getRootContext(),
+        gdb.build());
+    }
+
     this.zbuffer = R2EyeZBuffer.newEyeZBuffer(
       g.getFramebuffers(),
       g.getTextures(),
-      this.textures.getRootContext(),
+      m.getTextureUnitAllocator().getRootContext(),
       area);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
@@ -151,7 +144,6 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
     final R2IDPoolType id_pool = m.getIDPool();
 
     this.sphere = R2UnitSphere.newUnitSphere8(g);
-    this.quad = R2UnitQuad.newUnitQuad(g);
 
     final R2TransformReadableType tr = R2TransformOST.newTransform();
     this.instance = R2InstanceSingle.newInstance(
@@ -196,7 +188,7 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
   public void onRender(
     final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m,
     final int frame)
   {
@@ -218,16 +210,17 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
     }
 
     {
-      final JCGLFramebufferUsableType fb = this.gbuffer.getFramebuffer();
       final JCGLFramebuffersType g_fb = g.getFramebuffers();
       final JCGLClearType g_cl = g.getClear();
       final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
       final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
       final JCGLDepthBuffersType g_db = g.getDepthBuffers();
 
-      this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+      final R2MatricesType matrices = m.getMatrices();
+
+      matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         final JCGLFramebufferUsableType gbuffer_fb =
-          t.gbuffer.getFramebuffer();
+          t.gbuffer.getPrimaryFramebuffer();
         final JCGLFramebufferUsableType zbuffer_fb =
           t.zbuffer.getFramebuffer();
 
@@ -238,9 +231,15 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.geom_clear_spec);
 
-        t.stencil_renderer.renderStencilsWithBoundBuffer(g, mo, t.stencils);
-        t.geom_renderer.renderGeometryWithBoundBuffer(
-          g, t.textures.getRootContext(), mo, t.opaques);
+        t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
+          mo,
+          t.gbuffer.getArea(),
+          t.stencils);
+        t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
+          t.gbuffer.getArea(),
+          t.main.getTextureUnitAllocator().getRootContext(),
+          mo,
+          t.opaques);
         g_fb.framebufferDrawUnbind();
 
         g_fb.framebufferDrawBind(zbuffer_fb);
@@ -251,12 +250,11 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
         g_cl.clear(t.eye_clear_spec);
 
         t.eye_renderer.renderEyeZWithBoundBuffer(
-          g,
           t.gbuffer,
           t.zbuffer.getArea(),
-          t.textures.getRootContext(),
+          t.main.getTextureUnitAllocator().getRootContext(),
           mo,
-          this.quad);
+          t.main.getUnitQuad());
         g_fb.framebufferDrawUnbind();
         return Unit.unit();
       });
@@ -270,8 +268,7 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
     final JCGLInterfaceGL33Type g,
     final R2MainType m)
   {
-    this.quad.delete(g);
     this.shader.delete(g);
-    this.stencil_renderer.delete(g);
+    this.eye_renderer.delete(g);
   }
 }
