@@ -94,7 +94,7 @@ public final class R2SSAONoiseTexture
           c.setElementPosition(x, y);
           uv.setR((Math.random() * 2.0) - 1.0);
           uv.setG((Math.random() * 2.0) - 1.0);
-          uv.setB(1.0);
+          uv.setB(0.0);
         }
       }
 

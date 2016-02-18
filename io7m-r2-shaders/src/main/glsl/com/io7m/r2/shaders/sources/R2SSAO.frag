@@ -65,7 +65,7 @@ main (void)
     vec3 sample_eye = ((m_hemi * R2_ssao_kernel[index]) * R2_ssao_sample_radius) + eye_position.xyz;
 
     // Project the eye-space sample position to clip-space
-    vec4 sample_hom  = vec4(sample_eye, 1.0);
+    vec4 sample_hom  = vec4 (sample_eye, 1.0);
     vec4 sample_clip = R2_ssao_transform_projection * sample_hom;
 
     // Transform the clip-space sample position to UV coordinates
@@ -89,11 +89,14 @@ main (void)
     // If the surface being sampled is in front of the sample
     // position, then the sample position is inside the geometry
     // and therefore contributes to the occlusion.
-    occlusion += (sample_surface_eye_z <= sample_eye.z ? 1.0 : 0.0) * sample_range_check;
+    //
+    // Note that this check is dependent on coordinate system handedness:
+    // Values closer to the viewer have a LARGER eye-space Z.
+    occlusion += (sample_surface_eye_z >= sample_eye.z ? 1.0 : 0.0) * sample_range_check;
   }
 
-  // Normalize occlusion
-  occlusion = occlusion / R2_ssao_kernel_size;
+  // Invert and normalize occlusion
+  occlusion = 1.0 - (occlusion / R2_ssao_kernel_size);
 
   // Raise the occlusion to the given exponent, to optionally
   // add contrast.
