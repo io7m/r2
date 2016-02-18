@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core.filters;
 
+import com.io7m.jcanephora.core.JCGLBlendEquation;
+import com.io7m.jcanephora.core.JCGLBlendFunction;
 import com.io7m.jcanephora.core.JCGLPrimitives;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLBlendingType;
@@ -23,6 +25,7 @@ import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
 import com.io7m.jcanephora.core.api.JCGLCullingType;
 import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
+import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
@@ -31,41 +34,38 @@ import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
-import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightBufferUsableType;
 import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.shaders.R2ShaderLightApplicator;
-import com.io7m.r2.core.shaders.R2ShaderLightApplicatorParameters;
+import com.io7m.r2.core.shaders.R2ShaderOcclusionApplicator;
+import com.io7m.r2.core.shaders.R2ShaderOcclusionApplicatorParametersMutable;
 
 /**
- * A trivial filter that combines a geometry buffer and a light buffer into a
- * lit image.
- *
- * @see R2GeometryBufferUsableType
- * @see R2LightBufferUsableType
+ * A filter that applies ambient occlusion to a light buffer.
  */
 
-public final class R2FilterLightApplicator implements
-  R2FilterType<R2FilterLightApplicatorParametersType>
+public final class R2FilterOcclusionApplicator implements
+  R2FilterType<R2FilterOcclusionApplicatorParametersType>
 {
-  private final JCGLInterfaceGL33Type             g;
-  private final R2ShaderLightApplicator           shader;
-  private final R2UnitQuadUsableType              quad;
-  private       R2ShaderLightApplicatorParameters shader_params;
+  private final JCGLInterfaceGL33Type                        g;
+  private final R2ShaderOcclusionApplicator                  shader;
+  private final R2UnitQuadUsableType                         quad;
+  private       R2ShaderOcclusionApplicatorParametersMutable shader_params;
 
-  private R2FilterLightApplicator(
+  private R2FilterOcclusionApplicator(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderLightApplicator in_shader,
+    final R2ShaderOcclusionApplicator in_shader,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
+    this.shader_params = R2ShaderOcclusionApplicatorParametersMutable.create();
   }
 
   /**
@@ -80,7 +80,7 @@ public final class R2FilterLightApplicator implements
    * @return A new filter
    */
 
-  public static R2FilterType<R2FilterLightApplicatorParametersType>
+  public static R2FilterType<R2FilterOcclusionApplicatorParametersType>
   newFilter(
     final R2ShaderSourcesType in_sources,
     final R2TextureDefaultsType in_textures,
@@ -94,13 +94,13 @@ public final class R2FilterLightApplicator implements
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_quad);
 
-    final R2ShaderLightApplicator s =
-      R2ShaderLightApplicator.newShader(
+    final R2ShaderOcclusionApplicator s =
+      R2ShaderOcclusionApplicator.newShader(
         in_g.getShaders(),
         in_sources,
         in_pool);
 
-    return new R2FilterLightApplicator(in_g, s, in_quad);
+    return new R2FilterOcclusionApplicator(in_g, s, in_quad);
   }
 
   @Override
@@ -122,15 +122,16 @@ public final class R2FilterLightApplicator implements
   @Override
   public void runFilter(
     final R2TextureUnitContextParentType uc,
-    final R2FilterLightApplicatorParametersType parameters)
+    final R2FilterOcclusionApplicatorParametersType parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    final JCGLBlendingType g_b = this.g.getBlending();
     final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
+    final JCGLBlendingType g_b = this.g.getBlending();
     final JCGLCullingType g_cu = this.g.getCulling();
     final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
+    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
     final JCGLStencilBuffersType g_st = this.g.getStencilBuffers();
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();
@@ -138,53 +139,62 @@ public final class R2FilterLightApplicator implements
     final JCGLTexturesType g_tx = this.g.getTextures();
     final JCGLViewportsType g_v = this.g.getViewports();
 
-    if (g_db.depthBufferGetBits() > 0) {
-      g_db.depthBufferTestDisable();
-      g_db.depthBufferWriteDisable();
-    }
+    final R2LightBufferUsableType lb =
+      parameters.getLightBuffer();
+    final R2Texture2DUsableType tex =
+      parameters.getOcclusionTexture();
 
-    if (g_st.stencilBufferGetBits() > 0) {
-      g_st.stencilBufferDisable();
-    }
-
-    g_b.blendingDisable();
-    g_cu.cullingDisable();
-    g_cm.colorBufferMask(true, true, true, true);
-    g_v.viewportSet(parameters.getOutputViewport());
-
-    final R2TextureUnitContextType c = uc.unitContextNew();
     try {
-      final R2LightBufferUsableType lb =
-        parameters.getLightBuffer();
-      final R2GeometryBufferUsableType gb =
-        parameters.getGeometryBuffer();
+      g_fb.framebufferDrawBind(lb.getPrimaryFramebuffer());
 
-      if (this.shader_params == null) {
-        this.shader_params =
-          R2ShaderLightApplicatorParameters.newParameters(
-            gb.getAlbedoEmissiveTexture(),
-            lb.getDiffuseTexture(),
-            lb.getSpecularTexture());
+      if (g_db.depthBufferGetBits() > 0) {
+        g_db.depthBufferTestDisable();
+        g_db.depthBufferWriteDisable();
       }
 
-      this.shader_params.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
-      this.shader_params.setDiffuseTexture(lb.getDiffuseTexture());
-      this.shader_params.setSpecularTexture(lb.getSpecularTexture());
+      if (g_st.stencilBufferGetBits() > 0) {
+        g_st.stencilBufferDisable();
+      }
 
+      g_b.blendingEnableSeparateWithEquationSeparate(
+        JCGLBlendFunction.BLEND_ONE,
+        JCGLBlendFunction.BLEND_ONE,
+        JCGLBlendFunction.BLEND_ONE,
+        JCGLBlendFunction.BLEND_ONE,
+        JCGLBlendEquation.BLEND_EQUATION_REVERSE_SUBTRACT,
+        JCGLBlendEquation.BLEND_EQUATION_ADD);
+
+      g_cu.cullingDisable();
+      g_cm.colorBufferMask(true, true, true, true);
+      g_v.viewportSet(lb.getArea());
+
+      final R2TextureUnitContextType c = uc.unitContextNew();
       try {
-        g_sh.shaderActivateProgram(this.shader.getShaderProgram());
-        this.shader.setTextures(g_tx, c, this.shader_params);
-        this.shader.setValues(g_sh, this.shader_params);
+        try {
+          this.shader_params.setTexture(
+            parameters.getOcclusionTexture());
+          this.shader_params.setIntensity(
+            parameters.getIntensity());
 
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
-        g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+          g_sh.shaderActivateProgram(
+            this.shader.getShaderProgram());
+          this.shader.setTextures(
+            g_tx, c, this.shader_params);
+          this.shader.setValues(
+            g_sh, this.shader_params);
+
+          g_ao.arrayObjectBind(this.quad.getArrayObject());
+          g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+        } finally {
+          g_ao.arrayObjectUnbind();
+          g_sh.shaderDeactivateProgram();
+        }
       } finally {
-        g_ao.arrayObjectUnbind();
-        g_sh.shaderDeactivateProgram();
+        c.unitContextFinish(g_tx);
       }
 
     } finally {
-      c.unitContextFinish(g_tx);
+      g_fb.framebufferDrawUnbind();
     }
   }
 }

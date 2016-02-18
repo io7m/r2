@@ -84,8 +84,8 @@ import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.filters.R2FilterBoxBlur;
-import com.io7m.r2.core.filters.R2FilterBoxBlurParameters;
+import com.io7m.r2.core.filters.R2FilterBilateralBlurDepthAware;
+import com.io7m.r2.core.filters.R2FilterBilateralBlurDepthAwareParameters;
 import com.io7m.r2.core.filters.R2FilterCompositor;
 import com.io7m.r2.core.filters.R2FilterCompositorItem;
 import com.io7m.r2.core.filters.R2FilterCompositorParameters;
@@ -93,6 +93,9 @@ import com.io7m.r2.core.filters.R2FilterCompositorParametersType;
 import com.io7m.r2.core.filters.R2FilterLightApplicator;
 import com.io7m.r2.core.filters.R2FilterLightApplicatorParameters;
 import com.io7m.r2.core.filters.R2FilterLightApplicatorParametersType;
+import com.io7m.r2.core.filters.R2FilterOcclusionApplicator;
+import com.io7m.r2.core.filters.R2FilterOcclusionApplicatorParametersMutable;
+import com.io7m.r2.core.filters.R2FilterOcclusionApplicatorParametersType;
 import com.io7m.r2.core.filters.R2FilterSSAO;
 import com.io7m.r2.core.filters.R2FilterSSAOParametersMutable;
 import com.io7m.r2.core.filters.R2FilterSSAOParametersType;
@@ -175,14 +178,14 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     R2AmbientOcclusionBufferUsableType>
     pool_ssao;
 
-  private R2FilterType<R2FilterBoxBlurParameters<
+  private R2FilterType<R2FilterBilateralBlurDepthAwareParameters<
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferUsableType,
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferUsableType>>
     filter_blur_ssao;
 
-  private R2FilterBoxBlurParameters<
+  private R2FilterBilateralBlurDepthAwareParameters<
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferUsableType,
     R2AmbientOcclusionBufferDescriptionType,
@@ -195,6 +198,11 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     light_ambient_shader;
 
   private JCGLInterfaceGL33Type g;
+
+  private R2FilterType<R2FilterOcclusionApplicatorParametersType>
+    filter_ssao_app;
+  private R2FilterOcclusionApplicatorParametersMutable
+    filter_ssao_app_params;
 
   public ExampleLightSpherical4()
   {
@@ -219,8 +227,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       final R2AmbientOcclusionBufferDescription.Builder b =
         R2AmbientOcclusionBufferDescription.builder();
       b.setArea(AreaInclusiveUnsignedL.of(
-        new UnsignedRangeInclusiveL(0L, area.getRangeX().getUpper() / 4L),
-        new UnsignedRangeInclusiveL(0L, area.getRangeY().getUpper() / 4L)
+        new UnsignedRangeInclusiveL(0L, area.getRangeX().getUpper() / 2L),
+        new UnsignedRangeInclusiveL(0L, area.getRangeY().getUpper() / 2L)
       ));
 
       this.abuffer =
@@ -347,9 +355,9 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     }
 
     this.filter_ssao_params = R2FilterSSAOParametersMutable.create();
-    this.filter_ssao_params.setKernel(R2SSAOKernel.newKernel(16));
-    this.filter_ssao_params.setExponent(2.0f);
-    this.filter_ssao_params.setSampleRadius(0.01f);
+    this.filter_ssao_params.setKernel(R2SSAOKernel.newKernel(64));
+    this.filter_ssao_params.setExponent(1.0f);
+    this.filter_ssao_params.setSampleRadius(2.0f);
     this.filter_ssao_params.setGeometryBuffer(this.gbuffer);
     this.filter_ssao_params.setNoiseTexture(
       R2SSAONoiseTexture.newNoiseTexture(
@@ -365,30 +373,54 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       m.getUnitQuad());
 
     {
-      this.pool_ssao =
-        R2AmbientOcclusionBufferPool.newPool(gx, 614400L, 6144000L);
+      final UnsignedRangeInclusiveL screen_x = area.getRangeX();
+      final UnsignedRangeInclusiveL screen_y = area.getRangeY();
+      final long one = screen_x.getInterval() * screen_y.getInterval();
+      final long soft = one * 2L;
+      final long hard = one * 10L;
+      this.pool_ssao = R2AmbientOcclusionBufferPool.newPool(gx, soft, hard);
     }
 
     {
       this.filter_blur_ssao_params =
-        R2FilterBoxBlurParameters.newParameters(
+        R2FilterBilateralBlurDepthAwareParameters.newParameters(
           this.abuffer,
           R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
+          this.gbuffer.getDepthTexture(),
           this.abuffer,
           R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
           this.pool_ssao);
-      this.filter_blur_ssao_params.setBlurSize(1.0f);
-      this.filter_blur_ssao_params.setBlurScale(1.0f);
-      this.filter_blur_ssao_params.setBlurPasses(1);
 
-      this.filter_blur_ssao = R2FilterBoxBlur.newFilter(
+      this.filter_blur_ssao_params.setBlurPasses(1);
+      this.filter_blur_ssao_params.setBlurRadius(2.0f);
+      this.filter_blur_ssao_params.setBlurScale(1.0f);
+      this.filter_blur_ssao_params.setBlurSharpness(16.0f);
+
+      this.filter_blur_ssao =
+        R2FilterBilateralBlurDepthAware.newFilter(
+          m.getShaderSources(),
+          gx,
+          m.getTextureDefaults(),
+          this.pool_ssao,
+          m.getIDPool(),
+          m.getUnitQuad());
+    }
+
+    this.filter_ssao_app =
+      R2FilterOcclusionApplicator.newFilter(
         m.getShaderSources(),
-        gx,
         m.getTextureDefaults(),
-        this.pool_ssao,
+        gx,
         m.getIDPool(),
         m.getUnitQuad());
-    }
+
+    this.filter_ssao_app_params =
+      R2FilterOcclusionApplicatorParametersMutable.create();
+    this.filter_ssao_app_params.setLightBuffer(
+      this.lbuffer);
+    this.filter_ssao_app_params.setOcclusionTexture(
+      this.abuffer.getAmbientOcclusionTexture());
+    this.filter_ssao_app_params.setIntensity(0.3f);
 
     this.filter_compositor =
       R2FilterCompositor.newFilter(
@@ -481,8 +513,6 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         m.getUnitQuad(), id_pool, m.getTextureDefaults());
     this.light_ambient.setIntensity(0.15f);
     this.light_ambient.getColor().set3F(0.0f, 1.0f, 1.0f);
-    this.light_ambient.setOcclusionMap(
-      this.abuffer.getAmbientOcclusionTexture());
 
     this.light_shader =
       R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
@@ -612,6 +642,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
         t.filter_ssao_params.setSceneObserverValues(mo);
         t.filter_ssao.runFilter(uc, t.filter_ssao_params);
+
+        t.filter_blur_ssao_params.setSceneObserverValues(mo);
         t.filter_blur_ssao.runFilter(uc, t.filter_blur_ssao_params);
 
         g_fb.framebufferDrawBind(lbuffer_fb);
@@ -628,6 +660,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           mo,
           t.lights);
         g_fb.framebufferDrawUnbind();
+
+        t.filter_ssao_app.runFilter(uc, t.filter_ssao_app_params);
 
         g_cb.colorBufferMask(true, true, true, true);
         g_db.depthBufferWriteEnable();

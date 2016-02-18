@@ -14,35 +14,44 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.shaders;
+package com.io7m.r2.core.filters;
 
 import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2LightBufferUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
 /**
- * Parameters for the texture display shader.
+ * The type of occlusion applicator filter parameters.
  */
 
 @Value.Immutable
 @Value.Modifiable
 @R2ImmutableStyleType
-public interface R2ShaderTextureShowParametersType
+public interface R2FilterOcclusionApplicatorParametersType
 {
   /**
-   * @return The texture that will be rendered
+   * @return The light buffer that will have occlusion applied
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getTexture();
+  R2LightBufferUsableType getLightBuffer();
 
   /**
-   * @return The texture intensity
+   * @return A texture containing occlusion values
+   */
+
+  @Value.Parameter
+  R2Texture2DUsableType getOcclusionTexture();
+
+  /**
+   * @return The intensity of the occlusion
    */
 
   @Value.Parameter
   @Value.Default
-  default float getIntensity() {
+  default float getIntensity()
+  {
     return 1.0f;
   }
 }

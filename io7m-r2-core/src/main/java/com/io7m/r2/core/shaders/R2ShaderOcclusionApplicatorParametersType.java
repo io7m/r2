@@ -21,23 +21,23 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
 /**
- * Parameters for the texture display shader.
+ * Parameters for the occlusion applicator shader
  */
 
 @Value.Immutable
 @Value.Modifiable
 @R2ImmutableStyleType
-public interface R2ShaderTextureShowParametersType
+public interface R2ShaderOcclusionApplicatorParametersType
 {
   /**
-   * @return The texture that will be rendered
+   * @return The texture that contains occlusion values
    */
 
   @Value.Parameter
   R2Texture2DUsableType getTexture();
 
   /**
-   * @return The texture intensity
+   * @return The occlusion intensity
    */
 
   @Value.Parameter

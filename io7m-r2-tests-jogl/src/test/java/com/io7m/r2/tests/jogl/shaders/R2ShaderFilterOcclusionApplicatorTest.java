@@ -14,35 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.shaders;
+package com.io7m.r2.tests.jogl.shaders;
 
-import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2Texture2DUsableType;
-import org.immutables.value.Value;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.shaders.R2ShaderFilterOcclusionApplicatorContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-/**
- * Parameters for the texture display shader.
- */
-
-@Value.Immutable
-@Value.Modifiable
-@R2ImmutableStyleType
-public interface R2ShaderTextureShowParametersType
+public final class R2ShaderFilterOcclusionApplicatorTest extends
+  R2ShaderFilterOcclusionApplicatorContract
 {
-  /**
-   * @return The texture that will be rendered
-   */
-
-  @Value.Parameter
-  R2Texture2DUsableType getTexture();
-
-  /**
-   * @return The texture intensity
-   */
-
-  @Value.Parameter
-  @Value.Default
-  default float getIntensity() {
-    return 1.0f;
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
   }
 }

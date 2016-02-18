@@ -210,7 +210,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     this.filter_ssao_params = R2FilterSSAOParametersMutable.create();
     this.filter_ssao_params.setKernel(R2SSAOKernel.newKernel(64));
     this.filter_ssao_params.setExponent(1.0f);
-    this.filter_ssao_params.setSampleRadius(0.16f);
+    this.filter_ssao_params.setSampleRadius(1.0f);
     this.filter_ssao_params.setGeometryBuffer(this.gbuffer);
     this.filter_ssao_params.setNoiseTexture(
       R2SSAONoiseTexture.newNoiseTexture(
@@ -246,7 +246,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
 
       this.filter_blur_ssao_params.setBlurPasses(1);
       this.filter_blur_ssao_params.setBlurRadius(2.0f);
-      this.filter_blur_ssao_params.setBlurScale(2.0f);
+      this.filter_blur_ssao_params.setBlurScale(1.0f);
       this.filter_blur_ssao_params.setBlurSharpness(4.0f);
 
       this.filter_blur_ssao =
