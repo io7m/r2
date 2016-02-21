@@ -34,6 +34,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
+import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2ShaderLightSingleType;
 import com.io7m.r2.core.R2ShaderParameters;
@@ -257,7 +258,21 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
     final R2MatricesInstanceSingleValuesType m,
     final R2LightSphericalSingleType values)
   {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_modelview, m.getMatrixModelView());
+  }
+
+  @Override
+  public void setLightProjectiveDependentValues(
+    final JCGLShadersType g_sh,
+    final R2MatricesProjectiveLightValuesType m,
+    final R2LightSphericalSingleType values)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+    NullCheck.notNull(values);
   }
 }

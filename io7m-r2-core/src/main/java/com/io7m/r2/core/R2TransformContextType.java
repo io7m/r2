@@ -18,6 +18,8 @@ package com.io7m.r2.core;
 
 import com.io7m.jtensors.Matrix4x4FType;
 import com.io7m.jtensors.MatrixM4x4F;
+import com.io7m.jtensors.Quaternion4FType;
+import com.io7m.jtensors.Vector3FType;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 
 /**
@@ -27,6 +29,18 @@ import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 
 public interface R2TransformContextType
 {
+  /**
+   * @return Preallocated storage for vectors
+   */
+
+  Vector3FType getTemporaryVector3();
+
+  /**
+   * @return Preallocated storage for quaternions
+   */
+
+  Quaternion4FType getTemporaryQuaternion();
+
   /**
    * @return Preallocated storage for mutable matrices
    */

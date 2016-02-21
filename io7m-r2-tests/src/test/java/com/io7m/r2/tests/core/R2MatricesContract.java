@@ -33,6 +33,8 @@ import com.io7m.r2.core.R2RendererExceptionInstanceAlreadyActive;
 import com.io7m.r2.core.R2RendererExceptionObserverAlreadyActive;
 import com.io7m.r2.core.R2RendererExceptionProjectiveAlreadyActive;
 import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformOT;
+import com.io7m.r2.core.R2TransformOTType;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.spaces.R2SpaceLightEyeType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
@@ -204,13 +206,10 @@ public abstract class R2MatricesContract
       JCGLProjectionMatrices.newMatrices();
     final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
       PMatrixI3x3F.identity();
-    final R2TransformReadableType t =
-      R2TransformOST.newTransform();
-
+    final R2TransformOTType t =
+      R2TransformOT.newTransform();
     final R2ProjectionFrustum pp =
       R2ProjectionFrustum.newFrustum(pm);
-    final PMatrix4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> pv =
-      PMatrixHeapArrayM4x4F.newMatrix();
 
     final Integer r = m.withObserver(
       PMatrixI4x4F.identity(),
@@ -218,7 +217,7 @@ public abstract class R2MatricesContract
       Unit.unit(),
       (mm, u0) ->
         mm.withProjectiveLight(
-          pp, pv, Integer.valueOf(23), (mp, u1) ->
+          t, pp, Integer.valueOf(23), (mp, u1) ->
             u1)
     );
 
@@ -233,13 +232,10 @@ public abstract class R2MatricesContract
       JCGLProjectionMatrices.newMatrices();
     final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
       PMatrixI3x3F.identity();
-    final R2TransformReadableType t =
-      R2TransformOST.newTransform();
-
+    final R2TransformOTType t =
+      R2TransformOT.newTransform();
     final R2ProjectionFrustum pp =
       R2ProjectionFrustum.newFrustum(pm);
-    final PMatrix4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> pv =
-      PMatrixHeapArrayM4x4F.newMatrix();
 
     this.expected.expect(R2RendererExceptionProjectiveAlreadyActive.class);
     this.expected.expectMessage("Projective already active");
@@ -250,10 +246,10 @@ public abstract class R2MatricesContract
       Unit.unit(),
       (mm, u0) ->
         mm.withProjectiveLight(
-          pp, pv, Integer.valueOf(23), (mp, u1) ->
+          t, pp, Integer.valueOf(23), (mp, u1) ->
             mm.withProjectiveLight(
+              t,
               pp,
-              pv,
               Integer.valueOf(24),
               (mpx, u1x) -> u1))
     );
@@ -267,13 +263,10 @@ public abstract class R2MatricesContract
       JCGLProjectionMatrices.newMatrices();
     final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
       PMatrixI3x3F.identity();
-    final R2TransformReadableType t =
-      R2TransformOST.newTransform();
-
+    final R2TransformOTType t =
+      R2TransformOT.newTransform();
     final R2ProjectionFrustum pp =
       R2ProjectionFrustum.newFrustum(pm);
-    final PMatrix4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> pv =
-      PMatrixHeapArrayM4x4F.newMatrix();
 
     this.expected.expect(R2RendererExceptionProjectiveAlreadyActive.class);
     this.expected.expectMessage("Projective already active");
@@ -284,7 +277,7 @@ public abstract class R2MatricesContract
       Unit.unit(),
       (mm, u0) ->
         mm.withProjectiveLight(
-          pp, pv, Integer.valueOf(23), (mp, u1) ->
+          t, pp, Integer.valueOf(23), (mp, u1) ->
             mm.withTransform(t, uv, Integer.valueOf(64), (mpx, ux) -> ux))
     );
   }
@@ -297,13 +290,10 @@ public abstract class R2MatricesContract
       JCGLProjectionMatrices.newMatrices();
     final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
       PMatrixI3x3F.identity();
-    final R2TransformReadableType t =
-      R2TransformOST.newTransform();
-
+    final R2TransformOTType t =
+      R2TransformOT.newTransform();
     final R2ProjectionFrustum pp =
       R2ProjectionFrustum.newFrustum(pm);
-    final PMatrix4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> pv =
-      PMatrixHeapArrayM4x4F.newMatrix();
 
     this.expected.expect(R2RendererExceptionInstanceAlreadyActive.class);
     this.expected.expectMessage("Instance already active");
@@ -315,8 +305,8 @@ public abstract class R2MatricesContract
       (mm, u0) ->
         mm.withTransform(t, uv, u0, (mi, u1) ->
           mm.withProjectiveLight(
+            t,
             pp,
-            pv,
             Integer.valueOf(23),
             (mpx, mvx) -> mvx))
     );

@@ -355,16 +355,32 @@ public final class R2LightRenderer implements R2LightRendererType
           s.setLightValues(
             this.shaders, this.textures, i);
 
-          this.matrices.withTransform(
-            i.getTransform(),
-            PMatrixI3x3F.identity(),
-            this,
-            (mi, t) -> {
-              t.light_shader.setLightTransformDependentValues(
-                t.shaders, mi, t.light);
-              t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-              return Unit.unit();
-            });
+          if (i instanceof R2LightProjectiveType) {
+            final R2LightProjectiveType it = (R2LightProjectiveType) i;
+            this.matrices.withProjectiveLight(
+              it.getTransform(),
+              it.getProjection(),
+              this,
+              (mi, t) -> {
+                t.light_shader.setLightTransformDependentValues(
+                  t.shaders, mi, t.light);
+                t.light_shader.setLightProjectiveDependentValues(
+                  t.shaders, mi, t.light);
+                t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+                return Unit.unit();
+              });
+          } else {
+            this.matrices.withTransform(
+              i.getTransform(),
+              PMatrixI3x3F.identity(),
+              this,
+              (mi, t) -> {
+                t.light_shader.setLightTransformDependentValues(
+                  t.shaders, mi, t.light);
+                t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+                return Unit.unit();
+              });
+          }
 
         } finally {
           uc.unitContextFinish(this.textures);

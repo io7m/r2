@@ -183,25 +183,25 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   }
 
   @Override
-  public float projectionGetXMaximum()
+  public float projectionGetNearXMaximum()
   {
     return this.x_max;
   }
 
   @Override
-  public float projectionGetXMinimum()
+  public float projectionGetNearXMinimum()
   {
     return this.x_min;
   }
 
   @Override
-  public float projectionGetYMaximum()
+  public float projectionGetNearYMaximum()
   {
     return this.y_max;
   }
 
   @Override
-  public float projectionGetYMinimum()
+  public float projectionGetNearYMinimum()
   {
     return this.y_min;
   }
@@ -216,5 +216,29 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   public float projectionGetZNear()
   {
     return this.z_near;
+  }
+
+  @Override
+  public float projectionGetFarXMaximum()
+  {
+    return this.x_max;
+  }
+
+  @Override
+  public float projectionGetFarXMinimum()
+  {
+    return this.x_min;
+  }
+
+  @Override
+  public float projectionGetFarYMaximum()
+  {
+    return this.y_max;
+  }
+
+  @Override
+  public float projectionGetFarYMinimum()
+  {
+    return this.y_min;
   }
 }

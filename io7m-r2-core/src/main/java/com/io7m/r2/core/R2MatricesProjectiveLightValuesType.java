@@ -20,14 +20,23 @@ import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceLightClipType;
 import com.io7m.r2.spaces.R2SpaceLightEyeType;
+import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
  * Access to the matrices for a given projective light.
  */
 
-public interface R2MatricesProjectiveLightValuesType
+public interface R2MatricesProjectiveLightValuesType extends
+  R2MatricesInstanceSingleValuesType
 {
+  /**
+   * @return The modelview matrix for the projective light volume geometry
+   */
+
+  PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
+  getMatrixProjectiveModelView();
+
   /**
    * @return The current projective light projection matrix
    */

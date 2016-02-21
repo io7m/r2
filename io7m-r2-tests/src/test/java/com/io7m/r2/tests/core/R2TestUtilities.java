@@ -60,6 +60,7 @@ import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
+import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 import com.io7m.r2.core.R2ShaderBatchedUsableType;
 import com.io7m.r2.core.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.R2ShaderSingleType;
@@ -561,6 +562,15 @@ public final class R2TestUtilities
       public void setLightTransformDependentValues(
         final JCGLShadersType g_sh,
         final R2MatricesInstanceSingleValuesType m,
+        final R2LightSingleType values)
+      {
+
+      }
+
+      @Override
+      public void setLightProjectiveDependentValues(
+        final JCGLShadersType g_sh,
+        final R2MatricesProjectiveLightValuesType m,
         final R2LightSingleType values)
       {
 

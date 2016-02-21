@@ -17,10 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
-import com.io7m.jtensors.parameterized.PMatrixReadable4x4FType;
-import com.io7m.r2.spaces.R2SpaceLightEyeType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
-import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
  * Access to the matrices for a given observer.
@@ -54,8 +51,8 @@ public interface R2MatricesObserverType extends R2MatricesObserverValuesType
    * Evaluate matrices for a given projective, relative to the current
    * observer.
    *
+   * @param t    The light's transform
    * @param f    The function that will receive matrices
-   * @param view The view matrix for the light
    * @param p    The projection for the light
    * @param x    A context value passed to {@code f}
    * @param <A>  The type of consumed values
@@ -67,8 +64,8 @@ public interface R2MatricesObserverType extends R2MatricesObserverValuesType
    */
 
   <A, B> B withProjectiveLight(
+    R2TransformOTReadableType t,
     R2ProjectionReadableType p,
-    PMatrixReadable4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> view,
     A x,
     R2MatricesProjectiveLightFunctionType<A, B> f)
     throws R2Exception;

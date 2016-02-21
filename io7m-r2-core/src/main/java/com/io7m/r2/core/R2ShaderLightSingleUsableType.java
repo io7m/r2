@@ -72,7 +72,7 @@ public interface R2ShaderLightSingleUsableType<M extends R2LightSingleType>
     M values);
 
   /**
-   * Set light values related to the current view.
+   * Set light values related to the current view and instance transform.
    *
    * @param g_sh   An OpenGL interface
    * @param m      The current instance matrices and values
@@ -82,5 +82,18 @@ public interface R2ShaderLightSingleUsableType<M extends R2LightSingleType>
   void setLightTransformDependentValues(
     JCGLShadersType g_sh,
     R2MatricesInstanceSingleValuesType m,
+    M values);
+
+  /**
+   * Set light values related to the current view and instance transform.
+   *
+   * @param g_sh   An OpenGL interface
+   * @param m      The current instance matrices and values
+   * @param values The light parameters
+   */
+
+  void setLightProjectiveDependentValues(
+    JCGLShadersType g_sh,
+    R2MatricesProjectiveLightValuesType m,
     M values);
 }

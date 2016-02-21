@@ -39,25 +39,25 @@ public interface R2ProjectionReadableType
    * @return The rightmost edge of the frustum's near plane.
    */
 
-  float projectionGetXMaximum();
+  float projectionGetNearXMaximum();
 
   /**
    * @return The leftmost edge of the frustum's near plane.
    */
 
-  float projectionGetXMinimum();
+  float projectionGetNearXMinimum();
 
   /**
    * @return The topmost edge of the frustum's near plane.
    */
 
-  float projectionGetYMaximum();
+  float projectionGetNearYMaximum();
 
   /**
    * @return The bottommost edge of the frustum's near plane.
    */
 
-  float projectionGetYMinimum();
+  float projectionGetNearYMinimum();
 
   /**
    * @return The value of the projection's far plane.
@@ -70,4 +70,28 @@ public interface R2ProjectionReadableType
    */
 
   float projectionGetZNear();
+
+  /**
+   * @return The rightmost edge of the frustum's far plane.
+   */
+
+  float projectionGetFarXMaximum();
+
+  /**
+   * @return The leftmost edge of the frustum's far plane.
+   */
+
+  float projectionGetFarXMinimum();
+
+  /**
+   * @return The topmost edge of the frustum's far plane.
+   */
+
+  float projectionGetFarYMaximum();
+
+  /**
+   * @return The bottommost edge of the frustum's far plane.
+   */
+
+  float projectionGetFarYMinimum();
 }
