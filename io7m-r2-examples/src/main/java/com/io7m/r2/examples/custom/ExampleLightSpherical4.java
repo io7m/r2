@@ -585,7 +585,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
 
     this.opaques.opaquesReset();
-    this.opaques.opaquesAddSingleInstance(this.instance, this.geom_material);
+    this.opaques.opaquesAddSingleInstance(
+      this.instance, this.geom_material);
     this.opaques.opaquesAddBatchedInstance(
       this.batched_instance, this.batched_geom_material);
 

@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLBlendEquation;
 import com.io7m.jcanephora.core.JCGLBlendFunction;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
@@ -29,8 +30,6 @@ import com.io7m.jcanephora.core.JCGLStencilFunction;
 import com.io7m.jcanephora.core.JCGLStencilOperation;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
-import com.io7m.jcanephora.core.api.JCGLBlendingType;
-import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
 import com.io7m.jcanephora.core.api.JCGLCullingType;
 import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
@@ -40,6 +39,15 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.renderstate.JCGLBlendState;
+import com.io7m.jcanephora.renderstate.JCGLCullingState;
+import com.io7m.jcanephora.renderstate.JCGLDepthClamping;
+import com.io7m.jcanephora.renderstate.JCGLDepthState;
+import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
+import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
+import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.renderstate.JCGLStencilStateMutable;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -47,6 +55,7 @@ import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -164,20 +173,6 @@ public final class R2LightRenderer implements R2LightRendererType
     g_fb.framebufferReadUnbind();
 
     if (s.opaqueLightsCount() > 0L) {
-
-      /**
-       * Configure state for light geometry rendering.
-       */
-
-      final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
-      final JCGLBlendingType g_b = this.g.getBlending();
-      final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
-
-      g_b.blendingEnable(
-        JCGLBlendFunction.BLEND_ONE, JCGLBlendFunction.BLEND_ONE);
-      g_cm.colorBufferMask(true, true, true, true);
-      g_db.depthClampingEnable();
-      g_db.depthBufferWriteDisable();
       g_v.viewportSet(lbuffer_area);
 
       this.light_consumer.gbuffer = gbuffer;
@@ -198,14 +193,18 @@ public final class R2LightRenderer implements R2LightRendererType
   private static final class LightConsumer implements
     R2SceneOpaqueLightsConsumerType
   {
-    private final JCGLInterfaceGL33Type  g33;
-    private final JCGLCullingType        culling;
-    private final JCGLShadersType        shaders;
-    private final JCGLTexturesType       textures;
-    private final JCGLArrayObjectsType   array_objects;
-    private final JCGLDrawType           draw;
-    private final JCGLDepthBuffersType   depth;
-    private final JCGLStencilBuffersType stencils;
+    private final JCGLInterfaceGL33Type   g33;
+    private final JCGLCullingType         culling;
+    private final JCGLShadersType         shaders;
+    private final JCGLTexturesType        textures;
+    private final JCGLArrayObjectsType    array_objects;
+    private final JCGLDrawType            draw;
+    private final JCGLDepthBuffersType    depth;
+    private final JCGLStencilBuffersType  stencils;
+    private final JCGLRenderStateMutable  render_state_screen;
+    private final JCGLRenderStateMutable  render_state_volume;
+    private final JCGLStencilStateMutable stencil_state_screen;
+    private final JCGLStencilStateMutable stencil_state_volume;
 
     private @Nullable R2MatricesObserverType         matrices;
     private @Nullable R2GeometryBufferUsableType     gbuffer;
@@ -231,6 +230,133 @@ public final class R2LightRenderer implements R2LightRendererType
       this.stencils = this.g33.getStencilBuffers();
       this.culling = this.g33.getCulling();
       this.depth = this.g33.getDepthBuffers();
+
+      {
+        this.render_state_screen = JCGLRenderStateMutable.create();
+
+        /**
+         * The light contributions are summed with pure additive blending.
+         */
+
+        this.render_state_screen.setBlendState(
+          Optional.of(JCGLBlendState.of(
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendEquation.BLEND_EQUATION_ADD,
+            JCGLBlendEquation.BLEND_EQUATION_ADD)));
+
+        /**
+         * For full-screen quads, the front faces should be rendered.
+         */
+
+        this.render_state_screen.setCullingState(
+          Optional.of(JCGLCullingState.of(
+            JCGLFaceSelection.FACE_BACK,
+            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
+
+        /**
+         * No depth testing and no depth writing is required.
+         */
+
+        this.render_state_screen.setDepthState(JCGLDepthState.of(
+          JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+          Optional.empty(),
+          JCGLDepthWriting.DEPTH_WRITE_DISABLED,
+          JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
+
+        this.stencil_state_screen = JCGLStencilStateMutable.create();
+        this.render_state_screen.setStencilState(this.stencil_state_screen);
+      }
+
+      {
+        this.render_state_volume = JCGLRenderStateMutable.create();
+
+        /**
+         * The light contributions are summed with pure additive blending.
+         */
+
+        this.render_state_volume.setBlendState(
+          Optional.of(JCGLBlendState.of(
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendEquation.BLEND_EQUATION_ADD,
+            JCGLBlendEquation.BLEND_EQUATION_ADD)));
+
+        /**
+         * For typical volume lights, only the back faces should be
+         * rendered.
+         */
+
+        this.render_state_volume.setCullingState(
+          Optional.of(JCGLCullingState.of(
+            JCGLFaceSelection.FACE_FRONT,
+            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
+
+        /**
+         * The fragments of the back faces of the light volume will have a
+         * depth greater than or equal to the geometry fragments that
+         * should be affected. No depth writing is required.
+         */
+
+        this.render_state_volume.setDepthState(
+          JCGLDepthState.of(
+            JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+            Optional.of(JCGLDepthFunction.DEPTH_GREATER_THAN_OR_EQUAL),
+            JCGLDepthWriting.DEPTH_WRITE_DISABLED,
+            JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
+
+        this.stencil_state_volume = JCGLStencilStateMutable.create();
+        this.render_state_volume.setStencilState(this.stencil_state_volume);
+      }
+    }
+
+    /**
+     * Configure stencilling such that only pixels with a stencil value equal to
+     * {@code group} are touched, and no writes are made to the stencil buffer.
+     */
+
+    private static void configureStencilState(
+      final int group,
+      final JCGLStencilStateMutable ss)
+    {
+      ss.setStencilStrict(true);
+      ss.setStencilEnabled(true);
+
+      ss.setOperationDepthFailFront(
+        JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationStencilFailFront(
+        JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationPassFront(
+        JCGLStencilOperation.STENCIL_OP_KEEP);
+
+      ss.setTestFunctionFront(
+        JCGLStencilFunction.STENCIL_EQUAL);
+      ss.setTestReferenceFront(
+        group);
+      ss.setTestMaskFront(
+        R2Stencils.GROUP_BITS);
+
+      ss.setWriteMaskFrontFaces(0);
+
+      ss.setOperationDepthFailBack(
+        JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationStencilFailBack(
+        JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationPassBack(
+        JCGLStencilOperation.STENCIL_OP_KEEP);
+
+      ss.setTestFunctionBack(
+        JCGLStencilFunction.STENCIL_EQUAL);
+      ss.setTestReferenceBack(
+        group);
+      ss.setTestMaskBack(
+        R2Stencils.GROUP_BITS);
+
+      ss.setWriteMaskBackFaces(0);
     }
 
     @Override
@@ -270,20 +396,10 @@ public final class R2LightRenderer implements R2LightRendererType
     @Override
     public void onStartGroup(final int group)
     {
-      this.stencils.stencilBufferEnable();
-      this.stencils.stencilBufferOperation(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK,
-        JCGLStencilOperation.STENCIL_OP_KEEP,
-        JCGLStencilOperation.STENCIL_OP_KEEP,
-        JCGLStencilOperation.STENCIL_OP_KEEP);
-      this.stencils.stencilBufferMask(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK,
-        0);
-      this.stencils.stencilBufferFunction(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK,
-        JCGLStencilFunction.STENCIL_EQUAL,
-        group,
-        R2Stencils.GROUP_BITS);
+      LightConsumer.configureStencilState(group, this.stencil_state_screen);
+      this.render_state_screen.setStencilState(this.stencil_state_screen);
+      LightConsumer.configureStencilState(group, this.stencil_state_volume);
+      this.render_state_volume.setStencilState(this.stencil_state_volume);
     }
 
     @Override
@@ -325,27 +441,10 @@ public final class R2LightRenderer implements R2LightRendererType
           this.light_base_context.unitContextNew();
 
         try {
-
-          /**
-           * For full-screen quads, the front faces should be rendered. For
-           * everything else, render only back faces.
-           *
-           * The fragments of the back faces of the light volume will have a
-           * depth greater than or equal to the geometry fragments that
-           * should be affected.
-           */
-
           if (i instanceof R2LightScreenSingleType) {
-            this.culling.cullingEnable(
-              JCGLFaceSelection.FACE_BACK,
-              JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
-            this.depth.depthBufferTestDisable();
+            JCGLRenderStates.activate(this.g33, this.render_state_screen);
           } else {
-            this.culling.cullingEnable(
-              JCGLFaceSelection.FACE_FRONT,
-              JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
-            this.depth.depthBufferTestEnable(
-              JCGLDepthFunction.DEPTH_GREATER_THAN_OR_EQUAL);
+            JCGLRenderStates.activate(this.g33, this.render_state_volume);
           }
 
           s.setLightTextures(
