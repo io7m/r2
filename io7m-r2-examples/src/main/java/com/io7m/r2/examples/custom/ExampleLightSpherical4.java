@@ -84,6 +84,7 @@ import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitSphereType;
+import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
 import com.io7m.r2.core.filters.R2FilterBilateralBlurDepthAware;
 import com.io7m.r2.core.filters.R2FilterBilateralBlurDepthAwareParameters;
 import com.io7m.r2.core.filters.R2FilterCompositor;
@@ -203,6 +204,9 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     filter_ssao_app;
   private R2FilterOcclusionApplicatorParametersMutable
     filter_ssao_app_params;
+
+  private R2DebugVisualizerRendererParametersMutable
+    debug_params;
 
   public ExampleLightSpherical4()
   {
@@ -534,6 +538,14 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         m.getUnitQuad());
 
     {
+      this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
+      this.debug_params.setOpaqueInstances(this.opaques);
+      this.debug_params.setOpaqueLights(this.lights);
+      this.debug_params.setShowOpaqueInstances(false);
+      this.debug_params.setShowOpaqueLights(true);
+    }
+
+    {
       final R2FilterLightApplicatorParameters.Builder b =
         R2FilterLightApplicatorParameters.builder();
 
@@ -671,6 +683,12 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         g_cl.clear(t.screen_clear_spec);
 
         t.filter_light.runFilter(uc, t.filter_light_params);
+        t.main.getDebugVisualizerRenderer().renderScene(
+          areax,
+          uc,
+          mo,
+          t.debug_params
+        );
         t.filter_compositor.runFilter(uc, t.filter_comp_parameters);
 
         return Unit.unit();

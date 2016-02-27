@@ -43,6 +43,8 @@ import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.debug.R2DebugVisualizerRenderer;
+import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
 import com.io7m.r2.shaders.R2Shaders;
 
 import java.util.function.Supplier;
@@ -53,18 +55,19 @@ import java.util.function.Supplier;
 
 public final class R2Main implements R2MainType
 {
-  private final R2IDPoolType               pool;
-  private final R2ShaderSourcesType        sources;
-  private final R2StencilRendererType      stencil_renderer;
-  private final R2MatricesType             matrices;
-  private final JCGLViewMatricesType       view_matrices;
-  private final JCGLProjectionMatricesType proj_matrices;
-  private final R2TextureDefaultsType      texture_defaults;
-  private final R2GeometryRendererType     geometry_renderer;
-  private final R2LightRendererType        light_renderer;
-  private final R2TextureUnitAllocatorType texture_allocator;
-  private final R2UnitQuadType             unit_quad;
-  private       boolean                    deleted;
+  private final R2IDPoolType                  pool;
+  private final R2ShaderSourcesType           sources;
+  private final R2StencilRendererType         stencil_renderer;
+  private final R2MatricesType                matrices;
+  private final JCGLViewMatricesType          view_matrices;
+  private final JCGLProjectionMatricesType    proj_matrices;
+  private final R2TextureDefaultsType         texture_defaults;
+  private final R2GeometryRendererType        geometry_renderer;
+  private final R2LightRendererType           light_renderer;
+  private final R2TextureUnitAllocatorType    texture_allocator;
+  private final R2UnitQuadType                unit_quad;
+  private final R2DebugVisualizerRendererType debug_visual_renderer;
+  private       boolean                       deleted;
 
   private R2Main(
     final R2IDPoolType in_pool,
@@ -77,6 +80,7 @@ public final class R2Main implements R2MainType
     final R2TextureDefaultsType in_texture_defaults,
     final R2GeometryRendererType in_geometry_renderer,
     final R2LightRendererType in_light_renderer,
+    final R2DebugVisualizerRendererType in_debug_visual_renderer,
     final R2UnitQuadType in_unit_quad)
   {
     this.pool = NullCheck.notNull(in_pool);
@@ -89,6 +93,7 @@ public final class R2Main implements R2MainType
     this.texture_defaults = NullCheck.notNull(in_texture_defaults);
     this.geometry_renderer = NullCheck.notNull(in_geometry_renderer);
     this.light_renderer = NullCheck.notNull(in_light_renderer);
+    this.debug_visual_renderer = NullCheck.notNull(in_debug_visual_renderer);
     this.unit_quad = NullCheck.notNull(in_unit_quad);
     this.deleted = false;
   }
@@ -169,6 +174,12 @@ public final class R2Main implements R2MainType
   }
 
   @Override
+  public R2DebugVisualizerRendererType getDebugVisualizerRenderer()
+  {
+    return this.debug_visual_renderer;
+  }
+
+  @Override
   public void delete(
     final JCGLInterfaceGL33Type g)
     throws R2Exception
@@ -194,17 +205,18 @@ public final class R2Main implements R2MainType
 
   private static final class Builder implements R2MainBuilderType
   {
-    private @Nullable R2StencilRendererType      stencil_renderer;
-    private @Nullable R2ShaderSourcesType        sources;
-    private @Nullable R2IDPoolType               pool;
-    private @Nullable R2MatricesType             matrices;
-    private @Nullable JCGLViewMatricesType       view_matrices;
-    private @Nullable JCGLProjectionMatricesType proj_matrices;
-    private @Nullable R2TextureDefaultsType      texture_defaults;
-    private @Nullable R2GeometryRendererType     geometry_renderer;
-    private @Nullable R2LightRendererType        light_renderer;
-    private @Nullable R2TextureUnitAllocatorType texture_unit_alloc;
-    private           R2UnitQuadType             unit_quad;
+    private @Nullable R2StencilRendererType         stencil_renderer;
+    private @Nullable R2ShaderSourcesType           sources;
+    private @Nullable R2IDPoolType                  pool;
+    private @Nullable R2MatricesType                matrices;
+    private @Nullable JCGLViewMatricesType          view_matrices;
+    private @Nullable JCGLProjectionMatricesType    proj_matrices;
+    private @Nullable R2TextureDefaultsType         texture_defaults;
+    private @Nullable R2GeometryRendererType        geometry_renderer;
+    private @Nullable R2LightRendererType           light_renderer;
+    private @Nullable R2TextureUnitAllocatorType    texture_unit_alloc;
+    private           R2UnitQuadType                unit_quad;
+    private @Nullable R2DebugVisualizerRendererType debug_visual_renderer;
 
     Builder()
     {
@@ -276,6 +288,11 @@ public final class R2Main implements R2MainType
         this.light_renderer,
         () -> R2LightRenderer.newRenderer(g));
 
+      final R2DebugVisualizerRendererType ex_debug_visual_renderer =
+        Builder.compute(
+          this.debug_visual_renderer,
+          () -> R2DebugVisualizerRenderer.newRenderer(g, ex_sources, ex_pool));
+
       return new R2Main(
         ex_pool,
         ex_sources,
@@ -287,6 +304,7 @@ public final class R2Main implements R2MainType
         ex_texture_defaults,
         ex_geometry_renderer,
         ex_light_renderer,
+        ex_debug_visual_renderer,
         ex_quad);
     }
   }

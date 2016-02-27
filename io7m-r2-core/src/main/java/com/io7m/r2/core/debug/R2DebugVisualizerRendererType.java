@@ -14,32 +14,31 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.debug;
 
-import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.spaces.R2SpaceRGBType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.r2.core.R2DeletableType;
+import com.io7m.r2.core.R2MatricesObserverType;
+import com.io7m.r2.core.R2TextureUnitContextParentType;
 
 /**
- * The type of lights.
+ * A renderer for producing various debug visualizations.
  */
 
-public interface R2LightType
+public interface R2DebugVisualizerRendererType extends R2DeletableType
 {
   /**
-   * @return The unique light ID
+   * Render the debug visualizations for the given scene.
+   *
+   * @param area The viewport area
+   * @param uc   A texture unit context
+   * @param m    A matrix context
+   * @param s    The scene
    */
 
-  long getLightID();
-
-  /**
-   * @return The readable/writable light color
-   */
-
-  PVector3FType<R2SpaceRGBType> getColor();
-
-  /**
-   * @return The current light intensity
-   */
-
-  float getIntensity();
+  void renderScene(
+    AreaInclusiveUnsignedLType area,
+    R2TextureUnitContextParentType uc,
+    R2MatricesObserverType m,
+    R2DebugVisualizerRendererParametersType s);
 }

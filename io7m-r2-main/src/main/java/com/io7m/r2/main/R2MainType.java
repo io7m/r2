@@ -28,6 +28,7 @@ import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
 
 /**
  * User-friendly frontend.
@@ -100,4 +101,10 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2UnitQuadUsableType getUnitQuad();
+
+  /**
+   * @return A renderer for visualizing debug info
+   */
+
+  R2DebugVisualizerRendererType getDebugVisualizerRenderer();
 }

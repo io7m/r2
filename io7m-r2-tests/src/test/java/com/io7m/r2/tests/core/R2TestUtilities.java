@@ -51,6 +51,8 @@ import com.io7m.jcanephora.fake.JCGLImplementationFake;
 import com.io7m.jcanephora.fake.JCGLImplementationFakeType;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
+import com.io7m.jtensors.parameterized.PVector3FType;
+import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2InstanceBatchedType;
@@ -70,6 +72,7 @@ import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.R2TransformReadableType;
+import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 
 import java.util.ArrayList;
@@ -606,6 +609,7 @@ public final class R2TestUtilities
     final JCGLArrayObjectType a0,
     final long light_id)
   {
+    final PVector3FType<R2SpaceRGBType> black = new PVectorM3F<>();
     return new R2LightSingleType()
     {
       @Override
@@ -624,6 +628,18 @@ public final class R2TestUtilities
       public long getLightID()
       {
         return light_id;
+      }
+
+      @Override
+      public PVector3FType<R2SpaceRGBType> getColor()
+      {
+        return black;
+      }
+
+      @Override
+      public float getIntensity()
+      {
+        return 1.0f;
       }
     };
   }

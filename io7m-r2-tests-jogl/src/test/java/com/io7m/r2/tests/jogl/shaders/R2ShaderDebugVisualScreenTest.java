@@ -14,32 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl.shaders;
 
-import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.spaces.R2SpaceRGBType;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.shaders.R2ShaderDebugVisualScreenContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-/**
- * The type of lights.
- */
-
-public interface R2LightType
+public final class R2ShaderDebugVisualScreenTest extends
+  R2ShaderDebugVisualScreenContract
 {
-  /**
-   * @return The unique light ID
-   */
-
-  long getLightID();
-
-  /**
-   * @return The readable/writable light color
-   */
-
-  PVector3FType<R2SpaceRGBType> getColor();
-
-  /**
-   * @return The current light intensity
-   */
-
-  float getIntensity();
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }

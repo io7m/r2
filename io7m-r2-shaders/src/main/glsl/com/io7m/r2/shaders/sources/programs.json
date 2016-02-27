@@ -84,6 +84,21 @@
     "fragment": "/com/io7m/r2/shaders/sources/R2DebugEyePositionReconstruction.frag"
   },
 
+  "R2DebugVisualConstantScreen": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DebugVisualConstantScreen.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugVisualConstant.frag"
+  },
+
+  "R2DebugVisualConstantSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugVisualConstant.frag"
+  },
+
+  "R2DebugVisualConstantBatched": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceBatched.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugVisualConstant.frag"
+  },
+
   "R2StencilSingle": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2StencilSingle.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2White.frag"

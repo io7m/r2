@@ -14,32 +14,29 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.debug;
 
-import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.spaces.R2SpaceRGBType;
+import com.io7m.jtensors.VectorI4F;
+import com.io7m.junreachable.UnreachableCodeException;
 
 /**
- * The type of lights.
+ * Default values for debug visualizer implementations.
  */
 
-public interface R2LightType
+public final class R2DebugVisualizerDefaults
 {
-  /**
-   * @return The unique light ID
-   */
-
-  long getLightID();
-
-  /**
-   * @return The readable/writable light color
-   */
-
-  PVector3FType<R2SpaceRGBType> getColor();
+  private R2DebugVisualizerDefaults()
+  {
+    throw new UnreachableCodeException();
+  }
 
   /**
-   * @return The current light intensity
+   * The default color for rendering opaque instances.
    */
 
-  float getIntensity();
+  public static final VectorI4F DEFAULT_GROUP_COLOR;
+
+  static {
+    DEFAULT_GROUP_COLOR = new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f);
+  }
 }
