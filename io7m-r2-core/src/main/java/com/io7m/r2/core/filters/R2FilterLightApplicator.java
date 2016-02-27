@@ -18,16 +18,13 @@ package com.io7m.r2.core.filters;
 
 import com.io7m.jcanephora.core.JCGLPrimitives;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
-import com.io7m.jcanephora.core.api.JCGLBlendingType;
-import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
-import com.io7m.jcanephora.core.api.JCGLCullingType;
-import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
@@ -57,6 +54,7 @@ public final class R2FilterLightApplicator implements
   private final R2ShaderLightApplicator                  shader;
   private final R2UnitQuadUsableType                     quad;
   private final R2ShaderLightApplicatorParametersMutable shader_params;
+  private final JCGLRenderStateMutable                   render_state;
 
   private R2FilterLightApplicator(
     final JCGLInterfaceGL33Type in_g,
@@ -67,6 +65,7 @@ public final class R2FilterLightApplicator implements
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
     this.shader_params = R2ShaderLightApplicatorParametersMutable.create();
+    this.render_state = JCGLRenderStateMutable.create();
   }
 
   /**
@@ -128,30 +127,15 @@ public final class R2FilterLightApplicator implements
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    final JCGLBlendingType g_b = this.g.getBlending();
-    final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
-    final JCGLCullingType g_cu = this.g.getCulling();
-    final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
-    final JCGLStencilBuffersType g_st = this.g.getStencilBuffers();
+
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLTexturesType g_tx = this.g.getTextures();
     final JCGLViewportsType g_v = this.g.getViewports();
 
-    if (g_db.depthBufferGetBits() > 0) {
-      g_db.depthBufferTestDisable();
-      g_db.depthBufferWriteDisable();
-    }
-
-    if (g_st.stencilBufferGetBits() > 0) {
-      g_st.stencilBufferDisable();
-    }
-
-    g_b.blendingDisable();
-    g_cu.cullingDisable();
-    g_cm.colorBufferMask(true, true, true, true);
     g_v.viewportSet(parameters.getOutputViewport());
+    JCGLRenderStates.activate(this.g, this.render_state);
 
     final R2TextureUnitContextType c = uc.unitContextNew();
     try {

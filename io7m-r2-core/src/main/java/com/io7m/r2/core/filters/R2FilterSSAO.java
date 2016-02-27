@@ -21,16 +21,14 @@ import com.io7m.jcanephora.core.JCGLPrimitives;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLClearType;
-import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
-import com.io7m.jcanephora.core.api.JCGLCullingType;
-import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorI4F;
 import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
@@ -62,6 +60,7 @@ public final class R2FilterSSAO implements
   private final JCGLInterfaceGL33Type         g;
   private final JCGLClearSpecification        clear;
   private final R2ShaderSSAOParametersMutable shader_params;
+  private final JCGLRenderStateMutable render_state;
 
   private R2FilterSSAO(
     final JCGLInterfaceGL33Type in_g,
@@ -79,6 +78,7 @@ public final class R2FilterSSAO implements
     this.clear = cb.build();
 
     this.shader_params = R2ShaderSSAOParametersMutable.create();
+    this.render_state = JCGLRenderStateMutable.create();
   }
 
   /**
@@ -141,10 +141,6 @@ public final class R2FilterSSAO implements
     NullCheck.notNull(parameters);
 
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-    final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
-    final JCGLCullingType g_cu = this.g.getCulling();
-    final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
-    final JCGLStencilBuffersType g_st = this.g.getStencilBuffers();
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
@@ -158,17 +154,7 @@ public final class R2FilterSSAO implements
     try {
       g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
 
-      if (g_db.depthBufferGetBits() > 0) {
-        g_db.depthBufferTestDisable();
-        g_db.depthBufferWriteDisable();
-      }
-
-      if (g_st.stencilBufferGetBits() > 0) {
-        g_st.stencilBufferDisable();
-      }
-
-      g_cu.cullingDisable();
-      g_cm.colorBufferMask(true, true, true, true);
+      JCGLRenderStates.activate(this.g, this.render_state);
       g_v.viewportSet(destination.getArea());
       g_cl.clear(this.clear);
 

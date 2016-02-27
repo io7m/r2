@@ -23,17 +23,14 @@ import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLPrimitives;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
-import com.io7m.jcanephora.core.api.JCGLBlendingType;
-import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
-import com.io7m.jcanephora.core.api.JCGLCullingType;
-import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
@@ -68,6 +65,7 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
 
   private final R2DebugShaderEyePosition shader;
   private final JCGLInterfaceGL33Type    g;
+  private final JCGLRenderStateMutable   render_state;
 
   private R2EyePositionRenderer(
     final JCGLInterfaceGL33Type in_g,
@@ -77,6 +75,8 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
     this.g = NullCheck.notNull(in_g);
     this.shader = R2DebugShaderEyePosition.newShader(
       this.g.getShaders(), in_sources, in_pool);
+    this.render_state =
+      JCGLRenderStateMutable.create();
   }
 
   /**
@@ -158,14 +158,9 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
 
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-    final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
-    final JCGLBlendingType g_b = this.g.getBlending();
-    final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
-    final JCGLCullingType g_cu = this.g.getCulling();
     final JCGLTexturesType g_tex = this.g.getTextures();
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();
-    final JCGLStencilBuffersType g_st = this.g.getStencilBuffers();
     final JCGLViewportsType g_v = this.g.getViewports();
 
     /**
@@ -198,13 +193,7 @@ public final class R2EyePositionRenderer implements R2EyePositionRendererType
       final JCGLTextureUnitType unit_depth =
         tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
 
-      g_b.blendingDisable();
-      g_cm.colorBufferMask(true, true, true, true);
-      g_cu.cullingDisable();
-      g_db.depthClampingEnable();
-      g_db.depthBufferWriteDisable();
-      g_db.depthBufferTestDisable();
-      g_st.stencilBufferDisable();
+      JCGLRenderStates.activate(this.g, this.render_state);
       g_v.viewportSet(zbuffer_area);
 
       try {
