@@ -17,7 +17,6 @@
 package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
-import com.io7m.jcanephora.core.api.JCGLArrayBuffersType;
 
 /**
  * The type of readable projection meshes.
@@ -40,7 +39,7 @@ public interface R2ProjectionMeshReadableType
   /**
    * @return {@code true} iff the values of the projection have changed more
    * recently than the last call to
-   * {@link R2ProjectionMeshWritableType#updateProjection(JCGLArrayBuffersType)}
+   * {@link R2ProjectionMeshWritableType#updateProjection(com.io7m.jcanephora.core.api.JCGLArrayBuffersType)}
    */
 
   boolean isUpdateRequired();
