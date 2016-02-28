@@ -17,19 +17,41 @@
 package com.io7m.r2.core;
 
 /**
- * <p>The type of readable and orthogonal transforms.</p>
- *
- * <p>A transform is considered to be <i>orthogonal</i> iff the 4x4 matrix it
- * produces is guaranteed to be orthogonal.</p>
+ * The type of writable projective lights.
  */
 
-public interface R2TransformOrthogonalReadableType extends
-  R2TransformReadableType
+public interface R2LightProjectiveWritableType
 {
   /**
-   * @return The watchable value for this transform
+   * @return The writable transform for the light
    */
 
-  R2WatchableType<R2TransformOrthogonalReadableType>
-  transformOrthogonalGetWatchable();
+  R2TransformOTType getTransformWritable();
+
+  /**
+   * Set the light radius in world-space units.
+   *
+   * @param r The light radius
+   */
+
+  void setRadius(
+    float r);
+
+  /**
+   * Set the light falloff exponent
+   *
+   * @param r The light falloff
+   */
+
+  void setFalloff(
+    float r);
+
+  /**
+   * Set the light intensity.
+   *
+   * @param i The intensity
+   */
+
+  void setIntensity(
+    float i);
 }

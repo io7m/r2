@@ -16,20 +16,26 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.api.JCGLArrayBuffersType;
+
 /**
- * <p>The type of readable and orthogonal transforms.</p>
- *
- * <p>A transform is considered to be <i>orthogonal</i> iff the 4x4 matrix it
- * produces is guaranteed to be orthogonal.</p>
+ * The type of writable projection meshes.
  */
 
-public interface R2TransformOrthogonalReadableType extends
-  R2TransformReadableType
+public interface R2ProjectionMeshWritableType
 {
   /**
-   * @return The watchable value for this transform
+   * Update the mesh for the current projection.
+   *
+   * @param ga An array buffer interface
    */
 
-  R2WatchableType<R2TransformOrthogonalReadableType>
-  transformOrthogonalGetWatchable();
+  void updateProjection(
+    final JCGLArrayBuffersType ga);
+
+  /**
+   * @return A writable reference to the mesh's projection
+   */
+
+  R2ProjectionType getProjectionWritable();
 }

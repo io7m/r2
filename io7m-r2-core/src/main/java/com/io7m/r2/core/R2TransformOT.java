@@ -40,26 +40,25 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 
 public final class R2TransformOT implements R2TransformOTType
 {
-  private final Quaternion4FType                orientation;
-  private final PVector3FType<R2SpaceWorldType> translation;
-  private final Runnable                        changed;
+  private final Quaternion4FType                   orientation;
+  private final PVector3FType<R2SpaceWorldType>    translation;
+  private final R2WatchableType<R2TransformOTType> watchable;
 
   private R2TransformOT(
-    final Runnable in_changed,
     final Quaternion4FType in_orientation,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    NullCheck.notNull(in_changed);
     NullCheck.notNull(in_orientation);
     NullCheck.notNull(in_translation);
 
-    this.changed = in_changed;
+    this.watchable =
+      R2Watchable.newWatchable(this);
     this.orientation =
       new R2TransformNotifyingTensors.R2QuaternionM4F(
-        in_changed, in_orientation);
+        this.watchable::watchableChanged, in_orientation);
     this.translation =
       new R2TransformNotifyingTensors.R2PVectorM3F<>(
-        in_changed, in_translation);
+        this.watchable::watchableChanged, in_translation);
   }
 
   /**
@@ -77,9 +76,7 @@ public final class R2TransformOT implements R2TransformOTType
     final Quaternion4FType in_orientation,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    return new R2TransformOT(
-      () -> {
-      }, in_orientation, in_translation);
+    return new R2TransformOT(in_orientation, in_translation);
   }
 
   /**
@@ -93,8 +90,6 @@ public final class R2TransformOT implements R2TransformOTType
   public static R2TransformOT newTransform()
   {
     return new R2TransformOT(
-      () -> {
-      },
       new QuaternionM4F(),
       new PVectorM3F<>(0.0f, 0.0f, 0.0f)
     );
@@ -115,7 +110,6 @@ public final class R2TransformOT implements R2TransformOTType
     final Runnable in_changed)
   {
     return new R2TransformOT(
-      in_changed,
       new QuaternionM4F(),
       new PVectorM3F<>(0.0f, 0.0f, 0.0f)
     );
@@ -190,5 +184,22 @@ public final class R2TransformOT implements R2TransformOTType
   public PVectorReadable3FType<R2SpaceWorldType> getTranslationReadable()
   {
     return this.translation;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformReadableType> transformGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformReadableType>) o;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformOrthogonalReadableType>
+  transformOrthogonalGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
   }
 }

@@ -16,20 +16,41 @@
 
 package com.io7m.r2.core;
 
+import java.util.function.Consumer;
+
 /**
- * <p>The type of readable and orthogonal transforms.</p>
+ * <p>A watchable value.</p>
  *
- * <p>A transform is considered to be <i>orthogonal</i> iff the 4x4 matrix it
- * produces is guaranteed to be orthogonal.</p>
+ * <p>This is very similar to {@link java.util.Observable} except that it is
+ * strongly typed and implementations are required to use weak references to
+ * observers so that the observers do not prevent the observed values from being
+ * garbage collected.</p>
+ *
+ * @param <T> The precise type of value
  */
 
-public interface R2TransformOrthogonalReadableType extends
-  R2TransformReadableType
+public interface R2WatchableType<T>
 {
   /**
-   * @return The watchable value for this transform
+   * Add a watcher. The watcher will be notified every time {@link
+   * #watchableChanged()} is called.
+   *
+   * @param w The watcher
    */
 
-  R2WatchableType<R2TransformOrthogonalReadableType>
-  transformOrthogonalGetWatchable();
+  void watchableAdd(Consumer<T> w);
+
+  /**
+   * Remove a watcher.
+   *
+   * @param w The watcher
+   */
+
+  void watchableRemove(Consumer<T> w);
+
+  /**
+   * Notify all watchers that the value has changed.
+   */
+
+  void watchableChanged();
 }

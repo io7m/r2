@@ -16,76 +16,12 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.spaces.R2SpaceRGBType;
-
 /**
  * The type of projective lights.
  */
 
-public interface R2LightProjectiveType extends R2LightSingleType
+public interface R2LightProjectiveType extends R2LightSingleType,
+  R2LightProjectiveUsableType
 {
-  /**
-   * @return The light radius
-   */
-
-  float getRadius();
-
-  /**
-   * Set the light radius in world-space units.
-   *
-   * @param r The light radius
-   */
-
-  void setRadius(
-    float r);
-
-  /**
-   * @return The light falloff exponent
-   */
-
-  float getFalloff();
-
-  /**
-   * Set the light falloff exponent
-   *
-   * @param r The light falloff
-   */
-
-  void setFalloff(
-    float r);
-
-  /**
-   * @return The readable/writable light color
-   */
-
-  PVector3FType<R2SpaceRGBType> getColor();
-
-  /**
-   * @return The current light intensity
-   */
-
-  float getIntensity();
-
-  /**
-   * Set the light intensity.
-   *
-   * @param i The intensity
-   */
-
-  void setIntensity(
-    float i);
-
-  /**
-   * @return The readable light transform
-   */
-
-  @Override
-  R2TransformOTReadableType getTransform();
-
-  /**
-   * @return The light's projection
-   */
-
-  R2ProjectionReadableType getProjection();
+  // No extra methods
 }

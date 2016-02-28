@@ -30,9 +30,11 @@ public final class R2TransformIdentity implements
 {
   private static final R2TransformIdentity INSTANCE = new R2TransformIdentity();
 
+  private final R2WatchableType<R2TransformReadableType> watchable;
+
   private R2TransformIdentity()
   {
-
+    this.watchable = R2Watchable.newWatchable(this);
   }
 
   /**
@@ -50,5 +52,20 @@ public final class R2TransformIdentity implements
     final PMatrixWritable4x4FType<R2SpaceObjectType, R2SpaceWorldType> m)
   {
     MatrixM4x4F.setIdentity(m);
+  }
+
+  @Override
+  public R2WatchableType<R2TransformReadableType> transformGetWatchable()
+  {
+    return this.watchable;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformOrthogonalReadableType>
+  transformOrthogonalGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
   }
 }

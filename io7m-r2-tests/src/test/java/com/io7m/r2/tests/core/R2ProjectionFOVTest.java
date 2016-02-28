@@ -18,9 +18,16 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
+import com.io7m.jranges.RangeCheckException;
 import com.io7m.r2.core.R2ProjectionFOV;
+import com.io7m.r2.core.R2ProjectionReadableType;
+import com.io7m.r2.core.R2WatchableType;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class R2ProjectionFOVTest
 {
@@ -32,7 +39,7 @@ public final class R2ProjectionFOVTest
     final R2ProjectionFOV p =
       R2ProjectionFOV.newFrustumWith(
         pm,
-        (float) Math.toRadians(90.0f),
+        1.5707963267948966f,
         1.0f,
         1.0f,
         100.0f);
@@ -59,5 +66,57 @@ public final class R2ProjectionFOVTest
     Assert.assertEquals(200.0f, p.projectionGetFarYMaximum(), 0.0f);
     Assert.assertEquals(-200.0f, p.projectionGetFarYMinimum(), 0.0f);
     Assert.assertEquals(200.0f, p.projectionGetZFar(), 0.0f);
+
+    p.setAspectRatio(2.0f);
+    Assert.assertEquals(2.0f, p.getAspectRatio(), 0.0f);
+    p.setHorizontalFOV(0.43633f);
+    Assert.assertEquals(0.43633, (double) p.getHorizontalFOV(), 0.00001);
+  }
+
+  @Rule public ExpectedException expected = ExpectedException.none();
+
+  @Test
+  public void testAspectNonzero()
+  {
+    final JCGLProjectionMatricesType pm =
+      JCGLProjectionMatrices.newMatrices();
+    final R2ProjectionFOV p =
+      R2ProjectionFOV.newFrustumWith(
+        pm,
+        1.5707963267948966f,
+        1.0f,
+        1.0f,
+        100.0f);
+
+    this.expected.expect(RangeCheckException.class);
+    p.setAspectRatio(0.0f);
+  }
+
+  @Test
+  public void testWatchable()
+  {
+    final JCGLProjectionMatricesType pm =
+      JCGLProjectionMatrices.newMatrices();
+    final R2ProjectionFOV p =
+      R2ProjectionFOV.newFrustumWith(
+        pm,
+        1.5707963267948966f,
+        1.0f,
+        1.0f,
+        100.0f);
+
+    final AtomicInteger called = new AtomicInteger(0);
+    final R2WatchableType<R2ProjectionReadableType> w =
+      p.projectionGetWatchable();
+    w.watchableAdd(ww -> called.incrementAndGet());
+
+    Assert.assertEquals(1L, (long) called.get());
+
+    p.projectionSetZFar(100.0f);
+    p.projectionSetZNear(1.0f);
+    p.setAspectRatio(1.0f);
+    p.setHorizontalFOV(1.0f);
+
+    Assert.assertEquals(5L, (long) called.get());
   }
 }

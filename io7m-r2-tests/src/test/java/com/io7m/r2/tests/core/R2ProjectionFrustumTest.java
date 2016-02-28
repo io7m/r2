@@ -19,8 +19,12 @@ package com.io7m.r2.tests.core;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.r2.core.R2ProjectionFrustum;
+import com.io7m.r2.core.R2ProjectionReadableType;
+import com.io7m.r2.core.R2WatchableType;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class R2ProjectionFrustumTest
 {
@@ -58,5 +62,30 @@ public final class R2ProjectionFrustumTest
     Assert.assertEquals(200.0f, p.projectionGetFarYMaximum(), 0.0f);
     Assert.assertEquals(-200.0f, p.projectionGetFarYMinimum(), 0.0f);
     Assert.assertEquals(200.0f, p.projectionGetZFar(), 0.0f);
+  }
+
+  @Test
+  public void testWatchable()
+  {
+    final JCGLProjectionMatricesType pm =
+      JCGLProjectionMatrices.newMatrices();
+    final R2ProjectionFrustum p =
+      R2ProjectionFrustum.newFrustum(pm);
+
+    final AtomicInteger called = new AtomicInteger(0);
+    final R2WatchableType<R2ProjectionReadableType> w =
+      p.projectionGetWatchable();
+    w.watchableAdd(ww -> called.incrementAndGet());
+
+    Assert.assertEquals(1L, (long) called.get());
+
+    p.projectionSetZFar(100.0f);
+    p.projectionSetZNear(1.0f);
+    p.projectionSetXMinimum(-1.0f);
+    p.projectionSetXMaximum(1.0f);
+    p.projectionSetYMinimum(-1.0f);
+    p.projectionSetYMaximum(1.0f);
+
+    Assert.assertEquals(7L, (long) called.get());
   }
 }

@@ -23,20 +23,26 @@ package com.io7m.r2.core;
 public interface R2TextureDefaultsType extends R2DeletableType
 {
   /**
-   * @return A texture representing a flat normal texture
+   * @return A flat normal texture
    */
 
   R2Texture2DUsableType getNormalTexture();
 
   /**
-   * @return A texture representing a flat white texture
+   * @return A flat white texture
    */
 
   R2Texture2DUsableType getWhiteTexture();
 
   /**
-   * @return A texture representing a flat black texture
+   * @return A flat black texture
    */
 
   R2Texture2DUsableType getBlackTexture();
+
+  /**
+   * @return A hard-edged white projective light texture
+   */
+
+  R2Texture2DUsableType getWhiteProjectiveTexture();
 }

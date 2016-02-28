@@ -18,6 +18,7 @@ package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jtensors.MatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -28,17 +29,18 @@ import com.io7m.r2.spaces.R2SpaceEyeType;
 
 public final class R2ProjectionFrustum implements R2ProjectionType
 {
-  private final JCGLProjectionMatricesType context;
-  private       float                      far_x_min;
-  private       float                      far_x_max;
-  private       float                      far_y_min;
-  private       float                      far_y_max;
-  private       float                      far_z;
-  private       float                      near_x_max;
-  private       float                      near_x_min;
-  private       float                      near_y_max;
-  private       float                      near_y_min;
-  private       float                      near_z;
+  private final JCGLProjectionMatricesType                context;
+  private final R2WatchableType<R2ProjectionReadableType> watchable;
+  private       float                                     far_x_min;
+  private       float                                     far_x_max;
+  private       float                                     far_y_min;
+  private       float                                     far_y_max;
+  private       float                                     far_z;
+  private       float                                     near_x_max;
+  private       float                                     near_x_min;
+  private       float                                     near_y_max;
+  private       float                                     near_y_min;
+  private       float                                     near_z;
 
   private R2ProjectionFrustum(
     final JCGLProjectionMatricesType in_context,
@@ -50,13 +52,15 @@ public final class R2ProjectionFrustum implements R2ProjectionType
     final float in_z_far)
   {
     this.context = NullCheck.notNull(in_context);
+
     this.near_x_max = in_x_max;
     this.near_x_min = in_x_min;
     this.near_y_max = in_y_max;
     this.near_y_min = in_y_min;
     this.near_z = in_z_near;
-
     this.far_z = in_z_far;
+
+    this.watchable = R2Watchable.newWatchable(this);
     this.update();
   }
 
@@ -71,7 +75,14 @@ public final class R2ProjectionFrustum implements R2ProjectionType
   public static R2ProjectionFrustum newFrustum(
     final JCGLProjectionMatricesType c)
   {
-    return new R2ProjectionFrustum(c, -1.0f, 1.0f, -1.0f, 1.0f, 0.01f, 1000.0f);
+    return new R2ProjectionFrustum(
+      c,
+      -1.0f,
+      1.0f,
+      -1.0f,
+      1.0f,
+      0.01f,
+      1000.0f);
   }
 
   /**
@@ -113,6 +124,7 @@ public final class R2ProjectionFrustum implements R2ProjectionType
     this.far_x_max = this.near_x_max * (this.far_z / this.near_z);
     this.far_y_min = this.near_y_min * (this.far_z / this.near_z);
     this.far_y_max = this.near_y_max * (this.far_z / this.near_z);
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -191,6 +203,12 @@ public final class R2ProjectionFrustum implements R2ProjectionType
   public void projectionMakeMatrix(
     final PMatrixWritable4x4FType<R2SpaceEyeType, R2SpaceClipType> m)
   {
+    this.projectionMakeMatrixUntyped(m);
+  }
+
+  @Override
+  public void projectionMakeMatrixUntyped(final MatrixWritable4x4FType m)
+  {
     this.context.makeFrustumProjection(
       m,
       (double) this.near_x_min,
@@ -259,5 +277,11 @@ public final class R2ProjectionFrustum implements R2ProjectionType
   public float projectionGetFarYMinimum()
   {
     return this.far_y_min;
+  }
+
+  @Override
+  public R2WatchableType<R2ProjectionReadableType> projectionGetWatchable()
+  {
+    return this.watchable;
   }
 }

@@ -486,7 +486,8 @@ public final class R2Matrices implements R2MatricesType
           this.context_tr,
           this.projective.m_projective_view);
 
-        p.projectionMakeMatrix(this.m_projection);
+        p.projectionMakeMatrixUntyped(
+          this.projective.m_projective_projection);
 
         /**
          * Produce a matrix that transforms a position in eye space to a

@@ -37,8 +37,8 @@ struct R2_light_positional_t {
 /// Calculate the vectors required to calculate positional lighting.
 ///
 /// @param light The light parameters
-/// @param p     The surface position
-/// @param n     The surface normal
+/// @param p     The surface position (eye-space)
+/// @param n     The surface normal (eye-space)
 ///
 /// @return A set of lighting vectors
 

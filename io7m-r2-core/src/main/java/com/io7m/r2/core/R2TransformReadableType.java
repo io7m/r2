@@ -37,4 +37,10 @@ public interface R2TransformReadableType
   void transformMakeMatrix4x4F(
     final R2TransformContextType context,
     final PMatrixWritable4x4FType<R2SpaceObjectType, R2SpaceWorldType> m);
+
+  /**
+   * @return The watchable value for this transform
+   */
+
+  R2WatchableType<R2TransformReadableType> transformGetWatchable();
 }

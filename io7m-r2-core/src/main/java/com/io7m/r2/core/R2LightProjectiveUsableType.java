@@ -17,19 +17,12 @@
 package com.io7m.r2.core;
 
 /**
- * <p>The type of readable and orthogonal transforms.</p>
- *
- * <p>A transform is considered to be <i>orthogonal</i> iff the 4x4 matrix it
- * produces is guaranteed to be orthogonal.</p>
+ * The type of usable (readable/writable but not deletable) projective lights.
  */
 
-public interface R2TransformOrthogonalReadableType extends
-  R2TransformReadableType
+public interface R2LightProjectiveUsableType extends
+  R2LightProjectiveReadableType,
+  R2LightProjectiveWritableType
 {
-  /**
-   * @return The watchable value for this transform
-   */
-
-  R2WatchableType<R2TransformOrthogonalReadableType>
-  transformOrthogonalGetWatchable();
+  // No extra methods
 }

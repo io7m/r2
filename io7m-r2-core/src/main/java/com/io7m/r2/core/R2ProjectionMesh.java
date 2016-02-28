@@ -19,6 +19,7 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.core.JCGLArrayBufferType;
 import com.io7m.jcanephora.core.JCGLArrayObjectBuilderType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
+import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.JCGLBufferUpdateType;
 import com.io7m.jcanephora.core.JCGLBufferUpdates;
 import com.io7m.jcanephora.core.JCGLIndexBufferType;
@@ -44,26 +45,34 @@ import java.nio.ByteBuffer;
  * A mesh representing the convex hull for a given projection.
  */
 
-public final class R2ProjectionMesh implements R2DeletableType
+public final class R2ProjectionMesh implements R2ProjectionMeshType
 {
   private final JCGLArrayObjectType                       array_object;
   private final JCGLArrayBufferType                       array_buffer;
   private final JCGLIndexBufferType                       index_buffer;
   private final JCGLBufferUpdateType<JCGLArrayBufferType> array_update;
   private final JPRACursor1DType<R2VertexP32UNT16Type>    array_cursor;
+  private final R2ProjectionType                          projection;
+  private       boolean                                   mesh_needs_update;
 
   private R2ProjectionMesh(
+    final R2ProjectionType in_p,
     final JCGLArrayObjectType in_array_object,
     final JCGLArrayBufferType in_array_buffer,
     final JCGLBufferUpdateType<JCGLArrayBufferType> in_array_update,
     final JPRACursor1DType<R2VertexP32UNT16Type> in_array_cursor,
     final JCGLIndexBufferType in_index_buffer)
   {
+    this.projection = NullCheck.notNull(in_p);
     this.array_object = NullCheck.notNull(in_array_object);
     this.array_buffer = NullCheck.notNull(in_array_buffer);
     this.index_buffer = NullCheck.notNull(in_index_buffer);
     this.array_update = NullCheck.notNull(in_array_update);
     this.array_cursor = NullCheck.notNull(in_array_cursor);
+
+    this.projection.projectionGetWatchable().watchableAdd(p -> {
+      this.mesh_needs_update = true;
+    });
   }
 
   /**
@@ -78,9 +87,9 @@ public final class R2ProjectionMesh implements R2DeletableType
    * @return A new mesh
    */
 
-  public static R2ProjectionMesh newMesh(
+  public static R2ProjectionMeshType newMesh(
     final JCGLInterfaceGL33Type g,
-    final R2ProjectionReadableType p,
+    final R2ProjectionType p,
     final JCGLUsageHint array_hint,
     final JCGLUsageHint index_hint)
   {
@@ -107,7 +116,7 @@ public final class R2ProjectionMesh implements R2DeletableType
       final R2VertexCursorP32UNT16 vci =
         R2VertexCursorP32UNT16.getInstance();
 
-      final long array_size = (3L * vci.getVertexSize()) * 8L;
+      final long array_size = vci.getVertexSize() * 8L;
       ab = ga.arrayBufferAllocate(array_size, array_hint);
       array_update =
         JCGLBufferUpdates.newUpdateReplacingAll(ab);
@@ -191,7 +200,7 @@ public final class R2ProjectionMesh implements R2DeletableType
         R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
         ab,
         3,
-        JCGLScalarType.TYPE_HALF_FLOAT,
+        JCGLScalarType.TYPE_FLOAT,
         R2VertexP32UNT16ByteBuffered.sizeInOctets(),
         (long) R2VertexP32UNT16ByteBuffered.metaPositionStaticOffsetFromType(),
         false);
@@ -225,9 +234,9 @@ public final class R2ProjectionMesh implements R2DeletableType
     }
 
     final R2ProjectionMesh m =
-      new R2ProjectionMesh(ao, ab, array_update, array_cursor, ib);
+      new R2ProjectionMesh(p, ao, ab, array_update, array_cursor, ib);
 
-    m.update(ga, p);
+    m.update(ga);
     return m;
   }
 
@@ -242,17 +251,38 @@ public final class R2ProjectionMesh implements R2DeletableType
     d.putShort((short) (v2 & 0xffff));
   }
 
+  /**
+   * @return The array object for the mesh
+   */
+
+  @Override
+  public JCGLArrayObjectUsableType getArrayObject()
+  {
+    return this.array_object;
+  }
+
+  @Override
+  public R2ProjectionReadableType getProjectionReadable()
+  {
+    return this.projection;
+  }
+
+  @Override
+  public boolean isUpdateRequired()
+  {
+    return this.mesh_needs_update;
+  }
+
   private void update(
-    final JCGLArrayBuffersType ga,
-    final R2ProjectionReadableType p)
+    final JCGLArrayBuffersType ga)
   {
     NullCheck.notNull(ga);
-    NullCheck.notNull(p);
 
     final R2VertexP32UNT16Type v = this.array_cursor.getElementView();
     final Vector3FType pc = v.getPositionWritable();
     final Vector2Db16Type uc = v.getUvWritable();
 
+    final R2ProjectionType p = this.projection;
     final float near_x_min = p.projectionGetNearXMinimum();
     final float near_x_max = p.projectionGetNearXMaximum();
     final float near_y_min = p.projectionGetNearYMinimum();
@@ -292,7 +322,10 @@ public final class R2ProjectionMesh implements R2DeletableType
     uc.set2D(1.0, 0.0);
     pc.set3F(far_x_max, far_y_min, far_z);
 
+    ga.arrayBufferBind(this.array_buffer);
     ga.arrayBufferUpdate(this.array_update);
+    ga.arrayBufferUnbind();
+    this.mesh_needs_update = false;
   }
 
   @Override
@@ -315,5 +348,19 @@ public final class R2ProjectionMesh implements R2DeletableType
   public boolean isDeleted()
   {
     return this.array_buffer.isDeleted();
+  }
+
+  @Override
+  public void updateProjection(
+    final JCGLArrayBuffersType ga)
+  {
+    NullCheck.notNull(ga);
+    this.update(ga);
+  }
+
+  @Override
+  public R2ProjectionType getProjectionWritable()
+  {
+    return this.projection;
   }
 }

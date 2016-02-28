@@ -27,5 +27,10 @@ package com.io7m.r2.core;
 public interface R2TransformNonOrthogonalReadableType extends
   R2TransformReadableType
 {
-  // No extra functions
+  /**
+   * @return The watchable value for this transform
+   */
+
+  R2WatchableType<R2TransformNonOrthogonalReadableType>
+  transformNonOrthogonalGetWatchable();
 }

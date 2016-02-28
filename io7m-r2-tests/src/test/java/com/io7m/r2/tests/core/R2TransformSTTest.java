@@ -25,7 +25,9 @@ import com.io7m.jtensors.parameterized.PVectorI2F;
 import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.r2.core.R2TransformContext;
 import com.io7m.r2.core.R2TransformContextType;
+import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2TransformST;
+import com.io7m.r2.core.R2WatchableType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.junit.Assert;
@@ -119,7 +121,10 @@ public final class R2TransformSTTest
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
     final R2TransformST r =
-      R2TransformST.newTransformWithNotifier(() -> changed.set(true));
+      R2TransformST.newTransform();
+    final R2WatchableType<R2TransformReadableType> w =
+      r.transformGetWatchable();
+    w.watchableAdd(ww -> changed.set(true));
     final PVector3FType<R2SpaceWorldType> t = r.getTranslation();
 
     Assert.assertTrue(changed.get());
@@ -189,7 +194,10 @@ public final class R2TransformSTTest
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
     final R2TransformST r =
-      R2TransformST.newTransformWithNotifier(() -> changed.set(true));
+      R2TransformST.newTransform();
+    final R2WatchableType<R2TransformReadableType> w =
+      r.transformGetWatchable();
+    w.watchableAdd(ww -> changed.set(true));
 
     Assert.assertTrue(changed.get());
     r.transformMakeMatrix4x4F(c, m);

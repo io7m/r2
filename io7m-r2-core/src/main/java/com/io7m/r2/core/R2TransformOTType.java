@@ -21,8 +21,7 @@ import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
- * The type of readable transforms represented by an orientation and a
- * translation.
+ * The type of transforms represented by an orientation and a translation.
  */
 
 public interface R2TransformOTType extends R2TransformOTReadableType

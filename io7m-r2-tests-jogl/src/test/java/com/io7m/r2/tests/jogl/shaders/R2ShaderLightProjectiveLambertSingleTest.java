@@ -14,22 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl.shaders;
 
-/**
- * <p>The type of readable and orthogonal transforms.</p>
- *
- * <p>A transform is considered to be <i>orthogonal</i> iff the 4x4 matrix it
- * produces is guaranteed to be orthogonal.</p>
- */
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.shaders
+  .R2ShaderLightProjectiveLambertSingleContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public interface R2TransformOrthogonalReadableType extends
-  R2TransformReadableType
+public final class R2ShaderLightProjectiveLambertSingleTest extends
+  R2ShaderLightProjectiveLambertSingleContract
 {
-  /**
-   * @return The watchable value for this transform
-   */
-
-  R2WatchableType<R2TransformOrthogonalReadableType>
-  transformOrthogonalGetWatchable();
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }

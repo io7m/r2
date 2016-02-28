@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jtensors.MatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -34,6 +35,15 @@ public interface R2ProjectionReadableType
 
   void projectionMakeMatrix(
     PMatrixWritable4x4FType<R2SpaceEyeType, R2SpaceClipType> m);
+
+  /**
+   * Write the projection to the given matrix.
+   *
+   * @param m The output matrix
+   */
+
+  void projectionMakeMatrixUntyped(
+    MatrixWritable4x4FType m);
 
   /**
    * @return The rightmost edge of the frustum's near plane.
@@ -94,4 +104,10 @@ public interface R2ProjectionReadableType
    */
 
   float projectionGetFarYMinimum();
+
+  /**
+   * @return The watchable value for this projection
+   */
+
+  R2WatchableType<R2ProjectionReadableType> projectionGetWatchable();
 }

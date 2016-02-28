@@ -44,25 +44,28 @@ public final class R2TransformOSiT implements
   private final Vector3FType                    scale;
   private final PVector3FType<R2SpaceWorldType> translation;
 
+  private final R2WatchableType<R2TransformNonOrthogonalReadableType> watchable;
+
   private R2TransformOSiT(
-    final Runnable in_changed,
     final Quaternion4FType in_orientation,
     final Vector3FType in_scale,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    NullCheck.notNull(in_changed);
     NullCheck.notNull(in_orientation);
     NullCheck.notNull(in_scale);
     NullCheck.notNull(in_translation);
 
+    this.watchable =
+      R2Watchable.newWatchable(this);
     this.orientation =
       new R2TransformNotifyingTensors.R2QuaternionM4F(
-        in_changed, in_orientation);
+        this.watchable::watchableChanged, in_orientation);
     this.scale =
-      new R2TransformNotifyingTensors.R2VectorM3F(in_changed, in_scale);
+      new R2TransformNotifyingTensors.R2VectorM3F(
+        this.watchable::watchableChanged, in_scale);
     this.translation =
       new R2TransformNotifyingTensors.R2PVectorM3F<>(
-        in_changed, in_translation);
+        this.watchable::watchableChanged, in_translation);
   }
 
   /**
@@ -82,9 +85,7 @@ public final class R2TransformOSiT implements
     final Vector3FType in_scale,
     final PVectorM3F<R2SpaceWorldType> in_translation)
   {
-    return new R2TransformOSiT(
-      () -> {
-      }, in_orientation, in_scale, in_translation);
+    return new R2TransformOSiT(in_orientation, in_scale, in_translation);
   }
 
   /**
@@ -98,30 +99,6 @@ public final class R2TransformOSiT implements
   public static R2TransformOSiT newTransform()
   {
     return new R2TransformOSiT(
-      () -> {
-      },
-      new QuaternionM4F(),
-      new VectorM3F(1.0f, 1.0f, 1.0f),
-      new PVectorM3F<>(0.0f, 0.0f, 0.0f)
-    );
-  }
-
-  /**
-   * <p>Construct a transform using the default values: The identity quaternion
-   * {@code (0, 0, 0, 1)} for orientation, the scale vector {@code (1, 1, 1)},
-   * and the translation {@code (0, 0, 0)}.</p>
-   *
-   * @param in_changed The procedure that will be executed every time the value
-   *                   of this transform is changed
-   *
-   * @return A new transform
-   */
-
-  public static R2TransformOSiT newTransformWithNotifier(
-    final Runnable in_changed)
-  {
-    return new R2TransformOSiT(
-      in_changed,
       new QuaternionM4F(),
       new VectorM3F(1.0f, 1.0f, 1.0f),
       new PVectorM3F<>(0.0f, 0.0f, 0.0f)
@@ -184,5 +161,20 @@ public final class R2TransformOSiT implements
       temporary.setR2C2F(this.scale.getZF());
       MatrixM4x4F.multiply(accum, temporary, m);
     }
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformReadableType> transformGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformReadableType>) o;
+  }
+
+  @Override
+  public R2WatchableType<R2TransformNonOrthogonalReadableType>
+  transformNonOrthogonalGetWatchable()
+  {
+    return this.watchable;
   }
 }

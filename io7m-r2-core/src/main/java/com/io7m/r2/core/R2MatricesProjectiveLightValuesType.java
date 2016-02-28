@@ -38,7 +38,8 @@ public interface R2MatricesProjectiveLightValuesType extends
   getMatrixProjectiveModelView();
 
   /**
-   * @return The current projective light projection matrix
+   * @return The current projective light matrix for transforming positions from
+   * eye-space to light-eye-space
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceLightEyeType>

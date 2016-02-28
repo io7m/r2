@@ -17,19 +17,11 @@
 package com.io7m.r2.core;
 
 /**
- * <p>The type of readable and orthogonal transforms.</p>
- *
- * <p>A transform is considered to be <i>orthogonal</i> iff the 4x4 matrix it
- * produces is guaranteed to be orthogonal.</p>
+ * The type of projection meshes.
  */
 
-public interface R2TransformOrthogonalReadableType extends
-  R2TransformReadableType
+public interface R2ProjectionMeshType extends R2ProjectionMeshUsableType,
+  R2DeletableType
 {
-  /**
-   * @return The watchable value for this transform
-   */
-
-  R2WatchableType<R2TransformOrthogonalReadableType>
-  transformOrthogonalGetWatchable();
+  // No extra methods
 }

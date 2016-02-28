@@ -30,13 +30,10 @@ import com.io7m.jcanephora.core.JCGLStencilFunction;
 import com.io7m.jcanephora.core.JCGLStencilOperation;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
-import com.io7m.jcanephora.core.api.JCGLCullingType;
-import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
@@ -194,13 +191,10 @@ public final class R2LightRenderer implements R2LightRendererType
     R2SceneOpaqueLightsConsumerType
   {
     private final JCGLInterfaceGL33Type   g33;
-    private final JCGLCullingType         culling;
     private final JCGLShadersType         shaders;
     private final JCGLTexturesType        textures;
     private final JCGLArrayObjectsType    array_objects;
     private final JCGLDrawType            draw;
-    private final JCGLDepthBuffersType    depth;
-    private final JCGLStencilBuffersType  stencils;
     private final JCGLRenderStateMutable  render_state_screen;
     private final JCGLRenderStateMutable  render_state_volume;
     private final JCGLStencilStateMutable stencil_state_screen;
@@ -227,9 +221,6 @@ public final class R2LightRenderer implements R2LightRendererType
       this.textures = this.g33.getTextures();
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
-      this.stencils = this.g33.getStencilBuffers();
-      this.culling = this.g33.getCulling();
-      this.depth = this.g33.getDepthBuffers();
 
       {
         this.render_state_screen = JCGLRenderStateMutable.create();

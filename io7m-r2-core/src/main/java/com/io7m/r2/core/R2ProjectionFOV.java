@@ -19,6 +19,7 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jranges.RangeCheck;
+import com.io7m.jtensors.MatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -29,31 +30,29 @@ import com.io7m.r2.spaces.R2SpaceEyeType;
 
 public final class R2ProjectionFOV implements R2ProjectionType
 {
-  private final JCGLProjectionMatricesType context;
-  private final Runnable                   changed;
-  private       float                      near_z;
-  private       float                      near_x_max;
-  private       float                      near_x_min;
-  private       float                      near_y_max;
-  private       float                      near_y_min;
-  private       float                      horizontal_fov;
-  private       float                      aspect;
-  private       float                      far_x_min;
-  private       float                      far_x_max;
-  private       float                      far_y_min;
-  private       float                      far_y_max;
-  private       float                      far_z;
+  private final JCGLProjectionMatricesType                context;
+  private final R2WatchableType<R2ProjectionReadableType> watchable;
+  private       float                                     near_z;
+  private       float                                     near_x_max;
+  private       float                                     near_x_min;
+  private       float                                     near_y_max;
+  private       float                                     near_y_min;
+  private       float                                     horizontal_fov;
+  private       float                                     aspect;
+  private       float                                     far_x_min;
+  private       float                                     far_x_max;
+  private       float                                     far_y_min;
+  private       float                                     far_y_max;
+  private       float                                     far_z;
 
   private R2ProjectionFOV(
     final JCGLProjectionMatricesType in_context,
-    final Runnable in_changed,
     final float in_fov,
     final float in_aspect,
     final float in_z_near,
     final float in_z_far)
   {
     this.context = NullCheck.notNull(in_context);
-    this.changed = NullCheck.notNull(in_changed);
 
     this.near_x_max = 1.0f;
     this.near_x_min = -1.0f;
@@ -68,6 +67,8 @@ public final class R2ProjectionFOV implements R2ProjectionType
 
     this.horizontal_fov = in_fov;
     this.aspect = in_aspect;
+
+    this.watchable = R2Watchable.newWatchable(this);
     this.update();
   }
 
@@ -94,8 +95,6 @@ public final class R2ProjectionFOV implements R2ProjectionType
   {
     return new R2ProjectionFOV(
       c,
-      () -> {
-      },
       in_fov,
       in_aspect,
       in_z_near,
@@ -114,6 +113,8 @@ public final class R2ProjectionFOV implements R2ProjectionType
     this.far_x_max = this.near_x_max * (this.far_z / this.near_z);
     this.far_y_min = this.near_y_min * (this.far_z / this.near_z);
     this.far_y_max = this.near_y_max * (this.far_z / this.near_z);
+
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -190,6 +191,13 @@ public final class R2ProjectionFOV implements R2ProjectionType
   public void projectionMakeMatrix(
     final PMatrixWritable4x4FType<R2SpaceEyeType, R2SpaceClipType> m)
   {
+    this.projectionMakeMatrixUntyped(m);
+  }
+
+  @Override
+  public void projectionMakeMatrixUntyped(
+    final MatrixWritable4x4FType m)
+  {
     this.context.makeFrustumProjection(
       m,
       (double) this.near_x_min,
@@ -258,5 +266,11 @@ public final class R2ProjectionFOV implements R2ProjectionType
   public float projectionGetFarYMinimum()
   {
     return this.far_y_min;
+  }
+
+  @Override
+  public R2WatchableType<R2ProjectionReadableType> projectionGetWatchable()
+  {
+    return this.watchable;
   }
 }

@@ -14,22 +14,16 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.core;
 
-/**
- * <p>The type of readable and orthogonal transforms.</p>
- *
- * <p>A transform is considered to be <i>orthogonal</i> iff the 4x4 matrix it
- * produces is guaranteed to be orthogonal.</p>
- */
+import com.io7m.r2.core.R2Watchable;
+import com.io7m.r2.core.R2WatchableType;
 
-public interface R2TransformOrthogonalReadableType extends
-  R2TransformReadableType
+public final class R2WatchableTest extends R2WatchableContract
 {
-  /**
-   * @return The watchable value for this transform
-   */
-
-  R2WatchableType<R2TransformOrthogonalReadableType>
-  transformOrthogonalGetWatchable();
+  @Override
+  protected <T> R2WatchableType<T> getWatchable(final T value)
+  {
+    return R2Watchable.newWatchable(value);
+  }
 }
