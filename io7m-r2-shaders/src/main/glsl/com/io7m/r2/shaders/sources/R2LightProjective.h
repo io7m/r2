@@ -23,6 +23,9 @@ struct R2_light_projective_vectors_t {
 
   /// The surface position as UV coordinates from the perspective of the light
   vec2 surface_light_uv;
+
+  /// A value that indicates whether or not the light fragment is back projected (0.0 means back projected, 1.0 means not)
+  float back_projected;
 };
 
 /// Calculate the vectors required to calculate projective lighting.
@@ -57,12 +60,17 @@ R2_lightProjectiveVectors(
   vec2 surface_light_uv =
     (surface_light_ndc.xy + 1.0) * 0.5;
 
+  // Back-projection test.
+  float back_projected =
+    (surface_light_clip.w < 0.0) ? 0.0 : 1.0;
+
   return R2_light_projective_vectors_t (
     positional,
     surface_light_eye,
     surface_light_clip,
     surface_light_ndc,
-    surface_light_uv
+    surface_light_uv,
+    back_projected
   );
 }
 

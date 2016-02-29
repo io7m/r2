@@ -27,7 +27,7 @@ R2_deferredLightMain(
 
   float attenuation = R2_lightPositionalAttenuation(
     R2_light_projective,
-    vectors.positional.distance);
+    vectors.positional.distance) * vectors.back_projected;
 
   vec3 image_sample =
     texture (R2_light_projective_image, vectors.surface_light_uv).rgb;
