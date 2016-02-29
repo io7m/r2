@@ -17,6 +17,7 @@
 package com.io7m.r2.core.filters;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.r2.core.R2CopyDepth;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.core.R2LightBufferUsableType;
@@ -31,6 +32,18 @@ import org.immutables.value.Value;
 @R2ImmutableStyleType
 public interface R2FilterLightApplicatorParametersType
 {
+  /**
+   * @return A value specifying whether or not the depth buffer of the scene's
+   * geometry buffer should be copied to the output
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default R2CopyDepth getCopyDepth()
+  {
+    return R2CopyDepth.R2_COPY_DEPTH_ENABLED;
+  }
+
   /**
    * @return The geometry buffer that will be used to produce a lit image
    */

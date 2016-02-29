@@ -585,7 +585,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
       this.debug_params.setOpaqueInstances(this.opaques);
       this.debug_params.setOpaqueLights(this.lights);
-      this.debug_params.setShowOpaqueInstances(false);
+      this.debug_params.setShowOpaqueInstances(true);
       this.debug_params.setShowOpaqueLights(true);
     }
 
@@ -738,8 +738,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           areax,
           uc,
           mo,
-          t.debug_params
-        );
+          t.debug_params);
         t.filter_compositor.runFilter(uc, t.filter_comp_parameters);
 
         return Unit.unit();

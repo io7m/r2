@@ -16,9 +16,12 @@
 
 package com.io7m.r2.core.filters;
 
+import com.io7m.jcanephora.core.JCGLFramebufferBlitBuffer;
+import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
 import com.io7m.jcanephora.core.JCGLPrimitives;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
+import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
@@ -39,6 +42,9 @@ import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.R2ShaderLightApplicator;
 import com.io7m.r2.core.shaders.R2ShaderLightApplicatorParametersMutable;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * A trivial filter that combines a geometry buffer and a light buffer into a
  * lit image.
@@ -50,7 +56,14 @@ import com.io7m.r2.core.shaders.R2ShaderLightApplicatorParametersMutable;
 public final class R2FilterLightApplicator implements
   R2FilterType<R2FilterLightApplicatorParametersType>
 {
-  private final JCGLInterfaceGL33Type                    g;
+  private static final Set<JCGLFramebufferBlitBuffer> BLIT_BUFFERS;
+
+  static {
+    BLIT_BUFFERS = EnumSet.of(
+      JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_DEPTH);
+  }
+
+  private final JCGLInterfaceGL33Type g;
   private final R2ShaderLightApplicator                  shader;
   private final R2UnitQuadUsableType                     quad;
   private final R2ShaderLightApplicatorParametersMutable shader_params;
@@ -127,23 +140,39 @@ public final class R2FilterLightApplicator implements
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
+    final R2LightBufferUsableType lb =
+      parameters.getLightBuffer();
+    final R2GeometryBufferUsableType gb =
+      parameters.getGeometryBuffer();
 
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLTexturesType g_tx = this.g.getTextures();
     final JCGLViewportsType g_v = this.g.getViewports();
+    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
+
+    switch (parameters.getCopyDepth()) {
+      case R2_COPY_DEPTH_ENABLED: {
+        g_fb.framebufferReadBind(gb.getPrimaryFramebuffer());
+        g_fb.framebufferBlit(
+          gb.getArea(),
+          parameters.getOutputViewport(),
+          R2FilterLightApplicator.BLIT_BUFFERS,
+          JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
+        g_fb.framebufferReadUnbind();
+        break;
+      }
+      case R2_COPY_DEPTH_DISABLED: {
+        break;
+      }
+    }
 
     g_v.viewportSet(parameters.getOutputViewport());
     JCGLRenderStates.activate(this.g, this.render_state);
 
     final R2TextureUnitContextType c = uc.unitContextNew();
     try {
-      final R2LightBufferUsableType lb =
-        parameters.getLightBuffer();
-      final R2GeometryBufferUsableType gb =
-        parameters.getGeometryBuffer();
-
       this.shader_params.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
       this.shader_params.setDiffuseTexture(lb.getDiffuseTexture());
       this.shader_params.setSpecularTexture(lb.getSpecularTexture());

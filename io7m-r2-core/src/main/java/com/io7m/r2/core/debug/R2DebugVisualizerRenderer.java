@@ -481,6 +481,11 @@ public final class R2DebugVisualizerRenderer implements
        */
 
       this.render_state_volume = JCGLRenderStateMutable.create();
+      this.render_state_volume.setDepthState(JCGLDepthState.of(
+        JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+        Optional.of(JCGLDepthFunction.DEPTH_LESS_THAN_OR_EQUAL),
+        JCGLDepthWriting.DEPTH_WRITE_DISABLED,
+        JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
       this.render_state_volume.setPolygonMode(JCGLPolygonMode.POLYGON_LINES);
       this.render_state_screen = JCGLRenderStateMutable.create();
       this.render_state_screen.setPolygonMode(JCGLPolygonMode.POLYGON_LINES);
