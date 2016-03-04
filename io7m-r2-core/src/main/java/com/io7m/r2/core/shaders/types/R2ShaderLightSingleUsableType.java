@@ -33,7 +33,7 @@ import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 public interface R2ShaderLightSingleUsableType<M extends R2LightSingleType>
   extends
-  R2ShaderUsableType<M>, R2ShaderGBufferConsumerType
+  R2ShaderUsableType<M>, R2ShaderGeometryBufferConsumerType
 {
   /**
    * Bind any textures needed for execution.

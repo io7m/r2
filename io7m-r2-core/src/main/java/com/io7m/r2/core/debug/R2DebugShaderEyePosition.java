@@ -29,7 +29,7 @@ import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.types.R2ShaderGBufferConsumerType;
+import com.io7m.r2.core.shaders.types.R2ShaderGeometryBufferConsumerType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -45,7 +45,7 @@ import java.util.Optional;
 
 public final class R2DebugShaderEyePosition extends
   R2AbstractShader<Unit>
-  implements R2ShaderScreenType<Unit>, R2ShaderGBufferConsumerType
+  implements R2ShaderScreenType<Unit>, R2ShaderGeometryBufferConsumerType
 {
   private final JCGLProgramUniformType u_gbuffer_albedo;
   private final JCGLProgramUniformType u_gbuffer_normal;

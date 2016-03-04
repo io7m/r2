@@ -34,7 +34,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.filters.R2SSAOKernelReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderGBufferConsumerType;
+import com.io7m.r2.core.shaders.types.R2ShaderGeometryBufferConsumerType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -50,7 +50,7 @@ import java.util.Optional;
 public final class R2ShaderSSAO extends
   R2AbstractShader<R2ShaderSSAOParametersType>
   implements R2ShaderScreenType<R2ShaderSSAOParametersType>,
-  R2ShaderGBufferConsumerType
+  R2ShaderGeometryBufferConsumerType
 {
   private final VectorM2F              noise_uv_scale;
   private final JCGLProgramUniformType u_ssao_noise_uv_scale;

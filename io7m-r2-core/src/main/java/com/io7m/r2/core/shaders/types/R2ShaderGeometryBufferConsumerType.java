@@ -21,23 +21,23 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 
 /**
- * The type of shaders that consume G-Buffers.
+ * The type of shaders that consume geometry buffers.
  */
 
-public interface R2ShaderGBufferConsumerType
+public interface R2ShaderGeometryBufferConsumerType
 {
   /**
-   * Set the shader values related to the given G-Buffer.
+   * Set the shader values related to the given geometry buffer.
    *
    * @param g_sh          An OpenGL interface
-   * @param g             The G-Buffer
-   * @param unit_albedo   The texture unit to which the G-Buffer's
+   * @param g             The geometry buffer
+   * @param unit_albedo   The texture unit to which the geometry buffer's
    *                      albedo/emissive texture is bound
-   * @param unit_specular The texture unit to which the G-Buffer's specular
-   *                      texture is bound
-   * @param unit_depth    The texture unit to which the G-Buffer's depth/stencil
-   *                      texture is bound
-   * @param unit_normals  The texture unit to which the G-Buffer's normal
+   * @param unit_specular The texture unit to which the geometry buffer's
+   *                      specular texture is bound
+   * @param unit_depth    The texture unit to which the geometry buffer's
+   *                      depth/stencil texture is bound
+   * @param unit_normals  The texture unit to which the geometry buffer's normal
    *                      texture is bound
    */
 
