@@ -34,13 +34,14 @@ import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightBufferUsableType;
-import com.io7m.r2.core.shaders.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.shaders.R2ShaderLightApplicator;
-import com.io7m.r2.core.shaders.R2ShaderLightApplicatorParametersMutable;
+import com.io7m.r2.core.shaders.provided.R2ShaderLightApplicator;
+import com.io7m.r2.core.shaders.provided
+  .R2ShaderLightApplicatorParametersMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -63,7 +64,7 @@ public final class R2FilterLightApplicator implements
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_DEPTH);
   }
 
-  private final JCGLInterfaceGL33Type g;
+  private final JCGLInterfaceGL33Type                    g;
   private final R2ShaderLightApplicator                  shader;
   private final R2UnitQuadUsableType                     quad;
   private final R2ShaderLightApplicatorParametersMutable shader_params;

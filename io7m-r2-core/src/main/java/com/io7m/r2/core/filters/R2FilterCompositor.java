@@ -30,13 +30,13 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.shaders.R2ShaderTextureShow;
-import com.io7m.r2.core.shaders.R2ShaderTextureShowParametersMutable;
+import com.io7m.r2.core.shaders.provided.R2ShaderTextureShow;
+import com.io7m.r2.core.shaders.provided.R2ShaderTextureShowParametersMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 import java.util.Optional;
 
@@ -51,7 +51,7 @@ public final class R2FilterCompositor implements
   private final R2ShaderTextureShow                  shader;
   private final R2UnitQuadUsableType                 quad;
   private final R2ShaderTextureShowParametersMutable shader_params;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderStateMutable               render_state;
 
   private R2FilterCompositor(
     final JCGLInterfaceGL33Type in_g,

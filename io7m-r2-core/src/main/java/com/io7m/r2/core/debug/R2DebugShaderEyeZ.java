@@ -29,10 +29,10 @@ import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.R2ShaderGBufferConsumerType;
-import com.io7m.r2.core.shaders.R2ShaderParameters;
-import com.io7m.r2.core.shaders.R2ShaderScreenType;
-import com.io7m.r2.core.shaders.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderGBufferConsumerType;
+import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderScreenType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
 
 import java.util.Map;

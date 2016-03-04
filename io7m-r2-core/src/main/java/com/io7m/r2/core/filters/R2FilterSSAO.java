@@ -36,12 +36,12 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.shaders.R2ShaderSSAO;
-import com.io7m.r2.core.shaders.R2ShaderSSAOParametersMutable;
+import com.io7m.r2.core.shaders.provided.R2ShaderSSAO;
+import com.io7m.r2.core.shaders.provided.R2ShaderSSAOParametersMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
 
 import java.util.OptionalDouble;
@@ -60,7 +60,7 @@ public final class R2FilterSSAO implements
   private final JCGLInterfaceGL33Type         g;
   private final JCGLClearSpecification        clear;
   private final R2ShaderSSAOParametersMutable shader_params;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderStateMutable        render_state;
 
   private R2FilterSSAO(
     final JCGLInterfaceGL33Type in_g,

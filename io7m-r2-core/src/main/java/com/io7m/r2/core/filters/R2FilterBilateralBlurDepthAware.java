@@ -38,15 +38,18 @@ import com.io7m.r2.core.R2RenderTargetDescriptionType;
 import com.io7m.r2.core.R2RenderTargetDescriptions;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2RenderTargetUsableType;
-import com.io7m.r2.core.shaders.R2ShaderSourcesType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.shaders.R2ShaderFilterBilateralBlurDepthAwareHorizontal4f;
-import com.io7m.r2.core.shaders.R2ShaderFilterBilateralBlurDepthAwareParametersMutable;
-import com.io7m.r2.core.shaders.R2ShaderFilterBilateralBlurDepthAwareVertical4f;
+import com.io7m.r2.core.shaders.provided
+  .R2ShaderFilterBilateralBlurDepthAwareHorizontal4f;
+import com.io7m.r2.core.shaders.provided
+  .R2ShaderFilterBilateralBlurDepthAwareParametersMutable;
+import com.io7m.r2.core.shaders.provided
+  .R2ShaderFilterBilateralBlurDepthAwareVertical4f;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 import java.util.EnumSet;
 import java.util.Set;

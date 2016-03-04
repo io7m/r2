@@ -36,14 +36,15 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightBufferUsableType;
-import com.io7m.r2.core.shaders.R2ShaderSourcesType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.shaders.R2ShaderOcclusionApplicator;
-import com.io7m.r2.core.shaders.R2ShaderOcclusionApplicatorParametersMutable;
+import com.io7m.r2.core.shaders.provided.R2ShaderOcclusionApplicator;
+import com.io7m.r2.core.shaders.provided
+  .R2ShaderOcclusionApplicatorParametersMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 /**
  * A filter that applies ambient occlusion to a light buffer.

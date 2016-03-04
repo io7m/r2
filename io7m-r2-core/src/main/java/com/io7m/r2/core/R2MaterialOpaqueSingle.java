@@ -17,7 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.shaders.R2ShaderSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderSingleUsableType;
 
 /**
  * Default implementation of the {@link R2MaterialOpaqueSingleType}

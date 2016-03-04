@@ -16,7 +16,7 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.r2.core.shaders.R2ShaderLightSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 
 /**
  * The set of lights that affect opaque instances in a scene.

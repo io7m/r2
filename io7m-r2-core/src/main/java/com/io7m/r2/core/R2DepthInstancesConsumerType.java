@@ -18,8 +18,8 @@ package com.io7m.r2.core;
 
 // @formatter:off
 
-import com.io7m.r2.core.shaders.R2ShaderBatchedUsableType;
-import com.io7m.r2.core.shaders.R2ShaderSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderSingleUsableType;
 
 /**
  * <p>The type of consumers of depth instances.</p>

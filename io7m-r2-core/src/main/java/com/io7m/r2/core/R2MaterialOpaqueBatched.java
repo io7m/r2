@@ -17,7 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.shaders.R2ShaderBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderBatchedUsableType;
 
 /**
  * Default implementation of the {@link R2MaterialOpaqueBatchedType} interface.
