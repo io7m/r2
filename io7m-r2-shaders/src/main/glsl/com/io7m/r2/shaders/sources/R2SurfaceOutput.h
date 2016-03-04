@@ -17,6 +17,8 @@ struct R2_surface_output_t {
   vec3  specular;
   /// Specular exponent in the range `[0, 256]`
   float specular_exp;
+  /// `True` if this particular surface fragment should be discarded
+  bool discarded;
 };
 
 #endif // R2_SURFACE_OUTPUT_H

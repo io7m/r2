@@ -19,6 +19,8 @@ struct R2_gbuffer_output_t {
   float specular_exp;
   /// Logarithmic depth value
   float depth;
+  /// `True` if this particular surface fragment should be discarded
+  bool discarded;
 };
 
 #endif // R2_GBUFFER_OUTPUT_H

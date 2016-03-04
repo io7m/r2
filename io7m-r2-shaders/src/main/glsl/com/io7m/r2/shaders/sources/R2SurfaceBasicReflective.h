@@ -66,12 +66,16 @@ R2_deferredSurfaceMain (
   vec3 specular =
     specular_sample * R2_basic_surface_parameters.specular_color;
 
+  bool discarded =
+    surface.w < R2_basic_surface_parameters.alpha_discard_threshold;
+
   return R2_surface_output_t (
     surface.xyz,
     emission,
     derived.normal_bumped,
     specular,
-    R2_basic_surface_parameters.specular_exponent
+    R2_basic_surface_parameters.specular_exponent,
+    discarded
   );
 }
 

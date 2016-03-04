@@ -50,7 +50,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
   protected abstract R2MBReaderType getMeshReader(
     String name,
     R2MeshParserInterleavedListenerType listener);
-  
+
   @Test
   public final void testOneTriOK_0()
   {

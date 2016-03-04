@@ -162,6 +162,11 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
   private R2ProjectionMeshType                           proj_mesh;
   private R2LightProjectiveType                          proj_light;
 
+  private R2InstanceSingleType golden;
+  private R2SurfaceShaderBasicParameters golden_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
+    golden_material;
+
   private R2InstanceBatchedDynamicType
     batched_instance;
   private R2TransformOST[]
@@ -220,7 +225,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     filter_ssao_app_params;
 
   private R2DebugVisualizerRendererParametersMutable
-    debug_params;
+              debug_params;
 
   public ExampleLightSpherical4()
   {
@@ -516,6 +521,27 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     this.geom_material = R2MaterialOpaqueSingle.newMaterial(
       id_pool, this.geom_shader, this.geom_shader_params);
 
+    {
+      this.golden =
+        R2InstanceSingle.newInstance(
+          id_pool,
+          m.getUnitQuad().getArrayObject(),
+          transform,
+          PMatrixI3x3F.identity());
+
+      this.golden_shader_params =
+        R2SurfaceShaderBasicParameters.newParameters(
+          m.getTextureDefaults());
+      this.golden_shader_params.getAlbedoColor().set4F(0.0f, 0.0f, 0.0f, 0.0f);
+      this.golden_shader_params.setAlbedoTexture(
+        serv.getTexture2D("golden_albedo.png"));
+      this.golden_shader_params.setAlbedoMix(1.0f);
+      this.golden_shader_params.setAlphaDiscardThreshold(0.1f);
+
+      this.golden_material = R2MaterialOpaqueSingle.newMaterial(
+        id_pool, this.geom_shader, this.golden_shader_params);
+    }
+
     this.batched_geom_shader =
       R2SurfaceShaderBasicBatched.newShader(
         gx.getShaders(),
@@ -636,8 +662,10 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
   {
     this.g = gx;
 
-    this.proj_proj.projectionSetXMaximum((float) Math.abs(Math.sin(frame * 0.01) * 2.0f));
-    this.proj_proj.projectionSetXMinimum((float) -Math.abs(Math.sin(frame * 0.01) * 2.0f));
+    this.proj_proj.projectionSetXMaximum(
+      (float) Math.abs(Math.sin(frame * 0.01) * 2.0f));
+    this.proj_proj.projectionSetXMinimum(
+      (float) -Math.abs(Math.sin(frame * 0.01) * 2.0f));
     this.proj_mesh.updateProjection(gx.getArrayBuffers());
 
     this.stencils.stencilsReset();
@@ -647,6 +675,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     this.opaques.opaquesReset();
     this.opaques.opaquesAddSingleInstance(
       this.instance, this.geom_material);
+    this.opaques.opaquesAddSingleInstance(
+      this.golden, this.golden_material);
     this.opaques.opaquesAddBatchedInstance(
       this.batched_instance, this.batched_geom_material);
 

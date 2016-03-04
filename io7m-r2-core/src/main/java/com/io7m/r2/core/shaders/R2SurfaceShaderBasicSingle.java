@@ -59,6 +59,7 @@ public final class R2SurfaceShaderBasicSingle extends
   private final JCGLProgramUniformType u_texture_normal;
   private final JCGLProgramUniformType u_texture_specular;
   private final JCGLProgramUniformType u_texture_emission;
+  private final JCGLProgramUniformType u_alpha_discard_threshold;
   private JCGLTextureUnitType unit_albedo;
   private JCGLTextureUnitType unit_emission;
   private JCGLTextureUnitType unit_normal;
@@ -80,7 +81,10 @@ public final class R2SurfaceShaderBasicSingle extends
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     final Map<String, JCGLProgramUniformType> us = p.getUniforms();
-    Assertive.ensure(us.size() == 15, "Expected number of parameters is 15");
+    Assertive.ensure(
+      us.size() == 16,
+      "Expected number of parameters is 16 (got %d)",
+      Integer.valueOf(us.size()));
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
       p, "R2_view.transform_projection");
@@ -106,6 +110,8 @@ public final class R2SurfaceShaderBasicSingle extends
       p, "R2_basic_surface_parameters.specular_color");
     this.u_specular_exponent = R2ShaderParameters.getUniformChecked(
       p, "R2_basic_surface_parameters.specular_exponent");
+    this.u_alpha_discard_threshold = R2ShaderParameters.getUniformChecked(
+      p, "R2_basic_surface_parameters.alpha_discard_threshold");
 
     this.u_texture_normal = R2ShaderParameters.getUniformChecked(
       p, "R2_surface_textures.normal");
@@ -185,6 +191,9 @@ public final class R2SurfaceShaderBasicSingle extends
       this.u_specular_color, values.getSpecularColor());
     g_sh.shaderUniformPutFloat(
       this.u_specular_exponent, values.getSpecularExponent());
+
+    g_sh.shaderUniformPutFloat(
+      this.u_alpha_discard_threshold, values.getAlphaDiscardThreshold());
   }
 
   @Override

@@ -32,15 +32,16 @@ import com.io7m.r2.spaces.R2SpaceRGBType;
 
 public final class R2SurfaceShaderBasicParameters
 {
+  private final PVector4FType<R2SpaceRGBAType> albedo_color;
+  private final PVector3FType<R2SpaceRGBType>  specular_color;
   private       float                          emission;
   private       R2Texture2DUsableType          emission_texture;
   private       R2Texture2DUsableType          albedo_texture;
-  private final PVector4FType<R2SpaceRGBAType> albedo_color;
   private       float                          albedo_mix;
   private       R2Texture2DUsableType          specular_texture;
-  private final PVector3FType<R2SpaceRGBType>  specular_color;
   private       float                          specular_exponent;
   private       R2Texture2DUsableType          normal_texture;
+  private       float                          alpha_discard_threshold;
 
   private R2SurfaceShaderBasicParameters(
     final PVector4FType<R2SpaceRGBAType> in_albedo_color,
@@ -51,7 +52,8 @@ public final class R2SurfaceShaderBasicParameters
     final R2Texture2DUsableType in_normal_texture,
     final PVector3FType<R2SpaceRGBType> in_specular_color,
     final float in_specular_exponent,
-    final R2Texture2DUsableType in_specular_texture)
+    final R2Texture2DUsableType in_specular_texture,
+    final float in_alpha_discard_threshold)
   {
     this.albedo_color = NullCheck.notNull(in_albedo_color);
     this.albedo_mix = in_albedo_mix;
@@ -62,7 +64,9 @@ public final class R2SurfaceShaderBasicParameters
     this.specular_color = in_specular_color;
     this.specular_exponent = in_specular_exponent;
     this.specular_texture = NullCheck.notNull(in_specular_texture);
+    this.alpha_discard_threshold = in_alpha_discard_threshold;
   }
+
 
   /**
    * Construct a set of default material parameters.
@@ -86,7 +90,8 @@ public final class R2SurfaceShaderBasicParameters
       t.getNormalTexture(),
       new PVectorM3F<>(0.0f, 0.0f, 0.0f),
       0.0f,
-      t.getWhiteTexture()
+      t.getWhiteTexture(),
+      0.0f
     );
   }
 
@@ -139,6 +144,29 @@ public final class R2SurfaceShaderBasicParameters
     final R2Texture2DUsableType t)
   {
     this.albedo_texture = NullCheck.notNull(t);
+  }
+
+  /**
+   * @return The alpha discard threshold for the shader
+   */
+
+  public float getAlphaDiscardThreshold()
+  {
+    return this.alpha_discard_threshold;
+  }
+
+  /**
+   * Set the alpha discard threshold for the shader. For a surface with a given
+   * threshold {@code t}, if the calculated alpha value for that surface (taken
+   * from the albedo texture and color) is less than {@code t}, the surface will
+   * be discarded instead of written to the geometry buffer.
+   *
+   * @param a The threshold
+   */
+
+  public void setAlphaDiscardThreshold(final float a)
+  {
+    this.alpha_discard_threshold = a;
   }
 
   /**
