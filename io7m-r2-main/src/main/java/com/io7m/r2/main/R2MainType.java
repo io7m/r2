@@ -19,6 +19,7 @@ package com.io7m.r2.main;
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jcanephora.core.JCGLViewMatricesType;
 import com.io7m.r2.core.R2DeletableType;
+import com.io7m.r2.core.R2DepthRendererType;
 import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightRendererType;
@@ -107,4 +108,10 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2DebugVisualizerRendererType getDebugVisualizerRenderer();
+
+  /**
+   * @return A depth renderer
+   */
+
+  R2DepthRendererType getDepthRenderer();
 }
