@@ -22,7 +22,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLReferableType;
 import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.r2.core.R2ExceptionShaderParameterNotPresent;
-import com.io7m.r2.core.R2ShaderParameters;
+import com.io7m.r2.core.shaders.R2ShaderParameters;
 import org.junit.Assert;
 import org.junit.Test;
 

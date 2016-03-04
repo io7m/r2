@@ -14,21 +14,16 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
-
-import java.util.List;
+package com.io7m.r2.core.shaders;
 
 /**
- * Access to shader sources.
+ * The type of shaders for rendering batched instances.
+ *
+ * @param <M> The type of parameter data
  */
 
-public interface R2ShaderSourcesType
+public interface R2ShaderBatchedType<M> extends R2ShaderType<M>,
+  R2ShaderBatchedUsableType<M>
 {
-  /**
-   * @param path The program name
-   *
-   * @return Sources for the program at {@code path}
-   */
-
-  List<String> getSourceLines(String path);
+  // No extra functions
 }

@@ -14,19 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
+
+import java.util.List;
 
 /**
- * The type of single-instance light shaders that operate on full-screen quads.
- *
- * @param <M> The type of shader parameters
+ * Access to shader sources.
  */
 
-public interface R2ShaderLightScreenSingleType<M extends R2LightSingleType>
-  extends
-  R2ShaderLightSingleType<M>,
-  R2ShaderScreenType<M>,
-  R2ShaderLightScreenSingleUsableType<M>
+public interface R2ShaderSourcesType
 {
-  // No extra functions
+  /**
+   * @param path The program name
+   *
+   * @return Sources for the program at {@code path}
+   */
+
+  List<String> getSourceLines(String path);
 }

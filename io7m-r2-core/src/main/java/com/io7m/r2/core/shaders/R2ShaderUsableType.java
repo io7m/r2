@@ -14,18 +14,34 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
+
+import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
 
 /**
- * The type of usable single-instance light shaders that operate on full-screen
- * quads.
+ * The type of usable shaders.
  *
- * @param <M> The type of shader parameters
+ * @param <M> The type of parameter data
  */
 
-public interface R2ShaderLightScreenSingleUsableType<M extends
-  R2LightSingleType>
-  extends R2ShaderLightSingleUsableType<M>, R2ShaderScreenUsableType<M>
+public interface R2ShaderUsableType<M> extends JCGLResourceUsableType
 {
-  // No extra functions
+  /**
+   * @return The unique shader ID
+   */
+
+  long getShaderID();
+
+  /**
+   * @return The shader parameter type
+   */
+
+  Class<M> getShaderParametersType();
+
+  /**
+   * @return The compiled shader program
+   */
+
+  JCGLProgramShaderUsableType getShaderProgram();
 }

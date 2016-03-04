@@ -36,7 +36,7 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightBufferUsableType;
-import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.R2ShaderSourcesType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;

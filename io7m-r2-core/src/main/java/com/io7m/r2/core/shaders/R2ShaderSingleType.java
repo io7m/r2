@@ -14,16 +14,16 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 /**
- * The type of shaders for rendering batched instances.
+ * The type of shaders for rendering single instances.
  *
  * @param <M> The type of parameter data
  */
 
-public interface R2ShaderBatchedType<M> extends R2ShaderType<M>,
-  R2ShaderBatchedUsableType<M>
+public interface R2ShaderSingleType<M> extends R2ShaderType<M>,
+  R2ShaderSingleUsableType<M>
 {
   // No extra functions
 }

@@ -24,9 +24,6 @@ import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2ShaderParameters;
-import com.io7m.r2.core.R2ShaderScreenType;
-import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import org.valid4j.Assertive;
 

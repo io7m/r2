@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.r2.core.shaders.R2ShaderSingleUsableType;
+
 /**
  * The type of opaque materials that can be applied to single instances.
  *

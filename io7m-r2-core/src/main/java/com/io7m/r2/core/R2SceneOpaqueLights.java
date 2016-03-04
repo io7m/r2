@@ -18,6 +18,7 @@ package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.shaders.R2ShaderLightSingleUsableType;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;

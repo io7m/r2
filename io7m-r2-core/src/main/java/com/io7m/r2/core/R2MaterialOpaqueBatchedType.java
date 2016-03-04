@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.r2.core.shaders.R2ShaderBatchedUsableType;
+
 /**
  * The type of opaque materials that can be applied to batched instances.
  *

@@ -14,15 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
+
+import com.io7m.r2.core.R2LightSingleType;
 
 /**
- * The type of shaders.
+ * The type of single-instance light shaders that operate on full-screen quads.
  *
- * @param <M> The type of parameter data
+ * @param <M> The type of shader parameters
  */
 
-public interface R2ShaderType<M> extends R2DeletableType, R2ShaderUsableType<M>
+public interface R2ShaderLightScreenSingleType<M extends R2LightSingleType>
+  extends
+  R2ShaderLightSingleType<M>,
+  R2ShaderScreenType<M>,
+  R2ShaderLightScreenSingleUsableType<M>
 {
   // No extra functions
 }

@@ -38,7 +38,7 @@ import com.io7m.r2.core.R2RenderTargetDescriptionType;
 import com.io7m.r2.core.R2RenderTargetDescriptions;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2RenderTargetUsableType;
-import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.R2ShaderSourcesType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;

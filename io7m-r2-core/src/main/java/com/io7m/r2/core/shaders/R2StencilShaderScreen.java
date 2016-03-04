@@ -20,8 +20,6 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2ShaderScreenType;
-import com.io7m.r2.core.R2ShaderSourcesType;
 
 import java.util.Optional;
 

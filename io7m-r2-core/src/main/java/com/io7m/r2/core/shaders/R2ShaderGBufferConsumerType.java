@@ -14,10 +14,11 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
+import com.io7m.r2.core.R2GeometryBufferUsableType;
 
 /**
  * The type of shaders that consume G-Buffers.

@@ -14,9 +14,10 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.R2RendererExceptionNoSuchShader;
 
 import java.io.BufferedReader;
 import java.io.IOException;

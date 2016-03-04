@@ -27,9 +27,6 @@ import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2ShaderParameters;
-import com.io7m.r2.core.R2ShaderScreenType;
-import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import org.valid4j.Assertive;
 

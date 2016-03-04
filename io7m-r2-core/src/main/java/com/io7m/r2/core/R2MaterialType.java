@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.r2.core.shaders.R2ShaderUsableType;
+
 /**
  * The base type of materials. A material associates a shader with a set of
  * shader parameters.

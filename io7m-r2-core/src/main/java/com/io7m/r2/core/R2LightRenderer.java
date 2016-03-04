@@ -49,6 +49,7 @@ import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.r2.core.shaders.R2ShaderLightSingleUsableType;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;

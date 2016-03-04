@@ -14,10 +14,12 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.r2.core.R2MatricesObserverValuesType;
+import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 /**
  * The type of usable shaders for rendering batched instances.

@@ -24,6 +24,8 @@ import com.io7m.jcanephora.core.JCGLVertexShaderType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.shaders.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.R2ShaderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

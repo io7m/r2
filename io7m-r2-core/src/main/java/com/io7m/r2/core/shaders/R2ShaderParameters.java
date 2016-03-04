@@ -14,11 +14,12 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.r2.core.R2ExceptionShaderParameterNotPresent;
 
 import java.util.Map;
 
