@@ -17,10 +17,16 @@
 package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jcanephora.core.api.JCGLShadersType;
+import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jfunctional.Unit;
+import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.types.R2ShaderScreenType;
+import com.io7m.r2.core.R2MatricesObserverValuesType;
+import com.io7m.r2.core.R2TextureUnitContextMutableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
+import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 import java.util.Optional;
@@ -30,7 +36,7 @@ import java.util.Optional;
  */
 
 public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
-  implements R2ShaderScreenType<Unit>
+  implements R2ShaderInstanceSingleScreenType<Unit>
 {
   private R2StencilShaderScreen(
     final JCGLShadersType in_shaders,
@@ -45,6 +51,8 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
       "R2StencilScreen.vert",
       Optional.empty(),
       "R2StencilScreen.frag");
+
+    R2ShaderParameters.checkUniformParameterCount(this.getShaderProgram(), 0);
   }
 
   /**
@@ -57,7 +65,7 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
    * @return A new shader
    */
 
-  public static R2ShaderScreenType<Unit> newShader(
+  public static R2ShaderInstanceSingleScreenType<Unit> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -69,5 +77,34 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
   public Class<Unit> getShaderParametersType()
   {
     return Unit.class;
+  }
+
+  @Override
+  public void onValidate()
+    throws R2ExceptionShaderValidationFailed
+  {
+    // Nothing
+  }
+
+  @Override
+  public void onReceiveViewValues(
+    final JCGLShadersType g_sh,
+    final R2MatricesObserverValuesType m)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+  }
+
+  @Override
+  public void onReceiveMaterialValues(
+    final JCGLTexturesType g_tex,
+    final JCGLShadersType g_sh,
+    final R2TextureUnitContextMutableType tc,
+    final Unit values)
+  {
+    NullCheck.notNull(g_tex);
+    NullCheck.notNull(tc);
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(values);
   }
 }

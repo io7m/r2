@@ -17,7 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.shaders.types.R2ShaderSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 
 /**
  * Default implementation of the {@link R2MaterialOpaqueSingleType}
@@ -29,13 +29,13 @@ import com.io7m.r2.core.shaders.types.R2ShaderSingleUsableType;
 public final class R2MaterialOpaqueSingle<M> implements
   R2MaterialOpaqueSingleType<M>
 {
-  private final long                        id;
-  private final M                           params;
-  private final R2ShaderSingleUsableType<M> shader;
+  private final long                                id;
+  private final M                                   params;
+  private final R2ShaderInstanceSingleUsableType<M> shader;
 
   private R2MaterialOpaqueSingle(
     final long in_id,
-    final R2ShaderSingleUsableType<M> in_shader,
+    final R2ShaderInstanceSingleUsableType<M> in_shader,
     final M in_params)
   {
     this.params = NullCheck.notNull(in_params);
@@ -56,7 +56,7 @@ public final class R2MaterialOpaqueSingle<M> implements
 
   public static <M> R2MaterialOpaqueSingleType<M> newMaterial(
     final R2IDPoolType in_pool,
-    final R2ShaderSingleUsableType<M> in_shader,
+    final R2ShaderInstanceSingleUsableType<M> in_shader,
     final M in_params)
   {
     NullCheck.notNull(in_pool);
@@ -77,7 +77,7 @@ public final class R2MaterialOpaqueSingle<M> implements
   }
 
   @Override
-  public R2ShaderSingleUsableType<M> getShader()
+  public R2ShaderInstanceSingleUsableType<M> getShader()
   {
     return this.shader;
   }

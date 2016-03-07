@@ -18,6 +18,8 @@ package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLResourceUsableType;
+import com.io7m.jcanephora.core.api.JCGLShadersType;
+import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 
 /**
  * The type of usable shaders.
@@ -44,4 +46,31 @@ public interface R2ShaderUsableType<M> extends JCGLResourceUsableType
    */
 
   JCGLProgramShaderUsableType getShaderProgram();
+
+  /**
+   * Activate the shader for rendering.
+   *
+   * @param g_sh A shader interface
+   */
+
+  void onActivate(JCGLShadersType g_sh);
+
+  /**
+   * Validate the shader prior to executing a draw call. This method exists so
+   * that shader implementations can check that the caller has called all
+   * required methods before drawing.
+   *
+   * @throws R2ExceptionShaderValidationFailed If validation fails
+   */
+
+  void onValidate()
+    throws R2ExceptionShaderValidationFailed;
+
+  /**
+   * Deactivate the shader.
+   *
+   * @param g_sh A shader interface
+   */
+
+  void onDeactivate(JCGLShadersType g_sh);
 }

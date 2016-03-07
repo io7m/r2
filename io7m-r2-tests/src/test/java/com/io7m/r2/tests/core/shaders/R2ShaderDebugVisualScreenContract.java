@@ -21,7 +21,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jtensors.VectorReadable4FType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.types.R2ShaderSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualScreen;
@@ -42,7 +42,7 @@ public abstract class R2ShaderDebugVisualScreenContract extends
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderSingleType<VectorReadable4FType> s =
+    final R2ShaderInstanceSingleScreenType<VectorReadable4FType> s =
       R2ShaderDebugVisualScreen.newShader(
         g.getShaders(),
         sources,

@@ -23,16 +23,16 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
-import com.io7m.r2.core.shaders.types.R2ShaderBatchedType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import org.valid4j.Assertive;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -41,7 +41,7 @@ import java.util.Optional;
 
 public final class R2SurfaceShaderBasicBatched extends
   R2AbstractShader<R2SurfaceShaderBasicParameters>
-  implements R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
+  implements R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_view;
@@ -77,11 +77,7 @@ public final class R2SurfaceShaderBasicBatched extends
       "R2SurfaceBasicBatched.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    final Map<String, JCGLProgramUniformType> us = p.getUniforms();
-    Assertive.ensure(
-      us.size() == 13,
-      "Expected number of parameters is 13 (got %d)",
-      Integer.valueOf(us.size()));
+    R2ShaderParameters.checkUniformParameterCount(p, 13);
 
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
@@ -136,20 +132,55 @@ public final class R2SurfaceShaderBasicBatched extends
    * @return A new shader
    */
 
-  public static R2ShaderBatchedType<R2SurfaceShaderBasicParameters> newShader(
+  public static R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters>
+  newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2SurfaceShaderBasicBatched(in_shaders, in_sources, in_pool);
+    return R2ShaderInstanceBatchedVerifier.newVerifier(
+      new R2SurfaceShaderBasicBatched(in_shaders, in_sources, in_pool));
   }
 
   @Override
-  public void setMaterialTextures(
+  public Class<R2SurfaceShaderBasicParameters> getShaderParametersType()
+  {
+    return R2SurfaceShaderBasicParameters.class;
+  }
+
+  @Override
+  public void onValidate()
+    throws R2ExceptionShaderValidationFailed
+  {
+    // Nothing
+  }
+
+  @Override
+  public void onReceiveViewValues(
+    final JCGLShadersType g_sh,
+    final R2MatricesObserverValuesType m)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+
+    g_sh.shaderUniformPutFloat(
+      this.u_depth_coefficient,
+      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_view, m.getMatrixView());
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_projection, m.getMatrixProjection());
+  }
+
+  @Override
+  public void onReceiveMaterialValues(
     final JCGLTexturesType g_tex,
+    final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
     final R2SurfaceShaderBasicParameters values)
   {
+    NullCheck.notNull(g_tex);
+    NullCheck.notNull(g_sh);
     NullCheck.notNull(tc);
     NullCheck.notNull(values);
 
@@ -161,15 +192,6 @@ public final class R2SurfaceShaderBasicBatched extends
       tc.unitContextBindTexture2D(g_tex, values.getNormalTexture());
     this.unit_specular =
       tc.unitContextBindTexture2D(g_tex, values.getSpecularTexture());
-  }
-
-  @Override
-  public void setMaterialValues(
-    final JCGLShadersType g_sh,
-    final R2SurfaceShaderBasicParameters values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(values);
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, this.unit_albedo);
@@ -195,28 +217,5 @@ public final class R2SurfaceShaderBasicBatched extends
 
     g_sh.shaderUniformPutFloat(
       this.u_alpha_discard_threshold, values.getAlphaDiscardThreshold());
-  }
-
-  @Override
-  public void setMatricesView(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-
-    g_sh.shaderUniformPutFloat(
-      this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_view, m.getMatrixView());
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
-  }
-
-  @Override
-  public Class<R2SurfaceShaderBasicParameters> getShaderParametersType()
-  {
-    return R2SurfaceShaderBasicParameters.class;
   }
 }

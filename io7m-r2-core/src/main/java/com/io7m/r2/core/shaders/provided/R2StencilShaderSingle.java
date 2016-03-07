@@ -16,19 +16,22 @@
 
 package com.io7m.r2.core.shaders.provided;
 
+import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
-import com.io7m.r2.core.shaders.types.R2ShaderSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import org.valid4j.Assertive;
 
 import java.util.Map;
 import java.util.Optional;
@@ -38,8 +41,7 @@ import java.util.Optional;
  */
 
 public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
-  implements
-  R2ShaderSingleType<Unit>
+  implements R2ShaderInstanceSingleType<Unit>
 {
   private final JCGLProgramUniformType u_transform_modelview;
   private final JCGLProgramUniformType u_transform_projection;
@@ -58,10 +60,10 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
       Optional.empty(),
       "R2StencilSingle.frag");
 
-    final Map<String, JCGLProgramUniformType> us =
-      this.getShaderProgram().getUniforms();
-    Assertive.ensure(2 == us.size());
+    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    R2ShaderParameters.checkUniformParameterCount(p, 2);
 
+    final Map<String, JCGLProgramUniformType> us = p.getUniforms();
     this.u_transform_modelview = NullCheck.notNull(
       us.get("R2_stencil_parameters.transform_modelview"));
     this.u_transform_projection = NullCheck.notNull(
@@ -78,12 +80,13 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
    * @return A new shader
    */
 
-  public static R2ShaderSingleType<Unit> newShader(
+  public static R2ShaderInstanceSingleType<Unit> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2StencilShaderSingle(in_shaders, in_sources, in_pool);
+    return R2ShaderInstanceSingleVerifier.newVerifier(
+      new R2StencilShaderSingle(in_shaders, in_sources, in_pool));
   }
 
   @Override
@@ -93,24 +96,14 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   }
 
   @Override
-  public void setMaterialTextures(
-    final JCGLTexturesType g_tex,
-    final R2TextureUnitContextMutableType tc,
-    final Unit values)
+  public void onValidate()
+    throws R2ExceptionShaderValidationFailed
   {
-
+    // Nothing
   }
 
   @Override
-  public void setMaterialValues(
-    final JCGLShadersType g_sh,
-    final Unit values)
-  {
-
-  }
-
-  @Override
-  public void setMatricesView(
+  public void onReceiveViewValues(
     final JCGLShadersType g_sh,
     final R2MatricesObserverValuesType m)
   {
@@ -122,7 +115,20 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   }
 
   @Override
-  public void setMatricesInstance(
+  public void onReceiveMaterialValues(
+    final JCGLTexturesType g_tex,
+    final JCGLShadersType g_sh,
+    final R2TextureUnitContextMutableType tc,
+    final Unit values)
+  {
+    NullCheck.notNull(g_tex);
+    NullCheck.notNull(tc);
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(values);
+  }
+
+  @Override
+  public void onReceiveInstanceTransformValues(
     final JCGLShadersType g_sh,
     final R2MatricesInstanceSingleValuesType m)
   {

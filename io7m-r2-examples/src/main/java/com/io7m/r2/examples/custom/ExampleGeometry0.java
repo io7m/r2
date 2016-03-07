@@ -46,12 +46,12 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.shaders.types.R2ShaderSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
@@ -72,8 +72,9 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private R2GeometryBufferType   gbuffer;
   private JCGLClearSpecification clear_spec;
 
-  private R2ShaderSingleType<R2SurfaceShaderBasicParameters> shader;
-  private R2SurfaceShaderBasicParameters                     shader_params;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
+  private R2SurfaceShaderBasicParameters
+                                                                     shader_params;
 
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
@@ -162,41 +163,39 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
     this.opaques.opaquesReset();
     this.opaques.opaquesAddSingleInstance(this.instance, this.material);
 
-    {
-      final R2MatricesType matrices = m.getMatrices();
-      matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+    final R2MatricesType matrices = m.getMatrices();
+    matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
 
-        final JCGLFramebuffersType g_fb = g.getFramebuffers();
-        final JCGLClearType g_cl = g.getClear();
-        final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
-        final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
-        final JCGLDepthBuffersType g_db = g.getDepthBuffers();
+      final JCGLFramebuffersType g_fb = g.getFramebuffers();
+      final JCGLClearType g_cl = g.getClear();
+      final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
+      final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
+      final JCGLDepthBuffersType g_db = g.getDepthBuffers();
 
-        g_cb.colorBufferMask(true, true, true, true);
-        g_db.depthBufferWriteEnable();
-        g_sb.stencilBufferMask(
-          JCGLFaceSelection.FACE_FRONT_AND_BACK,
-          0b11111111);
+      g_cb.colorBufferMask(true, true, true, true);
+      g_db.depthBufferWriteEnable();
+      g_sb.stencilBufferMask(
+        JCGLFaceSelection.FACE_FRONT_AND_BACK,
+        0b11111111);
 
-        g_fb.framebufferDrawBind(t.gbuffer.getPrimaryFramebuffer());
-        g_cl.clear(t.clear_spec);
+      g_fb.framebufferDrawBind(t.gbuffer.getPrimaryFramebuffer());
+      g_cl.clear(t.clear_spec);
 
-        t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
-          mo,
-          t.gbuffer.getArea(),
-          t.stencils);
-        t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
-          t.gbuffer.getArea(),
-          m.getTextureUnitAllocator().getRootContext(),
-          mo,
-          t.opaques);
+      t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
+        mo,
+        t.main.getTextureUnitAllocator().getRootContext(),
+        t.gbuffer.getArea(),
+        t.stencils);
 
-        g_fb.framebufferDrawUnbind();
-        return Unit.unit();
-      });
+      t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
+        t.gbuffer.getArea(),
+        t.main.getTextureUnitAllocator().getRootContext(),
+        mo,
+        t.opaques);
 
-
-    }
+      g_fb.framebufferDrawUnbind();
+      return Unit.unit();
+    });
   }
 
   @Override

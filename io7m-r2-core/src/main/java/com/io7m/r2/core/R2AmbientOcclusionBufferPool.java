@@ -149,23 +149,6 @@ public final class R2AmbientOcclusionBufferPool implements
   }
 
   @Override
-  public void delete(final JCGLInterfaceGL33Type g)
-    throws R2Exception
-  {
-    NullCheck.notNull(g);
-
-    // TODO: Generated method stub!
-    throw new UnimplementedCodeException();
-  }
-
-  @Override
-  public boolean isDeleted()
-  {
-    // TODO: Generated method stub!
-    throw new UnimplementedCodeException();
-  }
-
-  @Override
   public R2AmbientOcclusionBufferUsableType get(
     final R2TextureUnitContextParentType tc,
     final R2AmbientOcclusionBufferDescriptionType desc)
@@ -183,5 +166,17 @@ public final class R2AmbientOcclusionBufferPool implements
     NullCheck.notNull(tc);
     NullCheck.notNull(target);
     this.actual.returnValue(tc, target);
+  }
+
+  @Override
+  public void delete(final R2TextureUnitContextParentType c)
+  {
+    this.actual.deleteUnsafely(c);
+  }
+
+  @Override
+  public boolean isDeleted()
+  {
+    return this.actual.isDeleted();
   }
 }

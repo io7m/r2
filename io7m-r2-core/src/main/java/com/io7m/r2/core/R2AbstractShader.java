@@ -90,6 +90,18 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
   }
 
   @Override
+  public final void onActivate(final JCGLShadersType g_sh)
+  {
+    g_sh.shaderActivateProgram(this.program);
+  }
+
+  @Override
+  public final void onDeactivate(final JCGLShadersType g_sh)
+  {
+    g_sh.shaderDeactivateProgram();
+  }
+
+  @Override
   public final void delete(final JCGLInterfaceGL33Type g)
   {
     NullCheck.notNull(g);

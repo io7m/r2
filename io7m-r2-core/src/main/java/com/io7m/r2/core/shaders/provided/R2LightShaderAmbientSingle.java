@@ -25,6 +25,7 @@ import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightAmbientSingle;
@@ -35,11 +36,11 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderProjectiveRequired;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import org.valid4j.Assertive;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -59,7 +60,7 @@ public final class R2LightShaderAmbientSingle extends
   private final JCGLProgramUniformType u_light_color;
   private final JCGLProgramUniformType u_light_intensity;
   private final JCGLProgramUniformType u_light_occlusion;
-  private JCGLTextureUnitType          unit_ao;
+  private       JCGLTextureUnitType    unit_ao;
 
   private R2LightShaderAmbientSingle(
     final JCGLShadersType in_shaders,
@@ -76,11 +77,7 @@ public final class R2LightShaderAmbientSingle extends
       "R2LightAmbientSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    final Map<String, JCGLProgramUniformType> us = p.getUniforms();
-    Assertive.ensure(
-      us.size() == 9,
-      "Expected number of parameters is 9 (got %d)",
-      Integer.valueOf(us.size()));
+    R2ShaderParameters.checkUniformParameterCount(p, 9);
 
     this.u_light_color =
       R2ShaderParameters.getUniformChecked(
@@ -130,8 +127,9 @@ public final class R2LightShaderAmbientSingle extends
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2LightShaderAmbientSingle(
-      in_shaders, in_sources, in_pool);
+    return R2ShaderLightVerifier.newVerifier(
+      new R2LightShaderAmbientSingle(in_shaders, in_sources, in_pool),
+      R2ShaderProjectiveRequired.R2_SHADER_PROJECTIVE_NOT_REQUIRED);
   }
 
   @Override
@@ -142,39 +140,14 @@ public final class R2LightShaderAmbientSingle extends
   }
 
   @Override
-  public void setLightTextures(
-    final JCGLTexturesType g_tex,
-    final R2TextureUnitContextMutableType uc,
-    final R2LightAmbientSingle values)
+  public void onValidate()
+    throws R2ExceptionShaderValidationFailed
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(uc);
-    NullCheck.notNull(values);
-
-    this.unit_ao =
-      uc.unitContextBindTexture2D(g_tex, values.getOcclusionMap());
+    // Nothing
   }
 
   @Override
-  public void setLightValues(
-    final JCGLShadersType g_sh,
-    final JCGLTexturesType g_tex,
-    final R2LightAmbientSingle values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(values);
-
-    g_sh.shaderUniformPutVector3f(
-      this.u_light_color, values.getColor());
-    g_sh.shaderUniformPutFloat(
-      this.u_light_intensity, values.getIntensity());
-    g_sh.shaderUniformPutTexture2DUnit(
-      this.u_light_occlusion, this.unit_ao);
-  }
-
-  @Override
-  public void setGBuffer(
+  public void onReceiveBoundGeometryBufferTextures(
     final JCGLShadersType g_sh,
     final R2GeometryBufferUsableType g,
     final JCGLTextureUnitType unit_albedo,
@@ -188,24 +161,12 @@ public final class R2LightShaderAmbientSingle extends
     NullCheck.notNull(unit_depth);
     NullCheck.notNull(unit_normals);
     NullCheck.notNull(unit_specular);
-  }
-
-  @Override
-  public void setLightViewDependentValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightAmbientSingle values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-    NullCheck.notNull(values);
-    NullCheck.notNull(viewport);
 
     /**
      * Upload the viewport.
      */
 
+    final AreaInclusiveUnsignedLType viewport = g.getDescription().getArea();
     final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
     final UnsignedRangeInclusiveL range_y = viewport.getRangeY();
     g_sh.shaderUniformPutFloat(
@@ -214,6 +175,41 @@ public final class R2LightShaderAmbientSingle extends
     g_sh.shaderUniformPutFloat(
       this.u_viewport_inverse_height,
       (float) (1.0 / (double) range_y.getInterval()));
+  }
+
+  @Override
+  public void onReceiveProjectiveLight(
+    final JCGLShadersType g_sh,
+    final R2MatricesProjectiveLightValuesType m)
+  {
+    // Nothing
+  }
+
+  @Override
+  public void onReceiveInstanceTransformValues(
+    final JCGLShadersType g_sh,
+    final R2MatricesInstanceSingleValuesType m)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_modelview, m.getMatrixModelView());
+  }
+
+  @Override
+  public void onReceiveValues(
+    final JCGLTexturesType g_tex,
+    final JCGLShadersType g_sh,
+    final R2TextureUnitContextMutableType tc,
+    final R2LightAmbientSingle values,
+    final R2MatricesObserverValuesType m)
+  {
+    NullCheck.notNull(g_tex);
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(tc);
+    NullCheck.notNull(m);
+    NullCheck.notNull(values);
 
     /**
      * Upload the projections for the light volume.
@@ -231,29 +227,19 @@ public final class R2LightShaderAmbientSingle extends
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
       (float) R2Projections.getDepthCoefficient(m.getProjection()));
-  }
 
-  @Override
-  public void setLightTransformDependentValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m,
-    final R2LightAmbientSingle values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
+    /**
+     * Upload the occlusion texture and light values.
+     */
 
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
-  }
+    this.unit_ao =
+      tc.unitContextBindTexture2D(g_tex, values.getOcclusionMap());
+    g_sh.shaderUniformPutTexture2DUnit(
+      this.u_light_occlusion, this.unit_ao);
 
-  @Override
-  public void setLightProjectiveDependentValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesProjectiveLightValuesType m,
-    final R2LightAmbientSingle values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-    NullCheck.notNull(values);
+    g_sh.shaderUniformPutVector3f(
+      this.u_light_color, values.getColor());
+    g_sh.shaderUniformPutFloat(
+      this.u_light_intensity, values.getIntensity());
   }
 }

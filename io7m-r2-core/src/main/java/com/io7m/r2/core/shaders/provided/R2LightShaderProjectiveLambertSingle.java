@@ -31,6 +31,7 @@ import com.io7m.jtensors.parameterized.PVectorM4F;
 import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightProjectiveType;
@@ -43,13 +44,13 @@ import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2TransformOTReadableType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderProjectiveRequired;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
-import org.valid4j.Assertive;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -90,7 +91,7 @@ public final class R2LightShaderProjectiveLambertSingle extends
   private final PVector4FType<R2SpaceEyeType>   position_eye;
   private final PVector3FType<R2SpaceEyeType>   position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
-  private JCGLTextureUnitType unit_image;
+  private       JCGLTextureUnitType             unit_image;
 
   private R2LightShaderProjectiveLambertSingle(
     final JCGLShadersType in_shaders,
@@ -107,11 +108,7 @@ public final class R2LightShaderProjectiveLambertSingle extends
       "R2LightProjectiveLambertSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    final Map<String, JCGLProgramUniformType> us = p.getUniforms();
-    Assertive.ensure(
-      us.size() == 26,
-      "Expected number of parameters is 26 (got %d)",
-      Integer.valueOf(us.size()));
+    R2ShaderParameters.checkUniformParameterCount(p, 26);
 
     this.u_light_projective_color =
       R2ShaderParameters.getUniformChecked(
@@ -220,8 +217,9 @@ public final class R2LightShaderProjectiveLambertSingle extends
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2LightShaderProjectiveLambertSingle(
-      in_shaders, in_sources, in_pool);
+    return R2ShaderLightVerifier.newVerifier(
+      new R2LightShaderProjectiveLambertSingle(in_shaders, in_sources, in_pool),
+      R2ShaderProjectiveRequired.R2_SHADER_PROJECTIVE_REQUIRED);
   }
 
   @Override
@@ -232,42 +230,14 @@ public final class R2LightShaderProjectiveLambertSingle extends
   }
 
   @Override
-  public void setLightTextures(
-    final JCGLTexturesType g_tex,
-    final R2TextureUnitContextMutableType uc,
-    final R2LightProjectiveType values)
+  public void onValidate()
+    throws R2ExceptionShaderValidationFailed
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(uc);
-    NullCheck.notNull(values);
 
-    this.unit_image = uc.unitContextBindTexture2D(g_tex, values.getImage());
   }
 
   @Override
-  public void setLightValues(
-    final JCGLShadersType g_sh,
-    final JCGLTexturesType g_tex,
-    final R2LightProjectiveType values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(values);
-
-    g_sh.shaderUniformPutVector3f(
-      this.u_light_projective_color, values.getColor());
-    g_sh.shaderUniformPutFloat(
-      this.u_light_projective_intensity, values.getIntensity());
-    g_sh.shaderUniformPutFloat(
-      this.u_light_projective_inverse_falloff, 1.0f / values.getFalloff());
-    g_sh.shaderUniformPutFloat(
-      this.u_light_projective_inverse_range, 1.0f / values.getRadius());
-    g_sh.shaderUniformPutTexture2DUnit(
-      this.u_light_projective_image, this.unit_image);
-  }
-
-  @Override
-  public void setGBuffer(
+  public void onReceiveBoundGeometryBufferTextures(
     final JCGLShadersType g_sh,
     final R2GeometryBufferUsableType g,
     final JCGLTextureUnitType unit_albedo,
@@ -283,45 +253,10 @@ public final class R2LightShaderProjectiveLambertSingle extends
     NullCheck.notNull(unit_specular);
 
     /**
-     * Set each of the required G-Buffer textures.
-     */
-
-    g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
-    g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);
-    g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_specular, unit_specular);
-    g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_depth, unit_depth);
-
-    /**
      * Upload the viewport.
      */
 
-    final AreaInclusiveUnsignedLType area = g.getArea();
-    final UnsignedRangeInclusiveL range_x = area.getRangeX();
-    final UnsignedRangeInclusiveL range_y = area.getRangeY();
-    g_sh.shaderUniformPutFloat(
-      this.u_viewport_inverse_width,
-      (float) (1.0 / (double) range_x.getInterval()));
-    g_sh.shaderUniformPutFloat(
-      this.u_viewport_inverse_height,
-      (float) (1.0 / (double) range_y.getInterval()));
-  }
-
-  @Override
-  public void setLightViewDependentValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightProjectiveType values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-    NullCheck.notNull(values);
-    NullCheck.notNull(viewport);
-
-    /**
-     * Upload the viewport.
-     */
-
+    final AreaInclusiveUnsignedLType viewport = g.getDescription().getArea();
     final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
     final UnsignedRangeInclusiveL range_y = viewport.getRangeY();
     g_sh.shaderUniformPutFloat(
@@ -330,6 +265,56 @@ public final class R2LightShaderProjectiveLambertSingle extends
     g_sh.shaderUniformPutFloat(
       this.u_viewport_inverse_height,
       (float) (1.0 / (double) range_y.getInterval()));
+
+    /**
+     * Set each of the required G-Buffer textures.
+     */
+
+    g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
+    g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);
+    g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_specular, unit_specular);
+    g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_depth, unit_depth);
+  }
+
+  @Override
+  public void onReceiveProjectiveLight(
+    final JCGLShadersType g_sh,
+    final R2MatricesProjectiveLightValuesType m)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_eye_to_light_eye, m.getMatrixProjectiveEyeToLightEye());
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_light_projection, m.getMatrixProjectiveProjection());
+  }
+
+  @Override
+  public void onReceiveInstanceTransformValues(
+    final JCGLShadersType g_sh,
+    final R2MatricesInstanceSingleValuesType m)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_modelview, m.getMatrixModelView());
+  }
+
+  @Override
+  public void onReceiveValues(
+    final JCGLTexturesType g_tex,
+    final JCGLShadersType g_sh,
+    final R2TextureUnitContextMutableType tc,
+    final R2LightProjectiveType values,
+    final R2MatricesObserverValuesType m)
+  {
+    NullCheck.notNull(g_tex);
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(tc);
+    NullCheck.notNull(values);
+    NullCheck.notNull(m);
 
     /**
      * Upload the current view rays.
@@ -393,34 +378,30 @@ public final class R2LightShaderProjectiveLambertSingle extends
 
     g_sh.shaderUniformPutVector3f(
       this.u_light_projective_position, this.position_eye3);
-  }
 
-  @Override
-  public void setLightTransformDependentValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m,
-    final R2LightProjectiveType values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
+    /**
+     * Upload the projected image.
+     */
 
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
-  }
+    this.unit_image =
+      tc.unitContextBindTexture2D(g_tex, values.getImage());
+    g_sh.shaderUniformPutTexture2DUnit(
+      this.u_light_projective_image,
+      this.unit_image);
 
-  @Override
-  public void setLightProjectiveDependentValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesProjectiveLightValuesType m,
-    final R2LightProjectiveType values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-    NullCheck.notNull(values);
+    /**
+     * Upload the light values.
+     */
 
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_eye_to_light_eye, m.getMatrixProjectiveEyeToLightEye());
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_light_projection, m.getMatrixProjectiveProjection());
+    g_sh.shaderUniformPutVector3f(
+      this.u_light_projective_color, values.getColor());
+    g_sh.shaderUniformPutFloat(
+      this.u_light_projective_intensity, values.getIntensity());
+    g_sh.shaderUniformPutFloat(
+      this.u_light_projective_inverse_falloff, 1.0f / values.getFalloff());
+    g_sh.shaderUniformPutFloat(
+      this.u_light_projective_inverse_range, 1.0f / values.getRadius());
+    g_sh.shaderUniformPutTexture2DUnit(
+      this.u_light_projective_image, this.unit_image);
   }
 }

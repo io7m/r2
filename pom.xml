@@ -20,6 +20,7 @@
     <module>io7m-r2-documentation</module>
     <module>io7m-r2-examples-jogl</module>
     <module>io7m-r2-examples</module>
+    <module>io7m-r2-filters</module>
     <module>io7m-r2-main</module>
     <module>io7m-r2-meshes-arrayobject</module>
     <module>io7m-r2-meshes-binary</module>
@@ -459,6 +460,7 @@
           <configuration>
             <source>1.8</source>
             <target>1.8</target>
+            <useIncrementalCompilation>false</useIncrementalCompilation>
           </configuration>
         </plugin>
 

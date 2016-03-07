@@ -312,6 +312,8 @@ public final class R2Main implements R2MainType
           this.depth_renderer,
           () -> R2DepthOnlyRenderer.newRenderer(g));
 
+      
+
       return new R2Main(
         ex_pool,
         ex_sources,

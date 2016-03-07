@@ -19,6 +19,7 @@ package com.io7m.r2.core.shaders.types;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.r2.core.R2ExceptionShaderParameterCountMismatch;
 import com.io7m.r2.core.R2ExceptionShaderParameterNotPresent;
 
 import java.util.Map;
@@ -51,6 +52,7 @@ public final class R2ShaderParameters
   public static JCGLProgramUniformType getUniformChecked(
     final JCGLProgramShaderUsableType p,
     final String name)
+    throws R2ExceptionShaderParameterNotPresent
   {
     final Map<String, JCGLProgramUniformType> u = p.getUniforms();
     if (u.containsKey(name)) {
@@ -66,5 +68,38 @@ public final class R2ShaderParameters
     sb.append(name);
     sb.append("\n");
     throw new R2ExceptionShaderParameterNotPresent(sb.toString());
+  }
+
+  /**
+   * Check that the given program has the expected number of uniform
+   * parameters.
+   *
+   * @param p     The program
+   * @param count The expected number of parameters
+   *
+   * @throws R2ExceptionShaderParameterCountMismatch On unexpected parameter
+   *                                                 counts
+   */
+
+  public static void checkUniformParameterCount(
+    final JCGLProgramShaderUsableType p,
+    final int count)
+    throws R2ExceptionShaderParameterCountMismatch
+  {
+    final Map<String, JCGLProgramUniformType> u = p.getUniforms();
+    if (u.size() != count) {
+      final StringBuilder sb = new StringBuilder(128);
+      sb.append("Shader parameter count is incorrect.\n");
+      sb.append("Program name:             ");
+      sb.append(p.getName());
+      sb.append("\n");
+      sb.append("Expected parameter count: ");
+      sb.append(count);
+      sb.append("\n");
+      sb.append("Actual parameter count:   ");
+      sb.append(u.size());
+      sb.append("\n");
+      throw new R2ExceptionShaderParameterCountMismatch(sb.toString());
+    }
   }
 }

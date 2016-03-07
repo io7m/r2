@@ -17,7 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.shaders.types.R2ShaderBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 
 /**
  * Default implementation of the {@link R2MaterialOpaqueBatchedType} interface.
@@ -28,13 +28,13 @@ import com.io7m.r2.core.shaders.types.R2ShaderBatchedUsableType;
 public final class R2MaterialOpaqueBatched<M> implements
   R2MaterialOpaqueBatchedType<M>
 {
-  private final long                         id;
-  private final M                            params;
-  private final R2ShaderBatchedUsableType<M> shader;
+  private final long                                 id;
+  private final M                                    params;
+  private final R2ShaderInstanceBatchedUsableType<M> shader;
 
   private R2MaterialOpaqueBatched(
     final long in_id,
-    final R2ShaderBatchedUsableType<M> in_shader,
+    final R2ShaderInstanceBatchedUsableType<M> in_shader,
     final M in_params)
   {
     this.params = NullCheck.notNull(in_params);
@@ -55,7 +55,7 @@ public final class R2MaterialOpaqueBatched<M> implements
 
   public static <M> R2MaterialOpaqueBatchedType<M> newMaterial(
     final R2IDPoolType in_pool,
-    final R2ShaderBatchedUsableType<M> in_shader,
+    final R2ShaderInstanceBatchedUsableType<M> in_shader,
     final M in_params)
   {
     NullCheck.notNull(in_pool);
@@ -76,7 +76,7 @@ public final class R2MaterialOpaqueBatched<M> implements
   }
 
   @Override
-  public R2ShaderBatchedUsableType<M> getShader()
+  public R2ShaderInstanceBatchedUsableType<M> getShader()
   {
     return this.shader;
   }

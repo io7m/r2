@@ -19,8 +19,8 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.shaders.types.R2ShaderBatchedUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
@@ -95,7 +95,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
 
     final long i_id = i.getInstanceID();
     final long m_id = m.getMaterialID();
-    final R2ShaderSingleUsableType<?> shader = m.getShader();
+    final R2ShaderInstanceSingleUsableType<?> shader = m.getShader();
     final long s_id = shader.getShaderID();
 
     /**
@@ -167,7 +167,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
 
     final long i_id = i.getInstanceID();
     final long m_id = m.getMaterialID();
-    final R2ShaderBatchedUsableType<?> shader = m.getShader();
+    final R2ShaderInstanceBatchedUsableType<?> shader = m.getShader();
     final long s_id = shader.getShaderID();
 
     /**
@@ -246,12 +246,12 @@ public final class R2DepthInstances implements R2DepthInstancesType
      * For each single instance shader {@code s}...
      */
 
-    final ObjectIterator<R2ShaderSingleUsableType<?>> bs_iter =
+    final ObjectIterator<R2ShaderInstanceSingleUsableType<?>> bs_iter =
       this.singles.instance_shaders.values().iterator();
 
     while (bs_iter.hasNext()) {
-      final R2ShaderSingleUsableType<Object> s =
-        (R2ShaderSingleUsableType<Object>) bs_iter.next();
+      final R2ShaderInstanceSingleUsableType<Object> s =
+        (R2ShaderInstanceSingleUsableType<Object>) bs_iter.next();
 
       c.onInstanceSingleShaderStart(s);
 
@@ -334,12 +334,12 @@ public final class R2DepthInstances implements R2DepthInstancesType
      * For each shader {@code s}...
      */
 
-    final ObjectIterator<R2ShaderBatchedUsableType<?>> bs_iter =
+    final ObjectIterator<R2ShaderInstanceBatchedUsableType<?>> bs_iter =
       this.batches.instance_shaders.values().iterator();
 
     while (bs_iter.hasNext()) {
-      final R2ShaderBatchedUsableType<Object> s =
-        (R2ShaderBatchedUsableType<Object>) bs_iter.next();
+      final R2ShaderInstanceBatchedUsableType<Object> s =
+        (R2ShaderInstanceBatchedUsableType<Object>) bs_iter.next();
 
       c.onInstanceBatchedShaderStart(s);
 
@@ -398,7 +398,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
       shader_to_materials;
     private final Long2ReferenceOpenHashMap<R2MaterialOpaqueSingleType<?>>
       instance_materials;
-    private final Long2ReferenceOpenHashMap<R2ShaderSingleUsableType<?>>
+    private final Long2ReferenceOpenHashMap<R2ShaderInstanceSingleUsableType<?>>
       instance_shaders;
     private final Long2ReferenceOpenHashMap<R2InstanceSingleType>
       instances;
@@ -436,7 +436,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
                                        shader_to_materials;
     private final Long2ReferenceOpenHashMap<R2MaterialOpaqueBatchedType<?>>
                                        instance_materials;
-    private final Long2ReferenceOpenHashMap<R2ShaderBatchedUsableType<?>>
+    private final Long2ReferenceOpenHashMap<R2ShaderInstanceBatchedUsableType<?>>
                                        instance_shaders;
     private final Long2ReferenceOpenHashMap<R2InstanceBatchedType>
                                        instances;

@@ -23,17 +23,15 @@ import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorReadable4FType;
 import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import org.valid4j.Assertive;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -42,7 +40,7 @@ import java.util.Optional;
 
 public final class R2ShaderDebugVisualScreen extends
   R2AbstractShader<VectorReadable4FType>
-  implements R2ShaderSingleType<VectorReadable4FType>
+  implements R2ShaderInstanceSingleScreenType<VectorReadable4FType>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_view;
@@ -65,8 +63,7 @@ public final class R2ShaderDebugVisualScreen extends
       "R2DebugVisualConstantScreen.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    final Map<String, JCGLProgramUniformType> us = p.getUniforms();
-    Assertive.ensure(us.size() == 5, "Expected number of parameters is 5");
+    R2ShaderParameters.checkUniformParameterCount(p, 5);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
       p, "R2_view.transform_projection");
@@ -81,7 +78,6 @@ public final class R2ShaderDebugVisualScreen extends
       p, "R2_color");
   }
 
-
   /**
    * Construct a new shader.
    *
@@ -92,7 +88,8 @@ public final class R2ShaderDebugVisualScreen extends
    * @return A new shader
    */
 
-  public static R2ShaderSingleType<VectorReadable4FType> newShader(
+  public static R2ShaderInstanceSingleScreenType<VectorReadable4FType>
+  newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
@@ -101,28 +98,20 @@ public final class R2ShaderDebugVisualScreen extends
   }
 
   @Override
-  public void setMaterialTextures(
-    final JCGLTexturesType g_tex,
-    final R2TextureUnitContextMutableType tc,
-    final VectorReadable4FType values)
+  public Class<VectorReadable4FType> getShaderParametersType()
   {
-    NullCheck.notNull(tc);
-    NullCheck.notNull(values);
+    return VectorReadable4FType.class;
   }
 
   @Override
-  public void setMaterialValues(
-    final JCGLShadersType g_sh,
-    final VectorReadable4FType values)
+  public void onValidate()
+    throws R2ExceptionShaderValidationFailed
   {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(values);
-
-    g_sh.shaderUniformPutVector4f(this.u_color, values);
+    // Nothing
   }
 
   @Override
-  public void setMatricesView(
+  public void onReceiveViewValues(
     final JCGLShadersType g_sh,
     final R2MatricesObserverValuesType m)
   {
@@ -141,17 +130,17 @@ public final class R2ShaderDebugVisualScreen extends
   }
 
   @Override
-  public void setMatricesInstance(
+  public void onReceiveMaterialValues(
+    final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m)
+    final R2TextureUnitContextMutableType tc,
+    final VectorReadable4FType values)
   {
+    NullCheck.notNull(g_tex);
+    NullCheck.notNull(tc);
     NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-  }
+    NullCheck.notNull(values);
 
-  @Override
-  public Class<VectorReadable4FType> getShaderParametersType()
-  {
-    return VectorReadable4FType.class;
+    g_sh.shaderUniformPutVector4f(this.u_color, values);
   }
 }

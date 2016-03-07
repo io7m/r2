@@ -28,12 +28,14 @@ public interface R2StencilRendererType extends R2DeletableType
    * Render the given stencil instances into the currently bound framebuffer.
    *
    * @param m    A matrix context
+   * @param uc   A texture unit context
    * @param area The current viewport
    * @param s    The stencil instances
    */
 
   void renderStencilsWithBoundBuffer(
     R2MatricesObserverType m,
+    R2TextureUnitContextParentType uc,
     AreaInclusiveUnsignedLType area,
     R2SceneStencilsType s);
 }

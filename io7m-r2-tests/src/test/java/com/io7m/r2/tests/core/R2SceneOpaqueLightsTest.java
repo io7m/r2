@@ -78,7 +78,7 @@ public final class R2SceneOpaqueLightsTest
   public void testSingleAlreadyVisible()
     throws Exception
   {
-    final JCGLInterfaceGL33Type g = R2TestUtilities.getGL();
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getFakeGL();
     final R2SceneOpaqueLightsType o = R2SceneOpaqueLights.newLights();
     final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
     final R2ShaderLightSingleUsableType<R2LightSingleType> s =
@@ -95,7 +95,7 @@ public final class R2SceneOpaqueLightsTest
   public void testSingleOrdering()
     throws Exception
   {
-    final JCGLInterfaceGL33Type g = R2TestUtilities.getGL();
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getFakeGL();
     final R2SceneOpaqueLightsType o = R2SceneOpaqueLights.newLights();
 
     final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
@@ -199,7 +199,7 @@ public final class R2SceneOpaqueLightsTest
   public void testSingleGroups()
     throws Exception
   {
-    final JCGLInterfaceGL33Type g = R2TestUtilities.getGL();
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getFakeGL();
     final R2SceneOpaqueLightsType o = R2SceneOpaqueLights.newLights();
 
     final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);

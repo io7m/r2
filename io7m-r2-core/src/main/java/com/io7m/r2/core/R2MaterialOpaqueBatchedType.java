@@ -16,7 +16,7 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.r2.core.shaders.types.R2ShaderBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 
 /**
  * The type of opaque materials that can be applied to batched instances.
@@ -31,5 +31,5 @@ public interface R2MaterialOpaqueBatchedType<M> extends R2MaterialType<M>
    */
 
   @Override
-  R2ShaderBatchedUsableType<M> getShader();
+  R2ShaderInstanceBatchedUsableType<M> getShader();
 }
