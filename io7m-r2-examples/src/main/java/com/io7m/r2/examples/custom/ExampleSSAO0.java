@@ -65,29 +65,29 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2ShaderBatchedType;
-import com.io7m.r2.core.R2ShaderSingleType;
-import com.io7m.r2.core.R2ShaderSourcesResources;
-import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.filters.R2FilterBoxBlur;
-import com.io7m.r2.core.filters.R2FilterBoxBlurParameters;
-import com.io7m.r2.core.filters.R2FilterCompositor;
-import com.io7m.r2.core.filters.R2FilterCompositorItem;
-import com.io7m.r2.core.filters.R2FilterCompositorParameters;
-import com.io7m.r2.core.filters.R2FilterCompositorParametersType;
-import com.io7m.r2.core.filters.R2FilterSSAO;
-import com.io7m.r2.core.filters.R2FilterSSAOParametersMutable;
-import com.io7m.r2.core.filters.R2FilterSSAOParametersType;
-import com.io7m.r2.core.filters.R2SSAOKernel;
-import com.io7m.r2.core.filters.R2SSAONoiseTexture;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
+import com.io7m.r2.filters.R2FilterBoxBlur;
+import com.io7m.r2.filters.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.R2FilterCompositor;
+import com.io7m.r2.filters.R2FilterCompositorItem;
+import com.io7m.r2.filters.R2FilterCompositorParameters;
+import com.io7m.r2.filters.R2FilterCompositorParametersType;
+import com.io7m.r2.filters.R2FilterSSAO;
+import com.io7m.r2.filters.R2FilterSSAOParametersMutable;
+import com.io7m.r2.filters.R2FilterSSAOParametersType;
+import com.io7m.r2.filters.R2SSAOKernel;
+import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.shaders.R2Shaders;
@@ -102,6 +102,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
+  private JCGLInterfaceGL33Type g33;
+
   private R2SceneStencilsType stencils;
   private R2SceneOpaquesType  opaques;
 
@@ -113,7 +115,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private JCGLClearSpecification       geom_clear_spec;
   private JCGLClearSpecification       screen_clear_spec;
 
-  private R2ShaderSingleType<R2SurfaceShaderBasicParameters>
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
     geom_shader;
   private R2SurfaceShaderBasicParameters
     geom_shader_params;
@@ -124,15 +126,12 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private R2InstanceBatchedDynamicType batched_instance;
   private R2TransformOST[]
                                        batched_transforms;
-  private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
+  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters>
                                        batched_geom_shader;
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters>
                                        batched_geom_material;
 
-  private R2FilterSSAOParametersMutable
-    filter_ssao_params;
-  private R2FilterType<R2FilterSSAOParametersType>
-    filter_ssao;
+  // Compositor
 
   private R2FilterType<R2FilterCompositorParametersType>
     filter_compositor;
@@ -141,18 +140,22 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
 
   private R2MainType main;
 
+  // SSAO
+
+  private R2FilterSSAOParametersMutable
+    filter_ssao_params;
+  private R2FilterType<R2FilterSSAOParametersType>
+    filter_ssao;
   private R2RenderTargetPoolUsableType<
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferUsableType>
     pool_ssao;
-
   private R2FilterType<R2FilterBoxBlurParameters<
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferUsableType,
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferUsableType>>
     filter_blur_ssao;
-
   private R2FilterBoxBlurParameters<
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferUsableType,
@@ -411,6 +414,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     final R2MainType m,
     final int frame)
   {
+    this.g33 = g;
+
     this.stencils.stencilsReset();
     this.stencils.stencilsSetMode(
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
@@ -430,54 +435,57 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         new VectorI3F(0.0f, 1.0f, 0.0f));
     }
 
-    {
-      final R2MatricesType matrices = m.getMatrices();
+    final R2MatricesType matrices = m.getMatrices();
+    matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+      final R2TextureUnitContextParentType uc =
+        t.main.getTextureUnitAllocator().getRootContext();
+      final JCGLFramebufferUsableType gbuffer_fb =
+        t.gbuffer.getPrimaryFramebuffer();
 
-      matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
-        final R2TextureUnitContextParentType uc =
-          t.main.getTextureUnitAllocator().getRootContext();
-        final JCGLFramebufferUsableType gbuffer_fb =
-          t.gbuffer.getPrimaryFramebuffer();
+      final JCGLFramebuffersType g_fb =
+        t.g33.getFramebuffers();
+      final JCGLClearType g_cl =
+        t.g33.getClear();
+      final JCGLColorBufferMaskingType g_cb =
+        t.g33.getColorBufferMasking();
+      final JCGLStencilBuffersType g_sb =
+        t.g33.getStencilBuffers();
+      final JCGLDepthBuffersType g_db =
+        t.g33.getDepthBuffers();
 
-        final JCGLFramebuffersType g_fb = g.getFramebuffers();
-        final JCGLClearType g_cl = g.getClear();
-        final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
-        final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
-        final JCGLDepthBuffersType g_db = g.getDepthBuffers();
+      g_fb.framebufferDrawBind(gbuffer_fb);
+      g_cb.colorBufferMask(true, true, true, true);
+      g_db.depthBufferWriteEnable();
+      g_sb.stencilBufferMask(
+        JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
+      g_cl.clear(t.geom_clear_spec);
 
-        g_fb.framebufferDrawBind(gbuffer_fb);
-        g_cb.colorBufferMask(true, true, true, true);
-        g_db.depthBufferWriteEnable();
-        g_sb.stencilBufferMask(
-          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-        g_cl.clear(t.geom_clear_spec);
+      t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
+        mo,
+        m.getTextureUnitAllocator().getRootContext(),
+        t.gbuffer.getArea(),
+        t.stencils);
+      t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
+        t.gbuffer.getArea(),
+        m.getTextureUnitAllocator().getRootContext(),
+        mo,
+        t.opaques);
+      g_fb.framebufferDrawUnbind();
 
-        t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
-          mo,
-          t.gbuffer.getArea(),
-          t.stencils);
-        t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
-          t.gbuffer.getArea(),
-          m.getTextureUnitAllocator().getRootContext(),
-          mo,
-          t.opaques);
-        g_fb.framebufferDrawUnbind();
+      t.filter_ssao_params.setSceneObserverValues(mo);
+      t.filter_ssao.runFilter(uc, t.filter_ssao_params);
+      t.filter_blur_ssao.runFilter(uc, t.filter_blur_ssao_params);
 
-        t.filter_ssao_params.setSceneObserverValues(mo);
-        t.filter_ssao.runFilter(uc, t.filter_ssao_params);
-        t.filter_blur_ssao.runFilter(uc, t.filter_blur_ssao_params);
+      g_cb.colorBufferMask(true, true, true, true);
+      g_db.depthBufferWriteEnable();
+      g_sb.stencilBufferMask(
+        JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
+      g_cl.clear(t.screen_clear_spec);
 
-        g_cb.colorBufferMask(true, true, true, true);
-        g_db.depthBufferWriteEnable();
-        g_sb.stencilBufferMask(
-          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-        g_cl.clear(t.screen_clear_spec);
+      t.filter_compositor.runFilter(uc, t.filter_comp_parameters);
 
-        t.filter_compositor.runFilter(uc, t.filter_comp_parameters);
-
-        return Unit.unit();
-      });
-    }
+      return Unit.unit();
+    });
   }
 
   @Override

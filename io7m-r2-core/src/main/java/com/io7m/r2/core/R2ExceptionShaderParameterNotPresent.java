@@ -21,7 +21,8 @@ package com.io7m.r2.core;
  * expected.
  */
 
-public final class R2ExceptionShaderParameterNotPresent extends R2Exception
+public final class R2ExceptionShaderParameterNotPresent
+  extends R2ExceptionShaderValidationFailed
 {
   /**
    * Construct an exception.

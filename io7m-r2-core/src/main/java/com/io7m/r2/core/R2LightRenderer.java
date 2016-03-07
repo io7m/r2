@@ -49,6 +49,7 @@ import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
@@ -175,14 +176,12 @@ public final class R2LightRenderer implements R2LightRendererType
       this.light_consumer.gbuffer = gbuffer;
       this.light_consumer.matrices = m;
       this.light_consumer.texture_context = uc;
-      this.light_consumer.viewport = lbuffer_area;
       try {
         s.opaqueLightsExecute(this.light_consumer);
       } finally {
         this.light_consumer.matrices = null;
         this.light_consumer.gbuffer = null;
         this.light_consumer.texture_context = null;
-        this.light_consumer.viewport = null;
       }
     }
   }
@@ -208,10 +207,8 @@ public final class R2LightRenderer implements R2LightRendererType
     private @Nullable JCGLTextureUnitType            unit_depth;
     private @Nullable R2TextureUnitContextParentType texture_context;
 
-    private R2LightSingleType                                light;
     private R2ShaderLightSingleUsableType<R2LightSingleType> light_shader;
     private R2TextureUnitContextType                         light_base_context;
-    private AreaInclusiveUnsignedLType                       viewport;
 
     LightConsumer(final JCGLInterfaceGL33Type in_g)
     {
@@ -397,8 +394,8 @@ public final class R2LightRenderer implements R2LightRendererType
     public <M extends R2LightSingleType> void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      this.shaders.shaderActivateProgram(s.getShaderProgram());
-      s.setGBuffer(
+      s.onActivate(this.shaders);
+      s.onReceiveBoundGeometryBufferTextures(
         this.shaders,
         this.gbuffer,
         this.unit_albedo,
@@ -419,7 +416,6 @@ public final class R2LightRenderer implements R2LightRendererType
       final R2ShaderLightSingleUsableType<M> s,
       final M i)
     {
-      this.light = i;
       this.light_shader = (R2ShaderLightSingleUsableType<R2LightSingleType>) s;
 
       try {
@@ -438,12 +434,7 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLRenderStates.activate(this.g33, this.render_state_volume);
           }
 
-          s.setLightTextures(
-            this.textures, uc, i);
-          s.setLightViewDependentValues(
-            this.shaders, this.matrices, this.viewport, i);
-          s.setLightValues(
-            this.shaders, this.textures, i);
+          s.onReceiveValues(this.textures, this.shaders, uc, i, this.matrices);
 
           if (i instanceof R2LightProjectiveType) {
             final R2LightProjectiveType it = (R2LightProjectiveType) i;
@@ -452,10 +443,9 @@ public final class R2LightRenderer implements R2LightRendererType
               it.getProjection(),
               this,
               (mi, t) -> {
-                t.light_shader.setLightTransformDependentValues(
-                  t.shaders, mi, t.light);
-                t.light_shader.setLightProjectiveDependentValues(
-                  t.shaders, mi, t.light);
+                t.light_shader.onReceiveProjectiveLight(t.shaders, mi);
+                t.light_shader.onReceiveInstanceTransformValues(t.shaders, mi);
+                t.light_shader.onValidate();
                 t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
                 return Unit.unit();
               });
@@ -465,8 +455,8 @@ public final class R2LightRenderer implements R2LightRendererType
               PMatrixI3x3F.identity(),
               this,
               (mi, t) -> {
-                t.light_shader.setLightTransformDependentValues(
-                  t.shaders, mi, t.light);
+                t.light_shader.onReceiveInstanceTransformValues(t.shaders, mi);
+                t.light_shader.onValidate();
                 t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
                 return Unit.unit();
               });
@@ -477,7 +467,6 @@ public final class R2LightRenderer implements R2LightRendererType
         }
 
       } finally {
-        this.light = null;
         this.light_shader = null;
       }
     }
@@ -486,7 +475,7 @@ public final class R2LightRenderer implements R2LightRendererType
     public <M extends R2LightSingleType> void onLightSingleShaderFinish(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      this.shaders.shaderDeactivateProgram();
+      s.onDeactivate(this.shaders);
     }
 
     @Override

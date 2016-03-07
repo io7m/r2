@@ -26,7 +26,19 @@ package com.io7m.r2.core;
 public interface R2RenderTargetPoolType<
   D extends R2RenderTargetDescriptionType,
   T extends R2RenderTargetUsableType<D>>
-  extends R2DeletableType, R2RenderTargetPoolUsableType<D, T>
+  extends R2RenderTargetPoolUsableType<D, T>
 {
-  // No extra methods
+  /**
+   * Delete the pool.
+   *
+   * @param c A texture unit context
+   */
+
+  void delete(R2TextureUnitContextParentType c);
+
+  /**
+   * @return {@code true} iff the pool is deleted
+   */
+
+  boolean isDeleted();
 }

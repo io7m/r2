@@ -18,19 +18,15 @@ package com.io7m.r2.examples.custom;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
-import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.api.JCGLClearType;
-import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
 import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
-import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
@@ -41,9 +37,6 @@ import com.io7m.r2.core.R2DepthOnlyBufferDescription;
 import com.io7m.r2.core.R2DepthOnlyBufferType;
 import com.io7m.r2.core.R2DepthPrecision;
 import com.io7m.r2.core.R2DepthRendererType;
-import com.io7m.r2.core.R2GeometryBuffer;
-import com.io7m.r2.core.R2GeometryBufferDescription;
-import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
@@ -51,19 +44,14 @@ import com.io7m.r2.core.R2MaterialOpaqueSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionFOV;
-import com.io7m.r2.core.R2SceneOpaques;
-import com.io7m.r2.core.R2SceneOpaquesType;
-import com.io7m.r2.core.R2SceneStencils;
-import com.io7m.r2.core.R2SceneStencilsMode;
-import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2ShaderSingleType;
-import com.io7m.r2.core.R2ShaderSourcesResources;
-import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
@@ -81,25 +69,25 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private R2SceneStencilsType    stencils;
-  private R2ProjectionFOV        projection;
-  private R2SceneOpaquesType     opaques;
-  private R2GeometryBufferType   gbuffer;
+  private R2ProjectionFOV projection;
 
-  private R2ShaderSingleType<R2SurfaceShaderBasicParameters>
-                                 shader;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
+    shader;
   private R2SurfaceShaderBasicParameters
-                                 shader_params;
+    shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-                                 material;
-  private R2UnitSphereType       sphere;
-  private R2InstanceSingleType   instance;
+    material;
+
+  private R2UnitSphereType     sphere;
+  private R2InstanceSingleType instance;
+
   private R2DepthOnlyBufferType  dbuffer;
-  private JCGLClearSpecification geom_clear_spec;
   private JCGLClearSpecification depth_clear_spec;
-  private R2MainType             main;
   private R2DepthRendererType    depth_renderer;
   private R2DepthInstancesType   depth_instances;
+
+  private R2MainType            main;
+  private JCGLInterfaceGL33Type g33;
 
   public ExampleDepthOnly0()
   {
@@ -115,21 +103,7 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
   {
     this.main = NullCheck.notNull(m);
 
-    this.opaques = R2SceneOpaques.newOpaques();
     this.depth_instances = R2DepthInstances.newDepthInstances();
-    this.stencils = R2SceneStencils.newMasks();
-
-    {
-      final R2GeometryBufferDescription.Builder gdb =
-        R2GeometryBufferDescription.builder();
-      gdb.setArea(area);
-
-      this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
-        g.getFramebuffers(),
-        g.getTextures(),
-        m.getTextureUnitAllocator().getRootContext(),
-        gdb.build());
-    }
 
     {
       final R2DepthOnlyBufferDescription.Builder desc =
@@ -186,15 +160,6 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
     {
       final JCGLClearSpecification.Builder csb =
         JCGLClearSpecification.builder();
-      csb.setStencilBufferClear(0);
-      csb.setDepthBufferClear(1.0);
-      csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
-      this.geom_clear_spec = csb.build();
-    }
-
-    {
-      final JCGLClearSpecification.Builder csb =
-        JCGLClearSpecification.builder();
       csb.setColorBufferClear(Optional.empty());
       csb.setStencilBufferClear(OptionalInt.empty());
       csb.setDepthBufferClear(1.0);
@@ -210,12 +175,7 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
     final R2MainType m,
     final int frame)
   {
-    this.stencils.stencilsReset();
-    this.stencils.stencilsSetMode(
-      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
-
-    this.opaques.opaquesReset();
-    this.opaques.opaquesAddSingleInstance(this.instance, this.material);
+    this.g33 = g;
 
     this.depth_instances.depthsReset();
     this.depth_instances.depthsAddSingleInstance(this.instance, this.material);
@@ -230,55 +190,28 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
         new VectorI3F(0.0f, 1.0f, 0.0f));
     }
 
-    {
-      final JCGLFramebuffersType g_fb = g.getFramebuffers();
-      final JCGLClearType g_cl = g.getClear();
-      final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
-      final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
-      final JCGLDepthBuffersType g_db = g.getDepthBuffers();
+    final R2MatricesType matrices = m.getMatrices();
+    matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+      final JCGLFramebufferUsableType dbuffer_fb =
+        t.dbuffer.getPrimaryFramebuffer();
 
-      final R2MatricesType matrices = m.getMatrices();
+      final JCGLFramebuffersType g_fb = t.g33.getFramebuffers();
+      final JCGLClearType g_cl = t.g33.getClear();
+      final JCGLDepthBuffersType g_db = t.g33.getDepthBuffers();
 
-      matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
-        final JCGLFramebufferUsableType gbuffer_fb =
-          t.gbuffer.getPrimaryFramebuffer();
-        final JCGLFramebufferUsableType dbuffer_fb =
-          t.dbuffer.getPrimaryFramebuffer();
+      g_fb.framebufferDrawBind(dbuffer_fb);
+      g_db.depthBufferWriteEnable();
+      g_cl.clear(t.depth_clear_spec);
 
-        g_fb.framebufferDrawBind(gbuffer_fb);
-        g_cb.colorBufferMask(true, true, true, true);
-        g_db.depthBufferWriteEnable();
-        g_sb.stencilBufferMask(
-          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-        g_cl.clear(t.geom_clear_spec);
-
-        t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
-          mo,
-          t.gbuffer.getArea(),
-          t.stencils);
-        t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
-          t.gbuffer.getArea(),
-          t.main.getTextureUnitAllocator().getRootContext(),
-          mo,
-          t.opaques);
-        g_fb.framebufferDrawUnbind();
-
-        g_fb.framebufferDrawBind(dbuffer_fb);
-        g_db.depthBufferWriteEnable();
-        g_cl.clear(t.depth_clear_spec);
-
-        t.depth_renderer.renderDepthWithBoundBuffer(
-          t.dbuffer.getArea(),
-          t.main.getTextureUnitAllocator().getRootContext(),
-          mo,
-          t.depth_instances);
-
-        g_fb.framebufferDrawUnbind();
-        return Unit.unit();
-      });
+      t.depth_renderer.renderDepthWithBoundBuffer(
+        t.dbuffer.getArea(),
+        t.main.getTextureUnitAllocator().getRootContext(),
+        mo,
+        t.depth_instances);
 
       g_fb.framebufferDrawUnbind();
-    }
+      return Unit.unit();
+    });
   }
 
   @Override

@@ -18,6 +18,8 @@ package com.io7m.r2.core;
 
 // @formatter:off
 
+import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
+
 /**
  * <p>The type of consumers of opaque scene instances.</p>
  *

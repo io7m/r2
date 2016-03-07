@@ -83,40 +83,41 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2ShaderBatchedType;
-import com.io7m.r2.core.R2ShaderLightSingleType;
-import com.io7m.r2.core.R2ShaderSingleType;
-import com.io7m.r2.core.R2ShaderSourcesResources;
-import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
-import com.io7m.r2.core.filters.R2FilterBilateralBlurDepthAware;
-import com.io7m.r2.core.filters.R2FilterBilateralBlurDepthAwareParameters;
-import com.io7m.r2.core.filters.R2FilterCompositor;
-import com.io7m.r2.core.filters.R2FilterCompositorItem;
-import com.io7m.r2.core.filters.R2FilterCompositorParameters;
-import com.io7m.r2.core.filters.R2FilterCompositorParametersType;
-import com.io7m.r2.core.filters.R2FilterLightApplicator;
-import com.io7m.r2.core.filters.R2FilterLightApplicatorParameters;
-import com.io7m.r2.core.filters.R2FilterLightApplicatorParametersType;
-import com.io7m.r2.core.filters.R2FilterOcclusionApplicator;
-import com.io7m.r2.core.filters.R2FilterOcclusionApplicatorParametersMutable;
-import com.io7m.r2.core.filters.R2FilterOcclusionApplicatorParametersType;
-import com.io7m.r2.core.filters.R2FilterSSAO;
-import com.io7m.r2.core.filters.R2FilterSSAOParametersMutable;
-import com.io7m.r2.core.filters.R2FilterSSAOParametersType;
-import com.io7m.r2.core.filters.R2SSAOKernel;
-import com.io7m.r2.core.filters.R2SSAONoiseTexture;
-import com.io7m.r2.core.shaders.R2LightShaderAmbientSingle;
-import com.io7m.r2.core.shaders.R2LightShaderProjectiveLambertSingle;
-import com.io7m.r2.core.shaders.R2LightShaderSphericalLambertBlinnPhongSingle;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.R2SurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
+import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertSingle;
+import com.io7m.r2.core.shaders.provided
+  .R2LightShaderSphericalLambertBlinnPhongSingle;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
+import com.io7m.r2.filters.R2FilterBilateralBlurDepthAware;
+import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParameters;
+import com.io7m.r2.filters.R2FilterCompositor;
+import com.io7m.r2.filters.R2FilterCompositorItem;
+import com.io7m.r2.filters.R2FilterCompositorParameters;
+import com.io7m.r2.filters.R2FilterCompositorParametersType;
+import com.io7m.r2.filters.R2FilterLightApplicator;
+import com.io7m.r2.filters.R2FilterLightApplicatorParameters;
+import com.io7m.r2.filters.R2FilterLightApplicatorParametersType;
+import com.io7m.r2.filters.R2FilterOcclusionApplicator;
+import com.io7m.r2.filters.R2FilterOcclusionApplicatorParametersMutable;
+import com.io7m.r2.filters.R2FilterOcclusionApplicatorParametersType;
+import com.io7m.r2.filters.R2FilterSSAO;
+import com.io7m.r2.filters.R2FilterSSAOParametersMutable;
+import com.io7m.r2.filters.R2FilterSSAOParametersType;
+import com.io7m.r2.filters.R2SSAOKernel;
+import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.shaders.R2Shaders;
@@ -145,7 +146,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
   private R2ImageBufferType            ibuffer;
   private R2AmbientOcclusionBufferType abuffer;
 
-  private R2ShaderSingleType<R2SurfaceShaderBasicParameters>
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
     geom_shader;
   private R2SurfaceShaderBasicParameters
     geom_shader_params;
@@ -171,7 +172,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     batched_instance;
   private R2TransformOST[]
     batched_transforms;
-  private R2ShaderBatchedType<R2SurfaceShaderBasicParameters>
+  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters>
     batched_geom_shader;
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters>
     batched_geom_material;
@@ -724,6 +725,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
         t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
           mo,
+          t.main.getTextureUnitAllocator().getRootContext(),
           t.gbuffer.getArea(),
           t.stencils);
 

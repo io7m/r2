@@ -15,7 +15,7 @@
  */
 
 /**
- * Default provided shaders.
+ * Shader types and implementations.
  */
 
 @com.io7m.jnull.NonNullByDefault package com.io7m.r2.core.shaders;

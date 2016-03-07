@@ -20,7 +20,7 @@ import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.r2.core.R2Bilinear;
 import com.io7m.r2.core.R2Core;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.R2Stencils;
 import org.junit.Test;
 

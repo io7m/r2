@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
+
 /**
  * The type of opaque materials that can be applied to single instances.
  *
@@ -29,5 +31,5 @@ public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
    */
 
   @Override
-  R2ShaderSingleUsableType<M> getShader();
+  R2ShaderInstanceSingleUsableType<M> getShader();
 }

@@ -16,7 +16,6 @@
 
 package com.io7m.r2.core.debug;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
@@ -29,6 +28,7 @@ import com.io7m.jtensors.parameterized.PVector4FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
 import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightDirectionalSingle;
@@ -36,12 +36,14 @@ import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2ShaderLightScreenSingleType;
-import com.io7m.r2.core.R2ShaderLightSingleType;
-import com.io7m.r2.core.R2ShaderParameters;
-import com.io7m.r2.core.R2ShaderSourcesType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderProjectiveRequired;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.valid4j.Assertive;
@@ -135,8 +137,10 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return new R2DebugShaderLightDirectionalConstantSingle(
-      in_shaders, in_sources, in_pool);
+    return R2ShaderLightVerifier.newVerifier(
+      new R2DebugShaderLightDirectionalConstantSingle(
+        in_shaders, in_sources, in_pool),
+      R2ShaderProjectiveRequired.R2_SHADER_PROJECTIVE_NOT_REQUIRED);
   }
 
   @Override
@@ -147,7 +151,14 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
   }
 
   @Override
-  public void setGBuffer(
+  public void onValidate()
+    throws R2ExceptionShaderValidationFailed
+  {
+
+  }
+
+  @Override
+  public void onReceiveBoundGeometryBufferTextures(
     final JCGLShadersType g_sh,
     final R2GeometryBufferUsableType g,
     final JCGLTextureUnitType unit_albedo,
@@ -164,43 +175,37 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
   }
 
   @Override
-  public void setLightTextures(
-    final JCGLTexturesType g_tex,
-    final R2TextureUnitContextMutableType uc,
-    final R2LightDirectionalSingle values)
-  {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(uc);
-    NullCheck.notNull(values);
-  }
-
-  @Override
-  public void setLightValues(
+  public void onReceiveProjectiveLight(
     final JCGLShadersType g_sh,
-    final JCGLTexturesType g_tex,
-    final R2LightDirectionalSingle v)
+    final R2MatricesProjectiveLightValuesType m)
   {
     NullCheck.notNull(g_sh);
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(v);
-
-    g_sh.shaderUniformPutVector3f(
-      this.u_light_directional_color, v.getColor());
-    g_sh.shaderUniformPutFloat(
-      this.u_light_directional_intensity, v.getIntensity());
+    NullCheck.notNull(m);
   }
 
   @Override
-  public void setLightViewDependentValues(
+  public void onReceiveInstanceTransformValues(
     final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightDirectionalSingle values)
+    final R2MatricesInstanceSingleValuesType m)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_modelview, m.getMatrixModelView());
+  }
+
+  @Override
+  public void onReceiveValues(
+    final JCGLTexturesType g_tex,
+    final JCGLShadersType g_sh,
+    final R2TextureUnitContextMutableType tc,
+    final R2LightDirectionalSingle values,
+    final R2MatricesObserverValuesType m)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(m);
     NullCheck.notNull(values);
-    NullCheck.notNull(viewport);
 
     /**
      * Upload the projections for the light volume.
@@ -238,29 +243,14 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
 
     g_sh.shaderUniformPutVector3f(
       this.u_light_directional_direction, this.direction_eye3);
-  }
 
-  @Override
-  public void setLightTransformDependentValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m,
-    final R2LightDirectionalSingle values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
+    /**
+     * Upload the light values.
+     */
 
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
-  }
-
-  @Override
-  public void setLightProjectiveDependentValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesProjectiveLightValuesType m,
-    final R2LightDirectionalSingle values)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-    NullCheck.notNull(values);
+    g_sh.shaderUniformPutVector3f(
+      this.u_light_directional_color, values.getColor());
+    g_sh.shaderUniformPutFloat(
+      this.u_light_directional_intensity, values.getIntensity());
   }
 }

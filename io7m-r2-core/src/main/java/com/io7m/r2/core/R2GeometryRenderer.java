@@ -43,6 +43,8 @@ import com.io7m.jcanephora.renderstate.JCGLStencilStateMutable;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import org.valid4j.Assertive;
 
 import java.util.Optional;
@@ -249,10 +251,10 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceBatchedShaderStart(
-      final R2ShaderBatchedUsableType<M> s)
+      final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      this.shaders.shaderActivateProgram(s.getShaderProgram());
-      s.setMatricesView(this.shaders, this.matrices);
+      s.onActivate(this.shaders);
+      s.onReceiveViewValues(this.shaders, this.matrices);
     }
 
     @Override
@@ -261,10 +263,10 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     {
       this.material_texture_context = this.texture_context.unitContextNew();
 
-      final R2ShaderBatchedUsableType<M> s = material.getShader();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
       final M p = material.getShaderParameters();
-      s.setMaterialTextures(this.textures, this.material_texture_context, p);
-      s.setMaterialValues(this.shaders, p);
+      s.onReceiveMaterialValues(
+        this.textures, this.shaders, this.material_texture_context, p);
     }
 
     @Override
@@ -272,6 +274,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2MaterialOpaqueBatchedType<M> material,
       final R2InstanceBatchedType i)
     {
+      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      s.onValidate();
+
       this.array_objects.arrayObjectBind(i.getArrayObject());
       this.draw.drawElementsInstanced(
         JCGLPrimitives.PRIMITIVE_TRIANGLES, i.getRenderCount());
@@ -287,17 +292,17 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceBatchedShaderFinish(
-      final R2ShaderBatchedUsableType<M> s)
+      final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      this.shaders.shaderDeactivateProgram();
+      s.onDeactivate(this.shaders);
     }
 
     @Override
     public <M> void onInstanceSingleShaderStart(
-      final R2ShaderSingleUsableType<M> s)
+      final R2ShaderInstanceSingleUsableType<M> s)
     {
-      this.shaders.shaderActivateProgram(s.getShaderProgram());
-      s.setMatricesView(this.shaders, this.matrices);
+      s.onActivate(this.shaders);
+      s.onReceiveViewValues(this.shaders, this.matrices);
     }
 
     @Override
@@ -307,10 +312,10 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.material_single = material;
       this.material_texture_context = this.texture_context.unitContextNew();
 
-      final R2ShaderSingleUsableType<M> s = material.getShader();
+      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
       final M p = material.getShaderParameters();
-      s.setMaterialTextures(this.textures, this.material_texture_context, p);
-      s.setMaterialValues(this.shaders, p);
+      s.onReceiveMaterialValues(
+        this.textures, this.shaders, this.material_texture_context, p);
     }
 
     @Override
@@ -330,8 +335,10 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
         i.getUVMatrix(),
         this,
         (mi, t) -> {
-          final R2ShaderSingleUsableType<?> s = t.material_single.getShader();
-          s.setMatricesInstance(t.shaders, mi);
+          final R2ShaderInstanceSingleUsableType<?> s =
+            t.material_single.getShader();
+          s.onReceiveInstanceTransformValues(t.shaders, mi);
+          s.onValidate();
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
           return Unit.unit();
         });
@@ -347,9 +354,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceSingleShaderFinish(
-      final R2ShaderSingleUsableType<M> s)
+      final R2ShaderInstanceSingleUsableType<M> s)
     {
-      this.shaders.shaderDeactivateProgram();
+      s.onDeactivate(this.shaders);
     }
 
     @Override

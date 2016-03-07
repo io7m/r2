@@ -18,6 +18,9 @@ package com.io7m.r2.core;
 
 // @formatter:off
 
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
+
 /**
  * <p>The type of consumers of depth instances.</p>
  *
@@ -56,7 +59,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceBatchedShaderStart(
-    R2ShaderBatchedUsableType<M> s);
+    R2ShaderInstanceBatchedUsableType<M> s);
 
   /**
    * Called when new material settings should be assigned, for batched
@@ -100,7 +103,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceBatchedShaderFinish(
-    R2ShaderBatchedUsableType<M> s);
+    R2ShaderInstanceBatchedUsableType<M> s);
 
   /**
    * Called when a new shader should be activated in order to start rendering
@@ -111,7 +114,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceSingleShaderStart(
-    R2ShaderSingleUsableType<M> s);
+    R2ShaderInstanceSingleUsableType<M> s);
 
   /**
    * Called when new material settings should be assigned, for single
@@ -164,7 +167,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceSingleShaderFinish(
-    R2ShaderSingleUsableType<M> s);
+    R2ShaderInstanceSingleUsableType<M> s);
 
   /**
    * Called when rendering of instances is finished.

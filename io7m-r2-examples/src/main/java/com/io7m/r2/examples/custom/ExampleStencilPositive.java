@@ -55,6 +55,7 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
   private R2ProjectionFOV projection;
   private R2UnitQuadType quad;
   private R2InstanceSingleType instance;
+  private R2MainType main;
 
   public ExampleStencilPositive()
   {
@@ -99,6 +100,8 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     final R2MainType m,
     final int frame)
   {
+    this.main = m;
+
     this.stencils.stencilsReset();
     this.stencils.stencilsSetMode(
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_POSITIVE);
@@ -112,7 +115,11 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     g_st.stencilBufferClear(0);
 
     this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
-      t.stencil_renderer.renderStencilsWithBoundBuffer(mo, area, t.stencils);
+      t.stencil_renderer.renderStencilsWithBoundBuffer(
+        mo,
+        t.main.getTextureUnitAllocator().getRootContext(),
+        area,
+        t.stencils);
       return Unit.unit();
     });
   }

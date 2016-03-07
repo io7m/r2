@@ -34,8 +34,8 @@ import com.io7m.r2.core.R2LightRenderer;
 import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2Matrices;
 import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.R2ShaderSourcesResources;
-import com.io7m.r2.core.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRenderer;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaults;
@@ -311,6 +311,8 @@ public final class R2Main implements R2MainType
         Builder.compute(
           this.depth_renderer,
           () -> R2DepthOnlyRenderer.newRenderer(g));
+
+      
 
       return new R2Main(
         ex_pool,

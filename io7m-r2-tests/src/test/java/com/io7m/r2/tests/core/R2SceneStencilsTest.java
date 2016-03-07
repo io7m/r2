@@ -98,7 +98,7 @@ public final class R2SceneStencilsTest
     final List<JCGLArrayObjectUsableType> aos = new ArrayList<>(2);
     final List<R2InstanceType> is = new ArrayList<>(6);
 
-    final JCGLInterfaceGL33Type g = R2TestUtilities.getGL();
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getFakeGL();
 
     final JCGLArrayObjectType a1 = R2TestUtilities.getArrayObject(g);
     final JCGLArrayObjectType a2 = R2TestUtilities.getArrayObject(g);

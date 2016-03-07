@@ -17,7 +17,7 @@
 package com.io7m.r2.tests.jogl;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
-import com.io7m.r2.tests.core.R2SSAONoiseTextureContract;
+import com.io7m.r2.tests.filters.R2SSAONoiseTextureContract;
 
 public final class R2SSAONoiseTextureTest extends R2SSAONoiseTextureContract
 {

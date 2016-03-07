@@ -17,6 +17,12 @@
 package com.io7m.r2.tests.jogl.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jtensors.VectorReadable4FType;
+import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualSingle;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.tests.core.shaders.R2ShaderDebugVisualSingleContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
@@ -30,5 +36,15 @@ public final class R2ShaderDebugVisualSingleTest extends
     final int stencil_bits)
   {
     return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
+
+  @Override
+  protected R2ShaderInstanceSingleType<VectorReadable4FType>
+  newShaderWithVerifier(
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderSourcesType sources,
+    final R2IDPoolType pool)
+  {
+    return R2ShaderDebugVisualSingle.newShader(g.getShaders(), sources, pool);
   }
 }
