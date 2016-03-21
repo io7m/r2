@@ -49,6 +49,16 @@
     "fragment": "/com/io7m/r2/shaders/sources/R2LightDirectionalDebugConstantSingle.frag"
   },
 
+  "R2DepthBasicSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DepthSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DepthBasicSingle.frag"
+  },
+
+  "R2DepthBasicBatched": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DepthBatched.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DepthBasicBatched.frag"
+  },
+
   "R2SurfaceBasicSingle": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceSingle.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2SurfaceBasicSingle.frag"

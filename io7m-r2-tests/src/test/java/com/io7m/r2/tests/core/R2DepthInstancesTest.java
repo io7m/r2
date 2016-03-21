@@ -25,12 +25,12 @@ import com.io7m.r2.core.R2DepthInstancesConsumerType;
 import com.io7m.r2.core.R2DepthInstancesType;
 import com.io7m.r2.core.R2InstanceBatchedType;
 import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
-import com.io7m.r2.core.R2MaterialOpaqueSingleType;
+import com.io7m.r2.core.R2MaterialDepthBatchedType;
+import com.io7m.r2.core.R2MaterialDepthSingleType;
 import com.io7m.r2.core.R2MaterialType;
 import com.io7m.r2.core.R2RendererExceptionInstanceAlreadyVisible;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderUsableType;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import org.hamcrest.core.StringStartsWith;
@@ -90,12 +90,12 @@ public final class R2DepthInstancesTest
     final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
     final R2InstanceSingleType i =
       R2TestUtilities.getInstanceSingle(g, a0, 0L);
-    final R2ShaderInstanceSingleUsableType<Object> s =
-      R2TestUtilities.getShaderInstanceSingle(g, 0L);
-    final R2MaterialOpaqueSingleType<Object> m0 =
-      R2TestUtilities.getMaterialSingle(g, s, new Object(), 0L);
-    final R2MaterialOpaqueSingleType<Object> m1 =
-      R2TestUtilities.getMaterialSingle(g, s, new Object(), 1L);
+    final R2ShaderDepthSingleUsableType<Object> s =
+      R2TestUtilities.getShaderDepthSingle(g, 0L);
+    final R2MaterialDepthSingleType<Object> m0 =
+      R2TestUtilities.getMaterialDepth(g, s, new Object(), 0L);
+    final R2MaterialDepthSingleType<Object> m1 =
+      R2TestUtilities.getMaterialDepth(g, s, new Object(), 1L);
 
     o.depthsAddSingleInstance(i, m0);
     this.expected.expect(R2RendererExceptionInstanceAlreadyVisible.class);
@@ -167,19 +167,19 @@ public final class R2DepthInstancesTest
     final R2InstanceSingleType i23a1 =
       R2TestUtilities.getInstanceSingle(g, a1, 23L);
 
-    final R2ShaderInstanceSingleUsableType<Object> s0 =
-      R2TestUtilities.getShaderInstanceSingle(g, 0L);
-    final R2ShaderInstanceSingleUsableType<Object> s1 =
-      R2TestUtilities.getShaderInstanceSingle(g, 1L);
+    final R2ShaderDepthSingleUsableType<Object> s0 =
+      R2TestUtilities.getShaderDepthSingle(g, 0L);
+    final R2ShaderDepthSingleUsableType<Object> s1 =
+      R2TestUtilities.getShaderDepthSingle(g, 1L);
 
-    final R2MaterialOpaqueSingleType<Object> m0 =
-      R2TestUtilities.getMaterialSingle(g, s0, new Object(), 0L);
-    final R2MaterialOpaqueSingleType<Object> m1 =
-      R2TestUtilities.getMaterialSingle(g, s0, new Object(), 1L);
-    final R2MaterialOpaqueSingleType<Object> m2 =
-      R2TestUtilities.getMaterialSingle(g, s1, new Object(), 2L);
-    final R2MaterialOpaqueSingleType<Object> m3 =
-      R2TestUtilities.getMaterialSingle(g, s1, new Object(), 3L);
+    final R2MaterialDepthSingleType<Object> m0 =
+      R2TestUtilities.getMaterialDepth(g, s0, new Object(), 0L);
+    final R2MaterialDepthSingleType<Object> m1 =
+      R2TestUtilities.getMaterialDepth(g, s0, new Object(), 1L);
+    final R2MaterialDepthSingleType<Object> m2 =
+      R2TestUtilities.getMaterialDepth(g, s1, new Object(), 2L);
+    final R2MaterialDepthSingleType<Object> m3 =
+      R2TestUtilities.getMaterialDepth(g, s1, new Object(), 3L);
 
     final R2DepthInstancesType o = R2DepthInstances.newDepthInstances();
     o.depthsAddSingleInstance(i0a0, m0);
@@ -279,10 +279,10 @@ public final class R2DepthInstancesTest
 
     final R2InstanceSingleType i0a0 =
       R2TestUtilities.getInstanceSingle(g, a0, 0L);
-    final R2ShaderInstanceSingleUsableType<Object> s0 =
-      R2TestUtilities.getShaderInstanceSingle(g, 0L);
-    final R2MaterialOpaqueSingleType<Object> m0 =
-      R2TestUtilities.getMaterialSingle(g, s0, new Object(), 0L);
+    final R2ShaderDepthSingleUsableType<Object> s0 =
+      R2TestUtilities.getShaderDepthSingle(g, 0L);
+    final R2MaterialDepthSingleType<Object> m0 =
+      R2TestUtilities.getMaterialDepth(g, s0, new Object(), 0L);
 
     final R2DepthInstancesType o = R2DepthInstances.newDepthInstances();
     o.depthsAddSingleInstance(i0a0, m0);
@@ -341,7 +341,7 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceBatchedShaderStart(
-      final R2ShaderInstanceBatchedUsableType<M> s)
+      final R2ShaderDepthBatchedUsableType<M> s)
     {
       this.shader_current = s;
       this.ops.add(String.format(
@@ -351,9 +351,9 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceBatchedMaterialStart(
-      final R2MaterialOpaqueBatchedType<M> material)
+      final R2MaterialDepthBatchedType<M> material)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderDepthBatchedUsableType<M> s = material.getShader();
       Assert.assertEquals(this.shader_current, s);
       this.material_current = material;
       this.ops.add(String.format(
@@ -364,10 +364,10 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceBatched(
-      final R2MaterialOpaqueBatchedType<M> material,
+      final R2MaterialDepthBatchedType<M> material,
       final R2InstanceBatchedType i)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderDepthBatchedUsableType<M> s = material.getShader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       this.ops.add(String.format(
@@ -377,9 +377,9 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceBatchedMaterialFinish(
-      final R2MaterialOpaqueBatchedType<M> material)
+      final R2MaterialDepthBatchedType<M> material)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderDepthBatchedUsableType<M> s = material.getShader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       this.material_current = null;
@@ -391,7 +391,7 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceBatchedShaderFinish(
-      final R2ShaderInstanceBatchedUsableType<M> s)
+      final R2ShaderDepthBatchedUsableType<M> s)
     {
       Assert.assertEquals(s, this.shader_current);
       this.shader_current = null;
@@ -402,7 +402,7 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceSingleShaderStart(
-      final R2ShaderInstanceSingleUsableType<M> s)
+      final R2ShaderDepthSingleUsableType<M> s)
     {
       this.shader_current = s;
       this.ops.add(String.format(
@@ -412,9 +412,9 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceSingleMaterialStart(
-      final R2MaterialOpaqueSingleType<M> material)
+      final R2MaterialDepthSingleType<M> material)
     {
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+      final R2ShaderDepthSingleUsableType<M> s = material.getShader();
       Assert.assertEquals(this.shader_current, s);
       this.material_current = material;
       this.ops.add(String.format(
@@ -435,10 +435,10 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceSingle(
-      final R2MaterialOpaqueSingleType<M> material,
+      final R2MaterialDepthSingleType<M> material,
       final R2InstanceSingleType i)
     {
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+      final R2ShaderDepthSingleUsableType<M> s = material.getShader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       Assert.assertEquals(i.getArrayObject(), this.array_current);
@@ -449,9 +449,9 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceSingleMaterialFinish(
-      final R2MaterialOpaqueSingleType<M> material)
+      final R2MaterialDepthSingleType<M> material)
     {
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+      final R2ShaderDepthSingleUsableType<M> s = material.getShader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       this.material_current = null;
@@ -463,7 +463,7 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceSingleShaderFinish(
-      final R2ShaderInstanceSingleUsableType<M> s)
+      final R2ShaderDepthSingleUsableType<M> s)
     {
       Assert.assertEquals(s, this.shader_current);
       this.shader_current = null;
@@ -491,12 +491,12 @@ public final class R2DepthInstancesTest
     final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
     final R2InstanceBatchedType i =
       R2TestUtilities.getInstanceBatched(g, a0, 0L);
-    final R2ShaderInstanceBatchedUsableType<Object> s =
-      R2TestUtilities.getShaderInstanceBatched(g, 0L);
-    final R2MaterialOpaqueBatchedType<Object> m0 =
-      R2TestUtilities.getMaterialBatched(g, s, new Object(), 0L);
-    final R2MaterialOpaqueBatchedType<Object> m1 =
-      R2TestUtilities.getMaterialBatched(g, s, new Object(), 1L);
+    final R2ShaderDepthBatchedUsableType<Object> s =
+      R2TestUtilities.getShaderDepthBatched(g, 0L);
+    final R2MaterialDepthBatchedType<Object> m0 =
+      R2TestUtilities.getMaterialDepthBatched(g, s, new Object(), 0L);
+    final R2MaterialDepthBatchedType<Object> m1 =
+      R2TestUtilities.getMaterialDepthBatched(g, s, new Object(), 1L);
 
     o.depthsAddBatchedInstance(i, m0);
     this.expected.expect(R2RendererExceptionInstanceAlreadyVisible.class);
@@ -514,10 +514,10 @@ public final class R2DepthInstancesTest
 
     final R2InstanceBatchedType i0a0 =
       R2TestUtilities.getInstanceBatched(g, a0, 0L);
-    final R2ShaderInstanceBatchedUsableType<Object> s0 =
-      R2TestUtilities.getShaderInstanceBatched(g, 0L);
-    final R2MaterialOpaqueBatchedType<Object> m0 =
-      R2TestUtilities.getMaterialBatched(g, s0, new Object(), 0L);
+    final R2ShaderDepthBatchedUsableType<Object> s0 =
+      R2TestUtilities.getShaderDepthBatched(g, 0L);
+    final R2MaterialDepthBatchedType<Object> m0 =
+      R2TestUtilities.getMaterialDepthBatched(g, s0, new Object(), 0L);
 
     final R2DepthInstancesType o = R2DepthInstances.newDepthInstances();
     o.depthsAddBatchedInstance(i0a0, m0);
@@ -610,19 +610,19 @@ public final class R2DepthInstancesTest
     final R2InstanceBatchedType i23a1 =
       R2TestUtilities.getInstanceBatched(g, a1, 23L);
 
-    final R2ShaderInstanceBatchedUsableType<Object> s0 =
-      R2TestUtilities.getShaderInstanceBatched(g, 0L);
-    final R2ShaderInstanceBatchedUsableType<Object> s1 =
-      R2TestUtilities.getShaderInstanceBatched(g, 1L);
+    final R2ShaderDepthBatchedUsableType<Object> s0 =
+      R2TestUtilities.getShaderDepthBatched(g, 0L);
+    final R2ShaderDepthBatchedUsableType<Object> s1 =
+      R2TestUtilities.getShaderDepthBatched(g, 1L);
 
-    final R2MaterialOpaqueBatchedType<Object> m0 =
-      R2TestUtilities.getMaterialBatched(g, s0, new Object(), 0L);
-    final R2MaterialOpaqueBatchedType<Object> m1 =
-      R2TestUtilities.getMaterialBatched(g, s0, new Object(), 1L);
-    final R2MaterialOpaqueBatchedType<Object> m2 =
-      R2TestUtilities.getMaterialBatched(g, s1, new Object(), 2L);
-    final R2MaterialOpaqueBatchedType<Object> m3 =
-      R2TestUtilities.getMaterialBatched(g, s1, new Object(), 3L);
+    final R2MaterialDepthBatchedType<Object> m0 =
+      R2TestUtilities.getMaterialDepthBatched(g, s0, new Object(), 0L);
+    final R2MaterialDepthBatchedType<Object> m1 =
+      R2TestUtilities.getMaterialDepthBatched(g, s0, new Object(), 1L);
+    final R2MaterialDepthBatchedType<Object> m2 =
+      R2TestUtilities.getMaterialDepthBatched(g, s1, new Object(), 2L);
+    final R2MaterialDepthBatchedType<Object> m3 =
+      R2TestUtilities.getMaterialDepthBatched(g, s1, new Object(), 3L);
 
     final R2DepthInstancesType o = R2DepthInstances.newDepthInstances();
     o.depthsAddBatchedInstance(i0a0, m0);
@@ -735,21 +735,21 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceBatchedShaderStart(
-      final R2ShaderInstanceBatchedUsableType<M> s)
+      final R2ShaderDepthBatchedUsableType<M> s)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
     public <M> void onInstanceBatchedMaterialStart(
-      final R2MaterialOpaqueBatchedType<M> material)
+      final R2MaterialDepthBatchedType<M> material)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
     public <M> void onInstanceBatched(
-      final R2MaterialOpaqueBatchedType<M> material,
+      final R2MaterialDepthBatchedType<M> material,
       final R2InstanceBatchedType i)
     {
       throw new UnreachableCodeException();
@@ -757,28 +757,28 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceBatchedMaterialFinish(
-      final R2MaterialOpaqueBatchedType<M> material)
+      final R2MaterialDepthBatchedType<M> material)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
     public <M> void onInstanceBatchedShaderFinish(
-      final R2ShaderInstanceBatchedUsableType<M> s)
+      final R2ShaderDepthBatchedUsableType<M> s)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
     public <M> void onInstanceSingleShaderStart(
-      final R2ShaderInstanceSingleUsableType<M> s)
+      final R2ShaderDepthSingleUsableType<M> s)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
     public <M> void onInstanceSingleMaterialStart(
-      final R2MaterialOpaqueSingleType<M> material)
+      final R2MaterialDepthSingleType<M> material)
     {
       throw new UnreachableCodeException();
     }
@@ -792,7 +792,7 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceSingle(
-      final R2MaterialOpaqueSingleType<M> material,
+      final R2MaterialDepthSingleType<M> material,
       final R2InstanceSingleType i)
     {
       throw new UnreachableCodeException();
@@ -800,14 +800,14 @@ public final class R2DepthInstancesTest
 
     @Override
     public <M> void onInstanceSingleMaterialFinish(
-      final R2MaterialOpaqueSingleType<M> material)
+      final R2MaterialDepthSingleType<M> material)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
     public <M> void onInstanceSingleShaderFinish(
-      final R2ShaderInstanceSingleUsableType<M> s)
+      final R2ShaderDepthSingleUsableType<M> s)
     {
       throw new UnreachableCodeException();
     }

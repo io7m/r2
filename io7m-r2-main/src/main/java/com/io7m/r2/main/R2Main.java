@@ -25,6 +25,8 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.r2.core.R2DepthOnlyRenderer;
 import com.io7m.r2.core.R2DepthRendererType;
+import com.io7m.r2.core.R2DepthVarianceRenderer;
+import com.io7m.r2.core.R2DepthVarianceRendererType;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2GeometryRenderer;
 import com.io7m.r2.core.R2GeometryRendererType;
@@ -34,8 +36,6 @@ import com.io7m.r2.core.R2LightRenderer;
 import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2Matrices;
 import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRenderer;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaults;
@@ -47,6 +47,8 @@ import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRenderer;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.shaders.R2Shaders;
 
 import java.util.function.Supplier;
@@ -70,6 +72,7 @@ public final class R2Main implements R2MainType
   private final R2UnitQuadType                unit_quad;
   private final R2DebugVisualizerRendererType debug_visual_renderer;
   private final R2DepthRendererType           depth_renderer;
+  private final R2DepthVarianceRendererType   depth_variance_renderer;
   private       boolean                       deleted;
 
   private R2Main(
@@ -85,21 +88,38 @@ public final class R2Main implements R2MainType
     final R2LightRendererType in_light_renderer,
     final R2DebugVisualizerRendererType in_debug_visual_renderer,
     final R2UnitQuadType in_unit_quad,
-    final R2DepthRendererType in_depth_renderer)
+    final R2DepthRendererType in_depth_renderer,
+    final R2DepthVarianceRendererType in_depth_variance_renderer)
   {
-    this.pool = NullCheck.notNull(in_pool);
-    this.sources = NullCheck.notNull(in_sources);
-    this.stencil_renderer = NullCheck.notNull(in_stencil_renderer);
-    this.matrices = NullCheck.notNull(in_matrices);
-    this.view_matrices = NullCheck.notNull(in_view_matrices);
-    this.proj_matrices = NullCheck.notNull(in_proj_matrices);
-    this.texture_allocator = NullCheck.notNull(in_texture_allocator);
-    this.texture_defaults = NullCheck.notNull(in_texture_defaults);
-    this.geometry_renderer = NullCheck.notNull(in_geometry_renderer);
-    this.light_renderer = NullCheck.notNull(in_light_renderer);
-    this.debug_visual_renderer = NullCheck.notNull(in_debug_visual_renderer);
-    this.unit_quad = NullCheck.notNull(in_unit_quad);
-    this.depth_renderer = NullCheck.notNull(in_depth_renderer);
+    this.pool =
+      NullCheck.notNull(in_pool);
+    this.sources =
+      NullCheck.notNull(in_sources);
+    this.stencil_renderer =
+      NullCheck.notNull(in_stencil_renderer);
+    this.matrices =
+      NullCheck.notNull(in_matrices);
+    this.view_matrices =
+      NullCheck.notNull(in_view_matrices);
+    this.proj_matrices =
+      NullCheck.notNull(in_proj_matrices);
+    this.texture_allocator =
+      NullCheck.notNull(in_texture_allocator);
+    this.texture_defaults =
+      NullCheck.notNull(in_texture_defaults);
+    this.geometry_renderer =
+      NullCheck.notNull(in_geometry_renderer);
+    this.light_renderer =
+      NullCheck.notNull(in_light_renderer);
+    this.debug_visual_renderer =
+      NullCheck.notNull(in_debug_visual_renderer);
+    this.unit_quad =
+      NullCheck.notNull(in_unit_quad);
+    this.depth_renderer =
+      NullCheck.notNull(in_depth_renderer);
+    this.depth_variance_renderer =
+      NullCheck.notNull(in_depth_variance_renderer);
+
     this.deleted = false;
   }
 
@@ -191,6 +211,12 @@ public final class R2Main implements R2MainType
   }
 
   @Override
+  public R2DepthVarianceRendererType getDepthVarianceRenderer()
+  {
+    return this.depth_variance_renderer;
+  }
+
+  @Override
   public void delete(
     final JCGLInterfaceGL33Type g)
     throws R2Exception
@@ -228,9 +254,10 @@ public final class R2Main implements R2MainType
     private @Nullable R2GeometryRendererType        geometry_renderer;
     private @Nullable R2LightRendererType           light_renderer;
     private @Nullable R2TextureUnitAllocatorType    texture_unit_alloc;
-    private           R2UnitQuadType                unit_quad;
+    private @Nullable R2UnitQuadType                unit_quad;
     private @Nullable R2DebugVisualizerRendererType debug_visual_renderer;
-    private @Nullable R2DepthRendererType depth_renderer;
+    private @Nullable R2DepthRendererType           depth_renderer;
+    private @Nullable R2DepthVarianceRendererType   depth_variance_renderer;
 
     Builder()
     {
@@ -312,7 +339,10 @@ public final class R2Main implements R2MainType
           this.depth_renderer,
           () -> R2DepthOnlyRenderer.newRenderer(g));
 
-      
+      final R2DepthVarianceRendererType ex_depth_variance_renderer =
+        Builder.compute(
+          this.depth_variance_renderer,
+          () -> R2DepthVarianceRenderer.newRenderer(g));
 
       return new R2Main(
         ex_pool,
@@ -327,7 +357,8 @@ public final class R2Main implements R2MainType
         ex_light_renderer,
         ex_debug_visual_renderer,
         ex_quad,
-        ex_depth_renderer);
+        ex_depth_renderer,
+        ex_depth_variance_renderer);
     }
   }
 }

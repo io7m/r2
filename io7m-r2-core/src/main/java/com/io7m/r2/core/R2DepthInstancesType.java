@@ -58,7 +58,7 @@ public interface R2DepthInstancesType
 
   <M> void depthsAddSingleInstance(
     final R2InstanceSingleType i,
-    final R2MaterialOpaqueSingleType<M> m);
+    final R2MaterialDepthSingleType<M> m);
 
   /**
    * Add a batched instance to the scene using the given material, in group
@@ -71,7 +71,7 @@ public interface R2DepthInstancesType
 
   <M> void depthsAddBatchedInstance(
     final R2InstanceBatchedType i,
-    final R2MaterialOpaqueBatchedType<M> m);
+    final R2MaterialDepthBatchedType<M> m);
 
   /**
    * Batch the instances and pass them to the given consumer for rendering.

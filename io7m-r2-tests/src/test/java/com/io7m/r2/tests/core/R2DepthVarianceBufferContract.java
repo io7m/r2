@@ -23,19 +23,33 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2DepthOnlyBuffer;
-import com.io7m.r2.core.R2DepthOnlyBufferDescription;
-import com.io7m.r2.core.R2DepthOnlyBufferType;
 import com.io7m.r2.core.R2DepthPrecision;
+import com.io7m.r2.core.R2DepthVarianceBuffer;
+import com.io7m.r2.core.R2DepthVarianceBufferDescription;
+import com.io7m.r2.core.R2DepthVarianceBufferType;
+import com.io7m.r2.core.R2DepthVariancePrecision;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureUnitAllocator;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import org.junit.Assert;
 import org.junit.Test;
 
-public abstract class R2DepthOnlyBufferContract extends R2JCGLContract
+public abstract class R2DepthVarianceBufferContract extends R2JCGLContract
 {
-  private static JCGLTextureFormat formatForPrecision(
+  private static JCGLTextureFormat formatVarianceForPrecision(
+    final R2DepthVariancePrecision p)
+  {
+    switch (p) {
+      case R2_DEPTH_VARIANCE_PRECISION_16:
+        return JCGLTextureFormat.TEXTURE_FORMAT_RG_16F_4BPP;
+      case R2_DEPTH_VARIANCE_PRECISION_32:
+        return JCGLTextureFormat.TEXTURE_FORMAT_RG_32F_8BPP;
+    }
+
+    throw new UnreachableCodeException();
+  }
+
+  private static JCGLTextureFormat formatDepthForPrecision(
     final R2DepthPrecision p)
   {
     switch (p) {
@@ -63,38 +77,47 @@ public abstract class R2DepthOnlyBufferContract extends R2JCGLContract
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    for (final R2DepthPrecision p : R2DepthPrecision.values()) {
-      final JCGLTextureFormat f =
-        R2DepthOnlyBufferContract.formatForPrecision(p);
+    for (final R2DepthPrecision dp : R2DepthPrecision.values()) {
+      for (final R2DepthVariancePrecision vp : R2DepthVariancePrecision
+        .values()) {
+        final JCGLTextureFormat df =
+          R2DepthVarianceBufferContract.formatDepthForPrecision(dp);
+        final JCGLTextureFormat vf =
+          R2DepthVarianceBufferContract.formatVarianceForPrecision(vp);
 
-      final R2DepthOnlyBufferDescription.Builder db =
-        R2DepthOnlyBufferDescription.builder();
-      db.setDepthPrecision(p);
-      db.setArea(area);
+        final R2DepthVarianceBufferDescription.Builder db =
+          R2DepthVarianceBufferDescription.builder();
+        db.setDepthVariancePrecision(vp);
+        db.setDepthPrecision(dp);
+        db.setArea(area);
 
-      final R2DepthOnlyBufferType gb =
-        R2DepthOnlyBuffer.newDepthOnlyBuffer(
-          g.getFramebuffers(),
-          g.getTextures(),
-          tc.getRootContext(),
-          db.build());
+        final R2DepthVarianceBufferType gb =
+          R2DepthVarianceBuffer.newDepthVarianceBuffer(
+            g.getFramebuffers(),
+            g.getTextures(),
+            tc.getRootContext(),
+            db.build());
 
-      Assert.assertEquals(
-        640L * 480L * (long) f.getBytesPerPixel(), gb.getRange().getInterval());
-      Assert.assertFalse(gb.isDeleted());
+        final int bpp =
+          vf.getBytesPerPixel() + df.getBytesPerPixel();
 
-      final R2Texture2DUsableType t_dept =
-        gb.getDepthTexture();
-      final JCGLFramebufferUsableType fb =
-        gb.getPrimaryFramebuffer();
+        Assert.assertEquals(
+          640L * 480L * bpp, gb.getRange().getInterval());
+        Assert.assertFalse(gb.isDeleted());
 
-      Assert.assertEquals(
-        f,
-        t_dept.get().textureGetFormat());
+        final R2Texture2DUsableType t_dept =
+          gb.getDepthVarianceTexture();
+        final JCGLFramebufferUsableType fb =
+          gb.getPrimaryFramebuffer();
 
-      gb.delete(g);
-      Assert.assertTrue(fb.isDeleted());
-      Assert.assertTrue(gb.isDeleted());
+        Assert.assertEquals(
+          vf,
+          t_dept.get().textureGetFormat());
+
+        gb.delete(g);
+        Assert.assertTrue(fb.isDeleted());
+        Assert.assertTrue(gb.isDeleted());
+      }
     }
   }
 }

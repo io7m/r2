@@ -51,13 +51,14 @@ import java.util.Optional;
  * The default implementation of the {@link R2DepthRendererType} interface.
  */
 
-public final class R2DepthOnlyRenderer implements R2DepthRendererType
+public final class R2DepthVarianceRenderer implements
+  R2DepthVarianceRendererType
 {
   private final DepthConsumer         depth_consumer;
   private final JCGLInterfaceGL33Type g;
   private       boolean               deleted;
 
-  private R2DepthOnlyRenderer(final JCGLInterfaceGL33Type in_g)
+  private R2DepthVarianceRenderer(final JCGLInterfaceGL33Type in_g)
   {
     this.g = NullCheck.notNull(in_g);
     this.depth_consumer = new DepthConsumer(this.g);
@@ -71,10 +72,10 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
    * @return A new renderer
    */
 
-  public static R2DepthRendererType newRenderer(
+  public static R2DepthVarianceRendererType newRenderer(
     final JCGLInterfaceGL33Type in_g)
   {
-    return new R2DepthOnlyRenderer(in_g);
+    return new R2DepthVarianceRenderer(in_g);
   }
 
   @Override
@@ -91,8 +92,8 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
   }
 
   @Override
-  public void renderDepth(
-    final R2DepthOnlyBufferUsableType dbuffer,
+  public void renderDepthVariance(
+    final R2DepthVarianceBufferUsableType dbuffer,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2DepthInstancesType s)
@@ -109,14 +110,14 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
 
     try {
       g_fb.framebufferDrawBind(gb_fb);
-      this.renderDepthWithBoundBuffer(dbuffer.getArea(), uc, m, s);
+      this.renderDepthVarianceWithBoundBuffer(dbuffer.getArea(), uc, m, s);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
   }
 
   @Override
-  public void renderDepthWithBoundBuffer(
+  public void renderDepthVarianceWithBoundBuffer(
     final AreaInclusiveUnsignedLType area,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
@@ -181,8 +182,8 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
     private @Nullable R2MatricesObserverType         matrices;
     private @Nullable R2TextureUnitContextParentType texture_context;
     private @Nullable R2TextureUnitContextType       material_texture_context;
-    private @Nullable R2MaterialDepthSingleType<?>  material_single;
-    private @Nullable JCGLFaceSelection culling;
+    private @Nullable R2MaterialDepthSingleType<?>   material_single;
+    private @Nullable JCGLFaceSelection              culling;
 
     private DepthConsumer(
       final JCGLInterfaceGL33Type ig)
@@ -197,13 +198,11 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
         this.render_state = JCGLRenderStateMutable.create();
 
         /**
-         * Disable any color buffer rendering (even though the
-         * framebuffer configuration should already cause any
-         * color output to be discarded).
+         * Enable color buffer rendering to the first two channels.
          */
 
         this.render_state.setColorBufferMaskingState(
-          JCGLColorBufferMaskingState.of(false, false, false, false));
+          JCGLColorBufferMaskingState.of(true, true, false, false));
 
         /**
          * Enable depth testing, writing, and clamping.

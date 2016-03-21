@@ -67,7 +67,28 @@ public final class R2ShaderParameters
     sb.append("Parameter name: ");
     sb.append(name);
     sb.append("\n");
+    R2ShaderParameters.dumpParameters(u, sb);
     throw new R2ExceptionShaderParameterNotPresent(sb.toString());
+  }
+
+  private static void dumpParameters(
+    final Map<String, JCGLProgramUniformType> us,
+    final StringBuilder sb)
+  {
+    sb.append("Parameters:\n");
+    for (final String name : us.keySet()) {
+      final JCGLProgramUniformType u = us.get(name);
+      sb.append("[");
+      sb.append(u.getGLName());
+      sb.append("] ");
+      sb.append(u.getName());
+      sb.append(" ");
+      sb.append(u.getType());
+      sb.append(" (size ");
+      sb.append(u.getSize());
+      sb.append(")");
+      sb.append("\n");
+    }
   }
 
   /**
@@ -99,6 +120,7 @@ public final class R2ShaderParameters
       sb.append("Actual parameter count:   ");
       sb.append(u.size());
       sb.append("\n");
+      R2ShaderParameters.dumpParameters(u, sb);
       throw new R2ExceptionShaderParameterCountMismatch(sb.toString());
     }
   }

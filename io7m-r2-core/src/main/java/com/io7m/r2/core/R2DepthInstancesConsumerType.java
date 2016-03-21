@@ -18,8 +18,8 @@ package com.io7m.r2.core;
 
 // @formatter:off
 
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
 
 /**
  * <p>The type of consumers of depth instances.</p>
@@ -59,7 +59,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceBatchedShaderStart(
-    R2ShaderInstanceBatchedUsableType<M> s);
+    R2ShaderDepthBatchedUsableType<M> s);
 
   /**
    * Called when new material settings should be assigned, for batched
@@ -70,7 +70,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceBatchedMaterialStart(
-    R2MaterialOpaqueBatchedType<M> material);
+    R2MaterialDepthBatchedType<M> material);
 
   /**
    * Called when a batched instance should be rendered.
@@ -81,7 +81,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceBatched(
-    R2MaterialOpaqueBatchedType<M> material,
+    R2MaterialDepthBatchedType<M> material,
     R2InstanceBatchedType i);
 
   /**
@@ -93,7 +93,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceBatchedMaterialFinish(
-    R2MaterialOpaqueBatchedType<M> material);
+    R2MaterialDepthBatchedType<M> material);
 
   /**
    * Called when the current shader should be deactivated.
@@ -103,7 +103,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceBatchedShaderFinish(
-    R2ShaderInstanceBatchedUsableType<M> s);
+    R2ShaderDepthBatchedUsableType<M> s);
 
   /**
    * Called when a new shader should be activated in order to start rendering
@@ -114,7 +114,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceSingleShaderStart(
-    R2ShaderInstanceSingleUsableType<M> s);
+    R2ShaderDepthSingleUsableType<M> s);
 
   /**
    * Called when new material settings should be assigned, for single
@@ -125,7 +125,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceSingleMaterialStart(
-    R2MaterialOpaqueSingleType<M> material);
+    R2MaterialDepthSingleType<M> material);
 
   /**
    * Called when a new array object should be bound, for single instances.
@@ -145,7 +145,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceSingle(
-    R2MaterialOpaqueSingleType<M> material,
+    R2MaterialDepthSingleType<M> material,
     R2InstanceSingleType i);
 
   /**
@@ -157,7 +157,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceSingleMaterialFinish(
-    R2MaterialOpaqueSingleType<M> material);
+    R2MaterialDepthSingleType<M> material);
 
   /**
    * Called when the current shader should be deactivated.
@@ -167,7 +167,7 @@ public interface R2DepthInstancesConsumerType
    */
 
   <M> void onInstanceSingleShaderFinish(
-    R2ShaderInstanceSingleUsableType<M> s);
+    R2ShaderDepthSingleUsableType<M> s);
 
   /**
    * Called when rendering of instances is finished.

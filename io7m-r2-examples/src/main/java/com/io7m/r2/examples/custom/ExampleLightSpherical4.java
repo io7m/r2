@@ -737,10 +737,10 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         g_fb.framebufferDrawUnbind();
 
         t.filter_ssao_params.setSceneObserverValues(mo);
-        //t.filter_ssao.runFilter(uc, t.filter_ssao_params);
+        t.filter_ssao.runFilter(uc, t.filter_ssao_params);
 
         t.filter_blur_ssao_params.setSceneObserverValues(mo);
-        //t.filter_blur_ssao.runFilter(uc, t.filter_blur_ssao_params);
+        t.filter_blur_ssao.runFilter(uc, t.filter_blur_ssao_params);
 
         g_fb.framebufferDrawBind(lbuffer_fb);
         g_cb.colorBufferMask(true, true, true, true);
@@ -757,7 +757,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           t.lights);
         g_fb.framebufferDrawUnbind();
 
-        //t.filter_ssao_app.runFilter(uc, t.filter_ssao_app_params);
+        t.filter_ssao_app.runFilter(uc, t.filter_ssao_app_params);
 
         g_cb.colorBufferMask(true, true, true, true);
         g_db.depthBufferWriteEnable();

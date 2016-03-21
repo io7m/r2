@@ -20,16 +20,17 @@ import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jcanephora.core.JCGLViewMatricesType;
 import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2DepthRendererType;
+import com.io7m.r2.core.R2DepthVarianceRendererType;
 import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 /**
  * User-friendly frontend.
@@ -114,4 +115,10 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2DepthRendererType getDepthRenderer();
+
+  /**
+   * @return A depth variance renderer
+   */
+
+  R2DepthVarianceRendererType getDepthVarianceRenderer();
 }
