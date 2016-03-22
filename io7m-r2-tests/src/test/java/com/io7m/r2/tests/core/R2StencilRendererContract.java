@@ -18,32 +18,22 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
-import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
-import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixI4x4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2DepthInstances;
-import com.io7m.r2.core.R2DepthInstancesType;
-import com.io7m.r2.core.R2DepthPrecision;
-import com.io7m.r2.core.R2DepthVarianceBuffer;
-import com.io7m.r2.core.R2DepthVarianceBufferDescription;
-import com.io7m.r2.core.R2DepthVarianceBufferDescriptionType;
-import com.io7m.r2.core.R2DepthVarianceBufferType;
-import com.io7m.r2.core.R2DepthVariancePrecision;
-import com.io7m.r2.core.R2DepthVarianceRendererType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2MaterialDepthSingle;
-import com.io7m.r2.core.R2MaterialDepthSingleType;
 import com.io7m.r2.core.R2Matrices;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
+import com.io7m.r2.core.R2SceneStencils;
+import com.io7m.r2.core.R2SceneStencilsType;
+import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitAllocator;
@@ -52,19 +42,20 @@ import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
+import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
-import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.shaders.R2Shaders;
 import org.junit.Test;
 
-public abstract class R2DepthVarianceRendererContract extends R2JCGLContract
+public abstract class R2StencilRendererContract extends R2JCGLContract
 {
-  protected abstract R2DepthVarianceRendererType getRenderer(
-    final JCGLInterfaceGL33Type g);
+  protected abstract R2StencilRendererType getRenderer(
+    final JCGLInterfaceGL33Type g,
+    R2ShaderSourcesType in_sources,
+    R2IDPoolType in_pool,
+    R2UnitQuadUsableType in_quad);
 
   /**
    * Just check that execution proceeds without errors.
@@ -78,8 +69,15 @@ public abstract class R2DepthVarianceRendererContract extends R2JCGLContract
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
 
-    final R2DepthVarianceRendererType r =
-      this.getRenderer(g);
+    final R2UnitQuadType quad =
+      R2UnitQuad.newUnitQuad(g);
+    final R2IDPoolType id_pool =
+      R2IDPool.newPool();
+    final R2ShaderSourcesType sources =
+      R2ShaderSourcesResources.newSources(R2Shaders.class);
+
+    final R2StencilRendererType r =
+      this.getRenderer(g, sources, id_pool, quad);
 
     final AreaInclusiveUnsignedL area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
@@ -94,26 +92,6 @@ public abstract class R2DepthVarianceRendererContract extends R2JCGLContract
     final R2TextureDefaultsType td =
       R2TextureDefaults.newDefaults(g.getTextures(), tc);
 
-    final R2DepthVarianceBufferDescriptionType dbd =
-      R2DepthVarianceBufferDescription.of(
-        area,
-        JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR,
-        JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
-        R2DepthPrecision.R2_DEPTH_PRECISION_24,
-        R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16);
-
-    final R2DepthVarianceBufferType db =
-      R2DepthVarianceBuffer.newDepthVarianceBuffer(
-        g.getFramebuffers(),
-        g.getTextures(),
-        tc,
-        dbd);
-
-    final R2UnitQuadType quad =
-      R2UnitQuad.newUnitQuad(g);
-    final R2IDPoolType id_pool =
-      R2IDPool.newPool();
-
     final R2InstanceSingleType i =
       R2InstanceSingle.newInstance(
         id_pool,
@@ -121,32 +99,19 @@ public abstract class R2DepthVarianceRendererContract extends R2JCGLContract
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
-
-    final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> ds =
-      R2DepthShaderBasicSingle.newShader(
-        g.getShaders(),
-        ss,
-        id_pool);
-
     final R2DepthShaderBasicParametersMutable ds_param =
       R2DepthShaderBasicParametersMutable.create();
     ds_param.setAlbedoTexture(td.getWhiteTexture());
 
-    final R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> mat =
-      R2MaterialDepthSingle.newMaterial(id_pool, ds, ds_param);
-
     final R2ProjectionOrthographic proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    final R2DepthInstancesType di =
-      R2DepthInstances.newDepthInstances();
-    di.depthsAddSingleInstance(i, mat);
+    final R2SceneStencilsType ii = R2SceneStencils.newMasks();
+    ii.stencilsAddSingle(i);
 
     final R2MatricesType m = R2Matrices.newMatrices();
     m.withObserver(PMatrixI4x4F.identity(), proj, Unit.unit(), (x, y) -> {
-      r.renderDepthVarianceWithBoundBuffer(area, tc, x, di);
+      r.renderStencilsWithBoundBuffer(x, tc, area, ii);
       return Unit.unit();
     });
   }
