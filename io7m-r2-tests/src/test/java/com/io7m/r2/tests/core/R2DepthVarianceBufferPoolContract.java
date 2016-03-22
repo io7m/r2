@@ -22,12 +22,12 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jpuddle.core.JPPoolHardLimitExceededException;
 import com.io7m.jpuddle.core.JPPoolObjectReturnException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2AmbientOcclusionBuffer;
-import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
-import com.io7m.r2.core.R2AmbientOcclusionBufferDescriptionType;
-import com.io7m.r2.core.R2AmbientOcclusionBufferPool;
-import com.io7m.r2.core.R2AmbientOcclusionBufferType;
-import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
+import com.io7m.r2.core.R2DepthVarianceBuffer;
+import com.io7m.r2.core.R2DepthVarianceBufferDescription;
+import com.io7m.r2.core.R2DepthVarianceBufferDescriptionType;
+import com.io7m.r2.core.R2DepthVarianceBufferPool;
+import com.io7m.r2.core.R2DepthVarianceBufferType;
+import com.io7m.r2.core.R2DepthVarianceBufferUsableType;
 import com.io7m.r2.core.R2RenderTargetPoolType;
 import com.io7m.r2.core.R2TextureUnitAllocator;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
@@ -38,7 +38,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public abstract class R2AmbientOcclusionBufferPoolContract extends
+public abstract class R2DepthVarianceBufferPoolContract extends
   R2JCGLContract
 {
   @Rule public ExpectedException expected = ExpectedException.none();
@@ -58,9 +58,9 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
       tc.getRootContext();
 
     final R2RenderTargetPoolType<
-      R2AmbientOcclusionBufferDescriptionType,
-      R2AmbientOcclusionBufferUsableType> p =
-      R2AmbientOcclusionBufferPool.newPool(g, 0L, 8L * 8L);
+      R2DepthVarianceBufferDescriptionType,
+      R2DepthVarianceBufferUsableType> p =
+      R2DepthVarianceBufferPool.newPool(g, 0L, 8L * 8L);
 
     Assert.assertFalse(p.isDeleted());
     p.delete(tc_root);
@@ -82,9 +82,9 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
       tc.getRootContext();
 
     final R2RenderTargetPoolType<
-      R2AmbientOcclusionBufferDescriptionType,
-      R2AmbientOcclusionBufferUsableType> p =
-      R2AmbientOcclusionBufferPool.newPool(g, 8L * 8L, 8L * 8L);
+      R2DepthVarianceBufferDescriptionType,
+      R2DepthVarianceBufferUsableType> p =
+      R2DepthVarianceBufferPool.newPool(g, 8L * 8L * 8L, 8L * 8L * 8L);
 
     Assert.assertFalse(p.isDeleted());
 
@@ -93,16 +93,20 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
         new UnsignedRangeInclusiveL(0L, 7L),
         new UnsignedRangeInclusiveL(0L, 7L));
 
-    final R2AmbientOcclusionBufferDescription desc =
-      R2AmbientOcclusionBufferDescription.of(area);
+    final R2DepthVarianceBufferDescription.Builder db =
+      R2DepthVarianceBufferDescription.builder();
+    db.setArea(area);
 
-    final R2AmbientOcclusionBufferUsableType b0 = p.get(tc_root, desc);
+    final R2DepthVarianceBufferDescription desc =
+      db.build();
+
+    final R2DepthVarianceBufferUsableType b0 = p.get(tc_root, desc);
     Assert.assertFalse(b0.isDeleted());
     Assert.assertEquals(area, b0.getArea());
 
     p.returnValue(tc_root, b0);
 
-    final R2AmbientOcclusionBufferUsableType b1 = p.get(tc_root, desc);
+    final R2DepthVarianceBufferUsableType b1 = p.get(tc_root, desc);
     Assert.assertFalse(b1.isDeleted());
     Assert.assertEquals(area, b1.getArea());
     Assert.assertEquals(b0, b1);
@@ -127,9 +131,9 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
       tc_root.unitContextNew();
 
     final R2RenderTargetPoolType<
-      R2AmbientOcclusionBufferDescriptionType,
-      R2AmbientOcclusionBufferUsableType> p =
-      R2AmbientOcclusionBufferPool.newPool(
+      R2DepthVarianceBufferDescriptionType,
+      R2DepthVarianceBufferUsableType> p = R2DepthVarianceBufferPool
+      .newPool(
         g,
         0L,
         8L * 8L);
@@ -138,12 +142,12 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final R2AmbientOcclusionBufferDescription.Builder db =
-      R2AmbientOcclusionBufferDescription.builder();
+    final R2DepthVarianceBufferDescription.Builder db =
+      R2DepthVarianceBufferDescription.builder();
     db.setArea(area);
 
-    final R2AmbientOcclusionBufferType ab =
-      R2AmbientOcclusionBuffer.newAmbientOcclusionBuffer(
+    final R2DepthVarianceBufferType ab =
+      R2DepthVarianceBuffer.newDepthVarianceBuffer(
         g.getFramebuffers(),
         g.getTextures(),
         tc_alloc,
@@ -169,8 +173,8 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
     final R2TextureUnitContextType tc_alloc = tc_root.unitContextNew();
 
     final R2RenderTargetPoolType<
-      R2AmbientOcclusionBufferDescriptionType,
-      R2AmbientOcclusionBufferUsableType> p = R2AmbientOcclusionBufferPool
+      R2DepthVarianceBufferDescriptionType,
+      R2DepthVarianceBufferUsableType> p = R2DepthVarianceBufferPool
       .newPool(
         g,
         0L,
@@ -180,8 +184,8 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
       new UnsignedRangeInclusiveL(0L, 15L),
       new UnsignedRangeInclusiveL(0L, 15L));
 
-    final R2AmbientOcclusionBufferDescription.Builder db =
-      R2AmbientOcclusionBufferDescription.builder();
+    final R2DepthVarianceBufferDescription.Builder db =
+      R2DepthVarianceBufferDescription.builder();
     db.setArea(area);
 
     this.expected.expect(JPPoolHardLimitExceededException.class);

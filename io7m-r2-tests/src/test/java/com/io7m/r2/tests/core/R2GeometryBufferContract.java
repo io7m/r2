@@ -45,12 +45,15 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
     final AreaInclusiveUnsignedL area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
+    final R2GeometryBufferDescription desc =
+      R2GeometryBufferDescription.of(area);
+
     final R2GeometryBufferType gb =
       R2GeometryBuffer.newGeometryBuffer(
         g.getFramebuffers(),
         g.getTextures(),
         tc.getRootContext(),
-        R2GeometryBufferDescription.of(area));
+        desc);
 
     Assert.assertEquals(640L * 480L * 16L, gb.getRange().getInterval());
     Assert.assertFalse(gb.isDeleted());
@@ -65,6 +68,9 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
       gb.getNormalTexture();
     final JCGLFramebufferUsableType fb =
       gb.getPrimaryFramebuffer();
+
+    Assert.assertEquals(desc, gb.getDescription());
+    Assert.assertEquals(area, gb.getArea());
 
     Assert.assertEquals(
       JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,

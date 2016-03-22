@@ -72,12 +72,13 @@ public abstract class R2DepthOnlyBufferContract extends R2JCGLContract
       db.setDepthPrecision(p);
       db.setArea(area);
 
+      final R2DepthOnlyBufferDescription desc = db.build();
       final R2DepthOnlyBufferType gb =
         R2DepthOnlyBuffer.newDepthOnlyBuffer(
           g.getFramebuffers(),
           g.getTextures(),
           tc.getRootContext(),
-          db.build());
+          desc);
 
       Assert.assertEquals(
         640L * 480L * (long) f.getBytesPerPixel(), gb.getRange().getInterval());
@@ -88,6 +89,8 @@ public abstract class R2DepthOnlyBufferContract extends R2JCGLContract
       final JCGLFramebufferUsableType fb =
         gb.getPrimaryFramebuffer();
 
+      Assert.assertEquals(desc, gb.getDescription());
+      Assert.assertEquals(area, gb.getArea());
       Assert.assertEquals(
         f,
         t_dept.get().textureGetFormat());

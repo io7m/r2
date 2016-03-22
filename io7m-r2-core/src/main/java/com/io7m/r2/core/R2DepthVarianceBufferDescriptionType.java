@@ -16,6 +16,9 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
+import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import org.immutables.value.Value;
 
 /**
@@ -27,10 +30,37 @@ import org.immutables.value.Value;
 public interface R2DepthVarianceBufferDescriptionType extends
   R2RenderTargetDescriptionType
 {
+  @Override
+  @Value.Parameter
+  AreaInclusiveUnsignedLType getArea();
+
   /**
-   * @return The precision of the depth buffer
+   * @return The magnification filter used for the buffer
    */
 
+  @Value.Parameter
+  @Value.Default
+  default JCGLTextureFilterMagnification getMagnificationFilter()
+  {
+    return JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR;
+  }
+
+  /**
+   * @return The minification filter used for the buffer
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default JCGLTextureFilterMinification getMinificationFilter()
+  {
+    return JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
+  }
+
+  /**
+   * @return The precision of the depth attachment
+   */
+
+  @Value.Parameter
   @Value.Default
   default R2DepthPrecision getDepthPrecision()
   {
@@ -38,9 +68,10 @@ public interface R2DepthVarianceBufferDescriptionType extends
   }
 
   /**
-   * @return The precision of the depth variance buffer
+   * @return The precision of the depth-variance attachment
    */
 
+  @Value.Parameter
   @Value.Default
   default R2DepthVariancePrecision getDepthVariancePrecision()
   {

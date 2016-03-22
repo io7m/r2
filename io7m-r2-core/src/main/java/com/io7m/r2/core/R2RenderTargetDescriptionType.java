@@ -31,18 +31,4 @@ public interface R2RenderTargetDescriptionType
 
   @Value.Parameter
   AreaInclusiveUnsignedLType getArea();
-
-  /**
-   * Return a new description with the given area.
-   *
-   * <i>Note: Implementations are NOT permitted to return a different concrete
-   * class. In other words, {@code c.getClass() == c.withArea(a).getClass()}
-   * must hold!</i>
-   *
-   * @param a The new area
-   *
-   * @return A copy of this description with the given area
-   */
-
-  R2RenderTargetDescriptionType withArea(AreaInclusiveUnsignedLType a);
 }

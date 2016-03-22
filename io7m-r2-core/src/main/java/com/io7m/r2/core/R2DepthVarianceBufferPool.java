@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 /**
- * <p>A pool of ambient occlusion buffers, with a configurable <i>soft</i> and
+ * <p>A pool of depth variance buffers, with a configurable <i>soft</i> and
  * <i>hard</i> size.</p>
  *
  * <p>Objects within the pool will occasionally be discarded so that the storage
@@ -38,27 +38,27 @@ import java.util.Optional;
  * this will result in exceptions being raised.</p>
  */
 
-public final class R2AmbientOcclusionBufferPool implements
-  R2RenderTargetPoolType<R2AmbientOcclusionBufferDescriptionType,
-    R2AmbientOcclusionBufferUsableType>
+public final class R2DepthVarianceBufferPool implements
+  R2RenderTargetPoolType<R2DepthVarianceBufferDescriptionType,
+    R2DepthVarianceBufferUsableType>
 {
   private static final Logger LOG;
 
   static {
-    LOG = LoggerFactory.getLogger(R2AmbientOcclusionBufferPool.class);
+    LOG = LoggerFactory.getLogger(R2DepthVarianceBufferPool.class);
   }
 
   private final
   JPPoolSynchronousType<
-    R2AmbientOcclusionBufferDescriptionType,
-    R2AmbientOcclusionBufferType,
-    R2AmbientOcclusionBufferUsableType,
+    R2DepthVarianceBufferDescriptionType,
+    R2DepthVarianceBufferType,
+    R2DepthVarianceBufferUsableType,
     R2TextureUnitContextParentType> actual;
 
-  private R2AmbientOcclusionBufferPool(
-    final JPPoolSynchronousType<R2AmbientOcclusionBufferDescriptionType,
-      R2AmbientOcclusionBufferType,
-      R2AmbientOcclusionBufferUsableType,
+  private R2DepthVarianceBufferPool(
+    final JPPoolSynchronousType<R2DepthVarianceBufferDescriptionType,
+      R2DepthVarianceBufferType,
+      R2DepthVarianceBufferUsableType,
       R2TextureUnitContextParentType> in_actual)
   {
     this.actual = NullCheck.notNull(in_actual);
@@ -74,20 +74,20 @@ public final class R2AmbientOcclusionBufferPool implements
    * @return A new pool
    */
 
-  public static R2RenderTargetPoolType<R2AmbientOcclusionBufferDescriptionType,
-    R2AmbientOcclusionBufferUsableType> newPool(
+  public static R2RenderTargetPoolType<R2DepthVarianceBufferDescriptionType,
+    R2DepthVarianceBufferUsableType> newPool(
     final JCGLInterfaceGL33Type g,
     final long soft,
     final long hard)
   {
-    return new R2AmbientOcclusionBufferPool(
+    return new R2DepthVarianceBufferPool(
       JPPoolSynchronous.newPool(new Listener(g), soft, hard));
   }
 
   @Override
-  public R2AmbientOcclusionBufferUsableType get(
+  public R2DepthVarianceBufferUsableType get(
     final R2TextureUnitContextParentType tc,
-    final R2AmbientOcclusionBufferDescriptionType desc)
+    final R2DepthVarianceBufferDescriptionType desc)
   {
     NullCheck.notNull(tc);
     NullCheck.notNull(desc);
@@ -97,7 +97,7 @@ public final class R2AmbientOcclusionBufferPool implements
   @Override
   public void returnValue(
     final R2TextureUnitContextParentType tc,
-    final R2AmbientOcclusionBufferUsableType target)
+    final R2DepthVarianceBufferUsableType target)
   {
     NullCheck.notNull(tc);
     NullCheck.notNull(target);
@@ -117,8 +117,8 @@ public final class R2AmbientOcclusionBufferPool implements
   }
 
   private static final class Listener implements JPPoolableListenerType<
-    R2AmbientOcclusionBufferDescriptionType,
-    R2AmbientOcclusionBufferType,
+    R2DepthVarianceBufferDescriptionType,
+    R2DepthVarianceBufferType,
     R2TextureUnitContextParentType>
   {
     private final JCGLInterfaceGL33Type g;
@@ -131,7 +131,7 @@ public final class R2AmbientOcclusionBufferPool implements
     @Override
     public long onEstimateSize(
       final R2TextureUnitContextParentType tc,
-      final R2AmbientOcclusionBufferDescriptionType key)
+      final R2DepthVarianceBufferDescriptionType key)
     {
       final AreaInclusiveUnsignedLType area = key.getArea();
       final UnsignedRangeInclusiveL range_x = area.getRangeX();
@@ -140,11 +140,11 @@ public final class R2AmbientOcclusionBufferPool implements
     }
 
     @Override
-    public R2AmbientOcclusionBufferType onCreate(
+    public R2DepthVarianceBufferType onCreate(
       final R2TextureUnitContextParentType tc,
-      final R2AmbientOcclusionBufferDescriptionType key)
+      final R2DepthVarianceBufferDescriptionType key)
     {
-      return R2AmbientOcclusionBuffer.newAmbientOcclusionBuffer(
+      return R2DepthVarianceBuffer.newDepthVarianceBuffer(
         this.g.getFramebuffers(),
         this.g.getTextures(),
         tc,
@@ -154,8 +154,8 @@ public final class R2AmbientOcclusionBufferPool implements
     @Override
     public long onGetSize(
       final R2TextureUnitContextParentType tc,
-      final R2AmbientOcclusionBufferDescriptionType key,
-      final R2AmbientOcclusionBufferType value)
+      final R2DepthVarianceBufferDescriptionType key,
+      final R2DepthVarianceBufferType value)
     {
       return value.getRange().getInterval();
     }
@@ -163,22 +163,22 @@ public final class R2AmbientOcclusionBufferPool implements
     @Override
     public void onReuse(
       final R2TextureUnitContextParentType tc,
-      final R2AmbientOcclusionBufferDescriptionType key,
-      final R2AmbientOcclusionBufferType value)
+      final R2DepthVarianceBufferDescriptionType key,
+      final R2DepthVarianceBufferType value)
     {
-      if (R2AmbientOcclusionBufferPool.LOG.isTraceEnabled()) {
-        R2AmbientOcclusionBufferPool.LOG.trace("reuse {}", key);
+      if (R2DepthVarianceBufferPool.LOG.isTraceEnabled()) {
+        R2DepthVarianceBufferPool.LOG.trace("reuse {}", key);
       }
     }
 
     @Override
     public void onDelete(
       final R2TextureUnitContextParentType tc,
-      final R2AmbientOcclusionBufferDescriptionType key,
-      final R2AmbientOcclusionBufferType value)
+      final R2DepthVarianceBufferDescriptionType key,
+      final R2DepthVarianceBufferType value)
     {
-      if (R2AmbientOcclusionBufferPool.LOG.isTraceEnabled()) {
-        R2AmbientOcclusionBufferPool.LOG.trace("delete {}", value);
+      if (R2DepthVarianceBufferPool.LOG.isTraceEnabled()) {
+        R2DepthVarianceBufferPool.LOG.trace("delete {}", value);
       }
 
       value.delete(this.g);
@@ -187,11 +187,11 @@ public final class R2AmbientOcclusionBufferPool implements
     @Override
     public void onError(
       final R2TextureUnitContextParentType tc,
-      final R2AmbientOcclusionBufferDescriptionType key,
-      final Optional<R2AmbientOcclusionBufferType> value,
+      final R2DepthVarianceBufferDescriptionType key,
+      final Optional<R2DepthVarianceBufferType> value,
       final Throwable e)
     {
-      R2AmbientOcclusionBufferPool.LOG.error(
+      R2DepthVarianceBufferPool.LOG.error(
         "Exception raised in cache listener: {}: ", key, e);
     }
   }

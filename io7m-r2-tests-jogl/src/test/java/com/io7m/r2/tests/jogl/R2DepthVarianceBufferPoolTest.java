@@ -14,25 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl;
 
-/**
- * The type of usable ambient occlusion buffers.
- */
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.R2DepthVarianceBufferPoolContract;
 
-public interface R2AmbientOcclusionBufferUsableType extends
-  R2RenderTargetUsableType<R2AmbientOcclusionBufferDescriptionType>
+public final class R2DepthVarianceBufferPoolTest extends
+  R2DepthVarianceBufferPoolContract
 {
-  /**
-   * @return The buffer description
-   */
-
   @Override
-  R2AmbientOcclusionBufferDescriptionType getDescription();
-
-  /**
-   * @return The ambient occlusion texture
-   */
-
-  R2Texture2DUsableType getAmbientOcclusionTexture();
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }

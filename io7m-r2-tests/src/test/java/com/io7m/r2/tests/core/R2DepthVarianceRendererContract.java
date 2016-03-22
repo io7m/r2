@@ -18,6 +18,8 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
+import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
+import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jfunctional.Unit;
@@ -26,10 +28,12 @@ import com.io7m.jtensors.parameterized.PMatrixI4x4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2DepthInstances;
 import com.io7m.r2.core.R2DepthInstancesType;
+import com.io7m.r2.core.R2DepthPrecision;
 import com.io7m.r2.core.R2DepthVarianceBuffer;
 import com.io7m.r2.core.R2DepthVarianceBufferDescription;
 import com.io7m.r2.core.R2DepthVarianceBufferDescriptionType;
 import com.io7m.r2.core.R2DepthVarianceBufferType;
+import com.io7m.r2.core.R2DepthVariancePrecision;
 import com.io7m.r2.core.R2DepthVarianceRendererType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
@@ -87,7 +91,13 @@ public abstract class R2DepthVarianceRendererContract extends R2JCGLContract
       R2TextureDefaults.newDefaults(g.getTextures(), tc);
 
     final R2DepthVarianceBufferDescriptionType dbd =
-      R2DepthVarianceBufferDescription.of(area);
+      R2DepthVarianceBufferDescription.of(
+        area,
+        JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR,
+        JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
+        R2DepthPrecision.R2_DEPTH_PRECISION_24,
+        R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16);
+
     final R2DepthVarianceBufferType db =
       R2DepthVarianceBuffer.newDepthVarianceBuffer(
         g.getFramebuffers(),

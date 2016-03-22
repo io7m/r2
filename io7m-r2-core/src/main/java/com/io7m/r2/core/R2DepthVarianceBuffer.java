@@ -22,8 +22,6 @@ import com.io7m.jcanephora.core.JCGLFramebufferColorAttachmentPointType;
 import com.io7m.jcanephora.core.JCGLFramebufferDrawBufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
-import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
-import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLTextureWrapS;
@@ -105,12 +103,12 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
           g_t,
           range_x.getInterval(),
           range_y.getInterval(),
-          R2DepthVarianceBuffer.formatDepthForPrecision(desc
-                                                          .getDepthPrecision()),
+          R2DepthVarianceBuffer.formatDepthForPrecision(
+            desc.getDepthPrecision()),
           JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
-          JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
+          desc.getMinificationFilter(),
+          desc.getMagnificationFilter());
 
       final Pair<JCGLTextureUnitType, R2Texture2DType> p_variance =
         cc.unitContextAllocateTexture2D(
@@ -121,8 +119,8 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
             desc.getDepthVariancePrecision()),
           JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
-          JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+          desc.getMinificationFilter(),
+          desc.getMagnificationFilter());
 
       final R2Texture2DType rt_depth = p_depth.getRight();
       final R2Texture2DType rt_variance = p_variance.getRight();

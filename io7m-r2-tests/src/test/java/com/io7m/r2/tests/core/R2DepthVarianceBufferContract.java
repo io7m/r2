@@ -91,12 +91,13 @@ public abstract class R2DepthVarianceBufferContract extends R2JCGLContract
         db.setDepthPrecision(dp);
         db.setArea(area);
 
+        final R2DepthVarianceBufferDescription desc = db.build();
         final R2DepthVarianceBufferType gb =
           R2DepthVarianceBuffer.newDepthVarianceBuffer(
             g.getFramebuffers(),
             g.getTextures(),
             tc.getRootContext(),
-            db.build());
+            desc);
 
         final int bpp =
           vf.getBytesPerPixel() + df.getBytesPerPixel();
@@ -110,6 +111,8 @@ public abstract class R2DepthVarianceBufferContract extends R2JCGLContract
         final JCGLFramebufferUsableType fb =
           gb.getPrimaryFramebuffer();
 
+        Assert.assertEquals(desc, gb.getDescription());
+        Assert.assertEquals(area, gb.getArea());
         Assert.assertEquals(
           vf,
           t_dept.get().textureGetFormat());

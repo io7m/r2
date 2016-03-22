@@ -16,23 +16,32 @@
 
 package com.io7m.r2.core;
 
+import org.immutables.value.Value;
+
 /**
- * The type of usable ambient occlusion buffers.
+ * The type of shadows.
  */
 
-public interface R2AmbientOcclusionBufferUsableType extends
-  R2RenderTargetUsableType<R2AmbientOcclusionBufferDescriptionType>
+public interface R2ShadowType
 {
   /**
-   * @return The buffer description
+   * @return The unique shadow ID
    */
 
-  @Override
-  R2AmbientOcclusionBufferDescriptionType getDescription();
+  @Value.Parameter
+  long getShadowID();
 
   /**
-   * @return The ambient occlusion texture
+   * The level to which the shadow is allowed to attenuate light. A value of
+   * {@code n} means that if a point is in shadow, the light intensity will be
+   * attenuated down to {@code n}.
+   *
+   * @return The minimum shadow factor
    */
 
-  R2Texture2DUsableType getAmbientOcclusionTexture();
+  @Value.Parameter
+  default float getFactorMinimum()
+  {
+    return 0.2f;
+  }
 }

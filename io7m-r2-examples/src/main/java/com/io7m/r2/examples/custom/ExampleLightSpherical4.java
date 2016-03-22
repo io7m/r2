@@ -413,6 +413,13 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           this.gbuffer.getDepthTexture(),
           this.abuffer,
           R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
+          (d, a) -> {
+            final R2AmbientOcclusionBufferDescription.Builder b =
+              R2AmbientOcclusionBufferDescription.builder();
+            b.from(d);
+            b.setArea(a);
+            return b.build();
+          },
           this.pool_ssao);
 
       this.filter_blur_ssao_params.setBlurPasses(1);

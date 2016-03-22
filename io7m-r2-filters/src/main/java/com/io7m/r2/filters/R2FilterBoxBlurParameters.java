@@ -16,6 +16,7 @@
 
 package com.io7m.r2.filters;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2RenderTargetDescriptionType;
@@ -23,6 +24,7 @@ import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2RenderTargetUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -41,6 +43,9 @@ public final class R2FilterBoxBlurParameters<
   DD extends R2RenderTargetDescriptionType,
   D extends R2RenderTargetUsableType<DD>>
 {
+  private BiFunction<DD, AreaInclusiveUnsignedLType, DD>
+    output_desc_scaler;
+
   private Function<S, R2Texture2DUsableType>  source_selector;
   private Function<D, R2Texture2DUsableType>  output_selector;
   private S                                   source_buffer;
@@ -56,12 +61,21 @@ public final class R2FilterBoxBlurParameters<
     final D in_output_buffer,
     final Function<S, R2Texture2DUsableType> in_source_selector,
     final Function<D, R2Texture2DUsableType> in_output_selector,
+    final BiFunction<DD, AreaInclusiveUnsignedLType, DD> in_output_desc_scaler,
     final R2RenderTargetPoolUsableType<DD, D> rtp)
   {
-    this.source_buffer = NullCheck.notNull(in_source_buffer);
-    this.source_selector = NullCheck.notNull(in_source_selector);
-    this.output_buffer = NullCheck.notNull(in_output_buffer);
-    this.output_selector = NullCheck.notNull(in_output_selector);
+    this.source_buffer =
+      NullCheck.notNull(in_source_buffer);
+    this.source_selector =
+      NullCheck.notNull(in_source_selector);
+
+    this.output_buffer =
+      NullCheck.notNull(in_output_buffer);
+    this.output_selector =
+      NullCheck.notNull(in_output_selector);
+    this.output_desc_scaler =
+      NullCheck.notNull(in_output_desc_scaler);
+
     this.render_target_pool = NullCheck.notNull(rtp);
 
     this.blur_size = 1.0f;
@@ -74,21 +88,25 @@ public final class R2FilterBoxBlurParameters<
   /**
    * Construct a new set of parameters.
    *
-   * @param source             The source render target
-   * @param in_source_selector A function that, given a render target of type
-   *                           {@code S}, selects which texture on that render
-   *                           target will be used for blurring.
-   * @param output             The output render target
-   * @param in_output_selector A function that, given a render target of type
-   *                           {@code D}, selects which texture on that render
-   *                           target will be used for blurring.
-   * @param r                  A pool used to construct temporary render
-   *                           targets
-   * @param <SD>               The type of source render target descriptions
-   * @param <S>                The type of source render targets
-   * @param <DD>               The type of destination render target
-   *                           descriptions
-   * @param <D>                The type of destination render targets
+   * @param source                The source render target
+   * @param in_source_selector    A function that, given a render target of type
+   *                              {@code S}, selects which texture on that
+   *                              render target will be used for blurring.
+   * @param output                The output render target
+   * @param in_output_selector    A function that, given a render target of type
+   *                              {@code D}, selects which texture on that
+   *                              render target will be used for blurring.
+   * @param in_output_desc_scaler A function that, given an existing description
+   *                              {@code D} and an area {@code A}, returns a new
+   *                              description with the values of {@code D} and
+   *                              the area {@code A}
+   * @param r                     A pool used to construct temporary render
+   *                              targets
+   * @param <SD>                  The type of source render target descriptions
+   * @param <S>                   The type of source render targets
+   * @param <DD>                  The type of destination render target
+   *                              descriptions
+   * @param <D>                   The type of destination render targets
    *
    * @return A new set of parameters
    */
@@ -104,13 +122,20 @@ public final class R2FilterBoxBlurParameters<
     final Function<S, R2Texture2DUsableType> in_source_selector,
     final D output,
     final Function<D, R2Texture2DUsableType> in_output_selector,
+    final BiFunction<DD, AreaInclusiveUnsignedLType, DD> in_output_desc_scaler,
     final R2RenderTargetPoolUsableType<DD, D> r)
   {
     NullCheck.notNull(source);
     NullCheck.notNull(output);
     NullCheck.notNull(r);
+
     return new R2FilterBoxBlurParameters<>(
-      source, output, in_source_selector, in_output_selector, r);
+      source,
+      output,
+      in_source_selector,
+      in_output_selector,
+      in_output_desc_scaler,
+      r);
   }
 
   /**
@@ -303,5 +328,27 @@ public final class R2FilterBoxBlurParameters<
   public void setBlurScaleFilter(final JCGLFramebufferBlitFilter f)
   {
     this.blur_scale_filter = NullCheck.notNull(f);
+  }
+
+  /**
+   * @return The output description scaling function
+   */
+
+  public BiFunction<DD, AreaInclusiveUnsignedLType, DD>
+  getOutputDescriptionScaler()
+  {
+    return this.output_desc_scaler;
+  }
+
+  /**
+   * Set the output description scaling function.
+   *
+   * @param f A scaling function
+   */
+
+  public void setOutputDescriptionScaler(
+    final BiFunction<DD, AreaInclusiveUnsignedLType, DD> f)
+  {
+    this.output_desc_scaler = NullCheck.notNull(f);
   }
 }

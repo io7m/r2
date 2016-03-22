@@ -197,7 +197,9 @@ public final class R2FilterBoxBlur<
       destination.getDescription();
     final DD desc_scaled =
       R2RenderTargetDescriptions.scale(
-        desc_orig, (double) parameters.getBlurScale());
+        desc_orig,
+        parameters.getOutputDescriptionScaler(),
+        (double) parameters.getBlurScale());
 
     final D destination_scaled =
       this.render_target_pool.get(uc, desc_scaled);
@@ -307,6 +309,7 @@ public final class R2FilterBoxBlur<
     } else {
       desc_scaled = R2RenderTargetDescriptions.scale(
         destination.getDescription(),
+        parameters.getOutputDescriptionScaler(),
         parameters.getBlurScale());
     }
 

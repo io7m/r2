@@ -56,12 +56,13 @@ public abstract class R2AmbientOcclusionBufferContract extends R2JCGLContract
     final R2TextureUnitContextType tc_alloc = tc_root.unitContextNew();
 
     try {
+      final R2AmbientOcclusionBufferDescription desc = db.build();
       final R2AmbientOcclusionBufferType ab =
         R2AmbientOcclusionBuffer.newAmbientOcclusionBuffer(
           g.getFramebuffers(),
           g.getTextures(),
           tc_alloc,
-          db.build());
+          desc);
 
       Assert.assertEquals(
         640L * 480L, ab.getRange().getInterval());
@@ -71,6 +72,9 @@ public abstract class R2AmbientOcclusionBufferContract extends R2JCGLContract
         ab.getAmbientOcclusionTexture();
       final JCGLFramebufferUsableType fb =
         ab.getPrimaryFramebuffer();
+
+      Assert.assertEquals(desc, ab.getDescription());
+      Assert.assertEquals(area, ab.getArea());
 
       Assert.assertEquals(
         JCGLTextureFormat.TEXTURE_FORMAT_R_8_1BPP,

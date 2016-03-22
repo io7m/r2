@@ -16,6 +16,7 @@
 
 package com.io7m.r2.filters;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -26,6 +27,7 @@ import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2RenderTargetUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -45,6 +47,9 @@ public final class R2FilterBilateralBlurDepthAwareParameters<
   DD extends R2RenderTargetDescriptionType,
   D extends R2RenderTargetUsableType<DD>>
 {
+  private BiFunction<DD, AreaInclusiveUnsignedLType, DD>
+    output_desc_scaler;
+
   private           R2Texture2DUsableType               depth;
   private           Function<S, R2Texture2DUsableType>  source_value_selector;
   private           Function<D, R2Texture2DUsableType>  output_value_selector;
@@ -64,14 +69,26 @@ public final class R2FilterBilateralBlurDepthAwareParameters<
     final R2Texture2DUsableType in_depth,
     final D in_output_buffer,
     final Function<D, R2Texture2DUsableType> in_output_value_selector,
+    final BiFunction<DD, AreaInclusiveUnsignedLType, DD> in_output_desc_scaler,
     final R2RenderTargetPoolUsableType<DD, D> rtp)
   {
-    this.source_buffer = NullCheck.notNull(in_source_buffer);
-    this.source_value_selector = NullCheck.notNull(in_source_value_selector);
-    this.depth = NullCheck.notNull(in_depth);
-    this.output_buffer = NullCheck.notNull(in_output_buffer);
-    this.output_value_selector = NullCheck.notNull(in_output_value_selector);
-    this.render_target_pool = NullCheck.notNull(rtp);
+    this.source_buffer =
+      NullCheck.notNull(in_source_buffer);
+    this.source_value_selector =
+      NullCheck.notNull(in_source_value_selector);
+
+    this.depth =
+      NullCheck.notNull(in_depth);
+
+    this.output_buffer =
+      NullCheck.notNull(in_output_buffer);
+    this.output_value_selector =
+      NullCheck.notNull(in_output_value_selector);
+    this.output_desc_scaler =
+      NullCheck.notNull(in_output_desc_scaler);
+
+    this.render_target_pool =
+      NullCheck.notNull(rtp);
 
     this.blur_radius = 1.0f;
     this.blur_scale = 1.0f;
@@ -92,6 +109,10 @@ public final class R2FilterBilateralBlurDepthAwareParameters<
    * @param in_depth                 The depth texture that will be used to
    *                                 control how the blur effect is applied
    * @param in_output_buffer         The output render target
+   * @param in_output_desc_scaler    A function that, given an existing
+   *                                 description {@code D} and an area {@code
+   *                                 A}, returns a new description with the
+   *                                 values of {@code D} and the area {@code A}
    * @param in_output_value_selector A function that, given a render target of
    *                                 type {@code T}, selects which texture on
    *                                 that render target will be used for as the
@@ -120,17 +141,20 @@ public final class R2FilterBilateralBlurDepthAwareParameters<
     final R2Texture2DUsableType in_depth,
     final D in_output_buffer,
     final Function<D, R2Texture2DUsableType> in_output_value_selector,
+    final BiFunction<DD, AreaInclusiveUnsignedLType, DD> in_output_desc_scaler,
     final R2RenderTargetPoolUsableType<DD, D> r)
   {
     NullCheck.notNull(in_source_buffer);
     NullCheck.notNull(in_output_buffer);
     NullCheck.notNull(r);
+
     return new R2FilterBilateralBlurDepthAwareParameters<>(
       in_source_buffer,
       in_source_value_selector,
       in_depth,
       in_output_buffer,
       in_output_value_selector,
+      in_output_desc_scaler,
       r);
   }
 
@@ -177,7 +201,6 @@ public final class R2FilterBilateralBlurDepthAwareParameters<
   {
     this.matrices = NullCheck.notNull(m);
   }
-
 
   /**
    * @return The depth texture that will be used to control how the blur effect
@@ -241,6 +264,28 @@ public final class R2FilterBilateralBlurDepthAwareParameters<
     final Function<D, R2Texture2DUsableType> f)
   {
     this.output_value_selector = NullCheck.notNull(f);
+  }
+
+  /**
+   * @return The output description scaling function
+   */
+
+  public BiFunction<DD, AreaInclusiveUnsignedLType, DD>
+  getOutputDescriptionScaler()
+  {
+    return this.output_desc_scaler;
+  }
+
+  /**
+   * Set the output description scaling function.
+   *
+   * @param f A scaling function
+   */
+
+  public void setOutputDescriptionScaler(
+    final BiFunction<DD, AreaInclusiveUnsignedLType, DD> f)
+  {
+    this.output_desc_scaler = NullCheck.notNull(f);
   }
 
   /**
