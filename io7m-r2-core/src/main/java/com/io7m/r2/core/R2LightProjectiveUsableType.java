@@ -22,7 +22,8 @@ package com.io7m.r2.core;
 
 public interface R2LightProjectiveUsableType extends
   R2LightProjectiveReadableType,
-  R2LightProjectiveWritableType
+  R2LightProjectiveWritableType,
+  R2LightVolumeSingleType
 {
   // No extra methods
 }

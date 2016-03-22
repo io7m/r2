@@ -31,8 +31,7 @@ import org.valid4j.Assertive;
  * meshes.
  */
 
-public final class R2LightProjective implements
-  R2LightProjectiveType
+public final class R2LightProjective implements R2LightProjectiveType
 {
   private final PVector3FType<R2SpaceRGBType> color;
   private final long                          id;
