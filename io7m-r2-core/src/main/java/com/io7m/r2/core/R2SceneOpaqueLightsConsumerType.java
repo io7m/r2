@@ -41,12 +41,6 @@ public interface R2SceneOpaqueLightsConsumerType
   void onStart();
 
   /**
-   * Called when rendering of lights is finished.
-   */
-
-  void onFinish();
-
-  /**
    * Called when rendering of a group begins.
    *
    * @param group The group
@@ -103,4 +97,10 @@ public interface R2SceneOpaqueLightsConsumerType
    */
 
   void onFinishGroup(int group);
+
+  /**
+   * Called when rendering of lights is finished.
+   */
+
+  void onFinish();
 }

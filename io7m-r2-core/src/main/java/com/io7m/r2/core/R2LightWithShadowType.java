@@ -17,43 +17,27 @@
 package com.io7m.r2.core;
 
 import com.io7m.jfunctional.PartialBiFunctionType;
-import org.immutables.value.Value;
 
 /**
- * The type of shadows.
+ * The type of lights that have shadows.
  */
 
-public interface R2ShadowType
+public interface R2LightWithShadowType extends R2LightType
 {
   /**
-   * @return The unique shadow ID
+   * @return The shadow for the light
    */
 
-  @Value.Parameter
-  long getShadowID();
-
-  /**
-   * The level to which the shadow is allowed to attenuate light. A value of
-   * {@code n} means that if a point is in shadow, the light intensity will be
-   * attenuated down to {@code n}.
-   *
-   * @return The minimum shadow factor
-   */
-
-  @Value.Parameter
-  default float getFactorMinimum()
-  {
-    return 0.2f;
-  }
+  R2ShadowType getShadow();
 
   /**
    * Match on the type of light.
    *
-   * @param context     A context value
-   * @param on_variance Evaluated for variance shadows
-   * @param <A>         The type of context values
-   * @param <B>         The type of returned values
-   * @param <E>         The type of raised exceptions
+   * @param context    A context value
+   * @param on_project Evaluated for projective lights
+   * @param <A>        The type of context values
+   * @param <B>        The type of returned values
+   * @param <E>        The type of raised exceptions
    *
    * @return A value of type {@code B}
    *
@@ -61,8 +45,8 @@ public interface R2ShadowType
    */
 
   <A, B, E extends Throwable>
-  B matchShadow(
+  B matchLightWithShadow(
     A context,
-    PartialBiFunctionType<A, R2ShadowDepthVarianceType, B, E> on_variance)
+    PartialBiFunctionType<A, R2LightProjectiveWithShadowType, B, E> on_project)
     throws E;
 }

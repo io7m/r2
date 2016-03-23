@@ -17,10 +17,13 @@
 package com.io7m.r2.core;
 
 /**
- * The type of projective lights.
+ * The type of usable (readable/writable but not deletable) projective lights.
  */
 
-public interface R2LightProjectiveType extends R2LightProjectiveUsableType
+public interface R2LightProjectiveWithShadowUsableType extends
+  R2LightProjectiveWithShadowReadableType,
+  R2LightProjectiveWithShadowWritableType,
+  R2LightVolumeSingleType
 {
   // No extra methods
 }

@@ -48,16 +48,20 @@ import com.io7m.jcanephora.fake.FakeContext;
 import com.io7m.jcanephora.fake.FakeShaderListenerType;
 import com.io7m.jcanephora.fake.JCGLImplementationFake;
 import com.io7m.jcanephora.fake.JCGLImplementationFakeType;
+import com.io7m.jfunctional.PartialBiFunctionType;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2InstanceBatchedType;
 import com.io7m.r2.core.R2InstanceSingleType;
+import com.io7m.r2.core.R2LightScreenSingleType;
 import com.io7m.r2.core.R2LightSingleType;
+import com.io7m.r2.core.R2LightVolumeSingleType;
 import com.io7m.r2.core.R2MaterialDepthBatchedType;
 import com.io7m.r2.core.R2MaterialDepthSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
@@ -571,7 +575,7 @@ public final class R2TestUtilities
     return new R2ShaderInstanceBatchedType<Object>()
     {
       @Override
-      public void delete(JCGLInterfaceGL33Type g)
+      public void delete(final JCGLInterfaceGL33Type g)
         throws R2Exception
       {
 
@@ -674,7 +678,7 @@ public final class R2TestUtilities
     return new R2ShaderDepthBatchedType<Object>()
     {
       @Override
-      public void delete(JCGLInterfaceGL33Type g)
+      public void delete(final JCGLInterfaceGL33Type g)
         throws R2Exception
       {
 
@@ -1034,6 +1038,16 @@ public final class R2TestUtilities
       public R2TransformReadableType getTransform()
       {
         return R2TransformIdentity.getInstance();
+      }
+
+      @Override
+      public <A, B, E extends Throwable> B matchLightSingle(
+        final A context,
+        final PartialBiFunctionType<A, R2LightVolumeSingleType, B, E> on_volume,
+        final PartialBiFunctionType<A, R2LightScreenSingleType, B, E> on_screen)
+        throws E
+      {
+        throw new UnimplementedCodeException();
       }
 
       @Override

@@ -17,10 +17,20 @@
 package com.io7m.r2.core;
 
 /**
- * The type of projective lights.
+ * The type of renderers that populate shadow maps.
  */
 
-public interface R2LightProjectiveType extends R2LightProjectiveUsableType
+public interface R2ShadowMapRendererType
 {
-  // No extra methods
+  /**
+   * Begin rendering shadow maps.
+   *
+   * @return A shadow map execution
+   *
+   * @throws R2RendererExceptionShadowExecutionAlreadyActive If an execution is
+   *                                                         already active
+   */
+
+  R2ShadowMapRendererExecutionType shadowBegin()
+    throws R2RendererExceptionShadowExecutionAlreadyActive;
 }

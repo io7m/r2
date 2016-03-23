@@ -17,10 +17,24 @@
 package com.io7m.r2.core;
 
 /**
- * The type of projective lights.
+ * An exception indicating an attempt to use a shadow map context without
+ * it being active.
  */
 
-public interface R2LightProjectiveType extends R2LightProjectiveUsableType
+public final class R2RendererExceptionShadowMapContextNotActive
+  extends R2RendererException
 {
-  // No extra methods
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
+  public R2RendererExceptionShadowMapContextNotActive(
+    final String message)
+  {
+    super(message);
+  }
 }

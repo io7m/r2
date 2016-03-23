@@ -59,7 +59,27 @@ public final class R2RenderTargetDescriptions
   {
     NullCheck.notNull(a);
 
-    final AreaInclusiveUnsignedLType ao = a.getArea();
+    final AreaInclusiveUnsignedLType b =
+      R2RenderTargetDescriptions.scaleAreaInclusive(a.getArea(), scale);
+    final T r = constructor.apply(a, b);
+    Assertive.ensure(Objects.equals(a.getClass(), r.getClass()));
+
+    return r;
+  }
+
+  /**
+   * Scale the given inclusive area by the given scale value.
+   *
+   * @param ao    The inclusive area
+   * @param scale The scale value
+   *
+   * @return A scaled area
+   */
+
+  public static AreaInclusiveUnsignedLType scaleAreaInclusive(
+    final AreaInclusiveUnsignedLType ao,
+    final double scale)
+  {
     final UnsignedRangeInclusiveL rx_o = ao.getRangeX();
     final UnsignedRangeInclusiveL ry_o = ao.getRangeY();
 
@@ -70,10 +90,6 @@ public final class R2RenderTargetDescriptions
       new UnsignedRangeInclusiveL(
         ry_o.getLower(), (long) ((double) ry_o.getUpper() * scale));
 
-    final AreaInclusiveUnsignedL b = AreaInclusiveUnsignedL.of(rx, ry);
-    final T r = constructor.apply(a, b);
-    Assertive.ensure(Objects.equals(a.getClass(), r.getClass()));
-
-    return r;
+    return AreaInclusiveUnsignedL.of(rx, ry);
   }
 }

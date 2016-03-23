@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jfunctional.PartialBiFunctionType;
 import org.immutables.value.Value;
 
 /**
@@ -75,5 +76,14 @@ public interface R2ShadowDepthVarianceType extends R2ShadowType
   default float getMinimumVariance()
   {
     return 0.00002f;
+  }
+
+  @Override
+  default <A, B, E extends Throwable> B matchShadow(
+    final A context,
+    final PartialBiFunctionType<A, R2ShadowDepthVarianceType, B, E> on_variance)
+    throws E
+  {
+    return on_variance.call(context, this);
   }
 }

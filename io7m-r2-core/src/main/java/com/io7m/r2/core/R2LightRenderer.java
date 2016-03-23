@@ -352,7 +352,6 @@ public final class R2LightRenderer implements R2LightRendererType
     {
       Assertive.require(this.g33 != null);
 
-
       /**
        * Create a new texture context and bind the geometry buffer textures
        * to it.

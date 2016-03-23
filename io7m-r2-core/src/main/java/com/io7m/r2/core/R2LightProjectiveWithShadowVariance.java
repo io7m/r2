@@ -29,10 +29,11 @@ import org.valid4j.Assertive;
 
 /**
  * Parameters for simple projective lights that operate by rendering frustum
- * meshes.
+ * meshes and that have variance shadows.
  */
 
-public final class R2LightProjective implements R2LightProjectiveType
+public final class R2LightProjectiveWithShadowVariance implements
+  R2LightProjectiveWithShadowType
 {
   private final PVector3FType<R2SpaceRGBType> color;
   private final long                          id;
@@ -40,17 +41,20 @@ public final class R2LightProjective implements R2LightProjectiveType
   private final R2ProjectionMeshReadableType  mesh;
   private final R2ProjectionReadableType      projection;
   private final R2Texture2DUsableType         image;
+  private final R2ShadowDepthVarianceType     shadow;
   private       float                         falloff;
   private       float                         intensity;
   private       float                         radius;
 
-  private R2LightProjective(
+  private R2LightProjectiveWithShadowVariance(
     final R2ProjectionMeshReadableType in_mesh,
     final R2Texture2DUsableType in_image,
+    final R2ShadowDepthVarianceType in_shadow,
     final long in_id)
   {
     this.mesh = NullCheck.notNull(in_mesh);
     this.image = NullCheck.notNull(in_image);
+    this.shadow = NullCheck.notNull(in_shadow);
 
     this.projection = this.mesh.getProjectionReadable();
     this.id = in_id;
@@ -63,20 +67,23 @@ public final class R2LightProjective implements R2LightProjectiveType
   /**
    * Construct a new light.
    *
-   * @param in_mesh  The light projection mesh
-   * @param in_image The image that will be projected by the light
-   * @param in_pool  The ID pool
+   * @param in_mesh   The light projection mesh
+   * @param in_image  The image that will be projected by the light
+   * @param in_shadow The shadow
+   * @param in_pool   The ID pool
    *
    * @return A new light
    */
 
-  public static R2LightProjectiveType newLight(
+  public static R2LightProjectiveWithShadowVariance newLight(
     final R2ProjectionMeshReadableType in_mesh,
     final R2Texture2DUsableType in_image,
+    final R2ShadowDepthVarianceType in_shadow,
     final R2IDPoolType in_pool)
   {
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_mesh);
+    NullCheck.notNull(in_shadow);
 
     final JCGLTexture2DUsableType t = in_image.get();
     final JCGLTextureWrapS wrap_s = t.textureGetWrapS();
@@ -88,7 +95,11 @@ public final class R2LightProjective implements R2LightProjectiveType
       wrap_t.equals(JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE),
       "Wrapping mode should be CLAMP_TO_EDGE (is %s)", wrap_t);
 
-    return new R2LightProjective(in_mesh, in_image, in_pool.getFreshID());
+    return new R2LightProjectiveWithShadowVariance(
+      in_mesh,
+      in_image,
+      in_shadow,
+      in_pool.getFreshID());
   }
 
   @Override
@@ -179,5 +190,21 @@ public final class R2LightProjective implements R2LightProjectiveType
   public R2Texture2DUsableType getImage()
   {
     return this.image;
+  }
+
+  @Override
+  public R2ShadowDepthVarianceType getShadow()
+  {
+    return this.shadow;
+  }
+
+  @Override
+  public <A, B, E extends Throwable> B matchLightWithShadow(
+    final A context,
+    final PartialBiFunctionType<A, R2LightProjectiveWithShadowType, B, E>
+      on_project)
+    throws E
+  {
+    return on_project.call(context, this);
   }
 }

@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFaceWindingOrder;
@@ -41,11 +42,14 @@ import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
+import com.io7m.jtensors.VectorI4F;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
 import org.valid4j.Assertive;
 
 import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
 
 /**
  * The default implementation of the {@link R2DepthRendererType} interface.
@@ -54,14 +58,20 @@ import java.util.Optional;
 public final class R2DepthVarianceRenderer implements
   R2DepthVarianceRendererType
 {
-  private final DepthConsumer         depth_consumer;
-  private final JCGLInterfaceGL33Type g;
-  private       boolean               deleted;
+  private final DepthConsumer          depth_consumer;
+  private final JCGLInterfaceGL33Type  g;
+  private final JCGLClearSpecification clear;
+  private       boolean                deleted;
 
   private R2DepthVarianceRenderer(final JCGLInterfaceGL33Type in_g)
   {
     this.g = NullCheck.notNull(in_g);
     this.depth_consumer = new DepthConsumer(this.g);
+    this.clear = JCGLClearSpecification.of(
+      Optional.of(new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f)),
+      OptionalDouble.of(1.0),
+      OptionalInt.empty(),
+      true);
   }
 
   /**
