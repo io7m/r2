@@ -25,6 +25,7 @@ import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2MatricesType;
+import com.io7m.r2.core.R2ShadowMapRendererType;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
@@ -121,4 +122,10 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2DepthVarianceRendererType getDepthVarianceRenderer();
+
+  /**
+   * @return A shadow map renderer
+   */
+
+  R2ShadowMapRendererType getShadowMapRenderer();
 }

@@ -22,6 +22,8 @@ import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.r2.core.R2ExceptionShaderParameterCountMismatch;
 import com.io7m.r2.core.R2ExceptionShaderParameterNotPresent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -76,8 +78,15 @@ public final class R2ShaderParameters
     final StringBuilder sb)
   {
     sb.append("Parameters:\n");
-    for (final String name : us.keySet()) {
-      final JCGLProgramUniformType u = us.get(name);
+
+    final List<JCGLProgramUniformType> ps = new ArrayList<>(us.size());
+    ps.addAll(us.values());
+    ps.sort((u0, u1) -> Integer.compareUnsigned(
+      u0.getGLName(),
+      u1.getGLName()));
+
+    for (int index = 0; index < ps.size(); ++index) {
+      final JCGLProgramUniformType u = ps.get(index);
       sb.append("[");
       sb.append(u.getGLName());
       sb.append("] ");

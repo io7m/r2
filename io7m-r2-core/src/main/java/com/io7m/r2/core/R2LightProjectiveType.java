@@ -20,8 +20,7 @@ package com.io7m.r2.core;
  * The type of projective lights.
  */
 
-public interface R2LightProjectiveType extends R2LightSingleType,
-  R2LightProjectiveUsableType
+public interface R2LightProjectiveType extends R2LightProjectiveUsableType
 {
   // No extra methods
 }

@@ -83,12 +83,9 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
   private R2GeometryBufferType    gbuffer;
   private R2EyePositionBufferType pbuffer;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
-    shader;
-  private R2SurfaceShaderBasicParameters
-    shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-    material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
+  private R2SurfaceShaderBasicParameters shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
   private R2UnitSphereType     sphere;
   private R2InstanceSingleType instance;

@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFramebufferBuilderType;
 import com.io7m.jcanephora.core.JCGLFramebufferColorAttachmentPointType;
 import com.io7m.jcanephora.core.JCGLFramebufferDrawBufferType;
@@ -31,11 +32,23 @@ import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.renderstate.JCGLColorBufferMaskingState;
+import com.io7m.jcanephora.renderstate.JCGLDepthClamping;
+import com.io7m.jcanephora.renderstate.JCGLDepthState;
+import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
+import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
+import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jtensors.VectorI4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
 
 /**
  * Default implementation of the {@link R2ImageBufferType} interface.
@@ -43,6 +56,28 @@ import java.util.List;
 
 public final class R2ImageBuffer implements R2ImageBufferType
 {
+  private static final JCGLRenderState CLEAR_STATE;
+  private static final JCGLClearSpecification CLEAR_SPEC;
+
+  static {
+    final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
+    k.setDepthState(JCGLDepthState.of(
+      JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+      Optional.empty(),
+      JCGLDepthWriting.DEPTH_WRITE_ENABLED,
+      JCGLDepthClamping.DEPTH_CLAMP_ENABLED
+    ));
+    k.setColorBufferMaskingState(
+      JCGLColorBufferMaskingState.of(true, true, true, true));
+    CLEAR_STATE = JCGLRenderState.builder().from(k).build();
+
+    CLEAR_SPEC = JCGLClearSpecification.of(
+      Optional.of(new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f)),
+      OptionalDouble.of(1.0),
+      OptionalInt.empty(),
+      true);
+  }
+
   private final R2Texture2DType              t_rgba;
   private final JCGLFramebufferType          framebuffer;
   private final UnsignedRangeInclusiveL      range;
@@ -164,5 +199,26 @@ public final class R2ImageBuffer implements R2ImageBufferType
       final JCGLFramebuffersType g_fb = g.getFramebuffers();
       g_fb.framebufferDelete(this.framebuffer);
     }
+  }
+
+  @Override
+  public void clearBoundPrimaryFramebuffer(
+    final JCGLInterfaceGL33Type g)
+    throws R2RendererExceptionFramebufferNotBound
+  {
+    final JCGLFramebuffersType g_fb = g.getFramebuffers();
+
+    if (!g_fb.framebufferDrawIsBound(this.framebuffer)) {
+      final StringBuilder sb = new StringBuilder(128);
+      sb.append("Expected a framebuffer to be bound.");
+      sb.append(System.lineSeparator());
+      sb.append("Framebuffer: ");
+      sb.append(this.framebuffer);
+      sb.append(System.lineSeparator());
+      throw new R2RendererExceptionFramebufferNotBound(sb.toString());
+    }
+
+    JCGLRenderStates.activate(g, R2ImageBuffer.CLEAR_STATE);
+    g.getClear().clear(R2ImageBuffer.CLEAR_SPEC);
   }
 }

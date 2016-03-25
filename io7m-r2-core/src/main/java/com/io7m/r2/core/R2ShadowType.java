@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jfunctional.PartialBiFunctionType;
 import org.immutables.value.Value;
 
 /**
@@ -40,8 +41,28 @@ public interface R2ShadowType
    */
 
   @Value.Parameter
-  default float getFactorMinimum()
+  default float getMinimumFactor()
   {
     return 0.2f;
   }
+
+  /**
+   * Match on the type of light.
+   *
+   * @param context     A context value
+   * @param on_variance Evaluated for variance shadows
+   * @param <A>         The type of context values
+   * @param <B>         The type of returned values
+   * @param <E>         The type of raised exceptions
+   *
+   * @return A value of type {@code B}
+   *
+   * @throws E If any of the given functions raise {@code E}
+   */
+
+  <A, B, E extends Throwable>
+  B matchShadow(
+    A context,
+    PartialBiFunctionType<A, R2ShadowDepthVarianceType, B, E> on_variance)
+    throws E;
 }

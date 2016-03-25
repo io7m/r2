@@ -77,27 +77,26 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private R2SceneStencilsType  stencils;
-  private R2ProjectionFOV      projection;
-  private R2SceneOpaquesType   opaques;
+  private R2SceneStencilsType stencils;
+  private R2ProjectionFOV projection;
+  private R2SceneOpaquesType opaques;
   private R2GeometryBufferType gbuffer;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
-  private R2SurfaceShaderBasicParameters
-                                                                     shader_params;
+  private R2SurfaceShaderBasicParameters shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
-  private R2UnitSphereType     sphere;
+  private R2UnitSphereType sphere;
   private R2InstanceSingleType instance;
 
   private JCGLClearSpecification geom_clear_spec;
   private JCGLClearSpecification eye_clear_spec;
 
   private R2FilterType<R2FilterDebugEyeZParametersType> eye_filter;
-  private R2FilterDebugEyeZParametersMutable            eye_filter_params;
-  private R2EyeZBufferType                              eye_buffer;
+  private R2FilterDebugEyeZParametersMutable eye_filter_params;
+  private R2EyeZBufferType eye_buffer;
 
-  private R2MainType            main;
+  private R2MainType main;
   private JCGLInterfaceGL33Type g33;
 
   public ExampleEyeZ0()

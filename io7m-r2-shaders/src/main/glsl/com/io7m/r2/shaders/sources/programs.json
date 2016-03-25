@@ -29,6 +29,11 @@
     "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertSingle.frag"
   },
 
+  "R2LightProjectiveLambertShadowVarianceSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertShadowVarianceSingle.frag"
+  },
+
   "R2LightSphericalDebugConstantSingle": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalDebugConstantSingle.frag"

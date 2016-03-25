@@ -83,6 +83,8 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
+import com.io7m.r2.core.R2ShadowMapContextType;
+import com.io7m.r2.core.R2ShadowMapRendererExecutionType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformOST;
 import com.io7m.r2.core.R2UnitSphereType;
@@ -227,6 +229,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
   private R2DebugVisualizerRendererParametersMutable
               debug_params;
+  private R2ShadowMapContextType shadow_context;
 
   public ExampleLightSpherical4()
   {
@@ -619,8 +622,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
       this.debug_params.setOpaqueInstances(this.opaques);
       this.debug_params.setOpaqueLights(this.lights);
-      this.debug_params.setShowOpaqueInstances(true);
-      this.debug_params.setShowOpaqueLights(true);
+      this.debug_params.setShowOpaqueInstances(false);
+      this.debug_params.setShowOpaqueLights(false);
     }
 
     {
@@ -709,6 +712,10 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     {
       final R2MatricesType matrices = mx.getMatrices();
 
+      final R2ShadowMapRendererExecutionType sme =
+        this.main.getShadowMapRenderer().shadowBegin();
+      this.shadow_context = sme.shadowExecComplete();
+
       matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         final R2TextureUnitContextParentType uc =
           t.main.getTextureUnitAllocator().getRootContext();
@@ -724,18 +731,12 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         final JCGLDepthBuffersType g_db = t.g.getDepthBuffers();
 
         g_fb.framebufferDrawBind(gbuffer_fb);
-        g_cb.colorBufferMask(true, true, true, true);
-        g_db.depthBufferWriteEnable();
-        g_sb.stencilBufferMask(
-          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-        g_cl.clear(t.geom_clear_spec);
-
+        t.gbuffer.clearBoundPrimaryFramebuffer(t.g);
         t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
           mo,
           t.main.getTextureUnitAllocator().getRootContext(),
           t.gbuffer.getArea(),
           t.stencils);
-
         t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
           t.gbuffer.getArea(),
           uc,
@@ -743,28 +744,24 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           t.opaques);
         g_fb.framebufferDrawUnbind();
 
-        t.filter_ssao_params.setSceneObserverValues(mo);
-        t.filter_ssao.runFilter(uc, t.filter_ssao_params);
+        // t.filter_ssao_params.setSceneObserverValues(mo);
+        // t.filter_ssao.runFilter(uc, t.filter_ssao_params);
 
-        t.filter_blur_ssao_params.setSceneObserverValues(mo);
-        t.filter_blur_ssao.runFilter(uc, t.filter_blur_ssao_params);
+        // t.filter_blur_ssao_params.setSceneObserverValues(mo);
+        // t.filter_blur_ssao.runFilter(uc, t.filter_blur_ssao_params);
 
         g_fb.framebufferDrawBind(lbuffer_fb);
-        g_cb.colorBufferMask(true, true, true, true);
-        g_db.depthBufferWriteEnable();
-        g_sb.stencilBufferMask(
-          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-        g_cl.clear(t.light_clear_spec);
-
+        t.lbuffer.clearBoundPrimaryFramebuffer(t.g);
         t.main.getLightRenderer().renderLightsWithBoundBuffer(
           t.gbuffer,
           t.lbuffer.getArea(),
           uc,
+          t.shadow_context,
           mo,
           t.lights);
         g_fb.framebufferDrawUnbind();
 
-        t.filter_ssao_app.runFilter(uc, t.filter_ssao_app_params);
+        // t.filter_ssao_app.runFilter(uc, t.filter_ssao_app_params);
 
         g_cb.colorBufferMask(true, true, true, true);
         g_db.depthBufferWriteEnable();
@@ -782,6 +779,8 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
         return Unit.unit();
       });
+
+      this.shadow_context.shadowMapContextFinish();
     }
   }
 

@@ -43,6 +43,11 @@ public final class R2ShaderDepthSingleVerifier<M> implements
     State.STATE_INSTANCE_RECEIVED,
   };
 
+  private static final State[] MATERIAL_OR_INSTANCE_RECEIVED = {
+    State.STATE_MATERIAL_RECEIVED,
+    State.STATE_INSTANCE_RECEIVED,
+  };
+
   private final R2ShaderDepthSingleType<M> shader;
   private final StringBuilder                 text;
   private       State                         state;
@@ -165,10 +170,10 @@ public final class R2ShaderDepthSingleVerifier<M> implements
     final JCGLShadersType g_sh,
     final R2MatricesInstanceSingleValuesType m)
   {
-    R2ShaderVerifiers.checkState(
+    R2ShaderVerifiers.checkStates(
       this.text,
       this.getShaderProgram().getName(),
-      State.STATE_MATERIAL_RECEIVED,
+      R2ShaderDepthSingleVerifier.MATERIAL_OR_INSTANCE_RECEIVED,
       this.state);
 
     this.state = State.STATE_INSTANCE_RECEIVED;
