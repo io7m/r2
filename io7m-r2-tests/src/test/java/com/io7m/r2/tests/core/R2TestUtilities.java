@@ -16,6 +16,7 @@
 
 package com.io7m.r2.tests.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLArrayBufferUsableType;
 import com.io7m.jcanephora.core.JCGLArrayObjectBuilderType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
@@ -970,6 +971,7 @@ public final class R2TestUtilities
         final JCGLTexturesType g_tex,
         final JCGLShadersType g_sh,
         final R2TextureUnitContextMutableType tc,
+        final AreaInclusiveUnsignedLType viewport,
         final R2LightSingleType values,
         final R2MatricesObserverValuesType m)
       {

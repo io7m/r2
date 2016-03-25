@@ -70,6 +70,7 @@ import com.io7m.r2.core.R2LightBuffer;
 import com.io7m.r2.core.R2LightBufferDescription;
 import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
+import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
 import com.io7m.r2.core.R2LightSphericalSimpleSingle;
 import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2MaterialDepthSingle;
@@ -168,10 +169,10 @@ public final class ExampleLightProjectiveWithShadow0 implements
   private R2LightSphericalSingleType sphere_light;
   private R2UnitSphereType sphere;
 
-  private R2ShaderLightWithShadowSingleType<R2LightProjectiveWithShadowVariance> proj_light_shader;
+  private R2ShaderLightWithShadowSingleType<R2LightProjectiveWithShadowVarianceType> proj_light_shader;
   private R2ProjectionFrustum proj_proj;
   private R2ProjectionMeshType proj_mesh;
-  private R2LightProjectiveWithShadowVariance proj_light;
+  private R2LightProjectiveWithShadowVarianceType proj_light;
   private R2ShadowDepthVariance proj_shadow;
   private R2DepthInstancesType proj_shadow_instances;
   private R2ShadowMapContextType shadow_context;

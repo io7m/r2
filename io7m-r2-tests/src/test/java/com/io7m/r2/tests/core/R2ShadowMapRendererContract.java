@@ -43,6 +43,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
+import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
 import com.io7m.r2.core.R2MaterialDepthSingle;
 import com.io7m.r2.core.R2MaterialDepthSingleType;
 import com.io7m.r2.core.R2Matrices;
@@ -298,7 +299,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2ShadowDepthVariance shadow =
       R2ShadowDepthVariance.of(id_pool.getFreshID(), desc);
 
-    final R2LightProjectiveWithShadowVariance ls =
+    final R2LightProjectiveWithShadowVarianceType ls =
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 
@@ -415,7 +416,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2ShadowDepthVariance shadow =
       R2ShadowDepthVariance.of(id_pool.getFreshID(), desc);
 
-    final R2LightProjectiveWithShadowVariance ls =
+    final R2LightProjectiveWithShadowVarianceType ls =
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 

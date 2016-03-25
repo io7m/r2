@@ -34,7 +34,7 @@ import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
+import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
@@ -60,9 +60,9 @@ import java.util.Optional;
  */
 
 public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle extends
-  R2AbstractShader<R2LightProjectiveWithShadowVariance>
+  R2AbstractShader<R2LightProjectiveWithShadowVarianceType>
   implements R2ShaderLightWithShadowSingleType
-  <R2LightProjectiveWithShadowVariance>
+  <R2LightProjectiveWithShadowVarianceType>
 {
   private final JCGLProgramUniformType u_transform_projection_inverse;
   private final JCGLProgramUniformType u_transform_modelview;
@@ -237,7 +237,7 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
    */
 
   public static R2ShaderLightWithShadowSingleType
-    <R2LightProjectiveWithShadowVariance>
+    <R2LightProjectiveWithShadowVarianceType>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
@@ -252,10 +252,10 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
   }
 
   @Override
-  public Class<R2LightProjectiveWithShadowVariance>
+  public Class<R2LightProjectiveWithShadowVarianceType>
   getShaderParametersType()
   {
-    return R2LightProjectiveWithShadowVariance.class;
+    return R2LightProjectiveWithShadowVarianceType.class;
   }
 
   @Override
@@ -323,7 +323,7 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
     final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
-    final R2LightProjectiveWithShadowVariance values,
+    final R2LightProjectiveWithShadowVarianceType values,
     final R2MatricesObserverValuesType m)
   {
     NullCheck.notNull(g_tex);
@@ -454,7 +454,7 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
-    final R2LightProjectiveWithShadowVariance values,
+    final R2LightProjectiveWithShadowVarianceType values,
     final R2Texture2DUsableType map)
   {
     NullCheck.notNull(g_tex);

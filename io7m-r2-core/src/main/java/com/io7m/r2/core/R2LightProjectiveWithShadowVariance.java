@@ -33,18 +33,18 @@ import org.valid4j.Assertive;
  */
 
 public final class R2LightProjectiveWithShadowVariance implements
-  R2LightProjectiveWithShadowType
+  R2LightProjectiveWithShadowVarianceType
 {
   private final PVector3FType<R2SpaceRGBType> color;
-  private final long                          id;
-  private final R2TransformOT                 transform;
-  private final R2ProjectionMeshReadableType  mesh;
-  private final R2ProjectionReadableType      projection;
-  private final R2Texture2DUsableType         image;
-  private final R2ShadowDepthVarianceType     shadow;
-  private       float                         falloff;
-  private       float                         intensity;
-  private       float                         radius;
+  private final long id;
+  private final R2TransformOT transform;
+  private final R2ProjectionMeshReadableType mesh;
+  private final R2ProjectionReadableType projection;
+  private final R2Texture2DUsableType image;
+  private final R2ShadowDepthVarianceType shadow;
+  private float falloff;
+  private float intensity;
+  private float radius;
 
   private R2LightProjectiveWithShadowVariance(
     final R2ProjectionMeshReadableType in_mesh,
@@ -75,7 +75,7 @@ public final class R2LightProjectiveWithShadowVariance implements
    * @return A new light
    */
 
-  public static R2LightProjectiveWithShadowVariance newLight(
+  public static R2LightProjectiveWithShadowVarianceType newLight(
     final R2ProjectionMeshReadableType in_mesh,
     final R2Texture2DUsableType in_image,
     final R2ShadowDepthVarianceType in_shadow,
