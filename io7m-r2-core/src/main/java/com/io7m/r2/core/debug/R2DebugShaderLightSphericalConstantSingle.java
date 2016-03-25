@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.debug;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
@@ -207,6 +208,7 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
+    final AreaInclusiveUnsignedLType viewport,
     final R2LightSphericalSingleType values,
     final R2MatricesObserverValuesType m)
   {

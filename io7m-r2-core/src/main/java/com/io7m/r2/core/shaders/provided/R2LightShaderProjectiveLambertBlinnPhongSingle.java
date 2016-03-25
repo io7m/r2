@@ -254,20 +254,6 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
     NullCheck.notNull(unit_specular);
 
     /**
-     * Upload the viewport.
-     */
-
-    final AreaInclusiveUnsignedLType viewport = g.getDescription().getArea();
-    final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
-    final UnsignedRangeInclusiveL range_y = viewport.getRangeY();
-    g_sh.shaderUniformPutFloat(
-      this.u_viewport_inverse_width,
-      (float) (1.0 / (double) range_x.getInterval()));
-    g_sh.shaderUniformPutFloat(
-      this.u_viewport_inverse_height,
-      (float) (1.0 / (double) range_y.getInterval()));
-
-    /**
      * Set each of the required G-Buffer textures.
      */
 
@@ -308,6 +294,7 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
+    final AreaInclusiveUnsignedLType viewport,
     final R2LightProjectiveType values,
     final R2MatricesObserverValuesType m)
   {
@@ -339,6 +326,19 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
       this.u_view_rays_ray_x0y1, view_rays.getRayX0Y1());
     g_sh.shaderUniformPutVector3f(
       this.u_view_rays_ray_x1y1, view_rays.getRayX1Y1());
+
+    /**
+     * Upload the viewport.
+     */
+
+    final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
+    final UnsignedRangeInclusiveL range_y = viewport.getRangeY();
+    g_sh.shaderUniformPutFloat(
+      this.u_viewport_inverse_width,
+      (float) (1.0 / (double) range_x.getInterval()));
+    g_sh.shaderUniformPutFloat(
+      this.u_viewport_inverse_height,
+      (float) (1.0 / (double) range_y.getInterval()));
 
     /**
      * Upload the scene's depth coefficient.

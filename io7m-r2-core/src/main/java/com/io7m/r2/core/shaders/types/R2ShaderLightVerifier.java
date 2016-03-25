@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.shaders.types;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
@@ -204,6 +205,7 @@ public final class R2ShaderLightVerifier<M extends R2LightSingleType> implements
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
+    final AreaInclusiveUnsignedLType area,
     final M values,
     final R2MatricesObserverValuesType m)
   {
@@ -213,7 +215,7 @@ public final class R2ShaderLightVerifier<M extends R2LightSingleType> implements
       State.STATE_GEOMETRY_BUFFER_RECEIVED,
       this.state);
 
-    this.shader.onReceiveValues(g_tex, g_sh, tc, values, m);
+    this.shader.onReceiveValues(g_tex, g_sh, tc, area, values, m);
     this.state = State.STATE_VALUES_RECEIVED;
   }
 

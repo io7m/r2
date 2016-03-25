@@ -18,8 +18,6 @@ package com.io7m.r2.examples.custom;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
-import com.io7m.jcanephora.core.api.JCGLClearType;
-import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jfunctional.Unit;
@@ -200,8 +198,6 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
         t.dbuffer.getPrimaryFramebuffer();
 
       final JCGLFramebuffersType g_fb = t.g33.getFramebuffers();
-      final JCGLClearType g_cl = t.g33.getClear();
-      final JCGLDepthBuffersType g_db = t.g33.getDepthBuffers();
 
       g_fb.framebufferDrawBind(dbuffer_fb);
       this.dbuffer.clearBoundPrimaryFramebuffer(t.g33);

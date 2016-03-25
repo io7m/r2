@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.shaders.types;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
@@ -113,17 +114,19 @@ public interface R2ShaderLightSingleUsableType<M extends R2LightSingleType>
    * #onActivate(JCGLShadersType)} and before a call to {@link
    * #onValidate()}.</p>
    *
-   * @param g_tex  A texture interface
-   * @param g_sh   A shader interface
-   * @param tc     A texture unit context
-   * @param values The material parameters
-   * @param m      Observer values
+   * @param g_tex    A texture interface
+   * @param g_sh     A shader interface
+   * @param tc       A texture unit context
+   * @param viewport The viewport
+   * @param values   The material parameters
+   * @param m        Observer values
    */
 
   void onReceiveValues(
     JCGLTexturesType g_tex,
     JCGLShadersType g_sh,
     R2TextureUnitContextMutableType tc,
+    AreaInclusiveUnsignedLType viewport,
     M values,
     R2MatricesObserverValuesType m);
 }

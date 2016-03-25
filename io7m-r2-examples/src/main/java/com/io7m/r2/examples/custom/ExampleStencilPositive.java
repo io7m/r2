@@ -114,14 +114,18 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     g_st.stencilBufferMask(JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
     g_st.stencilBufferClear(0);
 
-    this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
-      t.stencil_renderer.renderStencilsWithBoundBuffer(
-        mo,
-        t.main.getTextureUnitAllocator().getRootContext(),
-        area,
-        t.stencils);
-      return Unit.unit();
-    });
+    this.matrices.withObserver(
+      this.view,
+      this.projection,
+      this,
+      (mo, t) -> {
+        t.stencil_renderer.renderStencilsWithBoundBuffer(
+          mo,
+          t.main.getTextureUnitAllocator().getRootContext(),
+          area,
+          t.stencils);
+        return Unit.unit();
+      });
   }
 
   @Override

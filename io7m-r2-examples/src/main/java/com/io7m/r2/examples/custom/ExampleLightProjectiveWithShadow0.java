@@ -563,8 +563,8 @@ public final class ExampleLightProjectiveWithShadow0 implements
           R2DepthVarianceBufferDescription.of(
             shadow_area,
             JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR,
-            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
-            R2DepthPrecision.R2_DEPTH_PRECISION_24,
+            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
+            R2DepthPrecision.R2_DEPTH_PRECISION_16,
             R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16));
     }
 

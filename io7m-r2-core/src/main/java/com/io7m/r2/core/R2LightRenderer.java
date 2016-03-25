@@ -71,9 +71,9 @@ public final class R2LightRenderer implements R2LightRendererType
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_STENCIL);
   }
 
-  private final LightConsumer         light_consumer;
+  private final LightConsumer light_consumer;
   private final JCGLInterfaceGL33Type g;
-  private       boolean               deleted;
+  private boolean deleted;
 
   private R2LightRenderer(final JCGLInterfaceGL33Type in_g)
   {
@@ -181,6 +181,7 @@ public final class R2LightRenderer implements R2LightRendererType
       this.light_consumer.matrices = m;
       this.light_consumer.texture_context = uc;
       this.light_consumer.shadow_maps = shadows;
+      this.light_consumer.viewport = lbuffer_area;
       try {
         s.opaqueLightsExecute(this.light_consumer);
       } finally {
@@ -188,6 +189,7 @@ public final class R2LightRenderer implements R2LightRendererType
         this.light_consumer.gbuffer = null;
         this.light_consumer.texture_context = null;
         this.light_consumer.shadow_maps = null;
+        this.light_consumer.viewport = null;
       }
     }
   }
@@ -195,27 +197,28 @@ public final class R2LightRenderer implements R2LightRendererType
   private static final class LightConsumer implements
     R2SceneOpaqueLightsConsumerType
   {
-    private final JCGLInterfaceGL33Type   g33;
-    private final JCGLShadersType         shaders;
-    private final JCGLTexturesType        textures;
-    private final JCGLArrayObjectsType    array_objects;
-    private final JCGLDrawType            draw;
-    private final JCGLRenderStateMutable  render_state_screen;
-    private final JCGLRenderStateMutable  render_state_volume;
+    private final JCGLInterfaceGL33Type g33;
+    private final JCGLShadersType shaders;
+    private final JCGLTexturesType textures;
+    private final JCGLArrayObjectsType array_objects;
+    private final JCGLDrawType draw;
+    private final JCGLRenderStateMutable render_state_screen;
+    private final JCGLRenderStateMutable render_state_volume;
     private final JCGLStencilStateMutable stencil_state_screen;
     private final JCGLStencilStateMutable stencil_state_volume;
 
-    private @Nullable R2MatricesObserverType         matrices;
-    private @Nullable R2GeometryBufferUsableType     gbuffer;
-    private @Nullable JCGLTextureUnitType            unit_albedo;
-    private @Nullable JCGLTextureUnitType            unit_normals;
-    private @Nullable JCGLTextureUnitType            unit_specular;
-    private @Nullable JCGLTextureUnitType            unit_depth;
+    private @Nullable R2MatricesObserverType matrices;
+    private @Nullable R2GeometryBufferUsableType gbuffer;
+    private @Nullable JCGLTextureUnitType unit_albedo;
+    private @Nullable JCGLTextureUnitType unit_normals;
+    private @Nullable JCGLTextureUnitType unit_specular;
+    private @Nullable JCGLTextureUnitType unit_depth;
     private @Nullable R2TextureUnitContextParentType texture_context;
-    private @Nullable R2ShadowMapContextType         shadow_maps;
-
-    private R2ShaderLightSingleUsableType<R2LightSingleType> light_shader;
-    private R2TextureUnitContextType                         light_base_context;
+    private @Nullable R2ShadowMapContextType shadow_maps;
+    private @Nullable
+    R2ShaderLightSingleUsableType<R2LightSingleType> light_shader;
+    private @Nullable R2TextureUnitContextType light_base_context;
+    private @Nullable AreaInclusiveUnsignedLType viewport;
 
     LightConsumer(final JCGLInterfaceGL33Type in_g)
     {
@@ -447,7 +450,12 @@ public final class R2LightRenderer implements R2LightRendererType
 
         try {
           this.light_shader.onReceiveValues(
-            this.textures, this.shaders, uc, light, this.matrices);
+            this.textures,
+            this.shaders,
+            uc,
+            this.viewport,
+            light,
+            this.matrices);
 
           /**
            * If the shader requires a shadow map, then fetch the one that

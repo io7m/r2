@@ -161,20 +161,6 @@ public final class R2LightShaderAmbientSingle extends
     NullCheck.notNull(unit_depth);
     NullCheck.notNull(unit_normals);
     NullCheck.notNull(unit_specular);
-
-    /**
-     * Upload the viewport.
-     */
-
-    final AreaInclusiveUnsignedLType viewport = g.getDescription().getArea();
-    final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
-    final UnsignedRangeInclusiveL range_y = viewport.getRangeY();
-    g_sh.shaderUniformPutFloat(
-      this.u_viewport_inverse_width,
-      (float) (1.0 / (double) range_x.getInterval()));
-    g_sh.shaderUniformPutFloat(
-      this.u_viewport_inverse_height,
-      (float) (1.0 / (double) range_y.getInterval()));
   }
 
   @Override
@@ -202,6 +188,7 @@ public final class R2LightShaderAmbientSingle extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
+    final AreaInclusiveUnsignedLType viewport,
     final R2LightAmbientSingle values,
     final R2MatricesObserverValuesType m)
   {
@@ -219,6 +206,19 @@ public final class R2LightShaderAmbientSingle extends
       this.u_transform_projection, m.getMatrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+
+    /**
+     * Upload the viewport.
+     */
+
+    final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
+    final UnsignedRangeInclusiveL range_y = viewport.getRangeY();
+    g_sh.shaderUniformPutFloat(
+      this.u_viewport_inverse_width,
+      (float) (1.0 / (double) range_x.getInterval()));
+    g_sh.shaderUniformPutFloat(
+      this.u_viewport_inverse_height,
+      (float) (1.0 / (double) range_y.getInterval()));
 
     /**
      * Upload the scene's depth coefficient.
