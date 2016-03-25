@@ -22,7 +22,7 @@ package com.io7m.r2.core;
 
 public interface R2LightProjectiveWithShadowWritableType extends
   R2LightProjectiveWritableType,
-  R2LightWithShadowType
+  R2LightWithShadowSingleType
 {
   // No extra methods
 }

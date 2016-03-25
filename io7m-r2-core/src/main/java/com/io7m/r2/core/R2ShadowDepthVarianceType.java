@@ -34,7 +34,7 @@ public interface R2ShadowDepthVarianceType extends R2ShadowType
 
   @Override
   @Value.Parameter
-  default float getFactorMinimum()
+  default float getMinimumFactor()
   {
     return 0.2f;
   }

@@ -14,16 +14,23 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl.shaders;
 
-/**
- * The type of usable (readable/writable but not deletable) projective lights.
- */
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.shaders
+  .R2ShaderLightProjectiveLambertShadowVarianceSingleContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public interface R2LightProjectiveWithShadowUsableType extends
-  R2LightProjectiveWithShadowReadableType,
-  R2LightProjectiveWithShadowWritableType,
-  R2LightProjectiveUsableType
+public final class R2ShaderLightProjectiveLambertShadowVarianceSingleTest
+  extends
+  R2ShaderLightProjectiveLambertShadowVarianceSingleContract
 {
-  // No extra methods
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }

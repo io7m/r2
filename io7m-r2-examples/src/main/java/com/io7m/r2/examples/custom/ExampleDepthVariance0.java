@@ -17,7 +17,6 @@
 package com.io7m.r2.examples.custom;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.api.JCGLClearType;
 import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
@@ -27,7 +26,6 @@ import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
-import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
@@ -68,9 +66,6 @@ import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
-import java.util.Optional;
-import java.util.OptionalInt;
-
 // CHECKSTYLE_JAVADOC:OFF
 
 public final class ExampleDepthVariance0 implements R2ExampleCustomType
@@ -79,31 +74,21 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
 
   private R2ProjectionFOV projection;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
-    shader;
-  private R2SurfaceShaderBasicParameters
-    shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-    material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
+  private R2SurfaceShaderBasicParameters shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
-  private R2UnitSphereType     sphere;
+  private R2UnitSphereType sphere;
   private R2InstanceSingleType instance;
 
-  private R2DepthVarianceBufferType dbuffer;
-  private JCGLClearSpecification
-                                    depth_clear_spec;
-  private R2DepthVarianceRendererType
-                                    depth_variance_renderer;
-  private R2DepthInstancesType
-                                    depth_instances;
-  private R2DepthShaderBasicParametersMutable
-                                    depth_shader_params;
-  private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType>
-                                    depth_shader;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType>
-                                    depth_material;
+  private R2DepthVarianceBufferType depth_buffer;
+  private R2DepthVarianceRendererType depth_variance_renderer;
+  private R2DepthInstancesType depth_instances;
+  private R2DepthShaderBasicParametersMutable depth_shader_params;
+  private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> depth_shader;
+  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
 
-  private R2MainType            main;
+  private R2MainType main;
   private JCGLInterfaceGL33Type g33;
 
   public ExampleDepthVariance0()
@@ -131,7 +116,7 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
       desc.setDepthVariancePrecision(
         R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16);
 
-      this.dbuffer = R2DepthVarianceBuffer.newDepthVarianceBuffer(
+      this.depth_buffer = R2DepthVarianceBuffer.newDepthVarianceBuffer(
         g.getFramebuffers(),
         g.getTextures(),
         m.getTextureUnitAllocator().getRootContext(),
@@ -187,16 +172,6 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
     this.depth_material =
       R2MaterialDepthSingle.newMaterial(
         id_pool, this.depth_shader, this.depth_shader_params);
-
-    {
-      final JCGLClearSpecification.Builder csb =
-        JCGLClearSpecification.builder();
-      csb.setColorBufferClear(Optional.of(
-        new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f)));
-      csb.setStencilBufferClear(OptionalInt.empty());
-      csb.setDepthBufferClear(1.0);
-      this.depth_clear_spec = csb.build();
-    }
   }
 
   @Override
@@ -226,22 +201,19 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
     final R2MatricesType matrices = m.getMatrices();
     matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
       final JCGLFramebufferUsableType dbuffer_fb =
-        t.dbuffer.getPrimaryFramebuffer();
+        t.depth_buffer.getPrimaryFramebuffer();
 
       final JCGLFramebuffersType g_fb = t.g33.getFramebuffers();
       final JCGLClearType g_cl = t.g33.getClear();
       final JCGLDepthBuffersType g_db = t.g33.getDepthBuffers();
 
       g_fb.framebufferDrawBind(dbuffer_fb);
-      g_db.depthBufferWriteEnable();
-      g_cl.clear(t.depth_clear_spec);
-
+      t.depth_buffer.clearBoundPrimaryFramebuffer(t.g33);
       t.depth_variance_renderer.renderDepthVarianceWithBoundBuffer(
-        t.dbuffer.getArea(),
+        t.depth_buffer.getArea(),
         t.main.getTextureUnitAllocator().getRootContext(),
         mo,
         t.depth_instances);
-
       g_fb.framebufferDrawUnbind();
       return Unit.unit();
     });

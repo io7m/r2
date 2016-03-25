@@ -19,10 +19,10 @@ package com.io7m.r2.core;
 import com.io7m.jfunctional.PartialBiFunctionType;
 
 /**
- * The type of lights that have shadows.
+ * The type of single-instance lights that have shadows.
  */
 
-public interface R2LightWithShadowType extends R2LightType
+public interface R2LightWithShadowSingleType extends R2LightSingleType
 {
   /**
    * @return The shadow for the light

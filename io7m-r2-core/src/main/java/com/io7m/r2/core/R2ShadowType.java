@@ -41,7 +41,7 @@ public interface R2ShadowType
    */
 
   @Value.Parameter
-  default float getFactorMinimum()
+  default float getMinimumFactor()
   {
     return 0.2f;
   }

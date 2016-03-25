@@ -14,16 +14,38 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests;
 
-/**
- * The type of usable (readable/writable but not deletable) projective lights.
- */
+import org.junit.Test;
 
-public interface R2LightProjectiveWithShadowUsableType extends
-  R2LightProjectiveWithShadowReadableType,
-  R2LightProjectiveWithShadowWritableType,
-  R2LightProjectiveUsableType
+public final class R2LinearStepTest
 {
-  // No extra methods
+  private static float clamp(
+    final float x,
+    final float min,
+    final float max)
+  {
+    return Math.max(Math.min(x, max), min);
+  }
+
+  private static float linearStep(
+    final float min,
+    final float max,
+    final float x)
+  {
+    final float vsm = x - min;
+    final float msm = max - min;
+    return R2LinearStepTest.clamp(vsm / msm, 0.0f, 1.0f);
+  }
+
+  @Test
+  public void testLinearStep()
+  {
+    for (float index = -10.0f; index < 10.0f; index += 0.1f) {
+      System.out.println(index + " -> " + R2LinearStepTest.linearStep(
+        0.0f,
+        2.0f,
+        index));
+    }
+  }
 }

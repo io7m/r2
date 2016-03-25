@@ -36,7 +36,7 @@ public interface R2ShadowMapContextType
    *                                                      context
    */
 
-  R2Texture2DUsableType shadowMapGet(R2LightWithShadowType ls)
+  R2Texture2DUsableType shadowMapGet(R2LightWithShadowSingleType ls)
     throws
     R2RendererExceptionShadowMapContextNotActive,
     R2RendererExceptionShadowNotRendered;

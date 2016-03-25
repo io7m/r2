@@ -21,7 +21,7 @@ package com.io7m.r2.core;
  */
 
 public interface R2LightProjectiveWithShadowType extends
-  R2LightProjectiveWithShadowUsableType
+  R2LightProjectiveWithShadowUsableType, R2LightProjectiveType
 {
   // No extra methods
 }

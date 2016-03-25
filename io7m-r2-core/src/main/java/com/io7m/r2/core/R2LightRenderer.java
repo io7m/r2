@@ -50,6 +50,7 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightWithShadowSingleUsableType;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
@@ -113,13 +114,14 @@ public final class R2LightRenderer implements R2LightRendererType
     final R2GeometryBufferUsableType gbuffer,
     final R2LightBufferUsableType lbuffer,
     final R2TextureUnitContextParentType uc,
+    final R2ShadowMapContextType shadows,
     final R2MatricesObserverType m,
     final R2SceneOpaqueLightsType s)
   {
-    NullCheck.notNull(this.g);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer);
     NullCheck.notNull(uc);
+    NullCheck.notNull(shadows);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
@@ -130,7 +132,8 @@ public final class R2LightRenderer implements R2LightRendererType
 
     try {
       g_fb.framebufferDrawBind(lb_fb);
-      this.renderLightsWithBoundBuffer(gbuffer, lbuffer.getArea(), uc, m, s);
+      this.renderLightsWithBoundBuffer(
+        gbuffer, lbuffer.getArea(), uc, shadows, m, s);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -141,13 +144,14 @@ public final class R2LightRenderer implements R2LightRendererType
     final R2GeometryBufferUsableType gbuffer,
     final AreaInclusiveUnsignedLType lbuffer_area,
     final R2TextureUnitContextParentType uc,
+    final R2ShadowMapContextType shadows,
     final R2MatricesObserverType m,
     final R2SceneOpaqueLightsType s)
   {
-    NullCheck.notNull(this.g);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer_area);
     NullCheck.notNull(uc);
+    NullCheck.notNull(shadows);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
@@ -176,12 +180,14 @@ public final class R2LightRenderer implements R2LightRendererType
       this.light_consumer.gbuffer = gbuffer;
       this.light_consumer.matrices = m;
       this.light_consumer.texture_context = uc;
+      this.light_consumer.shadow_maps = shadows;
       try {
         s.opaqueLightsExecute(this.light_consumer);
       } finally {
         this.light_consumer.matrices = null;
         this.light_consumer.gbuffer = null;
         this.light_consumer.texture_context = null;
+        this.light_consumer.shadow_maps = null;
       }
     }
   }
@@ -206,6 +212,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private @Nullable JCGLTextureUnitType            unit_specular;
     private @Nullable JCGLTextureUnitType            unit_depth;
     private @Nullable R2TextureUnitContextParentType texture_context;
+    private @Nullable R2ShadowMapContextType         shadow_maps;
 
     private R2ShaderLightSingleUsableType<R2LightSingleType> light_shader;
     private R2TextureUnitContextType                         light_base_context;
@@ -413,30 +420,58 @@ public final class R2LightRenderer implements R2LightRendererType
     @SuppressWarnings("unchecked")
     public <M extends R2LightSingleType> void onLightSingle(
       final R2ShaderLightSingleUsableType<M> s,
-      final M i)
+      final M light)
     {
       this.light_shader = (R2ShaderLightSingleUsableType<R2LightSingleType>) s;
 
       try {
 
         /**
-         * Create a new texture context for this particular light.
+         * Configure the rendering state based on the type of light.
          */
+
+        light.matchLightSingle(
+          this,
+          (t, lv) -> {
+            JCGLRenderStates.activate(t.g33, t.render_state_volume);
+            return Unit.unit();
+          },
+          (t, ls) -> {
+            JCGLRenderStates.activate(t.g33, t.render_state_screen);
+            return Unit.unit();
+          });
+
 
         final R2TextureUnitContextType uc =
           this.light_base_context.unitContextNew();
 
         try {
-          if (i instanceof R2LightScreenSingleType) {
-            JCGLRenderStates.activate(this.g33, this.render_state_screen);
-          } else {
-            JCGLRenderStates.activate(this.g33, this.render_state_volume);
+          this.light_shader.onReceiveValues(
+            this.textures, this.shaders, uc, light, this.matrices);
+
+          /**
+           * If the shader requires a shadow map, then fetch the one that
+           * was rendered.
+           */
+
+          if (this.light_shader
+            instanceof R2ShaderLightWithShadowSingleUsableType) {
+            final R2LightWithShadowSingleType light_ws =
+              (R2LightWithShadowSingleType) light;
+            final R2Texture2DUsableType map =
+              this.shadow_maps.shadowMapGet(light_ws);
+
+            final R2ShaderLightWithShadowSingleUsableType<
+              R2LightWithShadowSingleType> ss =
+              (R2ShaderLightWithShadowSingleUsableType<
+                R2LightWithShadowSingleType>) (Object) this.light_shader;
+
+            ss.onReceiveShadowMap(
+              this.textures, this.shaders, uc, light_ws, map);
           }
 
-          s.onReceiveValues(this.textures, this.shaders, uc, i, this.matrices);
-
-          if (i instanceof R2LightProjectiveType) {
-            final R2LightProjectiveType it = (R2LightProjectiveType) i;
+          if (light instanceof R2LightProjectiveType) {
+            final R2LightProjectiveType it = (R2LightProjectiveType) light;
             this.matrices.withProjectiveLight(
               it.getTransform(),
               it.getProjection(),
@@ -450,7 +485,7 @@ public final class R2LightRenderer implements R2LightRendererType
               });
           } else {
             this.matrices.withTransform(
-              i.getTransform(),
+              light.getTransform(),
               PMatrixI3x3F.identity(),
               this,
               (mi, t) -> {
@@ -469,6 +504,7 @@ public final class R2LightRenderer implements R2LightRendererType
         this.light_shader = null;
       }
     }
+
 
     @Override
     public <M extends R2LightSingleType> void onLightSingleShaderFinish(

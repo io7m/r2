@@ -22,5 +22,5 @@ package com.io7m.r2.core;
 
 public interface R2LightVolumeSingleType extends R2LightSingleType
 {
-
+  // No extra methods
 }

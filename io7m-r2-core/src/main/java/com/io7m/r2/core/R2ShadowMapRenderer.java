@@ -91,23 +91,15 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
   private static final class RendererContext implements
     R2ShadowMapRendererExecutionType
   {
-    private final MapContext
-                                                                    map_context;
-    private final JCGLInterfaceGL33Type                             g33;
+    private final MapContext map_context;
+    private final JCGLInterfaceGL33Type g33;
     private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
-    private final VarianceState
-                                                                    variance;
-    private       boolean                                           active;
-    private @Nullable
-    R2TextureUnitContextParentType
-      texture_context;
-    private @Nullable R2LightWithShadowType light;
-    private @Nullable
-    R2DepthInstancesType
-      instances;
-    private @Nullable
-    R2MatricesType
-      matrices;
+    private final VarianceState variance;
+    private boolean active;
+    private @Nullable R2TextureUnitContextParentType texture_context;
+    private @Nullable R2LightWithShadowSingleType light;
+    private @Nullable R2DepthInstancesType instances;
+    private @Nullable R2MatricesType matrices;
 
     private RendererContext(
       final
@@ -172,7 +164,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
           gfb.framebufferDrawBind(
             buffer.getPrimaryFramebuffer());
-          gcl.clear(t.variance.clear);
+          buffer.clearBoundPrimaryFramebuffer(t.g33);
           t.variance.renderer.renderDepthVarianceWithBoundBuffer(
             buffer.getArea(),
             t.texture_context,
@@ -220,7 +212,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
     public void shadowExecRenderLight(
       final R2TextureUnitContextParentType tc,
       final R2MatricesType m,
-      final R2LightWithShadowType ls,
+      final R2LightWithShadowSingleType ls,
       final R2DepthInstancesType i)
     {
       NullCheck.notNull(tc);
@@ -283,19 +275,11 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
     private static final class VarianceState
     {
-      private final R2DepthVarianceRendererType
-        renderer;
-      private final
-      R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType,
-        R2DepthVarianceBufferUsableType>
-        pool;
-      private final
-      Long2ReferenceOpenHashMap<R2DepthVarianceBufferUsableType>
-        used;
-      private final     JCGLClearSpecification
-                                                  clear;
-      private @Nullable R2DepthVarianceBufferUsableType
-                                                  current;
+      private final R2DepthVarianceRendererType renderer;
+      private final R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType, R2DepthVarianceBufferUsableType> pool;
+      private final Long2ReferenceOpenHashMap<R2DepthVarianceBufferUsableType> used;
+      private final JCGLClearSpecification clear;
+      private @Nullable R2DepthVarianceBufferUsableType current;
       private @Nullable R2ShadowDepthVarianceType shadow;
 
       private VarianceState(
@@ -322,8 +306,8 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
     private final class MapContext implements R2ShadowMapContextType
     {
-      private           boolean               active;
-      private @Nullable R2LightWithShadowType light;
+      private boolean active;
+      private @Nullable R2LightWithShadowSingleType light;
 
       MapContext()
       {
@@ -332,7 +316,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
       @Override
       public R2Texture2DUsableType shadowMapGet(
-        final R2LightWithShadowType ls)
+        final R2LightWithShadowSingleType ls)
       {
         this.light = NullCheck.notNull(ls);
 

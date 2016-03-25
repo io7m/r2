@@ -17,13 +17,24 @@
 package com.io7m.r2.core;
 
 /**
- * The type of usable (readable/writable but not deletable) projective lights.
+ * The type of renderer exceptions that indicate an attempt to perform an
+ * operation that requires a specific framebuffer be bound, but without that
+ * framebuffer actually being bound.
  */
 
-public interface R2LightProjectiveWithShadowUsableType extends
-  R2LightProjectiveWithShadowReadableType,
-  R2LightProjectiveWithShadowWritableType,
-  R2LightProjectiveUsableType
+public final class R2RendererExceptionFramebufferNotBound extends
+  R2RendererException
 {
-  // No extra methods
+  private static final long serialVersionUID = 1L;
+
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
+
+  public R2RendererExceptionFramebufferNotBound(final String message)
+  {
+    super(message);
+  }
 }

@@ -38,7 +38,7 @@ public interface R2ShadowMapRendererExecutionType
   void shadowExecRenderLight(
     R2TextureUnitContextParentType tc,
     R2MatricesType m,
-    R2LightWithShadowType ls,
+    R2LightWithShadowSingleType ls,
     R2DepthInstancesType i)
     throws R2RendererExceptionShadowExecutionNotActive;
 
