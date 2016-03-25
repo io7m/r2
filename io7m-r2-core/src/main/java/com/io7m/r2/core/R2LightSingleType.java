@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
+import com.io7m.jfunctional.PartialBiFunctionType;
 
 /**
  * The type of single-instance lights.
@@ -35,4 +36,26 @@ public interface R2LightSingleType extends R2LightType
    */
 
   R2TransformReadableType getTransform();
+
+  /**
+   * Match on the type of light.
+   *
+   * @param context   A context value
+   * @param on_volume Evaluated for volume lights
+   * @param on_screen Evaluated for screen lights
+   * @param <A>       The type of context values
+   * @param <B>       The type of returned values
+   * @param <E>       The type of raised exceptions
+   *
+   * @return A value of type {@code B}
+   *
+   * @throws E If any of the given functions raise {@code E}
+   */
+
+  <A, B, E extends Throwable>
+  B matchLightSingle(
+    A context,
+    PartialBiFunctionType<A, R2LightVolumeSingleType, B, E> on_volume,
+    PartialBiFunctionType<A, R2LightScreenSingleType, B, E> on_screen)
+    throws E;
 }

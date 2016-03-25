@@ -18,6 +18,8 @@ package com.io7m.r2.core;
 
 // @formatter:off
 
+import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
+
 /**
  * <p>The type of consumers of opaque scene instances.</p>
  *
@@ -37,12 +39,6 @@ public interface R2SceneOpaqueLightsConsumerType
    */
 
   void onStart();
-
-  /**
-   * Called when rendering of lights is finished.
-   */
-
-  void onFinish();
 
   /**
    * Called when rendering of a group begins.
@@ -101,4 +97,10 @@ public interface R2SceneOpaqueLightsConsumerType
    */
 
   void onFinishGroup(int group);
+
+  /**
+   * Called when rendering of lights is finished.
+   */
+
+  void onFinish();
 }

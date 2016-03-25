@@ -19,6 +19,26 @@
     "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalLambertSingle.frag"
   },
 
+  "R2LightProjectiveLambertBlinnPhongSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertBlinnPhongSingle.frag"
+  },
+
+  "R2LightProjectiveLambertSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertSingle.frag"
+  },
+
+  "R2LightProjectiveLambertShadowVarianceSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertShadowVarianceSingle.frag"
+  },
+
+  "R2LightProjectiveLambertBlinnPhongShadowVarianceSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertBlinnPhongShadowVarianceSingle.frag"
+  },
+
   "R2LightSphericalDebugConstantSingle": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalDebugConstantSingle.frag"
@@ -37,6 +57,16 @@
   "R2LightDirectionalDebugConstantSingle": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2LightDirectionalSingle.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2LightDirectionalDebugConstantSingle.frag"
+  },
+
+  "R2DepthBasicSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DepthSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DepthBasicSingle.frag"
+  },
+
+  "R2DepthBasicBatched": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DepthBatched.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DepthBasicBatched.frag"
   },
 
   "R2SurfaceBasicSingle": {
@@ -82,6 +112,21 @@
   "R2DebugEyePositionReconstruction": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2DebugPositionOnly.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2DebugEyePositionReconstruction.frag"
+  },
+
+  "R2DebugVisualConstantScreen": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DebugVisualConstantScreen.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugVisualConstant.frag"
+  },
+
+  "R2DebugVisualConstantSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugVisualConstant.frag"
+  },
+
+  "R2DebugVisualConstantBatched": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceBatched.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugVisualConstant.frag"
   },
 
   "R2StencilSingle": {

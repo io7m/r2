@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jtensors.MatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -36,28 +37,37 @@ public interface R2ProjectionReadableType
     PMatrixWritable4x4FType<R2SpaceEyeType, R2SpaceClipType> m);
 
   /**
+   * Write the projection to the given matrix.
+   *
+   * @param m The output matrix
+   */
+
+  void projectionMakeMatrixUntyped(
+    MatrixWritable4x4FType m);
+
+  /**
    * @return The rightmost edge of the frustum's near plane.
    */
 
-  float projectionGetXMaximum();
+  float projectionGetNearXMaximum();
 
   /**
    * @return The leftmost edge of the frustum's near plane.
    */
 
-  float projectionGetXMinimum();
+  float projectionGetNearXMinimum();
 
   /**
    * @return The topmost edge of the frustum's near plane.
    */
 
-  float projectionGetYMaximum();
+  float projectionGetNearYMaximum();
 
   /**
    * @return The bottommost edge of the frustum's near plane.
    */
 
-  float projectionGetYMinimum();
+  float projectionGetNearYMinimum();
 
   /**
    * @return The value of the projection's far plane.
@@ -70,4 +80,34 @@ public interface R2ProjectionReadableType
    */
 
   float projectionGetZNear();
+
+  /**
+   * @return The rightmost edge of the frustum's far plane.
+   */
+
+  float projectionGetFarXMaximum();
+
+  /**
+   * @return The leftmost edge of the frustum's far plane.
+   */
+
+  float projectionGetFarXMinimum();
+
+  /**
+   * @return The topmost edge of the frustum's far plane.
+   */
+
+  float projectionGetFarYMaximum();
+
+  /**
+   * @return The bottommost edge of the frustum's far plane.
+   */
+
+  float projectionGetFarYMinimum();
+
+  /**
+   * @return The watchable value for this projection
+   */
+
+  R2WatchableType<R2ProjectionReadableType> projectionGetWatchable();
 }

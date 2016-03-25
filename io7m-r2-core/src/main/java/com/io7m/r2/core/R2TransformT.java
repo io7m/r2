@@ -34,20 +34,19 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 public final class R2TransformT implements
   R2TransformOrthogonalReadableType
 {
-  private final PVector3FType<R2SpaceWorldType> translation;
-  private final Runnable                        changed;
+  private final PVector3FType<R2SpaceWorldType>                    translation;
+  private final R2WatchableType<R2TransformOrthogonalReadableType> watchable;
 
   private R2TransformT(
-    final Runnable in_changed,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    NullCheck.notNull(in_changed);
     NullCheck.notNull(in_translation);
 
-    this.changed = in_changed;
+    this.watchable =
+      R2Watchable.newWatchable(this);
     this.translation =
       new R2TransformNotifyingTensors.R2PVectorM3F<>(
-        in_changed, in_translation);
+        this.watchable::watchableChanged, in_translation);
   }
 
   /**
@@ -63,8 +62,7 @@ public final class R2TransformT implements
   public static R2TransformT newTransformWithValues(
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    return new R2TransformT(() -> {
-    }, in_translation);
+    return new R2TransformT(in_translation);
   }
 
   /**
@@ -76,24 +74,7 @@ public final class R2TransformT implements
 
   public static R2TransformT newTransform()
   {
-    return new R2TransformT(() -> {
-    }, new PVectorM3F<>(0.0f, 0.0f, 0.0f));
-  }
-
-  /**
-   * <p>Construct a transform using the default values: The translation {@code
-   * (0, 0, 0)}.</p>
-   *
-   * @param in_changed The procedure that will be executed every time the value
-   *                   of this transform is changed
-   *
-   * @return A new transform
-   */
-
-  public static R2TransformT newTransformWithNotifier(
-    final Runnable in_changed)
-  {
-    return new R2TransformT(in_changed, new PVectorM3F<>(0.0f, 0.0f, 0.0f));
+    return new R2TransformT(new PVectorM3F<>(0.0f, 0.0f, 0.0f));
   }
 
   /**
@@ -113,5 +94,22 @@ public final class R2TransformT implements
     NullCheck.notNull(context);
     NullCheck.notNull(m);
     MatrixM4x4F.makeTranslation3F(this.translation, m);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformReadableType> transformGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformReadableType>) o;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformOrthogonalReadableType>
+  transformOrthogonalGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
   }
 }

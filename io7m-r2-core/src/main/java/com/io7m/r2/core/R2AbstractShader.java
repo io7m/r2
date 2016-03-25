@@ -24,6 +24,8 @@ import com.io7m.jcanephora.core.JCGLVertexShaderType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +87,18 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
   public final boolean isDeleted()
   {
     return this.deleted;
+  }
+
+  @Override
+  public final void onActivate(final JCGLShadersType g_sh)
+  {
+    g_sh.shaderActivateProgram(this.program);
+  }
+
+  @Override
+  public final void onDeactivate(final JCGLShadersType g_sh)
+  {
+    g_sh.shaderDeactivateProgram();
   }
 
   @Override

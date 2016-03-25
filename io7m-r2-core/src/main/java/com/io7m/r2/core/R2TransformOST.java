@@ -38,29 +38,28 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 public final class R2TransformOST implements
   R2TransformOrthogonalReadableType
 {
-  private final Quaternion4FType                orientation;
-  private final PVector3FType<R2SpaceWorldType> translation;
-  private final Runnable                        changed;
-  private       float                           scale;
+  private final Quaternion4FType                                   orientation;
+  private final PVector3FType<R2SpaceWorldType>                    translation;
+  private final R2WatchableType<R2TransformOrthogonalReadableType> watchable;
+  private       float                                              scale;
 
   private R2TransformOST(
-    final Runnable in_changed,
     final Quaternion4FType in_orientation,
     final float in_scale,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    NullCheck.notNull(in_changed);
     NullCheck.notNull(in_orientation);
     NullCheck.notNull(in_translation);
 
-    this.changed = in_changed;
+    this.watchable = R2Watchable.newWatchable(this);
+
     this.orientation =
       new R2TransformNotifyingTensors.R2QuaternionM4F(
-        in_changed, in_orientation);
-    this.scale = in_scale;
+        this.watchable::watchableChanged, in_orientation);
     this.translation =
       new R2TransformNotifyingTensors.R2PVectorM3F<>(
-        in_changed, in_translation);
+        this.watchable::watchableChanged, in_translation);
+    this.scale = in_scale;
   }
 
   /**
@@ -80,9 +79,7 @@ public final class R2TransformOST implements
     final float in_scale,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    return new R2TransformOST(
-      () -> {
-      }, in_orientation, in_scale, in_translation);
+    return new R2TransformOST(in_orientation, in_scale, in_translation);
   }
 
   /**
@@ -96,30 +93,6 @@ public final class R2TransformOST implements
   public static R2TransformOST newTransform()
   {
     return new R2TransformOST(
-      () -> {
-      },
-      new QuaternionM4F(),
-      1.0f,
-      new PVectorM3F<>(0.0f, 0.0f, 0.0f)
-    );
-  }
-
-  /**
-   * <p>Construct a transform using the default values: The identity quaternion
-   * {@code (0, 0, 0, 1)} for orientation, the scale value {@code 1},
-   * and the translation {@code (0, 0, 0)}.</p>
-   *
-   * @param in_changed The procedure that will be executed every time the value
-   *                   of this transform is changed
-   *
-   * @return A new transform
-   */
-
-  public static R2TransformOST newTransformWithNotifier(
-    final Runnable in_changed)
-  {
-    return new R2TransformOST(
-      in_changed,
       new QuaternionM4F(),
       1.0f,
       new PVectorM3F<>(0.0f, 0.0f, 0.0f)
@@ -153,7 +126,7 @@ public final class R2TransformOST implements
   public void setScale(final float x)
   {
     this.scale = x;
-    this.changed.run();
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -194,5 +167,22 @@ public final class R2TransformOST implements
       temporary.setR2C2F(this.scale);
       MatrixM4x4F.multiply(accum, temporary, m);
     }
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformReadableType> transformGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformReadableType>) o;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformOrthogonalReadableType>
+  transformOrthogonalGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
   }
 }

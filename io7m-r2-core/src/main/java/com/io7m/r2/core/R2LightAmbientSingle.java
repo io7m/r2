@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
+import com.io7m.jfunctional.PartialBiFunctionType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
@@ -72,6 +73,7 @@ public final class R2LightAmbientSingle implements R2LightScreenSingleType
    * @return The readable/writable light color
    */
 
+  @Override
   public PVector3FType<R2SpaceRGBType> getColor()
   {
     return this.color;
@@ -81,6 +83,7 @@ public final class R2LightAmbientSingle implements R2LightScreenSingleType
    * @return The current light intensity
    */
 
+  @Override
   public float getIntensity()
   {
     return this.intensity;
@@ -135,5 +138,15 @@ public final class R2LightAmbientSingle implements R2LightScreenSingleType
   public R2TransformReadableType getTransform()
   {
     return R2TransformIdentity.getInstance();
+  }
+
+  @Override
+  public <A, B, E extends Throwable> B matchLightSingle(
+    final A context,
+    final PartialBiFunctionType<A, R2LightVolumeSingleType, B, E> on_volume,
+    final PartialBiFunctionType<A, R2LightScreenSingleType, B, E> on_screen)
+    throws E
+  {
+    return on_screen.call(context, this);
   }
 }

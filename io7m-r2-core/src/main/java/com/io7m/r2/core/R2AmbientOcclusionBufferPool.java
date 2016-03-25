@@ -22,8 +22,9 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jpuddle.core.JPPoolSynchronous;
 import com.io7m.jpuddle.core.JPPoolSynchronousType;
 import com.io7m.jpuddle.core.JPPoolableListenerType;
-import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -41,6 +42,12 @@ public final class R2AmbientOcclusionBufferPool implements
   R2RenderTargetPoolType<R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferUsableType>
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2AmbientOcclusionBufferPool.class);
+  }
+
   private final
   JPPoolSynchronousType<
     R2AmbientOcclusionBufferDescriptionType,
@@ -73,96 +80,8 @@ public final class R2AmbientOcclusionBufferPool implements
     final long soft,
     final long hard)
   {
-    final JPPoolableListenerType<
-      R2AmbientOcclusionBufferDescriptionType,
-      R2AmbientOcclusionBufferType,
-      R2TextureUnitContextParentType> listener =
-      new JPPoolableListenerType<
-        R2AmbientOcclusionBufferDescriptionType,
-        R2AmbientOcclusionBufferType,
-        R2TextureUnitContextParentType>()
-      {
-        @Override
-        public long onEstimateSize(
-          final R2TextureUnitContextParentType tc,
-          final R2AmbientOcclusionBufferDescriptionType key)
-        {
-          final AreaInclusiveUnsignedLType area = key.getArea();
-          final UnsignedRangeInclusiveL range_x = area.getRangeX();
-          final UnsignedRangeInclusiveL range_y = area.getRangeY();
-          return range_x.getInterval() * range_y.getInterval();
-        }
-
-        @Override
-        public R2AmbientOcclusionBufferType onCreate(
-          final R2TextureUnitContextParentType tc,
-          final R2AmbientOcclusionBufferDescriptionType key)
-        {
-          return R2AmbientOcclusionBuffer.newAmbientOcclusionBuffer(
-            g.getFramebuffers(),
-            g.getTextures(),
-            tc,
-            key);
-        }
-
-        @Override
-        public long onGetSize(
-          final R2TextureUnitContextParentType tc,
-          final R2AmbientOcclusionBufferDescriptionType key,
-          final R2AmbientOcclusionBufferType value)
-        {
-          return value.getRange().getInterval();
-        }
-
-        @Override
-        public void onReuse(
-          final R2TextureUnitContextParentType tc,
-          final R2AmbientOcclusionBufferDescriptionType key,
-          final R2AmbientOcclusionBufferType value)
-        {
-
-        }
-
-        @Override
-        public void onDelete(
-          final R2TextureUnitContextParentType tc,
-          final R2AmbientOcclusionBufferDescriptionType key,
-          final R2AmbientOcclusionBufferType value)
-        {
-          value.delete(g);
-        }
-
-        @Override
-        public void onError(
-          final R2TextureUnitContextParentType tc,
-          final R2AmbientOcclusionBufferDescriptionType key,
-          final Optional<R2AmbientOcclusionBufferType> value,
-          final Throwable e)
-        {
-          // TODO: Generated method stub!
-          throw new UnimplementedCodeException();
-        }
-      };
-
     return new R2AmbientOcclusionBufferPool(
-      JPPoolSynchronous.newPool(listener, soft, hard));
-  }
-
-  @Override
-  public void delete(final JCGLInterfaceGL33Type g)
-    throws R2Exception
-  {
-    NullCheck.notNull(g);
-
-    // TODO: Generated method stub!
-    throw new UnimplementedCodeException();
-  }
-
-  @Override
-  public boolean isDeleted()
-  {
-    // TODO: Generated method stub!
-    throw new UnimplementedCodeException();
+      JPPoolSynchronous.newPool(new Listener(g), soft, hard));
   }
 
   @Override
@@ -183,5 +102,97 @@ public final class R2AmbientOcclusionBufferPool implements
     NullCheck.notNull(tc);
     NullCheck.notNull(target);
     this.actual.returnValue(tc, target);
+  }
+
+  @Override
+  public void delete(final R2TextureUnitContextParentType c)
+  {
+    this.actual.deleteUnsafely(c);
+  }
+
+  @Override
+  public boolean isDeleted()
+  {
+    return this.actual.isDeleted();
+  }
+
+  private static final class Listener implements JPPoolableListenerType<
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferType,
+    R2TextureUnitContextParentType>
+  {
+    private final JCGLInterfaceGL33Type g;
+
+    Listener(final JCGLInterfaceGL33Type in_g)
+    {
+      this.g = NullCheck.notNull(in_g);
+    }
+
+    @Override
+    public long onEstimateSize(
+      final R2TextureUnitContextParentType tc,
+      final R2AmbientOcclusionBufferDescriptionType key)
+    {
+      final AreaInclusiveUnsignedLType area = key.getArea();
+      final UnsignedRangeInclusiveL range_x = area.getRangeX();
+      final UnsignedRangeInclusiveL range_y = area.getRangeY();
+      return range_x.getInterval() * range_y.getInterval();
+    }
+
+    @Override
+    public R2AmbientOcclusionBufferType onCreate(
+      final R2TextureUnitContextParentType tc,
+      final R2AmbientOcclusionBufferDescriptionType key)
+    {
+      return R2AmbientOcclusionBuffer.newAmbientOcclusionBuffer(
+        this.g.getFramebuffers(),
+        this.g.getTextures(),
+        tc,
+        key);
+    }
+
+    @Override
+    public long onGetSize(
+      final R2TextureUnitContextParentType tc,
+      final R2AmbientOcclusionBufferDescriptionType key,
+      final R2AmbientOcclusionBufferType value)
+    {
+      return value.getRange().getInterval();
+    }
+
+    @Override
+    public void onReuse(
+      final R2TextureUnitContextParentType tc,
+      final R2AmbientOcclusionBufferDescriptionType key,
+      final R2AmbientOcclusionBufferType value)
+    {
+      if (R2AmbientOcclusionBufferPool.LOG.isTraceEnabled()) {
+        R2AmbientOcclusionBufferPool.LOG.trace("reuse {}", key);
+      }
+    }
+
+    @Override
+    public void onDelete(
+      final R2TextureUnitContextParentType tc,
+      final R2AmbientOcclusionBufferDescriptionType key,
+      final R2AmbientOcclusionBufferType value)
+    {
+      if (R2AmbientOcclusionBufferPool.LOG.isTraceEnabled()) {
+        R2AmbientOcclusionBufferPool.LOG.trace("delete {}", value);
+      }
+
+      value.delete(this.g);
+    }
+
+    @Override
+    public void onError(
+      final R2TextureUnitContextParentType tc,
+      final R2AmbientOcclusionBufferDescriptionType key,
+      final Optional<R2AmbientOcclusionBufferType> value,
+      final Throwable e)
+    {
+      R2AmbientOcclusionBufferPool.LOG.error(
+        "Exception raised in cache listener: {}: ", key, e);
+    }
   }
 }

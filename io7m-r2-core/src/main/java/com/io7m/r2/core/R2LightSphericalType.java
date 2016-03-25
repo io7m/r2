@@ -17,7 +17,6 @@
 package com.io7m.r2.core;
 
 import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
@@ -55,18 +54,6 @@ public interface R2LightSphericalType extends R2LightType
 
   void setFalloff(
     float r);
-
-  /**
-   * @return The readable/writable light color
-   */
-
-  PVector3FType<R2SpaceRGBType> getColor();
-
-  /**
-   * @return The current light intensity
-   */
-
-  float getIntensity();
 
   /**
    * Set the light intensity.

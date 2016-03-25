@@ -19,6 +19,9 @@ struct R2_basic_surface_parameters_t {
   vec3  specular_color;
   /// Specular exponent in the range `[0, 256]`
   float specular_exponent;
+
+  /// Alpha discard threshold in the range `[0, 1]`.
+  float alpha_discard_threshold;
 };
 
 /// Input textures that all basic surface shaders will receive.

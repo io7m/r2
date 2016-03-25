@@ -17,11 +17,16 @@
 package com.io7m.r2.tests.core;
 
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.r2.core.R2AttributeConventions;
 import com.io7m.r2.core.R2Bilinear;
 import com.io7m.r2.core.R2Core;
+import com.io7m.r2.core.R2IndexBuffers;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2ShaderParameters;
+import com.io7m.r2.core.R2RenderTargetDescriptions;
 import com.io7m.r2.core.R2Stencils;
+import com.io7m.r2.core.debug.R2DebugVisualizerDefaults;
+import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderVerifiers;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -44,6 +49,41 @@ public final class R2UnreachableTest
     } catch (final InvocationTargetException e) {
       throw e.getCause();
     }
+  }
+
+  @Test(expected = UnreachableCodeException.class)
+  public void testAttributeConventions()
+    throws Throwable
+  {
+    R2UnreachableTest.checkUnreachable(R2AttributeConventions.class);
+  }
+
+  @Test(expected = UnreachableCodeException.class)
+  public void testIndexBuffers()
+    throws Throwable
+  {
+    R2UnreachableTest.checkUnreachable(R2IndexBuffers.class);
+  }
+
+  @Test(expected = UnreachableCodeException.class)
+  public void testRenderTargetDescriptions()
+    throws Throwable
+  {
+    R2UnreachableTest.checkUnreachable(R2RenderTargetDescriptions.class);
+  }
+
+  @Test(expected = UnreachableCodeException.class)
+  public void testDebugVisualizerDefaults()
+    throws Throwable
+  {
+    R2UnreachableTest.checkUnreachable(R2DebugVisualizerDefaults.class);
+  }
+
+  @Test(expected = UnreachableCodeException.class)
+  public void testShaderVerifiers()
+    throws Throwable
+  {
+    R2UnreachableTest.checkUnreachable(R2ShaderVerifiers.class);
   }
 
   @Test(expected = UnreachableCodeException.class)

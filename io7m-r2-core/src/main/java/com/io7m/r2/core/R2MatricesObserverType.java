@@ -46,4 +46,27 @@ public interface R2MatricesObserverType extends R2MatricesObserverValuesType
     A x,
     R2MatricesInstanceSingleFunctionType<A, B> f)
     throws R2Exception;
+
+  /**
+   * Evaluate matrices for a given projective, relative to the current
+   * observer.
+   *
+   * @param t    The light's transform
+   * @param f    The function that will receive matrices
+   * @param p    The projection for the light
+   * @param x    A context value passed to {@code f}
+   * @param <A>  The type of consumed values
+   * @param <B>  The type of returned values
+   *
+   * @return A value of {@code B}
+   *
+   * @throws R2Exception If {@code f} raises {@link R2Exception}
+   */
+
+  <A, B> B withProjectiveLight(
+    R2TransformOTReadableType t,
+    R2ProjectionReadableType p,
+    A x,
+    R2MatricesProjectiveLightFunctionType<A, B> f)
+    throws R2Exception;
 }

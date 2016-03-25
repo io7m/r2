@@ -52,7 +52,8 @@ R2_surface_shader_main_gbuffer()
     R2_normalsCompress (o.normal),
     o.specular,
     o.specular_exp / 256.0,
-    depth_log
+    depth_log,
+    o.discarded
   );
 }
 
@@ -69,6 +70,10 @@ main (void)
   R2_out_normal   = o.normal;
   R2_out_specular = vec4 (o.specular, o.specular_exp);
   gl_FragDepth    = o.depth;
+
+  if (o.discarded) {
+    discard;
+  }
 }
 
 #endif // R2_SURFACE_SHADER_DRIVER_SINGLE_H

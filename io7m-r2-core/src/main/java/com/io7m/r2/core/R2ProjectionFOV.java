@@ -19,6 +19,7 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jranges.RangeCheck;
+import com.io7m.jtensors.MatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -29,15 +30,20 @@ import com.io7m.r2.spaces.R2SpaceEyeType;
 
 public final class R2ProjectionFOV implements R2ProjectionType
 {
-  private final JCGLProjectionMatricesType context;
-  private       float                      z_far;
-  private       float                      z_near;
-  private       float                      x_max;
-  private       float                      x_min;
-  private       float                      y_max;
-  private       float                      y_min;
-  private       float                      horizontal_fov;
-  private       float                      aspect;
+  private final JCGLProjectionMatricesType                context;
+  private final R2WatchableType<R2ProjectionReadableType> watchable;
+  private       float                                     near_z;
+  private       float                                     near_x_max;
+  private       float                                     near_x_min;
+  private       float                                     near_y_max;
+  private       float                                     near_y_min;
+  private       float                                     horizontal_fov;
+  private       float                                     aspect;
+  private       float                                     far_x_min;
+  private       float                                     far_x_max;
+  private       float                                     far_y_min;
+  private       float                                     far_y_max;
+  private       float                                     far_z;
 
   private R2ProjectionFOV(
     final JCGLProjectionMatricesType in_context,
@@ -47,18 +53,22 @@ public final class R2ProjectionFOV implements R2ProjectionType
     final float in_z_far)
   {
     this.context = NullCheck.notNull(in_context);
-    this.x_max = 1.0f;
-    this.x_min = -1.0f;
-    this.y_max = 1.0f;
-    this.y_min = -1.0f;
-    this.z_far = in_z_far;
-    this.z_near = in_z_near;
+
+    this.near_x_max = 1.0f;
+    this.near_x_min = -1.0f;
+    this.near_y_max = 1.0f;
+    this.near_y_min = -1.0f;
+    this.near_z = in_z_near;
+
+    this.far_z = in_z_far;
 
     RangeCheck.checkGreaterDouble(
       (double) in_aspect, "Aspect ratio", 0.0, "Minimum ratio");
 
     this.horizontal_fov = in_fov;
     this.aspect = in_aspect;
+
+    this.watchable = R2Watchable.newWatchable(this);
     this.update();
   }
 
@@ -83,15 +93,28 @@ public final class R2ProjectionFOV implements R2ProjectionType
     final float in_z_near,
     final float in_z_far)
   {
-    return new R2ProjectionFOV(c, in_fov, in_aspect, in_z_near, in_z_far);
+    return new R2ProjectionFOV(
+      c,
+      in_fov,
+      in_aspect,
+      in_z_near,
+      in_z_far);
   }
 
   private void update()
   {
-    this.x_max = (float) (this.z_near * Math.tan(this.horizontal_fov / 2.0));
-    this.x_min = -this.x_max;
-    this.y_max = this.x_max / this.aspect;
-    this.y_min = -this.y_max;
+    this.near_x_max =
+      (float) (this.near_z * Math.tan(this.horizontal_fov / 2.0));
+    this.near_x_min = -this.near_x_max;
+    this.near_y_max = this.near_x_max / this.aspect;
+    this.near_y_min = -this.near_y_max;
+
+    this.far_x_min = this.near_x_min * (this.far_z / this.near_z);
+    this.far_x_max = this.near_x_max * (this.far_z / this.near_z);
+    this.far_y_min = this.near_y_min * (this.far_z / this.near_z);
+    this.far_y_max = this.near_y_max * (this.far_z / this.near_z);
+
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -148,7 +171,8 @@ public final class R2ProjectionFOV implements R2ProjectionType
 
   public void projectionSetZFar(final float z)
   {
-    this.z_far = z;
+    this.far_z = z;
+    this.update();
   }
 
   /**
@@ -159,56 +183,94 @@ public final class R2ProjectionFOV implements R2ProjectionType
 
   public void projectionSetZNear(final float z)
   {
-    this.z_near = z;
+    this.near_z = z;
+    this.update();
   }
 
   @Override
   public void projectionMakeMatrix(
     final PMatrixWritable4x4FType<R2SpaceEyeType, R2SpaceClipType> m)
   {
+    this.projectionMakeMatrixUntyped(m);
+  }
+
+  @Override
+  public void projectionMakeMatrixUntyped(
+    final MatrixWritable4x4FType m)
+  {
     this.context.makeFrustumProjection(
       m,
-      (double) this.x_min,
-      (double) this.x_max,
-      (double) this.y_min,
-      (double) this.y_max,
-      (double) this.z_near,
-      (double) this.z_far);
+      (double) this.near_x_min,
+      (double) this.near_x_max,
+      (double) this.near_y_min,
+      (double) this.near_y_max,
+      (double) this.near_z,
+      (double) this.far_z);
   }
 
   @Override
-  public float projectionGetXMaximum()
+  public float projectionGetNearXMaximum()
   {
-    return this.x_max;
+    return this.near_x_max;
   }
 
   @Override
-  public float projectionGetXMinimum()
+  public float projectionGetNearXMinimum()
   {
-    return this.x_min;
+    return this.near_x_min;
   }
 
   @Override
-  public float projectionGetYMaximum()
+  public float projectionGetNearYMaximum()
   {
-    return this.y_max;
+    return this.near_y_max;
   }
 
   @Override
-  public float projectionGetYMinimum()
+  public float projectionGetNearYMinimum()
   {
-    return this.y_min;
+    return this.near_y_min;
   }
 
   @Override
   public float projectionGetZFar()
   {
-    return this.z_far;
+    return this.far_z;
   }
 
   @Override
   public float projectionGetZNear()
   {
-    return this.z_near;
+    return this.near_z;
+  }
+
+  @Override
+  public float projectionGetFarXMaximum()
+  {
+    return this.far_x_max;
+  }
+
+  @Override
+  public float projectionGetFarXMinimum()
+  {
+    return this.far_x_min;
+  }
+
+  @Override
+  public float projectionGetFarYMaximum()
+  {
+    return this.far_y_max;
+  }
+
+  @Override
+  public float projectionGetFarYMinimum()
+  {
+    return this.far_y_min;
+  }
+
+  @Override
+  public R2WatchableType<R2ProjectionReadableType> projectionGetWatchable()
+  {
+    return this.watchable;
   }
 }

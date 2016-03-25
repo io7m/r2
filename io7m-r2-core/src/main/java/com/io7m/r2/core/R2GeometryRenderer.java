@@ -25,21 +25,29 @@ import com.io7m.jcanephora.core.JCGLPrimitives;
 import com.io7m.jcanephora.core.JCGLStencilFunction;
 import com.io7m.jcanephora.core.JCGLStencilOperation;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
-import com.io7m.jcanephora.core.api.JCGLBlendingType;
-import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
-import com.io7m.jcanephora.core.api.JCGLCullingType;
-import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.renderstate.JCGLCullingState;
+import com.io7m.jcanephora.renderstate.JCGLDepthClamping;
+import com.io7m.jcanephora.renderstate.JCGLDepthState;
+import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
+import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
+import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.renderstate.JCGLStencilStateMutable;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import org.valid4j.Assertive;
+
+import java.util.Optional;
 
 /**
  * The default implementation of the {@link R2GeometryRendererType} interface.
@@ -49,12 +57,38 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 {
   private final OpaqueConsumer        opaque_consumer;
   private final JCGLInterfaceGL33Type g;
+  private final JCGLRenderState       render_state_base;
   private       boolean               deleted;
 
   private R2GeometryRenderer(final JCGLInterfaceGL33Type in_g)
   {
     this.g = NullCheck.notNull(in_g);
     this.opaque_consumer = new OpaqueConsumer(this.g);
+
+    {
+      final JCGLRenderState.Builder b = JCGLRenderState.builder();
+
+      /**
+       * Only front faces are rendered.
+       */
+
+      b.setCullingState(Optional.of(JCGLCullingState.of(
+        JCGLFaceSelection.FACE_BACK,
+        JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
+
+      /**
+       * Enable depth testing, writing, and clamping.
+       */
+
+      b.setDepthState(JCGLDepthState.of(
+        JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+        Optional.of(JCGLDepthFunction.DEPTH_LESS_THAN),
+        JCGLDepthWriting.DEPTH_WRITE_ENABLED,
+        JCGLDepthClamping.DEPTH_CLAMP_ENABLED
+      ));
+
+      this.render_state_base = b.build();
+    }
   }
 
   /**
@@ -111,29 +145,12 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
     Assertive.require(g_fb.framebufferDrawAnyIsBound());
-
-    final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
-    final JCGLBlendingType g_b = this.g.getBlending();
-    final JCGLColorBufferMaskingType g_cm = this.g.getColorBufferMasking();
-    final JCGLCullingType g_cu = this.g.getCulling();
     final JCGLViewportsType g_v = this.g.getViewports();
 
     if (s.opaquesCount() > 0L) {
-
-      /**
-       * Configure state for geometry rendering.
-       */
-
-      g_b.blendingDisable();
-      g_cm.colorBufferMask(true, true, true, true);
-      g_cu.cullingEnable(
-        JCGLFaceSelection.FACE_BACK,
-        JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE);
-      g_db.depthClampingEnable();
-      g_db.depthBufferWriteEnable();
-      g_db.depthBufferTestEnable(JCGLDepthFunction.DEPTH_LESS_THAN);
       g_v.viewportSet(area);
 
+      this.opaque_consumer.render_state.from(this.render_state_base);
       this.opaque_consumer.matrices = m;
       this.opaque_consumer.texture_context = uc;
       try {
@@ -161,12 +178,13 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   private static final class OpaqueConsumer implements
     R2SceneOpaquesConsumerType
   {
-    private final JCGLInterfaceGL33Type  g33;
-    private final JCGLShadersType        shaders;
-    private final JCGLTexturesType       textures;
-    private final JCGLArrayObjectsType   array_objects;
-    private final JCGLDrawType           draw;
-    private final JCGLStencilBuffersType stencils;
+    private final JCGLInterfaceGL33Type   g33;
+    private final JCGLShadersType         shaders;
+    private final JCGLTexturesType        textures;
+    private final JCGLArrayObjectsType    array_objects;
+    private final JCGLDrawType            draw;
+    private final JCGLRenderStateMutable  render_state;
+    private final JCGLStencilStateMutable stencil_state;
 
     private @Nullable R2MatricesObserverType         matrices;
     private @Nullable R2TextureUnitContextParentType texture_context;
@@ -174,14 +192,15 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     private @Nullable R2MaterialOpaqueSingleType<?>  material_single;
 
     private OpaqueConsumer(
-      final JCGLInterfaceGL33Type g)
+      final JCGLInterfaceGL33Type ig)
     {
-      this.g33 = NullCheck.notNull(g);
+      this.g33 = NullCheck.notNull(ig);
       this.shaders = this.g33.getShaders();
       this.textures = this.g33.getTextures();
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
-      this.stencils = this.g33.getStencilBuffers();
+      this.render_state = JCGLRenderStateMutable.create();
+      this.stencil_state = JCGLStencilStateMutable.create();
     }
 
     @Override
@@ -193,20 +212,34 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     @Override
     public void onStartGroup(final int group)
     {
-      this.stencils.stencilBufferEnable();
-      this.stencils.stencilBufferOperation(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK,
-        JCGLStencilOperation.STENCIL_OP_KEEP,
-        JCGLStencilOperation.STENCIL_OP_KEEP,
+      /**
+       * Only touch pixels that have the `ALLOW_BIT` set, and write the
+       * given `group` number to the stencil buffer. Back faces are culled,
+       * so are left unconfigured here.
+       */
+
+      this.stencil_state.setOperationDepthFailFront(
+        JCGLStencilOperation.STENCIL_OP_KEEP);
+      this.stencil_state.setOperationStencilFailFront(
+        JCGLStencilOperation.STENCIL_OP_KEEP);
+      this.stencil_state.setOperationPassFront(
         JCGLStencilOperation.STENCIL_OP_REPLACE);
-      this.stencils.stencilBufferMask(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK,
-        R2Stencils.GROUP_BITS);
-      this.stencils.stencilBufferFunction(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK,
-        JCGLStencilFunction.STENCIL_EQUAL,
-        group | R2Stencils.ALLOW_BIT,
+
+      this.stencil_state.setTestFunctionFront(
+        JCGLStencilFunction.STENCIL_EQUAL);
+      this.stencil_state.setTestReferenceFront(
+        group | R2Stencils.ALLOW_BIT);
+      this.stencil_state.setTestMaskFront(
         R2Stencils.ALLOW_BIT);
+
+      this.stencil_state.setWriteMaskFrontFaces(
+        R2Stencils.GROUP_BITS);
+
+      this.stencil_state.setStencilStrict(true);
+      this.stencil_state.setStencilEnabled(true);
+      this.render_state.setStencilState(this.stencil_state);
+
+      JCGLRenderStates.activate(this.g33, this.render_state);
     }
 
     @Override
@@ -218,10 +251,10 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceBatchedShaderStart(
-      final R2ShaderBatchedUsableType<M> s)
+      final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      this.shaders.shaderActivateProgram(s.getShaderProgram());
-      s.setMatricesView(this.shaders, this.matrices);
+      s.onActivate(this.shaders);
+      s.onReceiveViewValues(this.shaders, this.matrices);
     }
 
     @Override
@@ -230,10 +263,10 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     {
       this.material_texture_context = this.texture_context.unitContextNew();
 
-      final R2ShaderBatchedUsableType<M> s = material.getShader();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
       final M p = material.getShaderParameters();
-      s.setMaterialTextures(this.textures, this.material_texture_context, p);
-      s.setMaterialValues(this.shaders, p);
+      s.onReceiveMaterialValues(
+        this.textures, this.shaders, this.material_texture_context, p);
     }
 
     @Override
@@ -241,6 +274,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2MaterialOpaqueBatchedType<M> material,
       final R2InstanceBatchedType i)
     {
+      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      s.onValidate();
+
       this.array_objects.arrayObjectBind(i.getArrayObject());
       this.draw.drawElementsInstanced(
         JCGLPrimitives.PRIMITIVE_TRIANGLES, i.getRenderCount());
@@ -256,17 +292,17 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceBatchedShaderFinish(
-      final R2ShaderBatchedUsableType<M> s)
+      final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      this.shaders.shaderDeactivateProgram();
+      s.onDeactivate(this.shaders);
     }
 
     @Override
     public <M> void onInstanceSingleShaderStart(
-      final R2ShaderSingleUsableType<M> s)
+      final R2ShaderInstanceSingleUsableType<M> s)
     {
-      this.shaders.shaderActivateProgram(s.getShaderProgram());
-      s.setMatricesView(this.shaders, this.matrices);
+      s.onActivate(this.shaders);
+      s.onReceiveViewValues(this.shaders, this.matrices);
     }
 
     @Override
@@ -276,10 +312,10 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.material_single = material;
       this.material_texture_context = this.texture_context.unitContextNew();
 
-      final R2ShaderSingleUsableType<M> s = material.getShader();
+      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
       final M p = material.getShaderParameters();
-      s.setMaterialTextures(this.textures, this.material_texture_context, p);
-      s.setMaterialValues(this.shaders, p);
+      s.onReceiveMaterialValues(
+        this.textures, this.shaders, this.material_texture_context, p);
     }
 
     @Override
@@ -299,8 +335,10 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
         i.getUVMatrix(),
         this,
         (mi, t) -> {
-          final R2ShaderSingleUsableType<?> s = t.material_single.getShader();
-          s.setMatricesInstance(t.shaders, mi);
+          final R2ShaderInstanceSingleUsableType<?> s =
+            t.material_single.getShader();
+          s.onReceiveInstanceTransformValues(t.shaders, mi);
+          s.onValidate();
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
           return Unit.unit();
         });
@@ -316,9 +354,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     @Override
     public <M> void onInstanceSingleShaderFinish(
-      final R2ShaderSingleUsableType<M> s)
+      final R2ShaderInstanceSingleUsableType<M> s)
     {
-      this.shaders.shaderDeactivateProgram();
+      s.onDeactivate(this.shaders);
     }
 
     @Override

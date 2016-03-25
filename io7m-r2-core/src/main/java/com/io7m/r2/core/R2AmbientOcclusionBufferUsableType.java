@@ -27,6 +27,7 @@ public interface R2AmbientOcclusionBufferUsableType extends
    * @return The buffer description
    */
 
+  @Override
   R2AmbientOcclusionBufferDescriptionType getDescription();
 
   /**

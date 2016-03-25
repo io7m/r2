@@ -18,6 +18,8 @@ package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
@@ -81,7 +83,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
     final long i_id = i.getInstanceID();
     final long m_id = m.getMaterialID();
-    final R2ShaderSingleUsableType<?> shader = m.getShader();
+    final R2ShaderInstanceSingleUsableType<?> shader = m.getShader();
     final long s_id = shader.getShaderID();
 
     /**
@@ -155,7 +157,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
     final long i_id = i.getInstanceID();
     final long m_id = m.getMaterialID();
-    final R2ShaderBatchedUsableType<?> shader = m.getShader();
+    final R2ShaderInstanceBatchedUsableType<?> shader = m.getShader();
     final long s_id = shader.getShaderID();
 
     /**
@@ -222,19 +224,46 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     final R2SceneOpaquesConsumerType c)
   {
     c.onStart();
-    this.opaquesExecuteBatchedInstances(c);
-    this.opaquesExecuteSingleInstances(c);
+
+    /**
+     * Update all the batched instances.
+     */
+
+    this.opaquesExecuteBatchedInstancesUpdate(c);
+
+    /**
+     * Then for each group, execute the batched instances followed by the
+     * single instances.
+     */
+
+    final int max = Math.max(this.batches.group_max, this.singles.group_max);
+    for (int index = 1; index < max; ++index) {
+      final Batches.Group gb = this.batches.groups[index];
+      final Singles.Group gs = this.singles.groups[index];
+
+      if (gb.instances.isEmpty() && gs.instances.isEmpty()) {
+        continue;
+      }
+
+      c.onStartGroup(index);
+
+      if (!gb.instances.isEmpty()) {
+        this.opaquesExecuteGroupBatched(c, gb);
+      }
+
+      if (!gs.instances.isEmpty()) {
+        this.opaquesExecuteGroupSingle(c, gs);
+      }
+
+      c.onFinishGroup(index);
+    }
+
     c.onFinish();
   }
 
-  @SuppressWarnings("unchecked")
-  private void opaquesExecuteBatchedInstances(
+  private void opaquesExecuteBatchedInstancesUpdate(
     final R2SceneOpaquesConsumerType c)
   {
-    /**
-     * First, update all batched instances.
-     */
-
     final LongIterator b_iter =
       this.batches.instances.keySet().iterator();
 
@@ -242,161 +271,136 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
       final long b_id = b_iter.nextLong();
       c.onInstanceBatchedUpdate(this.batches.instances.get(b_id));
     }
+  }
 
+  @SuppressWarnings("unchecked")
+  private void opaquesExecuteGroupSingle(
+    final R2SceneOpaquesConsumerType c,
+    final Singles.Group g)
+  {
     /**
-     * Then, for each group {@code g}...
+     * For each single instance shader {@code s}...
      */
 
-    for (int index = 1; index < this.batches.group_max; ++index) {
-      final Batches.Group g = this.batches.groups[index];
+    final ObjectIterator<R2ShaderInstanceSingleUsableType<?>> bs_iter =
+      g.instance_shaders.values().iterator();
 
-      if (g.instances.isEmpty()) {
-        continue;
-      }
+    while (bs_iter.hasNext()) {
+      final R2ShaderInstanceSingleUsableType<Object> s =
+        (R2ShaderInstanceSingleUsableType<Object>) bs_iter.next();
 
-      c.onStartGroup(index);
+      c.onInstanceSingleShaderStart(s);
 
       /**
-       * For each shader {@code s}...
+       * For each material {@code m} using the shader {@code s}...
        */
 
-      final ObjectIterator<R2ShaderBatchedUsableType<?>> bs_iter =
-        g.instance_shaders.values().iterator();
+      final LongSet s_materials =
+        g.shader_to_materials.get(s.getShaderID());
 
-      while (bs_iter.hasNext()) {
-        final R2ShaderBatchedUsableType<Object> s =
-          (R2ShaderBatchedUsableType<Object>) bs_iter.next();
-
-        c.onInstanceBatchedShaderStart(s);
+      for (final long m_id : s_materials) {
+        final R2MaterialOpaqueSingleType<Object> material =
+          (R2MaterialOpaqueSingleType<Object>) g.instance_materials.get(m_id);
+        c.onInstanceSingleMaterialStart(material);
 
         /**
-         * For each material {@code m} using the shader {@code s}...
+         * Sort the instances by their array object instances, to allow
+         * for rendering with the fewest number of array object binds.
          */
 
-        final LongSet s_materials =
-          g.shader_to_materials.get(s.getShaderID());
+        final LongSet m_instances =
+          g.material_to_instances.get(m_id);
 
-        for (final long m_id : s_materials) {
-          final R2MaterialOpaqueBatchedType<Object> material =
-            (R2MaterialOpaqueBatchedType<Object>)
-              g.instance_materials.get(m_id);
-          c.onInstanceBatchedMaterialStart(material);
-
-          /**
-           * Render all instances.
-           *
-           * Batched instances can be rendered in any order, because each
-           * batched instance is expected to have its own vertex array object.
-           * There are no efficiency gains to be made by imposing any particular
-           * order.
-           */
-
-          final LongSet m_instances =
-            g.material_to_instances.get(m_id);
-
-          for (final long id : m_instances) {
-            final R2InstanceBatchedType i = this.batches.instances.get(id);
-            c.onInstanceBatched(material, i);
-          }
-
-          c.onInstanceBatchedMaterialFinish(material);
+        this.singles.instances_sorted.clear();
+        for (final long i_id : m_instances) {
+          final R2InstanceSingleType i = g.instances.get(i_id);
+          this.singles.instances_sorted.add(i);
         }
 
-        c.onInstanceBatchedShaderFinish(s);
+        this.singles.instances_sorted.sort((a, b) -> {
+          final JCGLArrayObjectUsableType ao = a.getArrayObject();
+          final JCGLArrayObjectUsableType bo = b.getArrayObject();
+          return Integer.compare(ao.getGLName(), bo.getGLName());
+        });
+
+        /**
+         * Render all instances with the minimum number of array object
+         * bindings.
+         */
+
+        int current_array = -1;
+        final int sorted_size = this.singles.instances_sorted.size();
+        for (int index = 0; index < sorted_size; ++index) {
+          final R2InstanceSingleType i =
+            this.singles.instances_sorted.get(index);
+          final JCGLArrayObjectUsableType array_object = i.getArrayObject();
+          final int next_array = array_object.getGLName();
+          if (next_array != current_array) {
+            c.onInstanceSingleArrayStart(i);
+          }
+          current_array = next_array;
+          c.onInstanceSingle(material, i);
+        }
+
+        c.onInstanceSingleMaterialFinish(material);
       }
 
-      c.onFinishGroup(index);
+      c.onInstanceSingleShaderFinish(s);
     }
   }
 
   @SuppressWarnings("unchecked")
-  private void opaquesExecuteSingleInstances(
-    final R2SceneOpaquesConsumerType c)
+  private void opaquesExecuteGroupBatched(
+    final R2SceneOpaquesConsumerType c,
+    final Batches.Group g)
   {
     /**
-     * For each group {@code g}...
+     * For each shader {@code s}...
      */
 
-    for (int group = 1; group < this.singles.group_max; ++group) {
-      final Singles.Group g = this.singles.groups[group];
+    final ObjectIterator<R2ShaderInstanceBatchedUsableType<?>> bs_iter =
+      g.instance_shaders.values().iterator();
 
-      if (g.instances.isEmpty()) {
-        continue;
-      }
+    while (bs_iter.hasNext()) {
+      final R2ShaderInstanceBatchedUsableType<Object> s =
+        (R2ShaderInstanceBatchedUsableType<Object>) bs_iter.next();
 
-      c.onStartGroup(group);
+      c.onInstanceBatchedShaderStart(s);
 
       /**
-       * For each single instance shader {@code s}...
+       * For each material {@code m} using the shader {@code s}...
        */
 
-      final ObjectIterator<R2ShaderSingleUsableType<?>> bs_iter =
-        g.instance_shaders.values().iterator();
+      final LongSet s_materials =
+        g.shader_to_materials.get(s.getShaderID());
 
-      while (bs_iter.hasNext()) {
-        final R2ShaderSingleUsableType<Object> s =
-          (R2ShaderSingleUsableType<Object>) bs_iter.next();
-
-        c.onInstanceSingleShaderStart(s);
+      for (final long m_id : s_materials) {
+        final R2MaterialOpaqueBatchedType<Object> material =
+          (R2MaterialOpaqueBatchedType<Object>)
+            g.instance_materials.get(m_id);
+        c.onInstanceBatchedMaterialStart(material);
 
         /**
-         * For each material {@code m} using the shader {@code s}...
+         * Render all instances.
+         *
+         * Batched instances can be rendered in any order, because each
+         * batched instance is expected to have its own vertex array object.
+         * There are no efficiency gains to be made by imposing any particular
+         * order.
          */
 
-        final LongSet s_materials =
-          g.shader_to_materials.get(s.getShaderID());
+        final LongSet m_instances =
+          g.material_to_instances.get(m_id);
 
-        for (final long m_id : s_materials) {
-          final R2MaterialOpaqueSingleType<Object> material =
-            (R2MaterialOpaqueSingleType<Object>) g.instance_materials.get(m_id);
-          c.onInstanceSingleMaterialStart(material);
-
-          /**
-           * Sort the instances by their array object instances, to allow
-           * for rendering with the fewest number of array object binds.
-           */
-
-          final LongSet m_instances =
-            g.material_to_instances.get(m_id);
-
-          this.singles.instances_sorted.clear();
-          for (final long i_id : m_instances) {
-            final R2InstanceSingleType i = g.instances.get(i_id);
-            this.singles.instances_sorted.add(i);
-          }
-
-          this.singles.instances_sorted.sort((a, b) -> {
-            final JCGLArrayObjectUsableType ao = a.getArrayObject();
-            final JCGLArrayObjectUsableType bo = b.getArrayObject();
-            return Integer.compare(ao.getGLName(), bo.getGLName());
-          });
-
-          /**
-           * Render all instances with the minimum number of array object
-           * bindings.
-           */
-
-          int current_array = -1;
-          final int sorted_size = this.singles.instances_sorted.size();
-          for (int index = 0; index < sorted_size; ++index) {
-            final R2InstanceSingleType i =
-              this.singles.instances_sorted.get(index);
-            final JCGLArrayObjectUsableType array_object = i.getArrayObject();
-            final int next_array = array_object.getGLName();
-            if (next_array != current_array) {
-              c.onInstanceSingleArrayStart(i);
-            }
-            current_array = next_array;
-            c.onInstanceSingle(material, i);
-          }
-
-          c.onInstanceSingleMaterialFinish(material);
+        for (final long id : m_instances) {
+          final R2InstanceBatchedType i = this.batches.instances.get(id);
+          c.onInstanceBatched(material, i);
         }
 
-        c.onInstanceSingleShaderFinish(s);
+        c.onInstanceBatchedMaterialFinish(material);
       }
 
-      c.onFinishGroup(group);
+      c.onInstanceBatchedShaderFinish(s);
     }
   }
 
@@ -458,7 +462,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
         shader_to_materials;
       private final Long2ReferenceOpenHashMap<R2MaterialOpaqueSingleType<?>>
         instance_materials;
-      private final Long2ReferenceOpenHashMap<R2ShaderSingleUsableType<?>>
+      private final Long2ReferenceOpenHashMap<R2ShaderInstanceSingleUsableType<?>>
         instance_shaders;
       private final Long2ReferenceOpenHashMap<R2InstanceSingleType>
         instances;
@@ -520,7 +524,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
                                          shader_to_materials;
       private final Long2ReferenceOpenHashMap<R2MaterialOpaqueBatchedType<?>>
                                          instance_materials;
-      private final Long2ReferenceOpenHashMap<R2ShaderBatchedUsableType<?>>
+      private final Long2ReferenceOpenHashMap<R2ShaderInstanceBatchedUsableType<?>>
                                          instance_shaders;
       private final Long2ReferenceOpenHashMap<R2InstanceBatchedType>
                                          instances;

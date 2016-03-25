@@ -24,6 +24,7 @@ import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import org.valid4j.Assertive;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 /**
  * Functions over render target descriptions.
@@ -41,9 +42,11 @@ public final class R2RenderTargetDescriptions
    * description area will have the same lower corner - only the upper corner is
    * scaled.
    *
-   * @param a     A description
-   * @param scale The scale value
-   * @param <T>   The precise type of render target description
+   * @param a           A description
+   * @param constructor A function that yields a new render target description,
+   *                    giving an existing description and an inclusive area
+   * @param scale       The scale value
+   * @param <T>         The precise type of render target description
    *
    * @return A new description
    */
@@ -51,11 +54,32 @@ public final class R2RenderTargetDescriptions
   @SuppressWarnings("unchecked")
   public static <T extends R2RenderTargetDescriptionType> T scale(
     final T a,
+    final BiFunction<T, AreaInclusiveUnsignedLType, T> constructor,
     final double scale)
   {
     NullCheck.notNull(a);
 
-    final AreaInclusiveUnsignedLType ao = a.getArea();
+    final AreaInclusiveUnsignedLType b =
+      R2RenderTargetDescriptions.scaleAreaInclusive(a.getArea(), scale);
+    final T r = constructor.apply(a, b);
+    Assertive.ensure(Objects.equals(a.getClass(), r.getClass()));
+
+    return r;
+  }
+
+  /**
+   * Scale the given inclusive area by the given scale value.
+   *
+   * @param ao    The inclusive area
+   * @param scale The scale value
+   *
+   * @return A scaled area
+   */
+
+  public static AreaInclusiveUnsignedLType scaleAreaInclusive(
+    final AreaInclusiveUnsignedLType ao,
+    final double scale)
+  {
     final UnsignedRangeInclusiveL rx_o = ao.getRangeX();
     final UnsignedRangeInclusiveL ry_o = ao.getRangeY();
 
@@ -66,10 +90,6 @@ public final class R2RenderTargetDescriptions
       new UnsignedRangeInclusiveL(
         ry_o.getLower(), (long) ((double) ry_o.getUpper() * scale));
 
-    final AreaInclusiveUnsignedL b = AreaInclusiveUnsignedL.of(rx, ry);
-    final R2RenderTargetDescriptionType r = a.withArea(b);
-    Assertive.ensure(Objects.equals(a.getClass(), r.getClass()));
-
-    return (T) r;
+    return AreaInclusiveUnsignedL.of(rx, ry);
   }
 }

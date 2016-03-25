@@ -20,6 +20,7 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLResourceSizedType;
 import com.io7m.jcanephora.core.JCGLResourceUsableType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 
 /**
  * The type of usable render targets.
@@ -50,4 +51,17 @@ public interface R2RenderTargetUsableType<D extends
    */
 
   D getDescription();
+
+  /**
+   * Clear the primary framebuffer to render target specific default values,
+   * changing any current render state necessary to achieve this.
+   *
+   * @param g A GL interface
+   *
+   * @throws R2RendererExceptionFramebufferNotBound If the framebuffer is not
+   *                                                bound
+   */
+
+  void clearBoundPrimaryFramebuffer(JCGLInterfaceGL33Type g)
+    throws R2RendererExceptionFramebufferNotBound;
 }

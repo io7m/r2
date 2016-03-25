@@ -35,30 +35,30 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 public final class R2TransformST implements
   R2TransformOrthogonalReadableType
 {
-  private final PVector3FType<R2SpaceWorldType> translation;
-  private final Runnable                        changed;
-  private       float                           scale;
+  private final PVector3FType<R2SpaceWorldType>                    translation;
+  private final R2WatchableType<R2TransformOrthogonalReadableType> watchable;
+  private       float                                              scale;
 
   private R2TransformST(
-    final Runnable in_changed,
     final float in_scale,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    NullCheck.notNull(in_changed);
     NullCheck.notNull(in_translation);
 
-    this.changed = in_changed;
+    this.watchable =
+      R2Watchable.newWatchable(this);
+
     this.scale = in_scale;
     this.translation =
       new R2TransformNotifyingTensors.R2PVectorM3F<>(
-        in_changed, in_translation);
+        this.watchable::watchableChanged, in_translation);
   }
 
   /**
    * Construct a transform using the given initial values. The given vectors are
    * not copied; any modifications made to them will be reflected in the
    * transform.
-
+   *
    * @param in_scale       The scale
    * @param in_translation The translation
    *
@@ -69,12 +69,12 @@ public final class R2TransformST implements
     final float in_scale,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
-    return new R2TransformST(() -> { }, in_scale, in_translation);
+    return new R2TransformST(in_scale, in_translation);
   }
 
   /**
-   * Construct a transform using the default values: The scale {@code 1.0},
-   * and the translation {@code (0, 0, 0)}.
+   * Construct a transform using the default values: The scale {@code 1.0}, and
+   * the translation {@code (0, 0, 0)}.
    *
    * @return A new transform
    */
@@ -82,27 +82,6 @@ public final class R2TransformST implements
   public static R2TransformST newTransform()
   {
     return new R2TransformST(
-      () -> { },
-      1.0f,
-      new PVectorM3F<>(0.0f, 0.0f, 0.0f)
-    );
-  }
-
-  /**
-   * <p>Construct a transform using the default values: The scale value {@code 1},
-   * and the translation {@code (0, 0, 0)}.</p>
-   *
-   * @param in_changed The procedure that will be executed every time the value
-   *                   of this transform is changed
-   *
-   * @return A new transform
-   */
-
-  public static R2TransformST newTransformWithNotifier(
-    final Runnable in_changed)
-  {
-    return new R2TransformST(
-      in_changed,
       1.0f,
       new PVectorM3F<>(0.0f, 0.0f, 0.0f)
     );
@@ -126,7 +105,7 @@ public final class R2TransformST implements
   public void setScale(final float x)
   {
     this.scale = x;
-    this.changed.run();
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -160,5 +139,22 @@ public final class R2TransformST implements
       temporary.setR2C2F(this.scale);
       MatrixM4x4F.multiply(accum, temporary, m);
     }
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformReadableType> transformGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformReadableType>) o;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public R2WatchableType<R2TransformOrthogonalReadableType>
+  transformOrthogonalGetWatchable()
+  {
+    final Object o = this.watchable;
+    return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
   }
 }
