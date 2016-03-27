@@ -14,16 +14,19 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders.types;
+
+import com.io7m.r2.core.R2LightVolumeSingleReadableType;
 
 /**
- * The type of usable (readable/writable but not deletable) projective lights.
+ * The type of single-instance light shaders.
+ *
+ * @param <M> The type of shader parameters
  */
 
-public interface R2LightProjectiveWithShadowUsableType extends
-  R2LightProjectiveWithShadowReadableType,
-  R2LightProjectiveWithShadowWritableType,
-  R2LightProjectiveUsableType
+public interface R2ShaderLightVolumeSingleType<
+  M extends R2LightVolumeSingleReadableType>
+  extends R2ShaderType<M>, R2ShaderLightVolumeSingleUsableType<M>
 {
-  // No extra methods
+  // No extra functions
 }

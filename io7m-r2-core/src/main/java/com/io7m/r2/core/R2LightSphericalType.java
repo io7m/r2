@@ -16,57 +16,13 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.spaces.R2SpaceWorldType;
-
 /**
  * The type of spherical lights.
  */
 
-public interface R2LightSphericalType extends R2LightType
+public interface R2LightSphericalType extends R2LightType,
+  R2LightSphericalReadableType,
+  R2LightSphericalWritableType
 {
-  /**
-   * @return The light radius
-   */
-
-  float getRadius();
-
-  /**
-   * Set the light radius in world-space units.
-   *
-   * @param r The light radius
-   */
-
-  void setRadius(
-    float r);
-
-  /**
-   * @return The light falloff exponent
-   */
-
-  float getFalloff();
-
-  /**
-   * Set the light falloff exponent
-   *
-   * @param r The light falloff
-   */
-
-  void setFalloff(
-    float r);
-
-  /**
-   * Set the light intensity.
-   *
-   * @param i The intensity
-   */
-
-  void setIntensity(
-    float i);
-
-  /**
-   * @return The position of the center of the light in world-space
-   */
-
-  PVector3FType<R2SpaceWorldType> getPosition();
+  // No extra methods
 }

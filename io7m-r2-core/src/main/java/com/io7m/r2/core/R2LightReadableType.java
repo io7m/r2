@@ -14,23 +14,32 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.shaders.types;
+package com.io7m.r2.core;
+
+import com.io7m.jtensors.parameterized.PVectorReadable3FType;
+import com.io7m.r2.spaces.R2SpaceRGBType;
 
 /**
- * A specification of whether or not projective light values are required.
+ * The type of lights.
  */
 
-public enum R2ShaderProjectiveRequired
+public interface R2LightReadableType
 {
   /**
-   * Projective light values are required.
+   * @return The unique light ID
    */
 
-  R2_SHADER_PROJECTIVE_REQUIRED,
+  long getLightID();
 
   /**
-   * Projective light values are not required.
+   * @return The readable light color
    */
 
-  R2_SHADER_PROJECTIVE_NOT_REQUIRED
+  PVectorReadable3FType<R2SpaceRGBType> getColor();
+
+  /**
+   * @return The current light intensity
+   */
+
+  float getIntensity();
 }

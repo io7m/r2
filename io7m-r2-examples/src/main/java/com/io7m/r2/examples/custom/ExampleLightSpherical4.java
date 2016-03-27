@@ -58,13 +58,15 @@ import com.io7m.r2.core.R2InstanceBatchedDynamic;
 import com.io7m.r2.core.R2InstanceBatchedDynamicType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2LightAmbientSingle;
+import com.io7m.r2.core.R2LightAmbientScreenSingle;
 import com.io7m.r2.core.R2LightBuffer;
 import com.io7m.r2.core.R2LightBufferDescription;
 import com.io7m.r2.core.R2LightBufferType;
-import com.io7m.r2.core.R2LightProjective;
+import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2LightProjectiveType;
-import com.io7m.r2.core.R2LightSphericalSimpleSingle;
+import com.io7m.r2.core.R2LightProjectiveWithoutShadow;
+import com.io7m.r2.core.R2LightSphericalSingle;
+import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueBatched;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
@@ -86,19 +88,22 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShadowMapContextType;
 import com.io7m.r2.core.R2ShadowMapRendererExecutionType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformSOT;
+import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertSingle;
-import com.io7m.r2.core.shaders.provided
-  .R2LightShaderSphericalLambertBlinnPhongSingle;
+import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
+import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.examples.R2ExampleCustomType;
@@ -121,6 +126,7 @@ import com.io7m.r2.filters.R2FilterSSAOParametersType;
 import com.io7m.r2.filters.R2SSAOKernel;
 import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
+import com.io7m.r2.meshes.defaults.R2UnitCube;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -134,101 +140,66 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private JCGLClearSpecification  geom_clear_spec;
-  private JCGLClearSpecification  screen_clear_spec;
-  private JCGLClearSpecification  light_clear_spec;
-  private R2SceneStencilsType     stencils;
-  private R2ProjectionFOV         projection;
-  private R2InstanceSingleType    instance;
-  private R2SceneOpaquesType      opaques;
+  private JCGLClearSpecification screen_clear_spec;
+  private R2SceneStencilsType stencils;
+  private R2ProjectionFOV projection;
+  private R2InstanceSingleType instance;
+  private R2SceneOpaquesType opaques;
   private R2SceneOpaqueLightsType lights;
 
-  private R2GeometryBufferType         gbuffer;
-  private R2LightBufferType            lbuffer;
-  private R2ImageBufferType            ibuffer;
+  private R2GeometryBufferType gbuffer;
+  private R2LightBufferType lbuffer;
+  private R2ImageBufferType ibuffer;
   private R2AmbientOcclusionBufferType abuffer;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
-    geom_shader;
-  private R2SurfaceShaderBasicParameters
-    geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-    geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> geom_shader;
+  private R2SurfaceShaderBasicParameters geom_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
 
-  private R2ShaderLightSingleType<R2LightSphericalSingleType>
-    sphere_light_shader;
-  private R2LightSphericalSingleType                          sphere_light;
-  private R2UnitSphereType                                    sphere;
+  private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_bounded_shader;
+  private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
+  private R2LightSphericalSingleType sphere_light;
+  private R2UnitSphereType sphere;
+  private R2LightSphericalSingleType sphere_light_bounded;
+  private R2TransformSiOT sphere_light_bounded_transform;
 
-  private R2ShaderLightSingleType<R2LightProjectiveType> proj_light_shader;
-  private R2ProjectionFrustum                            proj_proj;
-  private R2ProjectionMeshType                           proj_mesh;
-  private R2LightProjectiveType                          proj_light;
+  private R2ShaderLightProjectiveType<R2LightProjectiveReadableType> proj_light_shader;
+  private R2ProjectionFrustum proj_proj;
+  private R2ProjectionMeshType proj_mesh;
+  private R2LightProjectiveType proj_light;
 
   private R2InstanceSingleType golden;
   private R2SurfaceShaderBasicParameters golden_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters>
-    golden_material;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> golden_material;
 
-  private R2InstanceBatchedDynamicType
-    batched_instance;
-  private R2TransformOST[]
-    batched_transforms;
-  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters>
-    batched_geom_shader;
-  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters>
-    batched_geom_material;
+  private R2InstanceBatchedDynamicType batched_instance;
+  private R2TransformSOT[] batched_transforms;
+  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
+  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
 
-  private R2FilterType<R2FilterLightApplicatorParametersType>
-    filter_light;
-  private R2FilterLightApplicatorParametersType
-    filter_light_params;
+  private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
+  private R2FilterLightApplicatorParametersType filter_light_params;
 
-  private R2FilterSSAOParametersMutable
-    filter_ssao_params;
-  private R2FilterType<R2FilterSSAOParametersType>
-    filter_ssao;
+  private R2FilterSSAOParametersMutable filter_ssao_params;
+  private R2FilterType<R2FilterSSAOParametersType> filter_ssao;
 
-  private R2FilterType<R2FilterCompositorParametersType>
-    filter_compositor;
-  private R2FilterCompositorParameters
-    filter_comp_parameters;
+  private R2FilterType<R2FilterCompositorParametersType> filter_compositor;
+  private R2FilterCompositorParameters filter_comp_parameters;
 
   private R2MainType main;
 
-  private R2RenderTargetPoolUsableType<
-    R2AmbientOcclusionBufferDescriptionType,
-    R2AmbientOcclusionBufferUsableType>
-    pool_ssao;
+  private R2RenderTargetPoolUsableType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> pool_ssao;
+  private R2FilterType<R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
+  private R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
+  private R2FilterType<R2FilterOcclusionApplicatorParametersType> filter_ssao_app;
+  private R2FilterOcclusionApplicatorParametersMutable filter_ssao_app_params;
 
-  private R2FilterType<R2FilterBilateralBlurDepthAwareParameters<
-    R2AmbientOcclusionBufferDescriptionType,
-    R2AmbientOcclusionBufferUsableType,
-    R2AmbientOcclusionBufferDescriptionType,
-    R2AmbientOcclusionBufferUsableType>>
-    filter_blur_ssao;
-
-  private R2FilterBilateralBlurDepthAwareParameters<
-    R2AmbientOcclusionBufferDescriptionType,
-    R2AmbientOcclusionBufferUsableType,
-    R2AmbientOcclusionBufferDescriptionType,
-    R2AmbientOcclusionBufferUsableType>
-    filter_blur_ssao_params;
-
-  private R2LightAmbientSingle
-    light_ambient;
-  private R2ShaderLightSingleType<R2LightAmbientSingle>
-    light_ambient_shader;
+  private R2LightAmbientScreenSingle light_ambient;
+  private R2ShaderLightSingleType<R2LightAmbientScreenSingle> light_ambient_shader;
 
   private JCGLInterfaceGL33Type g;
 
-  private R2FilterType<R2FilterOcclusionApplicatorParametersType>
-    filter_ssao_app;
-  private R2FilterOcclusionApplicatorParametersMutable
-    filter_ssao_app_params;
-
-  private R2DebugVisualizerRendererParametersMutable
-              debug_params;
+  private R2DebugVisualizerRendererParametersMutable debug_params;
   private R2ShadowMapContextType shadow_context;
 
   public ExampleLightSpherical4()
@@ -471,7 +442,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     final R2IDPoolType id_pool = m.getIDPool();
     final JCGLArrayObjectType mesh = serv.getMesh("halls_complex.r2z");
 
-    final R2TransformOST transform = R2TransformOST.newTransform();
+    final R2TransformSOT transform = R2TransformSOT.newTransform();
     transform.getTranslation().set3F(0.0f, -1.0f, 0.0f);
 
     this.instance =
@@ -490,13 +461,13 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         this.sphere.getArrayObject(),
         instance_count);
 
-    this.batched_transforms = new R2TransformOST[instance_count];
+    this.batched_transforms = new R2TransformSOT[instance_count];
 
     int index = 0;
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
         for (int z = 0; z < depth; ++z) {
-          final R2TransformOST t = R2TransformOST.newTransform();
+          final R2TransformSOT t = R2TransformSOT.newTransform();
           t.setScale(0.2f);
           final PVector3FType<R2SpaceWorldType> tr = t.getTranslation();
           final float fx = x - (width / 2);
@@ -564,10 +535,10 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     this.light_ambient_shader =
       R2LightShaderAmbientSingle.newShader(gx.getShaders(), sources, id_pool);
     this.light_ambient =
-      R2LightAmbientSingle.newLight(
+      R2LightAmbientScreenSingle.newLight(
         m.getUnitQuad(), id_pool, m.getTextureDefaults());
     this.light_ambient.setIntensity(0.15f);
-    this.light_ambient.getColor().set3F(0.0f, 1.0f, 1.0f);
+    this.light_ambient.getColorWritable().set3F(0.0f, 1.0f, 1.0f);
 
     this.proj_light_shader =
       R2LightShaderProjectiveLambertSingle.newShader(
@@ -575,12 +546,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     this.proj_proj =
       R2ProjectionFrustum.newFrustumWith(
         JCGLProjectionMatrices.newMatrices(),
-        -0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        1.0f,
-        10.0f);
+        -0.5f, 0.5f, -0.5f, 0.5f, 1.0f, 10.0f);
     this.proj_mesh =
       R2ProjectionMesh.newMesh(
         gx,
@@ -588,27 +554,43 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         JCGLUsageHint.USAGE_DYNAMIC_DRAW,
         JCGLUsageHint.USAGE_DYNAMIC_DRAW);
     this.proj_light =
-      R2LightProjective.newLight(
+      R2LightProjectiveWithoutShadow.newLight(
         this.proj_mesh,
         m.getTextureDefaults().getWhiteProjectiveTexture(),
         m.getIDPool());
     this.proj_light.setRadius(10.0f);
-    this.proj_light.getColor().set3F(0.0f, 0.0f, 1.0f);
-    this.proj_light.getTransformWritable().getTranslation().set3F(
-      0.0f,
-      0.0f,
-      3.0f);
+    this.proj_light.getColorWritable().set3F(0.0f, 0.0f, 1.0f);
+    this.proj_light.getOriginTransformWritable().getTranslation().set3F(
+      0.0f, 0.0f, 3.0f);
 
     this.sphere_light_shader =
       R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
         gx.getShaders(), sources, id_pool);
 
     this.sphere_light =
-      R2LightSphericalSimpleSingle.newLight(this.sphere, id_pool);
-    this.sphere_light.getColor().set3F(1.0f, 1.0f, 1.0f);
+      R2LightSphericalSingle.newLight(this.sphere, id_pool);
+    this.sphere_light.getColorWritable().set3F(1.0f, 1.0f, 1.0f);
     this.sphere_light.setIntensity(1.0f);
-    this.sphere_light.getPosition().set3F(0.0f, 1.0f, 1.0f);
+    this.sphere_light.getOriginPositionWritable().set3F(0.0f, 1.0f, 1.0f);
     this.sphere_light.setRadius(30.0f);
+
+    this.sphere_light_bounded_shader =
+      R2LightShaderSphericalLambertSingle.newShader(
+        gx.getShaders(), sources, id_pool);
+
+    this.sphere_light_bounded_transform = R2TransformSiOT.newTransform();
+    this.sphere_light_bounded_transform.getTranslation().set3F(-10.0f, 1.0f, 0.0f);
+    this.sphere_light_bounded_transform.getScale().set3F(9f, 9f, 9f);
+
+    this.sphere_light_bounded =
+      R2LightSphericalSingle.newLightWithVolume(
+        R2UnitCube.newUnitCube(gx).getArrayObject(),
+        this.sphere_light_bounded_transform,
+        id_pool);
+    this.sphere_light_bounded.getColorWritable().set3F(1.0f, 0.0f, 0.0f);
+    this.sphere_light_bounded.setIntensity(1.0f);
+    this.sphere_light_bounded.getOriginPositionWritable().set3F(-10.0f, 1.0f, 0.0f);
+    this.sphere_light_bounded.setRadius(9.0f);
 
     this.filter_light =
       R2FilterLightApplicator.newFilter(
@@ -643,23 +625,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
       csb.setStencilBufferClear(0);
       csb.setDepthBufferClear(1.0);
       csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
-      this.geom_clear_spec = csb.build();
-    }
-
-    {
-      final JCGLClearSpecification.Builder csb =
-        JCGLClearSpecification.builder();
-      csb.setStencilBufferClear(0);
-      csb.setDepthBufferClear(1.0);
-      csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
       this.screen_clear_spec = csb.build();
-    }
-
-    {
-      final JCGLClearSpecification.Builder csb =
-        JCGLClearSpecification.builder();
-      csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 1.0f));
-      this.light_clear_spec = csb.build();
     }
   }
 
@@ -694,8 +660,10 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     this.lights.opaqueLightsReset();
     this.lights.opaqueLightsAddSingle(
       this.light_ambient, this.light_ambient_shader);
-    //this.lights.opaqueLightsAddSingle(
-    //  this.sphere_light, this.sphere_light_shader);
+    this.lights.opaqueLightsAddSingle(
+     this.sphere_light, this.sphere_light_shader);
+    this.lights.opaqueLightsAddSingle(
+      this.sphere_light_bounded, this.sphere_light_bounded_shader);
     this.lights.opaqueLightsAddSingle(
       this.proj_light, this.proj_light_shader);
 

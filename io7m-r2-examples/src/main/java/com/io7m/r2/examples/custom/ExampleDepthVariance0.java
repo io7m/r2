@@ -46,7 +46,7 @@ import com.io7m.r2.core.R2MaterialOpaqueSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionFOV;
-import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
@@ -140,7 +140,7 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
 
     this.sphere = R2UnitSphere.newUnitSphere8(g);
 
-    final R2TransformReadableType tr = R2TransformOST.newTransform();
+    final R2TransformReadableType tr = R2TransformSOT.newTransform();
     this.instance = R2InstanceSingle.newInstance(
       id_pool,
       this.sphere.getArrayObject(),

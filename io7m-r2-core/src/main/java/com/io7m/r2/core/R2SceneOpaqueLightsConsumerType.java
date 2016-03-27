@@ -56,7 +56,7 @@ public interface R2SceneOpaqueLightsConsumerType
    * @param <M> The type of shader parameters
    */
 
-  <M extends R2LightSingleType> void onLightSingleShaderStart(
+  <M extends R2LightSingleReadableType> void onLightSingleShaderStart(
     R2ShaderLightSingleUsableType<M> s);
 
   /**
@@ -66,7 +66,7 @@ public interface R2SceneOpaqueLightsConsumerType
    */
 
   void onLightSingleArrayStart(
-    R2LightSingleType i);
+    R2LightSingleReadableType i);
 
   /**
    * Called when a single light should be rendered.
@@ -76,7 +76,7 @@ public interface R2SceneOpaqueLightsConsumerType
    * @param i   The current instance
    */
 
-  <M extends R2LightSingleType> void onLightSingle(
+  <M extends R2LightSingleReadableType> void onLightSingle(
     R2ShaderLightSingleUsableType<M> s,
     M i);
 
@@ -87,7 +87,7 @@ public interface R2SceneOpaqueLightsConsumerType
    * @param <M> The type of shader parameters
    */
 
-  <M extends R2LightSingleType> void onLightSingleShaderFinish(
+  <M extends R2LightSingleReadableType> void onLightSingleShaderFinish(
     R2ShaderLightSingleUsableType<M> s);
 
   /**

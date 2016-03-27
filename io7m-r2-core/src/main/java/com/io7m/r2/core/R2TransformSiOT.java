@@ -21,6 +21,8 @@ import com.io7m.jtensors.Matrix4x4FType;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.Quaternion4FType;
 import com.io7m.jtensors.QuaternionM4F;
+import com.io7m.jtensors.Vector3FType;
+import com.io7m.jtensors.VectorM3F;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
@@ -28,44 +30,48 @@ import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
- * <p>A transform represented by an orientation, a scale, and a
- * translation.</p>
+ * <p>A transform represented by a scale, followed by an orientation, followed
+ * by a translation.</p>
  *
- * <p>The transform does not allow independent scaling on each axis and will
- * therefore produce matrices that are guaranteed to be orthogonal.</p>
+ * <p>The transform allows independent scaling on each axis and may therefore
+ * produce matrices that are not orthogonal.</p>
  */
 
-public final class R2TransformOST implements
-  R2TransformOrthogonalReadableType
+public final class R2TransformSiOT implements
+  R2TransformNonOrthogonalReadableType, R2TransformType
 {
-  private final Quaternion4FType                                   orientation;
-  private final PVector3FType<R2SpaceWorldType>                    translation;
-  private final R2WatchableType<R2TransformOrthogonalReadableType> watchable;
-  private       float                                              scale;
+  private final Quaternion4FType orientation;
+  private final Vector3FType scale;
+  private final PVector3FType<R2SpaceWorldType> translation;
 
-  private R2TransformOST(
+  private final R2WatchableType<R2TransformNonOrthogonalReadableType> watchable;
+
+  private R2TransformSiOT(
     final Quaternion4FType in_orientation,
-    final float in_scale,
+    final Vector3FType in_scale,
     final PVector3FType<R2SpaceWorldType> in_translation)
   {
     NullCheck.notNull(in_orientation);
+    NullCheck.notNull(in_scale);
     NullCheck.notNull(in_translation);
 
-    this.watchable = R2Watchable.newWatchable(this);
-
+    this.watchable =
+      R2Watchable.newWatchable(this);
     this.orientation =
       new R2TransformNotifyingTensors.R2QuaternionM4F(
         this.watchable::watchableChanged, in_orientation);
+    this.scale =
+      new R2TransformNotifyingTensors.R2VectorM3F(
+        this.watchable::watchableChanged, in_scale);
     this.translation =
       new R2TransformNotifyingTensors.R2PVectorM3F<>(
         this.watchable::watchableChanged, in_translation);
-    this.scale = in_scale;
   }
 
   /**
-   * Construct a transform using the given initial values. The given vectors are
-   * not copied; any modifications made to them will be reflected in the
-   * transform.
+   * <p>Construct a transform using the given initial values. The given vectors
+   * are not copied; any modifications made to them will be reflected in the
+   * transform.</p>
    *
    * @param in_orientation The orientation
    * @param in_scale       The scale
@@ -74,27 +80,27 @@ public final class R2TransformOST implements
    * @return A new transform
    */
 
-  public static R2TransformOST newTransformWithValues(
+  public static R2TransformSiOT newTransformWith(
     final Quaternion4FType in_orientation,
-    final float in_scale,
-    final PVector3FType<R2SpaceWorldType> in_translation)
+    final Vector3FType in_scale,
+    final PVectorM3F<R2SpaceWorldType> in_translation)
   {
-    return new R2TransformOST(in_orientation, in_scale, in_translation);
+    return new R2TransformSiOT(in_orientation, in_scale, in_translation);
   }
 
   /**
-   * Construct a transform using the default values: The identity quaternion
+   * <p>Construct a transform using the default values: The identity quaternion
    * {@code (0, 0, 0, 1)} for orientation, the scale vector {@code (1, 1, 1)},
-   * and the translation {@code (0, 0, 0)}.
+   * and the translation {@code (0, 0, 0)}.</p>
    *
    * @return A new transform
    */
 
-  public static R2TransformOST newTransform()
+  public static R2TransformSiOT newTransform()
   {
-    return new R2TransformOST(
+    return new R2TransformSiOT(
       new QuaternionM4F(),
-      1.0f,
+      new VectorM3F(1.0f, 1.0f, 1.0f),
       new PVectorM3F<>(0.0f, 0.0f, 0.0f)
     );
   }
@@ -109,24 +115,12 @@ public final class R2TransformOST implements
   }
 
   /**
-   * @return A value representing scale
+   * @return A vector representing scale in three dimensions
    */
 
-  public float getScale()
+  public Vector3FType getScale()
   {
     return this.scale;
-  }
-
-  /**
-   * Set the uniform scale.
-   *
-   * @param x The scale value
-   */
-
-  public void setScale(final float x)
-  {
-    this.scale = x;
-    this.watchable.watchableChanged();
   }
 
   /**
@@ -162,9 +156,9 @@ public final class R2TransformOST implements
     {
       final Matrix4x4FType temporary = context.getTemporaryMatrix4x4_1();
       MatrixM4x4F.setIdentity(temporary);
-      temporary.setR0C0F(this.scale);
-      temporary.setR1C1F(this.scale);
-      temporary.setR2C2F(this.scale);
+      temporary.setR0C0F(this.scale.getXF());
+      temporary.setR1C1F(this.scale.getYF());
+      temporary.setR2C2F(this.scale.getZF());
       MatrixM4x4F.multiply(accum, temporary, m);
     }
   }
@@ -178,11 +172,9 @@ public final class R2TransformOST implements
   }
 
   @Override
-  @SuppressWarnings("unchecked")
-  public R2WatchableType<R2TransformOrthogonalReadableType>
-  transformOrthogonalGetWatchable()
+  public R2WatchableType<R2TransformNonOrthogonalReadableType>
+  transformNonOrthogonalGetWatchable()
   {
-    final Object o = this.watchable;
-    return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
+    return this.watchable;
   }
 }

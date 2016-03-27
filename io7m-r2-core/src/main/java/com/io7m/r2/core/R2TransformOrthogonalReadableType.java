@@ -24,7 +24,7 @@ package com.io7m.r2.core;
  */
 
 public interface R2TransformOrthogonalReadableType extends
-  R2TransformReadableType
+  R2TransformViewReadableType
 {
   /**
    * @return The watchable value for this transform

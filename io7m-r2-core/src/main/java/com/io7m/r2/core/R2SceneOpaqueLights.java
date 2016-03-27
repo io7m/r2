@@ -40,7 +40,7 @@ public final class R2SceneOpaqueLights implements R2SceneOpaqueLightsType
     LOG = LoggerFactory.getLogger(R2SceneOpaqueLights.class);
   }
 
-  private final Singles       singles;
+  private final Singles singles;
   private final StringBuilder text;
 
   private R2SceneOpaqueLights()
@@ -66,7 +66,8 @@ public final class R2SceneOpaqueLights implements R2SceneOpaqueLightsType
   }
 
   @Override
-  public <L extends R2LightSingleType> void opaqueLightsAddSingleWithGroup(
+  public <L extends R2LightSingleReadableType>
+  void opaqueLightsAddSingleWithGroup(
     final L light,
     final R2ShaderLightSingleUsableType<L> shader,
     final int group)
@@ -122,7 +123,7 @@ public final class R2SceneOpaqueLights implements R2SceneOpaqueLightsType
   }
 
   private R2RendererExceptionLightAlreadyVisible errorLightAlreadyVisible(
-    final R2LightSingleType light)
+    final R2LightSingleReadableType light)
   {
     this.text.setLength(0);
     this.text.append("Light is already visible.\n");
@@ -167,8 +168,8 @@ public final class R2SceneOpaqueLights implements R2SceneOpaqueLightsType
         g.light_shaders.values().iterator();
 
       while (bs_iter.hasNext()) {
-        final R2ShaderLightSingleUsableType<R2LightSingleType> s =
-          (R2ShaderLightSingleUsableType<R2LightSingleType>) bs_iter.next();
+        final R2ShaderLightSingleUsableType<R2LightSingleReadableType> s =
+          (R2ShaderLightSingleUsableType<R2LightSingleReadableType>) bs_iter.next();
 
         c.onLightSingleShaderStart(s);
 
@@ -184,7 +185,7 @@ public final class R2SceneOpaqueLights implements R2SceneOpaqueLightsType
 
         this.singles.lights_sorted.clear();
         for (final long i_id : s_lights) {
-          final R2LightSingleType i = g.lights.get(i_id);
+          final R2LightSingleReadableType i = g.lights.get(i_id);
           this.singles.lights_sorted.add(i);
         }
 
@@ -202,8 +203,10 @@ public final class R2SceneOpaqueLights implements R2SceneOpaqueLightsType
         int current_array = -1;
         final int sorted_size = this.singles.lights_sorted.size();
         for (int index = 0; index < sorted_size; ++index) {
-          final R2LightSingleType i = this.singles.lights_sorted.get(index);
-          final JCGLArrayObjectUsableType array_object = i.getArrayObject();
+          final R2LightSingleReadableType i =
+            this.singles.lights_sorted.get(index);
+          final JCGLArrayObjectUsableType array_object =
+            i.getArrayObject();
           final int next_array = array_object.getGLName();
           if (next_array != current_array) {
             c.onLightSingleArrayStart(i);
@@ -228,10 +231,10 @@ public final class R2SceneOpaqueLights implements R2SceneOpaqueLightsType
 
   private static final class Singles
   {
-    private final Group[]                                      groups;
-    private final Long2ReferenceOpenHashMap<R2LightSingleType> lights;
-    private final ObjectArrayList<R2LightSingleType>           lights_sorted;
-    private       int                                          group_max;
+    private final Group[] groups;
+    private final Long2ReferenceOpenHashMap<R2LightSingleReadableType> lights;
+    private final ObjectArrayList<R2LightSingleReadableType> lights_sorted;
+    private int group_max;
 
     Singles()
     {
@@ -261,7 +264,7 @@ public final class R2SceneOpaqueLights implements R2SceneOpaqueLightsType
         shader_to_lights;
       private final Long2ReferenceOpenHashMap<R2ShaderLightSingleUsableType<?>>
         light_shaders;
-      private final Long2ReferenceOpenHashMap<R2LightSingleType>
+      private final Long2ReferenceOpenHashMap<R2LightSingleReadableType>
         lights;
 
       Group()

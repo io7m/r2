@@ -48,9 +48,11 @@ import com.io7m.jcanephora.renderstate.JCGLStencilStateMutable;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
-import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightWithShadowSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleUsableType;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
@@ -114,7 +116,7 @@ public final class R2LightRenderer implements R2LightRendererType
     final R2GeometryBufferUsableType gbuffer,
     final R2LightBufferUsableType lbuffer,
     final R2TextureUnitContextParentType uc,
-    final R2ShadowMapContextType shadows,
+    final R2ShadowMapContextUsableType shadows,
     final R2MatricesObserverType m,
     final R2SceneOpaqueLightsType s)
   {
@@ -144,7 +146,7 @@ public final class R2LightRenderer implements R2LightRendererType
     final R2GeometryBufferUsableType gbuffer,
     final AreaInclusiveUnsignedLType lbuffer_area,
     final R2TextureUnitContextParentType uc,
-    final R2ShadowMapContextType shadows,
+    final R2ShadowMapContextUsableType shadows,
     final R2MatricesObserverType m,
     final R2SceneOpaqueLightsType s)
   {
@@ -214,11 +216,13 @@ public final class R2LightRenderer implements R2LightRendererType
     private @Nullable JCGLTextureUnitType unit_specular;
     private @Nullable JCGLTextureUnitType unit_depth;
     private @Nullable R2TextureUnitContextParentType texture_context;
-    private @Nullable R2ShadowMapContextType shadow_maps;
+    private @Nullable R2ShadowMapContextUsableType shadow_maps;
     private @Nullable
-    R2ShaderLightSingleUsableType<R2LightSingleType> light_shader;
+    R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
     private @Nullable R2TextureUnitContextType light_base_context;
     private @Nullable AreaInclusiveUnsignedLType viewport;
+    private @Nullable R2TextureUnitContextType light_each_context;
+    private @Nullable R2LightWithShadowSingleType light_shadow;
 
     LightConsumer(final JCGLInterfaceGL33Type in_g)
     {
@@ -368,7 +372,7 @@ public final class R2LightRenderer implements R2LightRendererType
        */
 
       this.light_base_context =
-        this.texture_context.unitContextNew();
+        this.texture_context.unitContextNewWithReserved(4);
       this.unit_albedo =
         this.light_base_context.unitContextBindTexture2D(
           this.textures, this.gbuffer.getAlbedoEmissiveTexture());
@@ -400,7 +404,7 @@ public final class R2LightRenderer implements R2LightRendererType
     }
 
     @Override
-    public <M extends R2LightSingleType> void onLightSingleShaderStart(
+    public <M extends R2LightSingleReadableType> void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
       s.onActivate(this.shaders);
@@ -414,108 +418,170 @@ public final class R2LightRenderer implements R2LightRendererType
     }
 
     @Override
-    public void onLightSingleArrayStart(final R2LightSingleType i)
+    public void onLightSingleArrayStart(final R2LightSingleReadableType i)
     {
       this.array_objects.arrayObjectBind(i.getArrayObject());
     }
 
+    private void onLightSingleScreen(
+      final R2LightScreenSingleType light)
+    {
+      // Nothing!
+    }
+
+    private void onLightSingleVolume(
+      final R2LightVolumeSingleReadableType light)
+    {
+      light.matchLightVolumeSingleReadable(this, (t, pl) -> {
+        Assertive.ensure(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType);
+        t.onLightSingleProjective(pl);
+        return Unit.unit();
+      }, (t, sl) -> {
+        Assertive.ensure(
+          t.light_shader instanceof R2ShaderLightVolumeSingleUsableType);
+        t.onLightSingleSpherical(sl);
+        return Unit.unit();
+      });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void onLightSingleSpherical(
+      final R2LightSphericalSingleReadableType light)
+    {
+      final R2ShaderLightVolumeSingleUsableType<
+        R2LightSphericalSingleReadableType> s =
+        R2ShaderLightVolumeSingleUsableType.class.cast(
+          this.light_shader);
+
+      this.matrices.withVolumeLight(light, this, (mv, t) -> {
+        s.onReceiveVolumeLightTransform(t.shaders, mv);
+        s.onValidate();
+        return Unit.unit();
+      });
+    }
+
+    private void onLightSingleProjective(
+      final R2LightProjectiveReadableType light)
+    {
+      light.matchProjectiveReadable(this, (t, pw) -> {
+        Assertive.ensure(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType);
+        t.onLightSingleProjectiveWithoutShadow(pw);
+        return Unit.unit();
+      }, (t, pw) -> {
+        Assertive.ensure(
+          t.light_shader instanceof R2ShaderLightProjectiveWithShadowUsableType);
+        t.onLightSingleProjectiveWithShadow(pw);
+        return Unit.unit();
+      });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void onLightSingleProjectiveWithShadow(
+      final R2LightProjectiveWithShadowReadableType light)
+    {
+      final R2ShaderLightProjectiveWithShadowUsableType<
+        R2LightProjectiveWithShadowReadableType> s =
+        R2ShaderLightProjectiveWithShadowUsableType.class.cast(
+          this.light_shader);
+
+      this.light_shadow = light;
+      try {
+        this.matrices.withProjectiveLight(light, this, (mp, t) -> {
+          s.onReceiveVolumeLightTransform(t.shaders, mp);
+          s.onReceiveProjectiveLight(t.shaders, mp);
+
+          final R2Texture2DUsableType map =
+            t.shadow_maps.shadowMapGet(t.light_shadow);
+
+          s.onReceiveShadowMap(
+            t.textures,
+            t.shaders,
+            t.light_each_context,
+            map);
+          s.onValidate();
+          return Unit.unit();
+        });
+      } finally {
+        this.light_shadow = null;
+      }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void onLightSingleProjectiveWithoutShadow(
+      final R2LightProjectiveWithoutShadowReadableType light)
+    {
+      final R2ShaderLightProjectiveUsableType<
+        R2LightProjectiveReadableType> s =
+        R2ShaderLightProjectiveUsableType.class.cast(
+          this.light_shader);
+
+      this.matrices.withProjectiveLight(light, this, (mp, t) -> {
+        s.onReceiveVolumeLightTransform(t.shaders, mp);
+        s.onReceiveProjectiveLight(t.shaders, mp);
+        s.onValidate();
+        return Unit.unit();
+      });
+    }
+
     @Override
     @SuppressWarnings("unchecked")
-    public <M extends R2LightSingleType> void onLightSingle(
+    public <M extends R2LightSingleReadableType> void onLightSingle(
       final R2ShaderLightSingleUsableType<M> s,
       final M light)
     {
-      this.light_shader = (R2ShaderLightSingleUsableType<R2LightSingleType>) s;
-
       try {
+        this.light_shader =
+          (R2ShaderLightSingleUsableType<R2LightSingleReadableType>) s;
+        this.light_each_context =
+          this.light_base_context.unitContextNew();
 
-        /**
-         * Configure the rendering state based on the type of light.
-         */
+        final Class<R2LightSingleReadableType> s_class =
+          this.light_shader.getShaderParametersType();
+        final Class<? extends R2LightSingleReadableType> l_class =
+          light.getClass();
+        Assertive.ensure(s_class.isAssignableFrom(l_class));
+
+        Assertive.ensure(this.matrices != null);
+
+        s.onReceiveValues(
+          this.textures,
+          this.shaders,
+          this.light_each_context,
+          this.viewport,
+          light,
+          this.matrices);
 
         light.matchLightSingle(
           this,
           (t, lv) -> {
+            Assertive.ensure(
+              t.light_shader instanceof R2ShaderLightVolumeSingleUsableType);
+
             JCGLRenderStates.activate(t.g33, t.render_state_volume);
+
+            t.onLightSingleVolume(lv);
             return Unit.unit();
           },
           (t, ls) -> {
+            Assertive.ensure(
+              t.light_shader instanceof R2ShaderLightScreenSingleUsableType);
+
             JCGLRenderStates.activate(t.g33, t.render_state_screen);
+            t.onLightSingleScreen(ls);
             return Unit.unit();
           });
 
-
-        final R2TextureUnitContextType uc =
-          this.light_base_context.unitContextNew();
-
-        try {
-          this.light_shader.onReceiveValues(
-            this.textures,
-            this.shaders,
-            uc,
-            this.viewport,
-            light,
-            this.matrices);
-
-          /**
-           * If the shader requires a shadow map, then fetch the one that
-           * was rendered.
-           */
-
-          if (this.light_shader
-            instanceof R2ShaderLightWithShadowSingleUsableType) {
-            final R2LightWithShadowSingleType light_ws =
-              (R2LightWithShadowSingleType) light;
-            final R2Texture2DUsableType map =
-              this.shadow_maps.shadowMapGet(light_ws);
-
-            final R2ShaderLightWithShadowSingleUsableType<
-              R2LightWithShadowSingleType> ss =
-              (R2ShaderLightWithShadowSingleUsableType<
-                R2LightWithShadowSingleType>) (Object) this.light_shader;
-
-            ss.onReceiveShadowMap(
-              this.textures, this.shaders, uc, light_ws, map);
-          }
-
-          if (light instanceof R2LightProjectiveType) {
-            final R2LightProjectiveType it = (R2LightProjectiveType) light;
-            this.matrices.withProjectiveLight(
-              it.getTransform(),
-              it.getProjection(),
-              this,
-              (mi, t) -> {
-                t.light_shader.onReceiveProjectiveLight(t.shaders, mi);
-                t.light_shader.onReceiveInstanceTransformValues(t.shaders, mi);
-                t.light_shader.onValidate();
-                t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-                return Unit.unit();
-              });
-          } else {
-            this.matrices.withTransform(
-              light.getTransform(),
-              PMatrixI3x3F.identity(),
-              this,
-              (mi, t) -> {
-                t.light_shader.onReceiveInstanceTransformValues(t.shaders, mi);
-                t.light_shader.onValidate();
-                t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-                return Unit.unit();
-              });
-          }
-
-        } finally {
-          uc.unitContextFinish(this.textures);
-        }
-
+        this.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
-        this.light_shader = null;
+        this.light_each_context.unitContextFinish(this.textures);
+        this.light_each_context = null;
       }
     }
 
-
     @Override
-    public <M extends R2LightSingleType> void onLightSingleShaderFinish(
+    public <M extends R2LightSingleReadableType> void onLightSingleShaderFinish(
       final R2ShaderLightSingleUsableType<M> s)
     {
       s.onDeactivate(this.shaders);

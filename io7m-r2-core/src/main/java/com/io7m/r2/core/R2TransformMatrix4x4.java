@@ -36,7 +36,7 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 
 public final class R2TransformMatrix4x4 implements
   R2TransformNonOrthogonalReadableType,
-  PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType>
+  PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType>, R2TransformType
 {
   private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType>  model;
   private final R2WatchableType<R2TransformNonOrthogonalReadableType> watchable;
@@ -453,7 +453,6 @@ public final class R2TransformMatrix4x4 implements
 
     final R2TransformMatrix4x4 that = (R2TransformMatrix4x4) o;
     return this.model.equals(that.model);
-
   }
 
   @Override

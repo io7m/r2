@@ -20,6 +20,7 @@ import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.r2.core.R2LightSingleReadableType;
 import com.io7m.r2.core.R2LightSingleType;
 import com.io7m.r2.core.R2RendererExceptionLightAlreadyVisible;
 import com.io7m.r2.core.R2SceneOpaqueLights;
@@ -269,20 +270,20 @@ public final class R2SceneOpaqueLightsTest
     }
 
     @Override
-    public <M extends R2LightSingleType> void onLightSingleShaderStart(
+    public <M extends R2LightSingleReadableType> void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
-    public void onLightSingleArrayStart(final R2LightSingleType i)
+    public void onLightSingleArrayStart(final R2LightSingleReadableType i)
     {
       throw new UnreachableCodeException();
     }
 
     @Override
-    public <M extends R2LightSingleType> void onLightSingle(
+    public <M extends R2LightSingleReadableType> void onLightSingle(
       final R2ShaderLightSingleUsableType<M> s,
       final M i)
     {
@@ -290,7 +291,7 @@ public final class R2SceneOpaqueLightsTest
     }
 
     @Override
-    public <M extends R2LightSingleType> void onLightSingleShaderFinish(
+    public <M extends R2LightSingleReadableType> void onLightSingleShaderFinish(
       final R2ShaderLightSingleUsableType<M> s)
     {
       throw new UnreachableCodeException();
@@ -332,7 +333,7 @@ public final class R2SceneOpaqueLightsTest
     }
 
     @Override
-    public <M extends R2LightSingleType> void onLightSingleShaderStart(
+    public <M extends R2LightSingleReadableType> void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
       this.shader_current = s;
@@ -342,7 +343,7 @@ public final class R2SceneOpaqueLightsTest
     }
 
     @Override
-    public void onLightSingleArrayStart(final R2LightSingleType i)
+    public void onLightSingleArrayStart(final R2LightSingleReadableType i)
     {
       this.array_current = i.getArrayObject();
       this.ops.add(String.format(
@@ -351,7 +352,7 @@ public final class R2SceneOpaqueLightsTest
     }
 
     @Override
-    public <M extends R2LightSingleType> void onLightSingle(
+    public <M extends R2LightSingleReadableType> void onLightSingle(
       final R2ShaderLightSingleUsableType<M> s,
       final M i)
     {
@@ -363,7 +364,7 @@ public final class R2SceneOpaqueLightsTest
     }
 
     @Override
-    public <M extends R2LightSingleType> void onLightSingleShaderFinish(
+    public <M extends R2LightSingleReadableType> void onLightSingleShaderFinish(
       final R2ShaderLightSingleUsableType<M> s)
     {
       Assert.assertEquals(s, this.shader_current);

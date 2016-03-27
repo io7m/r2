@@ -17,56 +17,52 @@
 package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
-import com.io7m.jfunctional.PartialBiFunctionType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
+import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
- * Parameters for single ambient lights.
+ * Parameters for single directional lights.
  */
 
-public final class R2LightAmbientSingle implements R2LightScreenSingleType
+public final class R2LightDirectionalScreenSingle implements
+  R2LightScreenSingleType
 {
   private final PVector3FType<R2SpaceRGBType> color;
-  private final long                          id;
-  private final R2UnitQuadUsableType          quad;
-  private       float                         intensity;
-  private       R2Texture2DUsableType         occlusion_map;
+  private final PVector3FType<R2SpaceWorldType> direction;
+  private final long id;
+  private final R2UnitQuadUsableType quad;
+  private float intensity;
 
-  private R2LightAmbientSingle(
+  private R2LightDirectionalScreenSingle(
     final R2UnitQuadUsableType in_quad,
-    final long in_id,
-    final R2Texture2DUsableType in_occ)
+    final long in_id)
   {
     this.quad = NullCheck.notNull(in_quad);
     this.id = in_id;
     this.color = new PVectorM3F<>(1.0f, 1.0f, 1.0f);
+    this.direction = new PVectorM3F<>(0.0f, 0.0f, -1.0f);
     this.intensity = 1.0f;
-    this.occlusion_map = NullCheck.notNull(in_occ);
   }
 
   /**
    * Construct a new light.
    *
-   * @param q           A unit quad
-   * @param pool        The ID pool
-   * @param in_defaults A set of default textures
+   * @param q    A unit quad
+   * @param pool The ID pool
    *
    * @return A new light
    */
 
-  public static R2LightAmbientSingle newLight(
+  public static R2LightDirectionalScreenSingle newLight(
     final R2UnitQuadUsableType q,
-    final R2IDPoolType pool,
-    final R2TextureDefaultsType in_defaults)
+    final R2IDPoolType pool)
   {
     NullCheck.notNull(pool);
-    NullCheck.notNull(in_defaults);
-
-    return new R2LightAmbientSingle(
-      q, pool.getFreshID(), in_defaults.getWhiteTexture());
+    return new R2LightDirectionalScreenSingle(q, pool.getFreshID());
   }
 
   /**
@@ -74,14 +70,19 @@ public final class R2LightAmbientSingle implements R2LightScreenSingleType
    */
 
   @Override
-  public PVector3FType<R2SpaceRGBType> getColor()
+  public PVectorReadable3FType<R2SpaceRGBType> getColor()
   {
     return this.color;
   }
 
   /**
-   * @return The current light intensity
+   * @return The readable/writable light direction
    */
+
+  public PVector3FType<R2SpaceWorldType> getDirection()
+  {
+    return this.direction;
+  }
 
   @Override
   public float getIntensity()
@@ -89,37 +90,17 @@ public final class R2LightAmbientSingle implements R2LightScreenSingleType
     return this.intensity;
   }
 
-  /**
-   * Set the light intensity.
-   *
-   * @param i The intensity
-   */
-
+  @Override
   public void setIntensity(
     final float i)
   {
     this.intensity = Math.max(0.0f, i);
   }
 
-  /**
-   * @return The occlusion map for the light
-   */
-
-  public R2Texture2DUsableType getOcclusionMap()
+  @Override
+  public PVector3FType<R2SpaceRGBType> getColorWritable()
   {
-    return this.occlusion_map;
-  }
-
-  /**
-   * Set the occlusion map for the light.
-   *
-   * @param m The occlusion map
-   */
-
-  public void setOcclusionMap(
-    final R2Texture2DUsableType m)
-  {
-    this.occlusion_map = NullCheck.notNull(m);
+    return this.color;
   }
 
   @Override
@@ -135,18 +116,8 @@ public final class R2LightAmbientSingle implements R2LightScreenSingleType
   }
 
   @Override
-  public R2TransformReadableType getTransform()
+  public R2TransformReadableType getOriginTransform()
   {
     return R2TransformIdentity.getInstance();
-  }
-
-  @Override
-  public <A, B, E extends Throwable> B matchLightSingle(
-    final A context,
-    final PartialBiFunctionType<A, R2LightVolumeSingleType, B, E> on_volume,
-    final PartialBiFunctionType<A, R2LightScreenSingleType, B, E> on_screen)
-    throws E
-  {
-    return on_screen.call(context, this);
   }
 }

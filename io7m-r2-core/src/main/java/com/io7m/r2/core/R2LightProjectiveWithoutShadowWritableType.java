@@ -17,25 +17,11 @@
 package com.io7m.r2.core;
 
 /**
- * The type of functions that take a value of type {@link
- * R2MatricesProjectiveLightType} and yield a value of type {@code B}.
- *
- * @param <A> The type of consumed values
- * @param <B> The type of returned values
+ * The type of writable projective lights that do not have shadows.
  */
 
-public interface R2MatricesProjectiveLightFunctionType<A, B>
+public interface R2LightProjectiveWithoutShadowWritableType extends
+  R2LightProjectiveWritableType
 {
-  /**
-   * Apply the function.
-   *
-   * @param o The projective light matrices
-   * @param x A consumed value
-   *
-   * @return A value of {@code B}
-   */
-
-  B apply(
-    R2MatricesProjectiveLightType o,
-    A x);
+  // No extra methods
 }

@@ -17,25 +17,11 @@
 package com.io7m.r2.core;
 
 /**
- * The type of functions that take a value of type {@link
- * R2MatricesInstanceSingleType} and yield a value of type {@code B}.
- *
- * @param <A> The type of consumed values
- * @param <B> The type of returned values
+ * Access to the matrices for a given volume light.
  */
 
-public interface R2MatricesInstanceSingleFunctionType<A, B>
+public interface R2MatricesVolumeLightType extends
+  R2MatricesVolumeLightValuesType
 {
-  /**
-   * Apply the function.
-   *
-   * @param o The instance matrices
-   * @param x A consumed value
-   *
-   * @return A value of {@code B}
-   */
-
-  B apply(
-    R2MatricesInstanceSingleType o,
-    A x);
+  // No extra methods
 }

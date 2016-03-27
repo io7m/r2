@@ -16,7 +16,7 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.r2.core.R2LightSingleType;
+import com.io7m.r2.core.R2LightSingleReadableType;
 
 /**
  * The type of single-instance light shaders that operate on full-screen quads.
@@ -24,7 +24,8 @@ import com.io7m.r2.core.R2LightSingleType;
  * @param <M> The type of shader parameters
  */
 
-public interface R2ShaderLightScreenSingleType<M extends R2LightSingleType>
+public interface R2ShaderLightScreenSingleType<
+  M extends R2LightSingleReadableType>
   extends
   R2ShaderLightSingleType<M>,
   R2ShaderScreenType<M>,

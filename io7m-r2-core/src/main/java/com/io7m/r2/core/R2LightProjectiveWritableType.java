@@ -20,13 +20,13 @@ package com.io7m.r2.core;
  * The type of writable projective lights.
  */
 
-public interface R2LightProjectiveWritableType
+public interface R2LightProjectiveWritableType extends R2LightWritableType
 {
   /**
-   * @return The writable transform for the light
+   * @return The writable transform for the light origin
    */
 
-  R2TransformOTType getTransformWritable();
+  R2TransformOTType getOriginTransformWritable();
 
   /**
    * Set the light radius in world-space units.
@@ -45,13 +45,4 @@ public interface R2LightProjectiveWritableType
 
   void setFalloff(
     float r);
-
-  /**
-   * Set the light intensity.
-   *
-   * @param i The intensity
-   */
-
-  void setIntensity(
-    float i);
 }

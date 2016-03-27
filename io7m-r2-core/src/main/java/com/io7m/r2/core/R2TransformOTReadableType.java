@@ -17,13 +17,11 @@
 package com.io7m.r2.core;
 
 import com.io7m.jtensors.QuaternionReadable4FType;
-import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PVectorReadable3FType;
-import com.io7m.r2.spaces.R2SpaceType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
- * A readable transform that exposes a translation and an orientation.
+ * A readable transform that exposes an orientation, followed by a translation.
  */
 
 public interface R2TransformOTReadableType extends
@@ -40,23 +38,4 @@ public interface R2TransformOTReadableType extends
    */
 
   PVectorReadable3FType<R2SpaceWorldType> getTranslationReadable();
-
-  /**
-   * Produce a view matrix for the transform.
-   *
-   * In this case, a <i>view matrix</i> is the view matrix required to place the
-   * observer at the transform's position, looking in the direction of the
-   * transform. In effect, this is the matrix resulting from the inverse of the
-   * transform.
-   *
-   * @param context A transform context
-   * @param m       The output matrix
-   * @param <T>     The source coordinate system
-   * @param <U>     The target coordinate system
-   */
-
-  <T extends R2SpaceType, U extends R2SpaceType>
-  void transformMakeViewMatrix4x4F(
-    final R2TransformContextType context,
-    final PMatrixWritable4x4FType<T, U> m);
 }

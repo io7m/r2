@@ -39,7 +39,7 @@ public interface R2LightRendererType extends R2DeletableType
     R2GeometryBufferUsableType gbuffer,
     R2LightBufferUsableType lbuffer,
     R2TextureUnitContextParentType uc,
-    R2ShadowMapContextType shadows,
+    R2ShadowMapContextUsableType shadows,
     R2MatricesObserverType m,
     R2SceneOpaqueLightsType s);
 
@@ -58,7 +58,7 @@ public interface R2LightRendererType extends R2DeletableType
     R2GeometryBufferUsableType gbuffer,
     AreaInclusiveUnsignedLType lbuffer_area,
     R2TextureUnitContextParentType uc,
-    R2ShadowMapContextType shadows,
+    R2ShadowMapContextUsableType shadows,
     R2MatricesObserverType m,
     R2SceneOpaqueLightsType s);
 }

@@ -28,17 +28,14 @@ import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightAmbientSingle;
-import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
+import com.io7m.r2.core.R2LightAmbientScreenSingle;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderProjectiveRequired;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 import java.util.Optional;
@@ -48,10 +45,10 @@ import java.util.Optional;
  */
 
 public final class R2LightShaderAmbientSingle extends
-  R2AbstractShader<R2LightAmbientSingle>
-  implements R2ShaderLightScreenSingleType<R2LightAmbientSingle>
+  R2AbstractShader<R2LightAmbientScreenSingle>
+  implements R2ShaderLightScreenSingleType<R2LightAmbientScreenSingle>
 {
-  private final JCGLProgramUniformType u_transform_modelview;
+  private final JCGLProgramUniformType u_transform_volume_modelview;
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_projection_inverse;
   private final JCGLProgramUniformType u_depth_coefficient;
@@ -89,9 +86,9 @@ public final class R2LightShaderAmbientSingle extends
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_ambient.occlusion");
 
-    this.u_transform_modelview =
+    this.u_transform_volume_modelview =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_modelview");
+        p, "R2_light_matrices.transform_volume_modelview");
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_matrices.transform_projection");
@@ -121,22 +118,21 @@ public final class R2LightShaderAmbientSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderLightSingleType<R2LightAmbientSingle>
+  public static R2ShaderLightSingleType<R2LightAmbientScreenSingle>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderLightVerifier.newVerifier(
-      new R2LightShaderAmbientSingle(in_shaders, in_sources, in_pool),
-      R2ShaderProjectiveRequired.R2_SHADER_PROJECTIVE_NOT_REQUIRED);
+    return R2ShaderLightScreenSingleVerifier.newVerifier(
+      new R2LightShaderAmbientSingle(in_shaders, in_sources, in_pool));
   }
 
   @Override
-  public Class<R2LightAmbientSingle>
+  public Class<R2LightAmbientScreenSingle>
   getShaderParametersType()
   {
-    return R2LightAmbientSingle.class;
+    return R2LightAmbientScreenSingle.class;
   }
 
   @Override
@@ -164,32 +160,12 @@ public final class R2LightShaderAmbientSingle extends
   }
 
   @Override
-  public void onReceiveProjectiveLight(
-    final JCGLShadersType g_sh,
-    final R2MatricesProjectiveLightValuesType m)
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveInstanceTransformValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
-  }
-
-  @Override
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
-    final R2LightAmbientSingle values,
+    final R2LightAmbientScreenSingle values,
     final R2MatricesObserverValuesType m)
   {
     NullCheck.notNull(g_tex);

@@ -32,7 +32,7 @@ import com.io7m.r2.spaces.R2SpaceType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
- * <p>A transform represented by an orientation and a translation.</p>
+ * <p>A transform represented by an orientation, followed by a translation.</p>
  *
  * <p>The transform does not allow independent scaling on each axis and will
  * therefore produce matrices that are guaranteed to be orthogonal.</p>
@@ -40,8 +40,8 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 
 public final class R2TransformOT implements R2TransformOTType
 {
-  private final Quaternion4FType                   orientation;
-  private final PVector3FType<R2SpaceWorldType>    translation;
+  private final Quaternion4FType orientation;
+  private final PVector3FType<R2SpaceWorldType> translation;
   private final R2WatchableType<R2TransformOTType> watchable;
 
   private R2TransformOT(

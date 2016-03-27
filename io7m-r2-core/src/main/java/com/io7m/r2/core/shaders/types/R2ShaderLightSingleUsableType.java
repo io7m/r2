@@ -21,10 +21,8 @@ import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
-import com.io7m.r2.core.R2LightSingleType;
-import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
+import com.io7m.r2.core.R2LightSingleReadableType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 /**
@@ -33,9 +31,9 @@ import com.io7m.r2.core.R2TextureUnitContextMutableType;
  * @param <M> The type of shader parameters
  */
 
-public interface R2ShaderLightSingleUsableType<M extends R2LightSingleType>
-  extends
-  R2ShaderUsableType<M>
+public interface R2ShaderLightSingleUsableType<
+  M extends R2LightSingleReadableType>
+  extends R2ShaderUsableType<M>
 {
   /**
    * <p>Set the bound geometry buffer textures for the current shader.</p>
@@ -62,47 +60,6 @@ public interface R2ShaderLightSingleUsableType<M extends R2LightSingleType>
     JCGLTextureUnitType unit_specular,
     JCGLTextureUnitType unit_depth,
     JCGLTextureUnitType unit_normals);
-
-  /**
-   * <p>Set shader values that are derived from the current projective
-   * light.</p>
-   *
-   * <p>This method will be called once for each projective light that uses the
-   * current shader.</p>
-   *
-   * <p>This method will not be called if {@code M} is not an instance of {@link
-   * com.io7m.r2.core.R2LightProjectiveUsableType}.</p>
-   *
-   * <p>This method will be called after a call to {@link
-   * #onActivate(JCGLShadersType)} and before a call to {@link
-   * #onValidate()}.</p>
-   *
-   * @param g_sh An OpenGL interface
-   * @param m    The instance matrices
-   */
-
-  void onReceiveProjectiveLight(
-    JCGLShadersType g_sh,
-    R2MatricesProjectiveLightValuesType m);
-
-  /**
-   * <p>Set shader values that are derived from the current instance
-   * transform.</p>
-   *
-   * <p>This method will be called exactly once for each light that uses the
-   * shader.</p>
-   *
-   * <p>This method will be called after a call to {@link
-   * #onActivate(JCGLShadersType)} and before a call to {@link
-   * #onValidate()}.</p>
-   *
-   * @param g_sh An OpenGL interface
-   * @param m    The instance matrices
-   */
-
-  void onReceiveInstanceTransformValues(
-    JCGLShadersType g_sh,
-    R2MatricesInstanceSingleValuesType m);
 
   /**
    * <p>Set light values.</p>

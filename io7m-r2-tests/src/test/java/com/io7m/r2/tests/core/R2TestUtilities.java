@@ -69,12 +69,11 @@ import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2TransformIdentity;
-import com.io7m.r2.core.R2TransformOSiT;
 import com.io7m.r2.core.R2TransformReadableType;
+import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
@@ -130,7 +129,7 @@ public final class R2TestUtilities
       @Override
       public R2TransformReadableType getTransform()
       {
-        return R2TransformOSiT.newTransform();
+        return R2TransformSiOT.newTransform();
       }
 
       @Override
@@ -951,22 +950,6 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onReceiveProjectiveLight(
-        final JCGLShadersType g_sh,
-        final R2MatricesProjectiveLightValuesType m)
-      {
-
-      }
-
-      @Override
-      public void onReceiveInstanceTransformValues(
-        final JCGLShadersType g_sh,
-        final R2MatricesInstanceSingleValuesType m)
-      {
-
-      }
-
-      @Override
       public void onReceiveValues(
         final JCGLTexturesType g_tex,
         final JCGLShadersType g_sh,
@@ -1031,13 +1014,25 @@ public final class R2TestUtilities
     return new R2LightSingleType()
     {
       @Override
+      public PVector3FType<R2SpaceRGBType> getColorWritable()
+      {
+        return black;
+      }
+
+      @Override
+      public void setIntensity(final float i)
+      {
+
+      }
+
+      @Override
       public JCGLArrayObjectUsableType getArrayObject()
       {
         return a0;
       }
 
       @Override
-      public R2TransformReadableType getTransform()
+      public R2TransformReadableType getOriginTransform()
       {
         return R2TransformIdentity.getInstance();
       }

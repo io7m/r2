@@ -40,7 +40,8 @@ public interface R2SceneOpaqueLightsType
    * @param <L>    The precise type of light
    */
 
-  <L extends R2LightSingleType> void opaqueLightsAddSingleWithGroup(
+  <L extends R2LightSingleReadableType>
+  void opaqueLightsAddSingleWithGroup(
     L light,
     R2ShaderLightSingleUsableType<L> shader,
     int group);
@@ -53,7 +54,8 @@ public interface R2SceneOpaqueLightsType
    * @param <L>    The precise type of light
    */
 
-  default <L extends R2LightSingleType> void opaqueLightsAddSingle(
+  default <L extends R2LightSingleReadableType>
+  void opaqueLightsAddSingle(
     final L light,
     final R2ShaderLightSingleUsableType<L> shader)
   {

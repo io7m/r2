@@ -28,23 +28,22 @@ import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVector4FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
+import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightSphericalSingleType;
-import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
+import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
+import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderProjectiveRequired;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -57,11 +56,11 @@ import java.util.Optional;
  */
 
 public final class R2LightShaderSphericalLambertSingle extends
-  R2AbstractShader<R2LightSphericalSingleType>
-  implements R2ShaderLightSingleType<R2LightSphericalSingleType>
+  R2AbstractShader<R2LightSphericalSingleReadableType>
+  implements R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType>
 {
+  private final JCGLProgramUniformType u_transform_volume_modelview;
   private final JCGLProgramUniformType u_transform_projection_inverse;
-  private final JCGLProgramUniformType u_transform_modelview;
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_view_rays_origin_x0y0;
@@ -84,10 +83,9 @@ public final class R2LightShaderSphericalLambertSingle extends
   private final JCGLProgramUniformType u_light_spherical_inverse_range;
   private final JCGLProgramUniformType u_light_spherical_inverse_falloff;
 
-  private final PVector4FType<R2SpaceEyeType>   position_eye;
-  private final PVector3FType<R2SpaceEyeType>   position_eye3;
+  private final PVector4FType<R2SpaceEyeType> position_eye;
+  private final PVector3FType<R2SpaceEyeType> position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
-  private       R2MatricesObserverValuesType    matrices_observer;
 
   private R2LightShaderSphericalLambertSingle(
     final JCGLShadersType in_shaders,
@@ -122,9 +120,9 @@ public final class R2LightShaderSphericalLambertSingle extends
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_spherical.inverse_falloff");
 
-    this.u_transform_modelview =
+    this.u_transform_volume_modelview =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_modelview");
+        p, "R2_light_matrices.transform_volume_modelview");
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_matrices.transform_projection");
@@ -197,22 +195,22 @@ public final class R2LightShaderSphericalLambertSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderLightSingleType<R2LightSphericalSingleType>
+  public static R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderLightVerifier.newVerifier(
-      new R2LightShaderSphericalLambertSingle(in_shaders, in_sources, in_pool),
-      R2ShaderProjectiveRequired.R2_SHADER_PROJECTIVE_NOT_REQUIRED);
+    return R2ShaderLightVolumeSingleVerifier.newVerifier(
+      new R2LightShaderSphericalLambertSingle(
+        in_shaders, in_sources, in_pool));
   }
 
   @Override
-  public Class<R2LightSphericalSingleType>
+  public Class<R2LightSphericalSingleReadableType>
   getShaderParametersType()
   {
-    return R2LightSphericalSingleType.class;
+    return R2LightSphericalSingleReadableType.class;
   }
 
   @Override
@@ -221,7 +219,6 @@ public final class R2LightShaderSphericalLambertSingle extends
   {
     // Nothing
   }
-
 
   @Override
   public void onReceiveBoundGeometryBufferTextures(
@@ -250,33 +247,12 @@ public final class R2LightShaderSphericalLambertSingle extends
   }
 
   @Override
-  public void onReceiveProjectiveLight(
-    final JCGLShadersType g_sh,
-    final R2MatricesProjectiveLightValuesType m)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-  }
-
-  @Override
-  public void onReceiveInstanceTransformValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
-  }
-
-  @Override
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
-    final R2LightSphericalSingleType values,
+    final R2LightSphericalSingleReadableType values,
     final R2MatricesObserverValuesType m)
   {
     NullCheck.notNull(g_tex);
@@ -355,16 +331,17 @@ public final class R2LightShaderSphericalLambertSingle extends
      * Transform the light's position to eye-space and upload it.
      */
 
-    final PVector3FType<R2SpaceWorldType> position = values.getPosition();
+    final PVectorReadable3FType<R2SpaceWorldType> position =
+      values.getOriginPosition();
     this.position_world.copyFrom3F(position);
     this.position_world.setWF(1.0f);
 
     final R2TransformContextType trc =
-      this.matrices_observer.getTransformContext();
+      m.getTransformContext();
 
     PMatrixM4x4F.multiplyVector4F(
       trc.getContextPM4F(),
-      this.matrices_observer.getMatrixView(),
+      m.getMatrixView(),
       this.position_world,
       this.position_eye);
 
@@ -372,5 +349,21 @@ public final class R2LightShaderSphericalLambertSingle extends
 
     g_sh.shaderUniformPutVector3f(
       this.u_light_spherical_position, this.position_eye3);
+  }
+
+  @Override
+  public void onReceiveVolumeLightTransform(
+    final JCGLShadersType g_sh,
+    final R2MatricesVolumeLightValuesType m)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+
+    /**
+     * Upload the light volume modelview matrix.
+     */
+
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_volume_modelview, m.getMatrixLightVolumeModelView());
   }
 }

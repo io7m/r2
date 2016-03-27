@@ -17,25 +17,26 @@
 package com.io7m.r2.core;
 
 /**
- * The type of functions that take a value of type {@link
- * R2MatricesObserverType} and yield a value of type {@code B}.
- *
- * @param <A> The type of consumed values
- * @param <B> The type of returned values
+ * The type of writable spherical lights.
  */
 
-public interface R2MatricesObserverFunctionType<A, B>
+public interface R2LightSphericalWritableType extends R2LightWritableType
 {
   /**
-   * Apply the function.
+   * Set the light radius in world-space units.
    *
-   * @param o The observer matrices
-   * @param x A consumed value
-   *
-   * @return A value of {@code B}
+   * @param r The light radius
    */
 
-  B apply(
-    R2MatricesObserverType o,
-    A x);
+  void setRadius(
+    float r);
+
+  /**
+   * Set the light falloff exponent
+   *
+   * @param r The light falloff
+   */
+
+  void setFalloff(
+    float r);
 }

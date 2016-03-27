@@ -14,19 +14,29 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.shaders.types;
+package com.io7m.r2.core;
 
-import com.io7m.r2.core.R2LightWithShadowSingleType;
+import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
+import com.io7m.r2.spaces.R2SpaceEyeType;
+import com.io7m.r2.spaces.R2SpaceObjectType;
 
 /**
- * The type of single-instance light shaders that consume shadows.
- *
- * @param <M> The type of shader parameters
+ * Access to the matrices for a given volume light.
  */
 
-public interface R2ShaderLightWithShadowSingleType<M extends
-  R2LightWithShadowSingleType> extends
-  R2ShaderLightWithShadowSingleUsableType<M>
+public interface R2MatricesVolumeLightValuesType
 {
-  // No extra functions
+  /**
+   * @return The modelview matrix for the light origin
+   */
+
+  PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
+  getMatrixLightOriginModelView();
+
+  /**
+   * @return The modelview matrix for the light volume geometry
+   */
+
+  PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
+  getMatrixLightVolumeModelView();
 }

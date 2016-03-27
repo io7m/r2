@@ -42,14 +42,14 @@ import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.VectorM3F;
 import com.io7m.jtensors.VectorM4F;
 import com.io7m.jtensors.VectorReadable4FType;
-import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceBatchedType;
 import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2LightProjectiveType;
+import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2LightScreenSingleType;
-import com.io7m.r2.core.R2LightSingleType;
+import com.io7m.r2.core.R2LightSingleReadableType;
+import com.io7m.r2.core.R2LightVolumeSingleReadableType;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesObserverType;
@@ -84,16 +84,13 @@ public final class R2DebugVisualizerRenderer implements
 {
   private final JCGLInterfaceGL33Type g;
 
-  private final R2ShaderInstanceSingleType<VectorReadable4FType>
-    shader_single;
-  private final R2ShaderInstanceBatchedType<VectorReadable4FType>
-    shader_batched;
-  private final R2ShaderInstanceSingleScreenType<VectorReadable4FType>
-    shader_screen;
+  private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
+  private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
+  private final R2ShaderInstanceSingleScreenType<VectorReadable4FType> shader_screen;
 
   private final JCGLRenderState render_geom_state_base;
-  private final OpaqueConsumer  opaque_consumer;
-  private final LightConsumer   light_consumer;
+  private final OpaqueConsumer opaque_consumer;
+  private final LightConsumer light_consumer;
 
   private R2DebugVisualizerRenderer(
     final JCGLInterfaceGL33Type in_g,
@@ -259,24 +256,19 @@ public final class R2DebugVisualizerRenderer implements
   private static final class OpaqueConsumer implements
     R2SceneOpaquesConsumerType
   {
-    private final JCGLInterfaceGL33Type  g33;
-    private final JCGLShadersType        shaders;
-    private final JCGLTexturesType       textures;
-    private final JCGLArrayObjectsType   array_objects;
-    private final JCGLDrawType           draw;
+    private final JCGLInterfaceGL33Type g33;
+    private final JCGLShadersType shaders;
+    private final JCGLTexturesType textures;
+    private final JCGLArrayObjectsType array_objects;
+    private final JCGLDrawType draw;
     private final JCGLRenderStateMutable render_state;
-
-    private final R2ShaderInstanceSingleType<VectorReadable4FType>
-      shader_single;
-    private final R2ShaderInstanceBatchedType<VectorReadable4FType>
-      shader_batched;
-
-    private @Nullable R2MatricesObserverType         matrices;
+    private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
+    private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
+    private @Nullable R2MatricesObserverType matrices;
     private @Nullable R2TextureUnitContextParentType texture_context;
-    private @Nullable R2TextureUnitContextType       material_texture_context;
-
+    private @Nullable R2TextureUnitContextType material_texture_context;
     private @Nullable R2DebugVisualizerRendererParametersType parameters;
-    private           VectorReadable4FType                    color;
+    private VectorReadable4FType color;
 
     OpaqueConsumer(
       final JCGLInterfaceGL33Type ig,
@@ -444,42 +436,26 @@ public final class R2DebugVisualizerRenderer implements
   private static final class LightConsumer implements
     R2SceneOpaqueLightsConsumerType
   {
-    // @formatter:off
-
     private final JCGLInterfaceGL33Type g33;
-    private final JCGLShadersType       shaders;
-    private final JCGLTexturesType      textures;
-    private final JCGLArrayObjectsType  array_objects;
-    private final JCGLDrawType          draw;
-
-    private       R2ShaderInstanceSingleType<VectorReadable4FType>
-                                         shader_single;
-    private final R2ShaderInstanceBatchedType<VectorReadable4FType>
-                                         shader_batched;
-    private final R2ShaderInstanceSingleScreenType<VectorReadable4FType>
-                                         shader_screen;
-    private final VectorM4F
-                                         light_color;
-    private final JCGLRenderStateMutable render_state_volume;
-    private final JCGLRenderStateMutable render_state_screen;
-
-
-    private R2ShaderInstanceSingleScreenType<VectorReadable4FType>
-      shader_single_screen_current;
-    private R2ShaderInstanceSingleType<VectorReadable4FType>
-      shader_single_current;
-
-    private @Nullable R2MatricesObserverType         matrices;
+    private final JCGLShadersType shaders;
+    private final JCGLTexturesType textures;
+    private final JCGLArrayObjectsType array_objects;
+    private final JCGLDrawType draw;
+    private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
+    private final R2ShaderInstanceSingleScreenType<VectorReadable4FType> shader_screen;
+    private final VectorM4F light_color;
+    private final JCGLRenderStateMutable render_state_volume_fill;
+    private final JCGLRenderStateMutable render_state_volume_lines;
+    private final JCGLRenderStateMutable render_state_screen_lines;
+    private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
+    private @Nullable R2MatricesObserverType matrices;
     private @Nullable R2TextureUnitContextParentType texture_context;
-
-    // @formatter:on
 
     private LightConsumer(
       final JCGLInterfaceGL33Type ig,
       final R2ShaderInstanceSingleType<VectorReadable4FType> in_shader_single,
       final R2ShaderInstanceBatchedType<VectorReadable4FType> in_shader_batched,
-      final R2ShaderInstanceSingleScreenType<VectorReadable4FType>
-        in_shader_screen)
+      final R2ShaderInstanceSingleScreenType<VectorReadable4FType> in_shader_screen)
     {
       this.g33 = NullCheck.notNull(ig);
       this.shader_single = NullCheck.notNull(in_shader_single);
@@ -491,19 +467,29 @@ public final class R2DebugVisualizerRenderer implements
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
 
-      /**
-       * Only render wireframes.
-       */
+      this.render_state_volume_fill = JCGLRenderStateMutable.create();
+      this.render_state_volume_fill.setDepthState(
+        JCGLDepthState.of(
+          JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+          Optional.of(JCGLDepthFunction.DEPTH_LESS_THAN_OR_EQUAL),
+          JCGLDepthWriting.DEPTH_WRITE_DISABLED,
+          JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
+      this.render_state_volume_fill.setPolygonMode(
+        JCGLPolygonMode.POLYGON_FILL);
 
-      this.render_state_volume = JCGLRenderStateMutable.create();
-      this.render_state_volume.setDepthState(JCGLDepthState.of(
-        JCGLDepthStrict.DEPTH_STRICT_ENABLED,
-        Optional.of(JCGLDepthFunction.DEPTH_LESS_THAN_OR_EQUAL),
-        JCGLDepthWriting.DEPTH_WRITE_DISABLED,
-        JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
-      this.render_state_volume.setPolygonMode(JCGLPolygonMode.POLYGON_LINES);
-      this.render_state_screen = JCGLRenderStateMutable.create();
-      this.render_state_screen.setPolygonMode(JCGLPolygonMode.POLYGON_LINES);
+      this.render_state_volume_lines = JCGLRenderStateMutable.create();
+      this.render_state_volume_lines.setDepthState(
+        JCGLDepthState.of(
+          JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+          Optional.of(JCGLDepthFunction.DEPTH_LESS_THAN_OR_EQUAL),
+          JCGLDepthWriting.DEPTH_WRITE_DISABLED,
+          JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
+      this.render_state_volume_lines.setPolygonMode(
+        JCGLPolygonMode.POLYGON_LINES);
+
+      this.render_state_screen_lines = JCGLRenderStateMutable.create();
+      this.render_state_screen_lines.setPolygonMode(
+        JCGLPolygonMode.POLYGON_LINES);
 
       this.light_color = new VectorM4F(1.0f, 1.0f, 1.0f, 1.0f);
     }
@@ -527,21 +513,21 @@ public final class R2DebugVisualizerRenderer implements
     }
 
     @Override
-    public <M extends R2LightSingleType> void onLightSingleShaderStart(
+    public <M extends R2LightSingleReadableType> void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
 
     }
 
     @Override
-    public void onLightSingleArrayStart(final R2LightSingleType i)
+    public void onLightSingleArrayStart(final R2LightSingleReadableType i)
     {
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <M extends R2LightSingleType> void onLightSingle(
+    public <M extends R2LightSingleReadableType> void onLightSingle(
       final R2ShaderLightSingleUsableType<M> s,
       final M i)
     {
@@ -553,22 +539,17 @@ public final class R2DebugVisualizerRenderer implements
         this.texture_context.unitContextNew();
 
       try {
-
         VectorM3F.scale(
-          i.getColor(),
-          (double) i.getIntensity(),
-          this.light_color);
+          i.getColor(), (double) i.getIntensity(), this.light_color);
         this.light_color.setWF(1.0f);
 
         if (i instanceof R2LightScreenSingleType) {
-          JCGLRenderStates.activate(this.g33, this.render_state_screen);
           this.onLightSingleScreen(
             uc, (R2LightScreenSingleType) i, this.shader_screen);
         } else {
-          JCGLRenderStates.activate(this.g33, this.render_state_volume);
-          this.onLightSingleVolume(uc, i, this.shader_single);
+          this.onLightSingleVolume(
+            uc, (R2LightVolumeSingleReadableType) i, this.shader_single);
         }
-
       } finally {
         uc.unitContextFinish(this.textures);
         this.shaders.shaderDeactivateProgram();
@@ -585,37 +566,11 @@ public final class R2DebugVisualizerRenderer implements
         this.shaders, this.matrices);
       s.onReceiveMaterialValues(
         this.textures, this.shaders, uc, this.light_color);
-
-      this.shader_single_current = null;
-      this.shader_single_screen_current = s;
-
-      if (i instanceof R2LightProjectiveType) {
-        final R2LightProjectiveType it = (R2LightProjectiveType) i;
-        this.matrices.withProjectiveLight(
-          it.getTransform(),
-          it.getProjection(),
-          this,
-          (mi, t) -> {
-            t.shader_single_screen_current.onValidate();
-            t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-            return Unit.unit();
-          });
-      } else {
-        this.matrices.withTransform(
-          i.getTransform(),
-          PMatrixI3x3F.identity(),
-          this,
-          (mi, t) -> {
-            t.shader_single_screen_current.onValidate();
-            t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-            return Unit.unit();
-          });
-      }
     }
 
     private void onLightSingleVolume(
       final R2TextureUnitContextType uc,
-      final R2LightSingleType i,
+      final R2LightVolumeSingleReadableType i,
       final R2ShaderInstanceSingleType<VectorReadable4FType> s)
     {
       s.onActivate(this.shaders);
@@ -624,46 +579,25 @@ public final class R2DebugVisualizerRenderer implements
       s.onReceiveMaterialValues(
         this.textures, this.shaders, uc, this.light_color);
 
-      this.shader_single_current = s;
-      this.shader_single_screen_current = null;
-
-      if (i instanceof R2LightProjectiveType) {
-        final R2LightProjectiveType it = (R2LightProjectiveType) i;
-        this.matrices.withProjectiveLight(
-          it.getTransform(),
-          it.getProjection(),
-          this,
-          (mi, t) -> {
-            t.shader_single_current.onReceiveInstanceTransformValues(
-              t.shaders, mi);
-            t.shader_single_current.onValidate();
-            t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-            return Unit.unit();
-          });
-      } else {
-        this.matrices.withTransform(
-          i.getTransform(),
-          PMatrixI3x3F.identity(),
-          this,
-          (mi, t) -> {
-            t.shader_single_current.onReceiveInstanceTransformValues(
-              t.shaders, mi);
-            t.shader_single_current.onValidate();
-            t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-            return Unit.unit();
-          });
+      if (i instanceof R2LightProjectiveReadableType) {
+        this.onLightSingleProjective(uc, (R2LightProjectiveReadableType) i, s);
+        return;
       }
     }
 
+    private void onLightSingleProjective(
+      final R2TextureUnitContextType uc,
+      final R2LightProjectiveReadableType i,
+      final R2ShaderInstanceSingleType<VectorReadable4FType> s)
+    {
+
+    }
+
     @Override
-    public <M extends R2LightSingleType> void onLightSingleShaderFinish(
+    public <M extends R2LightSingleReadableType> void onLightSingleShaderFinish(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      if (this.shader_single_screen_current != null) {
-        this.shader_single_screen_current.onDeactivate(this.shaders);
-      } else if (this.shader_single_current != null) {
-        this.shader_single_current.onDeactivate(this.shaders);
-      }
+
     }
 
     @Override

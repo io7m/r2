@@ -8,7 +8,7 @@
 
 struct R2_light_matrices_t {
   /// Object-space to Eye-space matrix
-  mat4x4 transform_modelview;
+  mat4x4 transform_volume_modelview;
   /// Eye-space to Clip-space matrix
   mat4x4 transform_projection;
   /// Clip-space to eye-space matrix

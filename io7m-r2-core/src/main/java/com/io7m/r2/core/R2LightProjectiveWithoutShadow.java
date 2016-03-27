@@ -20,11 +20,12 @@ import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureWrapS;
 import com.io7m.jcanephora.core.JCGLTextureWrapT;
-import com.io7m.jfunctional.PartialBiFunctionType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
+import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.valid4j.Assertive;
 
 /**
@@ -32,19 +33,20 @@ import org.valid4j.Assertive;
  * meshes.
  */
 
-public final class R2LightProjective implements R2LightProjectiveType
+public final class R2LightProjectiveWithoutShadow implements
+  R2LightProjectiveWithoutShadowType
 {
   private final PVector3FType<R2SpaceRGBType> color;
-  private final long                          id;
-  private final R2TransformOT                 transform;
-  private final R2ProjectionMeshReadableType  mesh;
-  private final R2ProjectionReadableType      projection;
-  private final R2Texture2DUsableType         image;
-  private       float                         falloff;
-  private       float                         intensity;
-  private       float                         radius;
+  private final long id;
+  private final R2TransformOT origin_transform;
+  private final R2ProjectionMeshReadableType mesh;
+  private final R2ProjectionReadableType projection;
+  private final R2Texture2DUsableType image;
+  private float falloff;
+  private float intensity;
+  private float radius;
 
-  private R2LightProjective(
+  private R2LightProjectiveWithoutShadow(
     final R2ProjectionMeshReadableType in_mesh,
     final R2Texture2DUsableType in_image,
     final long in_id)
@@ -54,7 +56,7 @@ public final class R2LightProjective implements R2LightProjectiveType
 
     this.projection = this.mesh.getProjectionReadable();
     this.id = in_id;
-    this.transform = R2TransformOT.newTransform();
+    this.origin_transform = R2TransformOT.newTransform();
     this.color = new PVectorM3F<>(1.0f, 1.0f, 1.0f);
     this.intensity = 1.0f;
     this.falloff = 1.0f;
@@ -70,7 +72,7 @@ public final class R2LightProjective implements R2LightProjectiveType
    * @return A new light
    */
 
-  public static R2LightProjectiveType newLight(
+  public static R2LightProjectiveWithoutShadowType newLight(
     final R2ProjectionMeshReadableType in_mesh,
     final R2Texture2DUsableType in_image,
     final R2IDPoolType in_pool)
@@ -88,7 +90,10 @@ public final class R2LightProjective implements R2LightProjectiveType
       wrap_t.equals(JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE),
       "Wrapping mode should be CLAMP_TO_EDGE (is %s)", wrap_t);
 
-    return new R2LightProjective(in_mesh, in_image, in_pool.getFreshID());
+    return new R2LightProjectiveWithoutShadow(
+      in_mesh,
+      in_image,
+      in_pool.getFreshID());
   }
 
   @Override
@@ -105,9 +110,9 @@ public final class R2LightProjective implements R2LightProjectiveType
   }
 
   @Override
-  public R2TransformOTType getTransformWritable()
+  public R2TransformOTType getOriginTransformWritable()
   {
-    return this.transform;
+    return this.origin_transform;
   }
 
   @Override
@@ -123,7 +128,7 @@ public final class R2LightProjective implements R2LightProjectiveType
   }
 
   @Override
-  public PVector3FType<R2SpaceRGBType> getColor()
+  public PVectorReadable3FType<R2SpaceRGBType> getColor()
   {
     return this.color;
   }
@@ -142,31 +147,33 @@ public final class R2LightProjective implements R2LightProjectiveType
   }
 
   @Override
+  public PVector3FType<R2SpaceRGBType> getColorWritable()
+  {
+    return this.color;
+  }
+
+  @Override
   public JCGLArrayObjectUsableType getArrayObject()
   {
     return this.mesh.getArrayObject();
   }
 
   @Override
+  public R2TransformOTReadableType getOriginTransform()
+  {
+    return this.origin_transform;
+  }
+
+  @Override
+  public PVectorReadable3FType<R2SpaceWorldType> getPosition()
+  {
+    return this.origin_transform.getTranslationReadable();
+  }
+
+  @Override
   public long getLightID()
   {
     return this.id;
-  }
-
-  @Override
-  public R2TransformOTReadableType getTransform()
-  {
-    return this.transform;
-  }
-
-  @Override
-  public <A, B, E extends Throwable> B matchLightSingle(
-    final A context,
-    final PartialBiFunctionType<A, R2LightVolumeSingleType, B, E> on_volume,
-    final PartialBiFunctionType<A, R2LightScreenSingleType, B, E> on_screen)
-    throws E
-  {
-    return on_volume.call(context, this);
   }
 
   @Override
@@ -179,5 +186,11 @@ public final class R2LightProjective implements R2LightProjectiveType
   public R2Texture2DUsableType getImage()
   {
     return this.image;
+  }
+
+  @Override
+  public R2TransformReadableType getVolumeTransform()
+  {
+    return this.origin_transform;
   }
 }

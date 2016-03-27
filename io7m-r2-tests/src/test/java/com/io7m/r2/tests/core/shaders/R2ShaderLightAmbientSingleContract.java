@@ -20,7 +20,7 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightAmbientSingle;
+import com.io7m.r2.core.R2LightAmbientScreenSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -43,7 +43,7 @@ public abstract class R2ShaderLightAmbientSingleContract
       R2ShaderSourcesResources.newSources(R2Shaders.class);
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderLightSingleType<R2LightAmbientSingle> s =
+    final R2ShaderLightSingleType<R2LightAmbientScreenSingle> s =
       R2LightShaderAmbientSingle.newShader(
         g.getShaders(), sources, pool);
 

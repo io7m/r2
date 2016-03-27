@@ -26,34 +26,32 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
-import com.io7m.r2.core.R2LightSingleType;
-import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
+import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
+import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 /**
- * A verifier for light shaders; a type that verifies that a renderer has called
- * all of the required methods in the correct order.
+ * A verifier for projective light shaders; a type that verifies
+ * that a renderer has called all of the required methods in the correct order.
  *
- * @param <M> See {@link R2ShaderLightSingleType}
+ * @param <M> See {@link R2ShaderLightProjectiveType}
  */
 
-public final class R2ShaderLightVerifier<M extends R2LightSingleType> implements
-  R2ShaderLightSingleType<M>
+public final class R2ShaderLightProjectiveVerifier<
+  M extends R2LightProjectiveReadableType> implements
+  R2ShaderLightProjectiveType<M>
 {
-  private final R2ShaderLightSingleType<M> shader;
-  private final StringBuilder              text;
-  private final R2ShaderProjectiveRequired projective_required;
-  private       State                      state;
+  private final R2ShaderLightProjectiveType<M> shader;
+  private final StringBuilder text;
+  private State state;
 
-  private R2ShaderLightVerifier(
-    final R2ShaderLightSingleType<M> in_shader,
-    final R2ShaderProjectiveRequired in_projective_required)
+  private R2ShaderLightProjectiveVerifier(
+    final R2ShaderLightProjectiveType<M> in_shader)
   {
     this.shader = NullCheck.notNull(in_shader);
     this.text = new StringBuilder(128);
-    this.projective_required = NullCheck.notNull(in_projective_required);
     this.state = State.STATE_DEACTIVATED;
   }
 
@@ -61,19 +59,18 @@ public final class R2ShaderLightVerifier<M extends R2LightSingleType> implements
    * Construct a new verifier for the given shader.
    *
    * @param s   The shader
-   * @param r   A specification of whether or not projective light values are
-   *            required
-   * @param <M> See {@link R2ShaderLightSingleType}
+
+   * @param <M> See {@link R2ShaderLightVolumeSingleType}
    *
    * @return A new verifier
    */
 
-  public static <M extends R2LightSingleType> R2ShaderLightSingleType<M>
+  public static <M extends R2LightProjectiveReadableType>
+  R2ShaderLightProjectiveType<M>
   newVerifier(
-    final R2ShaderLightSingleType<M> s,
-    final R2ShaderProjectiveRequired r)
+    final R2ShaderLightProjectiveType<M> s)
   {
-    return new R2ShaderLightVerifier<>(s, r);
+    return new R2ShaderLightProjectiveVerifier<>(s);
   }
 
   @Override
@@ -121,7 +118,7 @@ public final class R2ShaderLightVerifier<M extends R2LightSingleType> implements
     R2ShaderVerifiers.checkState(
       this.text,
       this.getShaderProgram().getName(),
-      State.STATE_INSTANCE_RECEIVED,
+      State.STATE_PROJECTIVE_RECEIVED,
       this.state);
 
     this.shader.onValidate();
@@ -160,47 +157,6 @@ public final class R2ShaderLightVerifier<M extends R2LightSingleType> implements
   }
 
   @Override
-  public void onReceiveProjectiveLight(
-    final JCGLShadersType g_sh,
-    final R2MatricesProjectiveLightValuesType m)
-  {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_VALUES_RECEIVED,
-      this.state);
-
-    this.shader.onReceiveProjectiveLight(g_sh, m);
-    this.state = State.STATE_PROJECTIVE_RECEIVED;
-  }
-
-  @Override
-  public void onReceiveInstanceTransformValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m)
-  {
-    switch (this.projective_required) {
-      case R2_SHADER_PROJECTIVE_REQUIRED:
-        R2ShaderVerifiers.checkState(
-          this.text,
-          this.getShaderProgram().getName(),
-          State.STATE_PROJECTIVE_RECEIVED,
-          this.state);
-        break;
-      case R2_SHADER_PROJECTIVE_NOT_REQUIRED:
-        R2ShaderVerifiers.checkState(
-          this.text,
-          this.getShaderProgram().getName(),
-          State.STATE_VALUES_RECEIVED,
-          this.state);
-        break;
-    }
-
-    this.shader.onReceiveInstanceTransformValues(g_sh, m);
-    this.state = State.STATE_INSTANCE_RECEIVED;
-  }
-
-  @Override
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
@@ -219,13 +175,43 @@ public final class R2ShaderLightVerifier<M extends R2LightSingleType> implements
     this.state = State.STATE_VALUES_RECEIVED;
   }
 
+  @Override
+  public void onReceiveVolumeLightTransform(
+    final JCGLShadersType g_sh,
+    final R2MatricesVolumeLightValuesType m)
+  {
+    R2ShaderVerifiers.checkState(
+      this.text,
+      this.getShaderProgram().getName(),
+      State.STATE_VALUES_RECEIVED,
+      this.state);
+
+    this.shader.onReceiveVolumeLightTransform(g_sh, m);
+    this.state = State.STATE_VOLUME_RECEIVED;
+  }
+
+  @Override
+  public void onReceiveProjectiveLight(
+    final JCGLShadersType g_sh,
+    final R2MatricesProjectiveLightValuesType m)
+  {
+    R2ShaderVerifiers.checkState(
+      this.text,
+      this.getShaderProgram().getName(),
+      State.STATE_VOLUME_RECEIVED,
+      this.state);
+
+    this.shader.onReceiveProjectiveLight(g_sh, m);
+    this.state = State.STATE_PROJECTIVE_RECEIVED;
+  }
+
   private enum State
   {
     STATE_DEACTIVATED,
     STATE_ACTIVATED,
     STATE_GEOMETRY_BUFFER_RECEIVED,
     STATE_VALUES_RECEIVED,
-    STATE_PROJECTIVE_RECEIVED,
-    STATE_INSTANCE_RECEIVED
+    STATE_VOLUME_RECEIVED,
+    STATE_PROJECTIVE_RECEIVED
   }
 }

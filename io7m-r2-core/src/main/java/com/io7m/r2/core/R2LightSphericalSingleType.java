@@ -21,7 +21,8 @@ package com.io7m.r2.core;
  */
 
 public interface R2LightSphericalSingleType extends
-  R2LightSphericalType,
+  R2LightSphericalSingleReadableType,
+  R2LightSphericalSingleWritableType,
   R2LightVolumeSingleType
 {
   // No extra functions

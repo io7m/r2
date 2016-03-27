@@ -24,7 +24,9 @@ import com.io7m.jfunctional.PartialBiFunctionType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
+import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.valid4j.Assertive;
 
 /**
@@ -37,7 +39,7 @@ public final class R2LightProjectiveWithShadowVariance implements
 {
   private final PVector3FType<R2SpaceRGBType> color;
   private final long id;
-  private final R2TransformOT transform;
+  private final R2TransformOT origin_transform;
   private final R2ProjectionMeshReadableType mesh;
   private final R2ProjectionReadableType projection;
   private final R2Texture2DUsableType image;
@@ -58,7 +60,7 @@ public final class R2LightProjectiveWithShadowVariance implements
 
     this.projection = this.mesh.getProjectionReadable();
     this.id = in_id;
-    this.transform = R2TransformOT.newTransform();
+    this.origin_transform = R2TransformOT.newTransform();
     this.color = new PVectorM3F<>(1.0f, 1.0f, 1.0f);
     this.intensity = 1.0f;
     this.falloff = 1.0f;
@@ -116,9 +118,9 @@ public final class R2LightProjectiveWithShadowVariance implements
   }
 
   @Override
-  public R2TransformOTType getTransformWritable()
+  public R2TransformOTType getOriginTransformWritable()
   {
-    return this.transform;
+    return this.origin_transform;
   }
 
   @Override
@@ -153,31 +155,33 @@ public final class R2LightProjectiveWithShadowVariance implements
   }
 
   @Override
+  public PVector3FType<R2SpaceRGBType> getColorWritable()
+  {
+    return this.color;
+  }
+
+  @Override
   public JCGLArrayObjectUsableType getArrayObject()
   {
     return this.mesh.getArrayObject();
   }
 
   @Override
+  public R2TransformOTReadableType getOriginTransform()
+  {
+    return this.origin_transform;
+  }
+
+  @Override
+  public PVectorReadable3FType<R2SpaceWorldType> getPosition()
+  {
+    return this.origin_transform.getTranslationReadable();
+  }
+
+  @Override
   public long getLightID()
   {
     return this.id;
-  }
-
-  @Override
-  public R2TransformOTReadableType getTransform()
-  {
-    return this.transform;
-  }
-
-  @Override
-  public <A, B, E extends Throwable> B matchLightSingle(
-    final A context,
-    final PartialBiFunctionType<A, R2LightVolumeSingleType, B, E> on_volume,
-    final PartialBiFunctionType<A, R2LightScreenSingleType, B, E> on_screen)
-    throws E
-  {
-    return on_volume.call(context, this);
   }
 
   @Override
@@ -206,5 +210,11 @@ public final class R2LightProjectiveWithShadowVariance implements
     throws E
   {
     return on_project.call(context, this);
+  }
+
+  @Override
+  public R2TransformReadableType getVolumeTransform()
+  {
+    return this.origin_transform;
   }
 }

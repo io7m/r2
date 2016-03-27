@@ -20,6 +20,8 @@ import com.io7m.jtensors.parameterized.PMatrixReadable4x4FType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
+import java.util.function.BiFunction;
+
 /**
  * Matrices.
  */
@@ -43,5 +45,5 @@ public interface R2MatricesType extends R2MatricesValuesType
     final PMatrixReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType> view,
     final R2ProjectionReadableType projection,
     final A x,
-    final R2MatricesObserverFunctionType<A, B> f);
+    final BiFunction<R2MatricesObserverType, A, B> f);
 }
