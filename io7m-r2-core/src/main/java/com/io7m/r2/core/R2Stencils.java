@@ -35,13 +35,19 @@ public final class R2Stencils
    * The bits used to store group values.
    */
 
-  public static final int GROUP_BITS = 0b0111_1111;
+  public static final int GROUP_BITS = 0b0111_1000;
+
+  /**
+   * The left shift used to store group values;
+   */
+
+  public static final int GROUP_LEFT_SHIFT = 3;
 
   /**
    * The maximum number of groups in a scene.
    */
 
-  public static final int MAXIMUM_GROUPS = 128;
+  public static final int MAXIMUM_GROUPS = 16;
 
   private R2Stencils()
   {
@@ -75,8 +81,9 @@ public final class R2Stencils
     if (!R2Stencils.isValidGroup(x)) {
       throw new R2ExceptionInvalidGroup(
         String.format(
-          "Group number %d is not in the range [1, 127]",
-          Integer.valueOf(x)));
+          "Group number %d is not in the range [1, %d]",
+          Integer.valueOf(x),
+          Integer.valueOf(R2Stencils.MAXIMUM_GROUPS - 1)));
     }
     return x;
   }

@@ -338,7 +338,7 @@ public final class R2LightRenderer implements R2LightRendererType
       ss.setTestFunctionFront(
         JCGLStencilFunction.STENCIL_EQUAL);
       ss.setTestReferenceFront(
-        group);
+        group << R2Stencils.GROUP_LEFT_SHIFT);
       ss.setTestMaskFront(
         R2Stencils.GROUP_BITS);
 
@@ -354,7 +354,7 @@ public final class R2LightRenderer implements R2LightRendererType
       ss.setTestFunctionBack(
         JCGLStencilFunction.STENCIL_EQUAL);
       ss.setTestReferenceBack(
-        group);
+        group << R2Stencils.GROUP_LEFT_SHIFT);
       ss.setTestMaskBack(
         R2Stencils.GROUP_BITS);
 

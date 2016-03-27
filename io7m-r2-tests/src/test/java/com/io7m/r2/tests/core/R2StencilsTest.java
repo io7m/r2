@@ -32,13 +32,13 @@ public final class R2StencilsTest
   @Test(expected = R2ExceptionInvalidGroup.class)
   public void testInvalidGroup1()
   {
-    R2Stencils.checkValidGroup(128);
+    R2Stencils.checkValidGroup(16);
   }
 
   @Test
   public void testValidGroup()
   {
-    for (int index = 1; index <= 127; ++index) {
+    for (int index = 1; index <= 15; ++index) {
       Assert.assertEquals(
         (long) index, (long) R2Stencils.checkValidGroup(index));
     }

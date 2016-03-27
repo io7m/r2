@@ -228,7 +228,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.stencil_state.setTestFunctionFront(
         JCGLStencilFunction.STENCIL_EQUAL);
       this.stencil_state.setTestReferenceFront(
-        group | R2Stencils.ALLOW_BIT);
+        (group << R2Stencils.GROUP_LEFT_SHIFT) | R2Stencils.ALLOW_BIT);
       this.stencil_state.setTestMaskFront(
         R2Stencils.ALLOW_BIT);
 
