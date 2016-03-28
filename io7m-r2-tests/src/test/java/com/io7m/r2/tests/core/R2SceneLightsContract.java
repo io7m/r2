@@ -24,6 +24,7 @@ import com.io7m.r2.core.R2ExceptionInvalidGroup;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightSingleReadableType;
 import com.io7m.r2.core.R2LightSingleType;
+import com.io7m.r2.core.R2RendererExceptionClipGroupDeleted;
 import com.io7m.r2.core.R2RendererExceptionLightAlreadyVisible;
 import com.io7m.r2.core.R2SceneLightsClipGroupConsumerType;
 import com.io7m.r2.core.R2SceneLightsClipGroupType;
@@ -367,6 +368,28 @@ public abstract class R2SceneLightsContract
     Assert.assertEquals("Group.onFinish 1", log.remove(0));
     Assert.assertEquals("onFinish", log.remove(0));
     Assert.assertEquals(0L, (long) log.size());
+
+    o.lightsReset();
+
+    final AtomicBoolean finished = new AtomicBoolean(false);
+    final AtomicBoolean started = new AtomicBoolean(false);
+    o.lightsExecute(new UnreachableConsumer()
+    {
+      @Override
+      public void onStart()
+      {
+        started.set(true);
+      }
+
+      @Override
+      public void onFinish()
+      {
+        finished.set(true);
+      }
+    });
+
+    Assert.assertTrue(started.get());
+    Assert.assertTrue(finished.get());
   }
 
   @Test
@@ -627,7 +650,6 @@ public abstract class R2SceneLightsContract
     final List<String> log = new ArrayList<>(128);
     o.lightsExecute(new LoggingConsumer(
       log, LoggingGroupConsumer::new, LoggingClipGroupConsumer::new));
-
     R2SceneLightsContract.dumpLog(log);
 
     Assert.assertEquals("onStart", log.remove(0));
@@ -659,6 +681,28 @@ public abstract class R2SceneLightsContract
     Assert.assertEquals("ClipGroup.onFinish 1", log.remove(0));
     Assert.assertEquals("onFinish", log.remove(0));
     Assert.assertEquals(0L, (long) log.size());
+
+    o.lightsReset();
+
+    final AtomicBoolean finished = new AtomicBoolean(false);
+    final AtomicBoolean started = new AtomicBoolean(false);
+    o.lightsExecute(new UnreachableConsumer()
+    {
+      @Override
+      public void onStart()
+      {
+        started.set(true);
+      }
+
+      @Override
+      public void onFinish()
+      {
+        finished.set(true);
+      }
+    });
+
+    Assert.assertTrue(started.get());
+    Assert.assertTrue(finished.get());
   }
 
   @Test
@@ -698,6 +742,34 @@ public abstract class R2SceneLightsContract
 
     Assert.assertTrue(started.get());
     Assert.assertTrue(finished.get());
+  }
+
+  @Test
+  public final void testClipGroupDeleted()
+    throws Exception
+  {
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getFakeGL();
+
+    final JCGLArrayObjectType ia0 =
+      R2TestUtilities.getArrayObject(g);
+    final R2InstanceSingleType i =
+      R2TestUtilities.getInstanceSingle(g, ia0, 100L);
+
+    final JCGLArrayObjectType a0 =
+      R2TestUtilities.getArrayObject(g);
+    final R2ShaderLightSingleUsableType<R2LightSingleType> s0 =
+      R2TestUtilities.getShaderLightSingle(g, 0L);
+    final R2LightSingleType l0 =
+      R2TestUtilities.getLightSingle(a0, 1L);
+
+    final R2SceneLightsType o = this.newLights();
+    final R2SceneLightsGroupType lg = o.lightsGetGroup(1);
+    final R2SceneLightsClipGroupType cg = lg.lightGroupNewClipGroup(i);
+
+    o.lightsReset();
+
+    this.expected.expect(R2RendererExceptionClipGroupDeleted.class);
+    cg.clipGroupAddSingle(l0, s0);
   }
 
   private interface LoggingGroupConsumerConstructorType

@@ -433,18 +433,28 @@ public final class R2SceneLights implements R2SceneLightsType
       this.light_shaders.clear();
       this.lights.clear();
       this.lights_unclipped.clear();
+
+      final LongIterator iter = this.clip_groups.keySet().iterator();
+      while (iter.hasNext()) {
+        final ClipGroup cg = this.clip_groups.get(iter.nextLong());
+        cg.shader_to_lights.clear();
+        cg.deleted = true;
+      }
+      this.clip_groups.clear();;
     }
 
     private final class ClipGroup implements R2SceneLightsClipGroupType
     {
       private final R2InstanceSingleType volume;
       private final Long2ReferenceOpenHashMap<LongSet> shader_to_lights;
+      private boolean deleted;
 
       private ClipGroup(
         final R2InstanceSingleType v)
       {
         this.volume = NullCheck.notNull(v);
         this.shader_to_lights = new Long2ReferenceOpenHashMap<>();
+        this.deleted = false;
       }
 
       @Override
@@ -460,6 +470,11 @@ public final class R2SceneLights implements R2SceneLightsType
       {
         NullCheck.notNull(light);
         NullCheck.notNull(shader);
+
+        if (this.deleted) {
+          throw new R2RendererExceptionClipGroupDeleted(
+            "Clip group has been deleted");
+        }
 
         final long l_id = light.getLightID();
         final long s_id = shader.getShaderID();
