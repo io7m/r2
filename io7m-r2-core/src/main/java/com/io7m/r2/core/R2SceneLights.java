@@ -128,6 +128,7 @@ public final class R2SceneLights implements R2SceneLightsType
     final R2SceneLightsGroupConsumerType gv = c.onStartGroup(g.id);
 
     try {
+      gv.onStart();
 
       /**
        * For each single instance shader {@code s}...
@@ -440,7 +441,7 @@ public final class R2SceneLights implements R2SceneLightsType
         cg.shader_to_lights.clear();
         cg.deleted = true;
       }
-      this.clip_groups.clear();;
+      this.clip_groups.clear();
     }
 
     private final class ClipGroup implements R2SceneLightsClipGroupType

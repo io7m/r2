@@ -160,6 +160,7 @@ public abstract class R2SceneLightsContract
 
     Assert.assertEquals("onStart", log.remove(0));
     Assert.assertEquals("onStartGroup 1", log.remove(0));
+    Assert.assertEquals("Group.onStart 1", log.remove(0));
     Assert.assertEquals("Group.onLightSingleShaderStart 0", log.remove(0));
     Assert.assertEquals("Group.onLightSingleArrayStart 1", log.remove(0));
     Assert.assertEquals("Group.onLightSingle 0 1", log.remove(0));
@@ -200,6 +201,7 @@ public abstract class R2SceneLightsContract
 
     Assert.assertEquals("onStart", log.remove(0));
     Assert.assertEquals("onStartGroup 1", log.remove(0));
+    Assert.assertEquals("Group.onStart 1", log.remove(0));
     Assert.assertEquals("Group.onLightSingleShaderStart 0", log.remove(0));
     Assert.assertEquals("Group.onLightSingleArrayStart 1", log.remove(0));
     Assert.assertEquals("Group.onLightSingle 0 1", log.remove(0));
@@ -261,6 +263,7 @@ public abstract class R2SceneLightsContract
 
     Assert.assertEquals("onStart", log.remove(0));
     Assert.assertEquals("onStartGroup 1", log.remove(0));
+    Assert.assertEquals("Group.onStart 1", log.remove(0));
     Assert.assertEquals("Group.onLightSingleShaderStart 0", log.remove(0));
     Assert.assertEquals("Group.onLightSingleArrayStart 1", log.remove(0));
     Assert.assertEquals("Group.onLightSingle 0 1", log.remove(0));
@@ -345,6 +348,7 @@ public abstract class R2SceneLightsContract
 
     Assert.assertEquals("onStart", log.remove(0));
     Assert.assertEquals("onStartGroup 1", log.remove(0));
+    Assert.assertEquals("Group.onStart 1", log.remove(0));
     Assert.assertEquals("Group.onLightSingleShaderStart 40", log.remove(0));
     Assert.assertEquals("Group.onLightSingleArrayStart 20", log.remove(0));
     Assert.assertEquals("Group.onLightSingle 40 20", log.remove(0));
@@ -418,6 +422,7 @@ public abstract class R2SceneLightsContract
 
     Assert.assertEquals("onStart", log.remove(0));
     Assert.assertEquals("onStartGroup 3", log.remove(0));
+    Assert.assertEquals("Group.onStart 3", log.remove(0));
     Assert.assertEquals("Group.onLightSingleShaderStart 0", log.remove(0));
     Assert.assertEquals("Group.onLightSingleArrayStart 1", log.remove(0));
     Assert.assertEquals("Group.onLightSingle 0 1", log.remove(0));
@@ -787,14 +792,14 @@ public abstract class R2SceneLightsContract
       int group);
   }
 
-  private static class LoggingClipGroupConsumer implements
+  private static final class LoggingClipGroupConsumer implements
     R2SceneLightsClipGroupConsumerType
   {
     private final List<String> log;
     private final R2InstanceSingleType volume;
     private final int group;
 
-    public LoggingClipGroupConsumer(
+    LoggingClipGroupConsumer(
       final List<String> in_log,
       final R2InstanceSingleType i,
       final int g)
@@ -853,18 +858,26 @@ public abstract class R2SceneLightsContract
     }
   }
 
-  private static class LoggingGroupConsumer
+  private static final class LoggingGroupConsumer
     implements R2SceneLightsGroupConsumerType
   {
     private final int group;
     private final List<String> log;
 
-    public LoggingGroupConsumer(
+    LoggingGroupConsumer(
       final List<String> in_log,
       final int in_group)
     {
       this.log = NullCheck.notNull(in_log);
       this.group = in_group;
+    }
+
+    @Override
+    public void onStart()
+    {
+      this.log.add(String.format(
+        "Group.onStart %d",
+        Integer.valueOf(this.group)));
     }
 
     @Override
@@ -916,14 +929,14 @@ public abstract class R2SceneLightsContract
     }
   }
 
-  private static class LoggingConsumer
+  private static final class LoggingConsumer
     implements R2SceneLightsConsumerType
   {
     private final LoggingGroupConsumerConstructorType group_cons;
     private final LoggingClipGroupConsumerConstructorType clip_group_cons;
     private final List<String> log;
 
-    public LoggingConsumer(
+    LoggingConsumer(
       final List<String> in_log,
       final LoggingGroupConsumerConstructorType in_group_cons,
       final LoggingClipGroupConsumerConstructorType in_clip_group_cons)
