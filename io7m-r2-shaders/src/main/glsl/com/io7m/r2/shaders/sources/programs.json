@@ -131,12 +131,12 @@
 
   "R2StencilSingle": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2StencilSingle.vert",
-    "fragment": "/com/io7m/r2/shaders/sources/R2White.frag"
+    "fragment": "/com/io7m/r2/shaders/sources/R2Nothing.frag"
   },
 
   "R2StencilScreen": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2StencilScreen.vert",
-    "fragment": "/com/io7m/r2/shaders/sources/R2White.frag"
+    "fragment": "/com/io7m/r2/shaders/sources/R2Nothing.frag"
   },
 
   "R2FilterLightApplicator" : {
@@ -177,5 +177,10 @@
   "R2SSAO" : {
     "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2SSAO.frag"
+  },
+
+  "R2LogDepthOnlySingle" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LogDepthOnlySingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LogDepthOnlySingle.frag"
   }
 }

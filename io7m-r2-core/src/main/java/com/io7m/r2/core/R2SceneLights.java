@@ -233,6 +233,7 @@ public final class R2SceneLights implements R2SceneLightsType
       c.onStartClipGroup(cg.volume, g.getID());
 
     try {
+      cgc.onStart();
 
       /**
        * For each shader...

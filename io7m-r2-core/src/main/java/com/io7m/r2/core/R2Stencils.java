@@ -32,6 +32,12 @@ public final class R2Stencils
   public static final int ALLOW_BIT = 0b1000_0000;
 
   /**
+   * The stencil bit used to mask the contributions of lights.
+   */
+
+  public static final int LIGHT_MASK_BIT = 0b0000_0001;
+
+  /**
    * The bits used to store group values.
    */
 

@@ -659,6 +659,7 @@ public abstract class R2SceneLightsContract
 
     Assert.assertEquals("onStart", log.remove(0));
     Assert.assertEquals("onStartClipGroup 100 1", log.remove(0));
+    Assert.assertEquals("ClipGroup.onStart 1", log.remove(0));
     Assert.assertEquals("ClipGroup.onLightSingleShaderStart 40", log.remove(0));
     Assert.assertEquals("ClipGroup.onLightSingleArrayStart 20", log.remove(0));
     Assert.assertEquals("ClipGroup.onLightSingle 40 20", log.remove(0));
@@ -807,6 +808,14 @@ public abstract class R2SceneLightsContract
       this.log = NullCheck.notNull(in_log);
       this.volume = NullCheck.notNull(i);
       this.group = g;
+    }
+
+    @Override
+    public void onStart()
+    {
+      this.log.add(String.format(
+        "ClipGroup.onStart %d",
+        Integer.valueOf(this.group)));
     }
 
     @Override

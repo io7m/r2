@@ -25,6 +25,12 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 public interface R2SceneLightsClipGroupConsumerType
 {
   /**
+   * Called when rendering of the clip group begins.
+   */
+
+  void onStart();
+
+  /**
    * Called when a new shader should be activated in order to start rendering
    * single lights.
    *

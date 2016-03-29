@@ -81,6 +81,7 @@ import com.io7m.r2.core.R2ProjectionMesh;
 import com.io7m.r2.core.R2ProjectionMeshType;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2SceneLights;
+import com.io7m.r2.core.R2SceneLightsClipGroupType;
 import com.io7m.r2.core.R2SceneLightsGroupType;
 import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaques;
@@ -98,7 +99,6 @@ import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
-import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
@@ -159,12 +159,12 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
   private R2SurfaceShaderBasicParameters geom_shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
 
-  private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_bounded_shader;
   private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
   private R2UnitSphereType sphere;
   private R2LightSphericalSingleType sphere_light_bounded;
   private R2TransformSiOT sphere_light_bounded_transform;
+  private R2InstanceSingleType sphere_light_bounds;
 
   private R2ShaderLightProjectiveType<R2LightProjectiveReadableType> proj_light_shader;
   private R2ProjectionFrustum proj_proj;
@@ -578,19 +578,18 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
     this.sphere_light.getOriginPositionWritable().set3F(0.0f, 1.0f, 1.0f);
     this.sphere_light.setRadius(30.0f);
 
-    this.sphere_light_bounded_shader =
-      R2LightShaderSphericalLambertSingle.newShader(
-        gx.getShaders(), sources, id_pool);
-
     this.sphere_light_bounded_transform = R2TransformSiOT.newTransform();
     this.sphere_light_bounded_transform.getTranslation().set3F(-10.0f, 1.0f, 0.0f);
-    this.sphere_light_bounded_transform.getScale().set3F(9f, 9f, 9f);
+    this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
-    this.sphere_light_bounded =
-      R2LightSphericalSingle.newLightWithVolume(
+    this.sphere_light_bounds =
+      R2InstanceSingle.newInstance(
+        id_pool,
         R2UnitCube.newUnitCube(gx).getArrayObject(),
         this.sphere_light_bounded_transform,
-        id_pool);
+        PMatrixI3x3F.identity());
+    this.sphere_light_bounded =
+      R2LightSphericalSingle.newLight(this.sphere, id_pool);
     this.sphere_light_bounded.getColorWritable().set3F(1.0f, 0.0f, 0.0f);
     this.sphere_light_bounded.setIntensity(1.0f);
     this.sphere_light_bounded.getOriginPositionWritable().set3F(-10.0f, 1.0f, 0.0f);
@@ -631,7 +630,8 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
       this.screen_clear_spec = csb.build();
     }
 
-    this.light_renderer = R2LightRendererNew.newRenderer(gx);
+    this.light_renderer =
+      R2LightRendererNew.newRenderer(gx, sources, id_pool, m.getUnitQuad());
   }
 
   @Override
@@ -670,9 +670,12 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
     lg.lightGroupAddSingle(
      this.sphere_light, this.sphere_light_shader);
     lg.lightGroupAddSingle(
-      this.sphere_light_bounded, this.sphere_light_bounded_shader);
-    lg.lightGroupAddSingle(
       this.proj_light, this.proj_light_shader);
+
+    final R2SceneLightsClipGroupType lcg =
+      lg.lightGroupNewClipGroup(this.sphere_light_bounds);
+    lcg.clipGroupAddSingle(
+      this.sphere_light_bounded, this.sphere_light_shader);
 
     if (servx.isFreeCameraEnabled()) {
       MatrixM4x4F.copy(servx.getFreeCameraViewMatrix(), this.view);

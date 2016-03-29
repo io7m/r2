@@ -220,7 +220,7 @@
   </module>
 
   <module name="FileLength">
-    <property name="max" value="1000"/>
+    <property name="max" value="2000"/>
   </module>
 
   <module name="FileTabCharacter"/>

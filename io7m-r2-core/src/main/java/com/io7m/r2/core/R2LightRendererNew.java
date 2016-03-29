@@ -37,6 +37,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
+import com.io7m.jcanephora.renderstate.JCGLColorBufferMaskingState;
 import com.io7m.jcanephora.renderstate.JCGLCullingState;
 import com.io7m.jcanephora.renderstate.JCGLDepthClamping;
 import com.io7m.jcanephora.renderstate.JCGLDepthState;
@@ -48,12 +49,18 @@ import com.io7m.jcanephora.renderstate.JCGLStencilStateMutable;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
-import com.io7m.junreachable.UnimplementedCodeException;
+import com.io7m.r2.core.shaders.provided.R2ShaderLogDepthOnlySingle;
+import com.io7m.r2.core.shaders.provided.R2StencilShaderScreen;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
@@ -76,40 +83,68 @@ public final class R2LightRendererNew implements R2LightRendererNewType
 
   private final LightConsumer light_consumer;
   private final JCGLInterfaceGL33Type g;
-  private boolean deleted;
+  private final R2ShaderInstanceSingleType<Unit> clip_volume_stencil;
+  private final R2ShaderInstanceSingleScreenType<Unit> clip_screen_stencil;
 
-  private R2LightRendererNew(final JCGLInterfaceGL33Type in_g)
+  private R2LightRendererNew(
+    final JCGLInterfaceGL33Type in_g,
+    final R2ShaderInstanceSingleType<Unit> in_clip_volume_stencil,
+    final R2ShaderInstanceSingleScreenType<Unit> in_clip_screen_stencil,
+    final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
-    this.light_consumer = new LightConsumer(this.g);
+    this.clip_volume_stencil = NullCheck.notNull(in_clip_volume_stencil);
+    this.clip_screen_stencil = NullCheck.notNull(in_clip_screen_stencil);
+    this.light_consumer =
+      new LightConsumer(
+        this.g, in_clip_volume_stencil, in_clip_screen_stencil, in_quad);
   }
 
   /**
    * Construct a new renderer.
    *
-   * @param in_g An OpenGL interface
+   * @param in_g       An OpenGL interface
+   * @param in_sources Access to shader sources
+   * @param in_pool    An ID pool
+   * @param in_quad    A usable unit quad
    *
    * @return A new renderer
    */
 
   public static R2LightRendererNewType newRenderer(
-    final JCGLInterfaceGL33Type
-      in_g)
+    final JCGLInterfaceGL33Type in_g,
+    final R2ShaderSourcesType in_sources,
+    final R2IDPoolType in_pool,
+    final R2UnitQuadUsableType in_quad)
   {
-    return new R2LightRendererNew(in_g);
+    final JCGLShadersType g_sh = in_g.getShaders();
+    final R2ShaderInstanceSingleType<Unit> volume_stencil =
+      R2ShaderLogDepthOnlySingle.newShader(
+        g_sh, in_sources, in_pool);
+    final R2ShaderInstanceSingleScreenType<Unit> screen_stencil =
+      R2StencilShaderScreen.newShader(
+        g_sh, in_sources, in_pool);
+
+    return new R2LightRendererNew(
+      in_g, volume_stencil, screen_stencil, in_quad);
   }
 
   @Override
   public void delete(final JCGLInterfaceGL33Type g3)
     throws R2Exception
   {
-    this.deleted = true;
+    NullCheck.notNull(g3);
+
+    if (!this.clip_volume_stencil.isDeleted()) {
+      this.clip_volume_stencil.delete(g3);
+      this.clip_screen_stencil.delete(g3);
+    }
   }
 
   @Override
   public boolean isDeleted()
   {
-    return this.deleted;
+    return this.clip_volume_stencil.isDeleted();
   }
 
   @Override
@@ -363,35 +398,23 @@ public final class R2LightRendererNew implements R2LightRendererNewType
       ss.setStencilStrict(true);
       ss.setStencilEnabled(true);
 
-      ss.setOperationDepthFailFront(
-        JCGLStencilOperation.STENCIL_OP_KEEP);
-      ss.setOperationStencilFailFront(
-        JCGLStencilOperation.STENCIL_OP_KEEP);
-      ss.setOperationPassFront(
-        JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationDepthFailFront(JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationStencilFailFront(JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationPassFront(JCGLStencilOperation.STENCIL_OP_KEEP);
 
-      ss.setTestFunctionFront(
-        JCGLStencilFunction.STENCIL_EQUAL);
-      ss.setTestReferenceFront(
-        group << R2Stencils.GROUP_LEFT_SHIFT);
-      ss.setTestMaskFront(
-        R2Stencils.GROUP_BITS);
+      ss.setTestFunctionFront(JCGLStencilFunction.STENCIL_EQUAL);
+      ss.setTestReferenceFront(group << R2Stencils.GROUP_LEFT_SHIFT);
+      ss.setTestMaskFront(R2Stencils.GROUP_BITS);
 
       ss.setWriteMaskFrontFaces(0);
 
-      ss.setOperationDepthFailBack(
-        JCGLStencilOperation.STENCIL_OP_KEEP);
-      ss.setOperationStencilFailBack(
-        JCGLStencilOperation.STENCIL_OP_KEEP);
-      ss.setOperationPassBack(
-        JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationDepthFailBack(JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationStencilFailBack(JCGLStencilOperation.STENCIL_OP_KEEP);
+      ss.setOperationPassBack(JCGLStencilOperation.STENCIL_OP_KEEP);
 
-      ss.setTestFunctionBack(
-        JCGLStencilFunction.STENCIL_EQUAL);
-      ss.setTestReferenceBack(
-        group << R2Stencils.GROUP_LEFT_SHIFT);
-      ss.setTestMaskBack(
-        R2Stencils.GROUP_BITS);
+      ss.setTestFunctionBack(JCGLStencilFunction.STENCIL_EQUAL);
+      ss.setTestReferenceBack(group << R2Stencils.GROUP_LEFT_SHIFT);
+      ss.setTestMaskBack(R2Stencils.GROUP_BITS);
 
       ss.setWriteMaskBackFaces(0);
     }
@@ -498,20 +521,20 @@ public final class R2LightRendererNew implements R2LightRendererNewType
       try {
         this.input_state.parent.matrices.withProjectiveLight(
           light, this, (mp, t) -> {
-          s.onReceiveVolumeLightTransform(t.shaders, mp);
-          s.onReceiveProjectiveLight(t.shaders, mp);
+            s.onReceiveVolumeLightTransform(t.shaders, mp);
+            s.onReceiveProjectiveLight(t.shaders, mp);
 
-          final R2Texture2DUsableType map =
-            t.input_state.parent.shadow_maps.shadowMapGet(t.light_shadow);
+            final R2Texture2DUsableType map =
+              t.input_state.parent.shadow_maps.shadowMapGet(t.light_shadow);
 
-          s.onReceiveShadowMap(
-            t.textures,
-            t.shaders,
-            t.light_each_context,
-            map);
-          s.onValidate();
-          return Unit.unit();
-        });
+            s.onReceiveShadowMap(
+              t.textures,
+              t.shaders,
+              t.light_each_context,
+              map);
+            s.onValidate();
+            return Unit.unit();
+          });
       } finally {
         this.light_shadow = null;
       }
@@ -528,11 +551,11 @@ public final class R2LightRendererNew implements R2LightRendererNewType
 
       this.input_state.parent.matrices.withProjectiveLight(
         light, this, (mp, t) -> {
-        s.onReceiveVolumeLightTransform(t.shaders, mp);
-        s.onReceiveProjectiveLight(t.shaders, mp);
-        s.onValidate();
-        return Unit.unit();
-      });
+          s.onReceiveVolumeLightTransform(t.shaders, mp);
+          s.onReceiveProjectiveLight(t.shaders, mp);
+          s.onValidate();
+          return Unit.unit();
+        });
     }
 
     @Override
@@ -639,6 +662,626 @@ public final class R2LightRendererNew implements R2LightRendererNewType
     }
   }
 
+  private static final class LightClipGroupConsumer implements
+    R2SceneLightsClipGroupConsumerType
+  {
+    private final JCGLInterfaceGL33Type g33;
+    private final LightConsumerInputState parent;
+    private final LightClipGroupConsumerInputState input_state;
+    private final R2ShaderInstanceSingleUsableType<Unit> clip_volume_stencil;
+    private final R2ShaderInstanceSingleScreenUsableType<Unit> clip_screen_stencil;
+    private final JCGLRenderStateMutable clip_screen_stencil_state;
+    private final JCGLRenderStateMutable clip_volume_stencil_state;
+    private final JCGLShadersType shaders;
+    private final JCGLTexturesType textures;
+    private final R2UnitQuadUsableType quad;
+    private final JCGLArrayObjectsType array_objects;
+    private final JCGLDrawType draw;
+    private final JCGLRenderStateMutable render_state_screen;
+    private final JCGLRenderStateMutable render_state_volume;
+    private final JCGLStencilStateMutable render_stencil_state;
+
+    private @Nullable
+    R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
+    private @Nullable R2TextureUnitContextType light_each_context;
+    private @Nullable R2LightProjectiveWithShadowReadableType light_shadow;
+
+    LightClipGroupConsumer(
+      final JCGLInterfaceGL33Type in_g33,
+      final LightConsumerInputState in_input_state,
+      final R2ShaderInstanceSingleUsableType<Unit> in_clip_volume_stencil,
+      final R2ShaderInstanceSingleScreenUsableType<Unit> in_clip_screen_stencil,
+      final R2UnitQuadUsableType in_quad)
+    {
+      this.g33 =
+        NullCheck.notNull(in_g33);
+      this.parent =
+        NullCheck.notNull(in_input_state);
+      this.quad =
+        NullCheck.notNull(in_quad);
+
+      this.shaders = this.g33.getShaders();
+      this.textures = this.g33.getTextures();
+      this.array_objects = this.g33.getArrayObjects();
+      this.draw = this.g33.getDraw();
+
+      this.input_state =
+        new LightClipGroupConsumerInputState(in_input_state);
+      this.clip_volume_stencil =
+        NullCheck.notNull(in_clip_volume_stencil);
+      this.clip_screen_stencil =
+        NullCheck.notNull(in_clip_screen_stencil);
+
+      {
+        /**
+         * Configure rendering state for the full-screen stencil clearing pass.
+         *
+         * Configure stencil settings that will unconditionally clear the
+         * {@link R2Stencils#LIGHT_MASK_BIT}, but leave the rest of the
+         * contents of the stencil buffer intact.
+         */
+
+        this.clip_screen_stencil_state =
+          JCGLRenderStateMutable.create();
+        this.clip_screen_stencil_state.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(false, false, false, false));
+
+        final JCGLStencilStateMutable ss = JCGLStencilStateMutable.create();
+        ss.setStencilEnabled(true);
+        ss.setStencilStrict(true);
+
+        ss.setOperationDepthFailBack(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationStencilFailBack(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationPassBack(JCGLStencilOperation.STENCIL_OP_REPLACE);
+
+        ss.setOperationDepthFailFront(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationStencilFailFront(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationPassFront(JCGLStencilOperation.STENCIL_OP_REPLACE);
+
+        ss.setTestFunctionBack(JCGLStencilFunction.STENCIL_ALWAYS);
+        ss.setTestMaskBack(0);
+        ss.setTestReferenceBack(0);
+        ss.setWriteMaskBackFaces(R2Stencils.LIGHT_MASK_BIT);
+
+        ss.setTestFunctionFront(JCGLStencilFunction.STENCIL_ALWAYS);
+        ss.setTestMaskFront(0);
+        ss.setTestReferenceFront(0);
+        ss.setWriteMaskFrontFaces(R2Stencils.LIGHT_MASK_BIT);
+
+        this.clip_screen_stencil_state.setStencilState(ss);
+      }
+
+      {
+        /**
+         * Configure rendering state for clipping volumes.
+         */
+
+        this.clip_volume_stencil_state =
+          JCGLRenderStateMutable.create();
+
+        /**
+         * Use a standard less-than-or-equal depth test for the clip volume.
+         */
+
+        this.clip_volume_stencil_state.setDepthState(JCGLDepthState.of(
+          JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+          Optional.of(JCGLDepthFunction.DEPTH_LESS_THAN_OR_EQUAL),
+          JCGLDepthWriting.DEPTH_WRITE_DISABLED,
+          JCGLDepthClamping.DEPTH_CLAMP_ENABLED
+        ));
+
+        this.clip_volume_stencil_state.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(false, false, false, false));
+
+        /**
+         * Configure stencil settings that will, in effect, set the
+         * {@link R2Stencils#LIGHT_MASK_BIT} for any fragment the light volume
+         * touches.
+         */
+
+        final JCGLStencilStateMutable ss = JCGLStencilStateMutable.create();
+        ss.setStencilEnabled(true);
+        ss.setStencilStrict(true);
+
+        ss.setOperationDepthFailBack(JCGLStencilOperation.STENCIL_OP_INVERT);
+        ss.setOperationStencilFailBack(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationPassBack(JCGLStencilOperation.STENCIL_OP_KEEP);
+
+        ss.setOperationDepthFailFront(JCGLStencilOperation.STENCIL_OP_INVERT);
+        ss.setOperationStencilFailFront(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationPassFront(JCGLStencilOperation.STENCIL_OP_KEEP);
+
+        ss.setTestFunctionBack(JCGLStencilFunction.STENCIL_ALWAYS);
+        ss.setTestMaskBack(R2Stencils.LIGHT_MASK_BIT);
+        ss.setTestReferenceBack(R2Stencils.LIGHT_MASK_BIT);
+        ss.setWriteMaskBackFaces(R2Stencils.LIGHT_MASK_BIT);
+
+        ss.setTestFunctionFront(JCGLStencilFunction.STENCIL_ALWAYS);
+        ss.setTestMaskFront(R2Stencils.LIGHT_MASK_BIT);
+        ss.setTestReferenceFront(R2Stencils.LIGHT_MASK_BIT);
+        ss.setWriteMaskFrontFaces(R2Stencils.LIGHT_MASK_BIT);
+
+        this.clip_volume_stencil_state.setStencilState(ss);
+      }
+
+      {
+        this.render_state_screen = JCGLRenderStateMutable.create();
+
+        /**
+         * The light contributions are summed with pure additive blending.
+         */
+
+        this.render_state_screen.setBlendState(
+          Optional.of(JCGLBlendState.of(
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendEquation.BLEND_EQUATION_ADD,
+            JCGLBlendEquation.BLEND_EQUATION_ADD)));
+
+        /**
+         * For full-screen quads, the front faces should be rendered.
+         */
+
+        this.render_state_screen.setCullingState(
+          Optional.of(JCGLCullingState.of(
+            JCGLFaceSelection.FACE_BACK,
+            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
+
+        /**
+         * No depth testing and no depth writing is required.
+         */
+
+        this.render_state_screen.setDepthState(JCGLDepthState.of(
+          JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+          Optional.empty(),
+          JCGLDepthWriting.DEPTH_WRITE_DISABLED,
+          JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
+
+        /**
+         * Configure the stencil test such that only those pixels that
+         * belong to the current group AND have the {@link R2Stencils#LIGHT_MASK_BIT}
+         * set are touched. Stencil writing is disabled.
+         */
+
+        final JCGLStencilStateMutable ss = JCGLStencilStateMutable.create();
+        this.render_stencil_state = ss;
+
+        ss.setStencilEnabled(true);
+        ss.setStencilStrict(true);
+
+        ss.setOperationDepthFailBack(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationStencilFailBack(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationPassBack(JCGLStencilOperation.STENCIL_OP_KEEP);
+
+        ss.setOperationDepthFailFront(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationStencilFailFront(JCGLStencilOperation.STENCIL_OP_KEEP);
+        ss.setOperationPassFront(JCGLStencilOperation.STENCIL_OP_KEEP);
+
+        ss.setTestFunctionBack(JCGLStencilFunction.STENCIL_EQUAL);
+        ss.setTestFunctionFront(JCGLStencilFunction.STENCIL_EQUAL);
+        ss.setTestMaskFront(R2Stencils.GROUP_BITS | R2Stencils.LIGHT_MASK_BIT);
+        ss.setTestMaskBack(R2Stencils.GROUP_BITS | R2Stencils.LIGHT_MASK_BIT);
+
+        final int ref =
+          (this.input_state.group << R2Stencils.GROUP_LEFT_SHIFT)
+            | R2Stencils.LIGHT_MASK_BIT;
+
+        // These are populated with the shifted group index on rendering
+        ss.setTestReferenceFront(0);
+        ss.setTestReferenceBack(0);
+
+        ss.setWriteMaskBackFaces(0);
+        ss.setWriteMaskFrontFaces(0);
+
+        this.render_state_screen.setStencilState(ss);
+      }
+
+      {
+        this.render_state_volume = JCGLRenderStateMutable.create();
+
+        /**
+         * The light contributions are summed with pure additive blending.
+         */
+
+        this.render_state_volume.setBlendState(
+          Optional.of(JCGLBlendState.of(
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendFunction.BLEND_ONE,
+            JCGLBlendEquation.BLEND_EQUATION_ADD,
+            JCGLBlendEquation.BLEND_EQUATION_ADD)));
+
+        /**
+         * For typical volume lights, only the back faces should be
+         * rendered.
+         */
+
+        this.render_state_volume.setCullingState(
+          Optional.of(JCGLCullingState.of(
+            JCGLFaceSelection.FACE_FRONT,
+            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
+
+        /**
+         * No depth testing and no depth writing is required.
+         */
+
+        this.render_state_screen.setDepthState(JCGLDepthState.of(
+          JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+          Optional.empty(),
+          JCGLDepthWriting.DEPTH_WRITE_DISABLED,
+          JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
+
+        /**
+         * See above for the stencil test.
+         */
+
+        this.render_state_volume.setStencilState(this.render_stencil_state);
+      }
+    }
+
+    @Override
+    public void onStart()
+    {
+      this.clearStencilForClipVolume();
+      this.renderStencilForClipVolume();
+      this.configureStencilsForLights();
+    }
+
+    /**
+     * Configure the stencil reference value such that the stencil test checks
+     * for the current group number and the {@link R2Stencils#LIGHT_MASK_BIT}.
+     */
+
+    private void configureStencilsForLights()
+    {
+      R2Stencils.checkValidGroup(this.input_state.group);
+      final int ref =
+        (this.input_state.group << R2Stencils.GROUP_LEFT_SHIFT)
+          | R2Stencils.LIGHT_MASK_BIT;
+
+      this.render_stencil_state.setTestReferenceFront(ref);
+      this.render_stencil_state.setTestReferenceBack(ref);
+      this.render_state_volume.setStencilState(this.render_stencil_state);
+      this.render_state_screen.setStencilState(this.render_stencil_state);
+    }
+
+    /**
+     * Render a volume that will set the {@link R2Stencils#LIGHT_MASK_BIT} for
+     * all pixels that the light should affect.
+     */
+
+    private void renderStencilForClipVolume()
+    {
+      JCGLRenderStates.activate(this.g33, this.clip_volume_stencil_state);
+
+      final R2TextureUnitContextType tc =
+        this.input_state.light_base_context.unitContextNew();
+
+      try {
+        this.clip_volume_stencil.onActivate(this.shaders);
+
+        try {
+          this.clip_volume_stencil.onReceiveViewValues(
+            this.shaders, this.input_state.parent.matrices);
+          this.clip_volume_stencil.onReceiveMaterialValues(
+            this.textures, this.shaders, tc, Unit.unit());
+
+          this.input_state.parent.matrices.withTransform(
+            this.input_state.volume.getTransform(),
+            this.input_state.volume.getUVMatrix(),
+            this,
+            (mi, t) -> {
+              t.clip_volume_stencil.onReceiveInstanceTransformValues(
+                t.shaders, mi);
+              t.clip_volume_stencil.onValidate();
+              t.array_objects.arrayObjectBind(
+                t.input_state.volume.getArrayObject());
+
+              try {
+                t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+              } finally {
+                t.array_objects.arrayObjectUnbind();
+              }
+
+              return Unit.unit();
+            }
+          );
+
+        } finally {
+          this.clip_volume_stencil.onDeactivate(this.shaders);
+        }
+
+      } finally {
+        tc.unitContextFinish(this.textures);
+      }
+    }
+
+    /**
+     * Clear the {@link R2Stencils#LIGHT_MASK_BIT} for all pixels in the stencil
+     * buffer.
+     */
+
+    private void clearStencilForClipVolume()
+    {
+      JCGLRenderStates.activate(this.g33, this.clip_screen_stencil_state);
+
+      final R2TextureUnitContextType tc =
+        this.input_state.light_base_context.unitContextNew();
+
+      try {
+        this.clip_screen_stencil.onActivate(this.shaders);
+
+        try {
+          this.clip_screen_stencil.onReceiveMaterialValues(
+            this.textures, this.shaders, tc, Unit.unit());
+          this.clip_screen_stencil.onReceiveViewValues(
+            this.shaders, this.input_state.parent.matrices);
+          this.clip_screen_stencil.onValidate();
+
+          this.array_objects.arrayObjectBind(this.quad.getArrayObject());
+          try {
+            this.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+          } finally {
+            this.array_objects.arrayObjectUnbind();
+          }
+
+        } finally {
+          this.clip_screen_stencil.onDeactivate(this.shaders);
+        }
+
+      } finally {
+        tc.unitContextFinish(this.textures);
+      }
+    }
+
+    private void onLightSingleScreen(
+      final R2LightScreenSingleType light)
+    {
+      // Nothing!
+    }
+
+    @SuppressWarnings("unchecked")
+    private void onLightSingleProjectiveWithoutShadow(
+      final R2LightProjectiveWithoutShadowReadableType light)
+    {
+      final R2ShaderLightProjectiveUsableType<
+        R2LightProjectiveReadableType> s =
+        R2ShaderLightProjectiveUsableType.class.cast(
+          this.light_shader);
+
+      this.input_state.parent.matrices.withProjectiveLight(
+        light, this, (mp, t) -> {
+          s.onReceiveVolumeLightTransform(t.shaders, mp);
+          s.onReceiveProjectiveLight(t.shaders, mp);
+          s.onValidate();
+          return Unit.unit();
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void onLightSingleSpherical(
+      final R2LightSphericalSingleReadableType light)
+    {
+      final R2ShaderLightVolumeSingleUsableType<
+        R2LightSphericalSingleReadableType> s =
+        R2ShaderLightVolumeSingleUsableType.class.cast(
+          this.light_shader);
+
+      this.input_state.parent.matrices.withVolumeLight(light, this, (mv, t) -> {
+        s.onReceiveVolumeLightTransform(t.shaders, mv);
+        s.onValidate();
+        return Unit.unit();
+      });
+    }
+
+    private void onLightSingleProjective(
+      final R2LightProjectiveReadableType light)
+    {
+      light.matchProjectiveReadable(this, (t, pw) -> {
+        Assertive.require(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType);
+        t.onLightSingleProjectiveWithoutShadow(pw);
+        return Unit.unit();
+      }, (t, pw) -> {
+        Assertive.require(
+          t.light_shader instanceof R2ShaderLightProjectiveWithShadowUsableType);
+        t.onLightSingleProjectiveWithShadow(pw);
+        return Unit.unit();
+      });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void onLightSingleProjectiveWithShadow(
+      final R2LightProjectiveWithShadowReadableType light)
+    {
+      final R2ShaderLightProjectiveWithShadowUsableType<
+        R2LightProjectiveWithShadowReadableType> s =
+        R2ShaderLightProjectiveWithShadowUsableType.class.cast(
+          this.light_shader);
+
+      this.light_shadow = light;
+      try {
+        this.input_state.parent.matrices.withProjectiveLight(
+          light, this, (mp, t) -> {
+            s.onReceiveVolumeLightTransform(t.shaders, mp);
+            s.onReceiveProjectiveLight(t.shaders, mp);
+
+            final R2Texture2DUsableType map =
+              t.input_state.parent.shadow_maps.shadowMapGet(t.light_shadow);
+
+            s.onReceiveShadowMap(
+              t.textures,
+              t.shaders,
+              t.light_each_context,
+              map);
+            s.onValidate();
+            return Unit.unit();
+          });
+      } finally {
+        this.light_shadow = null;
+      }
+    }
+
+    private void onLightSingleVolume(
+      final R2LightVolumeSingleReadableType light)
+    {
+      light.matchLightVolumeSingleReadable(this, (t, pl) -> {
+        Assertive.require(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType);
+        t.onLightSingleProjective(pl);
+        return Unit.unit();
+      }, (t, sl) -> {
+        Assertive.require(
+          t.light_shader instanceof R2ShaderLightVolumeSingleUsableType);
+        t.onLightSingleSpherical(sl);
+        return Unit.unit();
+      });
+    }
+
+    @Override
+    public <M extends R2LightSingleReadableType>
+    void onLightSingleShaderStart(
+      final R2ShaderLightSingleUsableType<M> s)
+    {
+      s.onActivate(this.shaders);
+      s.onReceiveBoundGeometryBufferTextures(
+        this.shaders,
+        this.input_state.parent.gbuffer,
+        this.input_state.unit_albedo,
+        this.input_state.unit_specular,
+        this.input_state.unit_depth,
+        this.input_state.unit_normals);
+    }
+
+    @Override
+    public void onLightSingleArrayStart(
+      final R2LightSingleReadableType i)
+    {
+      this.array_objects.arrayObjectBind(i.getArrayObject());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <M extends R2LightSingleReadableType>
+    void onLightSingle(
+      final R2ShaderLightSingleUsableType<M> s,
+      final M light)
+    {
+      try {
+        this.light_shader =
+          (R2ShaderLightSingleUsableType<R2LightSingleReadableType>) s;
+        this.light_each_context =
+          this.input_state.light_base_context.unitContextNew();
+
+        final Class<R2LightSingleReadableType> s_class =
+          this.light_shader.getShaderParametersType();
+        final Class<? extends R2LightSingleReadableType> l_class =
+          light.getClass();
+        Assertive.require(s_class.isAssignableFrom(l_class));
+
+        s.onReceiveValues(
+          this.textures,
+          this.shaders,
+          this.light_each_context,
+          this.input_state.viewport,
+          light,
+          this.input_state.parent.matrices);
+
+        light.matchLightSingle(
+          this,
+          (t, lv) -> {
+            Assertive.require(
+              t.light_shader instanceof R2ShaderLightVolumeSingleUsableType);
+
+            JCGLRenderStates.activate(t.g33, t.render_state_volume);
+            t.onLightSingleVolume(lv);
+            return Unit.unit();
+          },
+          (t, ls) -> {
+            Assertive.require(
+              t.light_shader instanceof R2ShaderLightScreenSingleUsableType);
+
+            JCGLRenderStates.activate(t.g33, t.render_state_screen);
+            t.onLightSingleScreen(ls);
+            return Unit.unit();
+          });
+
+        this.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+      } finally {
+        this.light_each_context.unitContextFinish(this.textures);
+        this.light_each_context = null;
+      }
+    }
+
+    @Override
+    public <M extends R2LightSingleReadableType>
+    void onLightSingleShaderFinish(
+      final R2ShaderLightSingleUsableType<M> s)
+    {
+      s.onDeactivate(this.shaders);
+    }
+
+    @Override
+    public void onFinish()
+    {
+      // Nothing
+    }
+  }
+
+  private static final class LightClipGroupConsumerInputState
+  {
+    private final LightConsumerInputState parent;
+    private @Nullable JCGLTextureUnitType unit_albedo;
+    private @Nullable JCGLTextureUnitType unit_normals;
+    private @Nullable JCGLTextureUnitType unit_specular;
+    private @Nullable JCGLTextureUnitType unit_depth;
+    private @Nullable R2TextureUnitContextType light_base_context;
+    private @Nullable AreaInclusiveUnsignedLType viewport;
+    private @Nullable R2InstanceSingleType volume;
+    private int group;
+
+    LightClipGroupConsumerInputState(
+      final LightConsumerInputState in_parent)
+    {
+      this.parent = NullCheck.notNull(in_parent);
+    }
+
+    void set(
+      final R2InstanceSingleType in_volume,
+      final int in_group,
+      final JCGLTextureUnitType in_unit_albedo,
+      final JCGLTextureUnitType in_unit_depth,
+      final JCGLTextureUnitType in_unit_normals,
+      final JCGLTextureUnitType in_unit_specular,
+      final R2TextureUnitContextType in_light_base_context,
+      final AreaInclusiveUnsignedLType in_viewport)
+    {
+      this.volume = in_volume;
+      this.group = in_group;
+      this.unit_albedo = NullCheck.notNull(in_unit_albedo);
+      this.unit_normals = NullCheck.notNull(in_unit_normals);
+      this.unit_specular = NullCheck.notNull(in_unit_specular);
+      this.unit_depth = NullCheck.notNull(in_unit_depth);
+      this.light_base_context = NullCheck.notNull(in_light_base_context);
+      this.viewport = NullCheck.notNull(in_viewport);
+    }
+
+    void clear()
+    {
+      this.group = -1;
+      this.volume = null;
+      this.unit_albedo = null;
+      this.unit_depth = null;
+      this.unit_normals = null;
+      this.unit_specular = null;
+      this.light_base_context = null;
+      this.viewport = null;
+    }
+  }
+
   private static final class LightConsumer implements
     R2SceneLightsConsumerType
   {
@@ -646,6 +1289,7 @@ public final class R2LightRendererNew implements R2LightRendererNewType
     private final JCGLTexturesType textures;
     private final LightGroupConsumer group_consumer;
     private final LightConsumerInputState input_state;
+    private final LightClipGroupConsumer clip_group_consumer;
 
     private @Nullable JCGLTextureUnitType unit_albedo;
     private @Nullable JCGLTextureUnitType unit_normals;
@@ -653,12 +1297,29 @@ public final class R2LightRendererNew implements R2LightRendererNewType
     private @Nullable JCGLTextureUnitType unit_depth;
     private @Nullable R2TextureUnitContextType light_base_context;
 
-    LightConsumer(final JCGLInterfaceGL33Type in_g)
+    LightConsumer(
+      final JCGLInterfaceGL33Type in_g,
+      final R2ShaderInstanceSingleUsableType<Unit> in_clip_volume_stencil,
+      final R2ShaderInstanceSingleScreenUsableType<Unit> in_clip_screen_stencil,
+      final R2UnitQuadUsableType in_quad)
     {
       this.g33 = NullCheck.notNull(in_g);
-      this.input_state = new LightConsumerInputState();
-      this.group_consumer = new LightGroupConsumer(this.g33, this.input_state);
-      this.textures = this.g33.getTextures();
+      NullCheck.notNull(in_clip_volume_stencil);
+
+      this.input_state =
+        new LightConsumerInputState();
+      this.group_consumer =
+        new LightGroupConsumer(this.g33, this.input_state);
+      this.clip_group_consumer =
+        new LightClipGroupConsumer(
+          this.g33,
+          this.input_state,
+          in_clip_volume_stencil,
+          in_clip_screen_stencil,
+          in_quad);
+
+      this.textures =
+        this.g33.getTextures();
     }
 
     @Override
@@ -692,8 +1353,16 @@ public final class R2LightRendererNew implements R2LightRendererNewType
       final R2InstanceSingleType i,
       final int group)
     {
-      // TODO: Generated method stub!
-      throw new UnimplementedCodeException();
+      this.clip_group_consumer.input_state.set(
+        i,
+        group,
+        this.unit_albedo,
+        this.unit_depth,
+        this.unit_normals,
+        this.unit_specular,
+        this.light_base_context,
+        this.input_state.viewport);
+      return this.clip_group_consumer;
     }
 
     @Override
@@ -708,7 +1377,6 @@ public final class R2LightRendererNew implements R2LightRendererNewType
         this.unit_specular,
         this.light_base_context,
         this.input_state.viewport);
-
       return this.group_consumer;
     }
 
