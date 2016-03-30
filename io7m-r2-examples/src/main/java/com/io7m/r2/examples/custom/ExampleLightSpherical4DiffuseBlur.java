@@ -61,9 +61,12 @@ import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightAmbientScreenSingle;
 import com.io7m.r2.core.R2LightBufferComponents;
 import com.io7m.r2.core.R2LightBufferDescription;
+import com.io7m.r2.core.R2LightBufferDescriptionType;
 import com.io7m.r2.core.R2LightBufferDiffuseOnlyUsableType;
+import com.io7m.r2.core.R2LightBufferPool;
 import com.io7m.r2.core.R2LightBufferSpecularOnlyUsableType;
 import com.io7m.r2.core.R2LightBufferType;
+import com.io7m.r2.core.R2LightBufferUsableType;
 import com.io7m.r2.core.R2LightBuffers;
 import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2LightProjectiveType;
@@ -82,6 +85,7 @@ import com.io7m.r2.core.R2ProjectionMesh;
 import com.io7m.r2.core.R2ProjectionMeshType;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2SceneLights;
+import com.io7m.r2.core.R2SceneLightsClipGroupType;
 import com.io7m.r2.core.R2SceneLightsGroupType;
 import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaques;
@@ -130,6 +134,7 @@ import com.io7m.r2.filters.R2FilterSSAOParametersType;
 import com.io7m.r2.filters.R2SSAOKernel;
 import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
+import com.io7m.r2.meshes.defaults.R2UnitCube;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -139,7 +144,7 @@ import java.util.Optional;
 
 // CHECKSTYLE_JAVADOC:OFF
 
-public final class ExampleLightSpherical4DiffuseHalf implements R2ExampleCustomType
+public final class ExampleLightSpherical4DiffuseBlur implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
@@ -166,6 +171,7 @@ public final class ExampleLightSpherical4DiffuseHalf implements R2ExampleCustomT
   private R2UnitSphereType sphere;
   private R2LightSphericalSingleType sphere_light_bounded;
   private R2TransformSiOT sphere_light_bounded_transform;
+  private R2InstanceSingleType sphere_light_bounds;
 
   private R2ShaderLightProjectiveType<R2LightProjectiveReadableType> proj_light_shader;
   private R2ProjectionFrustum proj_proj;
@@ -198,6 +204,10 @@ public final class ExampleLightSpherical4DiffuseHalf implements R2ExampleCustomT
   private R2FilterType<R2FilterOcclusionApplicatorParametersType> filter_ssao_app;
   private R2FilterOcclusionApplicatorParametersMutable filter_ssao_app_params;
 
+  private R2RenderTargetPoolUsableType<R2LightBufferDescriptionType, R2LightBufferUsableType> pool_light;
+  private R2FilterType<R2FilterBilateralBlurDepthAwareParameters<R2LightBufferDescriptionType, R2LightBufferUsableType, R2LightBufferDescriptionType, R2LightBufferUsableType>> filter_blur_light;
+  private R2FilterBilateralBlurDepthAwareParameters<R2LightBufferDescriptionType, R2LightBufferUsableType, R2LightBufferDescriptionType, R2LightBufferUsableType> filter_blur_light_params;
+
   private R2LightAmbientScreenSingle light_ambient;
   private R2ShaderLightSingleType<R2LightAmbientScreenSingle> light_ambient_shader;
 
@@ -206,7 +216,7 @@ public final class ExampleLightSpherical4DiffuseHalf implements R2ExampleCustomT
   private R2DebugVisualizerRendererParametersMutable debug_params;
   private R2ShadowMapContextType shadow_context;
 
-  public ExampleLightSpherical4DiffuseHalf()
+  public ExampleLightSpherical4DiffuseBlur()
   {
     this.view = PMatrixHeapArrayM4x4F.newMatrix();
   }
@@ -257,10 +267,7 @@ public final class ExampleLightSpherical4DiffuseHalf implements R2ExampleCustomT
       final R2LightBufferDescription.Builder b =
         R2LightBufferDescription.builder();
       b.setComponents(R2LightBufferComponents.R2_LIGHT_BUFFER_DIFFUSE_ONLY);
-      b.setArea(AreaInclusiveUnsignedL.of(
-        new UnsignedRangeInclusiveL(0L, area.getRangeX().getUpper() / 2L),
-        new UnsignedRangeInclusiveL(0L, area.getRangeY().getUpper() / 2L)
-      ));
+      b.setArea(area);
 
       this.lbuffer_diff = R2LightBuffers.newLightBuffer(
         gx.getFramebuffers(),
@@ -466,6 +473,55 @@ public final class ExampleLightSpherical4DiffuseHalf implements R2ExampleCustomT
         m.getIDPool(),
         m.getUnitQuad());
 
+    {
+      final UnsignedRangeInclusiveL screen_x = area.getRangeX();
+      final UnsignedRangeInclusiveL screen_y = area.getRangeY();
+      final long one = screen_x.getInterval() * screen_y.getInterval() * 8L;
+      final long soft = one * 2L;
+      final long hard = one * 10L;
+      this.pool_light = R2LightBufferPool.newPool(gx, soft, hard);
+    }
+
+    {
+      this.filter_blur_light_params =
+        R2FilterBilateralBlurDepthAwareParameters.newParameters(
+          this.lbuffer_diff,
+          (lb) -> {
+            final R2LightBufferDiffuseOnlyUsableType ld =
+              (R2LightBufferDiffuseOnlyUsableType) lb;
+            return ld.getDiffuseTexture();
+          },
+          this.gbuffer.getDepthTexture(),
+          this.lbuffer_diff,
+          (lb) -> {
+            final R2LightBufferDiffuseOnlyUsableType ld =
+              (R2LightBufferDiffuseOnlyUsableType) lb;
+            return ld.getDiffuseTexture();
+          },
+          (d, a) -> {
+            final R2LightBufferDescription.Builder b =
+              R2LightBufferDescription.builder();
+            b.from(d);
+            b.setArea(a);
+            return b.build();
+          },
+          this.pool_light);
+
+      this.filter_blur_light_params.setBlurPasses(1);
+      this.filter_blur_light_params.setBlurRadius(4.0f);
+      this.filter_blur_light_params.setBlurScale(1.0f);
+      this.filter_blur_light_params.setBlurSharpness(1.0f);
+
+      this.filter_blur_light =
+        R2FilterBilateralBlurDepthAware.newFilter(
+          m.getShaderSources(),
+          gx,
+          m.getTextureDefaults(),
+          this.pool_light,
+          m.getIDPool(),
+          m.getUnitQuad());
+    }
+
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
       (float) Math.toRadians(90.0f), 640.0f / 480.0f, 0.001f, 1000.0f);
@@ -620,6 +676,12 @@ public final class ExampleLightSpherical4DiffuseHalf implements R2ExampleCustomT
     this.sphere_light_bounded.getOriginPositionWritable().set3F(-10.0f, 1.0f, 0.0f);
     this.sphere_light_bounded.setRadius(9.0f);
 
+    this.sphere_light_bounds = R2InstanceSingle.newInstance(
+      m.getIDPool(),
+      R2UnitCube.newUnitCube(gx).getArrayObject(),
+      this.sphere_light_bounded_transform,
+      PMatrixI3x3F.identity());
+
     this.filter_light =
       R2FilterLightApplicator.newFilter(sources, gx, id_pool, m.getUnitQuad());
 
@@ -691,9 +753,12 @@ public final class ExampleLightSpherical4DiffuseHalf implements R2ExampleCustomT
     lg.lightGroupAddSingle(
      this.sphere_light, this.sphere_light_shader);
     lg.lightGroupAddSingle(
-      this.sphere_light_bounded, this.sphere_light_bounded_shader);
-    lg.lightGroupAddSingle(
       this.proj_light, this.proj_light_shader);
+
+    final R2SceneLightsClipGroupType lcg =
+      lg.lightGroupNewClipGroup(this.sphere_light_bounds);
+    lcg.clipGroupAddSingle(
+      this.sphere_light_bounded, this.sphere_light_bounded_shader);
 
     if (servx.isFreeCameraEnabled()) {
       MatrixM4x4F.copy(servx.getFreeCameraViewMatrix(), this.view);
@@ -769,6 +834,9 @@ public final class ExampleLightSpherical4DiffuseHalf implements R2ExampleCustomT
           mo,
           t.lights);
         g_fb.framebufferDrawUnbind();
+
+        t.filter_blur_light_params.setSceneObserverValues(mo);
+        t.filter_blur_light.runFilter(uc, t.filter_blur_light_params);
 
         // t.filter_ssao_app.runFilter(uc, t.filter_ssao_app_params);
 
