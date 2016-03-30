@@ -52,8 +52,12 @@ public abstract class R2SSAOKernelContract
         Float.valueOf(v.getZF()));
 
       final float mag = VectorM3F.magnitude(v);
-      Assert.assertTrue(mag > 0.1);
-      Assert.assertTrue(mag <= 1.0);
+      Assert.assertTrue(
+        String.format("Magnitude %f must be >= 0.099999", Float.valueOf(mag)),
+        (double) mag >= 0.099999);
+      Assert.assertTrue(
+        String.format("Magnitude %f must be <= 1.0", Float.valueOf(mag)),
+        (double) mag <= 1.0);
       final VectorM3F r = new VectorM3F(v);
       Assert.assertFalse(points.contains(r));
 
@@ -70,8 +74,12 @@ public abstract class R2SSAOKernelContract
     for (int index = 0; index < 128; ++index) {
       k.getSample(index, v);
       final float mag = VectorM3F.magnitude(v);
-      Assert.assertTrue(mag > 0.1);
-      Assert.assertTrue(mag <= 1.0);
+      Assert.assertTrue(
+        String.format("Magnitude %f must be >= 0.099999", Float.valueOf(mag)),
+        (double) mag >= 0.099999);
+      Assert.assertTrue(
+        String.format("Magnitude %f must be <= 1.0", Float.valueOf(mag)),
+        (double) mag <= 1.0);
       final VectorM3F r = new VectorM3F(v);
       Assert.assertFalse(points.contains(r));
     }
