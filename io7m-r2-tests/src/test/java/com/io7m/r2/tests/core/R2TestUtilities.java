@@ -1032,7 +1032,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public R2TransformReadableType getOriginTransform()
+      public R2TransformReadableType getTransform()
       {
         return R2TransformIdentity.getInstance();
       }

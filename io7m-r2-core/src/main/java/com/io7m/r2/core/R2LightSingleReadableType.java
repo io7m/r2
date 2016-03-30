@@ -35,7 +35,7 @@ public interface R2LightSingleReadableType extends R2LightReadableType
    * @return The transform for the light origin
    */
 
-  R2TransformReadableType getOriginTransform();
+  R2TransformReadableType getTransform();
 
   /**
    * Match on the type of light.

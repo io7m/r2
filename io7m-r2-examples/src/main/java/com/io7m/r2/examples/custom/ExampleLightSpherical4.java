@@ -127,7 +127,6 @@ import com.io7m.r2.filters.R2FilterSSAOParametersType;
 import com.io7m.r2.filters.R2SSAOKernel;
 import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
-import com.io7m.r2.meshes.defaults.R2UnitCube;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -561,7 +560,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         m.getIDPool());
     this.proj_light.setRadius(10.0f);
     this.proj_light.getColorWritable().set3F(0.0f, 0.0f, 1.0f);
-    this.proj_light.getOriginTransformWritable().getTranslation().set3F(
+    this.proj_light.getTransformWritable().getTranslation().set3F(
       0.0f, 0.0f, 3.0f);
 
     this.sphere_light_shader =
@@ -581,13 +580,10 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
     this.sphere_light_bounded_transform = R2TransformSiOT.newTransform();
     this.sphere_light_bounded_transform.getTranslation().set3F(-10.0f, 1.0f, 0.0f);
-    this.sphere_light_bounded_transform.getScale().set3F(9f, 9f, 9f);
+    this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
     this.sphere_light_bounded =
-      R2LightSphericalSingle.newLightWithVolume(
-        R2UnitCube.newUnitCube(gx).getArrayObject(),
-        this.sphere_light_bounded_transform,
-        id_pool);
+      R2LightSphericalSingle.newLight(this.sphere, id_pool);
     this.sphere_light_bounded.getColorWritable().set3F(1.0f, 0.0f, 0.0f);
     this.sphere_light_bounded.setIntensity(1.0f);
     this.sphere_light_bounded.getOriginPositionWritable().set3F(-10.0f, 1.0f, 0.0f);

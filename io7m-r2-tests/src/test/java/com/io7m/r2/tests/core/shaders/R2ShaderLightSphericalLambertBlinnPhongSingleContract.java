@@ -20,11 +20,10 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightSphericalSingle;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
-import com.io7m.r2.core.R2TransformOT;
-import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.meshes.defaults.R2UnitSphere;
 
 public abstract class R2ShaderLightSphericalLambertBlinnPhongSingleContract extends
   R2ShaderLightVolumeSingleContract<R2LightSphericalSingleReadableType>
@@ -45,8 +44,7 @@ public abstract class R2ShaderLightSphericalLambertBlinnPhongSingleContract exte
     final JCGLInterfaceGL33Type g,
     final R2IDPoolType pool)
   {
-    return R2LightSphericalSingle.newLightWithVolume(
-      R2UnitQuad.newUnitQuad(g).getArrayObject(),
-      R2TransformOT.newTransform(), pool);
+    return R2LightSphericalSingle.newLight(
+      R2UnitSphere.newUnitSphere8(g), pool);
   }
 }

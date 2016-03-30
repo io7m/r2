@@ -32,7 +32,7 @@ public interface R2LightVolumeSingleReadableType extends
    * @return The readable transform for the light volume
    */
 
-  R2TransformReadableType getVolumeTransform();
+  R2TransformReadableType getTransform();
 
   /**
    * Match on the type of volume light.

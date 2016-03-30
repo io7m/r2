@@ -304,7 +304,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 
-    final R2TransformOTType tr = ls.getOriginTransformWritable();
+    final R2TransformOTType tr = ls.getTransformWritable();
     tr.getTranslation().set3F(0.0f, 0.0f, 10.0f);
 
     rc.shadowExecRenderLight(tc, m, ls, di);
@@ -421,7 +421,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 
-    final R2TransformOTType tr = ls.getOriginTransformWritable();
+    final R2TransformOTType tr = ls.getTransformWritable();
     tr.getTranslation().set3F(0.0f, 0.0f, 10.0f);
 
     final R2ShadowMapContextUsableType mc =

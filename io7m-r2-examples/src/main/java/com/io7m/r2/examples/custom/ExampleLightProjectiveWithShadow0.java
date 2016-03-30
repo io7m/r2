@@ -580,7 +580,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
         m.getIDPool());
     this.proj_light.setRadius(10.0f);
     this.proj_light.getColorWritable().set3F(1.0f, 1.0f, 1.0f);
-    this.proj_light.getOriginTransformWritable().getTranslation().set3F(
+    this.proj_light.getTransformWritable().getTranslation().set3F(
       0.0f,
       0.0f,
       3.0f);

@@ -38,7 +38,7 @@ public final class R2LightProjectiveWithoutShadow implements
 {
   private final PVector3FType<R2SpaceRGBType> color;
   private final long id;
-  private final R2TransformOT origin_transform;
+  private final R2TransformOT transform;
   private final R2ProjectionMeshReadableType mesh;
   private final R2ProjectionReadableType projection;
   private final R2Texture2DUsableType image;
@@ -56,7 +56,7 @@ public final class R2LightProjectiveWithoutShadow implements
 
     this.projection = this.mesh.getProjectionReadable();
     this.id = in_id;
-    this.origin_transform = R2TransformOT.newTransform();
+    this.transform = R2TransformOT.newTransform();
     this.color = new PVectorM3F<>(1.0f, 1.0f, 1.0f);
     this.intensity = 1.0f;
     this.falloff = 1.0f;
@@ -110,9 +110,9 @@ public final class R2LightProjectiveWithoutShadow implements
   }
 
   @Override
-  public R2TransformOTType getOriginTransformWritable()
+  public R2TransformOTType getTransformWritable()
   {
-    return this.origin_transform;
+    return this.transform;
   }
 
   @Override
@@ -159,15 +159,15 @@ public final class R2LightProjectiveWithoutShadow implements
   }
 
   @Override
-  public R2TransformOTReadableType getOriginTransform()
+  public R2TransformOTReadableType getTransform()
   {
-    return this.origin_transform;
+    return this.transform;
   }
 
   @Override
   public PVectorReadable3FType<R2SpaceWorldType> getPosition()
   {
-    return this.origin_transform.getTranslationReadable();
+    return this.transform.getTranslationReadable();
   }
 
   @Override
@@ -186,11 +186,5 @@ public final class R2LightProjectiveWithoutShadow implements
   public R2Texture2DUsableType getImage()
   {
     return this.image;
-  }
-
-  @Override
-  public R2TransformReadableType getVolumeTransform()
-  {
-    return this.origin_transform;
   }
 }
