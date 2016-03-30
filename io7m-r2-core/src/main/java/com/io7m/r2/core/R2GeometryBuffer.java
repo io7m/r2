@@ -93,7 +93,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
     CLEAR_STATE = JCGLRenderState.builder().from(k).build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
-      Optional.of(new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f)),
+      Optional.of(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f)),
       OptionalDouble.of(1.0),
       OptionalInt.of(0),
       true);
