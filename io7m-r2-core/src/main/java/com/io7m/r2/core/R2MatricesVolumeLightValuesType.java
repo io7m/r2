@@ -27,16 +27,9 @@ import com.io7m.r2.spaces.R2SpaceObjectType;
 public interface R2MatricesVolumeLightValuesType
 {
   /**
-   * @return The modelview matrix for the light origin
+   * @return The modelview matrix for the light volume
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-  getMatrixLightOriginModelView();
-
-  /**
-   * @return The modelview matrix for the light volume geometry
-   */
-
-  PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-  getMatrixLightVolumeModelView();
+  getMatrixLightModelView();
 }

@@ -14,33 +14,26 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.core;
+package com.io7m.r2.core;
 
-import com.io7m.r2.core.R2ExceptionInvalidGroup;
-import com.io7m.r2.core.R2Stencils;
-import org.junit.Assert;
-import org.junit.Test;
+/**
+ * The type of renderer exceptions that indicate an attempt to use a deleted
+ * clip group.
+ */
 
-public final class R2StencilsTest
+public final class R2RendererExceptionClipGroupDeleted extends
+  R2RendererException
 {
-  @Test(expected = R2ExceptionInvalidGroup.class)
-  public void testInvalidGroup0()
-  {
-    R2Stencils.checkValidGroup(0);
-  }
+  private static final long serialVersionUID = 1L;
 
-  @Test(expected = R2ExceptionInvalidGroup.class)
-  public void testInvalidGroup1()
-  {
-    R2Stencils.checkValidGroup(16);
-  }
+  /**
+   * Construct an exception.
+   *
+   * @param message The message
+   */
 
-  @Test
-  public void testValidGroup()
+  public R2RendererExceptionClipGroupDeleted(final String message)
   {
-    for (int index = 1; index <= 15; ++index) {
-      Assert.assertEquals(
-        (long) index, (long) R2Stencils.checkValidGroup(index));
-    }
+    super(message);
   }
 }

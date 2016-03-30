@@ -364,6 +364,6 @@ public final class R2LightShaderSphericalLambertSingle extends
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_volume_modelview, m.getMatrixLightVolumeModelView());
+      this.u_transform_volume_modelview, m.getMatrixLightModelView());
   }
 }

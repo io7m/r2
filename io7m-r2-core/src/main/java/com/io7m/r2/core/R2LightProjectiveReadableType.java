@@ -56,7 +56,7 @@ public interface R2LightProjectiveReadableType extends
    */
 
   @Override
-  R2TransformViewReadableType getOriginTransform();
+  R2TransformViewReadableType getTransform();
 
   /**
    * @return The position of the origin of the light in world-space

@@ -16,31 +16,14 @@
 
 package com.io7m.r2.tests.core;
 
-import com.io7m.r2.core.R2ExceptionInvalidGroup;
-import com.io7m.r2.core.R2Stencils;
-import org.junit.Assert;
-import org.junit.Test;
+import com.io7m.r2.core.R2SceneLights;
+import com.io7m.r2.core.R2SceneLightsType;
 
-public final class R2StencilsTest
+public final class R2SceneLightsTest extends R2SceneLightsContract
 {
-  @Test(expected = R2ExceptionInvalidGroup.class)
-  public void testInvalidGroup0()
+  @Override
+  protected R2SceneLightsType newLights()
   {
-    R2Stencils.checkValidGroup(0);
-  }
-
-  @Test(expected = R2ExceptionInvalidGroup.class)
-  public void testInvalidGroup1()
-  {
-    R2Stencils.checkValidGroup(16);
-  }
-
-  @Test
-  public void testValidGroup()
-  {
-    for (int index = 1; index <= 15; ++index) {
-      Assert.assertEquals(
-        (long) index, (long) R2Stencils.checkValidGroup(index));
-    }
+    return R2SceneLights.newLights();
   }
 }

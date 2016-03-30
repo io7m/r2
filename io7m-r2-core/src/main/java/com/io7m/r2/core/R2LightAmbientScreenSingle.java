@@ -128,7 +128,7 @@ public final class R2LightAmbientScreenSingle implements R2LightScreenSingleType
   }
 
   @Override
-  public R2TransformReadableType getOriginTransform()
+  public R2TransformReadableType getTransform()
   {
     return R2TransformIdentity.getInstance();
   }

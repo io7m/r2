@@ -24,8 +24,6 @@ import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
-import java.util.Optional;
-
 /**
  * Parameters for simple spherical lights that operate by rendering scaled unit
  * spheres.
@@ -37,28 +35,18 @@ public final class R2LightSphericalSingle implements
   private final PVector3FType<R2SpaceRGBType> color;
   private final long id;
   private final JCGLArrayObjectUsableType volume;
-  private final R2TransformT origin_transform;
-  private final R2TransformST volume_transform;
-  private final Optional<R2TransformType> volume_transform_custom;
+  private final R2TransformST transform;
   private float falloff;
   private float intensity;
   private float radius;
 
   private R2LightSphericalSingle(
     final JCGLArrayObjectUsableType in_volume,
-    final Optional<R2TransformType> in_volume_transform,
     final long in_id)
   {
     this.id = in_id;
     this.volume = NullCheck.notNull(in_volume);
-    this.volume_transform = R2TransformST.newTransform();
-    this.volume_transform_custom = NullCheck.notNull(in_volume_transform);
-    this.origin_transform = R2TransformT.newTransform();
-    this.origin_transform.transformGetWatchable().watchableAdd(tr -> {
-      final R2TransformT tt = (R2TransformT) tr;
-      this.volume_transform.getTranslation().copyFrom3F(tt.getTranslation());
-    });
-
+    this.transform = R2TransformST.newTransform();
     this.radius = 1.0f;
     this.color = new PVectorM3F<>(1.0f, 1.0f, 1.0f);
     this.intensity = 1.0f;
@@ -82,31 +70,6 @@ public final class R2LightSphericalSingle implements
     NullCheck.notNull(in_sphere);
     return new R2LightSphericalSingle(
       in_sphere.getArrayObject(),
-      Optional.empty(),
-      in_pool.getFreshID());
-  }
-
-  /**
-   * Construct a new light with a custom light volume.
-   *
-   * @param in_volume           The light volume
-   * @param in_volume_transform The transform for the light volume geometry
-   * @param in_pool             The ID pool
-   *
-   * @return A new light
-   */
-
-  public static R2LightSphericalSingleType newLightWithVolume(
-    final JCGLArrayObjectUsableType in_volume,
-    final R2TransformType in_volume_transform,
-    final R2IDPoolType in_pool)
-  {
-    NullCheck.notNull(in_volume_transform);
-    NullCheck.notNull(in_volume);
-    NullCheck.notNull(in_pool);
-    return new R2LightSphericalSingle(
-      in_volume,
-      Optional.of(in_volume_transform),
       in_pool.getFreshID());
   }
 
@@ -121,7 +84,7 @@ public final class R2LightSphericalSingle implements
     final float r)
   {
     this.radius = Math.max(0.001f, r);
-    this.volume_transform.setScale(r);
+    this.transform.setScale(r);
   }
 
   @Override
@@ -164,7 +127,7 @@ public final class R2LightSphericalSingle implements
   @Override
   public PVectorReadable3FType<R2SpaceWorldType> getOriginPosition()
   {
-    return this.origin_transform.getTranslation();
+    return this.transform.getTranslation();
   }
 
   @Override
@@ -174,30 +137,20 @@ public final class R2LightSphericalSingle implements
   }
 
   @Override
-  public R2TransformReadableType getOriginTransform()
-  {
-    return this.origin_transform;
-  }
-
-  @Override
   public long getLightID()
   {
     return this.id;
   }
 
   @Override
-  public R2TransformReadableType getVolumeTransform()
+  public R2TransformReadableType getTransform()
   {
-    if (this.volume_transform_custom.isPresent()) {
-      return this.volume_transform_custom.get();
-    }
-
-    return this.volume_transform;
+    return this.transform;
   }
 
   @Override
   public PVector3FType<R2SpaceWorldType> getOriginPositionWritable()
   {
-    return this.origin_transform.getTranslation();
+    return this.transform.getTranslation();
   }
 }

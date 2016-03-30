@@ -19,61 +19,27 @@ package com.io7m.r2.core;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 
 /**
- * The set of lights that affect opaque instances in a scene.
+ * A clip group that will clip the bounds of all lights within it.
  */
 
-public interface R2SceneOpaqueLightsType
+public interface R2SceneLightsClipGroupType
 {
   /**
-   * Remove all lights from the scene.
+   * @return The light group to which this clip group belongs
    */
 
-  void opaqueLightsReset();
+  R2SceneLightsGroupType getGroup();
 
   /**
-   * Add a light to the scene, lighting instances that were in group {@code
-   * group}.
+   * Add a light to the clip group.
    *
    * @param light  The light
    * @param shader The light shader
-   * @param group  The group
    * @param <L>    The precise type of light
    */
 
   <L extends R2LightSingleReadableType>
-  void opaqueLightsAddSingleWithGroup(
+  void clipGroupAddSingle(
     L light,
-    R2ShaderLightSingleUsableType<L> shader,
-    int group);
-
-  /**
-   * Add a light to the scene, lighting instances that were in group {@code 1}.
-   *
-   * @param light  The light
-   * @param shader The light shader
-   * @param <L>    The precise type of light
-   */
-
-  default <L extends R2LightSingleReadableType>
-  void opaqueLightsAddSingle(
-    final L light,
-    final R2ShaderLightSingleUsableType<L> shader)
-  {
-    this.opaqueLightsAddSingleWithGroup(light, shader, 1);
-  }
-
-  /**
-   * Batch the lights and pass them to the given consumer for rendering.
-   *
-   * @param c The consumer
-   */
-
-  void opaqueLightsExecute(
-    R2SceneOpaqueLightsConsumerType c);
-
-  /**
-   * @return The number of lights in the scene
-   */
-
-  long opaqueLightsCount();
+    R2ShaderLightSingleUsableType<L> shader);
 }

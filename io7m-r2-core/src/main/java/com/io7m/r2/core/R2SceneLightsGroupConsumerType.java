@@ -16,37 +16,19 @@
 
 package com.io7m.r2.core;
 
-// @formatter:off
-
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 
 /**
- * <p>The type of consumers of opaque scene instances.</p>
- *
- * <p>Lights are batched in a manner that is intended to require the minimum
- * number of state changes for rendering, based upon the relative cost of state
- * changes.</p>
- *
- * @see R2SceneOpaquesConsumerType
+ * A consumer for lights within a specific group.
  */
 
-// @formatter:on
-
-public interface R2SceneOpaqueLightsConsumerType
+public interface R2SceneLightsGroupConsumerType
 {
   /**
-   * Called when rendering of lights begins.
+   * Called when rendering of the light group begins.
    */
 
   void onStart();
-
-  /**
-   * Called when rendering of a group begins.
-   *
-   * @param group The group
-   */
-
-  void onStartGroup(int group);
 
   /**
    * Called when a new shader should be activated in order to start rendering
@@ -56,11 +38,12 @@ public interface R2SceneOpaqueLightsConsumerType
    * @param <M> The type of shader parameters
    */
 
-  <M extends R2LightSingleReadableType> void onLightSingleShaderStart(
+  <M extends R2LightSingleReadableType>
+  void onLightSingleShaderStart(
     R2ShaderLightSingleUsableType<M> s);
 
   /**
-   * Called when a new array object should be bound, for single instances.
+   * Called when a new array object should be bound, for single lights.
    *
    * @param i The current instance
    */
@@ -87,19 +70,12 @@ public interface R2SceneOpaqueLightsConsumerType
    * @param <M> The type of shader parameters
    */
 
-  <M extends R2LightSingleReadableType> void onLightSingleShaderFinish(
+  <M extends R2LightSingleReadableType>
+  void onLightSingleShaderFinish(
     R2ShaderLightSingleUsableType<M> s);
 
   /**
-   * Called when rendering of a group is finished.
-   *
-   * @param group The group
-   */
-
-  void onFinishGroup(int group);
-
-  /**
-   * Called when rendering of lights is finished.
+   * Called when rendering of the group is finished.
    */
 
   void onFinish();

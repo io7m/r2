@@ -14,33 +14,42 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.core;
+package com.io7m.r2.core;
 
-import com.io7m.r2.core.R2ExceptionInvalidGroup;
-import com.io7m.r2.core.R2Stencils;
-import org.junit.Assert;
-import org.junit.Test;
+/**
+ * The set of lights that affect opaque instances in a scene.
+ */
 
-public final class R2StencilsTest
+public interface R2SceneLightsType
 {
-  @Test(expected = R2ExceptionInvalidGroup.class)
-  public void testInvalidGroup0()
-  {
-    R2Stencils.checkValidGroup(0);
-  }
+  /**
+   * Remove all lights from the scene.
+   */
 
-  @Test(expected = R2ExceptionInvalidGroup.class)
-  public void testInvalidGroup1()
-  {
-    R2Stencils.checkValidGroup(16);
-  }
+  void lightsReset();
 
-  @Test
-  public void testValidGroup()
-  {
-    for (int index = 1; index <= 15; ++index) {
-      Assert.assertEquals(
-        (long) index, (long) R2Stencils.checkValidGroup(index));
-    }
-  }
+  /**
+   * Get access to a numbered group.
+   *
+   * @param group The numbered group
+   *
+   * @return The group {@code group}
+   */
+
+  R2SceneLightsGroupType lightsGetGroup(int group);
+
+  /**
+   * Batch the lights and pass them to the given consumer for rendering.
+   *
+   * @param c The consumer
+   */
+
+  void lightsExecute(
+    R2SceneLightsConsumerType c);
+
+  /**
+   * @return The number of lights in the scene
+   */
+
+  long lightsCount();
 }

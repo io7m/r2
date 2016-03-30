@@ -78,8 +78,9 @@ import com.io7m.r2.core.R2ProjectionFrustum;
 import com.io7m.r2.core.R2ProjectionMesh;
 import com.io7m.r2.core.R2ProjectionMeshType;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
-import com.io7m.r2.core.R2SceneOpaqueLights;
-import com.io7m.r2.core.R2SceneOpaqueLightsType;
+import com.io7m.r2.core.R2SceneLights;
+import com.io7m.r2.core.R2SceneLightsGroupType;
+import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaques;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
@@ -126,7 +127,6 @@ import com.io7m.r2.filters.R2FilterSSAOParametersType;
 import com.io7m.r2.filters.R2SSAOKernel;
 import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
-import com.io7m.r2.meshes.defaults.R2UnitCube;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -145,7 +145,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
   private R2ProjectionFOV projection;
   private R2InstanceSingleType instance;
   private R2SceneOpaquesType opaques;
-  private R2SceneOpaqueLightsType lights;
+  private R2SceneLightsType lights;
 
   private R2GeometryBufferType gbuffer;
   private R2LightBufferType lbuffer;
@@ -218,7 +218,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
     this.sphere = R2UnitSphere.newUnitSphere8(gx);
     this.opaques = R2SceneOpaques.newOpaques();
-    this.lights = R2SceneOpaqueLights.newLights();
+    this.lights = R2SceneLights.newLights();
     this.stencils = R2SceneStencils.newMasks();
 
     {
@@ -560,7 +560,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         m.getIDPool());
     this.proj_light.setRadius(10.0f);
     this.proj_light.getColorWritable().set3F(0.0f, 0.0f, 1.0f);
-    this.proj_light.getOriginTransformWritable().getTranslation().set3F(
+    this.proj_light.getTransformWritable().getTranslation().set3F(
       0.0f, 0.0f, 3.0f);
 
     this.sphere_light_shader =
@@ -580,13 +580,10 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
 
     this.sphere_light_bounded_transform = R2TransformSiOT.newTransform();
     this.sphere_light_bounded_transform.getTranslation().set3F(-10.0f, 1.0f, 0.0f);
-    this.sphere_light_bounded_transform.getScale().set3F(9f, 9f, 9f);
+    this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
     this.sphere_light_bounded =
-      R2LightSphericalSingle.newLightWithVolume(
-        R2UnitCube.newUnitCube(gx).getArrayObject(),
-        this.sphere_light_bounded_transform,
-        id_pool);
+      R2LightSphericalSingle.newLight(this.sphere, id_pool);
     this.sphere_light_bounded.getColorWritable().set3F(1.0f, 0.0f, 0.0f);
     this.sphere_light_bounded.setIntensity(1.0f);
     this.sphere_light_bounded.getOriginPositionWritable().set3F(-10.0f, 1.0f, 0.0f);
@@ -603,7 +600,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     {
       this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
       this.debug_params.setOpaqueInstances(this.opaques);
-      this.debug_params.setOpaqueLights(this.lights);
+      this.debug_params.setLights(this.lights);
       this.debug_params.setShowOpaqueInstances(false);
       this.debug_params.setShowOpaqueLights(false);
     }
@@ -657,14 +654,16 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
     this.opaques.opaquesAddBatchedInstance(
       this.batched_instance, this.batched_geom_material);
 
-    this.lights.opaqueLightsReset();
-    this.lights.opaqueLightsAddSingle(
+    this.lights.lightsReset();
+
+    final R2SceneLightsGroupType lg = this.lights.lightsGetGroup(1);
+    lg.lightGroupAddSingle(
       this.light_ambient, this.light_ambient_shader);
-    this.lights.opaqueLightsAddSingle(
+    lg.lightGroupAddSingle(
      this.sphere_light, this.sphere_light_shader);
-    this.lights.opaqueLightsAddSingle(
+    lg.lightGroupAddSingle(
       this.sphere_light_bounded, this.sphere_light_bounded_shader);
-    this.lights.opaqueLightsAddSingle(
+    lg.lightGroupAddSingle(
       this.proj_light, this.proj_light_shader);
 
     if (servx.isFreeCameraEnabled()) {

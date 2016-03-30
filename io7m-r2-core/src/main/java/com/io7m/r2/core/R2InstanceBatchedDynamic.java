@@ -235,7 +235,7 @@ public final class R2InstanceBatchedDynamic implements
       throw new R2ExceptionBatchIsFull(sb.toString());
     }
 
-    Assertive.ensure(!this.free.isEmpty());
+    Assertive.require(!this.free.isEmpty());
     final int next = this.free.firstInt();
     this.members[next] = t;
     this.free.remove(next);

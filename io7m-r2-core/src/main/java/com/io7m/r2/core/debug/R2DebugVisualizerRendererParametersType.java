@@ -18,7 +18,7 @@ package com.io7m.r2.core.debug;
 
 import com.io7m.jtensors.VectorReadable4FType;
 import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2SceneOpaqueLightsType;
+import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
@@ -41,11 +41,11 @@ public interface R2DebugVisualizerRendererParametersType
   R2SceneOpaquesType getOpaqueInstances();
 
   /**
-   * @return The opaque lights in the scene.
+   * @return The lights in the scene.
    */
 
   @Value.Parameter
-  R2SceneOpaqueLightsType getOpaqueLights();
+  R2SceneLightsType getLights();
 
   /**
    * @return {@code true} iff opaque instances should be rendered

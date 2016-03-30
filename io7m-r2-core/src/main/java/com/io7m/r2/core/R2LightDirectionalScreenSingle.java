@@ -116,7 +116,7 @@ public final class R2LightDirectionalScreenSingle implements
   }
 
   @Override
-  public R2TransformReadableType getOriginTransform()
+  public R2TransformReadableType getTransform()
   {
     return R2TransformIdentity.getInstance();
   }

@@ -14,37 +14,36 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.core.shaders;
+package com.io7m.r2.tests.jogl.shaders;
 
+import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jfunctional.Unit;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightSphericalSingle;
-import com.io7m.r2.core.R2LightSphericalSingleReadableType;
-import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
-import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
+import com.io7m.r2.core.shaders.provided.R2ShaderLogDepthOnlySingle;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.meshes.defaults.R2UnitSphere;
+import com.io7m.r2.tests.core.shaders.R2ShaderLogDepthOnlySingleContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public abstract class R2ShaderLightSphericalLambertBlinnPhongSingleContract extends
-  R2ShaderLightVolumeSingleContract<R2LightSphericalSingleReadableType>
+public final class R2ShaderLogDepthOnlySingleTest extends
+  R2ShaderLogDepthOnlySingleContract
 {
   @Override
-  protected final R2ShaderLightVolumeSingleType<
-    R2LightSphericalSingleReadableType> newShaderWithVerifier(
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
+
+  @Override
+  protected R2ShaderInstanceSingleType<Unit> newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderSourcesType sources,
     final R2IDPoolType pool)
   {
-    return R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
-      g.getShaders(), sources, pool);
-  }
-
-  @Override
-  protected final R2LightSphericalSingleReadableType newLight(
-    final JCGLInterfaceGL33Type g,
-    final R2IDPoolType pool)
-  {
-    return R2LightSphericalSingle.newLight(
-      R2UnitSphere.newUnitSphere8(g), pool);
+    return R2ShaderLogDepthOnlySingle.newShader(g.getShaders(), sources, pool);
   }
 }

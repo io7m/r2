@@ -16,33 +16,44 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
+
 /**
- * The type of writable projective lights.
+ * A light group to which lights can be added.
  */
 
-public interface R2LightProjectiveWritableType extends R2LightWritableType
+public interface R2SceneLightsGroupType
 {
   /**
-   * @return The writable transform for the light origin
+   * @return The group ID
+   *
+   * @see R2Stencils#checkValidGroup(int)
    */
 
-  R2TransformOTType getTransformWritable();
+  int getID();
 
   /**
-   * Set the light radius in world-space units.
+   * Add a light to the group.
    *
-   * @param r The light radius
+   * @param light  The light
+   * @param shader The light shader
+   * @param <L>    The precise type of light
    */
 
-  void setRadius(
-    float r);
+  <L extends R2LightSingleReadableType>
+  void lightGroupAddSingle(
+    L light,
+    R2ShaderLightSingleUsableType<L> shader);
 
   /**
-   * Set the light falloff exponent
+   * Retrieve a clip group, creating one if the group does not exist, using the
+   * given instance as a clipping volume.
    *
-   * @param r The light falloff
+   * @param i The volume
+   *
+   * @return A new clip group
    */
 
-  void setFalloff(
-    float r);
+  R2SceneLightsClipGroupType lightGroupNewClipGroup(
+    R2InstanceSingleType i);
 }

@@ -148,10 +148,8 @@ public final class R2Matrices implements R2MatricesType
     private final PMatrixDirect4x4FType<R2SpaceEyeType, R2SpaceLightEyeType> m_projective_eye_to_light_eye;
     private final PMatrixDirect4x4FType<R2SpaceLightEyeType, R2SpaceLightClipType> m_projective_projection;
     private final PMatrixDirect4x4FType<R2SpaceWorldType, R2SpaceLightEyeType> m_projective_view;
-    private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m_volume_model;
-    private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m_origin_model;
-    private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceEyeType> m_volume_modelview;
-    private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceEyeType> m_origin_modelview;
+    private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m_model;
+    private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceEyeType> m_modelview;
     private final PMatrixDirect3x3FType<R2SpaceObjectType, R2SpaceNormalEyeType> m_normal;
     private final PMatrixDirect3x3FType<R2SpaceTextureType, R2SpaceTextureType> m_uv;
     private boolean active;
@@ -160,10 +158,8 @@ public final class R2Matrices implements R2MatricesType
     ProjectiveLight()
     {
       this.active = false;
-      this.m_volume_model = PMatrixHeapArrayM4x4F.newMatrix();
-      this.m_origin_model = PMatrixHeapArrayM4x4F.newMatrix();
-      this.m_volume_modelview = PMatrixDirectM4x4F.newMatrix();
-      this.m_origin_modelview = PMatrixDirectM4x4F.newMatrix();
+      this.m_model = PMatrixHeapArrayM4x4F.newMatrix();
+      this.m_modelview = PMatrixDirectM4x4F.newMatrix();
       this.m_projective_eye_to_light_eye = PMatrixDirectM4x4F.newMatrix();
       this.m_projective_projection = PMatrixDirectM4x4F.newMatrix();
       this.m_projective_view = PMatrixDirectM4x4F.newMatrix();
@@ -171,21 +167,7 @@ public final class R2Matrices implements R2MatricesType
       this.m_uv = PMatrixDirectM3x3F.newMatrix();
     }
 
-    @Override
-    public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixLightOriginModelView()
-    {
-      Assertive.require(this.active, "Projective is active");
-      return this.m_origin_modelview;
-    }
 
-    @Override
-    public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixLightVolumeModelView()
-    {
-      Assertive.require(this.active, "Projective is active");
-      return this.m_volume_modelview;
-    }
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceLightEyeType>
@@ -216,6 +198,14 @@ public final class R2Matrices implements R2MatricesType
     {
       Assertive.require(this.active, "Projective is active");
       return this.projection;
+    }
+
+    @Override
+    public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
+    getMatrixLightModelView()
+    {
+      Assertive.require(this.active, "Projective is active");
+      return this.m_modelview;
     }
   }
 
@@ -266,34 +256,22 @@ public final class R2Matrices implements R2MatricesType
   private static final class VolumeLight implements R2MatricesVolumeLightType
   {
     private boolean active;
-    private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m_volume_model;
-    private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m_origin_model;
-    private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceEyeType> m_volume_modelview;
-    private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceEyeType> m_origin_modelview;
+    private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m_model;
+    private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceEyeType> m_modelview;
 
     VolumeLight()
     {
       this.active = false;
-      this.m_volume_model = PMatrixHeapArrayM4x4F.newMatrix();
-      this.m_origin_model = PMatrixHeapArrayM4x4F.newMatrix();
-      this.m_volume_modelview = PMatrixDirectM4x4F.newMatrix();
-      this.m_origin_modelview = PMatrixDirectM4x4F.newMatrix();
+      this.m_model = PMatrixHeapArrayM4x4F.newMatrix();
+      this.m_modelview = PMatrixDirectM4x4F.newMatrix();
     }
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixLightOriginModelView()
+    getMatrixLightModelView()
     {
       Assertive.require(this.active, "Volume light is active");
-      return this.m_origin_modelview;
-    }
-
-    @Override
-    public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixLightVolumeModelView()
-    {
-      Assertive.require(this.active, "Volume light is active");
-      return this.m_volume_modelview;
+      return this.m_modelview;
     }
   }
 
@@ -465,32 +443,18 @@ public final class R2Matrices implements R2MatricesType
         this.projective.active = true;
 
         /**
-         * Produce a modelview matrix for the light's origin.
+         * Produce a modelview matrix for the light.
          */
 
-        final R2TransformViewReadableType ot = t.getOriginTransform();
+        final R2TransformViewReadableType ot = t.getTransform();
 
         ot.transformMakeMatrix4x4F(
-          this.context_tr, this.projective.m_origin_model);
+          this.context_tr, this.projective.m_model);
 
         PMatrixM4x4F.multiply(
           this.m_view,
-          this.projective.m_origin_model,
-          this.projective.m_origin_modelview);
-
-        /**
-         * Produce a modelview matrix for the light's volume.
-         */
-
-        final R2TransformReadableType vt = t.getVolumeTransform();
-
-        vt.transformMakeMatrix4x4F(
-          this.context_tr, this.projective.m_volume_model);
-
-        PMatrixM4x4F.multiply(
-          this.m_view,
-          this.projective.m_volume_model,
-          this.projective.m_volume_modelview);
+          this.projective.m_model,
+          this.projective.m_modelview);
 
         /**
          * Produce a view and projection matrix for the light's projection. The
@@ -554,32 +518,18 @@ public final class R2Matrices implements R2MatricesType
         this.volume.active = true;
 
         /**
-         * Produce a modelview matrix for the light's origin.
+         * Produce a modelview matrix for the light.
          */
 
-        final R2TransformReadableType ot = t.getOriginTransform();
+        final R2TransformReadableType ot = t.getTransform();
 
         ot.transformMakeMatrix4x4F(
-          this.context_tr, this.volume.m_origin_model);
+          this.context_tr, this.volume.m_model);
 
         PMatrixM4x4F.multiply(
           this.m_view,
-          this.volume.m_origin_model,
-          this.volume.m_origin_modelview);
-
-        /**
-         * Produce a modelview matrix for the light's volume.
-         */
-
-        final R2TransformReadableType vt = t.getVolumeTransform();
-
-        vt.transformMakeMatrix4x4F(
-          this.context_tr, this.volume.m_volume_model);
-
-        PMatrixM4x4F.multiply(
-          this.m_view,
-          this.volume.m_volume_model,
-          this.volume.m_volume_modelview);
+          this.volume.m_model,
+          this.volume.m_modelview);
 
         return f.apply(this.volume, x);
       } finally {
