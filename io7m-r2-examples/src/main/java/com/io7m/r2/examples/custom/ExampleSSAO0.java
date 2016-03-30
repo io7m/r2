@@ -66,7 +66,7 @@ import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
@@ -121,7 +121,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
 
   private R2UnitSphereType sphere;
   private R2InstanceBatchedDynamicType batched_instance;
-  private R2TransformOST[] batched_transforms;
+  private R2TransformSOT[] batched_transforms;
   private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
 
@@ -307,7 +307,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     final R2IDPoolType id_pool = m.getIDPool();
     final JCGLArrayObjectType mesh = serv.getMesh("halls_complex.r2z");
 
-    final R2TransformOST transform = R2TransformOST.newTransform();
+    final R2TransformSOT transform = R2TransformSOT.newTransform();
     transform.getTranslation().set3F(0.0f, -1.0f, 0.0f);
 
     this.instance =
@@ -326,13 +326,13 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         this.sphere.getArrayObject(),
         instance_count);
 
-    this.batched_transforms = new R2TransformOST[instance_count];
+    this.batched_transforms = new R2TransformSOT[instance_count];
 
     int index = 0;
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
         for (int z = 0; z < depth; ++z) {
-          final R2TransformOST t = R2TransformOST.newTransform();
+          final R2TransformSOT t = R2TransformSOT.newTransform();
           t.setScale(0.2f);
           final PVector3FType<R2SpaceWorldType> tr = t.getTranslation();
           final float fx = (float) (x - (width / 2));

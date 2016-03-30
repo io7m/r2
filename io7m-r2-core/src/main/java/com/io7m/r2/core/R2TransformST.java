@@ -22,22 +22,24 @@ import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.r2.spaces.R2SpaceObjectType;
+import com.io7m.r2.spaces.R2SpaceType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
- * <p>A transform represented by a scale, and a translation.</p>
+ * <p>A transform represented by a scale, followed by a translation.</p>
  *
  * <p>The transform does not allow independent scaling on each axis and will
  * therefore produce matrices that are guaranteed to be orthogonal.</p>
  */
 
 public final class R2TransformST implements
-  R2TransformOrthogonalReadableType
+  R2TransformOrthogonalReadableType, R2TransformType
 {
-  private final PVector3FType<R2SpaceWorldType>                    translation;
+  private final PVector3FType<R2SpaceWorldType> translation;
   private final R2WatchableType<R2TransformOrthogonalReadableType> watchable;
-  private       float                                              scale;
+  private float scale;
 
   private R2TransformST(
     final float in_scale,
@@ -156,5 +158,15 @@ public final class R2TransformST implements
   {
     final Object o = this.watchable;
     return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
+  }
+
+  @Override
+  public <T extends R2SpaceType, U extends R2SpaceType>
+  void transformMakeViewMatrix4x4F(
+    final R2TransformContextType context,
+    final PMatrixWritable4x4FType<T, U> m)
+  {
+    // TODO: Generated method stub!
+    throw new UnimplementedCodeException();
   }
 }

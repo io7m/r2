@@ -20,27 +20,8 @@ package com.io7m.r2.core;
  * A set of rendered shadow maps.
  */
 
-public interface R2ShadowMapContextType
+public interface R2ShadowMapContextType extends R2ShadowMapContextUsableType
 {
-  /**
-   * @param ls A light
-   *
-   * @return The rendered shadow map for the given light
-   *
-   * @throws R2RendererExceptionShadowMapContextNotActive Iff the shadow map
-   *                                                      context is not active
-   * @throws R2RendererExceptionShadowNotRendered         Iff the light was not
-   *                                                      rendered by the shadow
-   *                                                      map renderer execution
-   *                                                      that produced this
-   *                                                      context
-   */
-
-  R2Texture2DUsableType shadowMapGet(R2LightWithShadowSingleType ls)
-    throws
-    R2RendererExceptionShadowMapContextNotActive,
-    R2RendererExceptionShadowNotRendered;
-
   /**
    * Finish using the shadow map context.
    *

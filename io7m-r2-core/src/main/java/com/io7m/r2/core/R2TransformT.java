@@ -17,11 +17,14 @@
 package com.io7m.r2.core;
 
 import com.io7m.jnull.NullCheck;
+import com.io7m.jtensors.Matrix4x4FType;
 import com.io7m.jtensors.MatrixM4x4F;
+import com.io7m.jtensors.Vector3FType;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.r2.spaces.R2SpaceObjectType;
+import com.io7m.r2.spaces.R2SpaceType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
@@ -32,9 +35,9 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
  */
 
 public final class R2TransformT implements
-  R2TransformOrthogonalReadableType
+  R2TransformOrthogonalReadableType, R2TransformType
 {
-  private final PVector3FType<R2SpaceWorldType>                    translation;
+  private final PVector3FType<R2SpaceWorldType> translation;
   private final R2WatchableType<R2TransformOrthogonalReadableType> watchable;
 
   private R2TransformT(
@@ -111,5 +114,29 @@ public final class R2TransformT implements
   {
     final Object o = this.watchable;
     return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
+  }
+
+  @Override
+  public <T extends R2SpaceType, U extends R2SpaceType>
+  void transformMakeViewMatrix4x4F(
+    final R2TransformContextType context,
+    final PMatrixWritable4x4FType<T, U> m)
+  {
+    NullCheck.notNull(context);
+    NullCheck.notNull(m);
+
+    final Matrix4x4FType m_tmp0 =
+      context.getTemporaryMatrix4x4_0();
+    final Matrix4x4FType m_tmp1 =
+      context.getTemporaryMatrix4x4_1();
+    final Vector3FType v_tmp =
+      context.getTemporaryVector3();
+
+    v_tmp.set3F(
+      -this.translation.getXF(),
+      -this.translation.getYF(),
+      -this.translation.getZF());
+    MatrixM4x4F.makeTranslation3F(v_tmp, m_tmp1);
+    MatrixM4x4F.multiply(m_tmp0, m_tmp1, m);
   }
 }

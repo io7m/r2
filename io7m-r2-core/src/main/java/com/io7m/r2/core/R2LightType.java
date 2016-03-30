@@ -16,30 +16,11 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.r2.spaces.R2SpaceRGBType;
-
 /**
  * The type of lights.
  */
 
-public interface R2LightType
+public interface R2LightType extends R2LightReadableType, R2LightWritableType
 {
-  /**
-   * @return The unique light ID
-   */
-
-  long getLightID();
-
-  /**
-   * @return The readable/writable light color
-   */
-
-  PVector3FType<R2SpaceRGBType> getColor();
-
-  /**
-   * @return The current light intensity
-   */
-
-  float getIntensity();
+  // No extra methods
 }

@@ -34,19 +34,17 @@ import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightProjectiveType;
-import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
+import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
+import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
-import com.io7m.r2.core.R2TransformOTReadableType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderProjectiveRequired;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -58,11 +56,11 @@ import java.util.Optional;
  */
 
 public final class R2LightShaderProjectiveLambertSingle extends
-  R2AbstractShader<R2LightProjectiveType>
-  implements R2ShaderLightSingleType<R2LightProjectiveType>
+  R2AbstractShader<R2LightProjectiveReadableType>
+  implements R2ShaderLightProjectiveType<R2LightProjectiveReadableType>
 {
   private final JCGLProgramUniformType u_transform_projection_inverse;
-  private final JCGLProgramUniformType u_transform_modelview;
+  private final JCGLProgramUniformType u_transform_volume_modelview;
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_view_rays_origin_x0y0;
@@ -88,10 +86,10 @@ public final class R2LightShaderProjectiveLambertSingle extends
   private final JCGLProgramUniformType u_transform_eye_to_light_eye;
   private final JCGLProgramUniformType u_light_projective_image;
 
-  private final PVector4FType<R2SpaceEyeType>   position_eye;
-  private final PVector3FType<R2SpaceEyeType>   position_eye3;
+  private final PVector4FType<R2SpaceEyeType> position_eye;
+  private final PVector3FType<R2SpaceEyeType> position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
-  private       JCGLTextureUnitType             unit_image;
+  private JCGLTextureUnitType unit_image;
 
   private R2LightShaderProjectiveLambertSingle(
     final JCGLShadersType in_shaders,
@@ -129,9 +127,9 @@ public final class R2LightShaderProjectiveLambertSingle extends
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_projective_image");
 
-    this.u_transform_modelview =
+    this.u_transform_volume_modelview =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_modelview");
+        p, "R2_light_matrices.transform_volume_modelview");
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_matrices.transform_projection");
@@ -211,22 +209,22 @@ public final class R2LightShaderProjectiveLambertSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderLightSingleType<R2LightProjectiveType>
+  public static R2ShaderLightProjectiveType<R2LightProjectiveReadableType>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderLightVerifier.newVerifier(
-      new R2LightShaderProjectiveLambertSingle(in_shaders, in_sources, in_pool),
-      R2ShaderProjectiveRequired.R2_SHADER_PROJECTIVE_REQUIRED);
+    return R2ShaderLightProjectiveVerifier.newVerifier(
+      new R2LightShaderProjectiveLambertSingle(
+        in_shaders, in_sources, in_pool));
   }
 
   @Override
-  public Class<R2LightProjectiveType>
+  public Class<R2LightProjectiveReadableType>
   getShaderParametersType()
   {
-    return R2LightProjectiveType.class;
+    return R2LightProjectiveReadableType.class;
   }
 
   @Override
@@ -277,24 +275,12 @@ public final class R2LightShaderProjectiveLambertSingle extends
   }
 
   @Override
-  public void onReceiveInstanceTransformValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
-  }
-
-  @Override
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final R2TextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
-    final R2LightProjectiveType values,
+    final R2LightProjectiveReadableType values,
     final R2MatricesObserverValuesType m)
   {
     NullCheck.notNull(g_tex);
@@ -360,9 +346,8 @@ public final class R2LightShaderProjectiveLambertSingle extends
      * Transform the light's position to eye-space and upload it.
      */
 
-    final R2TransformOTReadableType transform = values.getTransform();
     final PVectorReadable3FType<R2SpaceWorldType> position =
-      transform.getTranslationReadable();
+      values.getPosition();
 
     this.position_world.copyFrom3F(position);
     this.position_world.setWF(1.0f);
@@ -403,5 +388,17 @@ public final class R2LightShaderProjectiveLambertSingle extends
       this.u_light_projective_inverse_range, 1.0f / values.getRadius());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_projective_image, this.unit_image);
+  }
+
+  @Override
+  public void onReceiveVolumeLightTransform(
+    final JCGLShadersType g_sh,
+    final R2MatricesVolumeLightValuesType m)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_volume_modelview, m.getMatrixLightModelView());
   }
 }

@@ -42,7 +42,7 @@ import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
@@ -129,7 +129,7 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
     this.sphere = R2UnitSphere.newUnitSphere8(g);
     this.quad = R2UnitQuad.newUnitQuad(g);
 
-    final R2TransformReadableType tr = R2TransformOST.newTransform();
+    final R2TransformReadableType tr = R2TransformSOT.newTransform();
     this.instance = R2InstanceSingle.newInstance(
       id_pool,
       this.sphere.getArrayObject(),

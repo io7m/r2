@@ -43,7 +43,7 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2TransformOSiT;
+import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -113,7 +113,7 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       new VectorI3F(0.0f, 0.0f, 0.0f),
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
-    final R2TransformOSiT transform = R2TransformOSiT.newTransform();
+    final R2TransformSiOT transform = R2TransformSiOT.newTransform();
 
     this.instance = R2InstanceSingle.newInstance(
       m.getIDPool(),

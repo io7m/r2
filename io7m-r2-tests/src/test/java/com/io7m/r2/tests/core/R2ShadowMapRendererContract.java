@@ -43,6 +43,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
+import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
 import com.io7m.r2.core.R2MaterialDepthSingle;
 import com.io7m.r2.core.R2MaterialDepthSingleType;
 import com.io7m.r2.core.R2Matrices;
@@ -58,6 +59,7 @@ import com.io7m.r2.core.R2RendererExceptionShadowMapContextAlreadyActive;
 import com.io7m.r2.core.R2RendererExceptionShadowNotRendered;
 import com.io7m.r2.core.R2ShadowDepthVariance;
 import com.io7m.r2.core.R2ShadowMapContextType;
+import com.io7m.r2.core.R2ShadowMapContextUsableType;
 import com.io7m.r2.core.R2ShadowMapRendererExecutionType;
 import com.io7m.r2.core.R2ShadowMapRendererType;
 import com.io7m.r2.core.R2Texture2DUsableType;
@@ -166,7 +168,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
 
     final R2ShadowMapRendererExecutionType rc =
       r.shadowBegin();
-    final R2ShadowMapContextType cc =
+    final R2ShadowMapContextUsableType cc =
       rc.shadowExecComplete();
 
     this.expected.expect(
@@ -298,7 +300,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2ShadowDepthVariance shadow =
       R2ShadowDepthVariance.of(id_pool.getFreshID(), desc);
 
-    final R2LightProjectiveWithShadowVariance ls =
+    final R2LightProjectiveWithShadowVarianceType ls =
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 
@@ -415,14 +417,14 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2ShadowDepthVariance shadow =
       R2ShadowDepthVariance.of(id_pool.getFreshID(), desc);
 
-    final R2LightProjectiveWithShadowVariance ls =
+    final R2LightProjectiveWithShadowVarianceType ls =
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 
     final R2TransformOTType tr = ls.getTransformWritable();
     tr.getTranslation().set3F(0.0f, 0.0f, 10.0f);
 
-    final R2ShadowMapContextType mc =
+    final R2ShadowMapContextUsableType mc =
       rc.shadowExecComplete();
 
     this.expected.expect(R2RendererExceptionShadowNotRendered.class);

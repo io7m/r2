@@ -140,7 +140,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
       final R2TransformContextType trc =
         this.matrices.getTransformContext();
-      final R2TransformOTReadableType tr =
+      final R2TransformViewReadableType tr =
         lp.getTransform();
       tr.transformMakeViewMatrix4x4F(trc, this.view);
 

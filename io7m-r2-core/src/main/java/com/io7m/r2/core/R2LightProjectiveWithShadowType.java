@@ -17,11 +17,13 @@
 package com.io7m.r2.core;
 
 /**
- * The type of projective lights.
+ * The type of projective lights that have shadows.
  */
 
 public interface R2LightProjectiveWithShadowType extends
-  R2LightProjectiveWithShadowUsableType, R2LightProjectiveType
+  R2LightProjectiveType,
+  R2LightProjectiveWithShadowReadableType,
+  R2LightProjectiveWithShadowWritableType
 {
   // No extra methods
 }

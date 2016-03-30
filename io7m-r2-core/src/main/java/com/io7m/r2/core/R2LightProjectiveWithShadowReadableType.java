@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jfunctional.PartialBiFunctionType;
+
 /**
  * The type of readable projective lights.
  */
@@ -24,5 +26,13 @@ public interface R2LightProjectiveWithShadowReadableType extends
   R2LightProjectiveReadableType,
   R2LightWithShadowSingleType
 {
-  // No extra methods
+  @Override
+  default <A, B, E extends Throwable> B matchProjectiveReadable(
+    final A context,
+    final PartialBiFunctionType<A, R2LightProjectiveWithoutShadowReadableType, B, E> on_shadowless,
+    final PartialBiFunctionType<A, R2LightProjectiveWithShadowReadableType, B, E> on_shadowed)
+    throws E
+  {
+    return on_shadowed.call(context, this);
+  }
 }

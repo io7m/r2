@@ -16,7 +16,7 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.r2.core.R2LightSingleType;
+import com.io7m.r2.core.R2LightSingleReadableType;
 
 /**
  * The type of single-instance light shaders.
@@ -24,8 +24,10 @@ import com.io7m.r2.core.R2LightSingleType;
  * @param <M> The type of shader parameters
  */
 
-public interface R2ShaderLightSingleType<M extends R2LightSingleType> extends
-  R2ShaderType<M>, R2ShaderLightSingleUsableType<M>
+public interface R2ShaderLightSingleType<
+  M extends R2LightSingleReadableType> extends
+  R2ShaderType<M>,
+  R2ShaderLightSingleUsableType<M>
 {
   // No extra functions
 }

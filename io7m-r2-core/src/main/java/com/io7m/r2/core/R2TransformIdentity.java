@@ -19,6 +19,7 @@ package com.io7m.r2.core;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
+import com.io7m.r2.spaces.R2SpaceType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 /**
@@ -26,7 +27,7 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
  */
 
 public final class R2TransformIdentity implements
-  R2TransformOrthogonalReadableType
+  R2TransformOrthogonalReadableType, R2TransformType
 {
   private static final R2TransformIdentity INSTANCE = new R2TransformIdentity();
 
@@ -50,6 +51,14 @@ public final class R2TransformIdentity implements
   public void transformMakeMatrix4x4F(
     final R2TransformContextType context,
     final PMatrixWritable4x4FType<R2SpaceObjectType, R2SpaceWorldType> m)
+  {
+    MatrixM4x4F.setIdentity(m);
+  }
+
+  @Override
+  public <T extends R2SpaceType, U extends R2SpaceType> void transformMakeViewMatrix4x4F(
+    final R2TransformContextType context,
+    final PMatrixWritable4x4FType<T, U> m)
   {
     MatrixM4x4F.setIdentity(m);
   }

@@ -16,41 +16,49 @@
 
 package com.io7m.r2.tests.core.shaders;
 
-import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.jcanephora.core.JCGLProjectionMatrices;
+import com.io7m.jcanephora.core.JCGLUsageHint;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightProjectiveType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.R2LightProjectiveReadableType;
+import com.io7m.r2.core.R2LightProjectiveWithoutShadow;
+import com.io7m.r2.core.R2ProjectionFrustum;
+import com.io7m.r2.core.R2ProjectionMesh;
+import com.io7m.r2.core.R2ProjectionMeshType;
+import com.io7m.r2.core.R2ProjectionType;
+import com.io7m.r2.core.R2TextureDefaultsType;
+import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertBlinnPhongSingle;
-import com.io7m.r2.shaders.R2Shaders;
-import com.io7m.r2.tests.core.R2JCGLContract;
-import org.junit.Assert;
-import org.junit.Test;
+import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 public abstract class R2ShaderLightProjectiveLambertBlinnPhongSingleContract
-  extends
-  R2JCGLContract
+  extends R2ShaderLightProjectiveContract<R2LightProjectiveReadableType>
 {
-  @Test
-  public final void testNew()
+  @Override
+  protected final R2ShaderLightProjectiveType<R2LightProjectiveReadableType>
+  newShaderWithVerifier(
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderSourcesType sources,
+    final R2IDPoolType pool)
   {
-    final JCGLContextType c = this.newGL33Context("main", 24, 8);
-    final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
-    final R2IDPoolType pool = R2IDPool.newPool();
+    return R2LightShaderProjectiveLambertBlinnPhongSingle.newShader(
+      g.getShaders(), sources, pool);
+  }
 
-    final R2ShaderLightSingleType<R2LightProjectiveType> s =
-      R2LightShaderProjectiveLambertBlinnPhongSingle.newShader(
-        g.getShaders(),
-        sources,
-        pool);
-
-    Assert.assertFalse(s.isDeleted());
-    s.delete(g);
-    Assert.assertTrue(s.isDeleted());
+  @Override
+  protected final R2LightProjectiveReadableType newLight(
+    final JCGLInterfaceGL33Type g,
+    final R2IDPoolType pool,
+    final R2TextureUnitContextType uc,
+    final R2TextureDefaultsType td)
+  {
+    final R2ProjectionType p =
+      R2ProjectionFrustum.newFrustum(JCGLProjectionMatrices.newMatrices());
+    final R2ProjectionMeshType pm =
+      R2ProjectionMesh.newMesh(
+        g, p, JCGLUsageHint.USAGE_STATIC_DRAW, JCGLUsageHint.USAGE_STATIC_DRAW);
+    return R2LightProjectiveWithoutShadow.newLight(
+      pm, td.getWhiteProjectiveTexture(), pool);
   }
 }

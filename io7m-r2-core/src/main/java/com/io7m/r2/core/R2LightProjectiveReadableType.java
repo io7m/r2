@@ -16,11 +16,16 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jfunctional.PartialBiFunctionType;
+import com.io7m.jtensors.parameterized.PVectorReadable3FType;
+import com.io7m.r2.spaces.R2SpaceWorldType;
+
 /**
  * The type of readable projective lights.
  */
 
-public interface R2LightProjectiveReadableType
+public interface R2LightProjectiveReadableType extends
+  R2LightVolumeSingleReadableType
 {
   /**
    * @return The light radius
@@ -35,12 +40,6 @@ public interface R2LightProjectiveReadableType
   float getFalloff();
 
   /**
-   * @return The readable light transform
-   */
-
-  R2TransformOTReadableType getTransform();
-
-  /**
    * @return The light's projection
    */
 
@@ -51,4 +50,49 @@ public interface R2LightProjectiveReadableType
    */
 
   R2Texture2DUsableType getImage();
+
+  /**
+   * @return The transform for the light origin
+   */
+
+  @Override
+  R2TransformViewReadableType getTransform();
+
+  /**
+   * @return The position of the origin of the light in world-space
+   */
+
+  PVectorReadable3FType<R2SpaceWorldType> getPosition();
+
+  @Override
+  default <A, B, E extends Throwable> B matchLightVolumeSingleReadable(
+    final A context,
+    final PartialBiFunctionType<A, R2LightProjectiveReadableType, B, E> on_projective,
+    final PartialBiFunctionType<A, R2LightSphericalSingleReadableType, B, E> on_spherical)
+    throws E
+  {
+    return on_projective.call(context, this);
+  }
+
+  /**
+   * Match on the type of projective light.
+   *
+   * @param context   A context value
+   * @param on_shadowless Evaluated for projective lights without shadows
+   * @param on_shadowed Evaluated for projective lights with shadows
+   * @param <A>       The type of context values
+   * @param <B>       The type of returned values
+   * @param <E>       The type of raised exceptions
+   *
+   * @return A value of type {@code B}
+   *
+   * @throws E If any of the given functions raise {@code E}
+   */
+
+  <A, B, E extends Throwable>
+  B matchProjectiveReadable(
+    A context,
+    PartialBiFunctionType<A, R2LightProjectiveWithoutShadowReadableType, B, E> on_shadowless,
+    PartialBiFunctionType<A, R2LightProjectiveWithShadowReadableType, B, E> on_shadowed)
+    throws E;
 }

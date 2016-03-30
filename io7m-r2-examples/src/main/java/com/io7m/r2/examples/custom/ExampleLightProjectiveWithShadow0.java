@@ -65,12 +65,14 @@ import com.io7m.r2.core.R2InstanceBatchedDynamic;
 import com.io7m.r2.core.R2InstanceBatchedDynamicType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2LightAmbientSingle;
+import com.io7m.r2.core.R2LightAmbientScreenSingle;
 import com.io7m.r2.core.R2LightBuffer;
 import com.io7m.r2.core.R2LightBufferDescription;
 import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
-import com.io7m.r2.core.R2LightSphericalSimpleSingle;
+import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
+import com.io7m.r2.core.R2LightSphericalSingle;
+import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2MaterialDepthSingle;
 import com.io7m.r2.core.R2MaterialDepthSingleType;
@@ -84,8 +86,9 @@ import com.io7m.r2.core.R2ProjectionFrustum;
 import com.io7m.r2.core.R2ProjectionMesh;
 import com.io7m.r2.core.R2ProjectionMeshType;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
-import com.io7m.r2.core.R2SceneOpaqueLights;
-import com.io7m.r2.core.R2SceneOpaqueLightsType;
+import com.io7m.r2.core.R2SceneLights;
+import com.io7m.r2.core.R2SceneLightsGroupType;
+import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaques;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
@@ -95,7 +98,7 @@ import com.io7m.r2.core.R2ShadowDepthVariance;
 import com.io7m.r2.core.R2ShadowMapContextType;
 import com.io7m.r2.core.R2ShadowMapRendererExecutionType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
@@ -110,8 +113,9 @@ import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightWithShadowSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.examples.R2ExampleCustomType;
@@ -153,7 +157,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
   private R2ProjectionFOV projection;
   private R2InstanceSingleType instance;
   private R2SceneOpaquesType opaques;
-  private R2SceneOpaqueLightsType lights;
+  private R2SceneLightsType lights;
 
   private R2GeometryBufferType gbuffer;
   private R2LightBufferType lbuffer;
@@ -164,14 +168,14 @@ public final class ExampleLightProjectiveWithShadow0 implements
   private R2SurfaceShaderBasicParameters geom_shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
 
-  private R2ShaderLightSingleType<R2LightSphericalSingleType> sphere_light_shader;
+  private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
   private R2UnitSphereType sphere;
 
-  private R2ShaderLightWithShadowSingleType<R2LightProjectiveWithShadowVariance> proj_light_shader;
+  private R2ShaderLightProjectiveWithShadowType<R2LightProjectiveWithShadowVarianceType> proj_light_shader;
   private R2ProjectionFrustum proj_proj;
   private R2ProjectionMeshType proj_mesh;
-  private R2LightProjectiveWithShadowVariance proj_light;
+  private R2LightProjectiveWithShadowVarianceType proj_light;
   private R2ShadowDepthVariance proj_shadow;
   private R2DepthInstancesType proj_shadow_instances;
   private R2ShadowMapContextType shadow_context;
@@ -183,7 +187,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
   private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> golden_depth_material;
 
   private R2InstanceBatchedDynamicType batched_instance;
-  private R2TransformOST[] batched_transforms;
+  private R2TransformSOT[] batched_transforms;
   private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
 
@@ -202,8 +206,8 @@ public final class ExampleLightProjectiveWithShadow0 implements
   private R2FilterType<R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
   private R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
 
-  private R2LightAmbientSingle light_ambient;
-  private R2ShaderLightSingleType<R2LightAmbientSingle> light_ambient_shader;
+  private R2LightAmbientScreenSingle light_ambient;
+  private R2ShaderLightSingleType<R2LightAmbientScreenSingle> light_ambient_shader;
 
   private JCGLInterfaceGL33Type g;
 
@@ -232,7 +236,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
 
     this.sphere = R2UnitSphere.newUnitSphere8(gx);
     this.opaques = R2SceneOpaques.newOpaques();
-    this.lights = R2SceneOpaqueLights.newLights();
+    this.lights = R2SceneLights.newLights();
     this.stencils = R2SceneStencils.newMasks();
 
     {
@@ -456,7 +460,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
     final R2IDPoolType id_pool = m.getIDPool();
     final JCGLArrayObjectType mesh = serv.getMesh("halls_complex.r2z");
 
-    final R2TransformOST transform = R2TransformOST.newTransform();
+    final R2TransformSOT transform = R2TransformSOT.newTransform();
     transform.getTranslation().set3F(0.0f, -1.0f, 0.0f);
 
     this.instance =
@@ -475,13 +479,13 @@ public final class ExampleLightProjectiveWithShadow0 implements
         this.sphere.getArrayObject(),
         instance_count);
 
-    this.batched_transforms = new R2TransformOST[instance_count];
+    this.batched_transforms = new R2TransformSOT[instance_count];
 
     int index = 0;
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
         for (int z = 0; z < depth; ++z) {
-          final R2TransformOST t = R2TransformOST.newTransform();
+          final R2TransformSOT t = R2TransformSOT.newTransform();
           t.setScale(0.2f);
           final PVector3FType<R2SpaceWorldType> tr = t.getTranslation();
           final float fx = x - (width / 2);
@@ -528,10 +532,10 @@ public final class ExampleLightProjectiveWithShadow0 implements
     this.light_ambient_shader =
       R2LightShaderAmbientSingle.newShader(gx.getShaders(), sources, id_pool);
     this.light_ambient =
-      R2LightAmbientSingle.newLight(
+      R2LightAmbientScreenSingle.newLight(
         m.getUnitQuad(), id_pool, m.getTextureDefaults());
     this.light_ambient.setIntensity(0.15f);
-    this.light_ambient.getColor().set3F(0.0f, 1.0f, 1.0f);
+    this.light_ambient.getColorWritable().set3F(0.0f, 1.0f, 1.0f);
 
     this.proj_light_shader =
       R2LightShaderProjectiveLambertShadowVarianceSingle.newShader(
@@ -575,7 +579,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
         this.proj_shadow,
         m.getIDPool());
     this.proj_light.setRadius(10.0f);
-    this.proj_light.getColor().set3F(1.0f, 1.0f, 1.0f);
+    this.proj_light.getColorWritable().set3F(1.0f, 1.0f, 1.0f);
     this.proj_light.getTransformWritable().getTranslation().set3F(
       0.0f,
       0.0f,
@@ -627,10 +631,10 @@ public final class ExampleLightProjectiveWithShadow0 implements
         gx.getShaders(), sources, id_pool);
 
     this.sphere_light =
-      R2LightSphericalSimpleSingle.newLight(this.sphere, id_pool);
-    this.sphere_light.getColor().set3F(1.0f, 1.0f, 1.0f);
+      R2LightSphericalSingle.newLight(this.sphere, id_pool);
+    this.sphere_light.getColorWritable().set3F(1.0f, 1.0f, 1.0f);
     this.sphere_light.setIntensity(1.0f);
-    this.sphere_light.getPosition().set3F(0.0f, 1.0f, 1.0f);
+    this.sphere_light.getOriginPositionWritable().set3F(0.0f, 1.0f, 1.0f);
     this.sphere_light.setRadius(30.0f);
 
     this.filter_light =
@@ -644,7 +648,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
     {
       this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
       this.debug_params.setOpaqueInstances(this.opaques);
-      this.debug_params.setOpaqueLights(this.lights);
+      this.debug_params.setLights(this.lights);
       this.debug_params.setShowOpaqueInstances(false);
       this.debug_params.setShowOpaqueLights(false);
     }
@@ -704,12 +708,14 @@ public final class ExampleLightProjectiveWithShadow0 implements
     this.opaques.opaquesAddBatchedInstance(
       this.batched_instance, this.batched_geom_material);
 
-    this.lights.opaqueLightsReset();
-    this.lights.opaqueLightsAddSingle(
+    this.lights.lightsReset();
+
+    final R2SceneLightsGroupType lg = this.lights.lightsGetGroup(1);
+    lg.lightGroupAddSingle(
       this.light_ambient, this.light_ambient_shader);
-    //this.lights.opaqueLightsAddSingle(
-    //  this.sphere_light, this.sphere_light_shader);
-    this.lights.opaqueLightsAddSingle(
+    lg.lightGroupAddSingle(
+      this.sphere_light, this.sphere_light_shader);
+    lg.lightGroupAddSingle(
       this.proj_light, this.proj_light_shader);
 
     if (servx.isFreeCameraEnabled()) {

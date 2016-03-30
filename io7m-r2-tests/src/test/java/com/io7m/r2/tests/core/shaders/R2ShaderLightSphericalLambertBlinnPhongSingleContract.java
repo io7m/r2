@@ -16,40 +16,35 @@
 
 package com.io7m.r2.tests.core.shaders;
 
-import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightSphericalSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.R2LightSphericalSingle;
+import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
-import com.io7m.r2.shaders.R2Shaders;
-import com.io7m.r2.tests.core.R2JCGLContract;
-import org.junit.Assert;
-import org.junit.Test;
+import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.meshes.defaults.R2UnitSphere;
 
 public abstract class R2ShaderLightSphericalLambertBlinnPhongSingleContract extends
-  R2JCGLContract
+  R2ShaderLightVolumeSingleContract<R2LightSphericalSingleReadableType>
 {
-  @Test
-  public final void testNew()
+  @Override
+  protected final R2ShaderLightVolumeSingleType<
+    R2LightSphericalSingleReadableType> newShaderWithVerifier(
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderSourcesType sources,
+    final R2IDPoolType pool)
   {
-    final JCGLContextType c = this.newGL33Context("main", 24, 8);
-    final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
-    final R2IDPoolType pool = R2IDPool.newPool();
+    return R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
+      g.getShaders(), sources, pool);
+  }
 
-    final R2ShaderLightSingleType<R2LightSphericalSingleType> s =
-      R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
-        g.getShaders(),
-        sources,
-        pool);
-
-    Assert.assertFalse(s.isDeleted());
-    s.delete(g);
-    Assert.assertTrue(s.isDeleted());
+  @Override
+  protected final R2LightSphericalSingleReadableType newLight(
+    final JCGLInterfaceGL33Type g,
+    final R2IDPoolType pool)
+  {
+    return R2LightSphericalSingle.newLight(
+      R2UnitSphere.newUnitSphere8(g), pool);
   }
 }

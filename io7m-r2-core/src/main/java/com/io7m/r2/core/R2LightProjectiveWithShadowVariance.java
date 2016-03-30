@@ -24,7 +24,9 @@ import com.io7m.jfunctional.PartialBiFunctionType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
+import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.valid4j.Assertive;
 
 /**
@@ -33,18 +35,18 @@ import org.valid4j.Assertive;
  */
 
 public final class R2LightProjectiveWithShadowVariance implements
-  R2LightProjectiveWithShadowType
+  R2LightProjectiveWithShadowVarianceType
 {
   private final PVector3FType<R2SpaceRGBType> color;
-  private final long                          id;
-  private final R2TransformOT                 transform;
-  private final R2ProjectionMeshReadableType  mesh;
-  private final R2ProjectionReadableType      projection;
-  private final R2Texture2DUsableType         image;
-  private final R2ShadowDepthVarianceType     shadow;
-  private       float                         falloff;
-  private       float                         intensity;
-  private       float                         radius;
+  private final long id;
+  private final R2TransformOT transform;
+  private final R2ProjectionMeshReadableType mesh;
+  private final R2ProjectionReadableType projection;
+  private final R2Texture2DUsableType image;
+  private final R2ShadowDepthVarianceType shadow;
+  private float falloff;
+  private float intensity;
+  private float radius;
 
   private R2LightProjectiveWithShadowVariance(
     final R2ProjectionMeshReadableType in_mesh,
@@ -75,7 +77,7 @@ public final class R2LightProjectiveWithShadowVariance implements
    * @return A new light
    */
 
-  public static R2LightProjectiveWithShadowVariance newLight(
+  public static R2LightProjectiveWithShadowVarianceType newLight(
     final R2ProjectionMeshReadableType in_mesh,
     final R2Texture2DUsableType in_image,
     final R2ShadowDepthVarianceType in_shadow,
@@ -153,15 +155,15 @@ public final class R2LightProjectiveWithShadowVariance implements
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public PVector3FType<R2SpaceRGBType> getColorWritable()
   {
-    return this.mesh.getArrayObject();
+    return this.color;
   }
 
   @Override
-  public long getLightID()
+  public JCGLArrayObjectUsableType getArrayObject()
   {
-    return this.id;
+    return this.mesh.getArrayObject();
   }
 
   @Override
@@ -171,13 +173,15 @@ public final class R2LightProjectiveWithShadowVariance implements
   }
 
   @Override
-  public <A, B, E extends Throwable> B matchLightSingle(
-    final A context,
-    final PartialBiFunctionType<A, R2LightVolumeSingleType, B, E> on_volume,
-    final PartialBiFunctionType<A, R2LightScreenSingleType, B, E> on_screen)
-    throws E
+  public PVectorReadable3FType<R2SpaceWorldType> getPosition()
   {
-    return on_volume.call(context, this);
+    return this.transform.getTranslationReadable();
+  }
+
+  @Override
+  public long getLightID()
+  {
+    return this.id;
   }
 
   @Override

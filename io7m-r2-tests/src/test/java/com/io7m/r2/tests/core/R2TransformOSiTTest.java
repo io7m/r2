@@ -28,7 +28,7 @@ import com.io7m.jtensors.parameterized.PVectorI2F;
 import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.r2.core.R2TransformContext;
 import com.io7m.r2.core.R2TransformContextType;
-import com.io7m.r2.core.R2TransformOSiT;
+import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2WatchableType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
@@ -45,7 +45,7 @@ public final class R2TransformOSiTTest
   {
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
-    final R2TransformOSiT r = R2TransformOSiT.newTransform();
+    final R2TransformSiOT r = R2TransformSiOT.newTransform();
     final PVector3FType<R2SpaceWorldType> t = r.getTranslation();
     final Quaternion4FType o = r.getOrientation();
     final Vector3FType s = r.getScale();
@@ -92,7 +92,7 @@ public final class R2TransformOSiTTest
   {
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
-    final R2TransformOSiT r = R2TransformOSiT.newTransform();
+    final R2TransformSiOT r = R2TransformSiOT.newTransform();
     final PVector3FType<R2SpaceWorldType> t = r.getTranslation();
     final Quaternion4FType o = r.getOrientation();
     final Vector3FType s = r.getScale();
@@ -145,8 +145,8 @@ public final class R2TransformOSiTTest
     final R2TransformContextType c = R2TransformContext.newContext();
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
-    final R2TransformOSiT r =
-      R2TransformOSiT.newTransform();
+    final R2TransformSiOT r =
+      R2TransformSiOT.newTransform();
     final R2WatchableType<R2TransformReadableType> w =
       r.transformGetWatchable();
     w.watchableAdd(ww -> changed.set(true));
@@ -218,8 +218,8 @@ public final class R2TransformOSiTTest
     final R2TransformContextType c = R2TransformContext.newContext();
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
-    final R2TransformOSiT r =
-      R2TransformOSiT.newTransform();
+    final R2TransformSiOT r =
+      R2TransformSiOT.newTransform();
     final R2WatchableType<R2TransformReadableType> w =
       r.transformGetWatchable();
     w.watchableAdd(ww -> changed.set(true));
@@ -279,8 +279,8 @@ public final class R2TransformOSiTTest
     final R2TransformContextType c = R2TransformContext.newContext();
     final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m =
       PMatrixHeapArrayM4x4F.newMatrix();
-    final R2TransformOSiT r =
-      R2TransformOSiT.newTransform();
+    final R2TransformSiOT r =
+      R2TransformSiOT.newTransform();
     final R2WatchableType<R2TransformReadableType> w =
       r.transformGetWatchable();
     w.watchableAdd(ww -> changed.set(true));

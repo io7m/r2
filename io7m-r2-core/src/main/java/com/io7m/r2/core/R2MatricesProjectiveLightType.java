@@ -23,5 +23,5 @@ package com.io7m.r2.core;
 public interface R2MatricesProjectiveLightType extends
   R2MatricesProjectiveLightValuesType
 {
-
+  // No extra methods
 }

@@ -18,9 +18,9 @@ main (void)
   vec4 position_hom =
     vec4 (R2_vertex_position, 1.0);
   vec4 position_eye =
-    (R2_light_matrices.transform_modelview * position_hom);
+    (R2_light_matrices.transform_volume_modelview * position_hom);
   vec4 position_clip =
-    ((R2_light_matrices.transform_projection * R2_light_matrices.transform_modelview) * position_hom);
+    ((R2_light_matrices.transform_projection * R2_light_matrices.transform_volume_modelview) * position_hom);
   vec4 position_clip_log =
     vec4 (
       position_clip.xy,

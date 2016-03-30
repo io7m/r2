@@ -16,40 +16,71 @@
 
 package com.io7m.r2.tests.core.shaders;
 
-import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedL;
+import com.io7m.jcanephora.core.JCGLProjectionMatrices;
+import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
+import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
+import com.io7m.jcanephora.core.JCGLUsageHint;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2IDPool;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.r2.core.R2DepthPrecision;
+import com.io7m.r2.core.R2DepthVarianceBufferDescription;
+import com.io7m.r2.core.R2DepthVariancePrecision;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
+import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
+import com.io7m.r2.core.R2ProjectionFrustum;
+import com.io7m.r2.core.R2ProjectionMesh;
+import com.io7m.r2.core.R2ProjectionMeshType;
+import com.io7m.r2.core.R2ProjectionType;
+import com.io7m.r2.core.R2ShadowDepthVariance;
+import com.io7m.r2.core.R2TextureDefaultsType;
+import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle;
-import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
+import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
-import com.io7m.r2.tests.core.R2JCGLContract;
-import org.junit.Assert;
-import org.junit.Test;
 
 public abstract class R2ShaderLightProjectiveLambertBlinnPhongShadowVarianceSingleContract
-  extends R2JCGLContract
+  extends R2ShaderLightProjectiveWithShadowContract<R2LightProjectiveWithShadowVarianceType>
 {
-  @Test
-  public final void testNew()
+  @Override
+  protected final R2LightProjectiveWithShadowVarianceType newLight(
+    final JCGLInterfaceGL33Type g,
+    final R2IDPoolType pool,
+    final R2TextureUnitContextType uc,
+    final R2TextureDefaultsType td)
   {
-    final JCGLContextType c = this.newGL33Context("main", 24, 8);
-    final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
-    final R2IDPoolType pool = R2IDPool.newPool();
+    final R2ProjectionType p =
+      R2ProjectionFrustum.newFrustum(JCGLProjectionMatrices.newMatrices());
+    final R2ProjectionMeshType pm =
+      R2ProjectionMesh.newMesh(
+        g, p, JCGLUsageHint.USAGE_STATIC_DRAW, JCGLUsageHint.USAGE_STATIC_DRAW);
 
-    final R2ShaderLightSingleType<R2LightProjectiveWithShadowVariance> s =
-      R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle.newShader(
-        g.getShaders(),
-        sources,
-        pool);
+    final R2ShadowDepthVariance shadow = R2ShadowDepthVariance.of(
+      pool.getFreshID(),
+      R2DepthVarianceBufferDescription.of(
+        AreaInclusiveUnsignedL.of(
+          new UnsignedRangeInclusiveL(0L, 63L),
+          new UnsignedRangeInclusiveL(0L, 63L)),
+        JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR,
+        JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+        R2DepthPrecision.R2_DEPTH_PRECISION_24,
+        R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16));
 
-    Assert.assertFalse(s.isDeleted());
-    s.delete(g);
-    Assert.assertTrue(s.isDeleted());
+    return R2LightProjectiveWithShadowVariance.newLight(
+      pm, td.getWhiteProjectiveTexture(), shadow, pool);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  protected final R2ShaderLightProjectiveWithShadowType<
+    R2LightProjectiveWithShadowVarianceType>
+  newShaderWithVerifier(
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderSourcesType sources,
+    final R2IDPoolType pool)
+  {
+    return R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle.newShader(
+      g.getShaders(), sources, pool);
   }
 }

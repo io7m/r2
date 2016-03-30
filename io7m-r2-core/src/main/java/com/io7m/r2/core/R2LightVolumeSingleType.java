@@ -16,11 +16,24 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jfunctional.PartialBiFunctionType;
+
 /**
  * The type of single-instance lights that operate using light volumes.
  */
 
-public interface R2LightVolumeSingleType extends R2LightSingleType
+public interface R2LightVolumeSingleType extends
+  R2LightVolumeSingleReadableType,
+  R2LightVolumeSingleWritableType,
+  R2LightSingleType
 {
-  // No extra methods
+  @Override
+  default <A, B, E extends Throwable> B matchLightSingle(
+    final A context,
+    final PartialBiFunctionType<A, R2LightVolumeSingleType, B, E> on_volume,
+    final PartialBiFunctionType<A, R2LightScreenSingleType, B, E> on_screen)
+    throws E
+  {
+    return on_volume.call(context, this);
+  }
 }
