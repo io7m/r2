@@ -116,7 +116,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
     void start()
     {
-      Assertive.ensure(!this.active);
+      Assertive.require(!this.active);
       this.variance.clear();
       this.active = true;
     }
@@ -354,7 +354,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
       @Override
       public void shadowMapContextFinish()
       {
-        Assertive.ensure(this.active);
+        Assertive.require(this.active);
 
         try {
           this.light = null;
@@ -366,8 +366,8 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
       void start()
       {
-        Assertive.ensure(!this.active);
-        Assertive.ensure(RendererContext.this.active);
+        Assertive.require(!this.active);
+        Assertive.require(RendererContext.this.active);
         this.active = true;
       }
     }

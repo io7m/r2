@@ -162,9 +162,9 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
 
     private void finishCurrentMesh()
     {
-      Assertive.ensure(this.mesh.isPresent());
+      Assertive.require(this.mesh.isPresent());
       final String name = this.mesh.get();
-      Assertive.ensure(!this.meshes.containsKey(name));
+      Assertive.require(!this.meshes.containsKey(name));
       final R2MeshBasicType m = this.builder.build();
       R2ObjMeshImporter.LOG.debug("loaded {}", name);
       this.meshes.put(name, m);
@@ -312,9 +312,9 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         return;
       }
 
-      Assertive.ensure(this.mesh_positions.containsKey(v));
-      Assertive.ensure(this.mesh_normals.containsKey(vn));
-      Assertive.ensure(this.mesh_textures.containsKey(vt));
+      Assertive.require(this.mesh_positions.containsKey(v));
+      Assertive.require(this.mesh_normals.containsKey(vn));
+      Assertive.require(this.mesh_textures.containsKey(vt));
 
       final long p_actual = this.mesh_positions.get(v);
       final long n_actual = this.mesh_normals.get(vn);
@@ -425,7 +425,7 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         return;
       }
 
-      Assertive.ensure(this.mesh.isPresent());
+      Assertive.require(this.mesh.isPresent());
       this.face_current = index;
     }
 
@@ -438,9 +438,9 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         return;
       }
 
-      Assertive.ensure(this.f_v0 != -1L);
-      Assertive.ensure(this.f_v1 != -1L);
-      Assertive.ensure(this.f_v2 != -1L);
+      Assertive.require(this.f_v0 != -1L);
+      Assertive.require(this.f_v1 != -1L);
+      Assertive.require(this.f_v2 != -1L);
 
       R2ObjMeshImporter.LOG.trace(
         "triangle {}/{}/{}",

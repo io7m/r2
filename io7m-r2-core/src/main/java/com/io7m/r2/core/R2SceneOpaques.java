@@ -102,7 +102,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
      */
 
     final Singles.Group g = this.singles.groups[group];
-    Assertive.ensure(!g.instances.containsKey(i_id));
+    Assertive.require(!g.instances.containsKey(i_id));
     this.singles.group_max = Math.max(this.singles.group_max, group + 1);
     g.instances.put(i_id, i);
     g.instance_materials.put(m_id, m);
@@ -176,7 +176,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
      */
 
     final Batches.Group g = this.batches.groups[group];
-    Assertive.ensure(!g.instances.containsKey(i_id));
+    Assertive.require(!g.instances.containsKey(i_id));
     this.batches.group_max = Math.max(this.batches.group_max, group + 1);
     g.instances.put(i_id, i);
     g.instance_materials.put(m_id, m);

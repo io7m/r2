@@ -147,9 +147,9 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventVertexCount(final long count)
   {
-    Assertive.ensure(this.array_buffer == null);
-    Assertive.ensure(this.array_object == null);
-    Assertive.ensure(this.index_buffer == null);
+    Assertive.require(this.array_buffer == null);
+    Assertive.require(this.array_object == null);
+    Assertive.require(this.index_buffer == null);
 
     this.vertex_count = OptionalLong.of(count);
 
@@ -168,10 +168,10 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventTriangleCount(final long count)
   {
-    Assertive.ensure(this.array_buffer != null);
-    Assertive.ensure(this.array_object == null);
-    Assertive.ensure(this.index_buffer == null);
-    Assertive.ensure(this.vertex_count.isPresent());
+    Assertive.require(this.array_buffer != null);
+    Assertive.require(this.array_object == null);
+    Assertive.require(this.index_buffer == null);
+    Assertive.require(this.vertex_count.isPresent());
 
     this.index_type_actual =
       R2IndexBuffers.getTypeForCount(
@@ -314,9 +314,9 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventVerticesFinished()
   {
-    Assertive.ensure(this.array_buffer != null);
-    Assertive.ensure(this.index_buffer != null);
-    Assertive.ensure(this.array_object != null);
+    Assertive.require(this.array_buffer != null);
+    Assertive.require(this.index_buffer != null);
+    Assertive.require(this.array_object != null);
 
     this.g_ab.arrayBufferBind(this.array_buffer);
     this.g_ab.arrayBufferUpdate(this.array_update);
@@ -377,9 +377,9 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventTrianglesFinished()
   {
-    Assertive.ensure(this.array_buffer != null);
-    Assertive.ensure(this.index_buffer != null);
-    Assertive.ensure(this.array_object != null);
+    Assertive.require(this.array_buffer != null);
+    Assertive.require(this.index_buffer != null);
+    Assertive.require(this.array_object != null);
 
     this.g_ao.arrayObjectBind(this.array_object);
     this.g_ib.indexBufferUpdate(this.index_update);

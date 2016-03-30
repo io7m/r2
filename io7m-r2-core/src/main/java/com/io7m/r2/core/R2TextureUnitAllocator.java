@@ -126,7 +126,7 @@ public final class R2TextureUnitAllocator implements R2TextureUnitAllocatorType
     NullCheck.notNull(c);
 
     final Context c_this = R2TextureUnitAllocator.this.contexts_active.pop();
-    Assertive.ensure(Objects.equals(c_this, c));
+    Assertive.require(Objects.equals(c_this, c));
     R2TextureUnitAllocator.this.contexts_free.push(c_this);
 
     final Context c_prev = R2TextureUnitAllocator.this.contexts_active.peek();
