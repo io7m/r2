@@ -20,7 +20,7 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.r2.core.R2CopyDepth;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2LightBufferUsableType;
+import com.io7m.r2.core.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
 /**
@@ -52,11 +52,18 @@ public interface R2FilterLightApplicatorParametersType
   R2GeometryBufferUsableType getGeometryBuffer();
 
   /**
-   * @return The light buffer that will be used to produce a lit image
+   * @return The diffuse light texture that will be used to produce a lit image
    */
 
   @Value.Parameter
-  R2LightBufferUsableType getLightBuffer();
+  R2Texture2DUsableType getLightDiffuseTexture();
+
+  /**
+   * @return The specular light texture that will be used to produce a lit image
+   */
+
+  @Value.Parameter
+  R2Texture2DUsableType getLightSpecularTexture();
 
   /**
    * @return The size of the current viewport

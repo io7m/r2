@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jfunctional.PartialBiFunctionType;
+
 /**
  * The type of usable light buffers.
  */
@@ -24,14 +26,26 @@ public interface R2LightBufferUsableType extends
   R2RenderTargetUsableType<R2LightBufferDescriptionType>
 {
   /**
-   * @return The diffuse texture
+   * Match on the type of projective light.
+   *
+   * @param context             A context value
+   * @param on_diffuse          Evaluated for diffuse-only light buffers
+   * @param on_diffuse_specular Evaluated for diffuse+specular light buffers
+   * @param on_specular         Evaluated for specular-only light buffers
+   * @param <A>                 The type of context values
+   * @param <B>                 The type of returned values
+   * @param <E>                 The type of raised exceptions
+   *
+   * @return A value of type {@code B}
+   *
+   * @throws E If any of the given functions raise {@code E}
    */
 
-  R2Texture2DUsableType getDiffuseTexture();
-
-  /**
-   * @return The specular texture
-   */
-
-  R2Texture2DUsableType getSpecularTexture();
+  <A, B, E extends Throwable>
+  B matchLightBuffer(
+    A context,
+    PartialBiFunctionType<A, R2LightBufferDiffuseOnlyUsableType, B, E> on_diffuse,
+    PartialBiFunctionType<A, R2LightBufferSpecularOnlyUsableType, B, E> on_specular,
+    PartialBiFunctionType<A, R2LightBufferDiffuseSpecularUsableType, B, E> on_diffuse_specular)
+    throws E;
 }
