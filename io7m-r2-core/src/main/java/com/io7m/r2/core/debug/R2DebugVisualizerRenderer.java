@@ -39,22 +39,20 @@ import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
-import com.io7m.jtensors.VectorM3F;
 import com.io7m.jtensors.VectorM4F;
 import com.io7m.jtensors.VectorReadable4FType;
+import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceBatchedType;
 import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2LightProjectiveReadableType;
-import com.io7m.r2.core.R2LightScreenSingleType;
-import com.io7m.r2.core.R2LightSingleReadableType;
-import com.io7m.r2.core.R2LightVolumeSingleReadableType;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesObserverType;
-import com.io7m.r2.core.R2SceneOpaqueLightsConsumerType;
-import com.io7m.r2.core.R2SceneOpaqueLightsType;
+import com.io7m.r2.core.R2SceneLightsClipGroupConsumerType;
+import com.io7m.r2.core.R2SceneLightsConsumerType;
+import com.io7m.r2.core.R2SceneLightsGroupConsumerType;
+import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaquesConsumerType;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
@@ -67,7 +65,6 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import org.valid4j.Assertive;
@@ -192,17 +189,17 @@ public final class R2DebugVisualizerRenderer implements
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
-    final R2SceneOpaqueLightsType so = s.getOpaqueLights();
+    final R2SceneLightsType so = s.getLights();
     final JCGLViewportsType g_v = this.g.getViewports();
 
-    final long light_count = so.opaqueLightsCount();
+    final long light_count = so.lightsCount();
     if (light_count > 0L && s.getShowOpaqueLights()) {
       g_v.viewportSet(area);
 
       this.light_consumer.matrices = m;
       this.light_consumer.texture_context = uc;
       try {
-        so.opaqueLightsExecute(this.light_consumer);
+        so.lightsExecute(this.light_consumer);
       } finally {
         this.light_consumer.texture_context = null;
         this.light_consumer.matrices = null;
@@ -434,7 +431,7 @@ public final class R2DebugVisualizerRenderer implements
   }
 
   private static final class LightConsumer implements
-    R2SceneOpaqueLightsConsumerType
+    R2SceneLightsConsumerType
   {
     private final JCGLInterfaceGL33Type g33;
     private final JCGLShadersType shaders;
@@ -501,107 +498,24 @@ public final class R2DebugVisualizerRenderer implements
     }
 
     @Override
+    public R2SceneLightsClipGroupConsumerType onStartClipGroup(
+      final R2InstanceSingleType i,
+      final int group)
+    {
+      // TODO: Generated method stub!
+      throw new UnimplementedCodeException();
+    }
+
+    @Override
+    public R2SceneLightsGroupConsumerType onStartGroup(
+      final int group)
+    {
+      // TODO: Generated method stub!
+      throw new UnimplementedCodeException();
+    }
+
+    @Override
     public void onFinish()
-    {
-
-    }
-
-    @Override
-    public void onStartGroup(final int group)
-    {
-
-    }
-
-    @Override
-    public <M extends R2LightSingleReadableType> void onLightSingleShaderStart(
-      final R2ShaderLightSingleUsableType<M> s)
-    {
-
-    }
-
-    @Override
-    public void onLightSingleArrayStart(final R2LightSingleReadableType i)
-    {
-
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <M extends R2LightSingleReadableType> void onLightSingle(
-      final R2ShaderLightSingleUsableType<M> s,
-      final M i)
-    {
-      /**
-       * Create a new texture context for this particular light.
-       */
-
-      final R2TextureUnitContextType uc =
-        this.texture_context.unitContextNew();
-
-      try {
-        VectorM3F.scale(
-          i.getColor(), (double) i.getIntensity(), this.light_color);
-        this.light_color.setWF(1.0f);
-
-        if (i instanceof R2LightScreenSingleType) {
-          this.onLightSingleScreen(
-            uc, (R2LightScreenSingleType) i, this.shader_screen);
-        } else {
-          this.onLightSingleVolume(
-            uc, (R2LightVolumeSingleReadableType) i, this.shader_single);
-        }
-      } finally {
-        uc.unitContextFinish(this.textures);
-        this.shaders.shaderDeactivateProgram();
-      }
-    }
-
-    private void onLightSingleScreen(
-      final R2TextureUnitContextType uc,
-      final R2LightScreenSingleType i,
-      final R2ShaderInstanceSingleScreenType<VectorReadable4FType> s)
-    {
-      s.onActivate(this.shaders);
-      s.onReceiveViewValues(
-        this.shaders, this.matrices);
-      s.onReceiveMaterialValues(
-        this.textures, this.shaders, uc, this.light_color);
-    }
-
-    private void onLightSingleVolume(
-      final R2TextureUnitContextType uc,
-      final R2LightVolumeSingleReadableType i,
-      final R2ShaderInstanceSingleType<VectorReadable4FType> s)
-    {
-      s.onActivate(this.shaders);
-      s.onReceiveViewValues(
-        this.shaders, this.matrices);
-      s.onReceiveMaterialValues(
-        this.textures, this.shaders, uc, this.light_color);
-
-      if (i instanceof R2LightProjectiveReadableType) {
-        this.onLightSingleProjective(uc, (R2LightProjectiveReadableType) i, s);
-        return;
-      }
-    }
-
-    private void onLightSingleProjective(
-      final R2TextureUnitContextType uc,
-      final R2LightProjectiveReadableType i,
-      final R2ShaderInstanceSingleType<VectorReadable4FType> s)
-    {
-
-    }
-
-    @Override
-    public <M extends R2LightSingleReadableType> void onLightSingleShaderFinish(
-      final R2ShaderLightSingleUsableType<M> s)
-    {
-
-    }
-
-    @Override
-    public void onFinishGroup(final int group)
     {
 
     }

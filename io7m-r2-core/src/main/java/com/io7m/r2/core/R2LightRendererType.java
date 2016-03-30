@@ -41,7 +41,7 @@ public interface R2LightRendererType extends R2DeletableType
     R2TextureUnitContextParentType uc,
     R2ShadowMapContextUsableType shadows,
     R2MatricesObserverType m,
-    R2SceneOpaqueLightsType s);
+    R2SceneLightsType s);
 
   /**
    * Render the given lights into the currently bound light buffer.
@@ -60,5 +60,5 @@ public interface R2LightRendererType extends R2DeletableType
     R2TextureUnitContextParentType uc,
     R2ShadowMapContextUsableType shadows,
     R2MatricesObserverType m,
-    R2SceneOpaqueLightsType s);
+    R2SceneLightsType s);
 }

@@ -65,8 +65,8 @@ import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2LightProjectiveType;
 import com.io7m.r2.core.R2LightProjectiveWithoutShadow;
-import com.io7m.r2.core.R2LightRendererNew;
-import com.io7m.r2.core.R2LightRendererNewType;
+import com.io7m.r2.core.R2LightRenderer;
+import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2LightSphericalSingle;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
@@ -204,7 +204,7 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
 
   private R2DebugVisualizerRendererParametersMutable debug_params;
   private R2ShadowMapContextType shadow_context;
-  private R2LightRendererNewType light_renderer;
+  private R2LightRendererType light_renderer;
 
   public ExampleLightSpherical4New()
   {
@@ -631,7 +631,7 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
     }
 
     this.light_renderer =
-      R2LightRendererNew.newRenderer(gx, sources, id_pool, m.getUnitQuad());
+      R2LightRenderer.newRenderer(gx, sources, id_pool, m.getUnitQuad());
   }
 
   @Override

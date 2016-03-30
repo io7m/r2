@@ -86,8 +86,9 @@ import com.io7m.r2.core.R2ProjectionFrustum;
 import com.io7m.r2.core.R2ProjectionMesh;
 import com.io7m.r2.core.R2ProjectionMeshType;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
-import com.io7m.r2.core.R2SceneOpaqueLights;
-import com.io7m.r2.core.R2SceneOpaqueLightsType;
+import com.io7m.r2.core.R2SceneLights;
+import com.io7m.r2.core.R2SceneLightsGroupType;
+import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaques;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
@@ -156,7 +157,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
   private R2ProjectionFOV projection;
   private R2InstanceSingleType instance;
   private R2SceneOpaquesType opaques;
-  private R2SceneOpaqueLightsType lights;
+  private R2SceneLightsType lights;
 
   private R2GeometryBufferType gbuffer;
   private R2LightBufferType lbuffer;
@@ -235,7 +236,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
 
     this.sphere = R2UnitSphere.newUnitSphere8(gx);
     this.opaques = R2SceneOpaques.newOpaques();
-    this.lights = R2SceneOpaqueLights.newLights();
+    this.lights = R2SceneLights.newLights();
     this.stencils = R2SceneStencils.newMasks();
 
     {
@@ -647,7 +648,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
     {
       this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
       this.debug_params.setOpaqueInstances(this.opaques);
-      this.debug_params.setOpaqueLights(this.lights);
+      this.debug_params.setLights(this.lights);
       this.debug_params.setShowOpaqueInstances(false);
       this.debug_params.setShowOpaqueLights(false);
     }
@@ -707,12 +708,14 @@ public final class ExampleLightProjectiveWithShadow0 implements
     this.opaques.opaquesAddBatchedInstance(
       this.batched_instance, this.batched_geom_material);
 
-    this.lights.opaqueLightsReset();
-    this.lights.opaqueLightsAddSingle(
+    this.lights.lightsReset();
+
+    final R2SceneLightsGroupType lg = this.lights.lightsGetGroup(1);
+    lg.lightGroupAddSingle(
       this.light_ambient, this.light_ambient_shader);
-    //this.lights.opaqueLightsAddSingle(
-    //  this.sphere_light, this.sphere_light_shader);
-    this.lights.opaqueLightsAddSingle(
+    lg.lightGroupAddSingle(
+      this.sphere_light, this.sphere_light_shader);
+    lg.lightGroupAddSingle(
       this.proj_light, this.proj_light_shader);
 
     if (servx.isFreeCameraEnabled()) {
