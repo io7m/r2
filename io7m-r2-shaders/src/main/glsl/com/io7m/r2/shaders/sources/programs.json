@@ -182,5 +182,35 @@
   "R2LogDepthOnlySingle" : {
     "vertex":   "/com/io7m/r2/shaders/sources/R2LogDepthOnlySingle.vert",
     "fragment": "/com/io7m/r2/shaders/sources/R2LogDepthOnlySingle.frag"
+  },
+
+  "R2FXAA_10" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_10.frag"
+  },
+
+  "R2FXAA_15" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_15.frag"
+  },
+
+  "R2FXAA_20" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_20.frag"
+  },
+
+  "R2FXAA_25" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_25.frag"
+  },
+
+  "R2FXAA_29" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_29.frag"
+  },
+
+  "R2FXAA_39" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_39.frag"
   }
 }
