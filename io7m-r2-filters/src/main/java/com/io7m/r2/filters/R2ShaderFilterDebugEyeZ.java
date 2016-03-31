@@ -121,7 +121,6 @@ public final class R2ShaderFilterDebugEyeZ extends
       new R2ShaderFilterDebugEyeZ(in_shaders, in_sources, in_pool));
   }
 
-
   @Override
   public Class<R2FilterDebugEyeZParametersType>
   getShaderParametersType()

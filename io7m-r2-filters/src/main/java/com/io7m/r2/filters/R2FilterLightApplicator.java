@@ -33,7 +33,6 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightBufferUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
@@ -48,8 +47,8 @@ import java.util.Set;
  * A trivial filter that combines a geometry buffer and a light buffer into a
  * lit image.
  *
- * @see R2GeometryBufferUsableType
- * @see R2LightBufferUsableType
+ * @see com.io7m.r2.core.R2GeometryBufferUsableType
+ * @see com.io7m.r2.core.R2LightBufferUsableType
  */
 
 public final class R2FilterLightApplicator implements
