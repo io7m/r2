@@ -17,6 +17,7 @@
 package com.io7m.r2.filters;
 
 import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
 /**
@@ -29,6 +30,13 @@ import org.immutables.value.Value;
 @R2ImmutableStyleType
 public interface R2FilterFXAAParametersType
 {
+  /**
+   * @return The texture that will be filtered
+   */
+
+  @Value.Parameter
+  R2Texture2DUsableType getTexture();
+
   /**
    * @return The FXAA quality preset
    */

@@ -118,6 +118,10 @@ import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
 import com.io7m.r2.filters.R2FilterCompositorParameters;
 import com.io7m.r2.filters.R2FilterCompositorParametersType;
+import com.io7m.r2.filters.R2FilterFXAA;
+import com.io7m.r2.filters.R2FilterFXAAParametersMutable;
+import com.io7m.r2.filters.R2FilterFXAAParametersType;
+import com.io7m.r2.filters.R2FilterFXAAQuality;
 import com.io7m.r2.filters.R2FilterLightApplicator;
 import com.io7m.r2.filters.R2FilterLightApplicatorParameters;
 import com.io7m.r2.filters.R2FilterLightApplicatorParametersType;
@@ -135,6 +139,7 @@ import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import org.valid4j.Assertive;
 
 import java.util.Optional;
 
@@ -186,6 +191,9 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
 
   private R2FilterSSAOParametersMutable filter_ssao_params;
   private R2FilterType<R2FilterSSAOParametersType> filter_ssao;
+
+  private R2FilterType<R2FilterFXAAParametersType> filter_fxaa;
+  private R2FilterFXAAParametersMutable filter_fxaa_params;
 
   private R2FilterType<R2FilterCompositorParametersType> filter_compositor;
   private R2FilterCompositorParameters filter_comp_parameters;
@@ -444,6 +452,21 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
         gx,
         m.getIDPool(),
         m.getUnitQuad());
+
+    this.filter_fxaa =
+      R2FilterFXAA.newFilter(
+        gx,
+        m.getShaderSources(),
+        m.getIDPool(),
+        m.getUnitQuad());
+
+    this.filter_fxaa_params = R2FilterFXAAParametersMutable.create();
+    this.filter_fxaa_params.setTexture(this.ibuffer.getRGBATexture());
+    this.filter_fxaa_params.setSubPixelAliasingRemoval(0.0f);
+    this.filter_fxaa_params.setEdgeThreshold(0.333f);
+    this.filter_fxaa_params.setEdgeThresholdMinimum(0.0833f);
+    this.filter_fxaa_params.setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10);
+    Assertive.ensure(this.filter_fxaa_params.isInitialized());
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -745,18 +768,25 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
 
         // t.filter_ssao_app.runFilter(uc, t.filter_ssao_app_params);
 
+        g_fb.framebufferDrawBind(t.ibuffer.getPrimaryFramebuffer());
+        g_cb.colorBufferMask(true, true, true, true);
+        g_cl.clear(t.screen_clear_spec);
+
+        t.filter_light.runFilter(uc, t.filter_light_params);
+        g_fb.framebufferDrawUnbind();
+
         g_cb.colorBufferMask(true, true, true, true);
         g_db.depthBufferWriteEnable();
         g_sb.stencilBufferMask(
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-        t.filter_light.runFilter(uc, t.filter_light_params);
 //        t.main.getDebugVisualizerRenderer().renderScene(
 //          areax,
 //          uc,
 //          mo,
 //          t.debug_params);
+        t.filter_fxaa.runFilter(uc, t.filter_fxaa_params);
         t.filter_compositor.runFilter(uc, t.filter_comp_parameters);
 
         return Unit.unit();
