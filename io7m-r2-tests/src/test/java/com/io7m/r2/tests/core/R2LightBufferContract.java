@@ -20,19 +20,32 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2LightBuffer;
+import com.io7m.r2.core.R2LightBufferComponents;
 import com.io7m.r2.core.R2LightBufferDescription;
+import com.io7m.r2.core.R2LightBufferDescriptionType;
+import com.io7m.r2.core.R2LightBufferDiffuseOnlyUsableType;
+import com.io7m.r2.core.R2LightBufferDiffuseSpecularUsableType;
+import com.io7m.r2.core.R2LightBufferSpecularOnlyUsableType;
 import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureUnitAllocator;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
+import com.io7m.r2.core.R2TextureUnitContextParentType;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2LightBufferContract extends R2JCGLContract
 {
+  protected abstract R2LightBufferType newLightBuffer(
+    JCGLFramebuffersType g_fb,
+    JCGLTexturesType g_tex,
+    R2TextureUnitContextParentType tc,
+    R2LightBufferDescriptionType desc);
+
   @Test
   public final void testIdentities()
   {
@@ -46,32 +59,74 @@ public abstract class R2LightBufferContract extends R2JCGLContract
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final R2LightBufferType gb =
-      R2LightBuffer.newLightBuffer(
-        g.getFramebuffers(),
-        g.getTextures(),
-        tc.getRootContext(),
-        R2LightBufferDescription.of(area));
+    for (final R2LightBufferComponents lc : R2LightBufferComponents.values()) {
+      final R2LightBufferDescription.Builder desc_b =
+        R2LightBufferDescription.builder();
+      desc_b.setArea(area);
+      desc_b.setComponents(lc);
 
-    Assert.assertEquals(640L * 480L * 12L, gb.getRange().getInterval());
-    Assert.assertFalse(gb.isDeleted());
+      final R2LightBufferType gb =
+        this.newLightBuffer(
+          g.getFramebuffers(),
+          g.getTextures(),
+          tc.getRootContext(),
+          desc_b.build());
 
-    final R2Texture2DUsableType t_diffuse =
-      gb.getDiffuseTexture();
-    final R2Texture2DUsableType t_spec =
-      gb.getSpecularTexture();
-    final JCGLFramebufferUsableType fb =
-      gb.getPrimaryFramebuffer();
+      Assert.assertFalse(gb.isDeleted());
 
-    Assert.assertEquals(
-      JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-      t_diffuse.get().textureGetFormat());
-    Assert.assertEquals(
-      JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-      t_spec.get().textureGetFormat());
+      switch (lc) {
+        case R2_LIGHT_BUFFER_DIFFUSE_ONLY: {
+          final R2LightBufferDiffuseOnlyUsableType gbb =
+            (R2LightBufferDiffuseOnlyUsableType) gb;
+          final R2Texture2DUsableType t_diffuse =
+            gbb.getDiffuseTexture();
 
-    gb.delete(g);
-    Assert.assertTrue(fb.isDeleted());
-    Assert.assertTrue(gb.isDeleted());
+          Assert.assertEquals(
+            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+            t_diffuse.get().textureGetFormat());
+
+          Assert.assertEquals(640L * 480L * 8L, gb.getRange().getInterval());
+          break;
+        }
+        case R2_LIGHT_BUFFER_SPECULAR_ONLY: {
+          final R2LightBufferSpecularOnlyUsableType gbb =
+            (R2LightBufferSpecularOnlyUsableType) gb;
+          final R2Texture2DUsableType t_spec =
+            gbb.getSpecularTexture();
+
+          Assert.assertEquals(
+            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+            t_spec.get().textureGetFormat());
+
+          Assert.assertEquals(640L * 480L * 8L, gb.getRange().getInterval());
+          break;
+        }
+        case R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR: {
+          final R2LightBufferDiffuseSpecularUsableType gbb =
+            (R2LightBufferDiffuseSpecularUsableType) gb;
+          final R2Texture2DUsableType t_diffuse =
+            gbb.getDiffuseTexture();
+          final R2Texture2DUsableType t_spec =
+            gbb.getSpecularTexture();
+
+          Assert.assertEquals(
+            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+            t_diffuse.get().textureGetFormat());
+          Assert.assertEquals(
+            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+            t_spec.get().textureGetFormat());
+
+          Assert.assertEquals(640L * 480L * 12L, gb.getRange().getInterval());
+          break;
+        }
+      }
+
+      final JCGLFramebufferUsableType fb =
+        gb.getPrimaryFramebuffer();
+
+      gb.delete(g);
+      Assert.assertTrue(fb.isDeleted());
+      Assert.assertTrue(gb.isDeleted());
+    }
   }
 }

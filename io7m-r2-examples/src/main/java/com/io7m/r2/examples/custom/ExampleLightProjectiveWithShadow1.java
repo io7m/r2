@@ -66,9 +66,10 @@ import com.io7m.r2.core.R2InstanceBatchedDynamicType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightAmbientScreenSingle;
-import com.io7m.r2.core.R2LightBuffer;
 import com.io7m.r2.core.R2LightBufferDescription;
+import com.io7m.r2.core.R2LightBufferDiffuseSpecularUsableType;
 import com.io7m.r2.core.R2LightBufferType;
+import com.io7m.r2.core.R2LightBuffers;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
 import com.io7m.r2.core.R2LightSphericalSingle;
@@ -272,7 +273,7 @@ public final class ExampleLightProjectiveWithShadow1 implements
         R2LightBufferDescription.builder();
       b.setArea(area);
 
-      this.lbuffer = R2LightBuffer.newLightBuffer(
+      this.lbuffer = R2LightBuffers.newLightBuffer(
         gx.getFramebuffers(),
         gx.getTextures(),
         m.getTextureUnitAllocator().getRootContext(),
@@ -339,23 +340,28 @@ public final class ExampleLightProjectiveWithShadow1 implements
       x = 20L;
       y = 20L + 96L + 20L;
 
-      b.addItems(R2FilterCompositorItem.of(
-        this.lbuffer.getDiffuseTexture(),
-        AreaInclusiveUnsignedL.of(
-          new UnsignedRangeInclusiveL(x, x + 128L),
-          new UnsignedRangeInclusiveL(y, y + 96L)),
-        1.0f,
-        Optional.empty()));
+      {
+        final R2LightBufferDiffuseSpecularUsableType lbb =
+          (R2LightBufferDiffuseSpecularUsableType) this.lbuffer;
 
-      x += 128L + 20L;
+        b.addItems(R2FilterCompositorItem.of(
+          lbb.getDiffuseTexture(),
+          AreaInclusiveUnsignedL.of(
+            new UnsignedRangeInclusiveL(x, x + 128L),
+            new UnsignedRangeInclusiveL(y, y + 96L)),
+          1.0f,
+          Optional.empty()));
 
-      b.addItems(R2FilterCompositorItem.of(
-        this.lbuffer.getSpecularTexture(),
-        AreaInclusiveUnsignedL.of(
-          new UnsignedRangeInclusiveL(x, x + 128L),
-          new UnsignedRangeInclusiveL(y, y + 96L)),
-        1.0f,
-        Optional.empty()));
+        x += 128L + 20L;
+
+        b.addItems(R2FilterCompositorItem.of(
+          lbb.getSpecularTexture(),
+          AreaInclusiveUnsignedL.of(
+            new UnsignedRangeInclusiveL(x, x + 128L),
+            new UnsignedRangeInclusiveL(y, y + 96L)),
+          1.0f,
+          Optional.empty()));
+      }
 
       x += 128L + 20L;
 
@@ -636,12 +642,7 @@ public final class ExampleLightProjectiveWithShadow1 implements
     this.sphere_light.setRadius(30.0f);
 
     this.filter_light =
-      R2FilterLightApplicator.newFilter(
-        sources,
-        m.getTextureDefaults(),
-        gx,
-        id_pool,
-        m.getUnitQuad());
+      R2FilterLightApplicator.newFilter(sources, gx, id_pool, m.getUnitQuad());
 
     {
       this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
@@ -654,9 +655,12 @@ public final class ExampleLightProjectiveWithShadow1 implements
     {
       final R2FilterLightApplicatorParameters.Builder b =
         R2FilterLightApplicatorParameters.builder();
+      final R2LightBufferDiffuseSpecularUsableType lb =
+        (R2LightBufferDiffuseSpecularUsableType) this.lbuffer;
 
       b.setGeometryBuffer(this.gbuffer);
-      b.setLightBuffer(this.lbuffer);
+      b.setLightSpecularTexture(lb.getSpecularTexture());
+      b.setLightDiffuseTexture(lb.getDiffuseTexture());
       b.setOutputViewport(this.ibuffer.getArea());
 
       this.filter_light_params = b.build();

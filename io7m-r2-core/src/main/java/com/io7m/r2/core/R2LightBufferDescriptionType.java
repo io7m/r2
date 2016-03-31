@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import org.immutables.value.Value;
 
 /**
@@ -27,5 +28,18 @@ import org.immutables.value.Value;
 public interface R2LightBufferDescriptionType extends
   R2RenderTargetDescriptionType
 {
-  // No extra methods
+  @Override
+  @Value.Parameter
+  AreaInclusiveUnsignedLType getArea();
+
+  /**
+   * @return The components that will be allocated in the light buffer
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default R2LightBufferComponents getComponents()
+  {
+    return R2LightBufferComponents.R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR;
+  }
 }

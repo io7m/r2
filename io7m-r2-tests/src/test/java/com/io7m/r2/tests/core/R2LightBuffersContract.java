@@ -14,19 +14,24 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.jogl;
+package com.io7m.r2.tests.core;
 
-import com.io7m.jcanephora.core.api.JCGLContextType;
-import com.io7m.r2.tests.core.R2LightBuffersContract;
+import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
+import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.r2.core.R2LightBufferDescriptionType;
+import com.io7m.r2.core.R2LightBufferType;
+import com.io7m.r2.core.R2LightBuffers;
+import com.io7m.r2.core.R2TextureUnitContextParentType;
 
-public final class R2LightBufferTest extends R2LightBuffersContract
+public abstract class R2LightBuffersContract extends R2LightBufferContract
 {
   @Override
-  protected JCGLContextType newGL33Context(
-    final String name,
-    final int depth_bits,
-    final int stencil_bits)
+  protected final R2LightBufferType newLightBuffer(
+    final JCGLFramebuffersType g_fb,
+    final JCGLTexturesType g_tex,
+    final R2TextureUnitContextParentType tc,
+    final R2LightBufferDescriptionType desc)
   {
-    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+    return R2LightBuffers.newLightBuffer(g_fb, g_tex, tc, desc);
   }
 }

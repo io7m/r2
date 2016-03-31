@@ -28,9 +28,11 @@ import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2LightBuffer;
+import com.io7m.r2.core.R2LightBufferComponents;
 import com.io7m.r2.core.R2LightBufferDescription;
+import com.io7m.r2.core.R2LightBufferDiffuseSpecularUsableType;
 import com.io7m.r2.core.R2LightBufferType;
+import com.io7m.r2.core.R2LightBuffers;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.R2TextureUnitAllocator;
@@ -85,18 +87,27 @@ public abstract class R2ShaderFilterLightApplicatorContract extends
           tc_alloc,
           R2GeometryBufferDescription.of(area));
 
+        final R2LightBufferDescription.Builder desc_b =
+          R2LightBufferDescription.builder();
+        desc_b.setArea(area);
+        desc_b.setComponents(
+          R2LightBufferComponents.R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR);
+
       final R2LightBufferType lb =
-        R2LightBuffer.newLightBuffer(
+        R2LightBuffers.newLightBuffer(
           g.getFramebuffers(),
           g_tex,
           tc_alloc,
-          R2LightBufferDescription.of(area));
+          desc_b.build());
+
+      final R2LightBufferDiffuseSpecularUsableType diff_spec =
+        (R2LightBufferDiffuseSpecularUsableType) lb;
 
       g_fb.framebufferDrawUnbind();
 
       p.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
-      p.setDiffuseTexture(lb.getDiffuseTexture());
-      p.setSpecularTexture(lb.getSpecularTexture());
+      p.setDiffuseTexture(diff_spec.getDiffuseTexture());
+      p.setSpecularTexture(diff_spec.getSpecularTexture());
 
     } finally {
       tc_alloc.unitContextFinish(g_tex);
