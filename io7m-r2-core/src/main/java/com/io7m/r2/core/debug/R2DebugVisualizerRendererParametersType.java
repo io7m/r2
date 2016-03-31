@@ -20,6 +20,7 @@ import com.io7m.jtensors.VectorReadable4FType;
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaquesType;
+import com.io7m.r2.core.R2UnitSphereUsableType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import org.immutables.value.Value;
@@ -33,6 +34,13 @@ import org.immutables.value.Value;
 @R2ImmutableStyleType
 public interface R2DebugVisualizerRendererParametersType
 {
+  /**
+   * @return A unit sphere used to render various pieces of debug geometry
+   */
+
+  @Value.Parameter
+  R2UnitSphereUsableType getUnitSphere();
+
   /**
    * @return The opaque instances in the scene.
    */
@@ -59,12 +67,12 @@ public interface R2DebugVisualizerRendererParametersType
   }
 
   /**
-   * @return {@code true} iff opaque lights should be rendered
+   * @return {@code true} iff lights should be rendered
    */
 
   @Value.Parameter
   @Value.Default
-  default boolean getShowOpaqueLights()
+  default boolean getShowLights()
   {
     return true;
   }

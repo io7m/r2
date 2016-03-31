@@ -27,14 +27,6 @@ public interface R2LightVolumeSingleReadableType extends
   R2LightSingleReadableType
 {
   /**
-   * Get access to the readable transform for the light volume geometry.
-   *
-   * @return The readable transform for the light volume
-   */
-
-  R2TransformReadableType getTransform();
-
-  /**
    * Match on the type of volume light.
    *
    * @param context       A context value

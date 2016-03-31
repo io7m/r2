@@ -649,7 +649,7 @@ public final class ExampleLightProjectiveWithShadow1 implements
       this.debug_params.setOpaqueInstances(this.opaques);
       this.debug_params.setLights(this.lights);
       this.debug_params.setShowOpaqueInstances(false);
-      this.debug_params.setShowOpaqueLights(false);
+      this.debug_params.setShowLights(false);
     }
 
     {

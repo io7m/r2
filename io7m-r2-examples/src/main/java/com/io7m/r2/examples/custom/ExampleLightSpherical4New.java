@@ -631,7 +631,10 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
       this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
       this.debug_params.setOpaqueInstances(this.opaques);
       this.debug_params.setShowOpaqueInstances(false);
-      this.debug_params.setShowOpaqueLights(false);
+      this.debug_params.setShowLights(true);
+      this.debug_params.setLights(this.lights);
+      this.debug_params.setUnitSphere(this.sphere);
+      Assertive.ensure(this.debug_params.isInitialized());
     }
 
     {
@@ -781,12 +784,14 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-//        t.main.getDebugVisualizerRenderer().renderScene(
-//          areax,
-//          uc,
-//          mo,
-//          t.debug_params);
         t.filter_fxaa.runFilter(uc, t.filter_fxaa_params);
+
+        t.main.getDebugVisualizerRenderer().renderScene(
+          areax,
+          uc,
+          mo,
+          t.debug_params);
+
         t.filter_compositor.runFilter(uc, t.filter_comp_parameters);
 
         return Unit.unit();
