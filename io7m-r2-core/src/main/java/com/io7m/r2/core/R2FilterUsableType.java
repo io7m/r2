@@ -36,8 +36,7 @@ public interface R2FilterUsableType<P>
    */
 
   void runFilter(
-    final
-    R2ProfilingContextType pc,
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final P parameters);
 }
