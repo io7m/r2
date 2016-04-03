@@ -37,6 +37,7 @@ import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderScreen;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
@@ -111,17 +112,100 @@ public final class R2StencilRenderer implements R2StencilRendererType
   @Override
   public void renderStencilsWithBoundBuffer(
     final R2MatricesObserverType m,
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final AreaInclusiveUnsignedLType area,
     final R2SceneStencilsType s)
   {
     NullCheck.notNull(m);
+    NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(area);
     NullCheck.notNull(s);
 
     Assertive.require(!this.deleted);
 
+    final R2ProfilingContextType pc_base =
+      pc.getChildContext("stencil");
+    final R2ProfilingContextType pc_setup =
+      pc_base.getChildContext("clear");
+    pc_setup.startMeasuringIfEnabled();
+
+    try {
+      this.renderBase(area, s);
+    } finally {
+      pc_setup.stopMeasuringIfEnabled();
+    }
+
+    final R2ProfilingContextType pc_instances =
+      pc_base.getChildContext("instances");
+    pc_instances.startMeasuringIfEnabled();
+
+    try {
+      this.renderInstances(m, uc, s);
+    } finally {
+      pc_instances.stopMeasuringIfEnabled();
+    }
+  }
+
+  private void renderInstances(
+    final R2MatricesObserverType m,
+    final R2TextureUnitContextParentType uc,
+    final R2SceneStencilsType s)
+  {
+    if (s.stencilsCount() > 0L) {
+      final JCGLStencilBuffersType g_st = this.g.getStencilBuffers();
+      switch (s.stencilsGetMode()) {
+        case STENCIL_MODE_INSTANCES_ARE_NEGATIVE: {
+
+          /**
+           * Each instance will unset the {@link R2Stencils#ALLOW_BIT} for
+           * each affected pixel.
+           */
+
+          g_st.stencilBufferFunction(
+            JCGLFaceSelection.FACE_FRONT_AND_BACK,
+            JCGLStencilFunction.STENCIL_ALWAYS,
+            0,
+            0);
+
+          break;
+        }
+        case STENCIL_MODE_INSTANCES_ARE_POSITIVE: {
+
+          /**
+           * Each instance will set the {@link R2Stencils#ALLOW_BIT} for
+           * each affected pixel.
+           */
+
+          g_st.stencilBufferFunction(
+            JCGLFaceSelection.FACE_FRONT_AND_BACK,
+            JCGLStencilFunction.STENCIL_ALWAYS,
+            R2Stencils.ALLOW_BIT,
+            R2Stencils.ALLOW_BIT);
+
+          break;
+        }
+      }
+
+      try {
+        this.stencil_consumer.g33 = this.g;
+        this.stencil_consumer.matrices = m;
+        this.stencil_consumer.texture_context = uc;
+
+        s.stencilsExecute(this.stencil_consumer);
+      } finally {
+        this.stencil_consumer.g33 = null;
+        this.stencil_consumer.texture_context = null;
+        this.stencil_consumer.matrices = null;
+      }
+    }
+  }
+
+  private void renderBase(
+    final AreaInclusiveUnsignedLType area,
+    final R2SceneStencilsType s)
+  {
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
     final JCGLBlendingType g_b = this.g.getBlending();
@@ -209,53 +293,6 @@ public final class R2StencilRenderer implements R2StencilRendererType
     g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
     g_ao.arrayObjectUnbind();
     g_sh.shaderDeactivateProgram();
-
-    if (s.stencilsCount() > 0L) {
-
-      switch (s.stencilsGetMode()) {
-        case STENCIL_MODE_INSTANCES_ARE_NEGATIVE: {
-
-          /**
-           * Each instance will unset the {@link R2Stencils#ALLOW_BIT} for
-           * each affected pixel.
-           */
-
-          g_st.stencilBufferFunction(
-            JCGLFaceSelection.FACE_FRONT_AND_BACK,
-            JCGLStencilFunction.STENCIL_ALWAYS,
-            0,
-            0);
-
-          break;
-        }
-        case STENCIL_MODE_INSTANCES_ARE_POSITIVE: {
-
-          /**
-           * Each instance will set the {@link R2Stencils#ALLOW_BIT} for
-           * each affected pixel.
-           */
-
-          g_st.stencilBufferFunction(
-            JCGLFaceSelection.FACE_FRONT_AND_BACK,
-            JCGLStencilFunction.STENCIL_ALWAYS,
-            R2Stencils.ALLOW_BIT,
-            R2Stencils.ALLOW_BIT);
-
-          break;
-        }
-      }
-
-      try {
-        this.stencil_consumer.g33 = this.g;
-        this.stencil_consumer.matrices = m;
-        this.stencil_consumer.texture_context = uc;
-        s.stencilsExecute(this.stencil_consumer);
-      } finally {
-        this.stencil_consumer.g33 = null;
-        this.stencil_consumer.texture_context = null;
-        this.stencil_consumer.matrices = null;
-      }
-    }
   }
 
   @Override
@@ -264,6 +301,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
   {
     if (!this.isDeleted()) {
       try {
+        R2StencilRenderer.LOG.debug("delete");
         this.program_instance.delete(gi);
         this.program_screen.delete(gi);
       } finally {

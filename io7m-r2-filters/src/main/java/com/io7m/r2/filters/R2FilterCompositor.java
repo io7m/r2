@@ -34,6 +34,7 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
@@ -117,12 +118,27 @@ public final class R2FilterCompositor implements
 
   @Override
   public void runFilter(
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2FilterCompositorParametersType parameters)
   {
+    NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
+    final R2ProfilingContextType pc_base = pc.getChildContext("compositor");
+    pc_base.startMeasuringIfEnabled();
+    try {
+      this.run(uc, parameters);
+    } finally {
+      pc_base.stopMeasuringIfEnabled();
+    }
+  }
+
+  private void run(
+    final R2TextureUnitContextParentType uc,
+    final R2FilterCompositorParametersType parameters)
+  {
     final JCGLBlendingType g_b = this.g.getBlending();
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();

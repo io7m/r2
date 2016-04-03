@@ -33,10 +33,6 @@ import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.renderstate.JCGLColorBufferMaskingState;
-import com.io7m.jcanephora.renderstate.JCGLDepthClamping;
-import com.io7m.jcanephora.renderstate.JCGLDepthState;
-import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
-import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
@@ -61,19 +57,14 @@ public final class R2ImageBuffer implements R2ImageBufferType
 
   static {
     final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
-    k.setDepthState(JCGLDepthState.of(
-      JCGLDepthStrict.DEPTH_STRICT_ENABLED,
-      Optional.empty(),
-      JCGLDepthWriting.DEPTH_WRITE_ENABLED,
-      JCGLDepthClamping.DEPTH_CLAMP_ENABLED
-    ));
+
     k.setColorBufferMaskingState(
       JCGLColorBufferMaskingState.of(true, true, true, true));
     CLEAR_STATE = JCGLRenderState.builder().from(k).build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
       Optional.of(new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f)),
-      OptionalDouble.of(1.0),
+      OptionalDouble.empty(),
       OptionalInt.empty(),
       true);
   }

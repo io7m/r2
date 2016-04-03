@@ -43,8 +43,11 @@ import com.io7m.jcanephora.renderstate.JCGLStencilStateMutable;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.valid4j.Assertive;
 
 import java.util.Optional;
@@ -55,10 +58,16 @@ import java.util.Optional;
 
 public final class R2GeometryRenderer implements R2GeometryRendererType
 {
-  private final OpaqueConsumer        opaque_consumer;
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2GeometryRenderer.class);
+  }
+
+  private final OpaqueConsumer opaque_consumer;
   private final JCGLInterfaceGL33Type g;
-  private final JCGLRenderState       render_state_base;
-  private       boolean               deleted;
+  private final JCGLRenderState render_state_base;
+  private boolean deleted;
 
   private R2GeometryRenderer(final JCGLInterfaceGL33Type in_g)
   {
@@ -108,11 +117,13 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   @Override
   public void renderGeometry(
     final R2GeometryBufferUsableType gbuffer,
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
   {
     NullCheck.notNull(gbuffer);
+    NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
@@ -124,7 +135,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     try {
       g_fb.framebufferDrawBind(gb_fb);
-      this.renderGeometryWithBoundBuffer(gbuffer.getArea(), uc, m, s);
+      this.renderGeometryWithBoundBuffer(gbuffer.getArea(), pc, uc, m, s);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -133,10 +144,12 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   @Override
   public void renderGeometryWithBoundBuffer(
     final AreaInclusiveUnsignedLType area,
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
   {
+    NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
@@ -153,11 +166,13 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.opaque_consumer.render_state.from(this.render_state_base);
       this.opaque_consumer.matrices = m;
       this.opaque_consumer.texture_context = uc;
+      this.opaque_consumer.profiling_context = pc.getChildContext("geometry");
       try {
         s.opaquesExecute(this.opaque_consumer);
       } finally {
         this.opaque_consumer.texture_context = null;
         this.opaque_consumer.matrices = null;
+        this.opaque_consumer.profiling_context = null;
       }
     }
   }
@@ -166,6 +181,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   public void delete(final JCGLInterfaceGL33Type g3)
     throws R2Exception
   {
+    R2GeometryRenderer.LOG.debug("delete");
     this.deleted = true;
   }
 
@@ -178,18 +194,19 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   private static final class OpaqueConsumer implements
     R2SceneOpaquesConsumerType
   {
-    private final JCGLInterfaceGL33Type   g33;
-    private final JCGLShadersType         shaders;
-    private final JCGLTexturesType        textures;
-    private final JCGLArrayObjectsType    array_objects;
-    private final JCGLDrawType            draw;
-    private final JCGLRenderStateMutable  render_state;
+    private final JCGLInterfaceGL33Type g33;
+    private final JCGLShadersType shaders;
+    private final JCGLTexturesType textures;
+    private final JCGLArrayObjectsType array_objects;
+    private final JCGLDrawType draw;
+    private final JCGLRenderStateMutable render_state;
     private final JCGLStencilStateMutable stencil_state;
 
-    private @Nullable R2MatricesObserverType         matrices;
+    private @Nullable R2MatricesObserverType matrices;
     private @Nullable R2TextureUnitContextParentType texture_context;
-    private @Nullable R2TextureUnitContextType       material_texture_context;
-    private @Nullable R2MaterialOpaqueSingleType<?>  material_single;
+    private @Nullable R2TextureUnitContextType material_texture_context;
+    private @Nullable R2MaterialOpaqueSingleType<?> material_single;
+    private @Nullable R2ProfilingContextType profiling_context;
 
     private OpaqueConsumer(
       final JCGLInterfaceGL33Type ig)
@@ -207,6 +224,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public void onStart()
     {
       Assertive.require(this.g33 != null);
+      Assertive.require(this.profiling_context != null);
+      this.profiling_context.startMeasuringIfEnabled();
     }
 
     @Override
@@ -369,6 +388,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public void onFinish()
     {
       this.material_single = null;
+
+      Assertive.require(this.profiling_context != null);
+      this.profiling_context.stopMeasuringIfEnabled();
     }
   }
 }

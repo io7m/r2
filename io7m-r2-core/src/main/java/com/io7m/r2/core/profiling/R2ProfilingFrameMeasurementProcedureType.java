@@ -14,31 +14,32 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
-
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
+package com.io7m.r2.core.profiling;
 
 /**
- * The type of stencil renderers.
+ * A procedure used to iterate over measured contexts.
+ *
+ * @param <A>
+ * @param <E>
  */
 
-public interface R2StencilRendererType extends R2DeletableType
+public interface R2ProfilingFrameMeasurementProcedureType<A, E extends Exception>
 {
   /**
-   * Render the given stencil instances into the currently bound framebuffer.
+   * Receive the measured context.
    *
-   * @param m    A matrix context
-   * @param pc   A profiling context
-   * @param uc   A texture unit context
-   * @param area The current viewport
-   * @param s    The stencil instances
+   * @param context A contextual value
+   * @param depth   The depth of the context
+   * @param c       The context
+   *
+   * @return {@link R2ProfilingIteration#CONTINUE} iff iteration should continue
+   *
+   * @throws E If required
    */
 
-  void renderStencilsWithBoundBuffer(
-    R2MatricesObserverType m,
-    R2ProfilingContextType pc,
-    R2TextureUnitContextParentType uc,
-    AreaInclusiveUnsignedLType area,
-    R2SceneStencilsType s);
+  R2ProfilingIteration apply(
+    A context,
+    int depth,
+    R2ProfilingFrameMeasurementType c)
+    throws E;
 }

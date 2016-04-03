@@ -39,6 +39,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
@@ -55,11 +56,11 @@ public final class R2FilterSSAO implements
   R2FilterType<R2FilterSSAOParametersType>
 {
   private final R2ShaderFilterType<R2ShaderSSAOParametersType> shader;
-  private final R2UnitQuadUsableType                           quad;
-  private final JCGLInterfaceGL33Type                          g;
-  private final JCGLClearSpecification                         clear;
-  private final R2ShaderSSAOParametersMutable                  shader_params;
-  private final JCGLRenderStateMutable                         render_state;
+  private final R2UnitQuadUsableType quad;
+  private final JCGLInterfaceGL33Type g;
+  private final JCGLClearSpecification clear;
+  private final R2ShaderSSAOParametersMutable shader_params;
+  private final JCGLRenderStateMutable render_state;
 
   private R2FilterSSAO(
     final JCGLInterfaceGL33Type in_g,
@@ -130,12 +131,26 @@ public final class R2FilterSSAO implements
 
   @Override
   public void runFilter(
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2FilterSSAOParametersType parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
+    final R2ProfilingContextType pc_base = pc.getChildContext("ssao");
+    pc_base.startMeasuringIfEnabled();
+    try {
+      this.run(uc, parameters);
+    } finally {
+      pc_base.stopMeasuringIfEnabled();
+    }
+  }
+
+  private void run(
+    final R2TextureUnitContextParentType uc,
+    final R2FilterSSAOParametersType parameters)
+  {
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();

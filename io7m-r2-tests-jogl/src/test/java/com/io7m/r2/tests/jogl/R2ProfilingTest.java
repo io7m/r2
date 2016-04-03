@@ -14,31 +14,28 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.r2.core.profiling.R2Profiling;
+import com.io7m.r2.core.profiling.R2ProfilingType;
+import com.io7m.r2.tests.core.profiling.R2ProfilingContract;
 
-/**
- * The type of stencil renderers.
- */
-
-public interface R2StencilRendererType extends R2DeletableType
+public final class R2ProfilingTest extends R2ProfilingContract
 {
-  /**
-   * Render the given stencil instances into the currently bound framebuffer.
-   *
-   * @param m    A matrix context
-   * @param pc   A profiling context
-   * @param uc   A texture unit context
-   * @param area The current viewport
-   * @param s    The stencil instances
-   */
+  @Override
+  protected R2ProfilingType newProfiling(final JCGLInterfaceGL33Type g)
+  {
+    return R2Profiling.newProfiling(g.getTimers());
+  }
 
-  void renderStencilsWithBoundBuffer(
-    R2MatricesObserverType m,
-    R2ProfilingContextType pc,
-    R2TextureUnitContextParentType uc,
-    AreaInclusiveUnsignedLType area,
-    R2SceneStencilsType s);
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }

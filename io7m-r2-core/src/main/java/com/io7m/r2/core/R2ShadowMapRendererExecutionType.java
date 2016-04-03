@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
+
 /**
  * A contextual value representing the in-process rendering of a set of shadow
  * maps.
@@ -26,6 +28,7 @@ public interface R2ShadowMapRendererExecutionType
   /**
    * Render the shadow map for the given light.
    *
+   * @param pc A profiling context
    * @param tc A texture unit context
    * @param m  A set of matrices
    * @param ls A light with a shadow
@@ -36,6 +39,7 @@ public interface R2ShadowMapRendererExecutionType
    */
 
   void shadowExecRenderLight(
+    R2ProfilingContextType pc,
     R2TextureUnitContextParentType tc,
     R2MatricesType m,
     R2LightWithShadowSingleType ls,

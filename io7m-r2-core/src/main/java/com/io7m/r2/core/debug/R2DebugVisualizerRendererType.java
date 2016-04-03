@@ -20,6 +20,7 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 
 /**
  * A renderer for producing various debug visualizations.
@@ -31,6 +32,7 @@ public interface R2DebugVisualizerRendererType extends R2DeletableType
    * Render the debug visualizations for the given scene.
    *
    * @param area The viewport area
+   * @param pc   A profiling context
    * @param uc   A texture unit context
    * @param m    A matrix context
    * @param s    The scene
@@ -38,6 +40,7 @@ public interface R2DebugVisualizerRendererType extends R2DeletableType
 
   void renderScene(
     AreaInclusiveUnsignedLType area,
+    R2ProfilingContextType pc,
     R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2DebugVisualizerRendererParametersType s);

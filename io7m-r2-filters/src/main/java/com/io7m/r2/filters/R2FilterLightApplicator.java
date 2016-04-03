@@ -37,6 +37,7 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
@@ -87,10 +88,10 @@ public final class R2FilterLightApplicator implements
   /**
    * Construct a new filter.
    *
-   * @param in_sources  Shader sources
-   * @param in_g        A GL interface
-   * @param in_pool     An ID pool
-   * @param in_quad     A unit quad
+   * @param in_sources Shader sources
+   * @param in_g       A GL interface
+   * @param in_pool    An ID pool
+   * @param in_quad    A unit quad
    *
    * @return A new filter
    */
@@ -134,12 +135,27 @@ public final class R2FilterLightApplicator implements
 
   @Override
   public void runFilter(
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2FilterLightApplicatorParametersType parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
+    final R2ProfilingContextType pc_base =
+      pc.getChildContext("light-applicator");
+    pc_base.startMeasuringIfEnabled();
+    try {
+      this.run(uc, parameters);
+    } finally {
+      pc_base.stopMeasuringIfEnabled();
+    }
+  }
+
+  private void run(
+    final R2TextureUnitContextParentType uc,
+    final R2FilterLightApplicatorParametersType parameters)
+  {
     final R2Texture2DUsableType ldiff =
       parameters.getLightDiffuseTexture();
     final R2Texture2DUsableType lspec =

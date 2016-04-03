@@ -17,12 +17,8 @@
 package com.io7m.r2.examples.custom;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jcanephora.core.api.JCGLClearType;
-import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
-import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorI3F;
@@ -44,6 +40,9 @@ import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TransformSiOT;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.r2.core.profiling.R2ProfilingFrameType;
+import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -156,20 +155,25 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
     matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
 
       final JCGLFramebuffersType g_fb = g.getFramebuffers();
-      final JCGLClearType g_cl = g.getClear();
-      final JCGLColorBufferMaskingType g_cb = g.getColorBufferMasking();
-      final JCGLStencilBuffersType g_sb = g.getStencilBuffers();
-      final JCGLDepthBuffersType g_db = g.getDepthBuffers();
+
+      final R2ProfilingType pro =
+        t.main.getProfiling();
+      final R2ProfilingFrameType pro_frame =
+        pro.startFrame();
+      final R2ProfilingContextType pro_root =
+        pro_frame.getChildContext("main");
 
       g_fb.framebufferDrawBind(t.gbuffer.getPrimaryFramebuffer());
       t.gbuffer.clearBoundPrimaryFramebuffer(g);
       t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
         mo,
+        pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
         t.gbuffer.getArea(),
         t.stencils);
       t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
         t.gbuffer.getArea(),
+        pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
         mo,
         t.opaques);

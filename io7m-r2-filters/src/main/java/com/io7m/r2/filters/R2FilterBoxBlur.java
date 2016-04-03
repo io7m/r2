@@ -44,6 +44,7 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
@@ -78,16 +79,13 @@ public final class R2FilterBoxBlur<
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_COLOR);
   }
 
-  private final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType>
-    shader_blur_h;
-  private final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType>
-    shader_blur_v;
-
-  private final JCGLInterfaceGL33Type                  g;
-  private final R2RenderTargetPoolUsableType<DD, D>    render_target_pool;
-  private final R2UnitQuadUsableType                   quad;
+  private final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType> shader_blur_h;
+  private final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType> shader_blur_v;
+  private final JCGLInterfaceGL33Type g;
+  private final R2RenderTargetPoolUsableType<DD, D> render_target_pool;
+  private final R2UnitQuadUsableType quad;
   private final R2ShaderFilterBoxBlurParametersMutable shader_params;
-  private final JCGLRenderStateMutable                 render_state;
+  private final JCGLRenderStateMutable render_state;
 
   private R2FilterBoxBlur(
     final JCGLInterfaceGL33Type in_g,
@@ -265,6 +263,7 @@ public final class R2FilterBoxBlur<
 
   @Override
   public void runFilter(
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2FilterBoxBlurParameters<SD, S, DD, D> parameters)
   {

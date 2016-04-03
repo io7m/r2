@@ -41,6 +41,7 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
@@ -51,15 +52,10 @@ import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 public final class R2FilterOcclusionApplicator implements
   R2FilterType<R2FilterOcclusionApplicatorParametersType>
 {
-  private final JCGLInterfaceGL33Type
-    g;
-  private final
-  R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParametersType>
-    shader;
-  private final R2UnitQuadUsableType
-    quad;
-  private final R2ShaderFilterOcclusionApplicatorParametersMutable
-    shader_params;
+  private final JCGLInterfaceGL33Type g;
+  private final R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParametersType> shader;
+  private final R2UnitQuadUsableType quad;
+  private final R2ShaderFilterOcclusionApplicatorParametersMutable shader_params;
 
   private R2FilterOcclusionApplicator(
     final JCGLInterfaceGL33Type in_g,
@@ -128,12 +124,27 @@ public final class R2FilterOcclusionApplicator implements
 
   @Override
   public void runFilter(
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2FilterOcclusionApplicatorParametersType parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
+    final R2ProfilingContextType pc_base =
+      pc.getChildContext("occlusion-applicator");
+    pc_base.startMeasuringIfEnabled();
+    try {
+      this.run(uc, parameters);
+    } finally {
+      pc_base.stopMeasuringIfEnabled();
+    }
+  }
+
+  private void run(
+    final R2TextureUnitContextParentType uc,
+    final R2FilterOcclusionApplicatorParametersType parameters)
+  {
     final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
     final JCGLBlendingType g_b = this.g.getBlending();
     final JCGLCullingType g_cu = this.g.getCulling();

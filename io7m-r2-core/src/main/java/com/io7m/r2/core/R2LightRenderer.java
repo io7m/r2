@@ -49,6 +49,7 @@ import com.io7m.jcanephora.renderstate.JCGLStencilStateMutable;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.provided.R2ShaderLogDepthOnlySingle;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderScreen;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
@@ -61,6 +62,8 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
@@ -73,6 +76,12 @@ import java.util.Set;
 
 public final class R2LightRenderer implements R2LightRendererType
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2LightRenderer.class);
+  }
+
   private static final Set<JCGLFramebufferBlitBuffer> DEPTH_STENCIL;
 
   static {
@@ -136,6 +145,7 @@ public final class R2LightRenderer implements R2LightRendererType
     NullCheck.notNull(g3);
 
     if (!this.clip_volume_stencil.isDeleted()) {
+      R2LightRenderer.LOG.debug("delete");
       this.clip_volume_stencil.delete(g3);
       this.clip_screen_stencil.delete(g3);
     }
@@ -151,6 +161,7 @@ public final class R2LightRenderer implements R2LightRendererType
   public void renderLights(
     final R2GeometryBufferUsableType gbuffer,
     final R2LightBufferUsableType lbuffer,
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2ShadowMapContextUsableType shadows,
     final R2MatricesObserverType m,
@@ -158,6 +169,7 @@ public final class R2LightRenderer implements R2LightRendererType
   {
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer);
+    NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(shadows);
     NullCheck.notNull(m);
@@ -171,7 +183,7 @@ public final class R2LightRenderer implements R2LightRendererType
     try {
       g_fb.framebufferDrawBind(lb_fb);
       this.renderLightsWithBoundBuffer(
-        gbuffer, lbuffer.getArea(), uc, shadows, m, s);
+        gbuffer, lbuffer.getArea(), pc, uc, shadows, m, s);
     } finally {
       g_fb.framebufferDrawUnbind();
     }
@@ -181,6 +193,7 @@ public final class R2LightRenderer implements R2LightRendererType
   public void renderLightsWithBoundBuffer(
     final R2GeometryBufferUsableType gbuffer,
     final AreaInclusiveUnsignedLType lbuffer_area,
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2ShadowMapContextUsableType shadows,
     final R2MatricesObserverType m,
@@ -188,6 +201,7 @@ public final class R2LightRenderer implements R2LightRendererType
   {
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(lbuffer_area);
+    NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(shadows);
     NullCheck.notNull(m);
@@ -195,14 +209,61 @@ public final class R2LightRenderer implements R2LightRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
+    final R2ProfilingContextType pc_base =
+      pc.getChildContext("lights");
+
+    final R2ProfilingContextType pc_copy_depth =
+      pc_base.getChildContext("copy-depth");
+
+    pc_copy_depth.startMeasuringIfEnabled();
+    try {
+      this.renderCopyDepthStencil(gbuffer, lbuffer_area);
+    } finally {
+      pc_copy_depth.stopMeasuringIfEnabled();
+    }
+
+    this.renderLightInstances(
+      gbuffer, lbuffer_area, pc_base, uc, shadows, m, s);
+  }
+
+  private void renderLightInstances(
+    final R2GeometryBufferUsableType gbuffer,
+    final AreaInclusiveUnsignedLType lbuffer_area,
+    final R2ProfilingContextType pc_base,
+    final R2TextureUnitContextParentType uc,
+    final R2ShadowMapContextUsableType shadows,
+    final R2MatricesObserverType m,
+    final R2SceneLightsType s)
+  {
+    final R2ProfilingContextType pc_instances =
+      pc_base.getChildContext("instances");
+
+    if (s.lightsCount() > 0L) {
+      final JCGLViewportsType g_v = this.g.getViewports();
+      g_v.viewportSet(lbuffer_area);
+
+      this.light_consumer.input_state.set(
+        gbuffer, m, uc, shadows, lbuffer_area, pc_base);
+      try {
+        s.lightsExecute(this.light_consumer);
+      } finally {
+        this.light_consumer.input_state.clear();
+      }
+    }
+  }
+
+  /**
+   * Copy the contents of the depth/stencil attachment of the G-Buffer to
+   * the current depth/stencil buffer.
+   */
+
+  private void renderCopyDepthStencil(
+    final R2GeometryBufferUsableType gbuffer,
+    final AreaInclusiveUnsignedLType lbuffer_area)
+  {
     final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-    final JCGLViewportsType g_v = this.g.getViewports();
 
-    /**
-     * Copy the contents of the depth/stencil attachment of the G-Buffer to
-     * the current depth/stencil buffer.
-     */
 
     g_fb.framebufferReadBind(gb_fb);
     g_fb.framebufferBlit(
@@ -211,18 +272,6 @@ public final class R2LightRenderer implements R2LightRendererType
       R2LightRenderer.DEPTH_STENCIL,
       JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
     g_fb.framebufferReadUnbind();
-
-    if (s.lightsCount() > 0L) {
-      g_v.viewportSet(lbuffer_area);
-
-      this.light_consumer.input_state.set(
-        gbuffer, m, uc, shadows, lbuffer_area);
-      try {
-        s.lightsExecute(this.light_consumer);
-      } finally {
-        this.light_consumer.input_state.clear();
-      }
-    }
   }
 
   private static final class LightGroupConsumerInputState
@@ -290,6 +339,7 @@ public final class R2LightRenderer implements R2LightRendererType
     R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
     private @Nullable R2TextureUnitContextType light_each_context;
     private @Nullable R2LightProjectiveWithShadowReadableType light_shadow;
+    private @Nullable R2ProfilingContextType profiling_instances;
 
     LightGroupConsumer(
       final JCGLInterfaceGL33Type in_g,
@@ -423,6 +473,12 @@ public final class R2LightRenderer implements R2LightRendererType
     public void onStart()
     {
       R2Stencils.checkValidGroup(this.input_state.group);
+
+      final R2ProfilingContextType pc_base =
+        this.input_state.parent.profiling_context.getChildContext("unclipped");
+      this.profiling_instances =
+        pc_base.getChildContext("instances");
+      this.profiling_instances.startMeasuringIfEnabled();
 
       LightGroupConsumer.configureStencilState(
         this.input_state.group, this.stencil_state_screen);
@@ -621,7 +677,8 @@ public final class R2LightRenderer implements R2LightRendererType
     @Override
     public void onFinish()
     {
-      // Nothing
+      NullCheck.notNull(this.profiling_instances);
+      this.profiling_instances.stopMeasuringIfEnabled();
     }
   }
 
@@ -632,6 +689,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private @Nullable R2TextureUnitContextParentType texture_context;
     private @Nullable R2ShadowMapContextUsableType shadow_maps;
     private @Nullable AreaInclusiveUnsignedLType viewport;
+    private @Nullable R2ProfilingContextType profiling_context;
 
     LightConsumerInputState()
     {
@@ -643,13 +701,15 @@ public final class R2LightRenderer implements R2LightRendererType
       final R2MatricesObserverType in_m,
       final R2TextureUnitContextParentType in_texture_context,
       final R2ShadowMapContextUsableType in_shadows,
-      final AreaInclusiveUnsignedLType in_viewport)
+      final AreaInclusiveUnsignedLType in_viewport,
+      final R2ProfilingContextType pc_base)
     {
       this.gbuffer = NullCheck.notNull(in_gbuffer);
       this.matrices = NullCheck.notNull(in_m);
       this.texture_context = NullCheck.notNull(in_texture_context);
       this.shadow_maps = NullCheck.notNull(in_shadows);
       this.viewport = NullCheck.notNull(in_viewport);
+      this.profiling_context = NullCheck.notNull(pc_base);
     }
 
     void clear()
@@ -659,6 +719,7 @@ public final class R2LightRenderer implements R2LightRendererType
       this.texture_context = null;
       this.shadow_maps = null;
       this.viewport = null;
+      this.profiling_context = null;
     }
   }
 
@@ -685,6 +746,7 @@ public final class R2LightRenderer implements R2LightRendererType
     R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
     private @Nullable R2TextureUnitContextType light_each_context;
     private @Nullable R2LightProjectiveWithShadowReadableType light_shadow;
+    private @Nullable R2ProfilingContextType profiling_instances;
 
     LightClipGroupConsumer(
       final JCGLInterfaceGL33Type in_g33,
@@ -925,9 +987,22 @@ public final class R2LightRenderer implements R2LightRendererType
     @Override
     public void onStart()
     {
-      this.clearStencilForClipVolume();
-      this.renderStencilForClipVolume();
-      this.configureStencilsForLights();
+      final R2ProfilingContextType pc_clipped =
+        this.input_state.parent.profiling_context.getChildContext("clipped");
+      final R2ProfilingContextType pc_setup =
+        pc_clipped.getChildContext("setup");
+
+      pc_setup.startMeasuringIfEnabled();
+      try {
+        this.clearStencilForClipVolume();
+        this.renderStencilForClipVolume();
+        this.configureStencilsForLights();
+      } finally {
+        pc_setup.stopMeasuringIfEnabled();
+      }
+
+      this.profiling_instances = pc_clipped.getChildContext("instances");
+      this.profiling_instances.startMeasuringIfEnabled();
     }
 
     /**
@@ -1227,7 +1302,8 @@ public final class R2LightRenderer implements R2LightRendererType
     @Override
     public void onFinish()
     {
-      // Nothing
+      this.profiling_instances.stopMeasuringIfEnabled();
+      this.profiling_instances = null;
     }
   }
 

@@ -14,31 +14,9 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
-
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
-
 /**
- * The type of stencil renderers.
+ * Types and functions for profiling GPU performance.
  */
 
-public interface R2StencilRendererType extends R2DeletableType
-{
-  /**
-   * Render the given stencil instances into the currently bound framebuffer.
-   *
-   * @param m    A matrix context
-   * @param pc   A profiling context
-   * @param uc   A texture unit context
-   * @param area The current viewport
-   * @param s    The stencil instances
-   */
+@com.io7m.jnull.NonNullByDefault package com.io7m.r2.core.profiling;
 
-  void renderStencilsWithBoundBuffer(
-    R2MatricesObserverType m,
-    R2ProfilingContextType pc,
-    R2TextureUnitContextParentType uc,
-    AreaInclusiveUnsignedLType area,
-    R2SceneStencilsType s);
-}

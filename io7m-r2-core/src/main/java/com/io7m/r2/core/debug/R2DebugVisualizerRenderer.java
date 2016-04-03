@@ -64,6 +64,7 @@ import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2TransformST;
 import com.io7m.r2.core.R2UnitSphereUsableType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualBatched;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualScreen;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualSingle;
@@ -76,6 +77,8 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.valid4j.Assertive;
 
 import java.util.Optional;
@@ -88,6 +91,12 @@ import java.util.Optional;
 public final class R2DebugVisualizerRenderer implements
   R2DebugVisualizerRendererType
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2DebugVisualizerRenderer.class);
+  }
+
   private final JCGLInterfaceGL33Type g;
 
   private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
@@ -176,19 +185,39 @@ public final class R2DebugVisualizerRenderer implements
   @Override
   public void renderScene(
     final AreaInclusiveUnsignedLType area,
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
     NullCheck.notNull(area);
+    NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    this.renderSceneOpaques(area, uc, m, s);
-    this.renderSceneLights(area, uc, m, s);
+    final R2ProfilingContextType pc_base =
+      pc.getChildContext("debug-visualizer");
+
+    final R2ProfilingContextType pc_opaques =
+      pc_base.getChildContext("opaques");
+    pc_opaques.startMeasuringIfEnabled();
+    try {
+      this.renderSceneOpaques(area, uc, m, s);
+    } finally {
+      pc_opaques.stopMeasuringIfEnabled();
+    }
+
+    final R2ProfilingContextType pc_lights =
+      pc_base.getChildContext("lights");
+    pc_lights.startMeasuringIfEnabled();
+    try {
+      this.renderSceneLights(area, uc, m, s);
+    } finally {
+      pc_lights.stopMeasuringIfEnabled();
+    }
   }
 
   private void renderSceneLights(
@@ -248,6 +277,7 @@ public final class R2DebugVisualizerRenderer implements
     throws R2Exception
   {
     if (!this.isDeleted()) {
+      R2DebugVisualizerRenderer.LOG.debug("delete");
       this.shader_batched.delete(ig);
       this.shader_single.delete(ig);
       this.shader_screen.delete(ig);

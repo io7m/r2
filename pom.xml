@@ -113,37 +113,37 @@
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-core</artifactId>
-        <version>0.45.2</version>
+        <version>0.45.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-texture-loader-core</artifactId>
-        <version>0.45.2</version>
+        <version>0.45.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-texture-loader-awt</artifactId>
-        <version>0.45.2</version>
+        <version>0.45.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-jogl</artifactId>
-        <version>0.45.2</version>
+        <version>0.45.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-fake</artifactId>
-        <version>0.45.2</version>
+        <version>0.45.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-cursors</artifactId>
-        <version>0.45.2</version>
+        <version>0.45.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-renderstate</artifactId>
-        <version>0.45.2</version>
+        <version>0.45.3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jpra</groupId>

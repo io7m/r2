@@ -20,7 +20,7 @@ package com.io7m.r2.core;
  * The type of renderers that populate shadow maps.
  */
 
-public interface R2ShadowMapRendererType
+public interface R2ShadowMapRendererType extends R2DeletableType
 {
   /**
    * Begin rendering shadow maps.
