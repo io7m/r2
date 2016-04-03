@@ -23,6 +23,8 @@ import com.io7m.jcanephora.core.JCGLViewMatricesType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
+import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2DepthOnlyRenderer;
 import com.io7m.r2.core.R2DepthRendererType;
 import com.io7m.r2.core.R2DepthVarianceBufferDescriptionType;
@@ -53,10 +55,13 @@ import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRenderer;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
+import com.io7m.r2.core.profiling.R2Profiling;
+import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.shaders.R2Shaders;
 
+import java.lang.reflect.Field;
 import java.util.function.Supplier;
 
 /**
@@ -91,6 +96,7 @@ public final class R2Main implements R2MainType
   private final R2DepthVarianceRendererType depth_variance_renderer;
   private final R2ShadowMapRendererType shadow_map_renderer;
   private final R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType, R2DepthVarianceBufferUsableType> depth_variance_pool;
+  private final R2ProfilingType profiling;
   private boolean deleted;
 
   private R2Main(
@@ -109,7 +115,8 @@ public final class R2Main implements R2MainType
     final R2DepthRendererType in_depth_renderer,
     final R2DepthVarianceRendererType in_depth_variance_renderer,
     final R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType, R2DepthVarianceBufferUsableType> in_depth_variance_pool,
-    final R2ShadowMapRendererType in_shadow_map_renderer)
+    final R2ShadowMapRendererType in_shadow_map_renderer,
+    final R2ProfilingType in_profiling)
   {
     this.pool =
       NullCheck.notNull(in_pool);
@@ -143,6 +150,8 @@ public final class R2Main implements R2MainType
       NullCheck.notNull(in_depth_variance_pool);
     this.shadow_map_renderer =
       NullCheck.notNull(in_shadow_map_renderer);
+    this.profiling =
+      NullCheck.notNull(in_profiling);
 
     this.deleted = false;
   }
@@ -247,19 +256,32 @@ public final class R2Main implements R2MainType
   }
 
   @Override
+  public R2ProfilingType getProfiling()
+  {
+    return this.profiling;
+  }
+
+  @Override
   public void delete(
     final JCGLInterfaceGL33Type g)
     throws R2Exception
   {
     if (!this.isDeleted()) {
       try {
-        this.depth_renderer.delete(g);
-        this.debug_visual_renderer.delete(g);
-        this.stencil_renderer.delete(g);
-        this.geometry_renderer.delete(g);
-        this.light_renderer.delete(g);
-        this.unit_quad.delete(g);
-        this.texture_defaults.delete(g);
+        final Class<? extends R2Main> c = this.getClass();
+        final Field[] fields = c.getDeclaredFields();
+        for (int index = 0; index < fields.length; ++index) {
+          final Field field = fields[index];
+          final Class<?> field_type = field.getType();
+          if (R2DeletableType.class.isAssignableFrom(field_type)) {
+            try {
+              final R2DeletableType k = (R2DeletableType) field.get(this);
+              k.delete(g);
+            } catch (final IllegalAccessException e) {
+              throw new UnreachableCodeException(e);
+            }
+          }
+        }
       } finally {
         this.deleted = true;
       }
@@ -291,6 +313,7 @@ public final class R2Main implements R2MainType
     private @Nullable
     R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType, R2DepthVarianceBufferUsableType> depth_variance_pool;
     private @Nullable R2ShadowMapRendererType shadow_map_renderer;
+    private @Nullable R2ProfilingType profiling;
 
     Builder()
     {
@@ -393,6 +416,10 @@ public final class R2Main implements R2MainType
             ex_depth_variance_renderer,
             ex_depth_variance_pool));
 
+      final R2ProfilingType ex_profiling =
+        Builder.compute(
+          this.profiling, () -> R2Profiling.newProfiling(g.getTimers()));
+
       return new R2Main(
         ex_pool,
         ex_sources,
@@ -409,7 +436,8 @@ public final class R2Main implements R2MainType
         ex_depth_renderer,
         ex_depth_variance_renderer,
         ex_depth_variance_pool,
-        ex_shadow_map_renderer);
+        ex_shadow_map_renderer,
+        ex_profiling);
     }
   }
 }

@@ -68,6 +68,9 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.r2.core.profiling.R2ProfilingFrameType;
+import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
@@ -427,23 +430,32 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       final JCGLDepthBuffersType g_db =
         t.g33.getDepthBuffers();
 
+      final R2ProfilingType pro =
+        t.main.getProfiling();
+      final R2ProfilingFrameType pro_frame =
+        pro.startFrame();
+      final R2ProfilingContextType pro_root =
+        pro_frame.getChildContext("main");
+
       g_fb.framebufferDrawBind(gbuffer_fb);
       t.geom_buffer.clearBoundPrimaryFramebuffer(t.g33);
       t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
         mo,
+        pro_root,
         m.getTextureUnitAllocator().getRootContext(),
         t.geom_buffer.getArea(),
         t.stencils);
       t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
         t.geom_buffer.getArea(),
+        pro_root,
         m.getTextureUnitAllocator().getRootContext(),
         mo,
         t.opaques);
       g_fb.framebufferDrawUnbind();
 
       t.filter_ssao_params.setSceneObserverValues(mo);
-      t.filter_ssao.runFilter(uc, t.filter_ssao_params);
-      t.filter_blur_ssao.runFilter(uc, t.filter_blur_ssao_params);
+      t.filter_ssao.runFilter(pro_root, uc, t.filter_ssao_params);
+      t.filter_blur_ssao.runFilter(pro_root, uc, t.filter_blur_ssao_params);
 
       g_cb.colorBufferMask(true, true, true, true);
       g_db.depthBufferWriteEnable();
@@ -451,7 +463,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
       g_cl.clear(t.screen_clear_spec);
 
-      t.filter_compositor.runFilter(uc, t.filter_comp_parameters);
+      t.filter_compositor.runFilter(pro_root, uc, t.filter_comp_parameters);
 
       return Unit.unit();
     });

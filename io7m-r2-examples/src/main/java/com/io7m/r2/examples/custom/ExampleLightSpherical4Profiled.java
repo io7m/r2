@@ -72,8 +72,6 @@ import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2LightBuffers;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
-import com.io7m.r2.core.R2LightRenderer;
-import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2LightSphericalSingle;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
@@ -107,7 +105,9 @@ import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
 import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.r2.core.profiling.R2ProfilingFrameMeasurementType;
 import com.io7m.r2.core.profiling.R2ProfilingFrameType;
+import com.io7m.r2.core.profiling.R2ProfilingIteration;
 import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
@@ -157,11 +157,13 @@ import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.valid4j.Assertive;
 
+import javax.swing.SwingUtilities;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 // CHECKSTYLE_JAVADOC:OFF
 
-public final class ExampleLightSpherical4New implements R2ExampleCustomType
+public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
@@ -192,8 +194,9 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
   private R2ProjectionFrustum proj_proj;
   private R2ProjectionMeshType proj_mesh;
   private R2LightProjectiveWithShadowVarianceType proj_light;
-  private R2ShadowDepthVariance proj_shadow;
   private R2DepthInstancesType proj_shadow_instances;
+  private R2ShadowDepthVariance proj_shadow;
+
   private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> depth_shader;
   private R2DepthShaderBasicParametersMutable depth_params;
   private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
@@ -236,9 +239,14 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
 
   private R2DebugVisualizerRendererParametersMutable debug_params;
   private R2ShadowMapContextType shadow_context;
-  private R2LightRendererType light_renderer;
 
-  public ExampleLightSpherical4New()
+  private AtomicReference<ExampleProfilingWindow> profiling_window;
+  private StringBuilder text_buffer;
+  private String text;
+  private R2ProfilingFrameType profiling_frame;
+  private R2ProfilingContextType profiling_root;
+
+  public ExampleLightSpherical4Profiled()
   {
     this.view = PMatrixHeapArrayM4x4F.newMatrix();
   }
@@ -540,6 +548,16 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
     final R2ShaderSourcesType sources =
       R2ShaderSourcesResources.newSources(R2Shaders.class);
 
+    this.depth_shader = R2DepthShaderBasicSingle.newShader(
+      gx.getShaders(), m.getShaderSources(), m.getIDPool());
+    this.depth_params =
+      R2DepthShaderBasicParametersMutable.create();
+    this.depth_params.setAlphaDiscardThreshold(0.1f);
+    this.depth_params.setAlbedoTexture(
+      this.main.getTextureDefaults().getWhiteTexture());
+    this.depth_material = R2MaterialDepthSingle.newMaterial(
+      m.getIDPool(), this.depth_shader, this.depth_params);
+
     this.geom_shader =
       R2SurfaceShaderBasicSingle.newShader(
         gx.getShaders(),
@@ -653,15 +671,6 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
       3.0f);
 
     this.proj_shadow_instances = R2DepthInstances.newDepthInstances();
-    this.depth_shader = R2DepthShaderBasicSingle.newShader(
-      gx.getShaders(), m.getShaderSources(), m.getIDPool());
-    this.depth_params =
-      R2DepthShaderBasicParametersMutable.create();
-    this.depth_params.setAlphaDiscardThreshold(0.1f);
-    this.depth_params.setAlbedoTexture(
-      this.main.getTextureDefaults().getWhiteTexture());
-    this.depth_material = R2MaterialDepthSingle.newMaterial(
-      m.getIDPool(), this.depth_shader, this.depth_params);
 
     this.sphere_light_shader =
       R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
@@ -675,7 +684,10 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
     this.sphere_light.setRadius(30.0f);
 
     this.sphere_light_bounded_transform = R2TransformSiOT.newTransform();
-    this.sphere_light_bounded_transform.getTranslation().set3F(-10.0f, 1.0f, 0.0f);
+    this.sphere_light_bounded_transform.getTranslation().set3F(
+      -10.0f,
+      1.0f,
+      0.0f);
     this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
     this.sphere_light_bounds =
@@ -688,7 +700,10 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
       R2LightSphericalSingle.newLight(this.sphere, id_pool);
     this.sphere_light_bounded.getColorWritable().set3F(1.0f, 0.0f, 0.0f);
     this.sphere_light_bounded.setIntensity(1.0f);
-    this.sphere_light_bounded.getOriginPositionWritable().set3F(-10.0f, 1.0f, 0.0f);
+    this.sphere_light_bounded.getOriginPositionWritable().set3F(
+      -10.0f,
+      1.0f,
+      0.0f);
     this.sphere_light_bounded.setRadius(9.0f);
 
     this.filter_light =
@@ -727,8 +742,15 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
       this.screen_clear_spec = csb.build();
     }
 
-    this.light_renderer =
-      R2LightRenderer.newRenderer(gx, sources, id_pool, m.getUnitQuad());
+    this.profiling_window = new AtomicReference<>();
+    SwingUtilities.invokeLater(() -> {
+      final ExampleProfilingWindow frame = new ExampleProfilingWindow();
+      frame.setVisible(true);
+      this.profiling_window.set(frame);
+    });
+
+    this.text_buffer = new StringBuilder(256);
+    this.text = "";
   }
 
   @Override
@@ -747,15 +769,15 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
       (float) -Math.abs(Math.sin(frame * 0.01) * 2.0f));
     this.proj_mesh.updateProjection(gx.getArrayBuffers());
 
+    this.stencils.stencilsReset();
+    this.stencils.stencilsSetMode(
+      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
+
     this.proj_shadow_instances.depthsReset();
     this.proj_shadow_instances.depthsAddSingleInstance(
       this.instance, this.depth_material);
     this.proj_shadow_instances.depthsAddSingleInstance(
       this.golden, this.golden_depth_material);
-
-    this.stencils.stencilsReset();
-    this.stencils.stencilsSetMode(
-      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
 
     this.opaques.opaquesReset();
     this.opaques.opaquesAddSingleInstance(
@@ -771,7 +793,7 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
     lg.lightGroupAddSingle(
       this.light_ambient, this.light_ambient_shader);
     lg.lightGroupAddSingle(
-     this.sphere_light, this.sphere_light_shader);
+      this.sphere_light, this.sphere_light_shader);
     lg.lightGroupAddSingle(
       this.proj_light, this.proj_light_shader);
 
@@ -793,8 +815,21 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
     {
       final R2MatricesType matrices = mx.getMatrices();
 
+      final R2ProfilingType pro = this.main.getProfiling();
+      pro.setEnabled(true);
+      this.profiling_frame = pro.startFrame();
+      this.profiling_root = this.profiling_frame.getChildContext("main");
+
       final R2ShadowMapRendererExecutionType sme =
         this.main.getShadowMapRenderer().shadowBegin();
+
+      sme.shadowExecRenderLight(
+        this.profiling_root,
+        this.main.getTextureUnitAllocator().getRootContext(),
+        matrices,
+        this.proj_light,
+        this.proj_shadow_instances);
+
       this.shadow_context = sme.shadowExecComplete();
 
       matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
@@ -811,54 +846,47 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
         final JCGLStencilBuffersType g_sb = t.g.getStencilBuffers();
         final JCGLDepthBuffersType g_db = t.g.getDepthBuffers();
 
-        final R2ProfilingType pro =
-          t.main.getProfiling();
-        final R2ProfilingFrameType pro_frame =
-          pro.startFrame();
-        final R2ProfilingContextType pro_root =
-          pro_frame.getChildContext("main");
-
         g_fb.framebufferDrawBind(gbuffer_fb);
         t.gbuffer.clearBoundPrimaryFramebuffer(t.g);
         t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
           mo,
-          pro_root,
+          t.profiling_root,
           t.main.getTextureUnitAllocator().getRootContext(),
           t.gbuffer.getArea(),
           t.stencils);
         t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
           t.gbuffer.getArea(),
-          pro_root,
+          t.profiling_root,
           uc,
           mo,
           t.opaques);
         g_fb.framebufferDrawUnbind();
 
-        // t.filter_ssao_params.setSceneObserverValues(mo);
-        // t.filter_ssao.runFilter(uc, t.filter_ssao_params);
+        t.filter_ssao_params.setSceneObserverValues(mo);
+        t.filter_ssao.runFilter(t.profiling_root, uc, t.filter_ssao_params);
 
-        // t.filter_blur_ssao_params.setSceneObserverValues(mo);
-        // t.filter_blur_ssao.runFilter(uc, t.filter_blur_ssao_params);
+        t.filter_blur_ssao_params.setSceneObserverValues(mo);
+        t.filter_blur_ssao.runFilter(
+          t.profiling_root, uc, t.filter_blur_ssao_params);
 
         g_fb.framebufferDrawBind(lbuffer_fb);
         t.lbuffer.clearBoundPrimaryFramebuffer(t.g);
-        t.light_renderer.renderLightsWithBoundBuffer(
+        t.main.getLightRenderer().renderLightsWithBoundBuffer(
           t.gbuffer,
           t.lbuffer.getArea(),
-          pro_root,
+          t.profiling_root,
           uc,
           t.shadow_context,
           mo,
           t.lights);
         g_fb.framebufferDrawUnbind();
 
-        // t.filter_ssao_app.runFilter(uc, t.filter_ssao_app_params);
+        t.filter_ssao_app.runFilter(
+          t.profiling_root, uc, t.filter_ssao_app_params);
 
         g_fb.framebufferDrawBind(t.ibuffer.getPrimaryFramebuffer());
-        g_cb.colorBufferMask(true, true, true, true);
-        g_cl.clear(t.screen_clear_spec);
-
-        t.filter_light.runFilter(pro_root, uc, t.filter_light_params);
+        t.ibuffer.clearBoundPrimaryFramebuffer(t.g);
+        t.filter_light.runFilter(t.profiling_root, uc, t.filter_light_params);
         g_fb.framebufferDrawUnbind();
 
         g_cb.colorBufferMask(true, true, true, true);
@@ -867,21 +895,47 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-        t.filter_fxaa.runFilter(pro_root, uc, t.filter_fxaa_params);
+        t.filter_fxaa.runFilter(t.profiling_root, uc, t.filter_fxaa_params);
 
         t.main.getDebugVisualizerRenderer().renderScene(
           areax,
-          pro_root,
+          t.profiling_root,
           uc,
           mo,
           t.debug_params);
 
-        t.filter_compositor.runFilter(pro_root, uc, t.filter_comp_parameters);
-
+        t.filter_compositor.runFilter(
+          t.profiling_root, uc, t.filter_comp_parameters);
         return Unit.unit();
       });
 
       this.shadow_context.shadowMapContextFinish();
+
+      final R2ProfilingFrameMeasurementType pro_measure =
+        pro.getMostRecentlyMeasuredFrame();
+
+      if (frame % 60 == 0) {
+        this.text_buffer.setLength(0);
+        pro_measure.iterate(this, (tt, depth, fm) -> {
+          final double nanos = fm.getElapsedTimeTotal();
+          final double millis = nanos / 1_000_000.0;
+
+          for (int index = 0; index < depth; ++index) {
+            tt.text_buffer.append("    ");
+          }
+          tt.text_buffer.append(fm.getName());
+          tt.text_buffer.append(" ");
+          tt.text_buffer.append(String.format("%.6f", Double.valueOf(millis)));
+          tt.text_buffer.append("ms");
+          tt.text_buffer.append(System.lineSeparator());
+          return R2ProfilingIteration.CONTINUE;
+        });
+        this.text = this.text_buffer.toString();
+        this.text_buffer.setLength(0);
+
+        SwingUtilities.invokeLater(
+          () -> this.profiling_window.get().sendText(this.text));
+      }
     }
   }
 

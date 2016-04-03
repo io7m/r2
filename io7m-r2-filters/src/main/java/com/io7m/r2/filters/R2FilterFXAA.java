@@ -33,6 +33,7 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
@@ -118,12 +119,26 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
 
   @Override
   public void runFilter(
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2FilterFXAAParametersType parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
+    final R2ProfilingContextType pc_base = pc.getChildContext("fxaa");
+    pc_base.startMeasuringIfEnabled();
+    try {
+      this.run(uc, parameters);
+    } finally {
+      pc_base.stopMeasuringIfEnabled();
+    }
+  }
+
+  private void run(
+    final R2TextureUnitContextParentType uc,
+    final R2FilterFXAAParametersType parameters)
+  {
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();

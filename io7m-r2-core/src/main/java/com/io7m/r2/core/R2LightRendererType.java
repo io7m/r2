@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 
 /**
  * The type of renderers that populate light buffers.
@@ -29,6 +30,7 @@ public interface R2LightRendererType extends R2DeletableType
    *
    * @param gbuffer The populated geometry buffer
    * @param lbuffer The light buffer
+   * @param pc      A profiling context
    * @param uc      A texture unit context
    * @param shadows A set of rendered shadow maps
    * @param m       A matrix context
@@ -38,6 +40,7 @@ public interface R2LightRendererType extends R2DeletableType
   void renderLights(
     R2GeometryBufferUsableType gbuffer,
     R2LightBufferUsableType lbuffer,
+    R2ProfilingContextType pc,
     R2TextureUnitContextParentType uc,
     R2ShadowMapContextUsableType shadows,
     R2MatricesObserverType m,
@@ -48,6 +51,7 @@ public interface R2LightRendererType extends R2DeletableType
    *
    * @param gbuffer      The populated geometry buffer
    * @param lbuffer_area The area of the currently bound framebuffer
+   * @param pc           A profiling context
    * @param uc           A texture unit context
    * @param shadows      A set of rendered shadow maps
    * @param m            A matrix context
@@ -57,6 +61,7 @@ public interface R2LightRendererType extends R2DeletableType
   void renderLightsWithBoundBuffer(
     R2GeometryBufferUsableType gbuffer,
     AreaInclusiveUnsignedLType lbuffer_area,
+    R2ProfilingContextType pc,
     R2TextureUnitContextParentType uc,
     R2ShadowMapContextUsableType shadows,
     R2MatricesObserverType m,

@@ -42,11 +42,14 @@ import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformReadableType;
+import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitSphereType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.r2.core.profiling.R2ProfilingFrameType;
+import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -178,13 +181,23 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
     this.gbuffer.clearBoundPrimaryFramebuffer(g);
 
     this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+
+      final R2ProfilingType pro =
+        t.main.getProfiling();
+      final R2ProfilingFrameType pro_frame =
+        pro.startFrame();
+      final R2ProfilingContextType pro_root =
+        pro_frame.getChildContext("main");
+
       t.stencil_renderer.renderStencilsWithBoundBuffer(
         mo,
+        pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
         t.gbuffer.getArea(),
         t.stencils);
       t.geom_renderer.renderGeometryWithBoundBuffer(
         t.gbuffer.getArea(),
+        pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
         mo,
         t.opaques);

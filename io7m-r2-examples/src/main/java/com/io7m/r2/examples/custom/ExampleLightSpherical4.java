@@ -94,6 +94,9 @@ import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.r2.core.profiling.R2ProfilingFrameType;
+import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
@@ -701,15 +704,24 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         final JCGLStencilBuffersType g_sb = t.g.getStencilBuffers();
         final JCGLDepthBuffersType g_db = t.g.getDepthBuffers();
 
+        final R2ProfilingType pro =
+          t.main.getProfiling();
+        final R2ProfilingFrameType pro_frame =
+          pro.startFrame();
+        final R2ProfilingContextType pro_root =
+          pro_frame.getChildContext("main");
+
         g_fb.framebufferDrawBind(gbuffer_fb);
         t.gbuffer.clearBoundPrimaryFramebuffer(t.g);
         t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
           mo,
+          pro_root,
           t.main.getTextureUnitAllocator().getRootContext(),
           t.gbuffer.getArea(),
           t.stencils);
         t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
           t.gbuffer.getArea(),
+          pro_root,
           uc,
           mo,
           t.opaques);
@@ -726,6 +738,7 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
         t.main.getLightRenderer().renderLightsWithBoundBuffer(
           t.gbuffer,
           t.lbuffer.getArea(),
+          pro_root,
           uc,
           t.shadow_context,
           mo,
@@ -740,13 +753,14 @@ public final class ExampleLightSpherical4 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-        t.filter_light.runFilter(uc, t.filter_light_params);
+        t.filter_light.runFilter(pro_root, uc, t.filter_light_params);
         t.main.getDebugVisualizerRenderer().renderScene(
           areax,
+          pro_root,
           uc,
           mo,
           t.debug_params);
-        t.filter_compositor.runFilter(uc, t.filter_comp_parameters);
+        t.filter_compositor.runFilter(pro_root, uc, t.filter_comp_parameters);
 
         return Unit.unit();
       });

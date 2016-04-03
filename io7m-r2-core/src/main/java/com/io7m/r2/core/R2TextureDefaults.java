@@ -223,6 +223,7 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
     throws R2Exception
   {
     if (!this.normal.isDeleted()) {
+      R2TextureDefaults.LOG.debug("delete");
       this.normal.delete(g);
       this.white.delete(g);
       this.black.delete(g);

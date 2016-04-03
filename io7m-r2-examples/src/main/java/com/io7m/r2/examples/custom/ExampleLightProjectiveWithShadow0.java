@@ -103,6 +103,9 @@ import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.r2.core.profiling.R2ProfilingFrameType;
+import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
@@ -221,6 +224,9 @@ public final class ExampleLightProjectiveWithShadow0 implements
   private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> depth_shader;
   private R2DepthShaderBasicParametersMutable depth_params;
   private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
+
+  private R2ProfilingFrameType profiling_frame;
+  private R2ProfilingContextType profiling_root;
 
   public ExampleLightProjectiveWithShadow0()
   {
@@ -632,7 +638,6 @@ public final class ExampleLightProjectiveWithShadow0 implements
         this.golden_shader_params.getAlbedoTexture());
       this.golden_depth_material = R2MaterialDepthSingle.newMaterial(
         m.getIDPool(), this.depth_shader, this.golden_depth_params);
-
     }
 
     this.sphere_light_shader =
@@ -738,10 +743,15 @@ public final class ExampleLightProjectiveWithShadow0 implements
     {
       final R2MatricesType matrices = mx.getMatrices();
 
+      final R2ProfilingType pro = this.main.getProfiling();
+      this.profiling_frame = pro.startFrame();
+      this.profiling_root = this.profiling_frame.getChildContext("main");
+
       final R2ShadowMapRendererExecutionType sme =
         this.main.getShadowMapRenderer().shadowBegin();
 
       sme.shadowExecRenderLight(
+        this.profiling_root,
         this.main.getTextureUnitAllocator().getRootContext(),
         matrices,
         this.proj_light,
@@ -767,11 +777,13 @@ public final class ExampleLightProjectiveWithShadow0 implements
         t.gbuffer.clearBoundPrimaryFramebuffer(t.g);
         t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
           mo,
+          t.profiling_root,
           t.main.getTextureUnitAllocator().getRootContext(),
           t.gbuffer.getArea(),
           t.stencils);
         t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
           t.gbuffer.getArea(),
+          t.profiling_root,
           uc,
           mo,
           t.opaques);
@@ -788,6 +800,7 @@ public final class ExampleLightProjectiveWithShadow0 implements
         t.main.getLightRenderer().renderLightsWithBoundBuffer(
           t.gbuffer,
           t.lbuffer.getArea(),
+          t.profiling_root,
           uc,
           t.shadow_context,
           mo,
@@ -802,13 +815,15 @@ public final class ExampleLightProjectiveWithShadow0 implements
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-        t.filter_light.runFilter(uc, t.filter_light_params);
+        t.filter_light.runFilter(t.profiling_root, uc, t.filter_light_params);
         t.main.getDebugVisualizerRenderer().renderScene(
           areax,
+          t.profiling_root,
           uc,
           mo,
           t.debug_params);
-        t.filter_compositor.runFilter(uc, t.filter_comp_parameters);
+        t.filter_compositor.runFilter(
+          t.profiling_root, uc, t.filter_comp_parameters);
 
         return Unit.unit();
       });

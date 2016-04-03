@@ -50,9 +50,12 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformReadableType;
+import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.r2.core.profiling.R2ProfilingFrameType;
+import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -241,6 +244,13 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
         final JCGLFramebufferUsableType zbuffer_fb =
           t.pbuffer.getFramebuffer();
 
+        final R2ProfilingType pro =
+          t.main.getProfiling();
+        final R2ProfilingFrameType pro_frame =
+          pro.startFrame();
+        final R2ProfilingContextType pro_root =
+          pro_frame.getChildContext("main");
+
         g_fb.framebufferDrawBind(gbuffer_fb);
         g_cb.colorBufferMask(true, true, true, true);
         g_db.depthBufferWriteEnable();
@@ -250,11 +260,13 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
 
         t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
           mo,
+          pro_root,
           t.main.getTextureUnitAllocator().getRootContext(),
           t.gbuffer.getArea(),
           t.stencils);
         t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
           t.gbuffer.getArea(),
+          pro_root,
           t.main.getTextureUnitAllocator().getRootContext(),
           mo,
           t.opaques);
@@ -272,9 +284,9 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
         t.eye_filter_params.setObserverValues(mo);
 
         t.eye_filter.runFilter(
+          pro_root,
           t.main.getTextureUnitAllocator().getRootContext(),
-          t.eye_filter_params
-        );
+          t.eye_filter_params);
 
         g_fb.framebufferDrawUnbind();
         return Unit.unit();

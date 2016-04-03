@@ -307,7 +307,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2TransformOTType tr = ls.getTransformWritable();
     tr.getTranslation().set3F(0.0f, 0.0f, 10.0f);
 
-    rc.shadowExecRenderLight(tc, m, ls, di);
+    rc.shadowExecRenderLight(R2FakeProfilingContext.newFake(), tc, m, ls, di);
 
     final R2ShadowMapContextType mc =
       rc.shadowExecComplete();

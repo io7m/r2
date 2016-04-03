@@ -14,31 +14,38 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.examples.custom;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
 
-/**
- * The type of stencil renderers.
- */
-
-public interface R2StencilRendererType extends R2DeletableType
+final class ExampleProfilingWindow extends JFrame
 {
-  /**
-   * Render the given stencil instances into the currently bound framebuffer.
-   *
-   * @param m    A matrix context
-   * @param pc   A profiling context
-   * @param uc   A texture unit context
-   * @param area The current viewport
-   * @param s    The stencil instances
-   */
+  private final JTextArea text;
+  private final JScrollPane scroll;
 
-  void renderStencilsWithBoundBuffer(
-    R2MatricesObserverType m,
-    R2ProfilingContextType pc,
-    R2TextureUnitContextParentType uc,
-    AreaInclusiveUnsignedLType area,
-    R2SceneStencilsType s);
+  ExampleProfilingWindow()
+  {
+    super("Profiling");
+
+    this.text = new JTextArea();
+    this.text.setFont(Font.decode("Monospace 10"));
+    this.scroll = new JScrollPane(this.text);
+
+    final Container cp = this.getContentPane();
+    cp.add(this.scroll);
+
+    this.setPreferredSize(new Dimension(640, 480));
+    this.pack();
+  }
+
+  void sendText(
+    final String t)
+  {
+    this.text.setText(t);
+  }
 }

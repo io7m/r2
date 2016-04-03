@@ -31,6 +31,7 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
+import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 /**
@@ -128,4 +129,10 @@ public interface R2MainType extends R2DeletableType
    */
 
   R2ShadowMapRendererType getShadowMapRenderer();
+
+  /**
+   * @return A profiling interface
+   */
+
+  R2ProfilingType getProfiling();
 }

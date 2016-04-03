@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
+
 /**
  * The type of usable image filters.
  *
@@ -28,11 +30,14 @@ public interface R2FilterUsableType<P>
    * Run the filter for the given parameters. The output will be written to
    * {@code destination}.
    *
-   * @param uc          A texture unit context
-   * @param parameters  The filter parameters
+   * @param pc         A profiling context
+   * @param uc         A texture unit context
+   * @param parameters The filter parameters
    */
 
   void runFilter(
+    final
+    R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final P parameters);
 }

@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 
 /**
  * The type of renderers that populate geometry buffers.
@@ -28,6 +29,7 @@ public interface R2GeometryRendererType extends R2DeletableType
    * Render the given opaque instances into the given geometry buffer.
    *
    * @param gbuffer The geometry buffer
+   * @param pc      A profiling context
    * @param uc      A texture unit context
    * @param m       A matrix context
    * @param s       The opaque instances
@@ -35,6 +37,7 @@ public interface R2GeometryRendererType extends R2DeletableType
 
   void renderGeometry(
     R2GeometryBufferUsableType gbuffer,
+    R2ProfilingContextType pc,
     R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2SceneOpaquesType s);
@@ -44,6 +47,7 @@ public interface R2GeometryRendererType extends R2DeletableType
    * buffer.
    *
    * @param area The current viewport
+   * @param pc   A profiling context
    * @param uc   A texture unit context
    * @param m    A matrix context
    * @param s    The opaque instances
@@ -51,6 +55,7 @@ public interface R2GeometryRendererType extends R2DeletableType
 
   void renderGeometryWithBoundBuffer(
     AreaInclusiveUnsignedLType area,
+    R2ProfilingContextType pc,
     R2TextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2SceneOpaquesType s);

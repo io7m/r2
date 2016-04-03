@@ -41,6 +41,7 @@ import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
@@ -65,10 +66,9 @@ public final class R2FilterDebugEyeZ implements
   }
 
   private final R2ShaderFilterType<R2FilterDebugEyeZParametersType> shader;
-  private final JCGLInterfaceGL33Type                               g;
-  private final JCGLRenderStateMutable
-    render_state;
-  private final R2UnitQuadUsableType                                quad;
+  private final JCGLInterfaceGL33Type g;
+  private final JCGLRenderStateMutable render_state;
+  private final R2UnitQuadUsableType quad;
 
   private R2FilterDebugEyeZ(
     final JCGLInterfaceGL33Type in_g,
@@ -119,6 +119,7 @@ public final class R2FilterDebugEyeZ implements
 
   @Override
   public void runFilter(
+    final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2FilterDebugEyeZParametersType parameters)
   {
@@ -127,6 +128,19 @@ public final class R2FilterDebugEyeZ implements
 
     Assertive.require(!this.isDeleted(), "Filter not deleted");
 
+    final R2ProfilingContextType pc_base = pc.getChildContext("debug-eye-z");
+    pc_base.startMeasuringIfEnabled();
+    try {
+      this.run(uc, parameters);
+    } finally {
+      pc_base.stopMeasuringIfEnabled();
+    }
+  }
+
+  private void run(
+    final R2TextureUnitContextParentType uc,
+    final R2FilterDebugEyeZParametersType parameters)
+  {
     final R2GeometryBufferUsableType gbuffer =
       parameters.getGeometryBuffer();
     final R2EyeZBufferUsableType zbuffer =

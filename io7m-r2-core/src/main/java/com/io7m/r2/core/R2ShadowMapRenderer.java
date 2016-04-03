@@ -31,9 +31,12 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.valid4j.Assertive;
 
 import java.util.Optional;
@@ -46,7 +49,14 @@ import java.util.OptionalInt;
 
 public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2ShadowMapRenderer.class);
+  }
+
   private final RendererContext context;
+  private boolean deleted;
 
   private R2ShadowMapRenderer(
     final JCGLInterfaceGL33Type g33,
@@ -88,6 +98,20 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
     return this.context;
   }
 
+  @Override
+  public void delete(final JCGLInterfaceGL33Type g)
+    throws R2Exception
+  {
+    R2ShadowMapRenderer.LOG.debug("delete");
+    this.deleted = true;
+  }
+
+  @Override
+  public boolean isDeleted()
+  {
+    return this.deleted;
+  }
+
   private static final class RendererContext implements
     R2ShadowMapRendererExecutionType
   {
@@ -100,6 +124,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
     private @Nullable R2LightWithShadowSingleType light;
     private @Nullable R2DepthInstancesType instances;
     private @Nullable R2MatricesType matrices;
+    private @Nullable R2ProfilingContextType profiling_variance;
 
     private RendererContext(
       final
@@ -210,15 +235,22 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
     @Override
     public void shadowExecRenderLight(
+      final R2ProfilingContextType pc,
       final R2TextureUnitContextParentType tc,
       final R2MatricesType m,
       final R2LightWithShadowSingleType ls,
       final R2DepthInstancesType i)
     {
+      NullCheck.notNull(pc);
       NullCheck.notNull(tc);
       NullCheck.notNull(m);
       NullCheck.notNull(ls);
       NullCheck.notNull(i);
+
+      final R2ProfilingContextType pc_base =
+        pc.getChildContext("shadow-map-renderer");
+      this.profiling_variance =
+        pc_base.getChildContext("variance");
 
       this.texture_context = tc;
       this.light = ls;
@@ -231,8 +263,13 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
         on_variance = (t, sv) -> {
         t.variance.shadow = sv;
         return t.light.matchLightWithShadow(t, (t1, lp) -> {
-          t1.renderLightProjectiveWithShadowVariance(lp, t1.variance.shadow);
-          return Unit.unit();
+          t.profiling_variance.startMeasuringIfEnabled();
+          try {
+            t1.renderLightProjectiveWithShadowVariance(lp, t1.variance.shadow);
+            return Unit.unit();
+          } finally {
+            t.profiling_variance.stopMeasuringIfEnabled();
+          }
         });
       };
 

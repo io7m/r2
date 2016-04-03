@@ -37,6 +37,9 @@ import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
+import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.r2.core.profiling.R2ProfilingFrameType;
+import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
@@ -114,18 +117,22 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     g_st.stencilBufferMask(JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
     g_st.stencilBufferClear(0);
 
-    this.matrices.withObserver(
-      this.view,
-      this.projection,
-      this,
-      (mo, t) -> {
-        t.stencil_renderer.renderStencilsWithBoundBuffer(
-          mo,
-          t.main.getTextureUnitAllocator().getRootContext(),
-          area,
-          t.stencils);
-        return Unit.unit();
-      });
+    this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+      final R2ProfilingType pro =
+        t.main.getProfiling();
+      final R2ProfilingFrameType pro_frame =
+        pro.startFrame();
+      final R2ProfilingContextType pro_root =
+        pro_frame.getChildContext("main");
+
+      t.stencil_renderer.renderStencilsWithBoundBuffer(
+        mo,
+        pro_root,
+        t.main.getTextureUnitAllocator().getRootContext(),
+        area,
+        t.stencils);
+      return Unit.unit();
+    });
   }
 
   @Override

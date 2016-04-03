@@ -111,7 +111,8 @@ public abstract class R2StencilRendererContract extends R2JCGLContract
 
     final R2MatricesType m = R2Matrices.newMatrices();
     m.withObserver(PMatrixI4x4F.identity(), proj, Unit.unit(), (x, y) -> {
-      r.renderStencilsWithBoundBuffer(x, tc, area, ii);
+      r.renderStencilsWithBoundBuffer(
+        x, R2FakeProfilingContext.newFake(), tc, area, ii);
       return Unit.unit();
     });
   }
