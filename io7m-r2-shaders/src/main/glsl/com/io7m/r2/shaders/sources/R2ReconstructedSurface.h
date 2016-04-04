@@ -35,6 +35,19 @@ struct R2_reconstructed_surface_t {
 ///
 /// Perform a full reconstruction of the surface in the given G-Buffer.
 ///
+/// The implementation of this function is affected by the following preprocessor
+/// defines:
+///
+/// If `R2_RECONSTRUCT_DIFFUSE_ONLY` is defined, the function only samples those parts
+/// of the geometry buffer that are required for diffuse lighting (specifically depth
+/// and normals).
+///
+/// If `R2_RECONSTRUCT_DIFFUSE_SPECULAR_ONLY` is defined, the function only samples
+/// those parts of the geometry buffer that are required for diffuse lighting
+/// (specifically depth, normals, and specular).
+///
+/// Otherwise, the surface is fully reconstructed.
+///
 /// @param gbuffer         The G-Buffer that will be sampled
 /// @param viewport        The current viewport
 /// @param view_rays       The current view rays
@@ -67,6 +80,10 @@ R2_deferredSurfaceReconstruct(
   vec4 position_eye =
     R2_positionReconstructFromEyeZ (eye_z, screen_uv, view_rays);
 
+#if defined(R2_RECONSTRUCT_DIFFUSE_ONLY) || defined(R2_RECONSTRUCT_DIFFUSE_SPECULAR_ONLY)
+  vec3 albedo    = vec3 (0.0);
+  float emission = 0.0;
+#else
   // Sample albedo/emission
   vec4 albedo_raw =
     texture (gbuffer.albedo, screen_uv);
@@ -74,6 +91,7 @@ R2_deferredSurfaceReconstruct(
     albedo_raw.rgb;
   float emission =
     albedo_raw.a;
+#endif
 
   // Sample normals
   vec2 normal_compressed =
@@ -81,6 +99,7 @@ R2_deferredSurfaceReconstruct(
   vec3 normal =
     R2_normalsDecompress (normal_compressed);
 
+#if !defined(R2_RECONSTRUCT_DIFFUSE_ONLY)
   // Sample specular
   vec4 specular_raw =
     texture (gbuffer.specular, screen_uv);
@@ -88,6 +107,10 @@ R2_deferredSurfaceReconstruct(
     specular_raw.rgb;
   float specular_exponent =
     specular_raw.a * 256.0;
+#else
+  vec3 specular_color     = vec3 (0.0);
+  float specular_exponent = 0.0;
+#endif
 
   // Construct surface data
   R2_reconstructed_surface_t surface =
