@@ -54,11 +54,14 @@ public interface R2GeometryBufferUsableType
   default R2Texture2DUsableType getSpecularTextureOrDefault(
     final R2TextureDefaultsType td)
   {
+    // Checkstyle doesn't understand the final keyword in interfaces.
+    // CHECKSTYLE:OFF
     final Optional<R2Texture2DUsableType> s_opt = this.getSpecularTexture();
     if (s_opt.isPresent()) {
       return s_opt.get();
     }
     return td.getBlackTexture();
+    // CHECKSTYLE:ON
   }
 
   /**

@@ -60,7 +60,6 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
           tc.getRootContext(),
           desc);
 
-      Assert.assertEquals(640L * 480L * 16L, gb.getRange().getInterval());
       Assert.assertFalse(gb.isDeleted());
 
       final R2Texture2DUsableType t_rgba =
@@ -90,6 +89,7 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
       switch (cc) {
         case R2_GEOMETRY_BUFFER_FULL:
         {
+          Assert.assertEquals(640L * 480L * 16L, gb.getRange().getInterval());
           Assert.assertEquals(
             JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
             t_spec.get().get().textureGetFormat());
@@ -97,6 +97,7 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
         }
         case R2_GEOMETRY_BUFFER_NO_SPECULAR:
         {
+          Assert.assertEquals(640L * 480L * 12L, gb.getRange().getInterval());
           break;
         }
       }
