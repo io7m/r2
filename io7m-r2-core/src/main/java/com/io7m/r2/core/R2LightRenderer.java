@@ -77,12 +77,11 @@ import java.util.Set;
 public final class R2LightRenderer implements R2LightRendererType
 {
   private static final Logger LOG;
+  private static final Set<JCGLFramebufferBlitBuffer> DEPTH_STENCIL;
 
   static {
     LOG = LoggerFactory.getLogger(R2LightRenderer.class);
   }
-
-  private static final Set<JCGLFramebufferBlitBuffer> DEPTH_STENCIL;
 
   static {
     DEPTH_STENCIL = EnumSet.of(
@@ -97,6 +96,7 @@ public final class R2LightRenderer implements R2LightRendererType
 
   private R2LightRenderer(
     final JCGLInterfaceGL33Type in_g,
+    final R2TextureDefaultsType in_defaults,
     final R2ShaderInstanceSingleType<Unit> in_clip_volume_stencil,
     final R2ShaderInstanceSingleScreenType<Unit> in_clip_screen_stencil,
     final R2UnitQuadUsableType in_quad)
@@ -106,22 +106,28 @@ public final class R2LightRenderer implements R2LightRendererType
     this.clip_screen_stencil = NullCheck.notNull(in_clip_screen_stencil);
     this.light_consumer =
       new LightConsumer(
-        this.g, in_clip_volume_stencil, in_clip_screen_stencil, in_quad);
+        this.g,
+        in_defaults,
+        in_clip_volume_stencil,
+        in_clip_screen_stencil,
+        in_quad);
   }
 
   /**
    * Construct a new renderer.
    *
-   * @param in_g       An OpenGL interface
-   * @param in_sources Access to shader sources
-   * @param in_pool    An ID pool
-   * @param in_quad    A usable unit quad
+   * @param in_g                An OpenGL interface
+   * @param in_sources          Access to shader sources
+   * @param in_texture_defaults A set of default textures
+   * @param in_pool             An ID pool
+   * @param in_quad             A usable unit quad
    *
    * @return A new renderer
    */
 
   public static R2LightRendererType newRenderer(
     final JCGLInterfaceGL33Type in_g,
+    final R2TextureDefaultsType in_texture_defaults,
     final R2ShaderSourcesType in_sources,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
@@ -135,7 +141,7 @@ public final class R2LightRenderer implements R2LightRendererType
         g_sh, in_sources, in_pool);
 
     return new R2LightRenderer(
-      in_g, volume_stencil, screen_stencil, in_quad);
+      in_g, in_texture_defaults, volume_stencil, screen_stencil, in_quad);
   }
 
   @Override
@@ -253,8 +259,8 @@ public final class R2LightRenderer implements R2LightRendererType
   }
 
   /**
-   * Copy the contents of the depth/stencil attachment of the G-Buffer to
-   * the current depth/stencil buffer.
+   * Copy the contents of the depth/stencil attachment of the G-Buffer to the
+   * current depth/stencil buffer.
    */
 
   private void renderCopyDepthStencil(
@@ -1366,6 +1372,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private final LightGroupConsumer group_consumer;
     private final LightConsumerInputState input_state;
     private final LightClipGroupConsumer clip_group_consumer;
+    private final R2TextureDefaultsType texture_defaults;
 
     private @Nullable JCGLTextureUnitType unit_albedo;
     private @Nullable JCGLTextureUnitType unit_normals;
@@ -1375,6 +1382,7 @@ public final class R2LightRenderer implements R2LightRendererType
 
     LightConsumer(
       final JCGLInterfaceGL33Type in_g,
+      final R2TextureDefaultsType in_defaults,
       final R2ShaderInstanceSingleUsableType<Unit> in_clip_volume_stencil,
       final R2ShaderInstanceSingleScreenUsableType<Unit> in_clip_screen_stencil,
       final R2UnitQuadUsableType in_quad)
@@ -1382,6 +1390,7 @@ public final class R2LightRenderer implements R2LightRendererType
       this.g33 = NullCheck.notNull(in_g);
       NullCheck.notNull(in_clip_volume_stencil);
 
+      this.texture_defaults = NullCheck.notNull(in_defaults);
       this.input_state =
         new LightConsumerInputState();
       this.group_consumer =
@@ -1410,18 +1419,24 @@ public final class R2LightRenderer implements R2LightRendererType
 
       this.light_base_context =
         this.input_state.texture_context.unitContextNewWithReserved(4);
+
       this.unit_albedo =
         this.light_base_context.unitContextBindTexture2D(
-          this.textures, this.input_state.gbuffer.getAlbedoEmissiveTexture());
+          this.textures,
+          this.input_state.gbuffer.getAlbedoEmissiveTexture());
       this.unit_normals =
         this.light_base_context.unitContextBindTexture2D(
-          this.textures, this.input_state.gbuffer.getNormalTexture());
+          this.textures,
+          this.input_state.gbuffer.getNormalTexture());
       this.unit_specular =
         this.light_base_context.unitContextBindTexture2D(
-          this.textures, this.input_state.gbuffer.getSpecularTexture());
+          this.textures,
+          this.input_state.gbuffer.getSpecularTextureOrDefault(
+            this.texture_defaults));
       this.unit_depth =
         this.light_base_context.unitContextBindTexture2D(
-          this.textures, this.input_state.gbuffer.getDepthTexture());
+          this.textures,
+          this.input_state.gbuffer.getDepthTexture());
     }
 
     @Override

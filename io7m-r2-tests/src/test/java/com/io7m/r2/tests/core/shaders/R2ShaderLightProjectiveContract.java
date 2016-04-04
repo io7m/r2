@@ -29,6 +29,7 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferComponents;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2IDPool;
@@ -62,6 +63,30 @@ public abstract class R2ShaderLightProjectiveContract<
   extends R2JCGLContract
 {
   @Rule public ExpectedException expected = ExpectedException.none();
+
+  private static R2GeometryBufferType newGeometryBuffer(
+    final JCGLFramebuffersType g_fb,
+    final JCGLTexturesType g_tex,
+    final R2TextureUnitContextParentType tr)
+  {
+    final R2TextureUnitContextType tc =
+      tr.unitContextNew();
+
+    try {
+      final R2GeometryBufferDescription gbuffer_desc =
+        R2GeometryBufferDescription.of(
+          AreaInclusiveUnsignedL.of(
+            new UnsignedRangeInclusiveL(0L, 4L),
+            new UnsignedRangeInclusiveL(0L, 4L)),
+          R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL);
+      final R2GeometryBufferType gb = R2GeometryBuffer.newGeometryBuffer(
+        g_fb, g_tex, tc, gbuffer_desc);
+      g_fb.framebufferDrawUnbind();
+      return gb;
+    } finally {
+      tc.unitContextFinish(g_tex);
+    }
+  }
 
   protected abstract R2ShaderLightProjectiveType<T> newShaderWithVerifier(
     JCGLInterfaceGL33Type g,
@@ -110,7 +135,9 @@ public abstract class R2ShaderLightProjectiveContract<
     final JCGLTextureUnitType un =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture());
     final JCGLTextureUnitType us =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getSpecularTexture());
+      tc.unitContextBindTexture2D(
+        g_tex,
+        gbuffer.getSpecularTextureOrDefault(td));
     final JCGLTextureUnitType ud =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
 
@@ -191,28 +218,6 @@ public abstract class R2ShaderLightProjectiveContract<
       f.onReceiveValues(g_tex, g_sh, tc, gbuffer.getArea(), params, mo);
       return Unit.unit();
     });
-  }
-
-  private static R2GeometryBufferType newGeometryBuffer(
-    final JCGLFramebuffersType g_fb,
-    final JCGLTexturesType g_tex,
-    final R2TextureUnitContextParentType tr)
-  {
-    final R2TextureUnitContextType tc =
-      tr.unitContextNew();
-
-    try {
-      final R2GeometryBufferDescription gbuffer_desc =
-        R2GeometryBufferDescription.of(AreaInclusiveUnsignedL.of(
-          new UnsignedRangeInclusiveL(0L, 4L),
-          new UnsignedRangeInclusiveL(0L, 4L)));
-      final R2GeometryBufferType gb = R2GeometryBuffer.newGeometryBuffer(
-        g_fb, g_tex, tc, gbuffer_desc);
-      g_fb.framebufferDrawUnbind();
-      return gb;
-    } finally {
-      tc.unitContextFinish(g_tex);
-    }
   }
 
   @Test

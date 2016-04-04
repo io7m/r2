@@ -29,6 +29,7 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferComponents;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2IDPool;
@@ -73,9 +74,11 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
 
     try {
       final R2GeometryBufferDescription gbuffer_desc =
-        R2GeometryBufferDescription.of(AreaInclusiveUnsignedL.of(
-          new UnsignedRangeInclusiveL(0L, 4L),
-          new UnsignedRangeInclusiveL(0L, 4L)));
+        R2GeometryBufferDescription.of(
+          AreaInclusiveUnsignedL.of(
+            new UnsignedRangeInclusiveL(0L, 4L),
+            new UnsignedRangeInclusiveL(0L, 4L)),
+          R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL);
       final R2GeometryBufferType gb = R2GeometryBuffer.newGeometryBuffer(
         g_fb, g_tex, tc, gbuffer_desc);
       g_fb.framebufferDrawUnbind();
@@ -134,7 +137,8 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
     final JCGLTextureUnitType un =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture());
     final JCGLTextureUnitType us =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getSpecularTexture());
+      tc.unitContextBindTexture2D(
+        g_tex, gbuffer.getSpecularTextureOrDefault(td));
     final JCGLTextureUnitType ud =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
 
@@ -142,7 +146,6 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
       this.newShaderWithVerifier(g, sources, pool);
     final T params =
       this.newLight(g, pool, tc, td);
-
 
 
     final R2ProjectionReadableType proj =

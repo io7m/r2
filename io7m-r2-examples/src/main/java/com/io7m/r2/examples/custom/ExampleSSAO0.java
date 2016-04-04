@@ -201,7 +201,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     this.filter_ssao = R2FilterSSAO.newFilter(
       m.getShaderSources(),
       g,
-      this.main.getTextureUnitAllocator().getRootContext(),
+      m.getTextureDefaults(),
+      m.getTextureUnitAllocator().getRootContext(),
       m.getIDPool(),
       m.getUnitQuad());
 
@@ -275,7 +276,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getSpecularTexture(),
+        this.geom_buffer.getSpecularTextureOrDefault(m.getTextureDefaults()),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),

@@ -72,7 +72,6 @@ import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2LightBuffers;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
-import com.io7m.r2.core.R2LightRenderer;
 import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2LightSphericalSingle;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
@@ -337,7 +336,7 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.gbuffer.getSpecularTexture(),
+        this.gbuffer.getSpecularTextureOrDefault(m.getTextureDefaults()),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -407,7 +406,8 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
     this.filter_ssao = R2FilterSSAO.newFilter(
       m.getShaderSources(),
       gx,
-      this.main.getTextureUnitAllocator().getRootContext(),
+      m.getTextureDefaults(),
+      m.getTextureUnitAllocator().getRootContext(),
       m.getIDPool(),
       m.getUnitQuad());
 
@@ -726,9 +726,6 @@ public final class ExampleLightSpherical4New implements R2ExampleCustomType
       csb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
       this.screen_clear_spec = csb.build();
     }
-
-    this.light_renderer =
-      R2LightRenderer.newRenderer(gx, sources, id_pool, m.getUnitQuad());
   }
 
   @Override

@@ -383,7 +383,12 @@ public final class R2Main implements R2MainType
 
       final R2LightRendererType ex_light_renderer = Builder.compute(
         this.light_renderer,
-        () -> R2LightRenderer.newRenderer(g, ex_sources, ex_pool, ex_quad));
+        () -> R2LightRenderer.newRenderer(
+          g,
+          ex_texture_defaults,
+          ex_sources,
+          ex_pool,
+          ex_quad));
 
       final R2DebugVisualizerRendererType ex_debug_visual_renderer =
         Builder.compute(

@@ -185,14 +185,16 @@ public final class R2ShaderFilterDebugEyePosition extends
      */
 
     final R2GeometryBufferUsableType gbuffer = values.getGeometryBuffer();
-    final JCGLTextureUnitType unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getAlbedoEmissiveTexture());
     final JCGLTextureUnitType unit_normals =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture());
-    final JCGLTextureUnitType unit_specular =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getSpecularTexture());
     final JCGLTextureUnitType unit_depth =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
+
+    final JCGLTextureUnitType unit_albedo =
+      tc.unitContextBindTexture2D(g_tex, gbuffer.getAlbedoEmissiveTexture());
+    final JCGLTextureUnitType unit_specular =
+      tc.unitContextBindTexture2D(
+        g_tex, gbuffer.getSpecularTextureOrDefault(values.getTextureDefaults()));
 
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);

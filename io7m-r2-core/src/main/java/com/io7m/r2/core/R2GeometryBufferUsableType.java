@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import java.util.Optional;
+
 /**
  * The type of usable geometry buffers.
  */
@@ -39,7 +41,25 @@ public interface R2GeometryBufferUsableType
    * @return The specular texture
    */
 
-  R2Texture2DUsableType getSpecularTexture();
+  Optional<R2Texture2DUsableType> getSpecularTexture();
+
+  /**
+   * Return either the allocated specular texture, or a suitable default
+   * replacement that behaves as if the geometry buffer contains no specular
+   * components.
+   * @param td The texture defaults
+   * @return A specular texture, or a default replacement
+   */
+
+  default R2Texture2DUsableType getSpecularTextureOrDefault(
+    final R2TextureDefaultsType td)
+  {
+    final Optional<R2Texture2DUsableType> s_opt = this.getSpecularTexture();
+    if (s_opt.isPresent()) {
+      return s_opt.get();
+    }
+    return td.getBlackTexture();
+  }
 
   /**
    * @return The depth/stencil texture

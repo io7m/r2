@@ -307,7 +307,7 @@ public final class ExampleLightSpherical4DiffuseOnly implements R2ExampleCustomT
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.gbuffer.getSpecularTexture(),
+        this.gbuffer.getSpecularTextureOrDefault(m.getTextureDefaults()),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -367,7 +367,8 @@ public final class ExampleLightSpherical4DiffuseOnly implements R2ExampleCustomT
     this.filter_ssao = R2FilterSSAO.newFilter(
       m.getShaderSources(),
       gx,
-      this.main.getTextureUnitAllocator().getRootContext(),
+      m.getTextureDefaults(),
+      m.getTextureUnitAllocator().getRootContext(),
       m.getIDPool(),
       m.getUnitQuad());
 
