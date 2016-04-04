@@ -18,7 +18,6 @@ package com.io7m.r2.filters;
 
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLPrimitives;
-import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLClearType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
@@ -34,8 +33,8 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
-import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
@@ -61,15 +60,18 @@ public final class R2FilterSSAO implements
   private final JCGLClearSpecification clear;
   private final R2ShaderSSAOParametersMutable shader_params;
   private final JCGLRenderStateMutable render_state;
+  private final R2TextureDefaultsType texture_defaults;
 
   private R2FilterSSAO(
     final JCGLInterfaceGL33Type in_g,
+    final R2TextureDefaultsType in_texture_defaults,
     final R2ShaderFilterType<R2ShaderSSAOParametersType> in_shader,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
+    this.texture_defaults = NullCheck.notNull(in_texture_defaults);
 
     final JCGLClearSpecification.Builder cb = JCGLClearSpecification.builder();
     cb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
@@ -84,11 +86,12 @@ public final class R2FilterSSAO implements
   /**
    * Construct a new filter.
    *
-   * @param in_sources Shader sources
-   * @param in_g       A GL interface
-   * @param in_tc      A texture unit allocator
-   * @param in_pool    An ID pool
-   * @param in_quad    A unit quad
+   * @param in_sources          Shader sources
+   * @param in_g                A GL interface
+   * @param in_texture_defaults A set of default textures
+   * @param in_tc               A texture unit allocator
+   * @param in_pool             An ID pool
+   * @param in_quad             A unit quad
    *
    * @return A new filter
    */
@@ -96,12 +99,14 @@ public final class R2FilterSSAO implements
   public static R2FilterType<R2FilterSSAOParametersType> newFilter(
     final R2ShaderSourcesType in_sources,
     final JCGLInterfaceGL33Type in_g,
+    final R2TextureDefaultsType in_texture_defaults,
     final R2TextureUnitContextParentType in_tc,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
     NullCheck.notNull(in_sources);
     NullCheck.notNull(in_g);
+    NullCheck.notNull(in_texture_defaults);
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_quad);
     NullCheck.notNull(in_tc);
@@ -109,7 +114,7 @@ public final class R2FilterSSAO implements
     final R2ShaderFilterType<R2ShaderSSAOParametersType> s =
       R2ShaderSSAO.newShader(in_g.getShaders(), in_sources, in_pool);
 
-    return new R2FilterSSAO(in_g, s, in_quad);
+    return new R2FilterSSAO(in_g, in_texture_defaults, s, in_quad);
   }
 
   @Override
@@ -180,17 +185,6 @@ public final class R2FilterSSAO implements
         this.shader_params.setViewport(destination.getArea());
         this.shader_params.setViewMatrices(parameters.getSceneObserverValues());
         Assertive.ensure(this.shader_params.isInitialized());
-
-        final R2GeometryBufferUsableType gb = parameters.getGeometryBuffer();
-
-        final JCGLTextureUnitType ua =
-          c.unitContextBindTexture2D(g_tx, gb.getAlbedoEmissiveTexture());
-        final JCGLTextureUnitType us =
-          c.unitContextBindTexture2D(g_tx, gb.getSpecularTexture());
-        final JCGLTextureUnitType ud =
-          c.unitContextBindTexture2D(g_tx, gb.getDepthTexture());
-        final JCGLTextureUnitType un =
-          c.unitContextBindTexture2D(g_tx, gb.getNormalTexture());
 
         try {
           g_sh.shaderActivateProgram(this.shader.getShaderProgram());

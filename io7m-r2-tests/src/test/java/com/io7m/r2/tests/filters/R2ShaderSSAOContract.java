@@ -24,6 +24,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferComponents;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2IDPool;
@@ -105,7 +106,8 @@ public abstract class R2ShaderSSAOContract extends
         g.getFramebuffers(),
         g_tex,
         tc_alloc,
-        R2GeometryBufferDescription.of(area));
+        R2GeometryBufferDescription.of(
+          area, R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL));
       g_fb.framebufferDrawUnbind();
 
       p.setGeometryBuffer(gb);

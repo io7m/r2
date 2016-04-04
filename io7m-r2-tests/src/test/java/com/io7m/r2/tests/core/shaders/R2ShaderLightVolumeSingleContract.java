@@ -29,6 +29,7 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferComponents;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2IDPool;
@@ -38,6 +39,8 @@ import com.io7m.r2.core.R2Matrices;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
+import com.io7m.r2.core.R2TextureDefaults;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitAllocator;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
@@ -70,9 +73,11 @@ public abstract class R2ShaderLightVolumeSingleContract<
 
     try {
       final R2GeometryBufferDescription gbuffer_desc =
-        R2GeometryBufferDescription.of(AreaInclusiveUnsignedL.of(
-          new UnsignedRangeInclusiveL(0L, 4L),
-          new UnsignedRangeInclusiveL(0L, 4L)));
+        R2GeometryBufferDescription.of(
+          AreaInclusiveUnsignedL.of(
+            new UnsignedRangeInclusiveL(0L, 4L),
+            new UnsignedRangeInclusiveL(0L, 4L)),
+          R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL);
       final R2GeometryBufferType gb = R2GeometryBuffer.newGeometryBuffer(
         g_fb, g_tex, tc, gbuffer_desc);
       g_fb.framebufferDrawUnbind();
@@ -114,6 +119,8 @@ public abstract class R2ShaderLightVolumeSingleContract<
       R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
     final R2TextureUnitContextParentType tr =
       ta.getRootContext();
+    final R2TextureDefaultsType td =
+      R2TextureDefaults.newDefaults(g_tex, tr);
 
     final R2GeometryBufferType gbuffer =
       R2ShaderLightVolumeSingleContract.newGeometryBuffer(g_fb, g_tex, tr);
@@ -124,7 +131,7 @@ public abstract class R2ShaderLightVolumeSingleContract<
     final JCGLTextureUnitType un =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture());
     final JCGLTextureUnitType us =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getSpecularTexture());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.getSpecularTextureOrDefault(td));
     final JCGLTextureUnitType ud =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
 

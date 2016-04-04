@@ -23,6 +23,7 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferComponents;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2Texture2DUsableType;
@@ -30,6 +31,8 @@ import com.io7m.r2.core.R2TextureUnitAllocator;
 import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Optional;
 
 public abstract class R2GeometryBufferContract extends R2JCGLContract
 {
@@ -45,48 +48,63 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
     final AreaInclusiveUnsignedL area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
-    final R2GeometryBufferDescription desc =
-      R2GeometryBufferDescription.of(area);
 
-    final R2GeometryBufferType gb =
-      R2GeometryBuffer.newGeometryBuffer(
-        g.getFramebuffers(),
-        g.getTextures(),
-        tc.getRootContext(),
-        desc);
+    for (final R2GeometryBufferComponents cc : R2GeometryBufferComponents.values()) {
+      final R2GeometryBufferDescription desc =
+        R2GeometryBufferDescription.of(area, cc);
 
-    Assert.assertEquals(640L * 480L * 16L, gb.getRange().getInterval());
-    Assert.assertFalse(gb.isDeleted());
+      final R2GeometryBufferType gb =
+        R2GeometryBuffer.newGeometryBuffer(
+          g.getFramebuffers(),
+          g.getTextures(),
+          tc.getRootContext(),
+          desc);
 
-    final R2Texture2DUsableType t_rgba =
-      gb.getAlbedoEmissiveTexture();
-    final R2Texture2DUsableType t_dept =
-      gb.getDepthTexture();
-    final R2Texture2DUsableType t_spec =
-      gb.getSpecularTexture();
-    final R2Texture2DUsableType t_norm =
-      gb.getNormalTexture();
-    final JCGLFramebufferUsableType fb =
-      gb.getPrimaryFramebuffer();
+      Assert.assertFalse(gb.isDeleted());
 
-    Assert.assertEquals(desc, gb.getDescription());
-    Assert.assertEquals(area, gb.getArea());
+      final R2Texture2DUsableType t_rgba =
+        gb.getAlbedoEmissiveTexture();
+      final R2Texture2DUsableType t_dept =
+        gb.getDepthTexture();
+      final Optional<R2Texture2DUsableType> t_spec =
+        gb.getSpecularTexture();
+      final R2Texture2DUsableType t_norm =
+        gb.getNormalTexture();
+      final JCGLFramebufferUsableType fb =
+        gb.getPrimaryFramebuffer();
 
-    Assert.assertEquals(
-      JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-      t_rgba.get().textureGetFormat());
-    Assert.assertEquals(
-      JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-      t_spec.get().textureGetFormat());
-    Assert.assertEquals(
-      JCGLTextureFormat.TEXTURE_FORMAT_RG_16F_4BPP,
-      t_norm.get().textureGetFormat());
-    Assert.assertEquals(
-      JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
-      t_dept.get().textureGetFormat());
+      Assert.assertEquals(desc, gb.getDescription());
+      Assert.assertEquals(area, gb.getArea());
 
-    gb.delete(g);
-    Assert.assertTrue(fb.isDeleted());
-    Assert.assertTrue(gb.isDeleted());
+      Assert.assertEquals(
+        JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+        t_rgba.get().textureGetFormat());
+      Assert.assertEquals(
+        JCGLTextureFormat.TEXTURE_FORMAT_RG_16F_4BPP,
+        t_norm.get().textureGetFormat());
+      Assert.assertEquals(
+        JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
+        t_dept.get().textureGetFormat());
+
+      switch (cc) {
+        case R2_GEOMETRY_BUFFER_FULL:
+        {
+          Assert.assertEquals(640L * 480L * 16L, gb.getRange().getInterval());
+          Assert.assertEquals(
+            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+            t_spec.get().get().textureGetFormat());
+          break;
+        }
+        case R2_GEOMETRY_BUFFER_NO_SPECULAR:
+        {
+          Assert.assertEquals(640L * 480L * 12L, gb.getRange().getInterval());
+          break;
+        }
+      }
+
+      gb.delete(g);
+      Assert.assertTrue(fb.isDeleted());
+      Assert.assertTrue(gb.isDeleted());
+    }
   }
 }

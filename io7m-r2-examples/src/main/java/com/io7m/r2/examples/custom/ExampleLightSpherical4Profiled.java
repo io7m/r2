@@ -55,6 +55,7 @@ import com.io7m.r2.core.R2DepthVarianceBufferDescription;
 import com.io7m.r2.core.R2DepthVariancePrecision;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBuffer;
+import com.io7m.r2.core.R2GeometryBufferComponents;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2IDPoolType;
@@ -285,6 +286,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       final R2GeometryBufferDescription.Builder b =
         R2GeometryBufferDescription.builder();
       b.setArea(area);
+      b.setComponents(
+        R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_NO_SPECULAR);
 
       this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
         gx.getFramebuffers(),
@@ -345,7 +348,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.gbuffer.getSpecularTexture(),
+        this.gbuffer.getSpecularTextureOrDefault(m.getTextureDefaults()),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -415,7 +418,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     this.filter_ssao = R2FilterSSAO.newFilter(
       m.getShaderSources(),
       gx,
-      this.main.getTextureUnitAllocator().getRootContext(),
+      m.getTextureDefaults(),
+      m.getTextureUnitAllocator().getRootContext(),
       m.getIDPool(),
       m.getUnitQuad());
 

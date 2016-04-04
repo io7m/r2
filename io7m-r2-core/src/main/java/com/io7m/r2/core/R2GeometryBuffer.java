@@ -102,6 +102,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
   private final R2Texture2DType t_rgba;
   private final R2Texture2DType t_norm;
   private final R2Texture2DType t_spec;
+  private final Optional<R2Texture2DUsableType> t_spec_opt;
   private final R2Texture2DType t_depth;
   private final JCGLFramebufferType framebuffer;
   private final UnsignedRangeInclusiveL range;
@@ -119,13 +120,24 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
     this.desc = NullCheck.notNull(in_desc);
     this.t_rgba = NullCheck.notNull(in_t_rgba);
     this.t_norm = NullCheck.notNull(in_t_norm);
-    this.t_spec = NullCheck.notNull(in_t_spec);
     this.t_depth = NullCheck.notNull(in_t_depth);
+
+    if (in_t_spec != null) {
+      this.t_spec = in_t_spec;
+      this.t_spec_opt = Optional.of(in_t_spec);
+    } else {
+      this.t_spec = null;
+      this.t_spec_opt = Optional.empty();
+    }
 
     long size = 0L;
     size += this.t_rgba.get().getRange().getInterval();
     size += this.t_norm.get().getRange().getInterval();
-    size += this.t_spec.get().getRange().getInterval();
+
+    if (this.t_spec != null) {
+      size += this.t_spec.get().getRange().getInterval();
+    }
+
     size += this.t_depth.get().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
   }
@@ -196,26 +208,36 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      final Pair<JCGLTextureUnitType, R2Texture2DType> p_spec =
-        cc.unitContextAllocateTexture2D(
-          g_t,
-          range_x.getInterval(),
-          range_y.getInterval(),
-          JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
-          JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+      Pair<JCGLTextureUnitType, R2Texture2DType> p_spec = null;
+      switch (desc.getComponents()) {
+        case R2_GEOMETRY_BUFFER_FULL:
+          p_spec = cc.unitContextAllocateTexture2D(
+            g_t,
+            range_x.getInterval(),
+            range_y.getInterval(),
+            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+            JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+            JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+          break;
+        case R2_GEOMETRY_BUFFER_NO_SPECULAR:
+          break;
+      }
+
 
       final R2Texture2DType rt_rgba = p_rgba.getRight();
       final R2Texture2DType rt_depth = p_depth.getRight();
       final R2Texture2DType rt_norm = p_norm.getRight();
-      final R2Texture2DType rt_spec = p_spec.getRight();
+      R2Texture2DType rt_spec = null;
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
       fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_rgba.get());
       fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_norm.get());
-      fbb.attachColorTexture2DAt(points.get(2), buffers.get(2), rt_spec.get());
+      if (p_spec != null) {
+        rt_spec = p_spec.getRight();
+        fbb.attachColorTexture2DAt(points.get(2), buffers.get(2), rt_spec.get());
+      }
       fbb.attachDepthStencilTexture2D(rt_depth.get());
 
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
@@ -239,9 +261,9 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
   }
 
   @Override
-  public R2Texture2DUsableType getSpecularTexture()
+  public Optional<R2Texture2DUsableType> getSpecularTexture()
   {
-    return this.t_spec;
+    return this.t_spec_opt;
   }
 
   @Override
@@ -288,7 +310,9 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
       this.t_rgba.delete(g);
       this.t_depth.delete(g);
       this.t_norm.delete(g);
-      this.t_spec.delete(g);
+      if (this.t_spec != null) {
+        this.t_spec.delete(g);
+      }
 
       final JCGLFramebuffersType g_fb = g.getFramebuffers();
       g_fb.framebufferDelete(this.framebuffer);

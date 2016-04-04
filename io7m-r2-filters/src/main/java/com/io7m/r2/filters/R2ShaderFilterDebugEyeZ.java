@@ -157,7 +157,9 @@ public final class R2ShaderFilterDebugEyeZ extends
     final JCGLTextureUnitType unit_normals =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture());
     final JCGLTextureUnitType unit_specular =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getSpecularTexture());
+      tc.unitContextBindTexture2D(
+        g_tex,
+        gbuffer.getSpecularTextureOrDefault(values.getTextureDefaults()));
     final JCGLTextureUnitType unit_depth =
       tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
 

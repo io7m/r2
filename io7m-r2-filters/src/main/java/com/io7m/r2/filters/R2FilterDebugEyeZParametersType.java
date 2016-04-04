@@ -19,6 +19,7 @@ package com.io7m.r2.filters;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.core.R2MatricesObserverType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import org.immutables.value.Value;
 
 /**
@@ -51,4 +52,11 @@ public interface R2FilterDebugEyeZParametersType
 
   @Value.Parameter
   R2MatricesObserverType getObserverValues();
+
+  /**
+   * @return A set of default textures
+   */
+
+  @Value.Parameter
+  R2TextureDefaultsType getTextureDefaults();
 }

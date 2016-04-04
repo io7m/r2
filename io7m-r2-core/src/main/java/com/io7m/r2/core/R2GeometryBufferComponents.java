@@ -16,30 +16,21 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import org.immutables.value.Value;
-
 /**
- * The type of geometry buffer descriptions.
+ * A specification of which components are allocated for a geometry buffer.
  */
 
-@Value.Immutable
-@R2ImmutableStyleType
-public interface R2GeometryBufferDescriptionType extends
-  R2RenderTargetDescriptionType
+public enum R2GeometryBufferComponents
 {
-  @Override
-  @Value.Parameter
-  AreaInclusiveUnsignedLType getArea();
-
   /**
-   * @return The components that will be allocated in the geometry buffer
+   * The geometry buffer contains all possible components.
    */
 
-  @Value.Parameter
-  @Value.Default
-  default R2GeometryBufferComponents getComponents()
-  {
-    return R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
-  }
+  R2_GEOMETRY_BUFFER_FULL,
+
+  /**
+   * The geometry buffer contains no specular components.
+   */
+
+  R2_GEOMETRY_BUFFER_NO_SPECULAR
 }
