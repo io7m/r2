@@ -59,6 +59,10 @@ public final class R2RenderTargetDescriptions
   {
     NullCheck.notNull(a);
 
+    if (scale == 1.0) {
+      return a;
+    }
+
     final AreaInclusiveUnsignedLType b =
       R2RenderTargetDescriptions.scaleAreaInclusive(a.getArea(), scale);
     final T r = constructor.apply(a, b);
@@ -80,6 +84,10 @@ public final class R2RenderTargetDescriptions
     final AreaInclusiveUnsignedLType ao,
     final double scale)
   {
+    if (scale == 1.0) {
+      return ao;
+    }
+
     final UnsignedRangeInclusiveL rx_o = ao.getRangeX();
     final UnsignedRangeInclusiveL ry_o = ao.getRangeY();
 

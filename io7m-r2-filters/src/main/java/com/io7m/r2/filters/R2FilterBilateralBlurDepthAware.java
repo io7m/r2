@@ -214,15 +214,10 @@ public final class R2FilterBilateralBlurDepthAware<
     final D destination =
       parameters.getOutputRenderTarget();
 
-    final DD desc_scaled;
-    if (parameters.getBlurScale() == 1.0) {
-      desc_scaled = destination.getDescription();
-    } else {
-      desc_scaled = R2RenderTargetDescriptions.scale(
-        destination.getDescription(),
-        parameters.getOutputDescriptionScaler(),
-        parameters.getBlurScale());
-    }
+    final DD desc_scaled = R2RenderTargetDescriptions.scale(
+      destination.getDescription(),
+      parameters.getOutputDescriptionScaler(),
+      parameters.getBlurScale());
 
     final D temporary_a =
       this.render_target_pool.get(uc, desc_scaled);

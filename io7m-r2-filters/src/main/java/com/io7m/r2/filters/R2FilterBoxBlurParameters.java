@@ -41,20 +41,22 @@ public final class R2FilterBoxBlurParameters<
   SD extends R2RenderTargetDescriptionType,
   S extends R2RenderTargetUsableType<SD>,
   DD extends R2RenderTargetDescriptionType,
-  D extends R2RenderTargetUsableType<DD>>
+  D extends R2RenderTargetUsableType<DD>> implements
+  R2BlurParametersReadableType,
+  R2BlurParametersWritableType
 {
   private BiFunction<DD, AreaInclusiveUnsignedLType, DD>
     output_desc_scaler;
 
-  private Function<S, R2Texture2DUsableType>  source_selector;
-  private Function<D, R2Texture2DUsableType>  output_selector;
-  private S                                   source_buffer;
-  private D                                   output_buffer;
+  private Function<S, R2Texture2DUsableType> source_selector;
+  private Function<D, R2Texture2DUsableType> output_selector;
+  private S source_buffer;
+  private D output_buffer;
   private R2RenderTargetPoolUsableType<DD, D> render_target_pool;
-  private float                               blur_size;
-  private float                               blur_scale;
-  private int                                 blur_passes;
-  private JCGLFramebufferBlitFilter           blur_scale_filter;
+  private float blur_size;
+  private float blur_scale;
+  private int blur_passes;
+  private JCGLFramebufferBlitFilter blur_scale_filter;
 
   private R2FilterBoxBlurParameters(
     final S in_source_buffer,
@@ -243,88 +245,49 @@ public final class R2FilterBoxBlurParameters<
     this.output_buffer = NullCheck.notNull(b);
   }
 
-  /**
-   * @return The current blur size in texels
-   */
-
+  @Override
   public float getBlurSize()
   {
     return this.blur_size;
   }
 
-  /**
-   * Set the blur size in texels.
-   *
-   * @param s The size
-   */
-
+  @Override
   public void setBlurSize(final float s)
   {
     this.blur_size = Math.max(0.0f, s);
   }
 
-  /**
-   * @return The scale value for intermediate images
-   */
-
+  @Override
   public float getBlurScale()
   {
     return this.blur_scale;
   }
 
-  /**
-   * Set the amount by which the image will be scaled during the blur operation.
-   * By scaling an image down, blurring it, and then scaling it back up again,
-   * the blur effect is emphasized without requiring additional passes.
-   *
-   * @param s The scale amount
-   */
-
+  @Override
   public void setBlurScale(final float s)
   {
     this.blur_scale = Math.max(0.001f, s);
   }
 
-  /**
-   * @return The number of blur passes that will be used
-   */
-
+  @Override
   public int getBlurPasses()
   {
     return this.blur_passes;
   }
 
-  /**
-   * Set the number of blur passes that will be used. If a value of {@code 0} is
-   * given here, the image will only be scaled and not actually blurred (and
-   * will not actually even be scaled, if a value of {@code 1.0} is given for
-   * {@link #setBlurScale(float)}).
-   *
-   * @param p The number of blur passes
-   */
-
+  @Override
   public void setBlurPasses(final int p)
   {
     this.blur_passes = Math.max(0, p);
   }
 
-  /**
-   * @return The filter that will be used when an image is scaled via
-   * framebuffer blitting
-   */
-
+  @Override
   public JCGLFramebufferBlitFilter getBlurScaleFilter()
   {
     return this.blur_scale_filter;
   }
 
-  /**
-   * Set the filter that will be used when an image is resized using framebuffer
-   * blitting.
-   *
-   * @param f The filter
-   */
-
+  @Override
   public void setBlurScaleFilter(final JCGLFramebufferBlitFilter f)
   {
     this.blur_scale_filter = NullCheck.notNull(f);
