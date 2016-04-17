@@ -39,6 +39,7 @@ public final class R2LightSphericalSingle implements
   private float falloff;
   private float intensity;
   private float radius;
+  private float scale_factor;
 
   private R2LightSphericalSingle(
     final JCGLArrayObjectUsableType in_volume,
@@ -51,6 +52,7 @@ public final class R2LightSphericalSingle implements
     this.color = new PVectorM3F<>(1.0f, 1.0f, 1.0f);
     this.intensity = 1.0f;
     this.falloff = 1.0f;
+    this.scale_factor = 1.0f;
   }
 
   /**
@@ -84,7 +86,7 @@ public final class R2LightSphericalSingle implements
     final float r)
   {
     this.radius = Math.max(0.001f, r);
-    this.transform.setScale(r);
+    this.transform.setScale(r * this.scale_factor);
   }
 
   @Override
@@ -152,5 +154,18 @@ public final class R2LightSphericalSingle implements
   public PVector3FType<R2SpaceWorldType> getOriginPositionWritable()
   {
     return this.transform.getTranslation();
+  }
+
+  @Override
+  public void setGeometryScaleFactor(final float f)
+  {
+    this.scale_factor = Math.max(0.001f, f);
+    this.transform.setScale(this.radius * this.scale_factor);
+  }
+
+  @Override
+  public float getGeometryScaleFactor()
+  {
+    return this.scale_factor;
   }
 }

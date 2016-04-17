@@ -32,4 +32,18 @@ public interface R2LightSphericalSingleWritableType extends
    */
 
   PVector3FType<R2SpaceWorldType> getOriginPositionWritable();
+
+  /**
+   * Set the geometry scale factor.
+   *
+   * The final rendered scale of the light volume
+   * geometry is given by {@link R2LightSphericalSingleReadableType#getRadius()}
+   * * {@code f}. This is used to artificially enlarge the light volume to
+   * account for, for example, the fact that a low-polygon approximation of a
+   * sphere will typically have a smaller volume than a real sphere would.
+   *
+   * @param f The scale factor
+   */
+
+  void setGeometryScaleFactor(float f);
 }
