@@ -37,6 +37,7 @@ import com.io7m.r2.meshes.binary.R2MBReaderType;
 import com.io7m.r2.meshes.binary.R2MBUnmappedReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.valid4j.Assertive;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,9 +58,9 @@ public final class R2UnitSphere implements R2UnitSphereType
     LOG = LoggerFactory.getLogger(R2UnitSphere.class);
   }
 
-  private final JCGLArrayBufferType     array_buffer;
-  private final JCGLIndexBufferType     index_buffer;
-  private final JCGLArrayObjectType     array_object;
+  private final JCGLArrayBufferType array_buffer;
+  private final JCGLIndexBufferType index_buffer;
+  private final JCGLArrayObjectType array_object;
   private final UnsignedRangeInclusiveL range;
 
   private R2UnitSphere(
@@ -143,6 +144,109 @@ public final class R2UnitSphere implements R2UnitSphereType
     } catch (final IOException e) {
       throw new R2ExceptionIO(e.getMessage(), e);
     }
+  }
+
+  /**
+   * <p>A UV sphere approximates a real sphere by using a fixed number of
+   * vertical segments. When using {@code 8} segments, for example, the sphere
+   * looks like an octagon when viewed from above. This function returns the
+   * interior angle, in radians, of one of the triangles that make up the
+   * shape.</p>
+   *
+   * <p>The following always holds: {@code 2 * π = n * getUVSphereTriangleInteriorAngle(n)}</p>
+   *
+   * @param s The number of segments
+   *
+   * @return The interior angle of one of the resulting triangles
+   */
+
+  public static double getUVSphereTriangleInteriorAngle(
+    final int s)
+  {
+    Assertive.require(s > 0, "Segment count must be positive");
+    return (2.0 * Math.PI) / (double) s;
+  }
+
+  /**
+   * <p>Calculate the area of one of the triangles that make up an approximation
+   * of a circle with radius {@code r} constructed with {@code s} line
+   * segments.</p>
+   *
+   * @param r The radius
+   * @param s The number of segments in the approximation
+   *
+   * @return The approximation area
+   */
+
+  public static double getUVSphereApproximationTriangleArea(
+    final double r,
+    final int s)
+  {
+    Assertive.require(s > 0, "Segment count must be positive");
+    Assertive.require(r > 0.0, "Radius must be positive");
+
+    final double a = R2UnitSphere.getUVSphereTriangleInteriorAngle(s);
+    final double rs = r * r;
+    return 0.5 * rs * Math.sin(a);
+  }
+
+  /**
+   * <p>Calculate the scale factor required to completely contain a circle of
+   * radius {@code r} inside an approximation with radius {@code r} constructed
+   * with {@code s} line segments.</p>
+   *
+   * @param r The radius
+   * @param s The number of segments in the approximation
+   *
+   * @return The approximation area
+   */
+
+  public static double getUVSphereApproximationScaleFactor(
+    final double r,
+    final int s)
+  {
+    Assertive.require(s > 0, "Segment count must be positive");
+    Assertive.require(r > 0.0, "Radius must be positive");
+
+    final double ac = R2UnitSphere.getCircleArea(r);
+    final double aa = R2UnitSphere.getUVSphereApproximationArea(r, s);
+    return ac / aa;
+  }
+
+  /**
+   * <p>Calculate the area of an approximation of a circle with radius {@code r}
+   * constructed with {@code s} line segments.</p>
+   *
+   * @param r The radius
+   * @param s The number of segments in the approximation
+   *
+   * @return The approximation area
+   */
+
+  public static double getUVSphereApproximationArea(
+    final double r,
+    final int s)
+  {
+    Assertive.require(s > 0, "Segment count must be positive");
+    Assertive.require(r > 0.0, "Radius must be positive");
+    final double ds = (double) s;
+    final double a = R2UnitSphere.getUVSphereApproximationTriangleArea(r, s);
+    return ds * a;
+  }
+
+  /**
+   * <p>Calculate the area of a circle with radius {@code r}.</p>
+   *
+   * @param r The radius
+   *
+   * @return The circle area
+   */
+
+  public static double getCircleArea(
+    final double r)
+  {
+    Assertive.require(r > 0.0, "Radius must be positive");
+    return Math.PI * (r * r);
   }
 
   @Override
