@@ -742,6 +742,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     this.sphere_light.setIntensity(1.0f);
     this.sphere_light.getOriginPositionWritable().set3F(0.0f, 1.0f, 1.0f);
     this.sphere_light.setRadius(30.0f);
+    this.sphere_light.setGeometryScaleFactor(
+      (float) R2UnitSphere.getUVSphereApproximationScaleFactor(30.0f, 8));
 
     this.sphere_light_bounded_transform = R2TransformSiOT.newTransform();
     this.sphere_light_bounded_transform.getTranslation().set3F(
