@@ -18,8 +18,11 @@ package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jnull.NullCheck;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.valid4j.Assertive;
 
 import java.util.Objects;
@@ -30,28 +33,36 @@ import java.util.Objects;
 
 public final class R2RenderTargetStack implements R2RenderTargetStackType
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2RenderTargetStack.class);
+  }
+
   private final ReferenceArrayList<R2RenderTargetUsableType<?>> stack_read;
   private final JCGLFramebuffersType framebuffers;
   private final ReferenceArrayList<R2RenderTargetUsableType<?>> stack_draw;
+  private final JCGLInterfaceGL33Type g;
 
   private R2RenderTargetStack(
-    final JCGLFramebuffersType g_fb)
+    final JCGLInterfaceGL33Type in_g)
   {
-    this.framebuffers = NullCheck.notNull(g_fb);
+    this.g = NullCheck.notNull(in_g);
+    this.framebuffers = this.g.getFramebuffers();
     this.stack_read = new ReferenceArrayList<>(32);
     this.stack_draw = new ReferenceArrayList<>(32);
   }
 
   /**
-   * @param fb A framebuffer interface
+   * @param in_g A GL interface
    *
    * @return A new render target stack
    */
 
   public static R2RenderTargetStackType newStack(
-    final JCGLFramebuffersType fb)
+    final JCGLInterfaceGL33Type in_g)
   {
-    return new R2RenderTargetStack(fb);
+    return new R2RenderTargetStack(in_g);
   }
 
   @Override
@@ -75,6 +86,10 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
     if (!already_bound) {
       this.framebuffers.framebufferReadBind(r.getPrimaryFramebuffer());
       this.stack_read.add(r);
+    } else {
+      if (R2RenderTargetStack.LOG.isTraceEnabled()) {
+        R2RenderTargetStack.LOG.trace("redundant read bind ignored: {}", r);
+      }
     }
 
     Assertive.ensure(
@@ -169,7 +184,7 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
   {
     NullCheck.notNull(r);
 
-    boolean redundant = false;
+    boolean already_bound = false;
 
     if (!this.stack_draw.isEmpty()) {
       final R2RenderTargetUsableType<?> p =
@@ -177,12 +192,16 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
 
       final JCGLFramebufferUsableType p_fb = p.getPrimaryFramebuffer();
       this.checkBoundDraw(p_fb);
-      redundant = Objects.equals(p_fb, r.getPrimaryFramebuffer());
+      already_bound = Objects.equals(p_fb, r.getPrimaryFramebuffer());
     }
 
-    if (!redundant) {
+    if (!already_bound) {
       this.framebuffers.framebufferDrawBind(r.getPrimaryFramebuffer());
       this.stack_draw.add(r);
+    } else {
+      if (R2RenderTargetStack.LOG.isTraceEnabled()) {
+        R2RenderTargetStack.LOG.trace("redundant draw bind ignored: {}", r);
+      }
     }
 
     Assertive.ensure(
@@ -253,6 +272,32 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
     Assertive.ensure(
       !this.framebuffers.framebufferDrawIsBound(r.getPrimaryFramebuffer()),
       "Given framebuffer is no longer bound");
+  }
+
+  @Override
+  public <D extends R2RenderTargetDescriptionType,
+    T extends R2RenderTargetType<D>, C> T renderTargetAllocateDraw(
+    final R2TextureUnitContextParentType tc,
+    final C context,
+    final D description,
+    final R2RenderTargetAllocatorFunctionType<D, T, C> f)
+  {
+    final T r = f.call(this.g, tc, context, description);
+
+    final JCGLFramebufferUsableType new_fb = r.getPrimaryFramebuffer();
+    if (!this.framebuffers.framebufferDrawIsBound(new_fb)) {
+      final StringBuilder sb = new StringBuilder(128);
+      sb.append(
+        "Render target allocator function failed to leave the primary framebuffer bound.\n");
+      sb.append("Currently bound: ");
+      sb.append(this.framebuffers.framebufferDrawGetBound());
+      sb.append("\n");
+      r.delete(this.g);
+      throw new R2RenderTargetStackAllocationException(sb.toString());
+    }
+
+    this.stack_draw.add(r);
+    return r;
   }
 
   private void checkBoundDraw(

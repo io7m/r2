@@ -100,4 +100,30 @@ public interface R2RenderTargetStackType
   void renderTargetUnbindDraw(R2RenderTargetUsableType<D> r)
     throws R2RenderTargetStackException,
     R2RenderTargetStackWrongTargetException;
+
+  /**
+   * <p>Allocate a new render target, leaving it bound as the current draw
+   * buffer.</p>
+   *
+   * <p>The render target is actually allocated by the function {@code f}, which
+   * is required to leave the render target bound as the current draw buffer
+   * prior to returning.</p>
+   *
+   * @param tc          A texture unit allocator
+   * @param context     A context value
+   * @param description A render target description
+   * @param f           An allocation function
+   * @param <D>         The type of render target descriptions
+   * @param <T>         The type of render targets
+   * @param <C>         The type of context values
+   *
+   * @return A new render target
+   */
+
+  <D extends R2RenderTargetDescriptionType, T extends R2RenderTargetType<D>, C>
+  T renderTargetAllocateDraw(
+    R2TextureUnitContextParentType tc,
+    C context,
+    D description,
+    R2RenderTargetAllocatorFunctionType<D, T, C> f);
 }

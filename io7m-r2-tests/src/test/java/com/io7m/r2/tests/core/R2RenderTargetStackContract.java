@@ -20,11 +20,14 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jfunctional.Unit;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2ImageBuffer;
 import com.io7m.r2.core.R2ImageBufferDescription;
 import com.io7m.r2.core.R2ImageBufferDescriptionType;
 import com.io7m.r2.core.R2ImageBufferType;
+import com.io7m.r2.core.R2RenderTargetAllocatorFunctionType;
+import com.io7m.r2.core.R2RenderTargetStackAllocationException;
 import com.io7m.r2.core.R2RenderTargetStackEmptyException;
 import com.io7m.r2.core.R2RenderTargetStackInconsistentException;
 import com.io7m.r2.core.R2RenderTargetStackType;
@@ -57,7 +60,7 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
       desc);
   }
 
-  protected abstract R2RenderTargetStackType newStack(JCGLFramebuffersType f);
+  protected abstract R2RenderTargetStackType newStack(JCGLInterfaceGL33Type f);
 
   @Test
   public final void testStackUnbindDrawNothingBound()
@@ -65,7 +68,7 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g33.getFramebuffers());
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
@@ -83,7 +86,7 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g33.getFramebuffers());
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
@@ -107,7 +110,7 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g33.getFramebuffers());
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
@@ -145,12 +148,72 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
   }
 
   @Test
+  public final void testStackAllocateIncorrect()
+  {
+    final JCGLContextType gc = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
+    final JCGLFramebuffersType g_fb = g33.getFramebuffers();
+    final R2RenderTargetStackType st = this.newStack(g33);
+
+    final R2TextureUnitAllocatorType tc =
+      R2TextureUnitAllocator.newAllocatorWithStack(
+        8, g33.getTextures().textureGetUnits());
+
+    final R2ImageBufferDescriptionType desc = R2ImageBufferDescription.of(
+      AreaInclusiveUnsignedL.of(
+        new UnsignedRangeInclusiveL(0L, 1L),
+        new UnsignedRangeInclusiveL(0L, 1L)));
+
+    final R2RenderTargetAllocatorFunctionType<
+      R2ImageBufferDescriptionType, R2ImageBufferType, Unit> f =
+      (g, tc1, context, description) -> {
+        final JCGLFramebuffersType gg = g.getFramebuffers();
+        final R2ImageBufferType r =
+          R2ImageBuffer.newImageBuffer(gg, g.getTextures(), tc1, description);
+        gg.framebufferDrawUnbind();
+        return r;
+      };
+
+    this.expected.expect(R2RenderTargetStackAllocationException.class);
+    st.renderTargetAllocateDraw(tc.getRootContext(), Unit.unit(), desc, f);
+  }
+
+  @Test
+  public final void testStackAllocateCorrect()
+  {
+    final JCGLContextType gc = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
+    final JCGLFramebuffersType g_fb = g33.getFramebuffers();
+    final R2RenderTargetStackType st = this.newStack(g33);
+
+    final R2TextureUnitAllocatorType tc =
+      R2TextureUnitAllocator.newAllocatorWithStack(
+        8, g33.getTextures().textureGetUnits());
+
+    final R2ImageBufferDescriptionType desc = R2ImageBufferDescription.of(
+      AreaInclusiveUnsignedL.of(
+        new UnsignedRangeInclusiveL(0L, 1L),
+        new UnsignedRangeInclusiveL(0L, 1L)));
+
+    final R2RenderTargetAllocatorFunctionType<
+      R2ImageBufferDescriptionType, R2ImageBufferType, Unit> f =
+      (g, tc1, context, description) -> R2ImageBuffer.newImageBuffer(
+        g.getFramebuffers(), g.getTextures(), tc1, description);
+
+    final R2ImageBufferType rt = st.renderTargetAllocateDraw(
+      tc.getRootContext(), Unit.unit(), desc, f);
+
+    Assert.assertEquals(rt.getDescription(), desc);
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(rt.getPrimaryFramebuffer()));
+  }
+
+  @Test
   public final void testStackUnbindReadWrongBound()
   {
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g_fb);
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
@@ -174,7 +237,7 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g_fb);
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
@@ -198,7 +261,7 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g_fb);
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
@@ -222,7 +285,7 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g33.getFramebuffers());
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
@@ -240,7 +303,7 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g33.getFramebuffers());
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
@@ -277,14 +340,13 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
   }
 
-
   @Test
   public final void testStackBindReadInconsistent()
   {
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g_fb);
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
@@ -308,7 +370,7 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
     final JCGLFramebuffersType g_fb = g33.getFramebuffers();
-    final R2RenderTargetStackType st = this.newStack(g_fb);
+    final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2ImageBufferType r0 =
       R2RenderTargetStackContract.newRenderTarget(g33);
