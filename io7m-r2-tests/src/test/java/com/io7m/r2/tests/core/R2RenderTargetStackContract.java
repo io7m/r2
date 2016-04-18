@@ -28,6 +28,7 @@ import com.io7m.r2.core.R2ImageBufferDescriptionType;
 import com.io7m.r2.core.R2ImageBufferType;
 import com.io7m.r2.core.R2RenderTargetAllocatorFunctionType;
 import com.io7m.r2.core.R2RenderTargetStackAllocationException;
+import com.io7m.r2.core.R2RenderTargetStackDeletedException;
 import com.io7m.r2.core.R2RenderTargetStackEmptyException;
 import com.io7m.r2.core.R2RenderTargetStackInconsistentException;
 import com.io7m.r2.core.R2RenderTargetStackType;
@@ -38,6 +39,8 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class R2RenderTargetStackContract extends R2JCGLContract
 {
@@ -125,6 +128,103 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     st.renderTargetBindDraw(r0);
     Assert.assertTrue(g_fb.framebufferDrawIsBound(r0.getPrimaryFramebuffer()));
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
+    Assert.assertEquals(1L, (long) st.getDrawStackSize());
+    Assert.assertEquals(0L, (long) st.getReadStackSize());
+
+    st.renderTargetBindDraw(r1);
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(r1.getPrimaryFramebuffer()));
+    Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
+    Assert.assertEquals(2L, (long) st.getDrawStackSize());
+    Assert.assertEquals(0L, (long) st.getReadStackSize());
+
+    st.renderTargetBindDraw(r2);
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(r2.getPrimaryFramebuffer()));
+    Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
+    Assert.assertEquals(3L, (long) st.getDrawStackSize());
+    Assert.assertEquals(0L, (long) st.getReadStackSize());
+
+    st.renderTargetUnbindDraw(r2);
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(r1.getPrimaryFramebuffer()));
+    Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
+    Assert.assertEquals(2L, (long) st.getDrawStackSize());
+    Assert.assertEquals(0L, (long) st.getReadStackSize());
+
+    st.renderTargetUnbindDraw(r1);
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(r0.getPrimaryFramebuffer()));
+    Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
+    Assert.assertEquals(1L, (long) st.getDrawStackSize());
+    Assert.assertEquals(0L, (long) st.getReadStackSize());
+
+    st.renderTargetUnbindDraw(r0);
+    Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
+    Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
+    Assert.assertEquals(0L, (long) st.getDrawStackSize());
+    Assert.assertEquals(0L, (long) st.getReadStackSize());
+  }
+
+  @Test
+  public final void testStackBindDrawDeleted()
+  {
+    final JCGLContextType gc = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
+    final JCGLFramebuffersType g_fb = g33.getFramebuffers();
+    final R2RenderTargetStackType st = this.newStack(g33);
+
+    final R2ImageBufferType r0 =
+      R2RenderTargetStackContract.newRenderTarget(g33);
+
+    g_fb.framebufferReadUnbind();
+    g_fb.framebufferDrawUnbind();
+
+    r0.delete(g33);
+
+    this.expected.expect(R2RenderTargetStackDeletedException.class);
+    st.renderTargetBindDraw(r0);
+  }
+
+  @Test
+  public final void testStackBindReadDeleted()
+  {
+    final JCGLContextType gc = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
+    final JCGLFramebuffersType g_fb = g33.getFramebuffers();
+    final R2RenderTargetStackType st = this.newStack(g33);
+
+    final R2ImageBufferType r0 =
+      R2RenderTargetStackContract.newRenderTarget(g33);
+
+    g_fb.framebufferReadUnbind();
+    g_fb.framebufferDrawUnbind();
+
+    r0.delete(g33);
+
+    this.expected.expect(R2RenderTargetStackDeletedException.class);
+    st.renderTargetBindRead(r0);
+  }
+
+  @Test
+  public final void testStackBindDrawRestoreDeleted()
+  {
+    final JCGLContextType gc = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
+    final JCGLFramebuffersType g_fb = g33.getFramebuffers();
+    final R2RenderTargetStackType st = this.newStack(g33);
+
+    final AtomicInteger deleted = new AtomicInteger(0);
+
+    final R2ImageBufferType r0 =
+      R2RenderTargetStackContract.newRenderTarget(g33);
+    final R2ImageBufferType r1 =
+      R2RenderTargetStackContract.newRenderTarget(g33);
+    final R2ImageBufferType r2 =
+      R2RenderTargetStackContract.newRenderTarget(g33);
+
+    g_fb.framebufferReadUnbind();
+    g_fb.framebufferDrawUnbind();
+
+    st.renderTargetBindDraw(r0);
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(r0.getPrimaryFramebuffer()));
+    Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
 
     st.renderTargetBindDraw(r1);
     Assert.assertTrue(g_fb.framebufferDrawIsBound(r1.getPrimaryFramebuffer()));
@@ -134,17 +234,98 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     Assert.assertTrue(g_fb.framebufferDrawIsBound(r2.getPrimaryFramebuffer()));
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
 
-    st.renderTargetUnbindDraw(r2);
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(r1.getPrimaryFramebuffer()));
-    Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
+    r1.delete(g33);
+    r0.delete(g33);
 
-    st.renderTargetUnbindDraw(r1);
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(r0.getPrimaryFramebuffer()));
-    Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
+    try {
+      st.renderTargetUnbindDraw(r2);
+    } catch (final R2RenderTargetStackDeletedException e) {
+      deleted.incrementAndGet();
+    }
 
-    st.renderTargetUnbindDraw(r0);
+    Assert.assertEquals(1L, (long) deleted.get());
+    Assert.assertEquals(2L, (long) st.getDrawStackSize());
+
+    try {
+      st.renderTargetUnbindDraw(r1);
+    } catch (final R2RenderTargetStackDeletedException e) {
+      deleted.incrementAndGet();
+    }
+
+    Assert.assertEquals(2L, (long) deleted.get());
+    Assert.assertEquals(1L, (long) st.getDrawStackSize());
+
+    try {
+      st.renderTargetUnbindDraw(r0);
+    } catch (final R2RenderTargetStackDeletedException e) {
+      deleted.incrementAndGet();
+    }
+
+    Assert.assertEquals(3L, (long) deleted.get());
+    Assert.assertEquals(0L, (long) st.getDrawStackSize());
+  }
+
+  @Test
+  public final void testStackBindReadRestoreDeleted()
+  {
+    final JCGLContextType gc = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
+    final JCGLFramebuffersType g_fb = g33.getFramebuffers();
+    final R2RenderTargetStackType st = this.newStack(g33);
+
+    final AtomicInteger deleted = new AtomicInteger(0);
+
+    final R2ImageBufferType r0 =
+      R2RenderTargetStackContract.newRenderTarget(g33);
+    final R2ImageBufferType r1 =
+      R2RenderTargetStackContract.newRenderTarget(g33);
+    final R2ImageBufferType r2 =
+      R2RenderTargetStackContract.newRenderTarget(g33);
+
+    g_fb.framebufferReadUnbind();
+    g_fb.framebufferDrawUnbind();
+
+    st.renderTargetBindRead(r0);
+    Assert.assertTrue(g_fb.framebufferReadIsBound(r0.getPrimaryFramebuffer()));
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
-    Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
+
+    st.renderTargetBindRead(r1);
+    Assert.assertTrue(g_fb.framebufferReadIsBound(r1.getPrimaryFramebuffer()));
+    Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
+
+    st.renderTargetBindRead(r2);
+    Assert.assertTrue(g_fb.framebufferReadIsBound(r2.getPrimaryFramebuffer()));
+    Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
+
+    r1.delete(g33);
+    r0.delete(g33);
+
+    try {
+      st.renderTargetUnbindRead(r2);
+    } catch (final R2RenderTargetStackDeletedException e) {
+      deleted.incrementAndGet();
+    }
+
+    Assert.assertEquals(1L, (long) deleted.get());
+    Assert.assertEquals(2L, (long) st.getReadStackSize());
+
+    try {
+      st.renderTargetUnbindRead(r1);
+    } catch (final R2RenderTargetStackDeletedException e) {
+      deleted.incrementAndGet();
+    }
+
+    Assert.assertEquals(2L, (long) deleted.get());
+    Assert.assertEquals(1L, (long) st.getReadStackSize());
+
+    try {
+      st.renderTargetUnbindRead(r0);
+    } catch (final R2RenderTargetStackDeletedException e) {
+      deleted.incrementAndGet();
+    }
+
+    Assert.assertEquals(3L, (long) deleted.get());
+    Assert.assertEquals(0L, (long) st.getReadStackSize());
   }
 
   @Test
@@ -152,7 +333,6 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
   {
     final JCGLContextType gc = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g33 = gc.contextGetGL33();
-    final JCGLFramebuffersType g_fb = g33.getFramebuffers();
     final R2RenderTargetStackType st = this.newStack(g33);
 
     final R2TextureUnitAllocatorType tc =
@@ -205,6 +385,8 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
 
     Assert.assertEquals(rt.getDescription(), desc);
     Assert.assertTrue(g_fb.framebufferDrawIsBound(rt.getPrimaryFramebuffer()));
+    Assert.assertEquals(1L, (long) st.getDrawStackSize());
+    Assert.assertEquals(0L, (long) st.getReadStackSize());
   }
 
   @Test
@@ -318,26 +500,38 @@ public abstract class R2RenderTargetStackContract extends R2JCGLContract
     st.renderTargetBindRead(r0);
     Assert.assertTrue(g_fb.framebufferReadIsBound(r0.getPrimaryFramebuffer()));
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
+    Assert.assertEquals(0L, (long) st.getDrawStackSize());
+    Assert.assertEquals(1L, (long) st.getReadStackSize());
 
     st.renderTargetBindRead(r1);
     Assert.assertTrue(g_fb.framebufferReadIsBound(r1.getPrimaryFramebuffer()));
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
+    Assert.assertEquals(0L, (long) st.getDrawStackSize());
+    Assert.assertEquals(2L, (long) st.getReadStackSize());
 
     st.renderTargetBindRead(r2);
     Assert.assertTrue(g_fb.framebufferReadIsBound(r2.getPrimaryFramebuffer()));
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
+    Assert.assertEquals(0L, (long) st.getDrawStackSize());
+    Assert.assertEquals(3L, (long) st.getReadStackSize());
 
     st.renderTargetUnbindRead(r2);
     Assert.assertTrue(g_fb.framebufferReadIsBound(r1.getPrimaryFramebuffer()));
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
+    Assert.assertEquals(0L, (long) st.getDrawStackSize());
+    Assert.assertEquals(2L, (long) st.getReadStackSize());
 
     st.renderTargetUnbindRead(r1);
     Assert.assertTrue(g_fb.framebufferReadIsBound(r0.getPrimaryFramebuffer()));
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
+    Assert.assertEquals(0L, (long) st.getDrawStackSize());
+    Assert.assertEquals(1L, (long) st.getReadStackSize());
 
     st.renderTargetUnbindRead(r0);
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
+    Assert.assertEquals(0L, (long) st.getDrawStackSize());
+    Assert.assertEquals(0L, (long) st.getReadStackSize());
   }
 
   @Test

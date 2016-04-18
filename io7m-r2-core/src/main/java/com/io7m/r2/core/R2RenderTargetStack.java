@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jnull.NullCheck;
@@ -65,11 +66,38 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
     return new R2RenderTargetStack(in_g);
   }
 
+  private static <D extends R2RenderTargetDescriptionType>
+  void checkNotDeleted(final JCGLResourceUsableType r)
+  {
+    if (r.isDeleted()) {
+      throw R2RenderTargetStack.isDeleted(r);
+    }
+  }
+
+  private static R2RenderTargetStackDeletedException isDeleted(
+    final JCGLResourceUsableType r)
+  {
+    return new R2RenderTargetStackDeletedException(r.toString());
+  }
+
+  @Override
+  public int getDrawStackSize()
+  {
+    return this.stack_draw.size();
+  }
+
+  @Override
+  public int getReadStackSize()
+  {
+    return this.stack_read.size();
+  }
+
   @Override
   public <D extends R2RenderTargetDescriptionType> void renderTargetBindRead(
     final R2RenderTargetUsableType<D> r)
   {
     NullCheck.notNull(r);
+    R2RenderTargetStack.checkNotDeleted(r);
 
     boolean already_bound = false;
 
@@ -130,11 +158,14 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
 
     /**
      * Check that the stack is consistent; the top of the stack must be
-     * the currently bound framebuffer.
+     * the currently bound framebuffer (if the framebuffer on the top of the
+     * stack hasn't been deleted).
      */
 
     final JCGLFramebufferUsableType c_fb = current.getPrimaryFramebuffer();
-    this.checkBoundRead(c_fb);
+    if (!current.isDeleted()) {
+      this.checkBoundRead(c_fb);
+    }
 
     /**
      * Check that the given render target matches that of the top of the stack.
@@ -160,8 +191,19 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
     if (this.stack_read.size() > 1) {
       final R2RenderTargetUsableType<?> previous =
         this.stack_read.get(this.stack_read.size() - 2);
-      this.framebuffers.framebufferReadBind(
-        previous.getPrimaryFramebuffer());
+
+      /**
+       * If the previous framebuffer was deleted, pop the current framebuffer
+       * from the stack and ignore it (nothing further needs to be done with it).
+       * Then signal the fact that there's a deleted framebuffer on the stack.
+       */
+
+      if (previous.isDeleted()) {
+        this.stack_read.remove(this.stack_read.size() - 1);
+        throw R2RenderTargetStack.isDeleted(previous);
+      }
+
+      this.framebuffers.framebufferReadBind(previous.getPrimaryFramebuffer());
     } else {
 
       /**
@@ -171,7 +213,15 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
       this.framebuffers.framebufferReadUnbind();
     }
 
+    /**
+     * Remove the render target from the stack, and then check if it was
+     * deleted. The reason that the check is deferred is that it results in
+     * consistent stack handling without hiding the fact that the user left
+     * a deleted framebuffer on the stack.
+     */
+
     this.stack_read.remove(this.stack_read.size() - 1);
+    R2RenderTargetStack.checkNotDeleted(r);
 
     Assertive.ensure(
       !this.framebuffers.framebufferReadIsBound(r.getPrimaryFramebuffer()),
@@ -183,6 +233,7 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
     final R2RenderTargetUsableType<D> r)
   {
     NullCheck.notNull(r);
+    R2RenderTargetStack.checkNotDeleted(r);
 
     boolean already_bound = false;
 
@@ -225,12 +276,14 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
 
     /**
      * Check that the stack is consistent; the top of the stack must be
-     * the currently bound framebuffer.
+     * the currently bound framebuffer (if the framebuffer on the top of the
+     * stack hasn't been deleted).
      */
 
-    final JCGLFramebufferUsableType current_fb =
-      current.getPrimaryFramebuffer();
-    this.checkBoundDraw(current_fb);
+    final JCGLFramebufferUsableType c_fb = current.getPrimaryFramebuffer();
+    if (!current.isDeleted()) {
+      this.checkBoundDraw(c_fb);
+    }
 
     /**
      * Check that the given render target matches that of the top of the stack.
@@ -240,7 +293,7 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
       final StringBuilder sb = new StringBuilder(128);
       sb.append("Render target stack is inconsistent.\n");
       sb.append("Top of draw stack: ");
-      sb.append(current_fb);
+      sb.append(c_fb);
       sb.append("\n");
       sb.append("Given render target: ");
       sb.append(r.getPrimaryFramebuffer());
@@ -256,8 +309,19 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
     if (this.stack_draw.size() > 1) {
       final R2RenderTargetUsableType<?> previous =
         this.stack_draw.get(this.stack_draw.size() - 2);
-      this.framebuffers.framebufferDrawBind(
-        previous.getPrimaryFramebuffer());
+
+      /**
+       * If the previous framebuffer was deleted, pop the current framebuffer
+       * from the stack and ignore it (nothing further needs to be done with it).
+       * Then signal the fact that there's a deleted framebuffer on the stack.
+       */
+
+      if (previous.isDeleted()) {
+        this.stack_draw.remove(this.stack_draw.size() - 1);
+        throw R2RenderTargetStack.isDeleted(previous);
+      }
+
+      this.framebuffers.framebufferDrawBind(previous.getPrimaryFramebuffer());
     } else {
 
       /**
@@ -267,7 +331,15 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
       this.framebuffers.framebufferDrawUnbind();
     }
 
+    /**
+     * Remove the render target from the stack, and then check if it was
+     * deleted. The reason that the check is deferred is that it results in
+     * consistent stack handling without hiding the fact that the user left
+     * a deleted framebuffer on the stack.
+     */
+
     this.stack_draw.remove(this.stack_draw.size() - 1);
+    R2RenderTargetStack.checkNotDeleted(r);
 
     Assertive.ensure(
       !this.framebuffers.framebufferDrawIsBound(r.getPrimaryFramebuffer()),
@@ -296,6 +368,7 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
       throw new R2RenderTargetStackAllocationException(sb.toString());
     }
 
+    R2RenderTargetStack.checkNotDeleted(r);
     this.stack_draw.add(r);
     return r;
   }

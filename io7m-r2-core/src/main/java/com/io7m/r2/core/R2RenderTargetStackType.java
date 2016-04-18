@@ -28,6 +28,18 @@ package com.io7m.r2.core;
 public interface R2RenderTargetStackType
 {
   /**
+   * @return The current size of the draw stack
+   */
+
+  int getDrawStackSize();
+
+  /**
+   * @return The current size of the read stack
+   */
+
+  int getReadStackSize();
+
+  /**
    * Bind the given render target for reading.
    *
    * @param r   The render target
