@@ -21,6 +21,8 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
+import com.io7m.jcanephora.core.JCGLFramebufferBlitBuffer;
+import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
@@ -169,6 +171,7 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.valid4j.Assertive;
 
 import javax.swing.SwingUtilities;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -1001,6 +1004,14 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
         t.filter_fxaa_params.setTexture(t.ibuffer.getRGBATexture());
         t.filter_fxaa.runFilter(t.profiling_root, uc, t.filter_fxaa_params);
+
+        g_fb.framebufferReadBind(t.gbuffer.getPrimaryFramebuffer());
+        g_fb.framebufferBlit(
+          t.gbuffer.getArea(),
+          t.ibuffer.getArea(),
+          EnumSet.of(JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_DEPTH),
+          JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
+        g_fb.framebufferReadUnbind();
 
         t.main.getDebugVisualizerRenderer().renderScene(
           areax,
