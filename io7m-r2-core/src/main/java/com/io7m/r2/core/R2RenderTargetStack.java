@@ -99,26 +99,15 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
     NullCheck.notNull(r);
     R2RenderTargetStack.checkNotDeleted(r);
 
-    boolean already_bound = false;
-
     if (!this.stack_read.isEmpty()) {
       final R2RenderTargetUsableType<?> p =
         this.stack_read.get(this.stack_read.size() - 1);
       final JCGLFramebufferUsableType p_fb = p.getPrimaryFramebuffer();
       this.checkBoundRead(p_fb);
-
-      already_bound =
-        Objects.equals(p_fb, r.getPrimaryFramebuffer());
     }
 
-    if (!already_bound) {
-      this.framebuffers.framebufferReadBind(r.getPrimaryFramebuffer());
-      this.stack_read.add(r);
-    } else {
-      if (R2RenderTargetStack.LOG.isTraceEnabled()) {
-        R2RenderTargetStack.LOG.trace("redundant read bind ignored: {}", r);
-      }
-    }
+    this.framebuffers.framebufferReadBind(r.getPrimaryFramebuffer());
+    this.stack_read.add(r);
 
     Assertive.ensure(
       this.framebuffers.framebufferReadIsBound(r.getPrimaryFramebuffer()),
@@ -235,25 +224,16 @@ public final class R2RenderTargetStack implements R2RenderTargetStackType
     NullCheck.notNull(r);
     R2RenderTargetStack.checkNotDeleted(r);
 
-    boolean already_bound = false;
-
     if (!this.stack_draw.isEmpty()) {
       final R2RenderTargetUsableType<?> p =
         this.stack_draw.get(this.stack_draw.size() - 1);
 
       final JCGLFramebufferUsableType p_fb = p.getPrimaryFramebuffer();
       this.checkBoundDraw(p_fb);
-      already_bound = Objects.equals(p_fb, r.getPrimaryFramebuffer());
     }
 
-    if (!already_bound) {
-      this.framebuffers.framebufferDrawBind(r.getPrimaryFramebuffer());
-      this.stack_draw.add(r);
-    } else {
-      if (R2RenderTargetStack.LOG.isTraceEnabled()) {
-        R2RenderTargetStack.LOG.trace("redundant draw bind ignored: {}", r);
-      }
-    }
+    this.framebuffers.framebufferDrawBind(r.getPrimaryFramebuffer());
+    this.stack_draw.add(r);
 
     Assertive.ensure(
       this.framebuffers.framebufferDrawIsBound(r.getPrimaryFramebuffer()),
