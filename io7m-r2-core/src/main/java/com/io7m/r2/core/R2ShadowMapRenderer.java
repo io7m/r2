@@ -19,7 +19,6 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.api.JCGLClearType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
@@ -179,7 +178,6 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
             t.variance.current;
 
           final JCGLFramebuffersType gfb = t.g33.getFramebuffers();
-          final JCGLClearType gcl = t.g33.getClear();
           final JCGLTexturesType gt = t.g33.getTextures();
 
           /**
