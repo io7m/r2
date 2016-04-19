@@ -32,6 +32,7 @@ import com.io7m.jcanephora.core.JCGLProgramAttributeType;
 import com.io7m.jcanephora.core.JCGLProgramShaderType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
+import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLScalarType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLUnsignedType;
@@ -50,7 +51,11 @@ import com.io7m.jcanephora.fake.FakeShaderListenerType;
 import com.io7m.jcanephora.fake.JCGLImplementationFake;
 import com.io7m.jcanephora.fake.JCGLImplementationFakeType;
 import com.io7m.jfunctional.PartialBiFunctionType;
+import com.io7m.jtensors.parameterized.PMatrixDirect4x4FType;
+import com.io7m.jtensors.parameterized.PMatrixDirectM4x4F;
+import com.io7m.jtensors.parameterized.PMatrixDirectReadable4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
@@ -69,11 +74,17 @@ import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
+import com.io7m.r2.core.R2ProjectionFOV;
+import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.R2TextureUnitContextMutableType;
+import com.io7m.r2.core.R2TransformContext;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2TransformSiOT;
+import com.io7m.r2.core.R2ViewRays;
+import com.io7m.r2.core.R2ViewRaysReadableType;
+import com.io7m.r2.core.R2ViewRaysType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
@@ -84,8 +95,11 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
+import com.io7m.r2.spaces.R2SpaceClipType;
+import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
+import com.io7m.r2.spaces.R2SpaceWorldType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1020,12 +1034,6 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void setIntensity(final float i)
-      {
-
-      }
-
-      @Override
       public JCGLArrayObjectUsableType getArrayObject()
       {
         return a0;
@@ -1063,6 +1071,75 @@ public final class R2TestUtilities
       public float getIntensity()
       {
         return 1.0f;
+      }
+
+      @Override
+      public void setIntensity(final float i)
+      {
+
+      }
+    };
+  }
+
+  @SuppressWarnings("unchecked")
+  public static R2MatricesObserverValuesType getMatricesObserverValues()
+  {
+    final R2TransformContextType tc =
+      R2TransformContext.newContext();
+    final R2ProjectionFOV p =
+      R2ProjectionFOV.newFrustumWith(
+        JCGLProjectionMatrices.newMatrices(),
+        (float) Math.toRadians(45.0),
+        1.0f,
+        1.0f,
+        100.0f);
+    final PMatrixDirect4x4FType<?, ?> m =
+      PMatrixDirectM4x4F.newMatrix();
+    final R2ViewRaysType vr =
+      R2ViewRays.newViewRays(new PMatrixM4x4F.ContextPM4F());
+
+    return new R2MatricesObserverValuesType()
+    {
+      @Override
+      public R2ProjectionReadableType getProjection()
+      {
+        return p;
+      }
+
+      @Override
+      public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceClipType> getMatrixProjection()
+      {
+        return (PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceClipType>) m;
+      }
+
+      @Override
+      public PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType> getMatrixProjectionInverse()
+      {
+        return (PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType>) m;
+      }
+
+      @Override
+      public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType> getMatrixView()
+      {
+        return (PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType>) m;
+      }
+
+      @Override
+      public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType> getMatrixViewInverse()
+      {
+        return (PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType>) m;
+      }
+
+      @Override
+      public R2ViewRaysReadableType getViewRays()
+      {
+        return vr;
+      }
+
+      @Override
+      public R2TransformContextType getTransformContext()
+      {
+        return tc;
       }
     };
   }

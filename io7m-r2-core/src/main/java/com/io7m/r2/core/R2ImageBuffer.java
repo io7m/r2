@@ -39,6 +39,7 @@ import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorI4F;
+import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 
 import java.util.List;
@@ -69,22 +70,31 @@ public final class R2ImageBuffer implements R2ImageBufferType
       true);
   }
 
-  private final R2Texture2DType              t_rgba;
-  private final JCGLFramebufferType          framebuffer;
-  private final UnsignedRangeInclusiveL      range;
+  private final R2Texture2DType t_rgba;
+  private final JCGLFramebufferType framebuffer;
+  private final UnsignedRangeInclusiveL range;
   private final R2ImageBufferDescriptionType desc;
+  private final Optional<R2Texture2DType> t_depth;
 
   private R2ImageBuffer(
     final JCGLFramebufferType in_framebuffer,
     final R2ImageBufferDescriptionType in_desc,
-    final R2Texture2DType in_t_rgba)
+    final R2Texture2DType in_t_rgba,
+    final Optional<R2Texture2DType> in_t_depth)
   {
     this.framebuffer = NullCheck.notNull(in_framebuffer);
     this.desc = NullCheck.notNull(in_desc);
     this.t_rgba = NullCheck.notNull(in_t_rgba);
+    this.t_depth = NullCheck.notNull(in_t_depth);
 
     long size = 0L;
     size += this.t_rgba.get().getRange().getInterval();
+
+    if (this.t_depth.isPresent()) {
+      final R2Texture2DType td = this.t_depth.get();
+      size += td.getReal().getRange().getInterval();
+    }
+
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
   }
 
@@ -136,13 +146,47 @@ public final class R2ImageBuffer implements R2ImageBufferType
       final R2Texture2DType rt = p.getRight();
       fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt.get());
 
+      final Optional<R2DepthPrecision> prec_opt = desc.getDepthPrecision();
+      if (prec_opt.isPresent()) {
+        final R2DepthPrecision prec = prec_opt.get();
+        final JCGLTextureFormat format =
+          R2ImageBuffer.depthFormatForPrecision(prec);
+        final Pair<JCGLTextureUnitType, R2Texture2DType> pd =
+          cc.unitContextAllocateTexture2D(
+            g_t,
+            range_x.getInterval(),
+            range_y.getInterval(),
+            format,
+            JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
+            JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
+        fbb.attachDepthTexture2D(pd.getRight().getReal());
+        final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
+        return new R2ImageBuffer(fb, desc, rt, Optional.of(pd.getRight()));
+      }
+
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
-      return new R2ImageBuffer(fb, desc, rt);
+      return new R2ImageBuffer(fb, desc, rt, Optional.empty());
+
     } finally {
       cc.unitContextFinish(g_t);
     }
   }
 
+  private static JCGLTextureFormat depthFormatForPrecision(
+    final R2DepthPrecision prec)
+  {
+    switch (prec) {
+      case R2_DEPTH_PRECISION_16:
+        return JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_16_2BPP;
+      case R2_DEPTH_PRECISION_24:
+        return JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_4BPP;
+      case R2_DEPTH_PRECISION_32F:
+        return JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_32F_4BPP;
+    }
+    throw new UnreachableCodeException();
+  }
 
   @Override
   public R2Texture2DUsableType getRGBATexture()
@@ -186,6 +230,10 @@ public final class R2ImageBuffer implements R2ImageBufferType
   {
     if (!this.isDeleted()) {
       this.t_rgba.delete(g);
+
+      if (this.t_depth.isPresent()) {
+        this.t_depth.get().delete(g);
+      }
 
       final JCGLFramebuffersType g_fb = g.getFramebuffers();
       g_fb.framebufferDelete(this.framebuffer);

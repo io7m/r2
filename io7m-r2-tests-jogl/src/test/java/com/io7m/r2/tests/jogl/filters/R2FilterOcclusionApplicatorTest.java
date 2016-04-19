@@ -14,44 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.filters;
+package com.io7m.r2.tests.jogl.filters;
 
-import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2LightBufferUsableType;
-import com.io7m.r2.core.R2Texture2DUsableType;
-import org.immutables.value.Value;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.filters.R2FilterOcclusionApplicatorContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-/**
- * The type of occlusion applicator filter parameters.
- */
-
-@Value.Immutable
-@Value.Modifiable
-@R2ImmutableStyleType
-public interface R2FilterOcclusionApplicatorParametersType
+public final class R2FilterOcclusionApplicatorTest extends
+  R2FilterOcclusionApplicatorContract
 {
-  /**
-   * @return The light buffer that will have occlusion applied
-   */
-
-  @Value.Parameter
-  R2LightBufferUsableType getOutputLightBuffer();
-
-  /**
-   * @return A texture containing occlusion values
-   */
-
-  @Value.Parameter
-  R2Texture2DUsableType getOcclusionTexture();
-
-  /**
-   * @return The intensity of the occlusion
-   */
-
-  @Value.Parameter
-  @Value.Default
-  default float getIntensity()
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
   {
-    return 1.0f;
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
   }
 }

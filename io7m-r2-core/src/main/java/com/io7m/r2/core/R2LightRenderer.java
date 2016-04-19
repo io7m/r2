@@ -166,7 +166,8 @@ public final class R2LightRenderer implements R2LightRendererType
   @Override
   public void renderLights(
     final R2GeometryBufferUsableType gbuffer,
-    final R2LightBufferUsableType lbuffer,
+    final AreaInclusiveUnsignedLType area,
+    final Optional<R2LightBufferUsableType> lbuffer,
     final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2ShadowMapContextUsableType shadows,
@@ -174,39 +175,8 @@ public final class R2LightRenderer implements R2LightRendererType
     final R2SceneLightsType s)
   {
     NullCheck.notNull(gbuffer);
+    NullCheck.notNull(area);
     NullCheck.notNull(lbuffer);
-    NullCheck.notNull(pc);
-    NullCheck.notNull(uc);
-    NullCheck.notNull(shadows);
-    NullCheck.notNull(m);
-    NullCheck.notNull(s);
-
-    Assertive.require(!this.isDeleted(), "Renderer not deleted");
-
-    final JCGLFramebufferUsableType lb_fb = lbuffer.getPrimaryFramebuffer();
-    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-
-    try {
-      g_fb.framebufferDrawBind(lb_fb);
-      this.renderLightsWithBoundBuffer(
-        gbuffer, lbuffer.getArea(), pc, uc, shadows, m, s);
-    } finally {
-      g_fb.framebufferDrawUnbind();
-    }
-  }
-
-  @Override
-  public void renderLightsWithBoundBuffer(
-    final R2GeometryBufferUsableType gbuffer,
-    final AreaInclusiveUnsignedLType lbuffer_area,
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
-    final R2ShadowMapContextUsableType shadows,
-    final R2MatricesObserverType m,
-    final R2SceneLightsType s)
-  {
-    NullCheck.notNull(gbuffer);
-    NullCheck.notNull(lbuffer_area);
     NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(shadows);
@@ -223,13 +193,19 @@ public final class R2LightRenderer implements R2LightRendererType
 
     pc_copy_depth.startMeasuringIfEnabled();
     try {
-      this.renderCopyDepthStencil(gbuffer, lbuffer_area);
+      if (lbuffer.isPresent()) {
+        final R2LightBufferUsableType lb = lbuffer.get();
+        final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
+        g_fb.framebufferDrawBind(lb.getPrimaryFramebuffer());
+      }
+
+      this.renderCopyDepthStencil(gbuffer, area);
     } finally {
       pc_copy_depth.stopMeasuringIfEnabled();
     }
 
     this.renderLightInstances(
-      gbuffer, lbuffer_area, pc_base, uc, shadows, m, s);
+      gbuffer, area, pc_base, uc, shadows, m, s);
   }
 
   private void renderLightInstances(
@@ -249,7 +225,7 @@ public final class R2LightRenderer implements R2LightRendererType
       g_v.viewportSet(lbuffer_area);
 
       this.light_consumer.input_state.set(
-        gbuffer, m, uc, shadows, lbuffer_area, pc_base);
+        gbuffer, m, uc, shadows, lbuffer_area, pc_instances);
       try {
         s.lightsExecute(this.light_consumer);
       } finally {

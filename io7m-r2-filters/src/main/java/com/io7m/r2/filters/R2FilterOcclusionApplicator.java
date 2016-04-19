@@ -36,7 +36,6 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightBufferUsableType;
-import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TextureUnitContextType;
@@ -158,58 +157,51 @@ public final class R2FilterOcclusionApplicator implements
     final JCGLViewportsType g_v = this.g.getViewports();
 
     final R2LightBufferUsableType lb =
-      parameters.getLightBuffer();
-    final R2Texture2DUsableType tex =
-      parameters.getOcclusionTexture();
+      parameters.getOutputLightBuffer();
 
+    g_fb.framebufferDrawBind(lb.getPrimaryFramebuffer());
+
+    if (g_db.depthBufferGetBits() > 0) {
+      g_db.depthBufferTestDisable();
+      g_db.depthBufferWriteDisable();
+    }
+
+    if (g_st.stencilBufferGetBits() > 0) {
+      g_st.stencilBufferDisable();
+    }
+
+    g_b.blendingEnableSeparateWithEquationSeparate(
+      JCGLBlendFunction.BLEND_ONE,
+      JCGLBlendFunction.BLEND_ONE,
+      JCGLBlendFunction.BLEND_ONE,
+      JCGLBlendFunction.BLEND_ONE,
+      JCGLBlendEquation.BLEND_EQUATION_REVERSE_SUBTRACT,
+      JCGLBlendEquation.BLEND_EQUATION_ADD);
+
+    g_cu.cullingDisable();
+    g_cm.colorBufferMask(true, true, true, true);
+    g_v.viewportSet(lb.getArea());
+
+    final R2TextureUnitContextType c = uc.unitContextNew();
     try {
-      g_fb.framebufferDrawBind(lb.getPrimaryFramebuffer());
-
-      if (g_db.depthBufferGetBits() > 0) {
-        g_db.depthBufferTestDisable();
-        g_db.depthBufferWriteDisable();
-      }
-
-      if (g_st.stencilBufferGetBits() > 0) {
-        g_st.stencilBufferDisable();
-      }
-
-      g_b.blendingEnableSeparateWithEquationSeparate(
-        JCGLBlendFunction.BLEND_ONE,
-        JCGLBlendFunction.BLEND_ONE,
-        JCGLBlendFunction.BLEND_ONE,
-        JCGLBlendFunction.BLEND_ONE,
-        JCGLBlendEquation.BLEND_EQUATION_REVERSE_SUBTRACT,
-        JCGLBlendEquation.BLEND_EQUATION_ADD);
-
-      g_cu.cullingDisable();
-      g_cm.colorBufferMask(true, true, true, true);
-      g_v.viewportSet(lb.getArea());
-
-      final R2TextureUnitContextType c = uc.unitContextNew();
       try {
-        try {
-          this.shader_params.setTexture(
-            parameters.getOcclusionTexture());
-          this.shader_params.setIntensity(
-            parameters.getIntensity());
+        this.shader_params.setTexture(
+          parameters.getOcclusionTexture());
+        this.shader_params.setIntensity(
+          parameters.getIntensity());
 
-          g_sh.shaderActivateProgram(this.shader.getShaderProgram());
-          this.shader.onActivate(g_sh);
-          this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
-          this.shader.onValidate();
-          g_ao.arrayObjectBind(this.quad.getArrayObject());
-          g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-        } finally {
-          g_ao.arrayObjectUnbind();
-          this.shader.onDeactivate(g_sh);
-        }
+        g_sh.shaderActivateProgram(this.shader.getShaderProgram());
+        this.shader.onActivate(g_sh);
+        this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
+        this.shader.onValidate();
+        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
-        c.unitContextFinish(g_tx);
+        g_ao.arrayObjectUnbind();
+        this.shader.onDeactivate(g_sh);
       }
-
     } finally {
-      g_fb.framebufferDrawUnbind();
+      c.unitContextFinish(g_tx);
     }
   }
 }

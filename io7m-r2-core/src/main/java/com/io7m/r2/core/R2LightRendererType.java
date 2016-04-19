@@ -19,6 +19,8 @@ package com.io7m.r2.core;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.r2.core.profiling.R2ProfilingContextType;
 
+import java.util.Optional;
+
 /**
  * The type of renderers that populate light buffers.
  */
@@ -26,10 +28,14 @@ import com.io7m.r2.core.profiling.R2ProfilingContextType;
 public interface R2LightRendererType extends R2DeletableType
 {
   /**
-   * Render the given lights into the given light buffer.
+   * <p>Render the given lights into the given light buffer.</p>
+   *
+   * <p>If a light buffer is provided, it will be bound before evaluation and
+   * left bound after the method returns.</p>
    *
    * @param gbuffer The populated geometry buffer
-   * @param lbuffer The light buffer
+   * @param area    The output viewport
+   * @param lbuffer The output light buffer
    * @param pc      A profiling context
    * @param uc      A texture unit context
    * @param shadows A set of rendered shadow maps
@@ -39,28 +45,8 @@ public interface R2LightRendererType extends R2DeletableType
 
   void renderLights(
     R2GeometryBufferUsableType gbuffer,
-    R2LightBufferUsableType lbuffer,
-    R2ProfilingContextType pc,
-    R2TextureUnitContextParentType uc,
-    R2ShadowMapContextUsableType shadows,
-    R2MatricesObserverType m,
-    R2SceneLightsType s);
-
-  /**
-   * Render the given lights into the currently bound light buffer.
-   *
-   * @param gbuffer      The populated geometry buffer
-   * @param lbuffer_area The area of the currently bound framebuffer
-   * @param pc           A profiling context
-   * @param uc           A texture unit context
-   * @param shadows      A set of rendered shadow maps
-   * @param m            A matrix context
-   * @param s            The opaque lights
-   */
-
-  void renderLightsWithBoundBuffer(
-    R2GeometryBufferUsableType gbuffer,
-    AreaInclusiveUnsignedLType lbuffer_area,
+    AreaInclusiveUnsignedLType area,
+    Optional<R2LightBufferUsableType> lbuffer,
     R2ProfilingContextType pc,
     R2TextureUnitContextParentType uc,
     R2ShadowMapContextUsableType shadows,

@@ -74,6 +74,8 @@ import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
+import java.util.Optional;
+
 // CHECKSTYLE_JAVADOC:OFF
 
 public final class ExampleEyePosition0 implements R2ExampleCustomType
@@ -264,8 +266,9 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
           t.main.getTextureUnitAllocator().getRootContext(),
           t.gbuffer.getArea(),
           t.stencils);
-        t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
+        t.main.getGeometryRenderer().renderGeometry(
           t.gbuffer.getArea(),
+          Optional.empty(),
           pro_root,
           t.main.getTextureUnitAllocator().getRootContext(),
           mo,

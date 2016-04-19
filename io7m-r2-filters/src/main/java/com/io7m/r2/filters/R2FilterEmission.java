@@ -224,18 +224,12 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       g_fb.framebufferDrawBind(fb_opt.get());
     }
 
-    try {
-      this.copyEmissive(
-        uc,
-        pc_unblurred.getChildContext("draw"),
-        parameters.getOutputViewport(),
-        parameters.getAlbedoEmissionMap(),
-        this.render_state_additive);
-    } finally {
-      if (fb_opt.isPresent()) {
-        g_fb.framebufferDrawUnbind();
-      }
-    }
+    this.copyEmissive(
+      uc,
+      pc_unblurred.getChildContext("draw"),
+      parameters.getOutputViewport(),
+      parameters.getAlbedoEmissionMap(),
+      this.render_state_additive);
   }
 
   private void runFilterBlurred(
@@ -258,7 +252,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       R2RenderTargetDescriptions.scaleAreaInclusive(
         parameters.getOutputViewport(), parameters.getScale());
     final R2ImageBufferDescription temp_desc =
-      R2ImageBufferDescription.of(area_scaled);
+      R2ImageBufferDescription.of(area_scaled, Optional.empty());
 
     final R2ImageBufferUsableType temp =
       this.render_target_pool.get(uc, temp_desc);
@@ -271,16 +265,12 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
        */
 
       g_fb.framebufferDrawBind(temp.getPrimaryFramebuffer());
-      try {
-        this.copyEmissive(
-          uc,
-          pc_draw,
-          area_scaled,
-          parameters.getAlbedoEmissionMap(),
-          this.render_state);
-      } finally {
-        g_fb.framebufferDrawUnbind();
-      }
+      this.copyEmissive(
+        uc,
+        pc_draw,
+        area_scaled,
+        parameters.getAlbedoEmissionMap(),
+        this.render_state);
 
       /**
        * Blur the image.
@@ -300,7 +290,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
           R2ImageBufferUsableType::getRGBATexture,
           temp,
           R2ImageBufferUsableType::getRGBATexture,
-          (i, a) -> R2ImageBufferDescription.of(a),
+          (i, a) -> R2ImageBufferDescription.of(a, Optional.empty()),
           this.render_target_pool);
       }
 
@@ -326,18 +316,12 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
         g_fb.framebufferDrawUnbind();
       }
 
-      try {
-        this.copyOut(
-          uc,
-          pc_copy_out,
-          parameters.getOutputViewport(),
-          temp.getRGBATexture(),
-          this.render_state_additive);
-      } finally {
-        if (fb_opt.isPresent()) {
-          g_fb.framebufferDrawUnbind();
-        }
-      }
+      this.copyOut(
+        uc,
+        pc_copy_out,
+        parameters.getOutputViewport(),
+        temp.getRGBATexture(),
+        this.render_state_additive);
 
     } finally {
       this.render_target_pool.returnValue(uc, temp);

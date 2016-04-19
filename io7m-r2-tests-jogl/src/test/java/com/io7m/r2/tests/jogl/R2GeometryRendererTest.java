@@ -14,30 +14,28 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import org.immutables.value.Value;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.r2.core.R2GeometryRenderer;
+import com.io7m.r2.core.R2GeometryRendererType;
+import com.io7m.r2.tests.core.R2GeometryRendererContract;
 
-import java.util.Optional;
-
-/**
- * The type of image buffer descriptions.
- */
-
-@Value.Immutable
-@R2ImmutableStyleType
-public interface R2ImageBufferDescriptionType extends
-  R2RenderTargetDescriptionType
+public final class R2GeometryRendererTest extends R2GeometryRendererContract
 {
   @Override
-  @Value.Parameter
-  AreaInclusiveUnsignedLType getArea();
+  protected R2GeometryRendererType getRenderer(final JCGLInterfaceGL33Type g)
+  {
+    return R2GeometryRenderer.newRenderer(g);
+  }
 
-  /**
-   * @return The precision of the depth buffer, if one is to be provided
-   */
-
-  @Value.Parameter
-  Optional<R2DepthPrecision> getDepthPrecision();
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }

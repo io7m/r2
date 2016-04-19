@@ -214,8 +214,6 @@ public final class R2FilterBoxBlur<
           destination_scaled.getArea(),
           R2FilterBoxBlur.BLIT_BUFFERS,
           parameters.getBlurScaleFilter());
-        g_fb.framebufferReadUnbind();
-        g_fb.framebufferDrawUnbind();
 
         g_fb.framebufferReadBind(destination_scaled.getPrimaryFramebuffer());
         g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
@@ -228,7 +226,6 @@ public final class R2FilterBoxBlur<
       } finally {
         this.render_target_pool.returnValue(uc, destination_scaled);
         g_fb.framebufferReadUnbind();
-        g_fb.framebufferDrawUnbind();
       }
     } finally {
       pc_scale.stopMeasuringIfEnabled();
@@ -242,6 +239,7 @@ public final class R2FilterBoxBlur<
     NullCheck.notNull(pc_base);
     NullCheck.notNull(parameters);
 
+    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
     final R2ProfilingContextType pc_copy = pc_base.getChildContext("copy");
 
     pc_copy.startMeasuringIfEnabled();
@@ -252,6 +250,15 @@ public final class R2FilterBoxBlur<
         parameters.getOutputRenderTarget();
 
       /**
+       * The output framebuffer is bound here even though it may not be
+       * necessary. The reason for this is that filters are supposed to have
+       * consistent binding semantics: If a framebuffer is specified as an output,
+       * that framebuffer will be bound when the filter has finished executing.
+       */
+
+      g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
+
+      /**
        * No point copying something to itself...
        */
 
@@ -259,18 +266,14 @@ public final class R2FilterBoxBlur<
         return;
       }
 
-      final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-
       try {
         g_fb.framebufferReadBind(source.getPrimaryFramebuffer());
-        g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
         g_fb.framebufferBlit(
           source.getArea(),
           destination.getArea(),
           R2FilterBoxBlur.BLIT_BUFFERS,
           parameters.getBlurScaleFilter());
       } finally {
-        g_fb.framebufferDrawUnbind();
         g_fb.framebufferReadUnbind();
       }
     } finally {
@@ -349,8 +352,6 @@ public final class R2FilterBoxBlur<
            */
 
           final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-          g_fb.framebufferReadUnbind();
-          g_fb.framebufferDrawUnbind();
           g_fb.framebufferReadBind(source.getPrimaryFramebuffer());
           g_fb.framebufferDrawBind(temporary_a.getPrimaryFramebuffer());
           g_fb.framebufferBlit(
@@ -358,8 +359,6 @@ public final class R2FilterBoxBlur<
             temporary_a.getArea(),
             R2FilterBoxBlur.BLIT_BUFFERS,
             parameters.getBlurScaleFilter());
-          g_fb.framebufferReadUnbind();
-          g_fb.framebufferDrawUnbind();
 
           /**
            * Now repeatedly blur TA → TB, TB → TA.
@@ -384,8 +383,6 @@ public final class R2FilterBoxBlur<
            * Now, copy TA → Output.
            */
 
-          g_fb.framebufferReadUnbind();
-          g_fb.framebufferDrawUnbind();
           g_fb.framebufferReadBind(temporary_a.getPrimaryFramebuffer());
           g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
           g_fb.framebufferBlit(
@@ -394,7 +391,6 @@ public final class R2FilterBoxBlur<
             R2FilterBoxBlur.BLIT_BUFFERS,
             parameters.getBlurScaleFilter());
           g_fb.framebufferReadUnbind();
-          g_fb.framebufferDrawUnbind();
 
         } finally {
           this.render_target_pool.returnValue(uc, temporary_b);
@@ -409,7 +405,7 @@ public final class R2FilterBoxBlur<
 
   private void evaluateBlurH(
     final R2TextureUnitContextParentType uc,
-    final R2FilterBoxBlurParameters<SD, S, DD, D> parameters,
+    final R2BlurParametersReadableType parameters,
     final R2Texture2DUsableType source_texture,
     final AreaInclusiveUnsignedLType target_area,
     final JCGLFramebufferUsableType target_fb)
@@ -453,14 +449,13 @@ public final class R2FilterBoxBlur<
       }
 
     } finally {
-      g_fb.framebufferDrawUnbind();
       tc.unitContextFinish(g_tex);
     }
   }
 
   private void evaluateBlurV(
     final R2TextureUnitContextParentType uc,
-    final R2FilterBoxBlurParameters<SD, S, DD, D> parameters,
+    final R2BlurParametersReadableType parameters,
     final R2Texture2DUsableType source_texture,
     final AreaInclusiveUnsignedLType target_area,
     final JCGLFramebufferUsableType target_fb)
@@ -504,7 +499,6 @@ public final class R2FilterBoxBlur<
       }
 
     } finally {
-      g_fb.framebufferDrawUnbind();
       tc.unitContextFinish(g_tex);
     }
   }

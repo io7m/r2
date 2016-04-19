@@ -20,7 +20,6 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
-import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2RenderTargetDescriptionType;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
@@ -197,7 +196,7 @@ public final class R2FilterBilateralBlurDepthAwareParameters<
    * @param m The observer values
    */
 
-  public void setSceneObserverValues(final R2MatricesObserverType m)
+  public void setSceneObserverValues(final R2MatricesObserverValuesType m)
   {
     this.matrices = NullCheck.notNull(m);
   }

@@ -446,8 +446,9 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         m.getTextureUnitAllocator().getRootContext(),
         t.geom_buffer.getArea(),
         t.stencils);
-      t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
+      t.main.getGeometryRenderer().renderGeometry(
         t.geom_buffer.getArea(),
+        Optional.empty(),
         pro_root,
         m.getTextureUnitAllocator().getRootContext(),
         mo,

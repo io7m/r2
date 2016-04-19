@@ -236,8 +236,6 @@ public final class R2FilterBilateralBlurDepthAware<
 
         pc_copy_in.startMeasuringIfEnabled();
         try {
-          g_fb.framebufferReadUnbind();
-          g_fb.framebufferDrawUnbind();
           g_fb.framebufferReadBind(source.getPrimaryFramebuffer());
           g_fb.framebufferDrawBind(temporary_a.getPrimaryFramebuffer());
           g_fb.framebufferBlit(
@@ -246,8 +244,6 @@ public final class R2FilterBilateralBlurDepthAware<
             R2FilterBilateralBlurDepthAware.BLIT_BUFFERS,
             parameters.getBlurScaleFilter());
           g_fb.framebufferReadUnbind();
-          g_fb.framebufferDrawUnbind();
-
         } finally {
           pc_copy_in.stopMeasuringIfEnabled();
         }
@@ -285,8 +281,6 @@ public final class R2FilterBilateralBlurDepthAware<
 
         pc_copy_out.startMeasuringIfEnabled();
         try {
-          g_fb.framebufferReadUnbind();
-          g_fb.framebufferDrawUnbind();
           g_fb.framebufferReadBind(temporary_a.getPrimaryFramebuffer());
           g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
           g_fb.framebufferBlit(
@@ -295,7 +289,6 @@ public final class R2FilterBilateralBlurDepthAware<
             R2FilterBilateralBlurDepthAware.BLIT_BUFFERS,
             parameters.getBlurScaleFilter());
           g_fb.framebufferReadUnbind();
-          g_fb.framebufferDrawUnbind();
         } finally {
           pc_copy_out.stopMeasuringIfEnabled();
         }
@@ -348,9 +341,7 @@ public final class R2FilterBilateralBlurDepthAware<
         g_ao.arrayObjectUnbind();
         this.shader_blur_h.onDeactivate(g_sh);
       }
-
     } finally {
-      g_fb.framebufferDrawUnbind();
       tc.unitContextFinish(g_tex);
     }
   }
@@ -395,9 +386,7 @@ public final class R2FilterBilateralBlurDepthAware<
         g_ao.arrayObjectUnbind();
         this.shader_blur_v.onDeactivate(g_sh);
       }
-
     } finally {
-      g_fb.framebufferDrawUnbind();
       tc.unitContextFinish(g_tex);
     }
   }

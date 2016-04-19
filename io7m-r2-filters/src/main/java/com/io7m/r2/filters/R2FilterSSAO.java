@@ -167,44 +167,40 @@ public final class R2FilterSSAO implements
     final R2AmbientOcclusionBufferUsableType destination =
       parameters.getOutputBuffer();
 
+    g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
+
+    JCGLRenderStates.activate(this.g, this.render_state);
+    g_v.viewportSet(destination.getArea());
+    g_cl.clear(this.clear);
+
+    final R2TextureUnitContextType c = uc.unitContextNew();
     try {
-      g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
+      this.shader_params.clear();
+      this.shader_params.setExponent(parameters.getExponent());
+      this.shader_params.setGeometryBuffer(parameters.getGeometryBuffer());
+      this.shader_params.setKernel(parameters.getKernel());
+      this.shader_params.setNoiseTexture(parameters.getNoiseTexture());
+      this.shader_params.setSampleRadius(parameters.getSampleRadius());
+      this.shader_params.setViewport(destination.getArea());
+      this.shader_params.setViewMatrices(parameters.getSceneObserverValues());
+      Assertive.ensure(this.shader_params.isInitialized());
 
-      JCGLRenderStates.activate(this.g, this.render_state);
-      g_v.viewportSet(destination.getArea());
-      g_cl.clear(this.clear);
-
-      final R2TextureUnitContextType c = uc.unitContextNew();
       try {
-        this.shader_params.clear();
-        this.shader_params.setExponent(parameters.getExponent());
-        this.shader_params.setGeometryBuffer(parameters.getGeometryBuffer());
-        this.shader_params.setKernel(parameters.getKernel());
-        this.shader_params.setNoiseTexture(parameters.getNoiseTexture());
-        this.shader_params.setSampleRadius(parameters.getSampleRadius());
-        this.shader_params.setViewport(destination.getArea());
-        this.shader_params.setViewMatrices(parameters.getSceneObserverValues());
-        Assertive.ensure(this.shader_params.isInitialized());
+        g_sh.shaderActivateProgram(this.shader.getShaderProgram());
 
-        try {
-          g_sh.shaderActivateProgram(this.shader.getShaderProgram());
+        this.shader.onActivate(g_sh);
+        this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
+        this.shader.onValidate();
 
-          this.shader.onActivate(g_sh);
-          this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
-          this.shader.onValidate();
-
-          g_ao.arrayObjectBind(this.quad.getArrayObject());
-          g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-        } finally {
-          g_ao.arrayObjectUnbind();
-          this.shader.onDeactivate(g_sh);
-        }
-
+        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
-        c.unitContextFinish(g_tx);
+        g_ao.arrayObjectUnbind();
+        this.shader.onDeactivate(g_sh);
       }
+
     } finally {
-      g_fb.framebufferDrawUnbind();
+      c.unitContextFinish(g_tx);
     }
   }
 }
