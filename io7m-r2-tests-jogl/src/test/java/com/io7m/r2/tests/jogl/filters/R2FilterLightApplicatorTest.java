@@ -14,22 +14,15 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.jogl;
+package com.io7m.r2.tests.jogl.filters;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2RenderTargetStack;
-import com.io7m.r2.core.R2RenderTargetStackType;
-import com.io7m.r2.tests.core.R2RenderTargetStackContract;
+import com.io7m.r2.tests.filters.R2FilterLightApplicatorContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public final class R2RenderTargetStackTest extends R2RenderTargetStackContract
+public final class R2FilterLightApplicatorTest extends
+  R2FilterLightApplicatorContract
 {
-  @Override
-  protected R2RenderTargetStackType newStack(final JCGLInterfaceGL33Type g)
-  {
-    return R2RenderTargetStack.newStack(g);
-  }
-
   @Override
   protected JCGLContextType newGL33Context(
     final String name,

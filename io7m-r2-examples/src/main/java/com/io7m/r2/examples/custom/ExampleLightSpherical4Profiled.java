@@ -21,8 +21,6 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
-import com.io7m.jcanephora.core.JCGLFramebufferBlitBuffer;
-import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
@@ -46,10 +44,12 @@ import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
+import com.io7m.r2.core.R2AmbientOcclusionBufferDescriptionScaler;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescriptionType;
 import com.io7m.r2.core.R2AmbientOcclusionBufferPool;
 import com.io7m.r2.core.R2AmbientOcclusionBufferType;
 import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
+import com.io7m.r2.core.R2CopyDepth;
 import com.io7m.r2.core.R2DepthInstances;
 import com.io7m.r2.core.R2DepthInstancesType;
 import com.io7m.r2.core.R2DepthPrecision;
@@ -106,6 +106,8 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShadowDepthVariance;
 import com.io7m.r2.core.R2ShadowMapContextType;
 import com.io7m.r2.core.R2ShadowMapRendererExecutionType;
+import com.io7m.r2.core.R2Texture2DType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformSiOT;
@@ -152,7 +154,7 @@ import com.io7m.r2.filters.R2FilterFXAAParametersMutable;
 import com.io7m.r2.filters.R2FilterFXAAParametersType;
 import com.io7m.r2.filters.R2FilterFXAAQuality;
 import com.io7m.r2.filters.R2FilterLightApplicator;
-import com.io7m.r2.filters.R2FilterLightApplicatorParameters;
+import com.io7m.r2.filters.R2FilterLightApplicatorParametersMutable;
 import com.io7m.r2.filters.R2FilterLightApplicatorParametersType;
 import com.io7m.r2.filters.R2FilterOcclusionApplicator;
 import com.io7m.r2.filters.R2FilterOcclusionApplicatorParametersMutable;
@@ -161,6 +163,7 @@ import com.io7m.r2.filters.R2FilterSSAO;
 import com.io7m.r2.filters.R2FilterSSAOParametersMutable;
 import com.io7m.r2.filters.R2FilterSSAOParametersType;
 import com.io7m.r2.filters.R2SSAOKernel;
+import com.io7m.r2.filters.R2SSAOKernelType;
 import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitCube;
@@ -171,7 +174,6 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.valid4j.Assertive;
 
 import javax.swing.SwingUtilities;
-import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -233,7 +235,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
 
   private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
-  private R2FilterLightApplicatorParametersType filter_light_params;
+  private R2FilterLightApplicatorParametersMutable filter_light_params;
 
   private R2FilterSSAOParametersMutable filter_ssao_params;
   private R2FilterType<R2FilterSSAOParametersType> filter_ssao;
@@ -251,6 +253,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
   private R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
   private R2FilterType<R2FilterOcclusionApplicatorParametersType> filter_ssao_app;
   private R2FilterOcclusionApplicatorParametersMutable filter_ssao_app_params;
+  private R2SSAOKernelType filter_ssao_kernel;
+  private R2Texture2DType filter_ssao_noise_texture;
 
   private R2LightAmbientScreenSingle light_ambient;
   private R2ShaderLightSingleType<R2LightAmbientScreenSingle> light_ambient_shader;
@@ -272,8 +276,10 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType>> filter_blur;
+
   private R2FilterType<R2FilterEmissionParametersType> filter_emission;
   private R2FilterEmissionParametersMutable filter_emission_params;
+  private R2BlurParametersReadableType filter_emission_blur_params;
 
   public ExampleLightSpherical4Profiled()
   {
@@ -340,6 +346,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       final R2ImageBufferDescription.Builder b =
         R2ImageBufferDescription.builder();
       b.setArea(area);
+      b.setDepthPrecision(R2DepthPrecision.R2_DEPTH_PRECISION_24);
 
       this.ibuffer = R2ImageBuffer.newImageBuffer(
         gx.getFramebuffers(),
@@ -432,24 +439,22 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       this.filter_comp_parameters = b.build();
     }
 
-    this.filter_ssao_params = R2FilterSSAOParametersMutable.create();
-    this.filter_ssao_params.setKernel(R2SSAOKernel.newKernel(64));
-    this.filter_ssao_params.setExponent(1.0f);
-    this.filter_ssao_params.setSampleRadius(2.0f);
-    this.filter_ssao_params.setGeometryBuffer(this.gbuffer);
-    this.filter_ssao_params.setNoiseTexture(
+    this.filter_ssao_kernel =
+      R2SSAOKernel.newKernel(64);
+    this.filter_ssao_noise_texture =
       R2SSAONoiseTexture.newNoiseTexture(
         gx.getTextures(),
-        this.main.getTextureUnitAllocator().getRootContext()));
-    this.filter_ssao_params.setOutputBuffer(this.abuffer);
-
-    this.filter_ssao = R2FilterSSAO.newFilter(
-      m.getShaderSources(),
-      gx,
-      m.getTextureDefaults(),
-      m.getTextureUnitAllocator().getRootContext(),
-      m.getIDPool(),
-      m.getUnitQuad());
+        this.main.getTextureUnitAllocator().getRootContext());
+    this.filter_ssao_params =
+      R2FilterSSAOParametersMutable.create();
+    this.filter_ssao =
+      R2FilterSSAO.newFilter(
+        m.getShaderSources(),
+        gx,
+        m.getTextureDefaults(),
+        m.getTextureUnitAllocator().getRootContext(),
+        m.getIDPool(),
+        m.getUnitQuad());
 
     {
       final UnsignedRangeInclusiveL screen_x = area.getRangeX();
@@ -468,19 +473,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           this.gbuffer.getDepthTexture(),
           this.abuffer,
           R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
-          (d, a) -> {
-            final R2AmbientOcclusionBufferDescription.Builder b =
-              R2AmbientOcclusionBufferDescription.builder();
-            b.from(d);
-            b.setArea(a);
-            return b.build();
-          },
+          R2AmbientOcclusionBufferDescriptionScaler.get(),
           this.pool_ssao);
-
-      this.filter_blur_ssao_params.setBlurPasses(1);
-      this.filter_blur_ssao_params.setBlurRadius(2.0f);
-      this.filter_blur_ssao_params.setBlurScale(1.0f);
-      this.filter_blur_ssao_params.setBlurSharpness(16.0f);
 
       this.filter_blur_ssao =
         R2FilterBilateralBlurDepthAware.newFilter(
@@ -502,11 +496,6 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
     this.filter_ssao_app_params =
       R2FilterOcclusionApplicatorParametersMutable.create();
-    this.filter_ssao_app_params.setLightBuffer(
-      this.lbuffer);
-    this.filter_ssao_app_params.setOcclusionTexture(
-      this.abuffer.getAmbientOcclusionTexture());
-    this.filter_ssao_app_params.setIntensity(0.3f);
 
     this.filter_compositor =
       R2FilterCompositor.newFilter(
@@ -523,13 +512,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         m.getIDPool(),
         m.getUnitQuad());
 
-    this.filter_fxaa_params = R2FilterFXAAParametersMutable.create();
-    this.filter_fxaa_params.setTexture(this.ibuffer.getRGBATexture());
-    this.filter_fxaa_params.setSubPixelAliasingRemoval(0.0f);
-    this.filter_fxaa_params.setEdgeThreshold(0.333f);
-    this.filter_fxaa_params.setEdgeThresholdMinimum(0.0833f);
-    this.filter_fxaa_params.setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10);
-    Assertive.ensure(this.filter_fxaa_params.isInitialized());
+    this.filter_fxaa_params =
+      R2FilterFXAAParametersMutable.create();
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -785,17 +769,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     }
 
     {
-      final R2FilterLightApplicatorParameters.Builder b =
-        R2FilterLightApplicatorParameters.builder();
-      final R2LightBufferDiffuseSpecularUsableType lb =
-        (R2LightBufferDiffuseSpecularUsableType) this.lbuffer;
-
-      b.setGeometryBuffer(this.gbuffer);
-      b.setLightSpecularTexture(lb.getSpecularTexture());
-      b.setLightDiffuseTexture(lb.getDiffuseTexture());
-      b.setOutputViewport(this.ibuffer.getArea());
-
-      this.filter_light_params = b.build();
+      this.filter_light_params =
+        R2FilterLightApplicatorParametersMutable.create();
     }
 
     {
@@ -810,15 +785,13 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         m.getIDPool(),
         m.getUnitQuad());
 
-      this.filter_emission_params = R2FilterEmissionParametersMutable.create();
-      this.filter_emission_params.setScale(0.25f);
-      this.filter_emission_params.setAlbedoEmissionMap(
-        this.gbuffer.getAlbedoEmissiveTexture());
-      this.filter_emission_params.setBlurParameters(
+      this.filter_emission_params =
+        R2FilterEmissionParametersMutable.create();
+      this.filter_emission_blur_params =
         new R2BlurParametersReadableType()
         {
 
-        });
+        };
 
       this.filter_emission = R2FilterEmission.newFilter(
         gx,
@@ -930,8 +903,6 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
       this.shadow_context = sme.shadowExecComplete();
 
-      this.filter_emission_params.setOutputViewport(areax);
-
       matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         final R2TextureUnitContextParentType uc =
           t.main.getTextureUnitAllocator().getRootContext();
@@ -945,6 +916,10 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         final JCGLColorBufferMaskingType g_cb = t.g.getColorBufferMasking();
         final JCGLStencilBuffersType g_sb = t.g.getStencilBuffers();
         final JCGLDepthBuffersType g_db = t.g.getDepthBuffers();
+
+        /**
+         * Populate geometry buffer.
+         */
 
         g_fb.framebufferDrawBind(gbuffer_fb);
         t.gbuffer.clearBoundPrimaryFramebuffer(t.g);
@@ -960,14 +935,35 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           uc,
           mo,
           t.opaques);
-        g_fb.framebufferDrawUnbind();
 
+        /**
+         * Evaluate and blur ambient occlusion.
+         */
+
+        t.filter_ssao_params.clear();
+        t.filter_ssao_params.setExponent(1.0f);
+        t.filter_ssao_params.setSampleRadius(2.0f);
+        t.filter_ssao_params.setKernel(t.filter_ssao_kernel);
+        t.filter_ssao_params.setNoiseTexture(t.filter_ssao_noise_texture);
+        t.filter_ssao_params.setGeometryBuffer(t.gbuffer);
+        t.filter_ssao_params.setOutputBuffer(t.abuffer);
         t.filter_ssao_params.setSceneObserverValues(mo);
+        Assertive.require(t.filter_ssao_params.isInitialized());
         t.filter_ssao.runFilter(t.profiling_root, uc, t.filter_ssao_params);
 
+        t.filter_blur_ssao_params.setBlurPasses(1);
+        t.filter_blur_ssao_params.setBlurRadius(2.0f);
+        t.filter_blur_ssao_params.setBlurScale(1.0f);
+        t.filter_blur_ssao_params.setBlurSharpness(16.0f);
+        t.filter_blur_ssao_params.setDepthTexture(t.gbuffer.getDepthTexture());
+        t.filter_blur_ssao_params.setOutputRenderTarget(t.abuffer);
         t.filter_blur_ssao_params.setSceneObserverValues(mo);
         t.filter_blur_ssao.runFilter(
           t.profiling_root, uc, t.filter_blur_ssao_params);
+
+        /**
+         * Populate light buffer.
+         */
 
         g_fb.framebufferDrawBind(lbuffer_fb);
         t.lbuffer.clearBoundPrimaryFramebuffer(t.g);
@@ -979,39 +975,79 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           t.shadow_context,
           mo,
           t.lights);
-        g_fb.framebufferDrawUnbind();
+
+        /**
+         * Apply ambient occlusion to light buffer.
+         */
+
+        t.filter_ssao_app_params.clear();
+        t.filter_ssao_app_params.setIntensity(0.3f);
+        t.filter_ssao_app_params.setOutputLightBuffer(t.lbuffer);
+        t.filter_ssao_app_params.setOcclusionTexture(
+          t.abuffer.getAmbientOcclusionTexture());
+        Assertive.require(t.filter_ssao_app_params.isInitialized());
 
         t.filter_ssao_app.runFilter(
           t.profiling_root, uc, t.filter_ssao_app_params);
 
+        /**
+         * Combine light and geometry buffers into lit image.
+         */
+
         g_fb.framebufferDrawBind(t.ibuffer.getPrimaryFramebuffer());
         t.ibuffer.clearBoundPrimaryFramebuffer(t.g);
+        t.filter_light_params.clear();
+        t.filter_light_params.setGeometryBuffer(t.gbuffer);
+        t.filter_light_params.setOutputViewport(t.ibuffer.getArea());
+        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
+        t.lbuffer.matchLightBuffer(
+          this,
+          (tt, lbdo) -> {
+            final R2TextureDefaultsType td = tt.main.getTextureDefaults();
+            tt.filter_light_params.setLightDiffuseTexture(
+              lbdo.getDiffuseTexture());
+            tt.filter_light_params.setLightSpecularTexture(
+              td.getBlackTexture());
+            return Unit.unit();
+          }, (tt, lbso) -> {
+            final R2TextureDefaultsType td = tt.main.getTextureDefaults();
+            tt.filter_light_params.setLightDiffuseTexture(
+              td.getBlackTexture());
+            tt.filter_light_params.setLightSpecularTexture(
+              lbso.getSpecularTexture());
+            return Unit.unit();
+          }, (tt, lb) -> {
+            tt.filter_light_params.setLightDiffuseTexture(
+              lb.getDiffuseTexture());
+            tt.filter_light_params.setLightSpecularTexture(
+              lb.getSpecularTexture());
+            return Unit.unit();
+          });
+        Assertive.require(t.filter_light_params.isInitialized());
         t.filter_light.runFilter(t.profiling_root, uc, t.filter_light_params);
 
+        /**
+         * Apply emission.
+         */
+
+        t.filter_emission_params.clear();
+        t.filter_emission_params.setAlbedoEmissionMap(
+          t.gbuffer.getAlbedoEmissiveTexture());
+        t.filter_emission_params.setBlurParameters(
+          t.filter_emission_blur_params);
         t.filter_emission_params.setOutputFramebuffer(
           Optional.of(t.ibuffer.getPrimaryFramebuffer()));
+        t.filter_emission_params.setOutputViewport(
+          t.ibuffer.getArea());
+        t.filter_emission_params.setScale(0.25f);
         Assertive.ensure(t.filter_emission_params.isInitialized());
 
         t.filter_emission.runFilter(
           t.profiling_root, uc, t.filter_emission_params);
-        g_fb.framebufferDrawUnbind();
 
-        g_cb.colorBufferMask(true, true, true, true);
-        g_db.depthBufferWriteEnable();
-        g_sb.stencilBufferMask(
-          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
-        g_cl.clear(t.screen_clear_spec);
-
-        t.filter_fxaa_params.setTexture(t.ibuffer.getRGBATexture());
-        t.filter_fxaa.runFilter(t.profiling_root, uc, t.filter_fxaa_params);
-
-        g_fb.framebufferReadBind(t.gbuffer.getPrimaryFramebuffer());
-        g_fb.framebufferBlit(
-          t.gbuffer.getArea(),
-          t.ibuffer.getArea(),
-          EnumSet.of(JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_DEPTH),
-          JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
-        g_fb.framebufferReadUnbind();
+        /**
+         * Render debug geometry.
+         */
 
         t.main.getDebugVisualizerRenderer().renderScene(
           areax,
@@ -1019,6 +1055,26 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           uc,
           mo,
           t.debug_params);
+
+        /**
+         * Filter the lit image with FXAA, writing it to the screen.
+         */
+
+        g_fb.framebufferDrawUnbind();
+        g_cb.colorBufferMask(true, true, true, true);
+        g_db.depthBufferWriteEnable();
+        g_sb.stencilBufferMask(
+          JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
+        g_cl.clear(t.screen_clear_spec);
+
+        t.filter_fxaa_params.clear();
+        t.filter_fxaa_params.setSubPixelAliasingRemoval(0.0f);
+        t.filter_fxaa_params.setEdgeThreshold(0.333f);
+        t.filter_fxaa_params.setEdgeThresholdMinimum(0.0833f);
+        t.filter_fxaa_params.setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10);
+        t.filter_fxaa_params.setTexture(t.ibuffer.getRGBATexture());
+        Assertive.require(t.filter_fxaa_params.isInitialized());
+        t.filter_fxaa.runFilter(t.profiling_root, uc, t.filter_fxaa_params);
 
         t.filter_compositor.runFilter(
           t.profiling_root, uc, t.filter_comp_parameters);

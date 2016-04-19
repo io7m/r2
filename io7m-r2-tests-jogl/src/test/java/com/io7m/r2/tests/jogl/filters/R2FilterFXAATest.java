@@ -14,27 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl.filters;
 
-/**
- * The type of renderer exceptions that indicate an inconsistent render target
- * stack. This usually means that the programmer has changed the framebuffer
- * binding manually, without doing it via the stack abstraction.
- */
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.filters.R2FilterFXAAContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public final class R2RenderTargetStackInconsistentException extends
-  R2RenderTargetStackException
+public final class R2FilterFXAATest extends
+  R2FilterFXAAContract
 {
-  private static final long serialVersionUID = 1L;
-
-  /**
-   * Construct an exception.
-   *
-   * @param message The message
-   */
-
-  public R2RenderTargetStackInconsistentException(final String message)
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
   {
-    super(message);
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
   }
 }

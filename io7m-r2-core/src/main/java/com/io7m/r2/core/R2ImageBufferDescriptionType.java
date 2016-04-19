@@ -16,7 +16,10 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import org.immutables.value.Value;
+
+import java.util.Optional;
 
 /**
  * The type of image buffer descriptions.
@@ -27,5 +30,14 @@ import org.immutables.value.Value;
 public interface R2ImageBufferDescriptionType extends
   R2RenderTargetDescriptionType
 {
-  // No extra methods
+  @Override
+  @Value.Parameter
+  AreaInclusiveUnsignedLType getArea();
+
+  /**
+   * @return The precision of the depth buffer, if one is to be provided
+   */
+
+  @Value.Parameter
+  Optional<R2DepthPrecision> getDepthPrecision();
 }

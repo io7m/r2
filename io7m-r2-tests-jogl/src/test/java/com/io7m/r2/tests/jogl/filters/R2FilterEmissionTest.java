@@ -14,26 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl.filters;
 
-/**
- * The type of renderer exceptions that indicate an error that occurred when
- * allocating a render target.
- */
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.filters.R2FilterEmissionContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public final class R2RenderTargetStackAllocationException extends
-  R2RenderTargetStackException
+public final class R2FilterEmissionTest extends R2FilterEmissionContract
 {
-  private static final long serialVersionUID = 1L;
-
-  /**
-   * Construct an exception.
-   *
-   * @param message The message
-   */
-
-  public R2RenderTargetStackAllocationException(final String message)
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
   {
-    super(message);
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
   }
 }

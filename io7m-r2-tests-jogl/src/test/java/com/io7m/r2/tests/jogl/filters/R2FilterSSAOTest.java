@@ -14,49 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl.filters;
 
-/**
- * The type of render target stack exceptions.
- */
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.filters.R2FilterSSAOContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public abstract class R2RenderTargetStackException extends R2Exception
+public final class R2FilterSSAOTest extends
+  R2FilterSSAOContract
 {
-  private static final long serialVersionUID = 1L;
-
-  /**
-   * Construct an exception.
-   *
-   * @param cause The cause
-   */
-
-  public R2RenderTargetStackException(final Throwable cause)
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
   {
-    super(cause);
-  }
-
-  /**
-   * Construct an exception.
-   *
-   * @param message The message
-   */
-
-  public R2RenderTargetStackException(final String message)
-  {
-    super(message);
-  }
-
-  /**
-   * Construct an exception.
-   *
-   * @param message The message
-   * @param cause   The cause
-   */
-
-  public R2RenderTargetStackException(
-    final String message,
-    final Throwable cause)
-  {
-    super(message, cause);
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
   }
 }

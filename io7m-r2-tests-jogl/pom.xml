@@ -36,6 +36,11 @@
       <artifactId>io7m-jcanephora-jogl</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>io7m-jcanephora-fake</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
