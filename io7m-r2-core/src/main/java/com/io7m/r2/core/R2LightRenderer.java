@@ -249,7 +249,7 @@ public final class R2LightRenderer implements R2LightRendererType
       g_v.viewportSet(lbuffer_area);
 
       this.light_consumer.input_state.set(
-        gbuffer, m, uc, shadows, lbuffer_area, pc_base);
+        gbuffer, m, uc, shadows, lbuffer_area, pc_instances);
       try {
         s.lightsExecute(this.light_consumer);
       } finally {
