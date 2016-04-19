@@ -968,9 +968,10 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
         g_fb.framebufferDrawBind(lbuffer_fb);
         t.lbuffer.clearBoundPrimaryFramebuffer(t.g);
-        t.main.getLightRenderer().renderLightsWithBoundBuffer(
+        t.main.getLightRenderer().renderLights(
           t.gbuffer,
           t.lbuffer.getArea(),
+          Optional.empty(),
           t.profiling_root,
           uc,
           t.shadow_context,
