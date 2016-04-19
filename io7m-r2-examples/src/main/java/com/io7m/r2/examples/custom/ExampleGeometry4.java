@@ -63,6 +63,8 @@ import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
+import java.util.Optional;
+
 // CHECKSTYLE_JAVADOC:OFF
 
 public final class ExampleGeometry4 implements R2ExampleCustomType
@@ -195,8 +197,9 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
         t.main.getTextureUnitAllocator().getRootContext(),
         t.gbuffer.getArea(),
         t.stencils);
-      t.geom_renderer.renderGeometryWithBoundBuffer(
+      t.geom_renderer.renderGeometry(
         t.gbuffer.getArea(),
+        Optional.empty(),
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
         mo,

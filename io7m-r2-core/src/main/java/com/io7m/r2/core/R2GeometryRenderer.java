@@ -20,7 +20,6 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFaceWindingOrder;
-import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLPrimitives;
 import com.io7m.jcanephora.core.JCGLStencilFunction;
 import com.io7m.jcanephora.core.JCGLStencilOperation;
@@ -116,12 +115,14 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
   @Override
   public void renderGeometry(
-    final R2GeometryBufferUsableType gbuffer,
+    final AreaInclusiveUnsignedLType area,
+    final Optional<R2GeometryBufferUsableType> gbuffer,
     final R2ProfilingContextType pc,
     final R2TextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
   {
+    NullCheck.notNull(area);
     NullCheck.notNull(gbuffer);
     NullCheck.notNull(pc);
     NullCheck.notNull(uc);
@@ -130,50 +131,32 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
-    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-
+    final R2ProfilingContextType p_geom = pc.getChildContext("geometry");
+    p_geom.startMeasuringIfEnabled();
     try {
-      g_fb.framebufferDrawBind(gb_fb);
-      this.renderGeometryWithBoundBuffer(gbuffer.getArea(), pc, uc, m, s);
-    } finally {
-      g_fb.framebufferDrawUnbind();
-    }
-  }
+      final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
+      final JCGLViewportsType g_v = this.g.getViewports();
 
-  @Override
-  public void renderGeometryWithBoundBuffer(
-    final AreaInclusiveUnsignedLType area,
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
-    final R2MatricesObserverType m,
-    final R2SceneOpaquesType s)
-  {
-    NullCheck.notNull(pc);
-    NullCheck.notNull(uc);
-    NullCheck.notNull(m);
-    NullCheck.notNull(s);
-
-    Assertive.require(!this.isDeleted(), "Renderer not deleted");
-
-    final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-    Assertive.require(g_fb.framebufferDrawAnyIsBound());
-    final JCGLViewportsType g_v = this.g.getViewports();
-
-    if (s.opaquesCount() > 0L) {
-      g_v.viewportSet(area);
-
-      this.opaque_consumer.render_state.from(this.render_state_base);
-      this.opaque_consumer.matrices = m;
-      this.opaque_consumer.texture_context = uc;
-      this.opaque_consumer.profiling_context = pc.getChildContext("geometry");
-      try {
-        s.opaquesExecute(this.opaque_consumer);
-      } finally {
-        this.opaque_consumer.texture_context = null;
-        this.opaque_consumer.matrices = null;
-        this.opaque_consumer.profiling_context = null;
+      if (gbuffer.isPresent()) {
+        final R2GeometryBufferUsableType gb = gbuffer.get();
+        g_fb.framebufferDrawBind(gb.getPrimaryFramebuffer());
       }
+
+      if (s.opaquesCount() > 0L) {
+        g_v.viewportSet(area);
+
+        this.opaque_consumer.render_state.from(this.render_state_base);
+        this.opaque_consumer.matrices = m;
+        this.opaque_consumer.texture_context = uc;
+        try {
+          s.opaquesExecute(this.opaque_consumer);
+        } finally {
+          this.opaque_consumer.texture_context = null;
+          this.opaque_consumer.matrices = null;
+        }
+      }
+    } finally {
+      p_geom.stopMeasuringIfEnabled();
     }
   }
 
@@ -206,7 +189,6 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     private @Nullable R2TextureUnitContextParentType texture_context;
     private @Nullable R2TextureUnitContextType material_texture_context;
     private @Nullable R2MaterialOpaqueSingleType<?> material_single;
-    private @Nullable R2ProfilingContextType profiling_context;
 
     private OpaqueConsumer(
       final JCGLInterfaceGL33Type ig)
@@ -224,8 +206,6 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public void onStart()
     {
       Assertive.require(this.g33 != null);
-      Assertive.require(this.profiling_context != null);
-      this.profiling_context.startMeasuringIfEnabled();
     }
 
     @Override
@@ -388,9 +368,6 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public void onFinish()
     {
       this.material_single = null;
-
-      Assertive.require(this.profiling_context != null);
-      this.profiling_context.stopMeasuringIfEnabled();
     }
   }
 }

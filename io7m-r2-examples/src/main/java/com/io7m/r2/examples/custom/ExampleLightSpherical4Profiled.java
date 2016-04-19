@@ -929,8 +929,9 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           t.main.getTextureUnitAllocator().getRootContext(),
           t.gbuffer.getArea(),
           t.stencils);
-        t.main.getGeometryRenderer().renderGeometryWithBoundBuffer(
+        t.main.getGeometryRenderer().renderGeometry(
           t.gbuffer.getArea(),
+          Optional.empty(),
           t.profiling_root,
           uc,
           mo,
