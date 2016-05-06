@@ -3,10 +3,10 @@
   <c:project>io7m-r2</c:project>
 
   <c:release c:ticket-system="com.github.io7m.r2">
-    <c:date>2015-12-09</c:date>
+    <c:date>2016-05-06</c:date>
     <c:version>0.1.0</c:version>
     <c:item>
-      <c:date>2015-12-09</c:date>
+      <c:date>2015-05-06</c:date>
       <c:type-code-new/>
       <c:summary>Initial release.</c:summary>
     </c:item>
