@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -113,7 +113,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       this.error = in_error;
     }
 
-    @Override public void onFatalError(
+    @Override
+    public void onFatalError(
       final LexicalPositionType<Path> p,
       final Optional<Throwable> e,
       final String message)
@@ -125,7 +126,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       }
     }
 
-    @Override public void onError(
+    @Override
+    public void onError(
       final LexicalPositionType<Path> p,
       final JOParserErrorCode e,
       final String message)
@@ -142,14 +144,16 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       }
     }
 
-    @Override public void onLine(
+    @Override
+    public void onLine(
       final LexicalPositionType<Path> p,
       final String line)
     {
 
     }
 
-    @Override public void onEOF(final LexicalPositionType<Path> p)
+    @Override
+    public void onEOF(final LexicalPositionType<Path> p)
     {
       if (this.mesh.isPresent() && !this.mesh_malformed) {
         this.finishCurrentMesh();
@@ -158,36 +162,40 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
 
     private void finishCurrentMesh()
     {
-      Assertive.ensure(this.mesh.isPresent());
+      Assertive.require(this.mesh.isPresent());
       final String name = this.mesh.get();
-      Assertive.ensure(!this.meshes.containsKey(name));
+      Assertive.require(!this.meshes.containsKey(name));
       final R2MeshBasicType m = this.builder.build();
       R2ObjMeshImporter.LOG.debug("loaded {}", name);
       this.meshes.put(name, m);
     }
 
-    @Override public void onComment(
+    @Override
+    public void onComment(
       final LexicalPositionType<Path> p,
       final String text)
     {
 
     }
 
-    @Override public void onCommandUsemtl(
+    @Override
+    public void onCommandUsemtl(
       final LexicalPositionType<Path> p,
       final String name)
     {
 
     }
 
-    @Override public void onCommandMtllib(
+    @Override
+    public void onCommandMtllib(
       final LexicalPositionType<Path> p,
       final String name)
     {
 
     }
 
-    @Override public void onCommandO(
+    @Override
+    public void onCommandO(
       final LexicalPositionType<Path> p,
       final String name)
     {
@@ -209,14 +217,16 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       this.mesh_malformed = false;
     }
 
-    @Override public void onCommandS(
+    @Override
+    public void onCommandS(
       final LexicalPositionType<Path> p,
       final int group_number)
     {
 
     }
 
-    @Override public void onCommandV(
+    @Override
+    public void onCommandV(
       final LexicalPositionType<Path> p,
       final int index,
       final double x,
@@ -237,7 +247,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         Integer.valueOf(index), Long.valueOf(pv));
     }
 
-    @Override public void onCommandVN(
+    @Override
+    public void onCommandVN(
       final LexicalPositionType<Path> p,
       final int index,
       final double x,
@@ -255,7 +266,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         Integer.valueOf(index), Long.valueOf(n));
     }
 
-    @Override public void onCommandVT(
+    @Override
+    public void onCommandVT(
       final LexicalPositionType<Path> p,
       final int index,
       final double x,
@@ -273,7 +285,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         Integer.valueOf(index), Long.valueOf(u));
     }
 
-    @Override public void onCommandFVertexV_VT_VN(
+    @Override
+    public void onCommandFVertexV_VT_VN(
       final LexicalPositionType<Path> p,
       final int index,
       final int v,
@@ -299,10 +312,28 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         return;
       }
 
-      final long vk = this.builder.addVertex(
-        this.mesh_positions.get(v),
-        this.mesh_normals.get(vn),
-        this.mesh_textures.get(vt));
+      Assertive.require(this.mesh_positions.containsKey(v));
+      Assertive.require(this.mesh_normals.containsKey(vn));
+      Assertive.require(this.mesh_textures.containsKey(vt));
+
+      final long p_actual = this.mesh_positions.get(v);
+      final long n_actual = this.mesh_normals.get(vn);
+      final long t_actual = this.mesh_textures.get(vt);
+
+      R2ObjMeshImporter.LOG.trace(
+        "p {} -> {}",
+        Integer.valueOf(v),
+        Long.valueOf(p_actual));
+      R2ObjMeshImporter.LOG.trace(
+        "n {} -> {}",
+        Integer.valueOf(vn),
+        Long.valueOf(n_actual));
+      R2ObjMeshImporter.LOG.trace(
+        "t {} -> {}",
+        Integer.valueOf(vt),
+        Long.valueOf(t_actual));
+
+      final long vk = this.builder.addVertex(p_actual, n_actual, t_actual);
 
       R2ObjMeshImporter.LOG.trace(
         "{}/{}/{} -> {}",
@@ -335,7 +366,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         "ignoring exception raised in error listener: ", ex);
     }
 
-    @Override public void onCommandFVertexV_VT(
+    @Override
+    public void onCommandFVertexV_VT(
       final LexicalPositionType<Path> p,
       final int index,
       final int v,
@@ -351,7 +383,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       }
     }
 
-    @Override public void onCommandFVertexV_VN(
+    @Override
+    public void onCommandFVertexV_VN(
       final LexicalPositionType<Path> p,
       final int index,
       final int v,
@@ -367,7 +400,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       }
     }
 
-    @Override public void onCommandFVertexV(
+    @Override
+    public void onCommandFVertexV(
       final LexicalPositionType<Path> p,
       final int index,
       final int v)
@@ -382,7 +416,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       }
     }
 
-    @Override public void onCommandFStarted(
+    @Override
+    public void onCommandFStarted(
       final LexicalPositionType<Path> p,
       final int index)
     {
@@ -390,11 +425,12 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         return;
       }
 
-      Assertive.ensure(this.mesh.isPresent());
+      Assertive.require(this.mesh.isPresent());
       this.face_current = index;
     }
 
-    @Override public void onCommandFFinished(
+    @Override
+    public void onCommandFFinished(
       final LexicalPositionType<Path> p,
       final int index)
     {
@@ -402,9 +438,15 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         return;
       }
 
-      Assertive.ensure(this.f_v0 != -1L);
-      Assertive.ensure(this.f_v1 != -1L);
-      Assertive.ensure(this.f_v2 != -1L);
+      Assertive.require(this.f_v0 != -1L);
+      Assertive.require(this.f_v1 != -1L);
+      Assertive.require(this.f_v2 != -1L);
+
+      R2ObjMeshImporter.LOG.trace(
+        "triangle {}/{}/{}",
+        Long.valueOf(this.f_v0),
+        Long.valueOf(this.f_v1),
+        Long.valueOf(this.f_v2));
 
       this.builder.addTriangle(this.f_v0, this.f_v1, this.f_v2);
       this.faceReset();

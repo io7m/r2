@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -29,21 +29,73 @@ public interface R2SceneOpaquesType
   void opaquesReset();
 
   /**
-   * Add a single mesh instance to the scene using the given material.
+   * Add a single instance to the scene using the given material, in group
+   * {@code 1}.
    *
    * @param i   The instance
    * @param m   The material
    * @param <M> The type of shader parameters
    */
 
-  <M> void opaquesAddSingleInstance(
-    R2InstanceSingleMeshType i,
-    R2MaterialOpaqueInstanceSingleType<M> m);
+  default <M> void opaquesAddSingleInstance(
+    final R2InstanceSingleType i,
+    final R2MaterialOpaqueSingleType<M> m)
+  {
+    this.opaquesAddSingleInstanceInGroup(i, m, 1);
+  }
+
+  /**
+   * Add a single instance to the scene using the given material. The instance
+   * is placed into the specified {@code group}, which must be a value in the
+   * range {@code [1, 127]}.
+   *
+   * @param i     The instance
+   * @param m     The material
+   * @param group The group
+   * @param <M>   The type of shader parameters
+   */
+
+  <M> void opaquesAddSingleInstanceInGroup(
+    R2InstanceSingleType i,
+    R2MaterialOpaqueSingleType<M> m,
+    int group);
+
+  /**
+   * Add a batched instance to the scene using the given material, in group
+   * {@code 1}.
+   *
+   * @param i   The instance
+   * @param m   The material
+   * @param <M> The type of shader parameters
+   */
+
+  default <M> void opaquesAddBatchedInstance(
+    final R2InstanceBatchedType i,
+    final R2MaterialOpaqueBatchedType<M> m)
+  {
+    this.opaquesAddBatchedInstanceInGroup(i, m, 1);
+  }
+
+  /**
+   * Add a batched instance to the scene using the given material. The instance
+   * is placed into the specified {@code group}, which must be a value in the
+   * range {@code [1, 127]}.
+   *
+   * @param i     The instance
+   * @param m     The material
+   * @param group The group
+   * @param <M>   The type of shader parameters
+   */
+
+  <M> void opaquesAddBatchedInstanceInGroup(
+    R2InstanceBatchedType i,
+    R2MaterialOpaqueBatchedType<M> m,
+    int group);
 
   /**
    * Batch the instances and pass them to the given consumer for rendering.
    *
-   * @param c The consume
+   * @param c The consumer
    */
 
   void opaquesExecute(

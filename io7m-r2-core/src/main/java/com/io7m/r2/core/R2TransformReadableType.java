@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -27,8 +27,8 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 public interface R2TransformReadableType
 {
   /**
-   * Produce a 4x4 matrix for the current transformation, writing the
-   * resulting matrix to {@code m}.
+   * Produce a 4x4 matrix for the current transformation, writing the resulting
+   * matrix to {@code m}.
    *
    * @param context The current transform context
    * @param m       The matrix to which values will be written
@@ -37,4 +37,10 @@ public interface R2TransformReadableType
   void transformMakeMatrix4x4F(
     final R2TransformContextType context,
     final PMatrixWritable4x4FType<R2SpaceObjectType, R2SpaceWorldType> m);
+
+  /**
+   * @return The watchable value for this transform
+   */
+
+  R2WatchableType<R2TransformReadableType> transformGetWatchable();
 }

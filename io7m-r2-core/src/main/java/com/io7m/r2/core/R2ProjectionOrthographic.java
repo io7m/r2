@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -18,6 +18,7 @@ package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jtensors.MatrixWritable4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixWritable4x4FType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -28,13 +29,14 @@ import com.io7m.r2.spaces.R2SpaceEyeType;
 
 public final class R2ProjectionOrthographic implements R2ProjectionType
 {
-  private final JCGLProjectionMatricesType context;
-  private       float                      x_max;
-  private       float                      x_min;
-  private       float                      y_max;
-  private       float                      y_min;
-  private       float                      z_far;
-  private       float                      z_near;
+  private final JCGLProjectionMatricesType                context;
+  private final R2WatchableType<R2ProjectionReadableType> watchable;
+  private       float                                     x_max;
+  private       float                                     x_min;
+  private       float                                     y_max;
+  private       float                                     y_min;
+  private       float                                     z_far;
+  private       float                                     z_near;
 
   private R2ProjectionOrthographic(
     final JCGLProjectionMatricesType in_context,
@@ -52,6 +54,7 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
     this.y_min = in_y_min;
     this.z_far = in_z_far;
     this.z_near = in_z_near;
+    this.watchable = R2Watchable.newWatchable(this);
   }
 
   /**
@@ -111,6 +114,7 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   public void projectionSetXMaximum(final float x)
   {
     this.x_max = x;
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -122,6 +126,7 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   public void projectionSetXMinimum(final float x)
   {
     this.x_min = x;
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -133,6 +138,7 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   public void projectionSetYMaximum(final float y)
   {
     this.y_max = y;
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -144,6 +150,7 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   public void projectionSetYMinimum(final float y)
   {
     this.y_min = y;
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -155,6 +162,7 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   public void projectionSetZFar(final float z)
   {
     this.z_far = z;
+    this.watchable.watchableChanged();
   }
 
   /**
@@ -166,11 +174,19 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   public void projectionSetZNear(final float z)
   {
     this.z_near = z;
+    this.watchable.watchableChanged();
   }
 
   @Override
   public void projectionMakeMatrix(
     final PMatrixWritable4x4FType<R2SpaceEyeType, R2SpaceClipType> m)
+  {
+    this.projectionMakeMatrixUntyped(m);
+  }
+
+  @Override
+  public void projectionMakeMatrixUntyped(
+    final MatrixWritable4x4FType m)
   {
     this.context.makeOrthographicProjection(
       m,
@@ -183,25 +199,25 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   }
 
   @Override
-  public float projectionGetXMaximum()
+  public float projectionGetNearXMaximum()
   {
     return this.x_max;
   }
 
   @Override
-  public float projectionGetXMinimum()
+  public float projectionGetNearXMinimum()
   {
     return this.x_min;
   }
 
   @Override
-  public float projectionGetYMaximum()
+  public float projectionGetNearYMaximum()
   {
     return this.y_max;
   }
 
   @Override
-  public float projectionGetYMinimum()
+  public float projectionGetNearYMinimum()
   {
     return this.y_min;
   }
@@ -216,5 +232,35 @@ public final class R2ProjectionOrthographic implements R2ProjectionType
   public float projectionGetZNear()
   {
     return this.z_near;
+  }
+
+  @Override
+  public float projectionGetFarXMaximum()
+  {
+    return this.x_max;
+  }
+
+  @Override
+  public float projectionGetFarXMinimum()
+  {
+    return this.x_min;
+  }
+
+  @Override
+  public float projectionGetFarYMaximum()
+  {
+    return this.y_max;
+  }
+
+  @Override
+  public float projectionGetFarYMinimum()
+  {
+    return this.y_min;
+  }
+
+  @Override
+  public R2WatchableType<R2ProjectionReadableType> projectionGetWatchable()
+  {
+    return this.watchable;
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -21,6 +21,8 @@ import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jnull.NullCheck;
+
+import java.util.function.BiFunction;
 
 /**
  * A simple static texture.
@@ -70,5 +72,19 @@ public final class R2Texture2DStatic implements R2Texture2DType
   public boolean isDeleted()
   {
     return this.texture.isDeleted();
+  }
+
+  @Override
+  public <A, B> B matchTexture(
+    final A context,
+    final BiFunction<A, R2Texture2DUsableType, B> on_2d)
+  {
+    return on_2d.apply(context, this);
+  }
+
+  @Override
+  public JCGLTexture2DType getReal()
+  {
+    return this.texture;
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -69,15 +69,27 @@ public final class R2ShadersCheckTest extends R2ShaderTest
     return R2ShaderChecker.newChecker(c.contextGetGL33().getShaders());
   }
 
-  @Test public void testDeferredSurfaceBasic()
+  @Test public void testSurfaceBasicSingle()
     throws Exception
   {
-    R2ShadersCheckTest.check("R2DeferredSurfaceBasic");
+    R2ShadersCheckTest.check("R2SurfaceBasicSingle");
   }
 
-  @Test public void testDeferredSurfaceBasicReflective()
+  @Test public void testStencilSingle()
     throws Exception
   {
-    R2ShadersCheckTest.check("R2DeferredSurfaceBasicReflective");
+    R2ShadersCheckTest.check("R2StencilSingle");
+  }
+
+  @Test public void testStencilScreen()
+    throws Exception
+  {
+    R2ShadersCheckTest.check("R2StencilScreen");
+  }
+
+  @Test public void testSurfaceBasicReflectiveSingle()
+    throws Exception
+  {
+    R2ShadersCheckTest.check("R2SurfaceBasicReflectiveSingle");
   }
 }

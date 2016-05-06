@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,41 +19,78 @@ package com.io7m.r2.core;
 import com.io7m.junreachable.UnreachableCodeException;
 
 /**
- * Stencil constants.
+ * Stencil values.
  */
 
 public final class R2Stencils
 {
   /**
-   * Only pixels with a corresponding {@code ALLOW_BIT} in the stencil buffer
-   * will be affected by rendering.
+   * Only pixels with a corresponding stencil value that contains the {@link
+   * #ALLOW_BIT} are touched by rendering operations.
    */
 
-  public static final int ALLOW_BIT;
+  public static final int ALLOW_BIT = 0b1000_0000;
 
   /**
-   * Pixels that have ever contained geometry will have a corresponding {@code
-   * GEOMETRY_BIT} in the stencil buffer.
+   * The stencil bit used to mask the contributions of lights.
    */
 
-  public static final int GEOMETRY_BIT;
+  public static final int LIGHT_MASK_BIT = 0b0000_0001;
 
   /**
-   * Pixels that contain geometry due to the most recent rendering pass will
-   * have a corresponding {@code GEOMETRY_MOST_RECENT_BIT} in the stencil
-   * buffer.
+   * The bits used to store group values.
    */
 
-  public static final int GEOMETRY_MOST_RECENT_BIT;
+  public static final int GROUP_BITS = 0b0111_1000;
 
-  static {
-    ALLOW_BIT = 0b00000000_00000000_00000000_00000001;
-    GEOMETRY_BIT = 0b00000000_00000000_00000000_00000010;
-    GEOMETRY_MOST_RECENT_BIT = 0b00000000_00000000_00000000_00000100;
-  }
+  /**
+   * The left shift used to store group values;
+   */
+
+  public static final int GROUP_LEFT_SHIFT = 3;
+
+  /**
+   * The maximum number of groups in a scene.
+   */
+
+  public static final int MAXIMUM_GROUPS = 16;
 
   private R2Stencils()
   {
     throw new UnreachableCodeException();
+  }
+
+  /**
+   * @param x The group value
+   *
+   * @return {@code true} iff the given value is a valid stencil group value
+   */
+
+  public static boolean isValidGroup(final int x)
+  {
+    return x > 0 && x < R2Stencils.MAXIMUM_GROUPS;
+  }
+
+  /**
+   * Check that {@code x} is a valid group number.
+   *
+   * @param x The group number
+   *
+   * @return {@code x}
+   *
+   * @throws R2ExceptionInvalidGroup Iff {@code x} is not valid
+   */
+
+  public static int checkValidGroup(final int x)
+    throws R2ExceptionInvalidGroup
+  {
+    if (!R2Stencils.isValidGroup(x)) {
+      throw new R2ExceptionInvalidGroup(
+        String.format(
+          "Group number %d is not in the range [1, %d]",
+          Integer.valueOf(x),
+          Integer.valueOf(R2Stencils.MAXIMUM_GROUPS - 1)));
+    }
+    return x;
   }
 }

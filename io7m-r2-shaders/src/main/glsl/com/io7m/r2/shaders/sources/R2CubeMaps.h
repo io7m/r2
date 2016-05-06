@@ -1,13 +1,15 @@
 #ifndef R2_CUBE_MAPS_H
 #define R2_CUBE_MAPS_H
 
-//
-// Functions for dealing with cube maps.
-//
+/// \file R2CubeMaps.h
+/// \brief Functions for dealing with cube maps.
 
-//
-// Sample from a right-handed cube map `t` using the world-space vector `v`.
-//
+///
+/// Sample from a right-handed cube map \a t using the world-space vector \a v.
+///
+/// @param t A right-handed cube map
+/// @param v A world-space direction vector
+///
 
 vec4
 R2_cubeMapTextureRH(

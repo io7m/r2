@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -17,6 +17,9 @@
 package com.io7m.r2.core;
 
 // @formatter:off
+
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 
 /**
  * <p>The type of consumers of opaque scene instances.</p>
@@ -48,6 +51,78 @@ public interface R2SceneOpaquesConsumerType
   void onStart();
 
   /**
+   * Called when rendering of a group begins.
+   *
+   * @param group The group
+   */
+
+  void onStartGroup(int group);
+
+  /**
+   * Called when a batched instance should upload batch data to the GPU.
+   *
+   * @param i The batched instance
+   */
+
+  void onInstanceBatchedUpdate(
+    R2InstanceBatchedType i);
+
+  /**
+   * Called when a new shader should be activated in order to start rendering
+   * batched instances.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
+
+  <M> void onInstanceBatchedShaderStart(
+    R2ShaderInstanceBatchedUsableType<M> s);
+
+  /**
+   * Called when new material settings should be assigned, for batched
+   * instances.
+   *
+   * @param material The current material
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstanceBatchedMaterialStart(
+    R2MaterialOpaqueBatchedType<M> material);
+
+  /**
+   * Called when a batched instance should be rendered.
+   *
+   * @param material The current material
+   * @param i        The current instance
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstanceBatched(
+    R2MaterialOpaqueBatchedType<M> material,
+    R2InstanceBatchedType i);
+
+  /**
+   * Called after the current set of batched instances have finished rendering
+   * with the current material.
+   *
+   * @param material The current material
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstanceBatchedMaterialFinish(
+    R2MaterialOpaqueBatchedType<M> material);
+
+  /**
+   * Called when the current shader should be deactivated.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
+
+  <M> void onInstanceBatchedShaderFinish(
+    R2ShaderInstanceBatchedUsableType<M> s);
+
+  /**
    * Called when a new shader should be activated in order to start rendering
    * single instances.
    *
@@ -56,7 +131,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleShaderStart(
-    R2ShaderInstanceUsableType<M> s);
+    R2ShaderInstanceSingleUsableType<M> s);
 
   /**
    * Called when new material settings should be assigned, for single
@@ -67,7 +142,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleMaterialStart(
-    R2MaterialOpaqueInstanceSingleType<M> material);
+    R2MaterialOpaqueSingleType<M> material);
 
   /**
    * Called when a new array object should be bound, for single instances.
@@ -76,7 +151,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   void onInstanceSingleArrayStart(
-    R2InstanceType i);
+    R2InstanceSingleType i);
 
   /**
    * Called when a single instance should be rendered.
@@ -87,8 +162,8 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingle(
-    R2MaterialOpaqueInstanceSingleType<M> material,
-    R2InstanceType i);
+    R2MaterialOpaqueSingleType<M> material,
+    R2InstanceSingleType i);
 
   /**
    * Called after the current set of single instances have finished rendering
@@ -99,7 +174,7 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleMaterialFinish(
-    R2MaterialOpaqueInstanceSingleType<M> material);
+    R2MaterialOpaqueSingleType<M> material);
 
   /**
    * Called when the current shader should be deactivated.
@@ -109,12 +184,19 @@ public interface R2SceneOpaquesConsumerType
    */
 
   <M> void onInstanceSingleShaderFinish(
-    R2ShaderInstanceUsableType<M> s);
+    R2ShaderInstanceSingleUsableType<M> s);
+
+  /**
+   * Called when rendering of a group is finished.
+   *
+   * @param group The group
+   */
+
+  void onFinishGroup(int group);
 
   /**
    * Called when rendering of instances is finished.
    */
 
   void onFinish();
-
 }

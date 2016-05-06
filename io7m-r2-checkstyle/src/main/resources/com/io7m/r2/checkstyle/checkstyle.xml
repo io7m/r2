@@ -56,7 +56,9 @@
     <module name="ClassFanOutComplexity">
       <property name="max" value="125"/>
     </module>
-    <module name="ClassTypeParameterName"/>
+    <module name="ClassTypeParameterName">
+      <property name="format" value="^[A-Z][A-Z0-9]*$"/>
+    </module>
     <module name="ConstantName"/>
     <module name="CovariantEquals"/>
     <module name="CyclomaticComplexity">
@@ -119,9 +121,7 @@
       <property name="scope" value="public"/>
     </module>
     <!-- <module name="LeftCurly"/> -->
-    <module name="LineLength">
-      <property name="max" value="180"/>
-    </module>
+    <!-- <module name="LineLength"/> -->
     <module name="LocalFinalVariableName">
       <property name="format" value="^([a-z][a-z0-9_]*|_)$"/>
     </module>
@@ -180,7 +180,7 @@
       <property name="format" value="^([a-z][a-z0-9_]*|_)$"/>
     </module>
     <module name="ParameterNumber">
-      <property name="max" value="10"/>
+      <property name="max" value="32"/>
     </module>
     <module name="ParenPad"/>
     <module name="RedundantImport"/>
@@ -220,7 +220,7 @@
   </module>
 
   <module name="FileLength">
-    <property name="max" value="1000"/>
+    <property name="max" value="2000"/>
   </module>
 
   <module name="FileTabCharacter"/>

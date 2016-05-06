@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -185,7 +185,7 @@ public final class R2UnitQuad implements R2UnitQuadType
       final JCGLArrayObjectBuilderType aob = g_ao.arrayObjectNewBuilder();
       aob.setIndexBuffer(i);
       aob.setAttributeFloatingPoint(
-        0,
+        R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
         a,
         3,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -193,7 +193,7 @@ public final class R2UnitQuad implements R2UnitQuadType
         (long) R2VertexPUNT16ByteBuffered.metaPositionStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        1,
+        R2AttributeConventions.UV_ATTRIBUTE_INDEX,
         a,
         2,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -201,7 +201,7 @@ public final class R2UnitQuad implements R2UnitQuadType
         (long) R2VertexPUNT16ByteBuffered.metaUvStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        2,
+        R2AttributeConventions.NORMAL_ATTRIBUTE_INDEX,
         a,
         3,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -209,7 +209,7 @@ public final class R2UnitQuad implements R2UnitQuadType
         (long) R2VertexPUNT16ByteBuffered.metaNormalStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        3,
+        R2AttributeConventions.TANGENT4_ATTRIBUTE_INDEX,
         a,
         4,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -230,6 +230,7 @@ public final class R2UnitQuad implements R2UnitQuadType
   {
     if (!this.isDeleted()) {
       try {
+        R2UnitQuad.LOG.debug("delete");
         final JCGLArrayBuffersType g_ab = g.getArrayBuffers();
         final JCGLIndexBuffersType g_ib = g.getIndexBuffers();
         final JCGLArrayObjectsType g_ao = g.getArrayObjects();

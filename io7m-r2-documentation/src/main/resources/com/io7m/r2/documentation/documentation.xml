@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright © 2015 <code@io7m.com> http://io7m.com
+  Copyright © 2016 <code@io7m.com> http://io7m.com
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -89,7 +89,7 @@
       <s:paragraph>
         All files distributed with the <s:term s:type="package">${project.parent.name}</s:term>
         package are placed under the following license:
-        <s:verbatim s:type="license"><![CDATA[Copyright © 2015 <code@io7m.com> http://io7m.com
+        <s:verbatim s:type="license"><![CDATA[Copyright © 2016 <code@io7m.com> http://io7m.com
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -27,8 +27,8 @@ import it.unimi.dsi.fastutil.BigList;
 import it.unimi.dsi.fastutil.objects.ObjectBigArrayBigList;
 import it.unimi.dsi.fastutil.objects.ObjectBigList;
 import it.unimi.dsi.fastutil.objects.ObjectBigLists;
-
-import java.util.NoSuchElementException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of the {@link R2MeshBasicType} interface.
@@ -36,6 +36,12 @@ import java.util.NoSuchElementException;
 
 public final class R2MeshBasic implements R2MeshBasicType
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(R2MeshBasic.class);
+  }
+
   private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  positions;
   private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  normals;
   private final ObjectBigList<PVectorI2D<R2SpaceTextureType>> uvs;
@@ -54,6 +60,20 @@ public final class R2MeshBasic implements R2MeshBasicType
     this.uvs = NullCheck.notNull(in_uvs);
     this.vertices = NullCheck.notNull(in_vertices);
     this.triangles = NullCheck.notNull(in_triangles);
+
+    if (R2MeshBasic.LOG.isTraceEnabled()) {
+      R2MeshBasic.LOG.trace("allocated mesh");
+      R2MeshBasic.LOG.trace(
+        "mesh positions: {}", Long.valueOf(this.positions.size64()));
+      R2MeshBasic.LOG.trace(
+        "mesh normals:   {}", Long.valueOf(this.normals.size64()));
+      R2MeshBasic.LOG.trace(
+        "mesh uvs:       {}", Long.valueOf(this.uvs.size64()));
+      R2MeshBasic.LOG.trace(
+        "mesh vertices:  {}", Long.valueOf(this.vertices.size64()));
+      R2MeshBasic.LOG.trace(
+        "mesh triangles: {}", Long.valueOf(this.triangles.size64()));
+    }
   }
 
   /**
@@ -78,32 +98,38 @@ public final class R2MeshBasic implements R2MeshBasicType
     return new Builder(v_count, t_count);
   }
 
-  @Override public BigList<PVectorI3D<R2SpaceObjectType>> getNormals()
+  @Override
+  public BigList<PVectorI3D<R2SpaceObjectType>> getNormals()
   {
     return this.normals;
   }
 
-  @Override public BigList<PVectorI3D<R2SpaceObjectType>> getPositions()
+  @Override
+  public BigList<PVectorI3D<R2SpaceObjectType>> getPositions()
   {
     return this.positions;
   }
 
-  @Override public BigList<PVectorI2D<R2SpaceTextureType>> getUVs()
+  @Override
+  public BigList<PVectorI2D<R2SpaceTextureType>> getUVs()
   {
     return this.uvs;
   }
 
-  @Override public BigList<R2MeshBasicVertexType> getVertices()
+  @Override
+  public BigList<R2MeshBasicVertexType> getVertices()
   {
     return this.vertices;
   }
 
-  @Override public BigList<R2MeshTriangleType> getTriangles()
+  @Override
+  public BigList<R2MeshTriangleType> getTriangles()
   {
     return this.triangles;
   }
 
-  @Override public boolean equals(final Object o)
+  @Override
+  public boolean equals(final Object o)
   {
     if (this == o) {
       return true;
@@ -114,13 +140,14 @@ public final class R2MeshBasic implements R2MeshBasicType
 
     final R2MeshBasic that = (R2MeshBasic) o;
     return this.getPositions().equals(that.getPositions())
-           && this.getNormals().equals(that.getNormals())
-           && this.getUVs().equals(that.getUVs())
-           && this.getVertices().equals(that.getVertices())
-           && this.getTriangles().equals(that.getTriangles());
+      && this.getNormals().equals(that.getNormals())
+      && this.getUVs().equals(that.getUVs())
+      && this.getVertices().equals(that.getVertices())
+      && this.getTriangles().equals(that.getTriangles());
   }
 
-  @Override public int hashCode()
+  @Override
+  public int hashCode()
   {
     int result = this.getPositions().hashCode();
     result = 31 * result + this.getNormals().hashCode();
@@ -149,7 +176,8 @@ public final class R2MeshBasic implements R2MeshBasicType
       this.triangles = new ObjectBigArrayBigList<>(t_count);
     }
 
-    @Override public void reset()
+    @Override
+    public void reset()
     {
       this.positions.clear();
       this.normals.clear();
@@ -161,6 +189,11 @@ public final class R2MeshBasic implements R2MeshBasicType
     @Override
     public long addPosition(final PVectorReadable3DType<R2SpaceObjectType> p)
     {
+      if (R2MeshBasic.LOG.isTraceEnabled()) {
+        R2MeshBasic.LOG.trace(
+          "[{}] position {}", Long.valueOf(this.positions.size64()), p);
+      }
+
       this.positions.add(new PVectorI3D<>(p));
       return this.positions.size64() - 1L;
     }
@@ -168,6 +201,11 @@ public final class R2MeshBasic implements R2MeshBasicType
     @Override
     public long addNormal(final PVectorReadable3DType<R2SpaceObjectType> n)
     {
+      if (R2MeshBasic.LOG.isTraceEnabled()) {
+        R2MeshBasic.LOG.trace(
+          "[{}] normal {}", Long.valueOf(this.normals.size64()), n);
+      }
+
       this.normals.add(new PVectorI3D<>(n));
       return this.normals.size64() - 1L;
     }
@@ -175,51 +213,94 @@ public final class R2MeshBasic implements R2MeshBasicType
     @Override
     public long addUV(final PVectorReadable2DType<R2SpaceTextureType> u)
     {
+      if (R2MeshBasic.LOG.isTraceEnabled()) {
+        R2MeshBasic.LOG.trace(
+          "[{}] uv {}", Long.valueOf(this.uvs.size64()), u);
+      }
+
       this.uvs.add(new PVectorI2D<>(u));
       return this.uvs.size64() - 1L;
     }
 
-    @Override public long addVertex(
+    @Override
+    public long addVertex(
       final long p,
       final long n,
       final long u)
-      throws NoSuchElementException
     {
+      if (R2MeshBasic.LOG.isTraceEnabled()) {
+        R2MeshBasic.LOG.trace(
+          "[{}] vertex {} {} {}",
+          Long.valueOf(this.vertices.size64()),
+          Long.valueOf(p),
+          Long.valueOf(n),
+          Long.valueOf(u));
+      }
+
       if (p < 0L || Long.compareUnsigned(p, this.positions.size64()) >= 0) {
-        throw new NoSuchElementException("Position");
+        throw new R2MeshExceptionMissingPosition(Long.toString(p));
       }
       if (n < 0L || Long.compareUnsigned(n, this.normals.size64()) >= 0) {
-        throw new NoSuchElementException("Normal");
+        throw new R2MeshExceptionMissingNormal(Long.toString(n));
       }
-      if (u < 0L || Long.compareUnsigned(n, this.uvs.size64()) >= 0) {
-        throw new NoSuchElementException("UV");
+      if (u < 0L || Long.compareUnsigned(u, this.uvs.size64()) >= 0) {
+        throw new R2MeshExceptionMissingUV(Long.toString(u));
       }
 
       this.vertices.add(R2MeshBasicVertex.of(p, n, u));
       return this.vertices.size64() - 1L;
     }
 
-    @Override public long addTriangle(
+    @Override
+    public long addTriangle(
       final long v0,
       final long v1,
       final long v2)
-      throws NoSuchElementException
     {
+      if (R2MeshBasic.LOG.isTraceEnabled()) {
+        R2MeshBasic.LOG.trace(
+          "[{}] triangle {} {} {}",
+          Long.valueOf(this.triangles.size64()),
+          Long.valueOf(v0),
+          Long.valueOf(v1),
+          Long.valueOf(v2));
+      }
+
       if (v0 < 0L || Long.compareUnsigned(v0, this.vertices.size64()) >= 0) {
-        throw new NoSuchElementException("Vertex 0");
+        throw new R2MeshExceptionMissingVertex(
+          "Vertex 0: " + Long.toString(v0));
       }
       if (v1 < 0L || Long.compareUnsigned(v1, this.vertices.size64()) >= 0) {
-        throw new NoSuchElementException("Vertex 1");
+        throw new R2MeshExceptionMissingVertex(
+          "Vertex 1: " + Long.toString(v1));
       }
       if (v2 < 0L || Long.compareUnsigned(v2, this.vertices.size64()) >= 0) {
-        throw new NoSuchElementException("Vertex 2");
+        throw new R2MeshExceptionMissingVertex(
+          "Vertex 2: " + Long.toString(v2));
+      }
+
+      if (v0 == v1 || v1 == v2 || v0 == v2) {
+        final StringBuilder sb = new StringBuilder(128);
+        sb.append("Malformed triangle.\n");
+        sb.append("Duplicate vertex indices.\n");
+        sb.append("Triangle: ");
+        sb.append(this.triangles.size64());
+        sb.append("\n");
+        sb.append("Indices: ");
+        sb.append(v0);
+        sb.append(" ");
+        sb.append(v1);
+        sb.append(" ");
+        sb.append(v2);
+        throw new R2MeshExceptionMalformedTriangle(sb.toString());
       }
 
       this.triangles.add(R2MeshTriangle.of(v0, v1, v2));
       return this.triangles.size64() - 1L;
     }
 
-    @Override public R2MeshBasicType build()
+    @Override
+    public R2MeshBasicType build()
     {
       return new R2MeshBasic(
         ObjectBigLists.unmodifiable(

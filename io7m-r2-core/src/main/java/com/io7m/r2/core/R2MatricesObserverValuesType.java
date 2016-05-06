@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -25,7 +25,7 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
  * Access to the matrices for a given observer.
  */
 
-public interface R2MatricesObserverValuesType
+public interface R2MatricesObserverValuesType extends R2MatricesValuesType
 {
   /**
    * @return The current projection
@@ -41,6 +41,13 @@ public interface R2MatricesObserverValuesType
   getMatrixProjection();
 
   /**
+   * @return The current inverse projection matrix for an observer
+   */
+
+  PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType>
+  getMatrixProjectionInverse();
+
+  /**
    * @return The current view matrix for an observer
    */
 
@@ -53,4 +60,10 @@ public interface R2MatricesObserverValuesType
 
   PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType>
   getMatrixViewInverse();
+
+  /**
+   * @return The view rays for the current view
+   */
+
+  R2ViewRaysReadableType getViewRays();
 }

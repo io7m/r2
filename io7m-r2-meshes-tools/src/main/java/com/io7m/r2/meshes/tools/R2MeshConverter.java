@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,14 +16,19 @@
 
 package com.io7m.r2.meshes.tools;
 
+import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
-import com.io7m.junreachable.UnimplementedCodeException;
+import com.io7m.jtensors.parameterized.PVectorI2D;
+import com.io7m.jtensors.parameterized.PVectorI3D;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.r2.meshes.R2MeshBasicType;
+import com.io7m.r2.meshes.R2MeshBasicVertexType;
 import com.io7m.r2.meshes.R2MeshTangents;
 import com.io7m.r2.meshes.R2MeshTangentsAdapter;
 import com.io7m.r2.meshes.R2MeshTangentsAdapterType;
 import com.io7m.r2.meshes.R2MeshTangentsType;
+import com.io7m.r2.meshes.R2MeshTangentsVertexType;
+import com.io7m.r2.meshes.R2MeshTriangleType;
 import com.io7m.r2.meshes.R2MeshType;
 import com.io7m.r2.meshes.binary.R2MBMappedReader;
 import com.io7m.r2.meshes.binary.R2MBMappedWriter;
@@ -33,12 +38,17 @@ import com.io7m.r2.meshes.binary.R2MBUnmappedWriter;
 import com.io7m.r2.meshes.binary.R2MBWriterType;
 import com.io7m.r2.meshes.obj.R2ObjMeshImporter;
 import com.io7m.r2.meshes.obj.R2ObjMeshImporterType;
+import com.io7m.r2.spaces.R2SpaceObjectType;
+import com.io7m.r2.spaces.R2SpaceTextureType;
+import it.unimi.dsi.fastutil.BigList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -224,8 +234,192 @@ public final class R2MeshConverter implements R2MeshConverterType
     final String name,
     final R2MeshType m)
   {
-    // TODO: Generated method stub!
-    throw new UnimplementedCodeException();
+    try (final OutputStream os =
+           Files.newOutputStream(
+             p,
+             StandardOpenOption.CREATE,
+             StandardOpenOption.TRUNCATE_EXISTING,
+             StandardOpenOption.WRITE)) {
+
+      try (final BufferedWriter w =
+             new BufferedWriter(new OutputStreamWriter(os))) {
+
+        w.write("o ");
+        w.write(name);
+        w.newLine();
+
+        m.matchMesh(basic -> {
+          R2MeshConverter.writeObjBasic(w, basic);
+          return Unit.unit();
+        }, tangents -> {
+          R2MeshConverter.writeObjTangents(w, tangents);
+          return Unit.unit();
+        });
+      }
+
+    } catch (final IOException e) {
+      this.listener.onError(Optional.of(e), p, e.getMessage());
+    }
+  }
+
+  private static void writeObjTangents(
+    final BufferedWriter w,
+    final R2MeshTangentsType tangents)
+    throws IOException
+  {
+    final BigList<PVectorI3D<R2SpaceObjectType>> ps =
+      tangents.getPositions();
+    final BigList<PVectorI3D<R2SpaceObjectType>> ns =
+      tangents.getNormals();
+    final BigList<PVectorI2D<R2SpaceTextureType>> us =
+      tangents.getUVs();
+    final BigList<R2MeshTriangleType> tris =
+      tangents.getTriangles();
+
+    for (long index = 0L; index < ps.size64(); ++index) {
+      final PVectorI3D<R2SpaceObjectType> pv = ps.get(index);
+      w.write("v ");
+      w.write(Double.toString(pv.getXD()));
+      w.write(" ");
+      w.write(Double.toString(pv.getYD()));
+      w.write(" ");
+      w.write(Double.toString(pv.getZD()));
+      w.newLine();
+    }
+
+    for (long index = 0L; index < ns.size64(); ++index) {
+      final PVectorI3D<R2SpaceObjectType> nv = ns.get(index);
+      w.write("vn ");
+      w.write(Double.toString(nv.getXD()));
+      w.write(" ");
+      w.write(Double.toString(nv.getYD()));
+      w.write(" ");
+      w.write(Double.toString(nv.getZD()));
+      w.newLine();
+    }
+
+    for (long index = 0L; index < us.size64(); ++index) {
+      final PVectorI2D<R2SpaceTextureType> uv = us.get(index);
+      w.write("vt ");
+      w.write(Double.toString(uv.getXD()));
+      w.write(" ");
+      w.write(Double.toString(uv.getYD()));
+      w.newLine();
+    }
+
+
+    for (long index = 0L; index < tris.size64(); ++index) {
+      final R2MeshTriangleType t = tris.get(index);
+      final R2MeshTangentsVertexType v0 =
+        tangents.getVertices().get(t.getV0());
+      final R2MeshTangentsVertexType v1 =
+        tangents.getVertices().get(t.getV1());
+      final R2MeshTangentsVertexType v2 =
+        tangents.getVertices().get(t.getV2());
+
+      w.write("f ");
+      w.write(Long.toString(v0.getPositionIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v0.getUVIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v0.getNormalIndex() + 1L));
+
+      w.write(" ");
+      w.write(Long.toString(v1.getPositionIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v1.getUVIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v1.getNormalIndex() + 1L));
+
+      w.write(" ");
+      w.write(Long.toString(v2.getPositionIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v2.getUVIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v2.getNormalIndex() + 1L));
+
+      w.newLine();
+    }
+  }
+
+  private static void writeObjBasic(
+    final BufferedWriter w,
+    final R2MeshBasicType basic)
+    throws IOException
+  {
+    final BigList<PVectorI3D<R2SpaceObjectType>> ps =
+      basic.getPositions();
+    final BigList<PVectorI3D<R2SpaceObjectType>> ns =
+      basic.getNormals();
+    final BigList<PVectorI2D<R2SpaceTextureType>> us =
+      basic.getUVs();
+    final BigList<R2MeshTriangleType> tris =
+      basic.getTriangles();
+
+    for (long index = 0L; index < ps.size64(); ++index) {
+      final PVectorI3D<R2SpaceObjectType> pv = ps.get(index);
+      w.write("v ");
+      w.write(Double.toString(pv.getXD()));
+      w.write(" ");
+      w.write(Double.toString(pv.getYD()));
+      w.write(" ");
+      w.write(Double.toString(pv.getZD()));
+      w.newLine();
+    }
+
+    for (long index = 0L; index < ns.size64(); ++index) {
+      final PVectorI3D<R2SpaceObjectType> nv = ns.get(index);
+      w.write("vn ");
+      w.write(Double.toString(nv.getXD()));
+      w.write(" ");
+      w.write(Double.toString(nv.getYD()));
+      w.write(" ");
+      w.write(Double.toString(nv.getZD()));
+      w.newLine();
+    }
+
+    for (long index = 0L; index < us.size64(); ++index) {
+      final PVectorI2D<R2SpaceTextureType> uv = us.get(index);
+      w.write("vt ");
+      w.write(Double.toString(uv.getXD()));
+      w.write(" ");
+      w.write(Double.toString(uv.getYD()));
+      w.newLine();
+    }
+
+
+    for (long index = 0L; index < tris.size64(); ++index) {
+      final R2MeshTriangleType t = tris.get(index);
+      final R2MeshBasicVertexType v0 =
+        basic.getVertices().get(t.getV0());
+      final R2MeshBasicVertexType v1 =
+        basic.getVertices().get(t.getV1());
+      final R2MeshBasicVertexType v2 =
+        basic.getVertices().get(t.getV2());
+
+      w.write("f ");
+      w.write(Long.toString(v0.getPositionIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v0.getUVIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v0.getNormalIndex() + 1L));
+
+      w.write(" ");
+      w.write(Long.toString(v1.getPositionIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v1.getUVIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v1.getNormalIndex() + 1L));
+
+      w.write(" ");
+      w.write(Long.toString(v2.getPositionIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v2.getUVIndex() + 1L));
+      w.write("/");
+      w.write(Long.toString(v2.getNormalIndex() + 1L));
+
+      w.newLine();
+    }
   }
 
   private void loadRMBZ(final Path p)

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -23,14 +23,26 @@ package com.io7m.r2.core;
 public interface R2TextureDefaultsType extends R2DeletableType
 {
   /**
-   * @return A texture representing a flat normal texture
+   * @return A flat normal texture
    */
 
   R2Texture2DUsableType getNormalTexture();
 
   /**
-   * @return A texture representing a flat white texture
+   * @return A flat white texture
    */
 
   R2Texture2DUsableType getWhiteTexture();
+
+  /**
+   * @return A flat black texture
+   */
+
+  R2Texture2DUsableType getBlackTexture();
+
+  /**
+   * @return A hard-edged white projective light texture
+   */
+
+  R2Texture2DUsableType getWhiteProjectiveTexture();
 }

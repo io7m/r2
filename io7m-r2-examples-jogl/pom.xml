@@ -42,6 +42,14 @@
       <groupId>com.io7m.jcanephora</groupId>
       <artifactId>io7m-jcanephora-jogl</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>io7m-jcanephora-texture-loader-awt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcamera</groupId>
+      <artifactId>io7m-jcamera-core</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>ch.qos.logback</groupId>

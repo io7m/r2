@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -17,6 +17,10 @@
 package com.io7m.r2.core;
 
 import com.io7m.jtensors.Matrix4x4FType;
+import com.io7m.jtensors.MatrixM4x4F;
+import com.io7m.jtensors.Quaternion4FType;
+import com.io7m.jtensors.Vector3FType;
+import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 
 /**
  * The storage required for producing transform matrices without allocating
@@ -25,6 +29,30 @@ import com.io7m.jtensors.Matrix4x4FType;
 
 public interface R2TransformContextType
 {
+  /**
+   * @return Preallocated storage for vectors
+   */
+
+  Vector3FType getTemporaryVector3();
+
+  /**
+   * @return Preallocated storage for quaternions
+   */
+
+  Quaternion4FType getTemporaryQuaternion();
+
+  /**
+   * @return Preallocated storage for mutable matrices
+   */
+
+  PMatrixM4x4F.ContextPM4F getContextPM4F();
+
+  /**
+   * @return Preallocated storage for mutable matrices
+   */
+
+  MatrixM4x4F.ContextMM4F getContextMM4F();
+
   /**
    * @return A reference to a temporary 4x4 matrix. Note that this matrix is
    * <i>not</i> recreated on every call, and the returned matrix is shared

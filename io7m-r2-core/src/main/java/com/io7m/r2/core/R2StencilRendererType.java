@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,6 +16,10 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+
 /**
  * The type of stencil renderers.
  */
@@ -25,11 +29,17 @@ public interface R2StencilRendererType extends R2DeletableType
   /**
    * Render the given stencil instances into the currently bound framebuffer.
    *
-   * @param m A matrix context
-   * @param s The stencil instances
+   * @param m    A matrix context
+   * @param pc   A profiling context
+   * @param uc   A texture unit context
+   * @param area The current viewport
+   * @param s    The stencil instances
    */
 
   void renderStencilsWithBoundBuffer(
     R2MatricesObserverType m,
+    JCGLProfilingContextType pc,
+    JCGLTextureUnitContextParentType uc,
+    AreaInclusiveUnsignedLType area,
     R2SceneStencilsType s);
 }

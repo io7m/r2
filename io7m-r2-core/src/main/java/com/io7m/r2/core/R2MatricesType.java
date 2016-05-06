@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -20,11 +20,13 @@ import com.io7m.jtensors.parameterized.PMatrixReadable4x4FType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
+import java.util.function.BiFunction;
+
 /**
  * Matrices.
  */
 
-public interface R2MatricesType
+public interface R2MatricesType extends R2MatricesValuesType
 {
   /**
    * Evaluate matrices for the given observer.
@@ -32,13 +34,16 @@ public interface R2MatricesType
    * @param view       The observer's view matrix
    * @param projection The observer's projection
    * @param f          The function that will receive the evaluated matrices
-   * @param <T>        The type of returned values
+   * @param x          A context value passed to {@code f}
+   * @param <A>        The type of consumed values
+   * @param <B>        The type of returned values
    *
-   * @return A value of {@code T}
+   * @return A value of {@code B}
    */
 
-  <T> T withObserver(
+  <A, B> B withObserver(
     final PMatrixReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType> view,
     final R2ProjectionReadableType projection,
-    final R2MatricesObserverFunctionType<T> f);
+    final A x,
+    final BiFunction<R2MatricesObserverType, A, B> f);
 }

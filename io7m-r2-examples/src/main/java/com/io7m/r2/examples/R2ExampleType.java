@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,7 +16,7 @@
 
 package com.io7m.r2.examples;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.main.R2MainType;
 
@@ -31,19 +31,22 @@ public interface R2ExampleType
   /**
    * Initialize any resources the example needs. Called once.
    *
+   * @param serv Example services
    * @param g    An OpenGL interface
    * @param area The window area
    * @param m    The main renderer interface
    */
 
   void onInitialize(
+    R2ExampleServicesType serv,
     JCGLInterfaceGL33Type g,
-    AreaInclusiveUnsignedIType area,
+    AreaInclusiveUnsignedLType area,
     R2MainType m);
 
   /**
    * Render the example. Called repeatedly.
    *
+   * @param serv  Example services
    * @param g     An OpenGL interface
    * @param area  The window area
    * @param m     The main renderer interface
@@ -51,8 +54,9 @@ public interface R2ExampleType
    */
 
   void onRender(
+    R2ExampleServicesType serv,
     JCGLInterfaceGL33Type g,
-    AreaInclusiveUnsignedIType area,
+    AreaInclusiveUnsignedLType area,
     R2MainType m,
     int frame);
 

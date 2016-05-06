@@ -3,16 +3,22 @@
 
 #include "R2CubeMaps.h"
 
-//
-// Functions for environment-mapped reflections.
-//
+///
+/// \file R2EnvironmentReflection.h
+/// \brief Functions for environment-mapped reflections.
+///
 
-//
-// Calculate a reflection based on the eye-space view direction `v_eye`
-// and eye-space surface normal `n_eye`. The reflection vector is transformed
-// to world-space using the inverse view transform `view_inv` and sampled
-// from the right-handed cube map `t`.
-//
+///
+/// Calculate a reflection based on the eye-space view direction \a v_eye
+/// and eye-space surface normal \a n_eye. The reflection vector is transformed
+/// to world-space using the inverse view transform \a view_inv and sampled
+/// from the right-handed cube map \a t.
+///
+/// @param t        A right-handed cube map
+/// @param v_eye    An eye-space view direction
+/// @param n_eye    An eye-space surface normal
+/// @param view_inv An eye-space-to-world-space matrix
+///
 
 vec4
 R2_environmentReflection(

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -22,7 +22,7 @@ import com.io7m.jpra.runtime.java.JPRACursor1DType;
 import com.io7m.jtensors.VectorReadable2FType;
 import com.io7m.jtensors.VectorReadable3FType;
 import com.io7m.jtensors.VectorReadable4FType;
-import com.io7m.r2.meshes.R2MeshParserListenerType;
+import com.io7m.r2.meshes.R2MeshParserInterleavedListenerType;
 import com.io7m.r2.meshes.binary.r2mb.R2MBHeaderByteBuffered;
 import com.io7m.r2.meshes.binary.r2mb.R2MBHeaderType;
 import com.io7m.r2.meshes.binary.r2mb.R2MBTriangleByteBuffered;
@@ -51,12 +51,12 @@ public final class R2MBMappedReader implements R2MBReaderType
     LOG = LoggerFactory.getLogger(R2MBMappedReader.class);
   }
 
-  private final R2MeshParserListenerType listener;
-  private final ByteBuffer               buffer;
+  private final R2MeshParserInterleavedListenerType listener;
+  private final ByteBuffer                          buffer;
 
   private R2MBMappedReader(
     final MappedByteBuffer in_buffer,
-    final R2MeshParserListenerType in_listener)
+    final R2MeshParserInterleavedListenerType in_listener)
   {
     this.buffer = NullCheck.notNull(in_buffer);
     this.listener = NullCheck.notNull(in_listener);
@@ -75,7 +75,7 @@ public final class R2MBMappedReader implements R2MBReaderType
 
   public static R2MBReaderType newMappedReaderForFileChannel(
     final FileChannel in_chan,
-    final R2MeshParserListenerType in_listener)
+    final R2MeshParserInterleavedListenerType in_listener)
     throws IOException
   {
     final MappedByteBuffer map =
@@ -86,7 +86,7 @@ public final class R2MBMappedReader implements R2MBReaderType
 
   static boolean checkVersion(
     final R2MBHeaderType v,
-    final R2MeshParserListenerType pl)
+    final R2MeshParserInterleavedListenerType pl)
   {
     final int vv = v.getVersion();
     if (vv != R2MBVersion.R2MB_VERSION) {
@@ -106,16 +106,16 @@ public final class R2MBMappedReader implements R2MBReaderType
 
   static boolean checkMagicNumber(
     final R2MBHeaderType v,
-    final R2MeshParserListenerType pl)
+    final R2MeshParserInterleavedListenerType pl)
   {
     final byte m0 = v.getMagic0();
     final byte m1 = v.getMagic1();
     final byte m2 = v.getMagic2();
     final byte m3 = v.getMagic3();
     if (!((int) m0 == (int) 'R'
-          && (int) m1 == (int) '2'
-          && (int) m2 == (int) 'B'
-          && (int) m3 == (int) '\n')) {
+      && (int) m1 == (int) '2'
+      && (int) m2 == (int) 'B'
+      && (int) m3 == (int) '\n')) {
       final StringBuilder sb = new StringBuilder(128);
       sb.append("Bad magic number.\n");
       sb.append("Expected: 0x52 0x32 0x42 0x0A\n");
@@ -131,7 +131,7 @@ public final class R2MBMappedReader implements R2MBReaderType
   }
 
   static void parseVertex(
-    final R2MeshParserListenerType pl,
+    final R2MeshParserInterleavedListenerType pl,
     final int index,
     final VectorReadable3FType v_pos,
     final VectorReadable3FType v_nor,
@@ -150,7 +150,24 @@ public final class R2MBMappedReader implements R2MBReaderType
     pl.onEventVertexFinished(index);
   }
 
-  @Override public void run()
+  @Override
+  public void run()
+  {
+    try {
+      this.listener.onEventStart();
+      this.main();
+    } catch (final Throwable ex) {
+      this.listener.onError(Optional.of(ex), ex.getMessage());
+    } finally {
+      try {
+        this.listener.onEventFinished();
+      } catch (final Throwable ex) {
+        this.listener.onError(Optional.of(ex), ex.getMessage());
+      }
+    }
+  }
+
+  private void main()
   {
     final long v_count;
     final long t_count;

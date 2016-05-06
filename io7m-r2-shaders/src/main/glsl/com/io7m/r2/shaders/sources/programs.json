@@ -1,12 +1,87 @@
 {
-  "R2DeferredSurfaceBasic": {
-    "vertex":   "/com/io7m/r2/shaders/sources/R2DeferredSurfaceBasic.vert",
-    "fragment": "/com/io7m/r2/shaders/sources/R2DeferredSurfaceBasic.frag"
+  "R2LightAmbientSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightAmbientSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightAmbientSingle.frag"
   },
 
-  "R2DeferredSurfaceBasicReflective": {
-    "vertex":   "/com/io7m/r2/shaders/sources/R2DeferredSurfaceBasic.vert",
-    "fragment": "/com/io7m/r2/shaders/sources/R2DeferredSurfaceBasicReflective.frag"
+  "R2LightSphericalLambertPhongSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalLambertPhongSingle.frag"
+  },
+
+  "R2LightSphericalLambertBlinnPhongSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalLambertBlinnPhongSingle.frag"
+  },
+
+  "R2LightSphericalLambertSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalLambertSingle.frag"
+  },
+
+  "R2LightProjectiveLambertBlinnPhongSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertBlinnPhongSingle.frag"
+  },
+
+  "R2LightProjectiveLambertSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertSingle.frag"
+  },
+
+  "R2LightProjectiveLambertShadowVarianceSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertShadowVarianceSingle.frag"
+  },
+
+  "R2LightProjectiveLambertBlinnPhongShadowVarianceSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightProjectiveLambertBlinnPhongShadowVarianceSingle.frag"
+  },
+
+  "R2LightSphericalDebugConstantSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalDebugConstantSingle.frag"
+  },
+
+  "R2LightSphericalDebugAttenuationSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightPositionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightSphericalDebugAttenuationSingle.frag"
+  },
+
+  "R2LightDirectionalSpecularSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightDirectionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightDirectionalSpecularSingle.frag"
+  },
+
+  "R2LightDirectionalDebugConstantSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LightDirectionalSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LightDirectionalDebugConstantSingle.frag"
+  },
+
+  "R2DepthBasicSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DepthSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DepthBasicSingle.frag"
+  },
+
+  "R2DepthBasicBatched": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DepthBatched.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DepthBasicBatched.frag"
+  },
+
+  "R2SurfaceBasicSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2SurfaceBasicSingle.frag"
+  },
+
+  "R2SurfaceBasicBatched": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceBatched.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2SurfaceBasicBatched.frag"
+  },
+
+  "R2SurfaceBasicReflectiveSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2SurfaceBasicReflectiveSingle.frag"
   },
 
   "R2DebugNormalCompression": {
@@ -29,13 +104,118 @@
     "fragment": "/com/io7m/r2/shaders/sources/R2DebugIdentity.frag"
   },
 
-  "R2StencilInstance": {
-    "vertex":   "/com/io7m/r2/shaders/sources/R2StencilInstance.vert",
-    "fragment": "/com/io7m/r2/shaders/sources/R2White.frag"
+  "R2DebugEyeZReconstruction": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DebugPositionOnly.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugEyeZReconstruction.frag"
+  },
+
+  "R2DebugEyePositionReconstruction": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DebugPositionOnly.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugEyePositionReconstruction.frag"
+  },
+
+  "R2DebugVisualConstantScreen": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2DebugVisualConstantScreen.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugVisualConstant.frag"
+  },
+
+  "R2DebugVisualConstantSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugVisualConstant.frag"
+  },
+
+  "R2DebugVisualConstantBatched": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2SurfaceBatched.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2DebugVisualConstant.frag"
+  },
+
+  "R2StencilSingle": {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2StencilSingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2Nothing.frag"
   },
 
   "R2StencilScreen": {
     "vertex":   "/com/io7m/r2/shaders/sources/R2StencilScreen.vert",
-    "fragment": "/com/io7m/r2/shaders/sources/R2White.frag"
+    "fragment": "/com/io7m/r2/shaders/sources/R2Nothing.frag"
+  },
+
+  "R2FilterLightApplicator" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterLightApplicator.frag"
+  },
+
+  "R2FilterOcclusionApplicator" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterOcclusionApplicator.frag"
+  },
+
+  "R2FilterTextureShow" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterTextureShow.frag"
+  },
+
+  "R2FilterBilateralBlurDepthAwareHorizontal4f" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterBilateralBlurDepthAwareHorizontal4f.frag"
+  },
+
+  "R2FilterBilateralBlurDepthAwareVertical4f" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterBilateralBlurDepthAwareVertical4f.frag"
+  },
+
+  "R2FilterBoxBlurHorizontal4f" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterBoxBlurHorizontal4f.frag"
+  },
+
+  "R2FilterBoxBlurVertical4f" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterBoxBlurVertical4f.frag"
+  },
+
+  "R2FilterEmission" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FilterEmission.frag"
+  },
+
+  "R2SSAO" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2SSAO.frag"
+  },
+
+  "R2LogDepthOnlySingle" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2LogDepthOnlySingle.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2LogDepthOnlySingle.frag"
+  },
+
+  "R2FXAA_10" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_10.frag"
+  },
+
+  "R2FXAA_15" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_15.frag"
+  },
+
+  "R2FXAA_20" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_20.frag"
+  },
+
+  "R2FXAA_25" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_25.frag"
+  },
+
+  "R2FXAA_29" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_29.frag"
+  },
+
+  "R2FXAA_39" : {
+    "vertex":   "/com/io7m/r2/shaders/sources/R2Filter.vert",
+    "fragment": "/com/io7m/r2/shaders/sources/R2FXAA_39.frag"
   }
 }

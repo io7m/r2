@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 <code@io7m.com> http://io7m.com
+ * Copyright © 2016 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -16,28 +16,32 @@
 
 package com.io7m.r2.examples.custom;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedIType;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
+import com.io7m.jcanephora.profiler.JCGLProfilingType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
-import com.io7m.r2.core.R2InstanceSingleMesh;
-import com.io7m.r2.core.R2InstanceSingleMeshType;
+import com.io7m.r2.core.R2InstanceSingle;
+import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionFOV;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TransformOST;
+import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.examples.R2ExampleCustomType;
+import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -48,12 +52,13 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
 {
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
-  private R2SceneStencilsType      stencils;
-  private R2StencilRendererType    stencil_renderer;
-  private R2MatricesType           matrices;
-  private R2ProjectionFOV          projection;
-  private R2UnitQuadType           quad;
-  private R2InstanceSingleMeshType instance;
+  private R2SceneStencilsType stencils;
+  private R2StencilRendererType stencil_renderer;
+  private R2MatricesType matrices;
+  private R2ProjectionFOV projection;
+  private R2UnitQuadType quad;
+  private R2InstanceSingleType instance;
+  private R2MainType main;
 
   public ExampleStencilPositive()
   {
@@ -62,8 +67,9 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
 
   @Override
   public void onInitialize(
+    final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m)
   {
     this.stencils = R2SceneStencils.newMasks();
@@ -81,8 +87,8 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
       new VectorI3F(0.0f, 0.0f, 0.0f),
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
-    final R2TransformOST transform = R2TransformOST.newTransform();
-    this.instance = R2InstanceSingleMesh.newInstance(
+    final R2TransformSiOT transform = R2TransformSiOT.newTransform();
+    this.instance = R2InstanceSingle.newInstance(
       m.getIDPool(),
       this.quad.getArrayObject(),
       transform,
@@ -91,15 +97,18 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
 
   @Override
   public void onRender(
+    final R2ExampleServicesType serv,
     final JCGLInterfaceGL33Type g,
-    final AreaInclusiveUnsignedIType area,
+    final AreaInclusiveUnsignedLType area,
     final R2MainType m,
     final int frame)
   {
+    this.main = m;
+
     this.stencils.stencilsReset();
     this.stencils.stencilsSetMode(
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_POSITIVE);
-    this.stencils.stencilsAddSingleMesh(this.instance);
+    this.stencils.stencilsAddSingle(this.instance);
 
     final JCGLDepthBuffersType g_dep = g.getDepthBuffers();
     g_dep.depthBufferClear(1.0f);
@@ -108,8 +117,20 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     g_st.stencilBufferMask(JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
     g_st.stencilBufferClear(0);
 
-    this.matrices.withObserver(this.view, this.projection, mo -> {
-      this.stencil_renderer.renderStencilsWithBoundBuffer(mo, this.stencils);
+    this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
+      final JCGLProfilingType pro =
+        t.main.getProfiling();
+      final JCGLProfilingFrameType pro_frame =
+        pro.startFrame();
+      final JCGLProfilingContextType pro_root =
+        pro_frame.getChildContext("main");
+
+      t.stencil_renderer.renderStencilsWithBoundBuffer(
+        mo,
+        pro_root,
+        t.main.getTextureUnitAllocator().getRootContext(),
+        area,
+        t.stencils);
       return Unit.unit();
     });
   }
