@@ -42,45 +42,38 @@
     <dependency>
       <groupId>com.io7m.jtensors</groupId>
       <artifactId>io7m-jtensors-core</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.io7m.jtensors</groupId>
       <artifactId>io7m-jtensors-bytebuffered</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.io7m.jpra</groupId>
       <artifactId>io7m-jpra-runtime-java</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.io7m.jcanephora</groupId>
       <artifactId>io7m-jcanephora-core</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.io7m.jcanephora</groupId>
       <artifactId>io7m-jcanephora-jogl</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.io7m.jcanephora</groupId>
       <artifactId>io7m-jcanephora-cursors</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>io7m-r2-shaders-pp</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>io7m-r2-shaders-checker</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
