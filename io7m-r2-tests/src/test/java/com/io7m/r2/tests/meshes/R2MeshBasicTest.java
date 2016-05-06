@@ -37,7 +37,8 @@ public final class R2MeshBasicTest
 {
   @Rule public ExpectedException expected = ExpectedException.none();
 
-  @Test public void testBuildEmpty()
+  @Test
+  public void testBuildEmpty()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
     final R2MeshBasicType m = b.build();
@@ -49,7 +50,8 @@ public final class R2MeshBasicTest
     Assert.assertEquals(0L, m.getTriangles().size64());
   }
 
-  @Test public void testBuildNoSuchPosition()
+  @Test
+  public void testBuildNoSuchPosition()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
     this.expected.expect(R2MeshExceptionMissingPosition.class);
@@ -57,7 +59,8 @@ public final class R2MeshBasicTest
     b.addVertex(0L, 0L, 0L);
   }
 
-  @Test public void testBuildNoSuchNormal()
+  @Test
+  public void testBuildNoSuchNormal()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
     b.addPosition(new PVectorI3D<>(0.0, 0.0, 0.0));
@@ -67,7 +70,8 @@ public final class R2MeshBasicTest
     b.addVertex(0L, 0L, 0L);
   }
 
-  @Test public void testBuildNoSuchUV()
+  @Test
+  public void testBuildNoSuchUV()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
     b.addPosition(new PVectorI3D<>(0.0, 0.0, 0.0));
@@ -78,7 +82,8 @@ public final class R2MeshBasicTest
     b.addVertex(0L, 0L, 0L);
   }
 
-  @Test public void testBuildVertex0()
+  @Test
+  public void testBuildVertex0()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
     b.addPosition(new PVectorI3D<>(0.0, 0.0, 0.0));
@@ -89,7 +94,8 @@ public final class R2MeshBasicTest
     Assert.assertEquals(0L, v);
   }
 
-  @Test public void testBuildTriangleNoSuchV0()
+  @Test
+  public void testBuildTriangleNoSuchV0()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
     this.expected.expect(R2MeshExceptionMissingVertex.class);
@@ -97,7 +103,8 @@ public final class R2MeshBasicTest
     b.addTriangle(0L, 0L, 0L);
   }
 
-  @Test public void testBuildTriangleNoSuchV1()
+  @Test
+  public void testBuildTriangleNoSuchV1()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
     b.addPosition(new PVectorI3D<>(0.0, 0.0, 0.0));
@@ -110,7 +117,8 @@ public final class R2MeshBasicTest
     b.addTriangle(v, v + 1L, v);
   }
 
-  @Test public void testBuildTriangleNoSuchV2()
+  @Test
+  public void testBuildTriangleNoSuchV2()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
     b.addPosition(new PVectorI3D<>(0.0, 0.0, 0.0));
@@ -123,7 +131,8 @@ public final class R2MeshBasicTest
     b.addTriangle(v, v, v + 1L);
   }
 
-  @Test public void testBuildTriangle0()
+  @Test
+  public void testBuildTriangle0()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
 
@@ -138,7 +147,8 @@ public final class R2MeshBasicTest
     Assert.assertEquals(0L, t);
   }
 
-  @Test public void testBuildTriangleMalformed0()
+  @Test
+  public void testBuildTriangleMalformed0()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
 
@@ -154,7 +164,8 @@ public final class R2MeshBasicTest
     b.addTriangle(v0, v0, v1);
   }
 
-  @Test public void testBuildTriangleMalformed1()
+  @Test
+  public void testBuildTriangleMalformed1()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
 
@@ -170,7 +181,8 @@ public final class R2MeshBasicTest
     b.addTriangle(v0, v1, v1);
   }
 
-  @Test public void testBuildTriangleMalformed2()
+  @Test
+  public void testBuildTriangleMalformed2()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
 
@@ -186,7 +198,8 @@ public final class R2MeshBasicTest
     b.addTriangle(v0, v1, v0);
   }
 
-  @Test public void testBuildResetEmpty()
+  @Test
+  public void testBuildResetEmpty()
   {
     final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
     b.addPosition(new PVectorI3D<>(0.0, 0.0, 0.0));

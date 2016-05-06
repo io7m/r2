@@ -27,8 +27,11 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2Exception;
@@ -40,10 +43,7 @@ import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2RenderTargetUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
@@ -176,15 +176,15 @@ public final class R2FilterBoxBlur<
   }
 
   private void runSimpleScale(
-    final R2ProfilingContextType pc_base,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc_base,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterBoxBlurParameters<SD, S, DD, D> parameters)
   {
     NullCheck.notNull(pc_base);
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    final R2ProfilingContextType pc_scale = pc_base.getChildContext("scale");
+    final JCGLProfilingContextType pc_scale = pc_base.getChildContext("scale");
 
     pc_scale.startMeasuringIfEnabled();
     try {
@@ -233,14 +233,14 @@ public final class R2FilterBoxBlur<
   }
 
   private void runSimpleCopy(
-    final R2ProfilingContextType pc_base,
+    final JCGLProfilingContextType pc_base,
     final R2FilterBoxBlurParameters<SD, S, DD, D> parameters)
   {
     NullCheck.notNull(pc_base);
     NullCheck.notNull(parameters);
 
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-    final R2ProfilingContextType pc_copy = pc_base.getChildContext("copy");
+    final JCGLProfilingContextType pc_copy = pc_base.getChildContext("copy");
 
     pc_copy.startMeasuringIfEnabled();
     try {
@@ -283,15 +283,15 @@ public final class R2FilterBoxBlur<
 
   @Override
   public void runFilter(
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterBoxBlurParameters<SD, S, DD, D> parameters)
   {
     NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    final R2ProfilingContextType pc_base = pc.getChildContext("box-blur");
+    final JCGLProfilingContextType pc_base = pc.getChildContext("box-blur");
 
     final int blur_passes = parameters.getBlurPasses();
     if (blur_passes == 0) {
@@ -314,15 +314,15 @@ public final class R2FilterBoxBlur<
   }
 
   private void runBlur(
-    final R2ProfilingContextType pc_base,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc_base,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterBoxBlurParameters<SD, S, DD, D> parameters)
   {
     NullCheck.notNull(pc_base);
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    final R2ProfilingContextType pc_blur = pc_base.getChildContext("blur");
+    final JCGLProfilingContextType pc_blur = pc_base.getChildContext("blur");
     pc_blur.startMeasuringIfEnabled();
 
     try {
@@ -404,7 +404,7 @@ public final class R2FilterBoxBlur<
   }
 
   private void evaluateBlurH(
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2BlurParametersReadableType parameters,
     final R2Texture2DUsableType source_texture,
     final AreaInclusiveUnsignedLType target_area,
@@ -417,7 +417,7 @@ public final class R2FilterBoxBlur<
     final JCGLViewportsType g_v = this.g.getViewports();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
-    final R2TextureUnitContextType tc = uc.unitContextNew();
+    final JCGLTextureUnitContextType tc = uc.unitContextNew();
 
     try {
       g_fb.framebufferDrawBind(target_fb);
@@ -454,7 +454,7 @@ public final class R2FilterBoxBlur<
   }
 
   private void evaluateBlurV(
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2BlurParametersReadableType parameters,
     final R2Texture2DUsableType source_texture,
     final AreaInclusiveUnsignedLType target_area,
@@ -467,7 +467,7 @@ public final class R2FilterBoxBlur<
     final JCGLViewportsType g_v = this.g.getViewports();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
-    final R2TextureUnitContextType tc = uc.unitContextNew();
+    final JCGLTextureUnitContextType tc = uc.unitContextNew();
 
     try {
       g_fb.framebufferDrawBind(target_fb);

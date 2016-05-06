@@ -21,14 +21,14 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -74,11 +74,13 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
 
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr =
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr =
       ta.getRootContext();
-    final R2TextureUnitContextType tc =
+    final JCGLTextureUnitContextType tc =
       tr.unitContextNew();
 
     final R2ProjectionReadableType proj =
@@ -94,7 +96,8 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
   }
 
   @Test
-  public final void testCorrectMultiInstance() throws Exception
+  public final void testCorrectMultiInstance()
+    throws Exception
   {
     final JCGLContextType c =
       this.newGL33Context("main", 24, 8);
@@ -112,10 +115,12 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
@@ -142,7 +147,8 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
   }
 
   @Test
-  public final void testWrongOrder() throws Exception
+  public final void testWrongOrder()
+    throws Exception
   {
     final JCGLContextType c =
       this.newGL33Context("main", 24, 8);
@@ -160,10 +166,12 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
@@ -179,7 +187,8 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
   }
 
   @Test
-  public final void testInactive() throws Exception
+  public final void testInactive()
+    throws Exception
   {
     final JCGLContextType c =
       this.newGL33Context("main", 24, 8);
@@ -205,7 +214,8 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
   }
 
   @Test
-  public final void testNoReceiveMaterial() throws Exception
+  public final void testNoReceiveMaterial()
+    throws Exception
   {
     final JCGLContextType c =
       this.newGL33Context("main", 24, 8);
@@ -234,7 +244,8 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
   }
 
   @Test
-  public final void testNoReceiveInstance() throws Exception
+  public final void testNoReceiveInstance()
+    throws Exception
   {
     final JCGLContextType c =
       this.newGL33Context("main", 24, 8);
@@ -255,10 +266,12 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     f.onActivate(g.getShaders());
     f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
@@ -269,7 +282,8 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
   }
 
   @Test
-  public final void testNoReceiveView() throws Exception
+  public final void testNoReceiveView()
+    throws Exception
   {
     final JCGLContextType c =
       this.newGL33Context("main", 24, 8);
@@ -287,10 +301,12 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     f.onActivate(g_sh);
     this.expected.expect(IllegalStateException.class);
@@ -298,7 +314,8 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
   }
 
   @Test
-  public final void testDeactivatedValidate() throws Exception
+  public final void testDeactivatedValidate()
+    throws Exception
   {
     final JCGLContextType c =
       this.newGL33Context("main", 24, 8);

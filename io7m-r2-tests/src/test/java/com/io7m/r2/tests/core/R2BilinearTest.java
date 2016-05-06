@@ -47,7 +47,8 @@ public final class R2BilinearTest
     Assert.assertEquals(0.0f, out.getZF(), 0.0f);
   }
 
-  @Test public void testBilinear1()
+  @Test
+  public void testBilinear1()
   {
     final VectorI3F x0y0 = new VectorI3F(0.0f, 0.0f, 0.0f);
     final VectorI3F x1y0 = new VectorI3F(1.0f, 0.0f, 0.0f);
@@ -69,7 +70,8 @@ public final class R2BilinearTest
     Assert.assertEquals(0.0f, out.getZF(), 0.0f);
   }
 
-  @Test public void testBilinear2()
+  @Test
+  public void testBilinear2()
   {
     final VectorI3F x0y0 = new VectorI3F(0.0f, 0.0f, 0.0f);
     final VectorI3F x1y0 = new VectorI3F(1.0f, 0.0f, 0.0f);

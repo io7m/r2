@@ -146,6 +146,16 @@
         <version>0.45.3-SNAPSHOT</version>
       </dependency>
       <dependency>
+        <groupId>com.io7m.jcanephora</groupId>
+        <artifactId>io7m-jcanephora-texture-unit-allocator</artifactId>
+        <version>0.45.3-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jcanephora</groupId>
+        <artifactId>io7m-jcanephora-profiler</artifactId>
+        <version>0.45.3-SNAPSHOT</version>
+      </dependency>
+      <dependency>
         <groupId>com.io7m.jpra</groupId>
         <artifactId>io7m-jpra-runtime-java</artifactId>
         <version>0.4.1</version>

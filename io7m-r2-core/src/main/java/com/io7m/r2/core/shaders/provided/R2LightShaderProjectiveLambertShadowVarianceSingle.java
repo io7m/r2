@@ -22,6 +22,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PVector3FType;
@@ -41,7 +42,6 @@ import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2ShadowDepthVarianceType;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
@@ -93,11 +93,11 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
   private final JCGLProgramUniformType u_shadow_depth_coefficient;
   private final JCGLProgramUniformType u_shadow_map;
 
-  private final PVector4FType<R2SpaceEyeType>   position_eye;
-  private final PVector3FType<R2SpaceEyeType>   position_eye3;
+  private final PVector4FType<R2SpaceEyeType> position_eye;
+  private final PVector3FType<R2SpaceEyeType> position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
-  private       JCGLTextureUnitType             unit_image;
-  private       JCGLTextureUnitType             unit_shadow;
+  private JCGLTextureUnitType unit_image;
+  private JCGLTextureUnitType unit_shadow;
 
   private R2LightShaderProjectiveLambertShadowVarianceSingle(
     final JCGLShadersType in_shaders,
@@ -305,7 +305,7 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
     final R2LightProjectiveWithShadowVarianceType values,
     final R2MatricesObserverValuesType m)
@@ -396,7 +396,7 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
      */
 
     this.unit_image =
-      tc.unitContextBindTexture2D(g_tex, values.getImage());
+      tc.unitContextBindTexture2D(g_tex, values.getImage().get());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_projective_image,
       this.unit_image);
@@ -436,7 +436,7 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
   public void onReceiveShadowMap(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final R2Texture2DUsableType map)
   {
     NullCheck.notNull(g_tex);
@@ -445,7 +445,7 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
     NullCheck.notNull(map);
 
     this.unit_shadow =
-      tc.unitContextBindTexture2D(g_tex, map);
+      tc.unitContextBindTexture2D(g_tex, map.get());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_shadow_map, this.unit_shadow);
   }

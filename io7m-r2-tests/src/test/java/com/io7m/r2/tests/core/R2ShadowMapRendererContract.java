@@ -29,6 +29,10 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2DepthInstances;
 import com.io7m.r2.core.R2DepthInstancesType;
 import com.io7m.r2.core.R2DepthPrecision;
@@ -65,9 +69,6 @@ import com.io7m.r2.core.R2ShadowMapRendererType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2TransformOTType;
 import com.io7m.r2.core.R2UnitQuad;
@@ -206,7 +207,6 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
   }
 
 
-
   @Test
   public final void testRenderOne()
   {
@@ -215,10 +215,10 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
 
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         8, g.getTextures().textureGetUnits());
-    final R2TextureUnitContextParentType tc =
+    final JCGLTextureUnitContextParentType tc =
       ta.getRootContext();
     final R2TextureDefaultsType td =
       R2TextureDefaults.newDefaults(g.getTextures(), tc);
@@ -334,10 +334,10 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
 
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         8, g.getTextures().textureGetUnits());
-    final R2TextureUnitContextParentType tc =
+    final JCGLTextureUnitContextParentType tc =
       ta.getRootContext();
     final R2TextureDefaultsType td =
       R2TextureDefaults.newDefaults(g.getTextures(), tc);

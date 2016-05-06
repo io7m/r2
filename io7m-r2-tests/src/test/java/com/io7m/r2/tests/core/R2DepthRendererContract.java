@@ -24,6 +24,10 @@ import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixI4x4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2DepthInstances;
 import com.io7m.r2.core.R2DepthInstancesType;
 import com.io7m.r2.core.R2DepthOnlyBuffer;
@@ -42,9 +46,6 @@ import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
@@ -78,10 +79,10 @@ public abstract class R2DepthRendererContract extends R2JCGLContract
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         8, g.getTextures().textureGetUnits());
-    final R2TextureUnitContextParentType tc =
+    final JCGLTextureUnitContextParentType tc =
       ta.getRootContext();
 
     final R2TextureDefaultsType td =

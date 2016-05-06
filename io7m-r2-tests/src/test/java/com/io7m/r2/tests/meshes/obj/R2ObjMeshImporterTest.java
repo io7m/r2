@@ -21,7 +21,8 @@ import com.io7m.r2.meshes.obj.R2ObjMeshImporterType;
 
 public final class R2ObjMeshImporterTest extends R2ObjMeshImporterContract
 {
-  @Override protected R2ObjMeshImporterType getImporter()
+  @Override
+  protected R2ObjMeshImporterType getImporter()
   {
     return R2ObjMeshImporter.newImporter();
   }

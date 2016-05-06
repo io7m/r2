@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.api.JCGLContextUsableType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
@@ -48,7 +49,7 @@ public interface R2ContextType extends AutoCloseable
    * operation
    */
 
-  R2TextureUnitContextParentType getTextureUnitContext();
+  JCGLTextureUnitContextParentType getTextureUnitContext();
 
   /**
    * Close the context.

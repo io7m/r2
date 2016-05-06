@@ -18,17 +18,17 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jcanephora.core.JCGLTimerQueryUsableType;
 import com.io7m.jcanephora.core.api.JCGLTimersType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 
-public final class R2FakeProfilingContext implements R2ProfilingContextType
+public final class R2FakeProfilingContext implements JCGLProfilingContextType
 {
   R2FakeProfilingContext()
   {
 
   }
 
-  public static R2ProfilingContextType newFake()
+  public static JCGLProfilingContextType newFake()
   {
     return new R2FakeProfilingContext();
   }
@@ -46,7 +46,7 @@ public final class R2FakeProfilingContext implements R2ProfilingContextType
   }
 
   @Override
-  public R2ProfilingContextType getChildContext(final String name)
+  public JCGLProfilingContextType getChildContext(final String name)
   {
     return this;
   }

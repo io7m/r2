@@ -37,12 +37,16 @@ public final class TestVirtualFilesystem implements VirtualFileSystem
     this.base = base;
   }
 
-  @Nonnull @Override public VirtualFile getFile(@Nonnull final String path)
+  @Nonnull
+  @Override
+  public VirtualFile getFile(@Nonnull final String path)
   {
     return new ResourceFile(this.base, path);
   }
 
-  @Nonnull @Override public VirtualFile getFile(
+  @Nonnull
+  @Override
+  public VirtualFile getFile(
     @Nonnull final String dir,
     @Nonnull final String name)
   {
@@ -52,7 +56,7 @@ public final class TestVirtualFilesystem implements VirtualFileSystem
   private static final class ResourceFile implements VirtualFile
   {
     private final Class<?> base;
-    private final String   path;
+    private final String path;
 
     public ResourceFile(
       final Class<?> in_base,

@@ -20,6 +20,7 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorReadable4FType;
 import com.io7m.r2.core.R2AbstractShader;
@@ -28,7 +29,6 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
@@ -140,7 +140,7 @@ public final class R2ShaderDebugVisualSingle extends
   public void onReceiveMaterialValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final VectorReadable4FType values)
   {
     NullCheck.notNull(g_tex);

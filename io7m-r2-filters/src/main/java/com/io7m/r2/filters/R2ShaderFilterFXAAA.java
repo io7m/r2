@@ -22,6 +22,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorM2F;
 import com.io7m.junreachable.UnreachableCodeException;
@@ -30,7 +31,6 @@ import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
@@ -145,7 +145,7 @@ public final class R2ShaderFilterFXAAA extends
   public void onReceiveFilterValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final R2ShaderFilterFXAAParametersType values)
   {
     /**
@@ -153,7 +153,7 @@ public final class R2ShaderFilterFXAAA extends
      */
 
     final JCGLTextureUnitType u =
-      tc.unitContextBindTexture2D(g_tex, values.getTexture());
+      tc.unitContextBindTexture2D(g_tex, values.getTexture().get());
     g_sh.shaderUniformPutTexture2DUnit(this.u_image, u);
 
     /**

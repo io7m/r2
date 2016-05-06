@@ -28,10 +28,13 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateType;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.r2.core.R2Exception;
@@ -44,10 +47,7 @@ import com.io7m.r2.core.R2ImageBufferUsableType;
 import com.io7m.r2.core.R2RenderTargetDescriptions;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
@@ -186,15 +186,15 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
 
   @Override
   public void runFilter(
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterEmissionParametersType parameters)
   {
     NullCheck.notNull(pc);
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    final R2ProfilingContextType pc_base =
+    final JCGLProfilingContextType pc_base =
       pc.getChildContext("emission");
 
     final Optional<R2BlurParametersReadableType> blur_opt =
@@ -209,11 +209,11 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   }
 
   private void runFilterUnblurred(
-    final R2ProfilingContextType pc_base,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc_base,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterEmissionParametersType parameters)
   {
-    final R2ProfilingContextType pc_unblurred =
+    final JCGLProfilingContextType pc_unblurred =
       pc_base.getChildContext("unblurred");
 
     final JCGLFramebuffersType g_fb =
@@ -233,16 +233,16 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   }
 
   private void runFilterBlurred(
-    final R2ProfilingContextType pc_base,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc_base,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterEmissionParametersType parameters,
     final R2BlurParametersReadableType blur_parameters)
   {
-    final R2ProfilingContextType pc_blurred =
+    final JCGLProfilingContextType pc_blurred =
       pc_base.getChildContext("blurred");
-    final R2ProfilingContextType pc_draw =
+    final JCGLProfilingContextType pc_draw =
       pc_blurred.getChildContext("draw");
-    final R2ProfilingContextType pc_copy_out =
+    final JCGLProfilingContextType pc_copy_out =
       pc_blurred.getChildContext("copy-out");
 
     final JCGLFramebuffersType g_fb =
@@ -329,8 +329,8 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   }
 
   private void copyOut(
-    final R2TextureUnitContextParentType uc,
-    final R2ProfilingContextType pc_copy_out,
+    final JCGLTextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc_copy_out,
     final AreaInclusiveUnsignedLType output_viewport,
     final R2Texture2DUsableType in_texture,
     final JCGLRenderStateType r_state)
@@ -343,7 +343,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
       final JCGLViewportsType g_v = this.g.getViewports();
 
-      final R2TextureUnitContextType tc = uc.unitContextNew();
+      final JCGLTextureUnitContextType tc = uc.unitContextNew();
       try {
         g_v.viewportSet(output_viewport);
         JCGLRenderStates.activate(this.g, r_state);
@@ -372,8 +372,8 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   }
 
   private void copyEmissive(
-    final R2TextureUnitContextParentType uc,
-    final R2ProfilingContextType pc_draw,
+    final JCGLTextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc_draw,
     final AreaInclusiveUnsignedLType output_viewport,
     final R2Texture2DUsableType in_texture,
     final JCGLRenderStateType r_state)
@@ -386,7 +386,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
       final JCGLViewportsType g_v = this.g.getViewports();
 
-      final R2TextureUnitContextType tc = uc.unitContextNew();
+      final JCGLTextureUnitContextType tc = uc.unitContextNew();
       try {
         g_v.viewportSet(output_viewport);
         JCGLRenderStates.activate(this.g, r_state);

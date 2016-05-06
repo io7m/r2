@@ -21,6 +21,9 @@ import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
+import com.io7m.jcanephora.profiler.JCGLProfilingType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
@@ -37,9 +40,6 @@ import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
-import com.io7m.r2.core.profiling.R2ProfilingFrameType;
-import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
@@ -119,11 +119,11 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
 
     this.matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
 
-      final R2ProfilingType pro =
+      final JCGLProfilingType pro =
         t.main.getProfiling();
-      final R2ProfilingFrameType pro_frame =
+      final JCGLProfilingFrameType pro_frame =
         pro.startFrame();
-      final R2ProfilingContextType pro_root =
+      final JCGLProfilingContextType pro_root =
         pro_frame.getChildContext("main");
 
       t.stencil_renderer.renderStencilsWithBoundBuffer(

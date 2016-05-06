@@ -33,7 +33,8 @@ public final class R2ShaderPreprocessorBatchReaderTest
 {
   @Rule public final ExpectedException expected = ExpectedException.none();
 
-  @Test public void testEmptyInvalid()
+  @Test
+  public void testEmptyInvalid()
     throws Exception
   {
     final Class<R2ShaderPreprocessorBatchReaderTest> c =
@@ -50,7 +51,8 @@ public final class R2ShaderPreprocessorBatchReaderTest
     }
   }
 
-  @Test public void testEmptyNoPrograms()
+  @Test
+  public void testEmptyNoPrograms()
     throws Exception
   {
     final Class<R2ShaderPreprocessorBatchReaderTest> c =
@@ -66,7 +68,8 @@ public final class R2ShaderPreprocessorBatchReaderTest
     }
   }
 
-  @Test public void testBatch()
+  @Test
+  public void testBatch()
     throws Exception
   {
     final Class<R2ShaderPreprocessorBatchReaderTest> c =

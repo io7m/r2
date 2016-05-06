@@ -26,8 +26,11 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorI4F;
 import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
@@ -35,10 +38,7 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
@@ -100,7 +100,7 @@ public final class R2FilterSSAO implements
     final R2ShaderSourcesType in_sources,
     final JCGLInterfaceGL33Type in_g,
     final R2TextureDefaultsType in_texture_defaults,
-    final R2TextureUnitContextParentType in_tc,
+    final JCGLTextureUnitContextParentType in_tc,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
@@ -136,14 +136,14 @@ public final class R2FilterSSAO implements
 
   @Override
   public void runFilter(
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterSSAOParametersType parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    final R2ProfilingContextType pc_base = pc.getChildContext("ssao");
+    final JCGLProfilingContextType pc_base = pc.getChildContext("ssao");
     pc_base.startMeasuringIfEnabled();
     try {
       this.run(uc, parameters);
@@ -153,7 +153,7 @@ public final class R2FilterSSAO implements
   }
 
   private void run(
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterSSAOParametersType parameters)
   {
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
@@ -173,7 +173,7 @@ public final class R2FilterSSAO implements
     g_v.viewportSet(destination.getArea());
     g_cl.clear(this.clear);
 
-    final R2TextureUnitContextType c = uc.unitContextNew();
+    final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
       this.shader_params.clear();
       this.shader_params.setExponent(parameters.getExponent());

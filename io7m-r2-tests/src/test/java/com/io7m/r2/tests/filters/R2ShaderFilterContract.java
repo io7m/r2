@@ -20,12 +20,12 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -69,11 +69,13 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
 
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr =
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr =
       ta.getRootContext();
-    final R2TextureUnitContextType tc =
+    final JCGLTextureUnitContextType tc =
       tr.unitContextNew();
 
     f.onActivate(g.getShaders());
@@ -102,10 +104,12 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
 
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     this.expected.expect(IllegalStateException.class);
     f.onReceiveFilterValues(g_tex, g_sh, tc, t);

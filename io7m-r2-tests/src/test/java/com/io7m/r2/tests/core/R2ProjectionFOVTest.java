@@ -31,6 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class R2ProjectionFOVTest
 {
+  @Rule public ExpectedException expected = ExpectedException.none();
+
   @Test
   public void testValues()
   {
@@ -72,8 +74,6 @@ public final class R2ProjectionFOVTest
     p.setHorizontalFOV(0.43633f);
     Assert.assertEquals(0.43633, (double) p.getHorizontalFOV(), 0.00001);
   }
-
-  @Rule public ExpectedException expected = ExpectedException.none();
 
   @Test
   public void testAspectNonzero()

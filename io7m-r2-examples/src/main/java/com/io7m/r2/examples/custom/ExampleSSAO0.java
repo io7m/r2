@@ -28,6 +28,10 @@ import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
+import com.io7m.jcanephora.profiler.JCGLProfilingType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.MatrixM4x4F;
@@ -65,12 +69,8 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
-import com.io7m.r2.core.profiling.R2ProfilingFrameType;
-import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
@@ -415,7 +415,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
 
     final R2MatricesType matrices = m.getMatrices();
     matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
-      final R2TextureUnitContextParentType uc =
+      final JCGLTextureUnitContextParentType uc =
         t.main.getTextureUnitAllocator().getRootContext();
       final JCGLFramebufferUsableType gbuffer_fb =
         t.geom_buffer.getPrimaryFramebuffer();
@@ -431,11 +431,11 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       final JCGLDepthBuffersType g_db =
         t.g33.getDepthBuffers();
 
-      final R2ProfilingType pro =
+      final JCGLProfilingType pro =
         t.main.getProfiling();
-      final R2ProfilingFrameType pro_frame =
+      final JCGLProfilingFrameType pro_frame =
         pro.startFrame();
-      final R2ProfilingContextType pro_root =
+      final JCGLProfilingContextType pro_root =
         pro_frame.getChildContext("main");
 
       g_fb.framebufferDrawBind(gbuffer_fb);

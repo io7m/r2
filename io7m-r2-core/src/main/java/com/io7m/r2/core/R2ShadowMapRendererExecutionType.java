@@ -16,7 +16,8 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 
 /**
  * A contextual value representing the in-process rendering of a set of shadow
@@ -39,8 +40,8 @@ public interface R2ShadowMapRendererExecutionType
    */
 
   void shadowExecRenderLight(
-    R2ProfilingContextType pc,
-    R2TextureUnitContextParentType tc,
+    JCGLProfilingContextType pc,
+    JCGLTextureUnitContextParentType tc,
     R2MatricesType m,
     R2LightWithShadowSingleType ls,
     R2DepthInstancesType i)

@@ -77,6 +77,14 @@
       <artifactId>io7m-jcanephora-renderstate</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>io7m-jcanephora-texture-unit-allocator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>io7m-jcanephora-profiler</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.io7m.jinterp</groupId>
       <artifactId>io7m-jinterp-core</artifactId>
     </dependency>

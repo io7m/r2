@@ -18,13 +18,13 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -99,7 +99,7 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
   public void onReceiveMaterialValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final Unit values)
   {
     NullCheck.notNull(g_tex);

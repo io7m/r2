@@ -32,6 +32,12 @@ import com.io7m.jcanephora.core.api.JCGLDepthBuffersType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingFrameMeasurementType;
+import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
+import com.io7m.jcanephora.profiler.JCGLProfilingIteration;
+import com.io7m.jcanephora.profiler.JCGLProfilingType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.MatrixM4x4F;
@@ -108,16 +114,10 @@ import com.io7m.r2.core.R2ShadowMapContextType;
 import com.io7m.r2.core.R2ShadowMapRendererExecutionType;
 import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
-import com.io7m.r2.core.profiling.R2ProfilingFrameMeasurementType;
-import com.io7m.r2.core.profiling.R2ProfilingFrameType;
-import com.io7m.r2.core.profiling.R2ProfilingIteration;
-import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
@@ -267,8 +267,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
   private AtomicReference<ExampleProfilingWindow> profiling_window;
   private StringBuilder text_buffer;
   private String text;
-  private R2ProfilingFrameType profiling_frame;
-  private R2ProfilingContextType profiling_root;
+  private JCGLProfilingFrameType profiling_frame;
+  private JCGLProfilingContextType profiling_root;
   private R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool;
   private R2FilterType<
     R2FilterBoxBlurParameters<
@@ -886,7 +886,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     {
       final R2MatricesType matrices = mx.getMatrices();
 
-      final R2ProfilingType pro = this.main.getProfiling();
+      final JCGLProfilingType pro = this.main.getProfiling();
       pro.setEnabled(true);
       this.profiling_frame = pro.startFrame();
       this.profiling_root = this.profiling_frame.getChildContext("main");
@@ -904,7 +904,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       this.shadow_context = sme.shadowExecComplete();
 
       matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
-        final R2TextureUnitContextParentType uc =
+        final JCGLTextureUnitContextParentType uc =
           t.main.getTextureUnitAllocator().getRootContext();
         final JCGLFramebufferUsableType gbuffer_fb =
           t.gbuffer.getPrimaryFramebuffer();
@@ -1085,7 +1085,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
       this.shadow_context.shadowMapContextFinish();
 
-      final R2ProfilingFrameMeasurementType pro_measure =
+      final JCGLProfilingFrameMeasurementType pro_measure =
         pro.getMostRecentlyMeasuredFrame();
 
       if (frame % 60 == 0) {
@@ -1102,7 +1102,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           tt.text_buffer.append(String.format("%.6f", Double.valueOf(millis)));
           tt.text_buffer.append("ms");
           tt.text_buffer.append(System.lineSeparator());
-          return R2ProfilingIteration.CONTINUE;
+          return JCGLProfilingIteration.CONTINUE;
         });
         this.text = this.text_buffer.toString();
         this.text_buffer.setLength(0);

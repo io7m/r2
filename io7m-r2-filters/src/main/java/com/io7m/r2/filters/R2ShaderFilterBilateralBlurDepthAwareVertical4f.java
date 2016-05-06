@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorM2F;
 import com.io7m.r2.core.R2AbstractShader;
@@ -28,7 +29,6 @@ import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
@@ -137,7 +137,7 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
   public void onReceiveFilterValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final R2ShaderFilterBilateralBlurDepthAwareParametersType values)
   {
     NullCheck.notNull(g_tex);
@@ -161,9 +161,9 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
      */
 
     this.unit_texture_image =
-      tc.unitContextBindTexture2D(g_tex, values.getImageTexture());
+      tc.unitContextBindTexture2D(g_tex, values.getImageTexture().get());
     this.unit_texture_depth =
-      tc.unitContextBindTexture2D(g_tex, values.getDepthTexture());
+      tc.unitContextBindTexture2D(g_tex, values.getDepthTexture().get());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_image, this.unit_texture_image);

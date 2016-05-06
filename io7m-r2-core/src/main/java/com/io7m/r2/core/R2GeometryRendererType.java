@@ -17,7 +17,8 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 
 import java.util.Optional;
 
@@ -44,8 +45,8 @@ public interface R2GeometryRendererType extends R2DeletableType
   void renderGeometry(
     AreaInclusiveUnsignedLType area,
     Optional<R2GeometryBufferUsableType> gbuffer,
-    R2ProfilingContextType pc,
-    R2TextureUnitContextParentType uc,
+    JCGLProfilingContextType pc,
+    JCGLTextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2SceneOpaquesType s);
 }

@@ -19,6 +19,7 @@ package com.io7m.r2.tests.core.shaders;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLUsageHint;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2LightProjectiveWithoutShadow;
@@ -27,7 +28,6 @@ import com.io7m.r2.core.R2ProjectionMesh;
 import com.io7m.r2.core.R2ProjectionMeshType;
 import com.io7m.r2.core.R2ProjectionType;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -50,7 +50,7 @@ public abstract class R2ShaderLightProjectiveLambertBlinnPhongSingleContract
   protected final R2LightProjectiveReadableType newLight(
     final JCGLInterfaceGL33Type g,
     final R2IDPoolType pool,
-    final R2TextureUnitContextType uc,
+    final JCGLTextureUnitContextType uc,
     final R2TextureDefaultsType td)
   {
     final R2ProjectionType p =

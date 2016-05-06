@@ -30,6 +30,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.renderstate.JCGLCullingState;
 import com.io7m.jcanephora.renderstate.JCGLDepthClamping;
 import com.io7m.jcanephora.renderstate.JCGLDepthState;
@@ -39,10 +40,11 @@ import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.renderstate.JCGLStencilStateMutable;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import org.slf4j.Logger;
@@ -117,8 +119,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   public void renderGeometry(
     final AreaInclusiveUnsignedLType area,
     final Optional<R2GeometryBufferUsableType> gbuffer,
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2SceneOpaquesType s)
   {
@@ -131,7 +133,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final R2ProfilingContextType p_geom = pc.getChildContext("geometry");
+    final JCGLProfilingContextType p_geom = pc.getChildContext("geometry");
     p_geom.startMeasuringIfEnabled();
     try {
       final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
@@ -186,8 +188,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     private final JCGLStencilStateMutable stencil_state;
 
     private @Nullable R2MatricesObserverType matrices;
-    private @Nullable R2TextureUnitContextParentType texture_context;
-    private @Nullable R2TextureUnitContextType material_texture_context;
+    private @Nullable JCGLTextureUnitContextParentType texture_context;
+    private @Nullable JCGLTextureUnitContextType material_texture_context;
     private @Nullable R2MaterialOpaqueSingleType<?> material_single;
 
     private OpaqueConsumer(

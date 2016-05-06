@@ -23,6 +23,7 @@ import com.io7m.jcanephora.core.JCGLFramebufferColorAttachmentPointType;
 import com.io7m.jcanephora.core.JCGLFramebufferDrawBufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
+import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
@@ -40,6 +41,8 @@ import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorI4F;
@@ -98,7 +101,7 @@ public final class R2LightBuffers
   public static R2LightBufferType newLightBuffer(
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_t,
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2LightBufferDescriptionType desc)
   {
     NullCheck.notNull(g_fb);
@@ -115,9 +118,9 @@ public final class R2LightBuffers
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
-    final R2TextureUnitContextType cc = tc.unitContextNewWithReserved(3);
+    final JCGLTextureUnitContextType cc = tc.unitContextNewWithReserved(3);
     try {
-      final Pair<JCGLTextureUnitType, R2Texture2DType> p_depth =
+      final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth =
         cc.unitContextAllocateTexture2D(
           g_t,
           range_x.getInterval(),
@@ -130,7 +133,7 @@ public final class R2LightBuffers
 
       switch (desc.getComponents()) {
         case R2_LIGHT_BUFFER_DIFFUSE_ONLY: {
-          final Pair<JCGLTextureUnitType, R2Texture2DType> p_diff =
+          final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_diff =
             cc.unitContextAllocateTexture2D(
               g_t,
               range_x.getInterval(),
@@ -142,10 +145,15 @@ public final class R2LightBuffers
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
           return R2LightBuffers.newDiffuseOnly(
-            g_fb, desc, points, buffers, p_depth, p_diff);
+            g_fb,
+            desc,
+            points,
+            buffers,
+            p_depth,
+            p_diff);
         }
         case R2_LIGHT_BUFFER_SPECULAR_ONLY: {
-          final Pair<JCGLTextureUnitType, R2Texture2DType> p_spec =
+          final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_spec =
             cc.unitContextAllocateTexture2D(
               g_t,
               range_x.getInterval(),
@@ -157,10 +165,15 @@ public final class R2LightBuffers
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
           return R2LightBuffers.newSpecularOnly(
-            g_fb, desc, points, buffers, p_depth, p_spec);
+            g_fb,
+            desc,
+            points,
+            buffers,
+            p_depth,
+            p_spec);
         }
         case R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR: {
-          final Pair<JCGLTextureUnitType, R2Texture2DType> p_diff =
+          final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_diff =
             cc.unitContextAllocateTexture2D(
               g_t,
               range_x.getInterval(),
@@ -171,7 +184,7 @@ public final class R2LightBuffers
               JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-          final Pair<JCGLTextureUnitType, R2Texture2DType> p_spec =
+          final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_spec =
             cc.unitContextAllocateTexture2D(
               g_t,
               range_x.getInterval(),
@@ -183,7 +196,13 @@ public final class R2LightBuffers
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
           return R2LightBuffers.newDiffuseSpecular(
-            g_fb, desc, points, buffers, p_depth, p_diff, p_spec);
+            g_fb,
+            desc,
+            points,
+            buffers,
+            p_depth,
+            p_diff,
+            p_spec);
         }
       }
 
@@ -198,13 +217,13 @@ public final class R2LightBuffers
     final R2LightBufferDescriptionType desc,
     final List<JCGLFramebufferColorAttachmentPointType> points,
     final List<JCGLFramebufferDrawBufferType> buffers,
-    final Pair<JCGLTextureUnitType, R2Texture2DType> p_depth,
-    final Pair<JCGLTextureUnitType, R2Texture2DType> p_diff,
-    final Pair<JCGLTextureUnitType, R2Texture2DType> p_spec)
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth,
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_diff,
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_spec)
   {
-    final R2Texture2DType rt_depth = p_depth.getRight();
-    final R2Texture2DType rt_diff = p_diff.getRight();
-    final R2Texture2DType rt_spec = p_spec.getRight();
+    final R2Texture2DType rt_depth = R2Texture2DStatic.of(p_depth.getRight());
+    final R2Texture2DType rt_diff = R2Texture2DStatic.of(p_diff.getRight());
+    final R2Texture2DType rt_spec = R2Texture2DStatic.of(p_spec.getRight());
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
     fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_diff.get());
@@ -221,11 +240,11 @@ public final class R2LightBuffers
     final R2LightBufferDescriptionType desc,
     final List<JCGLFramebufferColorAttachmentPointType> points,
     final List<JCGLFramebufferDrawBufferType> buffers,
-    final Pair<JCGLTextureUnitType, R2Texture2DType> p_depth,
-    final Pair<JCGLTextureUnitType, R2Texture2DType> p_spec)
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth,
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_spec)
   {
-    final R2Texture2DType rt_depth = p_depth.getRight();
-    final R2Texture2DType rt_spec = p_spec.getRight();
+    final R2Texture2DType rt_depth = R2Texture2DStatic.of(p_depth.getRight());
+    final R2Texture2DType rt_spec = R2Texture2DStatic.of(p_spec.getRight());
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
     fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_spec.get());
@@ -241,11 +260,11 @@ public final class R2LightBuffers
     final R2LightBufferDescriptionType desc,
     final List<JCGLFramebufferColorAttachmentPointType> points,
     final List<JCGLFramebufferDrawBufferType> buffers,
-    final Pair<JCGLTextureUnitType, R2Texture2DType> p_depth,
-    final Pair<JCGLTextureUnitType, R2Texture2DType> p_diff)
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth,
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_diff)
   {
-    final R2Texture2DType rt_depth = p_depth.getRight();
-    final R2Texture2DType rt_diff = p_diff.getRight();
+    final R2Texture2DType rt_depth = R2Texture2DStatic.of(p_depth.getRight());
+    final R2Texture2DType rt_diff = R2Texture2DStatic.of(p_diff.getRight());
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
     fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_diff.get());

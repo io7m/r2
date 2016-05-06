@@ -18,6 +18,7 @@ package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jpuddle.core.JPPoolSynchronous;
 import com.io7m.jpuddle.core.JPPoolSynchronousType;
@@ -53,13 +54,13 @@ public final class R2AmbientOcclusionBufferPool implements
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferType,
     R2AmbientOcclusionBufferUsableType,
-    R2TextureUnitContextParentType> actual;
+    JCGLTextureUnitContextParentType> actual;
 
   private R2AmbientOcclusionBufferPool(
     final JPPoolSynchronousType<R2AmbientOcclusionBufferDescriptionType,
       R2AmbientOcclusionBufferType,
       R2AmbientOcclusionBufferUsableType,
-      R2TextureUnitContextParentType> in_actual)
+      JCGLTextureUnitContextParentType> in_actual)
   {
     this.actual = NullCheck.notNull(in_actual);
   }
@@ -86,7 +87,7 @@ public final class R2AmbientOcclusionBufferPool implements
 
   @Override
   public R2AmbientOcclusionBufferUsableType get(
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2AmbientOcclusionBufferDescriptionType desc)
   {
     NullCheck.notNull(tc);
@@ -96,7 +97,7 @@ public final class R2AmbientOcclusionBufferPool implements
 
   @Override
   public void returnValue(
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2AmbientOcclusionBufferUsableType target)
   {
     NullCheck.notNull(tc);
@@ -105,7 +106,7 @@ public final class R2AmbientOcclusionBufferPool implements
   }
 
   @Override
-  public void delete(final R2TextureUnitContextParentType c)
+  public void delete(final JCGLTextureUnitContextParentType c)
   {
     this.actual.deleteUnsafely(c);
   }
@@ -119,7 +120,7 @@ public final class R2AmbientOcclusionBufferPool implements
   private static final class Listener implements JPPoolableListenerType<
     R2AmbientOcclusionBufferDescriptionType,
     R2AmbientOcclusionBufferType,
-    R2TextureUnitContextParentType>
+    JCGLTextureUnitContextParentType>
   {
     private final JCGLInterfaceGL33Type g;
 
@@ -130,7 +131,7 @@ public final class R2AmbientOcclusionBufferPool implements
 
     @Override
     public long onEstimateSize(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2AmbientOcclusionBufferDescriptionType key)
     {
       final AreaInclusiveUnsignedLType area = key.getArea();
@@ -141,7 +142,7 @@ public final class R2AmbientOcclusionBufferPool implements
 
     @Override
     public R2AmbientOcclusionBufferType onCreate(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2AmbientOcclusionBufferDescriptionType key)
     {
       return R2AmbientOcclusionBuffer.newAmbientOcclusionBuffer(
@@ -153,7 +154,7 @@ public final class R2AmbientOcclusionBufferPool implements
 
     @Override
     public long onGetSize(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2AmbientOcclusionBufferDescriptionType key,
       final R2AmbientOcclusionBufferType value)
     {
@@ -162,7 +163,7 @@ public final class R2AmbientOcclusionBufferPool implements
 
     @Override
     public void onReuse(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2AmbientOcclusionBufferDescriptionType key,
       final R2AmbientOcclusionBufferType value)
     {
@@ -173,7 +174,7 @@ public final class R2AmbientOcclusionBufferPool implements
 
     @Override
     public void onDelete(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2AmbientOcclusionBufferDescriptionType key,
       final R2AmbientOcclusionBufferType value)
     {
@@ -186,7 +187,7 @@ public final class R2AmbientOcclusionBufferPool implements
 
     @Override
     public void onError(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2AmbientOcclusionBufferDescriptionType key,
       final Optional<R2AmbientOcclusionBufferType> value,
       final Throwable e)

@@ -21,13 +21,13 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
@@ -48,7 +48,7 @@ public final class R2DepthShaderBasicBatched extends
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_texture_albedo;
   private final JCGLProgramUniformType u_alpha_discard_threshold;
-  private       JCGLTextureUnitType    unit_albedo;
+  private JCGLTextureUnitType unit_albedo;
 
   private R2DepthShaderBasicBatched(
     final JCGLShadersType in_shaders,
@@ -137,7 +137,7 @@ public final class R2DepthShaderBasicBatched extends
   public void onReceiveMaterialValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final R2DepthShaderBasicParametersType values)
   {
     NullCheck.notNull(g_tex);
@@ -146,7 +146,7 @@ public final class R2DepthShaderBasicBatched extends
     NullCheck.notNull(values);
 
     this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.getAlbedoTexture());
+      tc.unitContextBindTexture2D(g_tex, values.getAlbedoTexture().get());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, this.unit_albedo);

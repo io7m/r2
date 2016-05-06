@@ -26,18 +26,18 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
@@ -135,14 +135,14 @@ public final class R2FilterLightApplicator implements
 
   @Override
   public void runFilter(
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterLightApplicatorParametersType parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    final R2ProfilingContextType pc_base =
+    final JCGLProfilingContextType pc_base =
       pc.getChildContext("light-applicator");
     pc_base.startMeasuringIfEnabled();
     try {
@@ -153,7 +153,7 @@ public final class R2FilterLightApplicator implements
   }
 
   private void run(
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterLightApplicatorParametersType parameters)
   {
     final R2Texture2DUsableType ldiff =
@@ -189,7 +189,7 @@ public final class R2FilterLightApplicator implements
     g_v.viewportSet(parameters.getOutputViewport());
     JCGLRenderStates.activate(this.g, this.render_state);
 
-    final R2TextureUnitContextType c = uc.unitContextNew();
+    final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
       this.shader_params.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
       this.shader_params.setDiffuseTexture(ldiff);

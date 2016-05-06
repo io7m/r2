@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 
 /**
  * The type of renderers that populate depth variance buffers.
@@ -35,7 +36,7 @@ public interface R2DepthVarianceRendererType extends R2DeletableType
 
   void renderDepthVariance(
     R2DepthVarianceBufferUsableType gbuffer,
-    R2TextureUnitContextParentType uc,
+    JCGLTextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2DepthInstancesType s);
 
@@ -51,7 +52,7 @@ public interface R2DepthVarianceRendererType extends R2DeletableType
 
   void renderDepthVarianceWithBoundBuffer(
     AreaInclusiveUnsignedLType area,
-    R2TextureUnitContextParentType uc,
+    JCGLTextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2DepthInstancesType s);
 }

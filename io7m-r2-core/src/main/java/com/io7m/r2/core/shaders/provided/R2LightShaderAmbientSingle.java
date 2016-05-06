@@ -22,6 +22,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AbstractShader;
@@ -31,7 +32,6 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightAmbientScreenSingle;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
@@ -57,7 +57,7 @@ public final class R2LightShaderAmbientSingle extends
   private final JCGLProgramUniformType u_light_color;
   private final JCGLProgramUniformType u_light_intensity;
   private final JCGLProgramUniformType u_light_occlusion;
-  private       JCGLTextureUnitType    unit_ao;
+  private JCGLTextureUnitType unit_ao;
 
   private R2LightShaderAmbientSingle(
     final JCGLShadersType in_shaders,
@@ -163,7 +163,7 @@ public final class R2LightShaderAmbientSingle extends
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
     final R2LightAmbientScreenSingle values,
     final R2MatricesObserverValuesType m)
@@ -209,7 +209,7 @@ public final class R2LightShaderAmbientSingle extends
      */
 
     this.unit_ao =
-      tc.unitContextBindTexture2D(g_tex, values.getOcclusionMap());
+      tc.unitContextBindTexture2D(g_tex, values.getOcclusionMap().get());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_occlusion, this.unit_ao);
 

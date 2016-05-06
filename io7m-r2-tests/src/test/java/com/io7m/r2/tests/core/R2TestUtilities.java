@@ -50,6 +50,7 @@ import com.io7m.jcanephora.fake.FakeContext;
 import com.io7m.jcanephora.fake.FakeShaderListenerType;
 import com.io7m.jcanephora.fake.JCGLImplementationFake;
 import com.io7m.jcanephora.fake.JCGLImplementationFakeType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jfunctional.PartialBiFunctionType;
 import com.io7m.jtensors.parameterized.PMatrixDirect4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixDirectM4x4F;
@@ -76,7 +77,6 @@ import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2ProjectionFOV;
 import com.io7m.r2.core.R2ProjectionReadableType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContext;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2TransformIdentity;
@@ -294,7 +294,7 @@ public final class R2TestUtilities
       public void onReceiveMaterialValues(
         final JCGLTexturesType g_tex,
         final JCGLShadersType g_sh,
-        final R2TextureUnitContextMutableType tc,
+        final JCGLTextureUnitContextMutableType tc,
         final Object values)
       {
 
@@ -405,7 +405,7 @@ public final class R2TestUtilities
       public void onReceiveMaterialValues(
         final JCGLTexturesType g_tex,
         final JCGLShadersType g_sh,
-        final R2TextureUnitContextMutableType tc,
+        final JCGLTextureUnitContextMutableType tc,
         final Object values)
       {
 
@@ -607,7 +607,7 @@ public final class R2TestUtilities
       public void onReceiveMaterialValues(
         final JCGLTexturesType g_tex,
         final JCGLShadersType g_sh,
-        final R2TextureUnitContextMutableType tc,
+        final JCGLTextureUnitContextMutableType tc,
         final Object values)
       {
 
@@ -710,7 +710,7 @@ public final class R2TestUtilities
       public void onReceiveMaterialValues(
         final JCGLTexturesType g_tex,
         final JCGLShadersType g_sh,
-        final R2TextureUnitContextMutableType tc,
+        final JCGLTextureUnitContextMutableType tc,
         final Object values)
       {
 
@@ -873,7 +873,7 @@ public final class R2TestUtilities
       public void onReceiveFilterValues(
         final JCGLTexturesType g_tex,
         final JCGLShadersType g_sh,
-        final R2TextureUnitContextMutableType tc,
+        final JCGLTextureUnitContextMutableType tc,
         final Object values)
       {
 
@@ -967,7 +967,7 @@ public final class R2TestUtilities
       public void onReceiveValues(
         final JCGLTexturesType g_tex,
         final JCGLShadersType g_sh,
-        final R2TextureUnitContextMutableType tc,
+        final JCGLTextureUnitContextMutableType tc,
         final AreaInclusiveUnsignedLType viewport,
         final R2LightSingleType values,
         final R2MatricesObserverValuesType m)

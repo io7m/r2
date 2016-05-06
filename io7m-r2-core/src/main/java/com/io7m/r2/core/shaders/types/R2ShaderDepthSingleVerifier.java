@@ -20,12 +20,12 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 /**
  * A delegating verifier for single-instance depth shaders; a type that verifies
@@ -49,8 +49,8 @@ public final class R2ShaderDepthSingleVerifier<M> implements
   };
 
   private final R2ShaderDepthSingleType<M> shader;
-  private final StringBuilder                 text;
-  private       State                         state;
+  private final StringBuilder text;
+  private State state;
 
   private R2ShaderDepthSingleVerifier(
     final R2ShaderDepthSingleType<M> in_shader)
@@ -152,7 +152,7 @@ public final class R2ShaderDepthSingleVerifier<M> implements
   public void onReceiveMaterialValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final M values)
   {
     R2ShaderVerifiers.checkStates(

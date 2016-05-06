@@ -20,11 +20,11 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 import java.util.Objects;
 
@@ -44,8 +44,8 @@ public final class R2ShaderInstanceBatchedVerifier<M> implements
   };
 
   private final R2ShaderInstanceBatchedType<M> shader;
-  private final StringBuilder                  text;
-  private       State                          state;
+  private final StringBuilder text;
+  private State state;
 
   private R2ShaderInstanceBatchedVerifier(
     final R2ShaderInstanceBatchedType<M> in_shader)
@@ -137,7 +137,7 @@ public final class R2ShaderInstanceBatchedVerifier<M> implements
   public void onReceiveMaterialValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final M values)
   {
     this.checkStates(R2ShaderInstanceBatchedVerifier.VIEW_OR_MATERIAL_RECEIVED);

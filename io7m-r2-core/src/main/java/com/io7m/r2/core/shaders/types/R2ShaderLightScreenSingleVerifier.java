@@ -22,13 +22,13 @@ import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2LightScreenSingleType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 /**
  * A verifier for single-instance volume light shaders; a type that verifies
@@ -57,7 +57,6 @@ public final class R2ShaderLightScreenSingleVerifier<
    * Construct a new verifier for the given shader.
    *
    * @param s   The shader
-
    * @param <M> See {@link R2ShaderLightVolumeSingleType}
    *
    * @return A new verifier
@@ -158,7 +157,7 @@ public final class R2ShaderLightScreenSingleVerifier<
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType area,
     final M values,
     final R2MatricesObserverValuesType m)

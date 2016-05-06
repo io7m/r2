@@ -21,15 +21,15 @@ import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
 import com.io7m.r2.core.R2AmbientOcclusionBufferType;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,8 +40,8 @@ public abstract class R2AmbientOcclusionBufferContract extends R2JCGLContract
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2TextureUnitAllocatorType tc =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType tc =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         3, g.getTextures().textureGetUnits());
 
     final AreaInclusiveUnsignedL area = AreaInclusiveUnsignedL.of(
@@ -52,8 +52,8 @@ public abstract class R2AmbientOcclusionBufferContract extends R2JCGLContract
       R2AmbientOcclusionBufferDescription.builder();
     db.setArea(area);
 
-    final R2TextureUnitContextParentType tc_root = tc.getRootContext();
-    final R2TextureUnitContextType tc_alloc = tc_root.unitContextNew();
+    final JCGLTextureUnitContextParentType tc_root = tc.getRootContext();
+    final JCGLTextureUnitContextType tc_alloc = tc_root.unitContextNew();
 
     try {
       final R2AmbientOcclusionBufferDescription desc = db.build();

@@ -29,6 +29,8 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.cursors.JCGLRGB8ByteBuffered;
 import com.io7m.jcanephora.cursors.JCGLRGB8Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jpra.runtime.java.JPRACursor2DByteBufferedUnchecked;
@@ -78,14 +80,14 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
 
   public static R2TextureDefaultsType newDefaults(
     final JCGLTexturesType g_t,
-    final R2TextureUnitContextParentType tc)
+    final JCGLTextureUnitContextParentType tc)
   {
     NullCheck.notNull(g_t);
     NullCheck.notNull(tc);
 
     R2TextureDefaults.LOG.debug("allocating default textures");
 
-    final R2TextureUnitContextType cc = tc.unitContextNewWithReserved(3);
+    final JCGLTextureUnitContextType cc = tc.unitContextNewWithReserved(3);
     try {
       final R2Texture2DType t_n =
         R2TextureDefaults.newTextureRGB(g_t, cc, 0.5, 0.5, 1.0);
@@ -104,14 +106,14 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
 
   private static R2Texture2DType newTextureProjectiveRGB(
     final JCGLTexturesType g_tx,
-    final R2TextureUnitContextType cc,
+    final JCGLTextureUnitContextType cc,
     final double r,
     final double g,
     final double b)
   {
     final int size = 128;
 
-    final Pair<JCGLTextureUnitType, R2Texture2DType> p =
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> p =
       cc.unitContextAllocateTexture2D(
         g_tx,
         (long) size,
@@ -122,7 +124,7 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
         JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
         JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-    final JCGLTexture2DType t = p.getRight().getReal();
+    final JCGLTexture2DType t = p.getRight();
     final JCGLTexture2DUpdateType up =
       JCGLTextureUpdates.newUpdateReplacingAll2D(t);
     final ByteBuffer d = up.getData();
@@ -156,12 +158,12 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
 
   private static R2Texture2DType newTextureRGB(
     final JCGLTexturesType g_tx,
-    final R2TextureUnitContextType cc,
+    final JCGLTextureUnitContextType cc,
     final double r,
     final double g,
     final double b)
   {
-    final Pair<JCGLTextureUnitType, R2Texture2DType> p =
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> p =
       cc.unitContextAllocateTexture2D(
         g_tx,
         2L,
@@ -172,7 +174,7 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
         JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
         JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
 
-    final JCGLTexture2DType t = p.getRight().getReal();
+    final JCGLTexture2DType t = p.getRight();
     final JCGLTexture2DUpdateType up =
       JCGLTextureUpdates.newUpdateReplacingAll2D(t);
     final ByteBuffer d = up.getData();

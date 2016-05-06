@@ -22,6 +22,7 @@ import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
@@ -31,11 +32,10 @@ import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 /**
- * A verifier for projective light shaders; a type that verifies
- * that a renderer has called all of the required methods in the correct order.
+ * A verifier for projective light shaders; a type that verifies that a renderer
+ * has called all of the required methods in the correct order.
  *
  * @param <M> See {@link R2ShaderLightProjectiveType}
  */
@@ -60,7 +60,6 @@ public final class R2ShaderLightProjectiveWithShadowVerifier<
    * Construct a new verifier for the given shader.
    *
    * @param s   The shader
-
    * @param <M> See {@link R2LightProjectiveWithShadowReadableType}
    *
    * @return A new verifier
@@ -161,7 +160,7 @@ public final class R2ShaderLightProjectiveWithShadowVerifier<
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType area,
     final M values,
     final R2MatricesObserverValuesType m)
@@ -210,7 +209,7 @@ public final class R2ShaderLightProjectiveWithShadowVerifier<
   public void onReceiveShadowMap(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final R2Texture2DUsableType map)
   {
     R2ShaderVerifiers.checkState(

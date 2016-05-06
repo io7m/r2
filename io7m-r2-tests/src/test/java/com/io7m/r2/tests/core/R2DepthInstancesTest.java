@@ -310,178 +310,6 @@ public final class R2DepthInstancesTest
     Assert.assertTrue(op.isEmpty());
   }
 
-
-  private static final class LoggingConsumer implements
-    R2DepthInstancesConsumerType
-  {
-    private final List<String>              ops;
-    private       R2ShaderUsableType<?>     shader_current;
-    private       R2MaterialType<?>         material_current;
-    private       JCGLArrayObjectUsableType array_current;
-
-    LoggingConsumer()
-    {
-      this.ops = new ArrayList<>(256);
-    }
-
-    @Override
-    public void onStart()
-    {
-      this.ops.add("onStart");
-    }
-
-    @Override
-    public void onInstanceBatchedUpdate(
-      final R2InstanceBatchedType i)
-    {
-      this.ops.add(String.format(
-        "onInstanceBatchedUpdate %d",
-        Long.valueOf(i.getInstanceID())));
-    }
-
-    @Override
-    public <M> void onInstanceBatchedShaderStart(
-      final R2ShaderDepthBatchedUsableType<M> s)
-    {
-      this.shader_current = s;
-      this.ops.add(String.format(
-        "onInstanceBatchedShaderStart %d",
-        Long.valueOf(s.getShaderID())));
-    }
-
-    @Override
-    public <M> void onInstanceBatchedMaterialStart(
-      final R2MaterialDepthBatchedType<M> material)
-    {
-      final R2ShaderDepthBatchedUsableType<M> s = material.getShader();
-      Assert.assertEquals(this.shader_current, s);
-      this.material_current = material;
-      this.ops.add(String.format(
-        "onInstanceBatchedMaterialStart %d %d",
-        Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
-    }
-
-    @Override
-    public <M> void onInstanceBatched(
-      final R2MaterialDepthBatchedType<M> material,
-      final R2InstanceBatchedType i)
-    {
-      final R2ShaderDepthBatchedUsableType<M> s = material.getShader();
-      Assert.assertEquals(s, this.shader_current);
-      Assert.assertEquals(material, this.material_current);
-      this.ops.add(String.format(
-        "onInstanceBatched %d",
-        Long.valueOf(i.getInstanceID())));
-    }
-
-    @Override
-    public <M> void onInstanceBatchedMaterialFinish(
-      final R2MaterialDepthBatchedType<M> material)
-    {
-      final R2ShaderDepthBatchedUsableType<M> s = material.getShader();
-      Assert.assertEquals(s, this.shader_current);
-      Assert.assertEquals(material, this.material_current);
-      this.material_current = null;
-      this.ops.add(String.format(
-        "onInstanceBatchedMaterialFinish %d %d",
-        Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
-    }
-
-    @Override
-    public <M> void onInstanceBatchedShaderFinish(
-      final R2ShaderDepthBatchedUsableType<M> s)
-    {
-      Assert.assertEquals(s, this.shader_current);
-      this.shader_current = null;
-      this.ops.add(String.format(
-        "onInstanceBatchedShaderFinish %d",
-        Long.valueOf(s.getShaderID())));
-    }
-
-    @Override
-    public <M> void onInstanceSingleShaderStart(
-      final R2ShaderDepthSingleUsableType<M> s)
-    {
-      this.shader_current = s;
-      this.ops.add(String.format(
-        "onInstanceSingleShaderStart %d",
-        Long.valueOf(s.getShaderID())));
-    }
-
-    @Override
-    public <M> void onInstanceSingleMaterialStart(
-      final R2MaterialDepthSingleType<M> material)
-    {
-      final R2ShaderDepthSingleUsableType<M> s = material.getShader();
-      Assert.assertEquals(this.shader_current, s);
-      this.material_current = material;
-      this.ops.add(String.format(
-        "onInstanceSingleMaterialStart %d %d",
-        Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
-    }
-
-    @Override
-    public void onInstanceSingleArrayStart(
-      final R2InstanceSingleType i)
-    {
-      this.array_current = i.getArrayObject();
-      this.ops.add(String.format(
-        "onInstanceSingleArrayStart %d",
-        Integer.valueOf(this.array_current.getGLName())));
-    }
-
-    @Override
-    public <M> void onInstanceSingle(
-      final R2MaterialDepthSingleType<M> material,
-      final R2InstanceSingleType i)
-    {
-      final R2ShaderDepthSingleUsableType<M> s = material.getShader();
-      Assert.assertEquals(s, this.shader_current);
-      Assert.assertEquals(material, this.material_current);
-      Assert.assertEquals(i.getArrayObject(), this.array_current);
-      this.ops.add(String.format(
-        "onInstanceSingle %d",
-        Long.valueOf(i.getInstanceID())));
-    }
-
-    @Override
-    public <M> void onInstanceSingleMaterialFinish(
-      final R2MaterialDepthSingleType<M> material)
-    {
-      final R2ShaderDepthSingleUsableType<M> s = material.getShader();
-      Assert.assertEquals(s, this.shader_current);
-      Assert.assertEquals(material, this.material_current);
-      this.material_current = null;
-      this.ops.add(String.format(
-        "onInstanceSingleMaterialFinish %d %d",
-        Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
-    }
-
-    @Override
-    public <M> void onInstanceSingleShaderFinish(
-      final R2ShaderDepthSingleUsableType<M> s)
-    {
-      Assert.assertEquals(s, this.shader_current);
-      this.shader_current = null;
-      this.ops.add(String.format(
-        "onInstanceSingleShaderFinish %d",
-        Long.valueOf(s.getShaderID())));
-    }
-
-    @Override
-    public void onFinish()
-    {
-      this.ops.add("onFinish");
-      this.shader_current = null;
-      this.array_current = null;
-      this.material_current = null;
-    }
-  }
-
   @Test
   public void testBatchedAlreadyVisible()
     throws Exception
@@ -715,6 +543,177 @@ public final class R2DepthInstancesTest
     Assert.assertEquals("onInstanceBatchedShaderFinish 1", op.remove(0));
     Assert.assertEquals("onFinish", op.remove(0));
     Assert.assertTrue(op.isEmpty());
+  }
+
+  private static final class LoggingConsumer implements
+    R2DepthInstancesConsumerType
+  {
+    private final List<String> ops;
+    private R2ShaderUsableType<?> shader_current;
+    private R2MaterialType<?> material_current;
+    private JCGLArrayObjectUsableType array_current;
+
+    LoggingConsumer()
+    {
+      this.ops = new ArrayList<>(256);
+    }
+
+    @Override
+    public void onStart()
+    {
+      this.ops.add("onStart");
+    }
+
+    @Override
+    public void onInstanceBatchedUpdate(
+      final R2InstanceBatchedType i)
+    {
+      this.ops.add(String.format(
+        "onInstanceBatchedUpdate %d",
+        Long.valueOf(i.getInstanceID())));
+    }
+
+    @Override
+    public <M> void onInstanceBatchedShaderStart(
+      final R2ShaderDepthBatchedUsableType<M> s)
+    {
+      this.shader_current = s;
+      this.ops.add(String.format(
+        "onInstanceBatchedShaderStart %d",
+        Long.valueOf(s.getShaderID())));
+    }
+
+    @Override
+    public <M> void onInstanceBatchedMaterialStart(
+      final R2MaterialDepthBatchedType<M> material)
+    {
+      final R2ShaderDepthBatchedUsableType<M> s = material.getShader();
+      Assert.assertEquals(this.shader_current, s);
+      this.material_current = material;
+      this.ops.add(String.format(
+        "onInstanceBatchedMaterialStart %d %d",
+        Long.valueOf(s.getShaderID()),
+        Long.valueOf(material.getMaterialID())));
+    }
+
+    @Override
+    public <M> void onInstanceBatched(
+      final R2MaterialDepthBatchedType<M> material,
+      final R2InstanceBatchedType i)
+    {
+      final R2ShaderDepthBatchedUsableType<M> s = material.getShader();
+      Assert.assertEquals(s, this.shader_current);
+      Assert.assertEquals(material, this.material_current);
+      this.ops.add(String.format(
+        "onInstanceBatched %d",
+        Long.valueOf(i.getInstanceID())));
+    }
+
+    @Override
+    public <M> void onInstanceBatchedMaterialFinish(
+      final R2MaterialDepthBatchedType<M> material)
+    {
+      final R2ShaderDepthBatchedUsableType<M> s = material.getShader();
+      Assert.assertEquals(s, this.shader_current);
+      Assert.assertEquals(material, this.material_current);
+      this.material_current = null;
+      this.ops.add(String.format(
+        "onInstanceBatchedMaterialFinish %d %d",
+        Long.valueOf(s.getShaderID()),
+        Long.valueOf(material.getMaterialID())));
+    }
+
+    @Override
+    public <M> void onInstanceBatchedShaderFinish(
+      final R2ShaderDepthBatchedUsableType<M> s)
+    {
+      Assert.assertEquals(s, this.shader_current);
+      this.shader_current = null;
+      this.ops.add(String.format(
+        "onInstanceBatchedShaderFinish %d",
+        Long.valueOf(s.getShaderID())));
+    }
+
+    @Override
+    public <M> void onInstanceSingleShaderStart(
+      final R2ShaderDepthSingleUsableType<M> s)
+    {
+      this.shader_current = s;
+      this.ops.add(String.format(
+        "onInstanceSingleShaderStart %d",
+        Long.valueOf(s.getShaderID())));
+    }
+
+    @Override
+    public <M> void onInstanceSingleMaterialStart(
+      final R2MaterialDepthSingleType<M> material)
+    {
+      final R2ShaderDepthSingleUsableType<M> s = material.getShader();
+      Assert.assertEquals(this.shader_current, s);
+      this.material_current = material;
+      this.ops.add(String.format(
+        "onInstanceSingleMaterialStart %d %d",
+        Long.valueOf(s.getShaderID()),
+        Long.valueOf(material.getMaterialID())));
+    }
+
+    @Override
+    public void onInstanceSingleArrayStart(
+      final R2InstanceSingleType i)
+    {
+      this.array_current = i.getArrayObject();
+      this.ops.add(String.format(
+        "onInstanceSingleArrayStart %d",
+        Integer.valueOf(this.array_current.getGLName())));
+    }
+
+    @Override
+    public <M> void onInstanceSingle(
+      final R2MaterialDepthSingleType<M> material,
+      final R2InstanceSingleType i)
+    {
+      final R2ShaderDepthSingleUsableType<M> s = material.getShader();
+      Assert.assertEquals(s, this.shader_current);
+      Assert.assertEquals(material, this.material_current);
+      Assert.assertEquals(i.getArrayObject(), this.array_current);
+      this.ops.add(String.format(
+        "onInstanceSingle %d",
+        Long.valueOf(i.getInstanceID())));
+    }
+
+    @Override
+    public <M> void onInstanceSingleMaterialFinish(
+      final R2MaterialDepthSingleType<M> material)
+    {
+      final R2ShaderDepthSingleUsableType<M> s = material.getShader();
+      Assert.assertEquals(s, this.shader_current);
+      Assert.assertEquals(material, this.material_current);
+      this.material_current = null;
+      this.ops.add(String.format(
+        "onInstanceSingleMaterialFinish %d %d",
+        Long.valueOf(s.getShaderID()),
+        Long.valueOf(material.getMaterialID())));
+    }
+
+    @Override
+    public <M> void onInstanceSingleShaderFinish(
+      final R2ShaderDepthSingleUsableType<M> s)
+    {
+      Assert.assertEquals(s, this.shader_current);
+      this.shader_current = null;
+      this.ops.add(String.format(
+        "onInstanceSingleShaderFinish %d",
+        Long.valueOf(s.getShaderID())));
+    }
+
+    @Override
+    public void onFinish()
+    {
+      this.ops.add("onFinish");
+      this.shader_current = null;
+      this.array_current = null;
+      this.material_current = null;
+    }
   }
 
   private static abstract class UnreachableConsumer

@@ -18,6 +18,8 @@ package com.io7m.r2.main;
 
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jcanephora.core.JCGLViewMatricesType;
+import com.io7m.jcanephora.profiler.JCGLProfilingType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2DepthRendererType;
 import com.io7m.r2.core.R2DepthVarianceRendererType;
@@ -28,10 +30,8 @@ import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ShadowMapRendererType;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
-import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
 /**
@@ -80,7 +80,7 @@ public interface R2MainType extends R2DeletableType
    * @return The texture unit allocator
    */
 
-  R2TextureUnitAllocatorType getTextureUnitAllocator();
+  JCGLTextureUnitAllocatorType getTextureUnitAllocator();
 
   /**
    * @return The set of default textures
@@ -134,5 +134,5 @@ public interface R2MainType extends R2DeletableType
    * @return A profiling interface
    */
 
-  R2ProfilingType getProfiling();
+  JCGLProfilingType getProfiling();
 }

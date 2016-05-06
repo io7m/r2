@@ -22,6 +22,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PVector3FType;
@@ -36,7 +37,6 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightDirectionalScreenSingle;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
@@ -58,28 +58,28 @@ public final class R2LightShaderDirectionalSpecularSingle extends
   implements R2ShaderLightScreenSingleType<R2LightDirectionalScreenSingle>
 {
   private final JCGLProgramUniformType u_transform_volume_modelview;
-  private final JCGLProgramUniformType          u_transform_projection;
-  private final JCGLProgramUniformType          u_transform_projection_inverse;
-  private final JCGLProgramUniformType          u_depth_coefficient;
-  private final JCGLProgramUniformType          u_view_rays_origin_x0y0;
-  private final JCGLProgramUniformType          u_view_rays_origin_x1y0;
-  private final JCGLProgramUniformType          u_view_rays_origin_x0y1;
-  private final JCGLProgramUniformType          u_view_rays_origin_x1y1;
-  private final JCGLProgramUniformType          u_view_rays_ray_x0y0;
-  private final JCGLProgramUniformType          u_view_rays_ray_x1y0;
-  private final JCGLProgramUniformType          u_view_rays_ray_x0y1;
-  private final JCGLProgramUniformType          u_view_rays_ray_x1y1;
-  private final JCGLProgramUniformType          u_gbuffer_albedo;
-  private final JCGLProgramUniformType          u_gbuffer_normal;
-  private final JCGLProgramUniformType          u_gbuffer_specular;
-  private final JCGLProgramUniformType          u_gbuffer_depth;
-  private final JCGLProgramUniformType          u_viewport_inverse_width;
-  private final JCGLProgramUniformType          u_viewport_inverse_height;
-  private final JCGLProgramUniformType          u_light_directional_color;
-  private final JCGLProgramUniformType          u_light_directional_direction;
-  private final JCGLProgramUniformType          u_light_directional_intensity;
-  private final PVector4FType<R2SpaceEyeType>   direction_eye;
-  private final PVector3FType<R2SpaceEyeType>   direction_eye3;
+  private final JCGLProgramUniformType u_transform_projection;
+  private final JCGLProgramUniformType u_transform_projection_inverse;
+  private final JCGLProgramUniformType u_depth_coefficient;
+  private final JCGLProgramUniformType u_view_rays_origin_x0y0;
+  private final JCGLProgramUniformType u_view_rays_origin_x1y0;
+  private final JCGLProgramUniformType u_view_rays_origin_x0y1;
+  private final JCGLProgramUniformType u_view_rays_origin_x1y1;
+  private final JCGLProgramUniformType u_view_rays_ray_x0y0;
+  private final JCGLProgramUniformType u_view_rays_ray_x1y0;
+  private final JCGLProgramUniformType u_view_rays_ray_x0y1;
+  private final JCGLProgramUniformType u_view_rays_ray_x1y1;
+  private final JCGLProgramUniformType u_gbuffer_albedo;
+  private final JCGLProgramUniformType u_gbuffer_normal;
+  private final JCGLProgramUniformType u_gbuffer_specular;
+  private final JCGLProgramUniformType u_gbuffer_depth;
+  private final JCGLProgramUniformType u_viewport_inverse_width;
+  private final JCGLProgramUniformType u_viewport_inverse_height;
+  private final JCGLProgramUniformType u_light_directional_color;
+  private final JCGLProgramUniformType u_light_directional_direction;
+  private final JCGLProgramUniformType u_light_directional_intensity;
+  private final PVector4FType<R2SpaceEyeType> direction_eye;
+  private final PVector3FType<R2SpaceEyeType> direction_eye3;
   private final PVector4FType<R2SpaceWorldType> direction_world;
 
   private R2LightShaderDirectionalSpecularSingle(
@@ -239,7 +239,7 @@ public final class R2LightShaderDirectionalSpecularSingle extends
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
     final R2LightDirectionalScreenSingle values,
     final R2MatricesObserverValuesType m)

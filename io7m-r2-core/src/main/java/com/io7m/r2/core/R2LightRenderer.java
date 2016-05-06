@@ -36,6 +36,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
 import com.io7m.jcanephora.renderstate.JCGLColorBufferMaskingState;
 import com.io7m.jcanephora.renderstate.JCGLCullingState;
@@ -46,10 +47,11 @@ import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.renderstate.JCGLStencilStateMutable;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.provided.R2ShaderLogDepthOnlySingle;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderScreen;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
@@ -168,8 +170,8 @@ public final class R2LightRenderer implements R2LightRendererType
     final R2GeometryBufferUsableType gbuffer,
     final AreaInclusiveUnsignedLType area,
     final Optional<R2LightBufferUsableType> lbuffer,
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final R2ShadowMapContextUsableType shadows,
     final R2MatricesObserverType m,
     final R2SceneLightsType s)
@@ -185,10 +187,10 @@ public final class R2LightRenderer implements R2LightRendererType
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final R2ProfilingContextType pc_base =
+    final JCGLProfilingContextType pc_base =
       pc.getChildContext("lights");
 
-    final R2ProfilingContextType pc_copy_depth =
+    final JCGLProfilingContextType pc_copy_depth =
       pc_base.getChildContext("copy-depth");
 
     pc_copy_depth.startMeasuringIfEnabled();
@@ -211,13 +213,13 @@ public final class R2LightRenderer implements R2LightRendererType
   private void renderLightInstances(
     final R2GeometryBufferUsableType gbuffer,
     final AreaInclusiveUnsignedLType lbuffer_area,
-    final R2ProfilingContextType pc_base,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc_base,
+    final JCGLTextureUnitContextParentType uc,
     final R2ShadowMapContextUsableType shadows,
     final R2MatricesObserverType m,
     final R2SceneLightsType s)
   {
-    final R2ProfilingContextType pc_instances =
+    final JCGLProfilingContextType pc_instances =
       pc_base.getChildContext("instances");
 
     if (s.lightsCount() > 0L) {
@@ -263,7 +265,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private @Nullable JCGLTextureUnitType unit_normals;
     private @Nullable JCGLTextureUnitType unit_specular;
     private @Nullable JCGLTextureUnitType unit_depth;
-    private @Nullable R2TextureUnitContextType light_base_context;
+    private @Nullable JCGLTextureUnitContextType light_base_context;
     private @Nullable AreaInclusiveUnsignedLType viewport;
     private int group;
 
@@ -279,7 +281,7 @@ public final class R2LightRenderer implements R2LightRendererType
       final JCGLTextureUnitType in_unit_depth,
       final JCGLTextureUnitType in_unit_normals,
       final JCGLTextureUnitType in_unit_specular,
-      final R2TextureUnitContextType in_light_base_context,
+      final JCGLTextureUnitContextType in_light_base_context,
       final AreaInclusiveUnsignedLType in_viewport)
     {
       this.group = in_group;
@@ -319,9 +321,9 @@ public final class R2LightRenderer implements R2LightRendererType
 
     private @Nullable
     R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
-    private @Nullable R2TextureUnitContextType light_each_context;
+    private @Nullable JCGLTextureUnitContextType light_each_context;
     private @Nullable R2LightProjectiveWithShadowReadableType light_shadow;
-    private @Nullable R2ProfilingContextType profiling_instances;
+    private @Nullable JCGLProfilingContextType profiling_instances;
 
     LightGroupConsumer(
       final JCGLInterfaceGL33Type in_g,
@@ -456,7 +458,7 @@ public final class R2LightRenderer implements R2LightRendererType
     {
       R2Stencils.checkValidGroup(this.input_state.group);
 
-      final R2ProfilingContextType pc_base =
+      final JCGLProfilingContextType pc_base =
         this.input_state.parent.profiling_context.getChildContext("unclipped");
       this.profiling_instances =
         pc_base.getChildContext("instances");
@@ -668,10 +670,10 @@ public final class R2LightRenderer implements R2LightRendererType
   {
     private @Nullable R2GeometryBufferUsableType gbuffer;
     private @Nullable R2MatricesObserverType matrices;
-    private @Nullable R2TextureUnitContextParentType texture_context;
+    private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable R2ShadowMapContextUsableType shadow_maps;
     private @Nullable AreaInclusiveUnsignedLType viewport;
-    private @Nullable R2ProfilingContextType profiling_context;
+    private @Nullable JCGLProfilingContextType profiling_context;
 
     LightConsumerInputState()
     {
@@ -681,10 +683,10 @@ public final class R2LightRenderer implements R2LightRendererType
     void set(
       final R2GeometryBufferUsableType in_gbuffer,
       final R2MatricesObserverType in_m,
-      final R2TextureUnitContextParentType in_texture_context,
+      final JCGLTextureUnitContextParentType in_texture_context,
       final R2ShadowMapContextUsableType in_shadows,
       final AreaInclusiveUnsignedLType in_viewport,
-      final R2ProfilingContextType pc_base)
+      final JCGLProfilingContextType pc_base)
     {
       this.gbuffer = NullCheck.notNull(in_gbuffer);
       this.matrices = NullCheck.notNull(in_m);
@@ -726,9 +728,9 @@ public final class R2LightRenderer implements R2LightRendererType
 
     private @Nullable
     R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
-    private @Nullable R2TextureUnitContextType light_each_context;
+    private @Nullable JCGLTextureUnitContextType light_each_context;
     private @Nullable R2LightProjectiveWithShadowReadableType light_shadow;
-    private @Nullable R2ProfilingContextType profiling_instances;
+    private @Nullable JCGLProfilingContextType profiling_instances;
 
     LightClipGroupConsumer(
       final JCGLInterfaceGL33Type in_g33,
@@ -969,9 +971,9 @@ public final class R2LightRenderer implements R2LightRendererType
     @Override
     public void onStart()
     {
-      final R2ProfilingContextType pc_clipped =
+      final JCGLProfilingContextType pc_clipped =
         this.input_state.parent.profiling_context.getChildContext("clipped");
-      final R2ProfilingContextType pc_setup =
+      final JCGLProfilingContextType pc_setup =
         pc_clipped.getChildContext("setup");
 
       pc_setup.startMeasuringIfEnabled();
@@ -1014,7 +1016,7 @@ public final class R2LightRenderer implements R2LightRendererType
     {
       JCGLRenderStates.activate(this.g33, this.clip_volume_stencil_state);
 
-      final R2TextureUnitContextType tc =
+      final JCGLTextureUnitContextType tc =
         this.input_state.light_base_context.unitContextNew();
 
       try {
@@ -1065,7 +1067,7 @@ public final class R2LightRenderer implements R2LightRendererType
     {
       JCGLRenderStates.activate(this.g33, this.clip_screen_stencil_state);
 
-      final R2TextureUnitContextType tc =
+      final JCGLTextureUnitContextType tc =
         this.input_state.light_base_context.unitContextNew();
 
       try {
@@ -1296,7 +1298,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private @Nullable JCGLTextureUnitType unit_normals;
     private @Nullable JCGLTextureUnitType unit_specular;
     private @Nullable JCGLTextureUnitType unit_depth;
-    private @Nullable R2TextureUnitContextType light_base_context;
+    private @Nullable JCGLTextureUnitContextType light_base_context;
     private @Nullable AreaInclusiveUnsignedLType viewport;
     private @Nullable R2InstanceSingleType volume;
     private int group;
@@ -1314,7 +1316,7 @@ public final class R2LightRenderer implements R2LightRendererType
       final JCGLTextureUnitType in_unit_depth,
       final JCGLTextureUnitType in_unit_normals,
       final JCGLTextureUnitType in_unit_specular,
-      final R2TextureUnitContextType in_light_base_context,
+      final JCGLTextureUnitContextType in_light_base_context,
       final AreaInclusiveUnsignedLType in_viewport)
     {
       this.volume = in_volume;
@@ -1354,7 +1356,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private @Nullable JCGLTextureUnitType unit_normals;
     private @Nullable JCGLTextureUnitType unit_specular;
     private @Nullable JCGLTextureUnitType unit_depth;
-    private @Nullable R2TextureUnitContextType light_base_context;
+    private @Nullable JCGLTextureUnitContextType light_base_context;
 
     LightConsumer(
       final JCGLInterfaceGL33Type in_g,
@@ -1399,20 +1401,20 @@ public final class R2LightRenderer implements R2LightRendererType
       this.unit_albedo =
         this.light_base_context.unitContextBindTexture2D(
           this.textures,
-          this.input_state.gbuffer.getAlbedoEmissiveTexture());
+          this.input_state.gbuffer.getAlbedoEmissiveTexture().get());
       this.unit_normals =
         this.light_base_context.unitContextBindTexture2D(
           this.textures,
-          this.input_state.gbuffer.getNormalTexture());
+          this.input_state.gbuffer.getNormalTexture().get());
       this.unit_specular =
         this.light_base_context.unitContextBindTexture2D(
           this.textures,
           this.input_state.gbuffer.getSpecularTextureOrDefault(
-            this.texture_defaults));
+            this.texture_defaults).get());
       this.unit_depth =
         this.light_base_context.unitContextBindTexture2D(
           this.textures,
-          this.input_state.gbuffer.getDepthTexture());
+          this.input_state.gbuffer.getDepthTexture().get());
     }
 
     @Override

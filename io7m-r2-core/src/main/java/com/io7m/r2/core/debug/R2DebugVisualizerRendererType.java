@@ -17,10 +17,10 @@
 package com.io7m.r2.core.debug;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2MatricesObserverType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 
 /**
  * A renderer for producing various debug visualizations.
@@ -40,8 +40,8 @@ public interface R2DebugVisualizerRendererType extends R2DeletableType
 
   void renderScene(
     AreaInclusiveUnsignedLType area,
-    R2ProfilingContextType pc,
-    R2TextureUnitContextParentType uc,
+    JCGLProfilingContextType pc,
+    JCGLTextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2DebugVisualizerRendererParametersType s);
 }

@@ -28,6 +28,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.renderstate.JCGLCullingState;
 import com.io7m.jcanephora.renderstate.JCGLDepthClamping;
 import com.io7m.jcanephora.renderstate.JCGLDepthState;
@@ -36,6 +37,8 @@ import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -60,11 +63,8 @@ import com.io7m.r2.core.R2SceneLightsGroupConsumerType;
 import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaquesConsumerType;
 import com.io7m.r2.core.R2SceneOpaquesType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2TransformST;
 import com.io7m.r2.core.R2UnitSphereUsableType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualBatched;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualScreen;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualSingle;
@@ -185,8 +185,8 @@ public final class R2DebugVisualizerRenderer implements
   @Override
   public void renderScene(
     final AreaInclusiveUnsignedLType area,
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
@@ -198,10 +198,10 @@ public final class R2DebugVisualizerRenderer implements
 
     Assertive.require(!this.isDeleted(), "Renderer not deleted");
 
-    final R2ProfilingContextType pc_base =
+    final JCGLProfilingContextType pc_base =
       pc.getChildContext("debug-visualizer");
 
-    final R2ProfilingContextType pc_opaques =
+    final JCGLProfilingContextType pc_opaques =
       pc_base.getChildContext("opaques");
     pc_opaques.startMeasuringIfEnabled();
     try {
@@ -210,7 +210,7 @@ public final class R2DebugVisualizerRenderer implements
       pc_opaques.stopMeasuringIfEnabled();
     }
 
-    final R2ProfilingContextType pc_lights =
+    final JCGLProfilingContextType pc_lights =
       pc_base.getChildContext("lights");
     pc_lights.startMeasuringIfEnabled();
     try {
@@ -222,7 +222,7 @@ public final class R2DebugVisualizerRenderer implements
 
   private void renderSceneLights(
     final AreaInclusiveUnsignedLType area,
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
@@ -248,7 +248,7 @@ public final class R2DebugVisualizerRenderer implements
 
   private void renderSceneOpaques(
     final AreaInclusiveUnsignedLType area,
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
@@ -302,8 +302,8 @@ public final class R2DebugVisualizerRenderer implements
     private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
     private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
     private @Nullable R2MatricesObserverType matrices;
-    private @Nullable R2TextureUnitContextParentType texture_context;
-    private @Nullable R2TextureUnitContextType material_texture_context;
+    private @Nullable JCGLTextureUnitContextParentType texture_context;
+    private @Nullable JCGLTextureUnitContextType material_texture_context;
     private @Nullable R2DebugVisualizerRendererParametersType parameters;
     private VectorReadable4FType color;
 
@@ -489,7 +489,7 @@ public final class R2DebugVisualizerRenderer implements
     private final GroupConsumer group_consumer;
     private final R2TransformST sphere_transform;
     private @Nullable R2MatricesObserverType matrices;
-    private @Nullable R2TextureUnitContextParentType texture_context;
+    private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable R2UnitSphereUsableType sphere;
 
     private LightConsumer(
@@ -572,7 +572,7 @@ public final class R2DebugVisualizerRenderer implements
       implements R2SceneLightsGroupConsumerType
     {
       private int group;
-      private R2TextureUnitContextType group_texture_context;
+      private JCGLTextureUnitContextType group_texture_context;
 
       GroupConsumer()
       {
@@ -783,7 +783,7 @@ public final class R2DebugVisualizerRenderer implements
     {
       private @Nullable R2InstanceSingleType volume;
       private int group;
-      private @Nullable R2TextureUnitContextType texture_context;
+      private @Nullable JCGLTextureUnitContextType texture_context;
 
       ClipGroupConsumer()
       {

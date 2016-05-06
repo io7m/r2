@@ -23,6 +23,7 @@ import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorM2F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
@@ -32,7 +33,6 @@ import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
@@ -211,7 +211,7 @@ public final class R2ShaderSSAO extends
   public void onReceiveFilterValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final R2ShaderSSAOParametersType values)
   {
     NullCheck.notNull(g_tex);
@@ -259,7 +259,7 @@ public final class R2ShaderSSAO extends
       (float) R2Projections.getDepthCoefficient(view.getProjection()));
 
     this.unit_noise =
-      tc.unitContextBindTexture2D(g_tex, values.getNoiseTexture());
+      tc.unitContextBindTexture2D(g_tex, values.getNoiseTexture().get());
 
     /**
      * Upload the geometry buffer.
@@ -267,9 +267,9 @@ public final class R2ShaderSSAO extends
 
     final R2GeometryBufferUsableType gbuffer = values.getGeometryBuffer();
     this.unit_depth =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture().get());
     this.unit_normals =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture().get());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_gbuffer_normal, this.unit_normals);
     g_sh.shaderUniformPutTexture2DUnit(

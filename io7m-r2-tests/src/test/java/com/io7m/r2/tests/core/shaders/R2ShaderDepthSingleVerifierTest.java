@@ -20,12 +20,17 @@ import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
+import com.io7m.jcanephora.profiler.JCGLProfiling;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
+import com.io7m.jcanephora.profiler.JCGLProfilingType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleVerifier;
 import com.io7m.r2.tests.core.R2EmptyInstanceTransformValues;
@@ -40,7 +45,8 @@ public final class R2ShaderDepthSingleVerifierTest
   @Rule public ExpectedException expected = ExpectedException.none();
 
   @Test
-  public void testCorrect() throws Exception
+  public void testCorrect()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -51,10 +57,12 @@ public final class R2ShaderDepthSingleVerifierTest
 
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
@@ -69,7 +77,8 @@ public final class R2ShaderDepthSingleVerifierTest
   }
 
   @Test
-  public void testCorrectMultiInstance() throws Exception
+  public void testCorrectMultiInstance()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -80,10 +89,12 @@ public final class R2ShaderDepthSingleVerifierTest
 
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
@@ -110,7 +121,8 @@ public final class R2ShaderDepthSingleVerifierTest
   }
 
   @Test
-  public void testWrongOrder() throws Exception
+  public void testWrongOrder()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -121,10 +133,12 @@ public final class R2ShaderDepthSingleVerifierTest
 
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
@@ -140,7 +154,8 @@ public final class R2ShaderDepthSingleVerifierTest
   }
 
   @Test
-  public void testInactive() throws Exception
+  public void testInactive()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -159,7 +174,8 @@ public final class R2ShaderDepthSingleVerifierTest
   }
 
   @Test
-  public void testNoReceiveMaterial() throws Exception
+  public void testNoReceiveMaterial()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -181,7 +197,8 @@ public final class R2ShaderDepthSingleVerifierTest
   }
 
   @Test
-  public void testNoReceiveInstance() throws Exception
+  public void testNoReceiveInstance()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -195,10 +212,12 @@ public final class R2ShaderDepthSingleVerifierTest
 
     final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     v.onActivate(g.getShaders());
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
@@ -209,7 +228,8 @@ public final class R2ShaderDepthSingleVerifierTest
   }
 
   @Test
-  public void testNoReceiveView() throws Exception
+  public void testNoReceiveView()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -220,10 +240,12 @@ public final class R2ShaderDepthSingleVerifierTest
 
     final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     v.onActivate(g_sh);
     this.expected.expect(IllegalStateException.class);
@@ -231,7 +253,8 @@ public final class R2ShaderDepthSingleVerifierTest
   }
 
   @Test
-  public void testDeactivatedValidate() throws Exception
+  public void testDeactivatedValidate()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();

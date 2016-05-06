@@ -19,10 +19,10 @@ package com.io7m.r2.tests.filters;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.tests.core.R2TestUtilities;
@@ -35,7 +35,8 @@ public final class R2ShaderFilterVerifierTest
   @Rule public ExpectedException expected = ExpectedException.none();
 
   @Test
-  public void testCorrect() throws Exception
+  public void testCorrect()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -46,10 +47,12 @@ public final class R2ShaderFilterVerifierTest
 
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     v.onActivate(g.getShaders());
     v.onReceiveFilterValues(g_tex, g_sh, tc, new Object());
@@ -58,7 +61,8 @@ public final class R2ShaderFilterVerifierTest
   }
 
   @Test
-  public void testInactive() throws Exception
+  public void testInactive()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -69,17 +73,20 @@ public final class R2ShaderFilterVerifierTest
 
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLShadersType g_sh = g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr = ta.getRootContext();
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     this.expected.expect(IllegalStateException.class);
     v.onReceiveFilterValues(g_tex, g_sh, tc, new Object());
   }
 
   @Test
-  public void testNoReceiveFilter() throws Exception
+  public void testNoReceiveFilter()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();
@@ -96,7 +103,8 @@ public final class R2ShaderFilterVerifierTest
   }
 
   @Test
-  public void testDeactivatedValidate() throws Exception
+  public void testDeactivatedValidate()
+    throws Exception
   {
     final JCGLInterfaceGL33Type g =
       R2TestUtilities.getFakeGL();

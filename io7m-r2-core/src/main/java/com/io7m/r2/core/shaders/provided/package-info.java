@@ -18,5 +18,6 @@
  * Default provided shaders.
  */
 
-@com.io7m.jnull.NonNullByDefault package com.io7m.r2.core.shaders.provided;
+@com.io7m.jnull.NonNullByDefault
+package com.io7m.r2.core.shaders.provided;
 

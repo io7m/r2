@@ -17,6 +17,7 @@
 package com.io7m.r2.tests.filters;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedL;
+import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
@@ -28,13 +29,14 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -59,11 +61,13 @@ public abstract class R2ShaderFilterFXAAContract extends
 
     final JCGLTexturesType g_tex = g.getTextures();
 
-    final R2TextureUnitAllocatorType tp =
-      R2TextureUnitAllocator.newAllocatorWithStack(8, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tc_root =
+    final JCGLTextureUnitAllocatorType tp =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        8,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tc_root =
       tp.getRootContext();
-    final R2TextureUnitContextType tc_alloc =
+    final JCGLTextureUnitContextType tc_alloc =
       tc_root.unitContextNew();
 
     try {
@@ -72,7 +76,7 @@ public abstract class R2ShaderFilterFXAAContract extends
           new UnsignedRangeInclusiveL(0L, 639L),
           new UnsignedRangeInclusiveL(0L, 479L));
 
-      final Pair<JCGLTextureUnitType, R2Texture2DType> pq =
+      final Pair<JCGLTextureUnitType, JCGLTexture2DType> pq =
         tc_alloc.unitContextAllocateTexture2D(
           g_tex,
           640L,
@@ -83,7 +87,7 @@ public abstract class R2ShaderFilterFXAAContract extends
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      p.setTexture(pq.getRight());
+      p.setTexture(R2Texture2DStatic.of(pq.getRight()));
 
     } finally {
       tc_alloc.unitContextFinish(g_tex);

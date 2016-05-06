@@ -23,6 +23,7 @@ import com.io7m.jcanephora.core.JCGLFramebufferColorAttachmentPointType;
 import com.io7m.jcanephora.core.JCGLFramebufferDrawBufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
+import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
@@ -40,6 +41,8 @@ import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorI4F;
@@ -116,7 +119,7 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
   public static R2DepthVarianceBufferType newDepthVarianceBuffer(
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_t,
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2DepthVarianceBufferDescriptionType desc)
   {
     NullCheck.notNull(g_fb);
@@ -133,9 +136,9 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
-    final R2TextureUnitContextType cc = tc.unitContextNewWithReserved(4);
+    final JCGLTextureUnitContextType cc = tc.unitContextNewWithReserved(4);
     try {
-      final Pair<JCGLTextureUnitType, R2Texture2DType> p_depth =
+      final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth =
         cc.unitContextAllocateTexture2D(
           g_t,
           range_x.getInterval(),
@@ -147,7 +150,7 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      final Pair<JCGLTextureUnitType, R2Texture2DType> p_variance =
+      final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_variance =
         cc.unitContextAllocateTexture2D(
           g_t,
           range_x.getInterval(),
@@ -159,8 +162,10 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
           desc.getMinificationFilter(),
           desc.getMagnificationFilter());
 
-      final R2Texture2DType rt_depth = p_depth.getRight();
-      final R2Texture2DType rt_variance = p_variance.getRight();
+      final R2Texture2DType rt_depth =
+        R2Texture2DStatic.of(p_depth.getRight());
+      final R2Texture2DType rt_variance =
+        R2Texture2DStatic.of(p_variance.getRight());
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
       fbb.attachDepthTexture2D(rt_depth.get());

@@ -22,6 +22,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PVector3FType;
@@ -35,7 +36,6 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightDirectionalScreenSingle;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleVerifier;
@@ -175,7 +175,7 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
     final R2LightDirectionalScreenSingle values,
     final R2MatricesObserverValuesType m)

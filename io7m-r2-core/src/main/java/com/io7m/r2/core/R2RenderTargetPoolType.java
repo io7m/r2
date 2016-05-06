@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+
 /**
  * The type of render target pools.
  *
@@ -34,7 +36,7 @@ public interface R2RenderTargetPoolType<
    * @param c A texture unit context
    */
 
-  void delete(R2TextureUnitContextParentType c);
+  void delete(JCGLTextureUnitContextParentType c);
 
   /**
    * @return {@code true} iff the pool is deleted

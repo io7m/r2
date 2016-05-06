@@ -22,13 +22,15 @@ import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferComponents;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,8 +43,8 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2TextureUnitAllocatorType tc =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType tc =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         3, g.getTextures().textureGetUnits());
 
     final AreaInclusiveUnsignedL area = AreaInclusiveUnsignedL.of(
@@ -87,16 +89,14 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
         t_dept.get().textureGetFormat());
 
       switch (cc) {
-        case R2_GEOMETRY_BUFFER_FULL:
-        {
+        case R2_GEOMETRY_BUFFER_FULL: {
           Assert.assertEquals(640L * 480L * 16L, gb.getRange().getInterval());
           Assert.assertEquals(
             JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
             t_spec.get().get().textureGetFormat());
           break;
         }
-        case R2_GEOMETRY_BUFFER_NO_SPECULAR:
-        {
+        case R2_GEOMETRY_BUFFER_NO_SPECULAR: {
           Assert.assertEquals(640L * 480L * 12L, gb.getRange().getInterval());
           break;
         }

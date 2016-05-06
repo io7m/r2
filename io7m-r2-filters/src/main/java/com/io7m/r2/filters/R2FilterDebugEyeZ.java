@@ -27,8 +27,11 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
@@ -37,11 +40,8 @@ import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import org.valid4j.Assertive;
@@ -119,8 +119,8 @@ public final class R2FilterDebugEyeZ implements
 
   @Override
   public void runFilter(
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterDebugEyeZParametersType parameters)
   {
     NullCheck.notNull(uc);
@@ -128,7 +128,7 @@ public final class R2FilterDebugEyeZ implements
 
     Assertive.require(!this.isDeleted(), "Filter not deleted");
 
-    final R2ProfilingContextType pc_base = pc.getChildContext("debug-eye-z");
+    final JCGLProfilingContextType pc_base = pc.getChildContext("debug-eye-z");
     pc_base.startMeasuringIfEnabled();
     try {
       this.run(uc, parameters);
@@ -138,7 +138,7 @@ public final class R2FilterDebugEyeZ implements
   }
 
   private void run(
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterDebugEyeZParametersType parameters)
   {
     final R2GeometryBufferUsableType gbuffer =
@@ -174,7 +174,7 @@ public final class R2FilterDebugEyeZ implements
        * Bind G-buffer.
        */
 
-      final R2TextureUnitContextType tc = uc.unitContextNew();
+      final JCGLTextureUnitContextType tc = uc.unitContextNew();
 
       try {
         JCGLRenderStates.activate(this.g, this.render_state);

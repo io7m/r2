@@ -22,6 +22,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PVector3FType;
@@ -39,7 +40,6 @@ import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
@@ -278,7 +278,7 @@ public final class R2LightShaderProjectiveLambertSingle extends
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
     final R2LightProjectiveReadableType values,
     final R2MatricesObserverValuesType m)
@@ -369,7 +369,7 @@ public final class R2LightShaderProjectiveLambertSingle extends
      */
 
     this.unit_image =
-      tc.unitContextBindTexture2D(g_tex, values.getImage());
+      tc.unitContextBindTexture2D(g_tex, values.getImage().get());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_projective_image,
       this.unit_image);

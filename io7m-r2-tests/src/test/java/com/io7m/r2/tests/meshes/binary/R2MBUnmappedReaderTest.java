@@ -31,7 +31,8 @@ public final class R2MBUnmappedReaderTest extends R2MBReaderContract
     return Channels.newChannel(c.getResourceAsStream(resource));
   }
 
-  @Override protected Runnable getReader(
+  @Override
+  protected Runnable getReader(
     final String name,
     final R2MeshParserInterleavedListenerType listener)
     throws IOException

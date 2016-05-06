@@ -22,6 +22,9 @@ import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.PartialBiFunctionType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
@@ -30,7 +33,6 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
@@ -119,11 +121,11 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
     private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
     private final VarianceState variance;
     private boolean active;
-    private @Nullable R2TextureUnitContextParentType texture_context;
+    private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable R2LightWithShadowSingleType light;
     private @Nullable R2DepthInstancesType instances;
     private @Nullable R2MatricesType matrices;
-    private @Nullable R2ProfilingContextType profiling_variance;
+    private @Nullable JCGLProfilingContextType profiling_variance;
 
     private RendererContext(
       final
@@ -213,12 +215,12 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
             case TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST:
             case TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR:
             case TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR: {
-              final R2TextureUnitContextType tc =
+              final JCGLTextureUnitContextType tc =
                 t.texture_context.unitContextNew();
 
               try {
                 final JCGLTextureUnitType u =
-                  tc.unitContextBindTexture2D(gt, rt_texture);
+                  tc.unitContextBindTexture2D(gt, rt_texture.get());
                 gt.texture2DRegenerateMipmaps(u);
               } finally {
                 tc.unitContextFinish(gt);
@@ -233,8 +235,8 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
     @Override
     public void shadowExecRenderLight(
-      final R2ProfilingContextType pc,
-      final R2TextureUnitContextParentType tc,
+      final JCGLProfilingContextType pc,
+      final JCGLTextureUnitContextParentType tc,
       final R2MatricesType m,
       final R2LightWithShadowSingleType ls,
       final R2DepthInstancesType i)
@@ -245,7 +247,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
       NullCheck.notNull(ls);
       NullCheck.notNull(i);
 
-      final R2ProfilingContextType pc_base =
+      final JCGLProfilingContextType pc_base =
         pc.getChildContext("shadow-map-renderer");
       this.profiling_variance =
         pc_base.getChildContext("variance");

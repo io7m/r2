@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 
 /**
  * The type of renderers that populate depth-only buffers.
@@ -35,7 +36,7 @@ public interface R2DepthRendererType extends R2DeletableType
 
   void renderDepth(
     R2DepthOnlyBufferUsableType gbuffer,
-    R2TextureUnitContextParentType uc,
+    JCGLTextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2DepthInstancesType s);
 
@@ -51,7 +52,7 @@ public interface R2DepthRendererType extends R2DeletableType
 
   void renderDepthWithBoundBuffer(
     AreaInclusiveUnsignedLType area,
-    R2TextureUnitContextParentType uc,
+    JCGLTextureUnitContextParentType uc,
     R2MatricesObserverType m,
     R2DepthInstancesType s);
 }

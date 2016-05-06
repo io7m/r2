@@ -21,9 +21,9 @@ import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.r2.core.R2Texture2DType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Assert;
@@ -37,8 +37,8 @@ public abstract class R2SSAONoiseTextureContract extends R2JCGLContract
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type gi = c.contextGetGL33();
     final JCGLTexturesType gt = gi.getTextures();
-    final R2TextureUnitAllocatorType tc =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, gt.textureGetUnits());
+    final JCGLTextureUnitAllocatorType tc =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(32, gt.textureGetUnits());
 
     final R2Texture2DType tt =
       R2SSAONoiseTexture.newNoiseTexture(gt, tc.getRootContext());

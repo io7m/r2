@@ -53,7 +53,8 @@ public final class R2MBMappedReaderTest extends R2MBReaderContract
     }
   }
 
-  @Override protected Runnable getReader(
+  @Override
+  protected Runnable getReader(
     final String name,
     final R2MeshParserInterleavedListenerType listener)
     throws IOException

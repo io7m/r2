@@ -16,7 +16,8 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 
 /**
  * The type of usable image filters.
@@ -36,7 +37,7 @@ public interface R2FilterUsableType<P>
    */
 
   void runFilter(
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final P parameters);
 }

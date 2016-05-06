@@ -33,11 +33,13 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderScreen;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
@@ -112,8 +114,8 @@ public final class R2StencilRenderer implements R2StencilRendererType
   @Override
   public void renderStencilsWithBoundBuffer(
     final R2MatricesObserverType m,
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final AreaInclusiveUnsignedLType area,
     final R2SceneStencilsType s)
   {
@@ -125,9 +127,9 @@ public final class R2StencilRenderer implements R2StencilRendererType
 
     Assertive.require(!this.deleted);
 
-    final R2ProfilingContextType pc_base =
+    final JCGLProfilingContextType pc_base =
       pc.getChildContext("stencil");
-    final R2ProfilingContextType pc_setup =
+    final JCGLProfilingContextType pc_setup =
       pc_base.getChildContext("clear");
     pc_setup.startMeasuringIfEnabled();
 
@@ -137,7 +139,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
       pc_setup.stopMeasuringIfEnabled();
     }
 
-    final R2ProfilingContextType pc_instances =
+    final JCGLProfilingContextType pc_instances =
       pc_base.getChildContext("instances");
     pc_instances.startMeasuringIfEnabled();
 
@@ -150,7 +152,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
 
   private void renderInstances(
     final R2MatricesObserverType m,
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2SceneStencilsType s)
   {
     if (s.stencilsCount() > 0L) {
@@ -325,7 +327,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     private @Nullable JCGLArrayObjectsType             array_objects;
     private @Nullable JCGLDrawType                     draw;
     private @Nullable R2MatricesObserverType           matrices;
-    private @Nullable R2TextureUnitContextParentType   texture_context;
+    private @Nullable JCGLTextureUnitContextParentType   texture_context;
     private @Nullable JCGLTexturesType                 textures;
 
     StencilConsumer(
@@ -361,7 +363,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
         i.getUVMatrix();
 
       this.matrices.withTransform(it, uv, this, (mi, t) -> {
-        final R2TextureUnitContextType tc = t.texture_context.unitContextNew();
+        final JCGLTextureUnitContextType tc = t.texture_context.unitContextNew();
         try {
           t.program.onReceiveMaterialValues(
             t.textures, t.shaders, tc, Unit.unit());

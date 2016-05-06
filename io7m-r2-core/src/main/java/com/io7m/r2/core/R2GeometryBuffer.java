@@ -25,6 +25,7 @@ import com.io7m.jcanephora.core.JCGLFramebufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLStencilFunction;
 import com.io7m.jcanephora.core.JCGLStencilOperation;
+import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
@@ -43,6 +44,8 @@ import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.renderstate.JCGLStencilState;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorI4F;
@@ -156,7 +159,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
   public static R2GeometryBufferType newGeometryBuffer(
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_t,
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2GeometryBufferDescriptionType desc)
   {
     NullCheck.notNull(g_fb);
@@ -173,9 +176,9 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
-    final R2TextureUnitContextType cc = tc.unitContextNewWithReserved(4);
+    final JCGLTextureUnitContextType cc = tc.unitContextNewWithReserved(4);
     try {
-      final Pair<JCGLTextureUnitType, R2Texture2DType> p_rgba =
+      final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_rgba =
         cc.unitContextAllocateTexture2D(
           g_t,
           range_x.getInterval(),
@@ -186,7 +189,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      final Pair<JCGLTextureUnitType, R2Texture2DType> p_depth =
+      final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth =
         cc.unitContextAllocateTexture2D(
           g_t,
           range_x.getInterval(),
@@ -197,7 +200,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      final Pair<JCGLTextureUnitType, R2Texture2DType> p_norm =
+      final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_norm =
         cc.unitContextAllocateTexture2D(
           g_t,
           range_x.getInterval(),
@@ -208,7 +211,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      Pair<JCGLTextureUnitType, R2Texture2DType> p_spec = null;
+      Pair<JCGLTextureUnitType, JCGLTexture2DType> p_spec = null;
       switch (desc.getComponents()) {
         case R2_GEOMETRY_BUFFER_FULL:
           p_spec = cc.unitContextAllocateTexture2D(
@@ -226,16 +229,16 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
       }
 
 
-      final R2Texture2DType rt_rgba = p_rgba.getRight();
-      final R2Texture2DType rt_depth = p_depth.getRight();
-      final R2Texture2DType rt_norm = p_norm.getRight();
+      final R2Texture2DType rt_rgba = R2Texture2DStatic.of(p_rgba.getRight());
+      final R2Texture2DType rt_depth = R2Texture2DStatic.of(p_depth.getRight());
+      final R2Texture2DType rt_norm = R2Texture2DStatic.of(p_norm.getRight());
       R2Texture2DType rt_spec = null;
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
       fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_rgba.get());
       fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_norm.get());
       if (p_spec != null) {
-        rt_spec = p_spec.getRight();
+        rt_spec = R2Texture2DStatic.of(p_spec.getRight());
         fbb.attachColorTexture2DAt(points.get(2), buffers.get(2), rt_spec.get());
       }
       fbb.attachDepthStencilTexture2D(rt_depth.get());

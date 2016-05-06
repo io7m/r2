@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
@@ -28,7 +29,6 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
@@ -61,10 +61,10 @@ public final class R2SurfaceShaderBasicSingle extends
   private final JCGLProgramUniformType u_texture_specular;
   private final JCGLProgramUniformType u_texture_emission;
   private final JCGLProgramUniformType u_alpha_discard_threshold;
-  private       JCGLTextureUnitType    unit_albedo;
-  private       JCGLTextureUnitType    unit_emission;
-  private       JCGLTextureUnitType    unit_normal;
-  private       JCGLTextureUnitType    unit_specular;
+  private JCGLTextureUnitType unit_albedo;
+  private JCGLTextureUnitType unit_emission;
+  private JCGLTextureUnitType unit_normal;
+  private JCGLTextureUnitType unit_specular;
 
   private R2SurfaceShaderBasicSingle(
     final JCGLShadersType in_shaders,
@@ -191,7 +191,7 @@ public final class R2SurfaceShaderBasicSingle extends
   public void onReceiveMaterialValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final R2SurfaceShaderBasicParameters values)
   {
     NullCheck.notNull(g_tex);
@@ -200,13 +200,13 @@ public final class R2SurfaceShaderBasicSingle extends
     NullCheck.notNull(values);
 
     this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.getAlbedoTexture());
+      tc.unitContextBindTexture2D(g_tex, values.getAlbedoTexture().get());
     this.unit_emission =
-      tc.unitContextBindTexture2D(g_tex, values.getEmissionTexture());
+      tc.unitContextBindTexture2D(g_tex, values.getEmissionTexture().get());
     this.unit_normal =
-      tc.unitContextBindTexture2D(g_tex, values.getNormalTexture());
+      tc.unitContextBindTexture2D(g_tex, values.getNormalTexture().get());
     this.unit_specular =
-      tc.unitContextBindTexture2D(g_tex, values.getSpecularTexture());
+      tc.unitContextBindTexture2D(g_tex, values.getSpecularTexture().get());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, this.unit_albedo);

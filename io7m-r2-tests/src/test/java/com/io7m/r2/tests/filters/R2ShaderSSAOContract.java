@@ -22,6 +22,10 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferComponents;
@@ -31,10 +35,6 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -84,11 +84,13 @@ public abstract class R2ShaderSSAOContract extends
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLFramebuffersType g_fb = g.getFramebuffers();
 
-    final R2TextureUnitAllocatorType tp =
-      R2TextureUnitAllocator.newAllocatorWithStack(8, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tc_root =
+    final JCGLTextureUnitAllocatorType tp =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        8,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tc_root =
       tp.getRootContext();
-    final R2TextureUnitContextType tc_alloc =
+    final JCGLTextureUnitContextType tc_alloc =
       tc_root.unitContextNew();
 
     try {
@@ -103,11 +105,11 @@ public abstract class R2ShaderSSAOContract extends
 
       final R2GeometryBufferType gb =
         R2GeometryBuffer.newGeometryBuffer(
-        g.getFramebuffers(),
-        g_tex,
-        tc_alloc,
-        R2GeometryBufferDescription.of(
-          area, R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL));
+          g.getFramebuffers(),
+          g_tex,
+          tc_alloc,
+          R2GeometryBufferDescription.of(
+            area, R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL));
       g_fb.framebufferDrawUnbind();
 
       p.setGeometryBuffer(gb);

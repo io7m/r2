@@ -22,6 +22,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PVector3FType;
@@ -38,7 +39,6 @@ import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
@@ -85,8 +85,8 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
   private final JCGLProgramUniformType u_light_spherical_inverse_range;
   private final JCGLProgramUniformType u_light_spherical_inverse_falloff;
 
-  private final PVector4FType<R2SpaceEyeType>   position_eye;
-  private final PVector3FType<R2SpaceEyeType>   position_eye3;
+  private final PVector4FType<R2SpaceEyeType> position_eye;
+  private final PVector3FType<R2SpaceEyeType> position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
 
   private R2DebugShaderLightSphericalAttenuationSingle(
@@ -257,7 +257,7 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
   public void onReceiveValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final AreaInclusiveUnsignedLType viewport,
     final R2LightSphericalSingleReadableType values,
     final R2MatricesObserverValuesType m)

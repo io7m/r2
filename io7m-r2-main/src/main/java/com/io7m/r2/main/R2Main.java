@@ -21,6 +21,10 @@ import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jcanephora.core.JCGLViewMatrices;
 import com.io7m.jcanephora.core.JCGLViewMatricesType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.profiler.JCGLProfiling;
+import com.io7m.jcanephora.profiler.JCGLProfilingType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.junreachable.UnreachableCodeException;
@@ -48,15 +52,11 @@ import com.io7m.r2.core.R2StencilRenderer;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRenderer;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
-import com.io7m.r2.core.profiling.R2Profiling;
-import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.shaders.R2Shaders;
@@ -89,14 +89,14 @@ public final class R2Main implements R2MainType
   private final R2TextureDefaultsType texture_defaults;
   private final R2GeometryRendererType geometry_renderer;
   private final R2LightRendererType light_renderer;
-  private final R2TextureUnitAllocatorType texture_allocator;
+  private final JCGLTextureUnitAllocatorType texture_allocator;
   private final R2UnitQuadType unit_quad;
   private final R2DebugVisualizerRendererType debug_visual_renderer;
   private final R2DepthRendererType depth_renderer;
   private final R2DepthVarianceRendererType depth_variance_renderer;
   private final R2ShadowMapRendererType shadow_map_renderer;
   private final R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType, R2DepthVarianceBufferUsableType> depth_variance_pool;
-  private final R2ProfilingType profiling;
+  private final JCGLProfilingType profiling;
   private boolean deleted;
 
   private R2Main(
@@ -106,7 +106,7 @@ public final class R2Main implements R2MainType
     final R2MatricesType in_matrices,
     final JCGLViewMatricesType in_view_matrices,
     final JCGLProjectionMatricesType in_proj_matrices,
-    final R2TextureUnitAllocatorType in_texture_allocator,
+    final JCGLTextureUnitAllocatorType in_texture_allocator,
     final R2TextureDefaultsType in_texture_defaults,
     final R2GeometryRendererType in_geometry_renderer,
     final R2LightRendererType in_light_renderer,
@@ -116,7 +116,7 @@ public final class R2Main implements R2MainType
     final R2DepthVarianceRendererType in_depth_variance_renderer,
     final R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType, R2DepthVarianceBufferUsableType> in_depth_variance_pool,
     final R2ShadowMapRendererType in_shadow_map_renderer,
-    final R2ProfilingType in_profiling)
+    final JCGLProfilingType in_profiling)
   {
     this.pool =
       NullCheck.notNull(in_pool);
@@ -202,7 +202,7 @@ public final class R2Main implements R2MainType
   }
 
   @Override
-  public R2TextureUnitAllocatorType getTextureUnitAllocator()
+  public JCGLTextureUnitAllocatorType getTextureUnitAllocator()
   {
     return this.texture_allocator;
   }
@@ -256,7 +256,7 @@ public final class R2Main implements R2MainType
   }
 
   @Override
-  public R2ProfilingType getProfiling()
+  public JCGLProfilingType getProfiling()
   {
     return this.profiling;
   }
@@ -305,7 +305,7 @@ public final class R2Main implements R2MainType
     private @Nullable R2TextureDefaultsType texture_defaults;
     private @Nullable R2GeometryRendererType geometry_renderer;
     private @Nullable R2LightRendererType light_renderer;
-    private @Nullable R2TextureUnitAllocatorType texture_unit_alloc;
+    private @Nullable JCGLTextureUnitAllocatorType texture_unit_alloc;
     private @Nullable R2UnitQuadType unit_quad;
     private @Nullable R2DebugVisualizerRendererType debug_visual_renderer;
     private @Nullable R2DepthRendererType depth_renderer;
@@ -313,7 +313,7 @@ public final class R2Main implements R2MainType
     private @Nullable
     R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType, R2DepthVarianceBufferUsableType> depth_variance_pool;
     private @Nullable R2ShadowMapRendererType shadow_map_renderer;
-    private @Nullable R2ProfilingType profiling;
+    private @Nullable JCGLProfilingType profiling;
 
     Builder()
     {
@@ -362,10 +362,10 @@ public final class R2Main implements R2MainType
         Builder.compute(
           this.proj_matrices, JCGLProjectionMatrices::newMatrices);
 
-      final R2TextureUnitAllocatorType ex_unit_alloc =
+      final JCGLTextureUnitAllocatorType ex_unit_alloc =
         Builder.compute(
           this.texture_unit_alloc,
-          () -> R2TextureUnitAllocator.newAllocatorWithStack(
+          () -> JCGLTextureUnitAllocator.newAllocatorWithStack(
             32,
             g.getTextures().textureGetUnits()));
 
@@ -421,9 +421,9 @@ public final class R2Main implements R2MainType
             ex_depth_variance_renderer,
             ex_depth_variance_pool));
 
-      final R2ProfilingType ex_profiling =
+      final JCGLProfilingType ex_profiling =
         Builder.compute(
-          this.profiling, () -> R2Profiling.newProfiling(g.getTimers()));
+          this.profiling, () -> JCGLProfiling.newProfiling(g.getTimers()));
 
       return new R2Main(
         ex_pool,

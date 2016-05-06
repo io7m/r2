@@ -18,6 +18,7 @@ package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jpuddle.core.JPPoolSynchronous;
 import com.io7m.jpuddle.core.JPPoolSynchronousType;
@@ -53,13 +54,13 @@ public final class R2LightBufferPool implements
     R2LightBufferDescriptionType,
     R2LightBufferType,
     R2LightBufferUsableType,
-    R2TextureUnitContextParentType> actual;
+    JCGLTextureUnitContextParentType> actual;
 
   private R2LightBufferPool(
     final JPPoolSynchronousType<R2LightBufferDescriptionType,
       R2LightBufferType,
       R2LightBufferUsableType,
-      R2TextureUnitContextParentType> in_actual)
+      JCGLTextureUnitContextParentType> in_actual)
   {
     this.actual = NullCheck.notNull(in_actual);
   }
@@ -86,7 +87,7 @@ public final class R2LightBufferPool implements
 
   @Override
   public R2LightBufferUsableType get(
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2LightBufferDescriptionType desc)
   {
     NullCheck.notNull(tc);
@@ -96,7 +97,7 @@ public final class R2LightBufferPool implements
 
   @Override
   public void returnValue(
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2LightBufferUsableType target)
   {
     NullCheck.notNull(tc);
@@ -105,7 +106,7 @@ public final class R2LightBufferPool implements
   }
 
   @Override
-  public void delete(final R2TextureUnitContextParentType c)
+  public void delete(final JCGLTextureUnitContextParentType c)
   {
     this.actual.deleteUnsafely(c);
   }
@@ -119,7 +120,7 @@ public final class R2LightBufferPool implements
   private static final class Listener implements JPPoolableListenerType<
     R2LightBufferDescriptionType,
     R2LightBufferType,
-    R2TextureUnitContextParentType>
+    JCGLTextureUnitContextParentType>
   {
     private final JCGLInterfaceGL33Type g;
 
@@ -130,7 +131,7 @@ public final class R2LightBufferPool implements
 
     @Override
     public long onEstimateSize(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2LightBufferDescriptionType key)
     {
       final AreaInclusiveUnsignedLType area = key.getArea();
@@ -141,7 +142,7 @@ public final class R2LightBufferPool implements
 
     @Override
     public R2LightBufferType onCreate(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2LightBufferDescriptionType key)
     {
       return R2LightBuffers.newLightBuffer(
@@ -153,7 +154,7 @@ public final class R2LightBufferPool implements
 
     @Override
     public long onGetSize(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2LightBufferDescriptionType key,
       final R2LightBufferType value)
     {
@@ -162,7 +163,7 @@ public final class R2LightBufferPool implements
 
     @Override
     public void onReuse(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2LightBufferDescriptionType key,
       final R2LightBufferType value)
     {
@@ -173,7 +174,7 @@ public final class R2LightBufferPool implements
 
     @Override
     public void onDelete(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2LightBufferDescriptionType key,
       final R2LightBufferType value)
     {
@@ -186,7 +187,7 @@ public final class R2LightBufferPool implements
 
     @Override
     public void onError(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2LightBufferDescriptionType key,
       final Optional<R2LightBufferType> value,
       final Throwable e)

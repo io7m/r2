@@ -44,7 +44,8 @@ public final class R2ShaderPreprocessorBatchRunnerTest
     return MemoryFileSystemBuilder.newLinux().build("test");
   }
 
-  @Test public void testEmptyNoPrograms()
+  @Test
+  public void testEmptyNoPrograms()
     throws Exception
   {
     try (final FileSystem fs = R2ShaderPreprocessorBatchRunnerTest.getFS()) {
@@ -65,7 +66,8 @@ public final class R2ShaderPreprocessorBatchRunnerTest
     }
   }
 
-  @Test public void testProgramFull()
+  @Test
+  public void testProgramFull()
     throws Exception
   {
     try (final FileSystem fs = R2ShaderPreprocessorBatchRunnerTest.getFS()) {
@@ -97,7 +99,8 @@ public final class R2ShaderPreprocessorBatchRunnerTest
     }
   }
 
-  @Test public void testProgramNoGeom()
+  @Test
+  public void testProgramNoGeom()
     throws Exception
   {
     try (final FileSystem fs = R2ShaderPreprocessorBatchRunnerTest.getFS()) {

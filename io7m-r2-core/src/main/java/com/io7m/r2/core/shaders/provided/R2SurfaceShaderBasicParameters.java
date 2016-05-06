@@ -33,15 +33,15 @@ import com.io7m.r2.spaces.R2SpaceRGBType;
 public final class R2SurfaceShaderBasicParameters
 {
   private final PVector4FType<R2SpaceRGBAType> albedo_color;
-  private final PVector3FType<R2SpaceRGBType>  specular_color;
-  private       float                          emission;
-  private       R2Texture2DUsableType          emission_texture;
-  private       R2Texture2DUsableType          albedo_texture;
-  private       float                          albedo_mix;
-  private       R2Texture2DUsableType          specular_texture;
-  private       float                          specular_exponent;
-  private       R2Texture2DUsableType          normal_texture;
-  private       float                          alpha_discard_threshold;
+  private final PVector3FType<R2SpaceRGBType> specular_color;
+  private float emission;
+  private R2Texture2DUsableType emission_texture;
+  private R2Texture2DUsableType albedo_texture;
+  private float albedo_mix;
+  private R2Texture2DUsableType specular_texture;
+  private float specular_exponent;
+  private R2Texture2DUsableType normal_texture;
+  private float alpha_discard_threshold;
 
   private R2SurfaceShaderBasicParameters(
     final PVector4FType<R2SpaceRGBAType> in_albedo_color,

@@ -31,16 +31,16 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightBufferUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 
@@ -123,14 +123,14 @@ public final class R2FilterOcclusionApplicator implements
 
   @Override
   public void runFilter(
-    final R2ProfilingContextType pc,
-    final R2TextureUnitContextParentType uc,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterOcclusionApplicatorParametersType parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    final R2ProfilingContextType pc_base =
+    final JCGLProfilingContextType pc_base =
       pc.getChildContext("occlusion-applicator");
     pc_base.startMeasuringIfEnabled();
     try {
@@ -141,7 +141,7 @@ public final class R2FilterOcclusionApplicator implements
   }
 
   private void run(
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2FilterOcclusionApplicatorParametersType parameters)
   {
     final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
@@ -182,7 +182,7 @@ public final class R2FilterOcclusionApplicator implements
     g_cm.colorBufferMask(true, true, true, true);
     g_v.viewportSet(lb.getArea());
 
-    final R2TextureUnitContextType c = uc.unitContextNew();
+    final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
       try {
         this.shader_params.setTexture(

@@ -22,6 +22,7 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AbstractShader;
@@ -30,7 +31,6 @@ import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
@@ -172,7 +172,7 @@ public final class R2ShaderFilterDebugEyePosition extends
   public void onReceiveFilterValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final R2FilterDebugEyePositionParametersType values)
   {
     NullCheck.notNull(g_sh);
@@ -186,15 +186,15 @@ public final class R2ShaderFilterDebugEyePosition extends
 
     final R2GeometryBufferUsableType gbuffer = values.getGeometryBuffer();
     final JCGLTextureUnitType unit_normals =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture().get());
     final JCGLTextureUnitType unit_depth =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture().get());
 
     final JCGLTextureUnitType unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getAlbedoEmissiveTexture());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.getAlbedoEmissiveTexture().get());
     final JCGLTextureUnitType unit_specular =
       tc.unitContextBindTexture2D(
-        g_tex, gbuffer.getSpecularTextureOrDefault(values.getTextureDefaults()));
+        g_tex, gbuffer.getSpecularTextureOrDefault(values.getTextureDefaults()).get());
 
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);

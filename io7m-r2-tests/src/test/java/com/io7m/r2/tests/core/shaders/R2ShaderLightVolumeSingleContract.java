@@ -24,6 +24,10 @@ import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
@@ -41,10 +45,6 @@ import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -66,9 +66,9 @@ public abstract class R2ShaderLightVolumeSingleContract<
   private static R2GeometryBufferType newGeometryBuffer(
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_tex,
-    final R2TextureUnitContextParentType tr)
+    final JCGLTextureUnitContextParentType tr)
   {
-    final R2TextureUnitContextType tc =
+    final JCGLTextureUnitContextType tc =
       tr.unitContextNew();
 
     try {
@@ -115,9 +115,11 @@ public abstract class R2ShaderLightVolumeSingleContract<
       g.getTextures();
     final JCGLShadersType g_sh =
       g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr =
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr =
       ta.getRootContext();
     final R2TextureDefaultsType td =
       R2TextureDefaults.newDefaults(g_tex, tr);
@@ -125,15 +127,19 @@ public abstract class R2ShaderLightVolumeSingleContract<
     final R2GeometryBufferType gbuffer =
       R2ShaderLightVolumeSingleContract.newGeometryBuffer(g_fb, g_tex, tr);
 
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
     final JCGLTextureUnitType ua =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getAlbedoEmissiveTexture());
+      tc.unitContextBindTexture2D(
+        g_tex, gbuffer.getAlbedoEmissiveTexture().get());
     final JCGLTextureUnitType un =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture());
+      tc.unitContextBindTexture2D(
+        g_tex, gbuffer.getNormalTexture().get());
     final JCGLTextureUnitType us =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getSpecularTextureOrDefault(td));
+      tc.unitContextBindTexture2D(
+        g_tex, gbuffer.getSpecularTextureOrDefault(td).get());
     final JCGLTextureUnitType ud =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture());
+      tc.unitContextBindTexture2D(
+        g_tex, gbuffer.getDepthTexture().get());
 
     final R2ShaderLightVolumeSingleType<T> f =
       this.newShaderWithVerifier(g, sources, pool);
@@ -180,15 +186,17 @@ public abstract class R2ShaderLightVolumeSingleContract<
       g.getTextures();
     final JCGLShadersType g_sh =
       g.getShaders();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(32, g_tex.textureGetUnits());
-    final R2TextureUnitContextParentType tr =
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr =
       ta.getRootContext();
 
     final R2GeometryBufferType gbuffer =
       R2ShaderLightVolumeSingleContract.newGeometryBuffer(g_fb, g_tex, tr);
 
-    final R2TextureUnitContextType tc = tr.unitContextNew();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     final R2ShaderLightVolumeSingleType<T> f =
       this.newShaderWithVerifier(g, sources, pool);

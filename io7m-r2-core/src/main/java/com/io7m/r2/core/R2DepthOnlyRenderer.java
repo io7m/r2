@@ -38,6 +38,8 @@ import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
 import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -93,7 +95,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
   @Override
   public void renderDepth(
     final R2DepthOnlyBufferUsableType dbuffer,
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2DepthInstancesType s)
   {
@@ -118,7 +120,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
   @Override
   public void renderDepthWithBoundBuffer(
     final AreaInclusiveUnsignedLType area,
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2DepthInstancesType s)
   {
@@ -179,8 +181,8 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
     private final JCGLRenderStateMutable render_state;
 
     private @Nullable R2MatricesObserverType         matrices;
-    private @Nullable R2TextureUnitContextParentType texture_context;
-    private @Nullable R2TextureUnitContextType       material_texture_context;
+    private @Nullable JCGLTextureUnitContextParentType texture_context;
+    private @Nullable JCGLTextureUnitContextType material_texture_context;
     private @Nullable R2MaterialDepthSingleType<?>  material_single;
     private @Nullable JCGLFaceSelection culling;
 

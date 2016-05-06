@@ -39,6 +39,8 @@ import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
 import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
@@ -58,10 +60,10 @@ import java.util.OptionalInt;
 public final class R2DepthVarianceRenderer implements
   R2DepthVarianceRendererType
 {
-  private final DepthConsumer          depth_consumer;
-  private final JCGLInterfaceGL33Type  g;
+  private final DepthConsumer depth_consumer;
+  private final JCGLInterfaceGL33Type g;
   private final JCGLClearSpecification clear;
-  private       boolean                deleted;
+  private boolean deleted;
 
   private R2DepthVarianceRenderer(final JCGLInterfaceGL33Type in_g)
   {
@@ -104,7 +106,7 @@ public final class R2DepthVarianceRenderer implements
   @Override
   public void renderDepthVariance(
     final R2DepthVarianceBufferUsableType dbuffer,
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2DepthInstancesType s)
   {
@@ -129,7 +131,7 @@ public final class R2DepthVarianceRenderer implements
   @Override
   public void renderDepthVarianceWithBoundBuffer(
     final AreaInclusiveUnsignedLType area,
-    final R2TextureUnitContextParentType uc,
+    final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
     final R2DepthInstancesType s)
   {
@@ -182,18 +184,18 @@ public final class R2DepthVarianceRenderer implements
           JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE));
     }
 
-    private final JCGLInterfaceGL33Type  g33;
-    private final JCGLShadersType        shaders;
-    private final JCGLTexturesType       textures;
-    private final JCGLArrayObjectsType   array_objects;
-    private final JCGLDrawType           draw;
+    private final JCGLInterfaceGL33Type g33;
+    private final JCGLShadersType shaders;
+    private final JCGLTexturesType textures;
+    private final JCGLArrayObjectsType array_objects;
+    private final JCGLDrawType draw;
     private final JCGLRenderStateMutable render_state;
 
-    private @Nullable R2MatricesObserverType         matrices;
-    private @Nullable R2TextureUnitContextParentType texture_context;
-    private @Nullable R2TextureUnitContextType       material_texture_context;
-    private @Nullable R2MaterialDepthSingleType<?>   material_single;
-    private @Nullable JCGLFaceSelection              culling;
+    private @Nullable R2MatricesObserverType matrices;
+    private @Nullable JCGLTextureUnitContextParentType texture_context;
+    private @Nullable JCGLTextureUnitContextType material_texture_context;
+    private @Nullable R2MaterialDepthSingleType<?> material_single;
+    private @Nullable JCGLFaceSelection culling;
 
     private DepthConsumer(
       final JCGLInterfaceGL33Type ig)

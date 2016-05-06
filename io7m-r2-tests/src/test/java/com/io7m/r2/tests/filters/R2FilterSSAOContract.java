@@ -22,6 +22,13 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.profiler.JCGLProfiling;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
+import com.io7m.jcanephora.profiler.JCGLProfilingType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
@@ -35,15 +42,8 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.r2.core.profiling.R2Profiling;
-import com.io7m.r2.core.profiling.R2ProfilingContextType;
-import com.io7m.r2.core.profiling.R2ProfilingFrameType;
-import com.io7m.r2.core.profiling.R2ProfilingType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
 import com.io7m.r2.filters.R2FilterSSAO;
@@ -72,10 +72,10 @@ public abstract class R2FilterSSAOContract extends R2JCGLContract
       R2IDPool.newPool();
     final JCGLTexturesType g_t =
       g.getTextures();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         8, g_t.textureGetUnits());
-    final R2TextureUnitContextParentType tc =
+    final JCGLTextureUnitContextParentType tc =
       ta.getRootContext();
     final R2TextureDefaultsType td =
       R2TextureDefaults.newDefaults(g.getTextures(), tc);
@@ -106,20 +106,20 @@ public abstract class R2FilterSSAOContract extends R2JCGLContract
       g.getFramebuffers();
     final JCGLTexturesType g_t =
       g.getTextures();
-    final R2TextureUnitAllocatorType ta =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         8, g_t.textureGetUnits());
-    final R2TextureUnitContextParentType tc =
+    final JCGLTextureUnitContextParentType tc =
       ta.getRootContext();
     final R2TextureDefaultsType td =
       R2TextureDefaults.newDefaults(g.getTextures(), tc);
     final R2UnitQuadType quad =
       R2UnitQuad.newUnitQuad(g);
-    final R2ProfilingType pro =
-      R2Profiling.newProfiling(g.getTimers());
-    final R2ProfilingFrameType pro_frame =
+    final JCGLProfilingType pro =
+      JCGLProfiling.newProfiling(g.getTimers());
+    final JCGLProfilingFrameType pro_frame =
       pro.startFrame();
-    final R2ProfilingContextType pro_root =
+    final JCGLProfilingContextType pro_root =
       pro_frame.getChildContext("main");
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(

@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 
 /**
  * Functions that allocate render targets.
@@ -45,7 +46,7 @@ public interface R2RenderTargetAllocatorFunctionType<
 
   T call(
     JCGLInterfaceGL33Type g,
-    R2TextureUnitContextParentType tc,
+    JCGLTextureUnitContextParentType tc,
     C context,
     D description);
 }

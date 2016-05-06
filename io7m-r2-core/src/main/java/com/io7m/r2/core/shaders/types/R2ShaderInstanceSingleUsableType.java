@@ -18,9 +18,9 @@ package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 /**
  * The type of usable shaders for rendering the surfaces of single instances.
@@ -64,7 +64,7 @@ public interface R2ShaderInstanceSingleUsableType<M>
   void onReceiveMaterialValues(
     JCGLTexturesType g_tex,
     JCGLShadersType g_sh,
-    R2TextureUnitContextMutableType tc,
+    JCGLTextureUnitContextMutableType tc,
     M values);
 
   /**

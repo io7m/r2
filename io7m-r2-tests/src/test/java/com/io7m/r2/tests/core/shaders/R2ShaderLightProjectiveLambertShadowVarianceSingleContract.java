@@ -24,6 +24,10 @@ import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLUsageHint;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2DepthPrecision;
 import com.io7m.r2.core.R2DepthVarianceBufferDescription;
 import com.io7m.r2.core.R2DepthVariancePrecision;
@@ -35,7 +39,6 @@ import com.io7m.r2.core.R2ProjectionMesh;
 import com.io7m.r2.core.R2ProjectionMeshType;
 import com.io7m.r2.core.R2ShadowDepthVariance;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
 import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
@@ -59,7 +62,7 @@ public abstract class R2ShaderLightProjectiveLambertShadowVarianceSingleContract
   protected final R2LightProjectiveWithShadowVarianceType newLight(
     final JCGLInterfaceGL33Type g,
     final R2IDPoolType pool,
-    final R2TextureUnitContextType uc,
+    final JCGLTextureUnitContextType uc,
     final R2TextureDefaultsType td)
   {
     final R2ProjectionMeshType pm =

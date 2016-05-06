@@ -20,10 +20,10 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 /**
  * A verifier for filter shaders; a type that verifies that a renderer has
@@ -40,8 +40,8 @@ public final class R2ShaderFilterVerifier<M> implements R2ShaderFilterType<M>
   };
 
   private final R2ShaderFilterType<M> shader;
-  private final StringBuilder         text;
-  private       State                 state;
+  private final StringBuilder text;
+  private State state;
 
   private R2ShaderFilterVerifier(
     final R2ShaderFilterType<M> in_shader)
@@ -128,7 +128,7 @@ public final class R2ShaderFilterVerifier<M> implements R2ShaderFilterType<M>
   public void onReceiveFilterValues(
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
-    final R2TextureUnitContextMutableType tc,
+    final JCGLTextureUnitContextMutableType tc,
     final M values)
   {
     R2ShaderVerifiers.checkStates(

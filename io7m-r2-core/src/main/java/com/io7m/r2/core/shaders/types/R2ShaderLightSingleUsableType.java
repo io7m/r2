@@ -20,10 +20,10 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2LightSingleReadableType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2TextureUnitContextMutableType;
 
 /**
  * The type of usable single-instance light shaders.
@@ -82,7 +82,7 @@ public interface R2ShaderLightSingleUsableType<
   void onReceiveValues(
     JCGLTexturesType g_tex,
     JCGLShadersType g_sh,
-    R2TextureUnitContextMutableType tc,
+    JCGLTextureUnitContextMutableType tc,
     AreaInclusiveUnsignedLType viewport,
     M values,
     R2MatricesObserverValuesType m);

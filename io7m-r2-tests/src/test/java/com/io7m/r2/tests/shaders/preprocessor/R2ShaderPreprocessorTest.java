@@ -27,7 +27,8 @@ public final class R2ShaderPreprocessorTest
 {
   @Rule public final ExpectedException expected = ExpectedException.none();
 
-  @Test public void testBadDirective()
+  @Test
+  public void testBadDirective()
     throws Exception
   {
     final R2ShaderPreprocessorType p =
@@ -38,7 +39,8 @@ public final class R2ShaderPreprocessorTest
     p.preprocessFile("/com/io7m/r2/tests/shaders/preprocessor/bad-directive.h");
   }
 
-  @Test public void testIncludeNonexistent()
+  @Test
+  public void testIncludeNonexistent()
     throws Exception
   {
     final R2ShaderPreprocessorType p =
@@ -49,7 +51,8 @@ public final class R2ShaderPreprocessorTest
     p.preprocessFile("/com/io7m/r2/tests/shaders/preprocessor/bad-include.h");
   }
 
-  @Test public void testVersion()
+  @Test
+  public void testVersion()
     throws Exception
   {
     final R2ShaderPreprocessorType p =

@@ -22,6 +22,10 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jpuddle.core.JPPoolHardLimitExceededException;
 import com.io7m.jpuddle.core.JPPoolObjectReturnException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescriptionType;
@@ -29,10 +33,6 @@ import com.io7m.r2.core.R2AmbientOcclusionBufferPool;
 import com.io7m.r2.core.R2AmbientOcclusionBufferType;
 import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
 import com.io7m.r2.core.R2RenderTargetPoolType;
-import com.io7m.r2.core.R2TextureUnitAllocator;
-import com.io7m.r2.core.R2TextureUnitAllocatorType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,10 +51,10 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
 
-    final R2TextureUnitAllocatorType tc =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType tc =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         8, g.getTextures().textureGetUnits());
-    final R2TextureUnitContextParentType tc_root =
+    final JCGLTextureUnitContextParentType tc_root =
       tc.getRootContext();
 
     final R2RenderTargetPoolType<
@@ -75,10 +75,10 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
 
-    final R2TextureUnitAllocatorType tc =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType tc =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         8, g.getTextures().textureGetUnits());
-    final R2TextureUnitContextParentType tc_root =
+    final JCGLTextureUnitContextParentType tc_root =
       tc.getRootContext();
 
     final R2RenderTargetPoolType<
@@ -118,12 +118,12 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
 
-    final R2TextureUnitAllocatorType tc =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType tc =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         8, g.getTextures().textureGetUnits());
-    final R2TextureUnitContextParentType tc_root =
+    final JCGLTextureUnitContextParentType tc_root =
       tc.getRootContext();
-    final R2TextureUnitContextType tc_alloc =
+    final JCGLTextureUnitContextType tc_alloc =
       tc_root.unitContextNew();
 
     final R2RenderTargetPoolType<
@@ -161,12 +161,12 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
 
-    final R2TextureUnitAllocatorType tc =
-      R2TextureUnitAllocator.newAllocatorWithStack(
+    final JCGLTextureUnitAllocatorType tc =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
         8, g.getTextures().textureGetUnits());
 
-    final R2TextureUnitContextParentType tc_root = tc.getRootContext();
-    final R2TextureUnitContextType tc_alloc = tc_root.unitContextNew();
+    final JCGLTextureUnitContextParentType tc_root = tc.getRootContext();
+    final JCGLTextureUnitContextType tc_alloc = tc_root.unitContextNew();
 
     final R2RenderTargetPoolType<
       R2AmbientOcclusionBufferDescriptionType,

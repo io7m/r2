@@ -18,10 +18,13 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2LightBufferDescriptionType;
 import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2LightBuffers;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
 
 public abstract class R2LightBuffersContract extends R2LightBufferContract
 {
@@ -29,7 +32,7 @@ public abstract class R2LightBuffersContract extends R2LightBufferContract
   protected final R2LightBufferType newLightBuffer(
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_tex,
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2LightBufferDescriptionType desc)
   {
     return R2LightBuffers.newLightBuffer(g_fb, g_tex, tc, desc);

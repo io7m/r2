@@ -18,5 +18,6 @@
  * Shader types.
  */
 
-@com.io7m.jnull.NonNullByDefault package com.io7m.r2.core.shaders.types;
+@com.io7m.jnull.NonNullByDefault
+package com.io7m.r2.core.shaders.types;
 

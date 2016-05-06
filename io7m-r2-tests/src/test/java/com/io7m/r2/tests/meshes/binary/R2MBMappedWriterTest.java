@@ -38,7 +38,8 @@ public final class R2MBMappedWriterTest extends R2MBWriterContract
     LOG = LoggerFactory.getLogger(R2MBMappedWriterTest.class);
   }
 
-  @Override protected R2MBWriterType getWriter(
+  @Override
+  protected R2MBWriterType getWriter(
     final Path p,
     final R2MeshTangentsType m)
     throws IOException
@@ -46,7 +47,8 @@ public final class R2MBMappedWriterTest extends R2MBWriterContract
     return R2MBMappedWriter.newWriterForPath(p, m);
   }
 
-  @Override protected R2MBReaderType getReader(
+  @Override
+  protected R2MBReaderType getReader(
     final Path p,
     final R2MeshParserInterleavedListenerType listener)
     throws IOException

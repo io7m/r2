@@ -18,6 +18,7 @@ package com.io7m.r2.core;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jpuddle.core.JPPoolSynchronous;
 import com.io7m.jpuddle.core.JPPoolSynchronousType;
@@ -53,13 +54,13 @@ public final class R2DepthVarianceBufferPool implements
     R2DepthVarianceBufferDescriptionType,
     R2DepthVarianceBufferType,
     R2DepthVarianceBufferUsableType,
-    R2TextureUnitContextParentType> actual;
+    JCGLTextureUnitContextParentType> actual;
 
   private R2DepthVarianceBufferPool(
     final JPPoolSynchronousType<R2DepthVarianceBufferDescriptionType,
       R2DepthVarianceBufferType,
       R2DepthVarianceBufferUsableType,
-      R2TextureUnitContextParentType> in_actual)
+      JCGLTextureUnitContextParentType> in_actual)
   {
     this.actual = NullCheck.notNull(in_actual);
   }
@@ -86,7 +87,7 @@ public final class R2DepthVarianceBufferPool implements
 
   @Override
   public R2DepthVarianceBufferUsableType get(
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2DepthVarianceBufferDescriptionType desc)
   {
     NullCheck.notNull(tc);
@@ -96,7 +97,7 @@ public final class R2DepthVarianceBufferPool implements
 
   @Override
   public void returnValue(
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2DepthVarianceBufferUsableType target)
   {
     NullCheck.notNull(tc);
@@ -105,7 +106,7 @@ public final class R2DepthVarianceBufferPool implements
   }
 
   @Override
-  public void delete(final R2TextureUnitContextParentType c)
+  public void delete(final JCGLTextureUnitContextParentType c)
   {
     this.actual.deleteUnsafely(c);
   }
@@ -119,7 +120,7 @@ public final class R2DepthVarianceBufferPool implements
   private static final class Listener implements JPPoolableListenerType<
     R2DepthVarianceBufferDescriptionType,
     R2DepthVarianceBufferType,
-    R2TextureUnitContextParentType>
+    JCGLTextureUnitContextParentType>
   {
     private final JCGLInterfaceGL33Type g;
 
@@ -130,7 +131,7 @@ public final class R2DepthVarianceBufferPool implements
 
     @Override
     public long onEstimateSize(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2DepthVarianceBufferDescriptionType key)
     {
       final AreaInclusiveUnsignedLType area = key.getArea();
@@ -141,7 +142,7 @@ public final class R2DepthVarianceBufferPool implements
 
     @Override
     public R2DepthVarianceBufferType onCreate(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2DepthVarianceBufferDescriptionType key)
     {
       return R2DepthVarianceBuffer.newDepthVarianceBuffer(
@@ -153,7 +154,7 @@ public final class R2DepthVarianceBufferPool implements
 
     @Override
     public long onGetSize(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2DepthVarianceBufferDescriptionType key,
       final R2DepthVarianceBufferType value)
     {
@@ -162,7 +163,7 @@ public final class R2DepthVarianceBufferPool implements
 
     @Override
     public void onReuse(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2DepthVarianceBufferDescriptionType key,
       final R2DepthVarianceBufferType value)
     {
@@ -173,7 +174,7 @@ public final class R2DepthVarianceBufferPool implements
 
     @Override
     public void onDelete(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2DepthVarianceBufferDescriptionType key,
       final R2DepthVarianceBufferType value)
     {
@@ -186,7 +187,7 @@ public final class R2DepthVarianceBufferPool implements
 
     @Override
     public void onError(
-      final R2TextureUnitContextParentType tc,
+      final JCGLTextureUnitContextParentType tc,
       final R2DepthVarianceBufferDescriptionType key,
       final Optional<R2DepthVarianceBufferType> value,
       final Throwable e)

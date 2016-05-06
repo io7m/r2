@@ -16,6 +16,7 @@
 
 package com.io7m.r2.filters;
 
+import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTexture2DUpdateType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
@@ -27,15 +28,15 @@ import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.cursors.JCGLRGB8ByteBuffered;
 import com.io7m.jcanephora.cursors.JCGLRGB8Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jpra.runtime.java.JPRACursor2DByteBufferedUnchecked;
 import com.io7m.jpra.runtime.java.JPRACursor2DType;
 import com.io7m.junreachable.UnimplementedCodeException;
+import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
-import com.io7m.r2.core.R2TextureUnitContextParentType;
-import com.io7m.r2.core.R2TextureUnitContextType;
-
 /**
  * Functions for allocating noise textures for rotating SSAO kernels.
  */
@@ -58,16 +59,16 @@ public final class R2SSAONoiseTexture
 
   public static R2Texture2DType newNoiseTexture(
     final JCGLTexturesType gt,
-    final R2TextureUnitContextParentType tc)
+    final JCGLTextureUnitContextParentType tc)
   {
     NullCheck.notNull(gt);
     NullCheck.notNull(tc);
 
-    final R2TextureUnitContextType cc = tc.unitContextNew();
+    final JCGLTextureUnitContextType cc = tc.unitContextNew();
     try {
       final long size = 64L;
 
-      final Pair<JCGLTextureUnitType, R2Texture2DType> p =
+      final Pair<JCGLTextureUnitType, JCGLTexture2DType> p =
         cc.unitContextAllocateTexture2D(
           gt,
           size,
@@ -77,7 +78,7 @@ public final class R2SSAONoiseTexture
           JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
-      final R2Texture2DType rt = p.getRight();
+      final R2Texture2DType rt = R2Texture2DStatic.of(p.getRight());
 
       final JCGLTexture2DUpdateType tu =
         JCGLTextureUpdates.newUpdateReplacingAll2D(rt.get());

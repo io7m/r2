@@ -47,10 +47,10 @@ import com.io7m.r2.core.R2RendererExceptionInstanceAlreadyActive;
 import com.io7m.r2.core.R2RendererExceptionObserverAlreadyActive;
 import com.io7m.r2.core.R2RendererExceptionProjectiveAlreadyActive;
 import com.io7m.r2.core.R2Texture2DStatic;
-import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformOT;
 import com.io7m.r2.core.R2TransformOTType;
 import com.io7m.r2.core.R2TransformReadableType;
+import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -63,6 +63,41 @@ import java.util.List;
 public abstract class R2MatricesContract
 {
   @Rule public ExpectedException expected = ExpectedException.none();
+
+  private static R2LightProjectiveWithoutShadowType newProjective(
+    final JCGLInterfaceGL33Type c,
+    final JCGLProjectionMatricesType pm,
+    final R2IDPoolType id_pool)
+  {
+    final JCGLTexture2DType pt =
+      R2MatricesContract.newProjectionTexture(c);
+    final R2ProjectionFrustum pp =
+      R2ProjectionFrustum.newFrustum(pm);
+    final R2ProjectionMeshType pmesh =
+      R2ProjectionMesh.newMesh(
+        c,
+        pp,
+        JCGLUsageHint.USAGE_STATIC_DRAW,
+        JCGLUsageHint.USAGE_STATIC_DRAW);
+    return R2LightProjectiveWithoutShadow.newLight(
+      pmesh,
+      R2Texture2DStatic.of(pt),
+      id_pool);
+  }
+
+  private static JCGLTexture2DType newProjectionTexture(
+    final JCGLInterfaceGL33Type c)
+  {
+    final JCGLTexturesType gt = c.getTextures();
+    final List<JCGLTextureUnitType> gu = gt.textureGetUnits();
+    return gt.texture2DAllocate(
+      gu.get(0), 64L, 64L,
+      JCGLTextureFormat.TEXTURE_FORMAT_RGB_8_3BPP,
+      JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+      JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
+      JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
+      JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+  }
 
   protected abstract R2MatricesType newMatrices();
 
@@ -214,7 +249,8 @@ public abstract class R2MatricesContract
   }
 
   @Test
-  public final void testMatricesObserverProjectiveCalled() throws Exception
+  public final void testMatricesObserverProjectiveCalled()
+    throws Exception
   {
     final JCGLInterfaceGL33Type c = R2TestUtilities.getFakeGL();
     final R2IDPoolType id_pool = R2IDPool.newPool();
@@ -239,41 +275,6 @@ public abstract class R2MatricesContract
         mm.withProjectiveLight(lp, Integer.valueOf(23), (mp, u1) -> u1));
 
     Assert.assertEquals(Integer.valueOf(23), r);
-  }
-
-  private static R2LightProjectiveWithoutShadowType newProjective(
-    final JCGLInterfaceGL33Type c,
-    final JCGLProjectionMatricesType pm,
-    final R2IDPoolType id_pool)
-  {
-    final JCGLTexture2DType pt =
-      R2MatricesContract.newProjectionTexture(c);
-    final R2ProjectionFrustum pp =
-      R2ProjectionFrustum.newFrustum(pm);
-    final R2ProjectionMeshType pmesh =
-      R2ProjectionMesh.newMesh(
-        c,
-        pp,
-        JCGLUsageHint.USAGE_STATIC_DRAW,
-        JCGLUsageHint.USAGE_STATIC_DRAW);
-    return R2LightProjectiveWithoutShadow.newLight(
-      pmesh,
-      R2Texture2DStatic.of(pt),
-      id_pool);
-  }
-
-  private static JCGLTexture2DType newProjectionTexture(
-    final JCGLInterfaceGL33Type c)
-  {
-    final JCGLTexturesType gt = c.getTextures();
-    final List<JCGLTextureUnitType> gu = gt.textureGetUnits();
-    return gt.texture2DAllocate(
-      gu.get(0), 64L, 64L,
-      JCGLTextureFormat.TEXTURE_FORMAT_RGB_8_3BPP,
-      JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
-      JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-      JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
-      JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
   }
 
   @Test

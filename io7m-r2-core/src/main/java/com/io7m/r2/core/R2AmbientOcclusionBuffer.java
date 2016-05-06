@@ -23,6 +23,7 @@ import com.io7m.jcanephora.core.JCGLFramebufferColorAttachmentPointType;
 import com.io7m.jcanephora.core.JCGLFramebufferDrawBufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
+import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
@@ -40,6 +41,8 @@ import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorI4F;
@@ -113,7 +116,7 @@ public final class R2AmbientOcclusionBuffer implements
   public static R2AmbientOcclusionBufferType newAmbientOcclusionBuffer(
     final JCGLFramebuffersType g_fb,
     final JCGLTexturesType g_t,
-    final R2TextureUnitContextParentType tc,
+    final JCGLTextureUnitContextParentType tc,
     final R2AmbientOcclusionBufferDescriptionType d)
   {
     final List<JCGLFramebufferColorAttachmentPointType> points =
@@ -125,9 +128,9 @@ public final class R2AmbientOcclusionBuffer implements
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
-    final R2TextureUnitContextType cc = tc.unitContextNewWithReserved(1);
+    final JCGLTextureUnitContextType cc = tc.unitContextNewWithReserved(1);
     try {
-      final Pair<JCGLTextureUnitType, R2Texture2DType> p_occ =
+      final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_occ =
         cc.unitContextAllocateTexture2D(
           g_t,
           range_x.getInterval(),
@@ -138,7 +141,7 @@ public final class R2AmbientOcclusionBuffer implements
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      final R2Texture2DType rt_occ = p_occ.getRight();
+      final R2Texture2DType rt_occ = R2Texture2DStatic.of(p_occ.getRight());
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
       fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_occ.get());
 

@@ -16,6 +16,8 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+
 /**
  * The type of render target pools.
  *
@@ -31,7 +33,7 @@ public interface R2RenderTargetPoolUsableType<
    * <p>Get a render target from the pool, allocating a new one if necessary.
    * The returned render target is guaranteed to be different from any other
    * that has been returned from this call and not yet returned with {@link
-   * #returnValue(R2TextureUnitContextParentType, R2RenderTargetUsableType)}
+   * #returnValue(JCGLTextureUnitContextParentType, R2RenderTargetUsableType)}
    * .</p>
    *
    * @param tc   A texture unit context
@@ -39,22 +41,22 @@ public interface R2RenderTargetPoolUsableType<
    *
    * @return A (possibly new) render target that must be returned after use
    *
-   * @see #returnValue(R2TextureUnitContextParentType, R2RenderTargetUsableType)
+   * @see #returnValue(JCGLTextureUnitContextParentType, R2RenderTargetUsableType)
    */
 
   T get(
-    R2TextureUnitContextParentType tc,
+    JCGLTextureUnitContextParentType tc,
     D desc);
 
   /**
    * Return a render target that has previously been fetched via {@link
-   * #get(R2TextureUnitContextParentType, R2RenderTargetDescriptionType)}.
+   * #get(JCGLTextureUnitContextParentType, R2RenderTargetDescriptionType)}.
    *
    * @param tc     A texture unit context
    * @param target A render target
    */
 
   void returnValue(
-    R2TextureUnitContextParentType tc,
+    JCGLTextureUnitContextParentType tc,
     T target);
 }

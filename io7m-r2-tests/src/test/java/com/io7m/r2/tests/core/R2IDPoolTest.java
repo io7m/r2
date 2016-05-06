@@ -40,7 +40,8 @@ public final class R2IDPoolTest
   }
 
   @Test
-  public void testOverflow() throws Exception
+  public void testOverflow()
+    throws Exception
   {
     final R2IDPoolType p = R2IDPool.newPool();
 
