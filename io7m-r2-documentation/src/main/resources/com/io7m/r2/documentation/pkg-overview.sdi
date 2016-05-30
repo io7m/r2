@@ -1,0 +1,5 @@
+[section [title Orientation] [id pkg.orientation]]
+[subsection [title Overview]]
+[paragraph]
+The [term [type package] r2] package provides a minimalist deferred rendering
+system.

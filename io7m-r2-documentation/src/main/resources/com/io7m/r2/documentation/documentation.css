@@ -53,6 +53,50 @@
   overflow:       auto;
 }
 
+.monospace
+{
+  font-family: monospace;
+}
+.italic
+{
+  font-style: italic;
+}
+.bold
+{
+  font-weight: bold;
+}
+
+.example_3x3 td,
+.example_3x3 th
+{
+  padding-right: 3.0em;
+  font-family:   monospace;
+  font-size:     9pt;
+}
+
+.comparison_good
+{
+  background-color: #ccffcc;
+}
+
+.comparison_neutral
+{
+  background-color: #ffffcc;
+}
+
+.comparison_bad
+{
+  background-color: #ffcccc;
+}
+
+.comparison td, .comparison th
+{
+  padding-right:  1.0em;
+  font-family:    monospace;
+  font-size:      9pt;
+  vertical-align: top;
+}
+
 .dependencies table td
 {
   padding-right: 3.0em;
