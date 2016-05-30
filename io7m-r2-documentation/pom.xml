@@ -58,33 +58,23 @@
 
       <!-- Produce documentation -->
       <plugin>
-        <groupId>com.io7m.jstructural</groupId>
-        <artifactId>io7m-jstructural-maven-plugin</artifactId>
+        <groupId>com.io7m.kstructural</groupId>
+        <artifactId>io7m-kstructural-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>make-documentation-single</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
-              <goal>transform</goal>
+              <goal>compileXHTML</goal>
             </goals>
             <configuration>
-              <documentFile>${project.build.directory}/documentation/documentation.xml</documentFile>
+              <documentFile>${project.build.directory}/documentation/documentation.sd</documentFile>
               <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
-              <brandFile>${project.build.directory}/documentation/brand.xml</brandFile>
-              <pagination>XHTML_SINGLE</pagination>
-            </configuration>
-          </execution>
-          <execution>
-            <id>make-documentation-multi</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>transform</goal>
-            </goals>
-            <configuration>
-              <documentFile>${project.build.directory}/documentation/documentation.xml</documentFile>
-              <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
-              <brandFile>${project.build.directory}/documentation/brand.xml</brandFile>
-              <pagination>XHTML_MULTI</pagination>
+              <brandTopFile>${project.build.directory}/documentation/brand.xml</brandTopFile>
+              <pagination>XHTML_SINGLE_PAGE</pagination>
+              <cssExtraStyles>
+                <param>documentation.css</param>
+              </cssExtraStyles>
             </configuration>
           </execution>
         </executions>
