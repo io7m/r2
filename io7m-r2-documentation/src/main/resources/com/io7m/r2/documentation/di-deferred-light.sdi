@@ -1,0 +1,8 @@
+[section [title Deferred Rendering: Lighting] [id di.deferred.light]]
+[subsection [title Overview] [id di.deferred.light.overview]]
+[paragraph]
+Lighting.
+
+[subsection [title Light Buffer] [id di.deferred.light.lbuffer]]
+[paragraph]
+Light buffer.

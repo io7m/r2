@@ -1,0 +1,37 @@
+[section [title Filter: Emission] [id di.emission]]
+[subsection [title Overview] [id di.emission.overview]]
+[paragraph]
+An [term [type term] emissive] surface is a surface that appears to emit light.
+The [term [type package] r2] package offers emission as a visual effect
+implemented as a filter. An optional [term [type term] glow] effect is provided
+to allow emissive surfaces to appear to have a configurable
+(link-ext (target "http://en.wikipedia.org/wiki/Halo_%28optical_phenomenon%29")
+aura).
+
+[paragraph]
+The emission effect is obviously not physically accurate - surfaces do not
+really emit light. The user is expected to make intelligent use of the standard
+(link (target di.deferred.light) light sources) to provide lighting, and to use
+the emission effect to complement them.
+
+[formal-item [title Emission]]
+[image [target "images/emission.png"] Emission]
+
+[subsection [title Algorithm] [id di.emission.algorithm]]
+[paragraph]
+The plain emission effect without [term [type term] glow] is implemented as
+trivially as possible by sampling the
+(link (target di.deferred.geom.gbuffer) emission) value from a rendered scene's
+[term [type term] geometry buffer], multiplying it by the
+[term [type term] albedo] color and then simply adding the result to the
+current pixel color.
+
+[paragraph]
+The emission effect with [term [type term] glow] is implemented similarly,
+except that the [term [type expression] albedo * emission] term is stored in a
+separate image, and that image is blurred with a configurable
+[term [type term] box blur] before being additively blended over the original
+scene. Higher levels of blurring can give the impression of a dusty atmosphere.
+
+[formal-item [title "Emission (Glow)"]]
+[image [target "images/emission_glow.png"] "Emission (Glow)"]

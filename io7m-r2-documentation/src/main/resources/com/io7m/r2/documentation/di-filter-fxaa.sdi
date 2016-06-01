@@ -1,0 +1,47 @@
+[section [title Filter: FXAA] [id di.fxaa]]
+[subsection [title Overview] [id di.fxaa.overview]]
+[paragraph]
+[term [type term] Fast Approximate Anti-Aliasing] is a simple algorithm that
+attempts to detect and smooth [term [type term] aliasing] in a color image. The
+algorithm works with only the color components of the image in question; no
+other per-pixel information or knowledge of the scene is required.
+
+[formal-item [title Without FXAA]]
+[image [target "images/fxaa_without.png"] Without FXAA]
+
+[formal-item [title With FXAA]]
+[image [target "images/fxaa_with.png"] With FXAA]
+
+[subsection [title Implementation] [id di.fxaa.implementation]]
+[paragraph]
+Unfortunately, information on the FXAA algorithm is sparse, and much of it has
+been lost to time. The original FXAA algorithm was published in a whitepaper by
+NVIDIA [footnote-ref di.fxaa.whitepaper] and was severely optimized by the
+author on the suggestions of many mostly anonymous contributors. The latest
+published version of the algorithm "(version" "3.11)" bears little resemblance
+to the original and no documentation exists on the changes. The 3.11 version of
+the algorithm is constructed from a maze of C preprocessor macros, and many
+different variations of the algorithm are possible based on how the parameter
+macros are defined.
+
+[paragraph]
+The implementation of FXAA in the [term [type package] r2] package is a set
+of GLSL expansions of the public domain [footnote-ref di.fxaa.publicdomain]
+[term [type file] Fxaa3_11.h] header with a few minor modifications "(unused"
+parameter "removals)." Specifically, the [term [type term] PC] algorithm is
+used, with quality presets [term [type expression] "(10, 15, 20, 25, 29, 39)"] .
+
+[paragraph]
+The algorithm is applied via the use of the
+(link-ext (target "apidocs/com/io7m/r2/filters/R2FilterFXAA.html")
+R2FilterFXAA) filter.
+
+[footnote [id di.fxaa.whitepaper]]
+(link-ext
+(target
+"http://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf")
+http://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf)
+
+[footnote [id di.fxaa.publicdomain]]
+The included [term [type file] Fxaa3_11.h] file bears an NVIDIA copyright, but
+was placed into the public domain by the original author.

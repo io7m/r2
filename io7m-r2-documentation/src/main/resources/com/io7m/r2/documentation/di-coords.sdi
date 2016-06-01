@@ -171,7 +171,7 @@ and [term [type expression] mv] is then passed directly to the renderer's
 vertex shaders to transform the current object's vertices
 [footnote-ref di.coords.eye.efficient].
 
-[paragraph]
+[paragraph [id di.coords.eye.normal-matrix]]
 Additionally, as the [term [type package] r2] package does all lighting in
 eye space, it's necessary to transform the object space
 [term [type term] normal vectors] given in mesh data to eye space. However,

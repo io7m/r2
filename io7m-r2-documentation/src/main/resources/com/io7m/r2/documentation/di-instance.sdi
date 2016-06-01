@@ -1,0 +1,77 @@
+[section [title Instances] [id di.instances]]
+[subsection [title Overview] [id di.instances.overview]]
+[paragraph]
+An [term [type term] instance] is a renderable object. There are several types
+of instances available in the [term [type package] r2] package:
+[link [target di.instances.single] single],
+[link [target di.instances.batched] batched],
+and [link [target di.instances.billboarded] billboarded].
+
+[subsection [title Single] [id di.instances.single]]
+[paragraph]
+A [term [type term] single] instance is the simplest type of instance
+available in the [term [type package] r2] package. A [term [type term] single]
+instance is simply a pair [term [type expression] "(m, t)"], where
+[term [type expression] "m"] is a [link [target di.meshes] mesh], and
+[term [type expression] "t"] is a [link [target di.transforms] transform]
+capable of transforming the [link [target di.coords.object] object space]
+coordinates of the vertices contained within [term [type expression] "m"] to
+[link [target di.coords.world] world space].
+
+[subsection [title Batched] [id di.instances.batched]]
+[paragraph]
+A [term [type term] batched] instance represents a group of "(identical)"
+renderable objects. The reason for the existence of
+[term [type term] batched] instances is simple efficiency: On modern
+rendering hardware, rendering [term [type expression] n]
+[term [type term] single] instances means submitting
+[term [type expression] n] [term [type term] draw calls] to the GPU. As
+[term [type expression] n] becomes increasingly large, the overhead of the
+large number of draw calls becomes a bottleneck for rendering performance. A
+[term [type term] batched] instance of size [term [type expression] m] allows
+for rendering a given mesh [term [type expression] m] times in a single
+draw call.
+
+[paragraph]
+A [term [type term] batched] instance of size
+[term [type expression] n] is a 3-tuple [term [type expression] "(m, b, t)"],
+where [term [type expression] "m"] is a [link [target di.meshes] mesh],
+[term [type expression] "b"] is a buffer of [term [type expression] n]
+[link [target di.meshes.attributes.batched] 4x4 matrices]
+allocated on the GPU, and [term [type expression] t] is an array of
+[term [type expression] n] [link [target di.transforms] transforms] allocated
+on the CPU. For each [term [type expression] "i"] where
+[term [type expression] "0 <= i < n"],
+[term [type expression] "b[i]"] is the 4x4 model matrix produced from
+[term [type expression] "t[i]"]. The contents of [term [type expression] "b"]
+are typically recalculated and uploaded to the GPU once per rendering frame.
+
+[subsection [title Billboarded] [id di.instances.billboarded]]
+[paragraph]
+A [term [type term] billboarded] instance is a further specialization of
+[term [type term] batched] instances. [term [type term] Billboarding] is
+the name given to a rendering technique where instead of rendering full 3D
+objects, simple 2D images of those objects are rendered instead using
+flat rectangles that are arranged such that they are always facing directly
+towards the observer.
+
+[formal-item [title Billboarded Render]]
+[image [target "images/billboard_render.png"] Billboarding]
+
+[formal-item [title Billboarded Wireframe]]
+[image [target "images/billboard_wire.png"] Billboarding in wireframe view]
+
+[formal-item [title Billboarded Wireframe "(Side)"]]
+[image [target "images/billboard_wire_side.png"] Billboarding in wireframe side view]
+
+[paragraph]
+A [term [type term] billboarded] instance of size
+[term [type expression] n] is a pair [term [type expression] "(m, p)"],
+where [term [type expression] "m"] is a [link [target di.meshes] mesh]
+[footnote-ref di.instances.unit_quad], and
+[term [type expression] "p"] is a buffer of [term [type expression] n]
+[link [target di.coords.world] world space]
+positions allocated on the GPU.
+
+[footnote [id di.instances.unit_quad]]
+Typically a simple two-polygon [term [type term] unit quad].

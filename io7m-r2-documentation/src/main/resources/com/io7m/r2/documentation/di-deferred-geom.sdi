@@ -1,0 +1,148 @@
+[section [title Deferred Rendering: Geometry] [id di.deferred.geom]]
+[subsection [title Overview] [id di.deferred.geom.overview]]
+[paragraph]
+The first step in [term [type term] deferred rendering] involves rendering
+all opaque instances in the current scene to a
+[link [target di.deferred.geom.gbuffer] geometry buffer]. This populated
+geometry buffer is then primarily used in later stages to calculate
+[link [target di.deferred.light] lighting], but can also be used to implement
+effects such as [link [target di.ssao] screen-space ambient occlusion] and
+[link [target di.emission] emission].
+
+[subsection [title Groups] [id di.deferred.geom.group]]
+[paragraph]
+[term [type term] Groups] are a simple means to constrain the contributions
+of sets of specific light sources to sets of specific rendered instances.
+Instances and lights are assigned a [term [type term] group number] in the
+range [term [type expression] "[1, 15]"]. If the programmer does not explicitly
+assign a number, the number [term [type constant] 1] is assigned automatically.
+During rendering, the group number of each rendered instance is written to
+the [link [target di.stencil] stencil buffer]. Then, when the light
+contribution is calculated for a light with group number
+[term [type expression] n], only those pixels that have a corresponding value
+of [term [type expression] n] in the stencil buffer are allowed to be modified.
+
+[subsection [title Geometry Buffer] [id di.deferred.geom.gbuffer]]
+[paragraph]
+The [term [type term] geometry buffer] is a
+[link [target di.render-target] render target] in which the surface
+attributes of objects are stored prior to being combined with the contents
+of a [link [target di.deferred.light.lbuffer] light buffer] to produce a
+lit image.
+
+[paragraph]
+One of the main implementation issues in any deferred renderer is deciding which
+surface attributes "(such" as position, albedo, normals, "etc)" to store and
+which to reconstruct. The more attributes that are stored, the less work is
+required during rendering to reconstruct those values. However, storing more
+attributes requires a larger geometry buffer and more memory bandwidth to
+actually populate that geometry buffer during rendering. The
+[term [type package] r2] package leans towards having a more compact geometry
+buffer and doing slightly more reconstruction work during rendering.
+
+[formal-item [title Geometry Buffer]]
+[image [target "images/gbuffer.png"] Geometry Buffer]
+
+[paragraph]
+The [term [type package] r2] package explicitly stores the albedo, normals,
+emission level, and specular color of surfaces. Additionally, the depth buffer
+is sampled to recover the depth of surfaces. The eye-space positions of surfaces
+are recovered via an efficient
+(link (target di.deferred-position-recon) position reconstruction) algorithm
+which uses the current viewing projection and
+[link [target di.log_depth] logarithmic depth] value as input. In order to
+reduce the amount of storage required, three-dimensional eye-space normal
+vectors are stored compressed as two [term [type expression] 16] half-precision
+floating point components via a simple
+(link (target di.deferred.geom.normal-compression) mapping). This means
+that only [term [type expression] 32] bits are required to store the vectors,
+and very little precision is lost. The precise format of the geometry buffer
+is as follows:
+
+[formal-item [title Geometry Buffer Format]]
+[image [target "images/gbuffer_format_0.png"] Geometry Buffer Format]
+
+[paragraph]
+The [term [type variable] albedo_r], [term [type variable] albedo_g], and
+[term [type variable] albedo_b] components correspond to the red, green, and
+blue components of the surface, respectively. The
+[term [type variable] emission] component refers to the surface
+emission level. The
+[term [type variable] normal_x] and [term [type variable] normal_y] components
+correspond to the two components of the
+(link (target di.deferred.geom.normal-compression) compressed surface normal)
+vector. The [term [type variable] specular_r],
+[term [type variable] specular_g], and [term [type variable] specular_b]
+components correspond to the red, green, and blue components of the surface
+specularity. Surfaces that will not receive specular highlights simply have
+[term [type expression] 0] for each component. The
+[term [type variable] specular_e] component holds the surface
+[term [type term] specular exponent] divided by [term [type expression] 256].
+
+[subsection [title Algorithm]]
+[paragraph]
+An informal description of the geometry rendering algorithm as implemented in
+the [term [type package] r2] package is as follows:
+
+[formal-item [title Geometry Rendering Overview]]
+[list-ordered
+  [item
+    Set the current [link [target di.render-target] render target] to
+    a geometry buffer [term [type expression] b].]
+  [item
+    Enable writing to the depth and stencil buffers, and enable stencil
+    testing. Enable depth testing such that only pixels with a depth less
+    than or equal to the current depth are touched.]
+  [item
+    For each [link [target di.deferred.geom.group] group]
+    [term [type expression] g]:
+    [list-ordered
+      [item
+        Configure stencil testing such that only pixels with the
+        [link [target di.stencil.allow_bit] allow bit] enabled are touched,
+        and configure stencil writing such that the index of
+        [term [type expression] g] is recorded in the stencil buffer.]
+      [item
+        For each instance [term [type expression] o] in
+        [term [type expression] g]:
+
+        [list-ordered
+          [item
+            Render the surface albedo, eye space normals, specular color,
+            and emission level of [term [type expression] o] into
+            [term [type expression] b].
+            [link [target di.normal-mapping] Normal mapping]
+            is performed during rendering,
+            and if [term [type expression] o] does not have specular highlights,
+            then a pure black "(zero intensity)" specular color is written.
+            Effects such as
+            [link [target di.environment-mapping] environment mapping]
+            are considered to be part of the surface albedo and so are
+            performed in this step.]]
+      ]
+    ]
+  ]
+]
+
+[subsection [title Normal Compression] [id di.deferred.geom.normal-compression]]
+[paragraph]
+The [term [type package] r2] package uses a
+(link-ext
+(target "http://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection")
+Lambert azimuthal equal-area projection) to store surface normal vectors in two
+components instead of three. This makes use of the fact that normalized vectors
+represent points on the unit sphere. The mapping from normal vectors to
+two-dimensional spheremap coordinates is given by
+[term [type function] compress]
+(link-ext (target "haskell/NormalCompress.hs") NormalCompress.hs):
+
+[formal-item [title Normal Compression]]
+[verbatim [include "haskell/NormalCompress.hs"]]
+
+[paragraph]
+The mapping from two-dimensional spheremap coordinates to normal vectors is
+given by [term [type function] decompress]
+(link-ext (target "haskell/NormalDecompress.hs") NormalDecompress.hs):
+
+[formal-item [title Normal Decompression]]
+[verbatim [include "haskell/NormalDecompress.hs"]]

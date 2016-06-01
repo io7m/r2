@@ -1,0 +1,20 @@
+[section [title Filter: Blur] [id di.blur]]
+[subsection [title Overview] [id di.blur.overview]]
+[paragraph]
+The [term [type package] r2] offers a set of simple box blurs for use on
+both color and
+(link (target di.shadow-mapping.variance) depth-variance) data,
+with the effect being used on the latter to soften the edges of shadows.
+
+[subsection [title Algorithm] [id di.blur.algorithm]]
+[paragraph]
+The implemented algorithm is a simple box blur separated into horizontal and
+vertical passes. The package also allows for scaling of the image prior to
+blurring, in order to use bilinear filtering during scaling to accentuate the
+blur effect. The following image shows a blur of size
+[term [type expression] 1.0] but with the image scaled to
+[term [type expression] 0.5] times its original size, the blur applied, and then
+the image scaled back up to the original size again with bilinear filtering:
+
+[formal-item [title Blur]]
+[image [target "images/blur.png"] Blur]

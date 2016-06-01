@@ -1,0 +1,20 @@
+[section [title Transforms] [id di.transforms]]
+[subsection [title Overview] [id di.transforms.overview]]
+[paragraph]
+The ultimate purpose of a [term [type term] transform] is to produce one or more
+matrices that can be combined with other matrices and then finally passed to a
+[term [type term] shader] . The shader uses these matrices to transform vertices
+and normal vectors during the rendering of objects.
+
+[paragraph]
+A transform is effectively responsible for producing a
+[term [type term] model matrix] that transforms positions in
+(link (target di.coords.object) object space) to
+(link (target di.coords.world) world space).
+
+[paragraph]
+In practical terms, a [term [type term] transform] is a matrix used to position,
+scale, and rotate (link (target di.instances) instances) in a
+scene. This is achieved by multiplying the matrix with the object space
+positions of all vertices of the mesh that makes up the instance during
+rendering.
