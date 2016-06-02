@@ -85,6 +85,10 @@ expressed as object-space coordinates:
 In other rendering systems, object space is sometimes referred to as
 [term [type term] local space], or [term [type term] model space].
 
+[paragraph]
+In the [term [type package] r2] package, object space is represented by the
+[link-ext [target "apidocs/com/io7m/r2/spaces/R2SpaceObjectType.html"] R2SpaceObjectType].
+
 [subsection [title World Space] [id di.coords.world]]
 [paragraph]
 In order to position objects in a scene, they must be assigned a
@@ -137,6 +141,10 @@ enough to be given to the GPU directly without risking imprecision issues, and
 therefore the simulator would essentially treat
 [term [type term] aircraft relative space] and [term [type package] r2]
 [term [type term] world space] as equivalent [footnote-ref di.coords.minecraft].
+
+[paragraph]
+In the [term [type package] r2] package, world space is represented by the
+[link-ext [target "apidocs/com/io7m/r2/spaces/R2SpaceWorldType.html"] R2SpaceWorldType].
 
 [subsection [title Eye Space] [id di.coords.eye]]
 [paragraph]
@@ -218,6 +226,10 @@ perform the same [term [type expression] "mv = v * m"] multiplication to
 produce mv for each vertex - yielding the exact same
 [term [type expression] mv] each time!
 
+[paragraph]
+In the [term [type package] r2] package, eye space is represented by the
+[link-ext [target "apidocs/com/io7m/r2/spaces/R2SpaceEyeType.html"] R2SpaceEyeType].
+
 [subsection [title Clip Space] [id di.coords.clip]]
 [paragraph]
 [term [type term] Clip space] is a homogeneous coordinate system in which
@@ -265,6 +277,10 @@ The projection matrix is passed, along with the
 renderer's vertex shaders. As is normal in OpenGL, the vertex shader produces
 clip space coordinates which are then used by the hardware rasterizer to
 produce color fragments onscreen.
+
+[paragraph]
+In the [term [type package] r2] package, clip space is represented by the
+[link-ext [target "apidocs/com/io7m/r2/spaces/R2SpaceClipType.html"] R2SpaceClipType].
 
 [footnote [id di.coords.clip.invert]]
 Because normalized device space is a left-handed system by default, with the

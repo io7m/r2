@@ -1,0 +1,9 @@
+[section [title Screen-Space Ambient Occlusion] [id di.ssao]]
+[subsection [title Overview] [id di.ssao.overview]]
+[paragraph]
+SSAO.
+
+[subsection [title Types] [id di.ssao.types]]
+[paragraph]
+In the [term [type package] r2] package, the SSAO effect is provided by the
+[link-ext [target "apidocs/com/io7m/r2/filters/R2FilterSSAO.html"] R2FilterSSAO] type.

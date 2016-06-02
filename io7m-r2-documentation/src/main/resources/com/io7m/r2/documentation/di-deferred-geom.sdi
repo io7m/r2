@@ -9,6 +9,11 @@ geometry buffer is then primarily used in later stages to calculate
 effects such as [link [target di.ssao] screen-space ambient occlusion] and
 [link [target di.emission] emission].
 
+[paragraph]
+In the [term [type package] r2] package, the primary implementation of the
+deferred geometry rendering algorithm is the
+[link-ext [target "apidocs/com/io7m/r2/core/R2GeometryRenderer.html"] R2GeometryRenderer] type.
+
 [subsection [title Groups] [id di.deferred.geom.group]]
 [paragraph]
 [term [type term] Groups] are a simple means to constrain the contributions
@@ -79,6 +84,10 @@ specularity. Surfaces that will not receive specular highlights simply have
 [term [type variable] specular_e] component holds the surface
 [term [type term] specular exponent] divided by [term [type expression] 256].
 
+[paragraph]
+In the [term [type package] r2] package, geometry buffers are instances of
+[link-ext [target "apidocs/com/io7m/r2/core/R2GeometryBufferType.html"] R2GeometryBufferType].
+
 [subsection [title Algorithm]]
 [paragraph]
 An informal description of the geometry rendering algorithm as implemented in
@@ -123,6 +132,45 @@ the [term [type package] r2] package is as follows:
     ]
   ]
 ]
+
+[subsection [title Ordering/Batching] [id di.deferred.geom.ordering]]
+[paragraph]
+Due to the use of depth testing, the geometry rendering algorithm is effectively
+order independent: Instances can be rendered in any order and the final image
+will always be the same. However, there are efficiency advantages in rendering
+instances in a particular order. The most efficient order of rendering is the
+one that minimizes internal OpenGL [term [type term] state changes]. NVIDIA's
+[link-ext [target http://media.steampowered.com/apps/steamdevdays/slides/beyondporting.pdf] Beyond Porting]
+presentation gives the relative cost of OpenGL state changes, from most
+expensive to least expensive, as [footnote-ref di.deferred.geom.ordering.perf]:
+
+[formal-item [title State changes]]
+[list-ordered
+  [item Render target changes: 60,000/second]
+  [item Program bindings: 300,000/second]
+  [item Texture bindings: 1,500,000/second]
+  [item Vertex format "(exact cost unspecified)"]
+  [item UBO bindings "(exact cost unspecified)"]
+  [item Vertex Bindings "(exact cost unspecified)"]
+  [item Uniform Updates: 10,000,000/second]]
+
+[paragraph]
+Therefore, it is beneficial to order rendering operations such that the most
+expensive state changes happen the least frequently.
+
+[paragraph]
+The [link-ext [target "apidocs/com/io7m/r2/core/R2SceneOpaquesType.html"] R2SceneOpaquesType]
+type provides a simple interface that allows the programmer to specify instances
+without worrying about ordering concerns. When all instances have been submitted,
+they will be delivered to a given consumer "(typically a geometry renderer)"
+via the [term [type function] opaquesExecute] method in the order that would be
+most efficient for rendering.
+
+[footnote [id di.deferred.geom.ordering.perf]]
+For some reason, the presentation does not specify a publication date. However,
+inspection of the presentation's metadata suggests that it was written in
+October 2014, so the numbers given are likely for reasonably high-end 2014-era
+hardware.
 
 [subsection [title Normal Compression] [id di.deferred.geom.normal-compression]]
 [paragraph]

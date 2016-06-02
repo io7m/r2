@@ -35,3 +35,8 @@ scene. Higher levels of blurring can give the impression of a dusty atmosphere.
 
 [formal-item [title "Emission (Glow)"]]
 [image [target "images/emission_glow.png"] "Emission (Glow)"]
+
+[subsection [title Types] [id di.emission.types]]
+[paragraph]
+In the [term [type package] r2] package, the emission effect is provided by the
+[link-ext [target "apidocs/com/io7m/r2/filters/R2FilterEmission.html"] R2FilterEmission] type.

@@ -3,6 +3,15 @@
 [paragraph]
 Lighting.
 
+[paragraph]
+In the [term [type package] r2] package, the primary implementation of the
+deferred light rendering algorithm is the
+[link-ext [target "apidocs/com/io7m/r2/core/R2LightRenderer.html"] R2LightRenderer] type.
+
 [subsection [title Light Buffer] [id di.deferred.light.lbuffer]]
 [paragraph]
 Light buffer.
+
+[paragraph]
+In the [term [type package] r2] package, geometry buffers are instances of
+[link-ext [target "apidocs/com/io7m/r2/core/R2LightBufferType.html"] R2LightBufferType].

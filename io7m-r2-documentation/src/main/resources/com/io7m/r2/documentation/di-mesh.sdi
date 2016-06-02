@@ -110,3 +110,9 @@ additional conventions:
 Naturally, as is standard with OpenGL, failing to associate the correct shader
 attributes with the correct vertex attributes results in silent failure and/or
 bizarre visual results.
+
+[subsection [title Types] [id di.meshes.types]]
+[paragraph]
+In the [term [type package] r2] package, the given attribute conventions are
+specified by the
+[link-ext [target "apidocs/com/io7m/r2/core/R2AttributeConventions.html"] R2AttributeConventions] type.

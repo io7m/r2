@@ -21,6 +21,6 @@
   [import "di-shadow-variance.sdi"]
   [import "di-envmap.sdi"]
   [import "di-gen-refraction.sdi"]
-  [import "di-ssao.sdi"]
+  [import "di-filter-ssao.sdi"]
   [import "di-filter-emission.sdi"]
   [import "di-filter-fxaa.sdi"]]
