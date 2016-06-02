@@ -13,7 +13,7 @@ simply for [link [target di.stencil] stencilling] are permitted to do.
 Instance shaders are most often exposed to the programmer via
 [link [target di.shaders.instance.material] materials].
 
-[subsection [title Overview] [id di.shaders.instance.material]]
+[subsection [title Materials] [id di.shaders.instance.material]]
 [paragraph]
 A [term [type term] material] is a pair [term [type expression] "(s, i, p)"] where
 [term [type expression] "p"] is a value of type [term [type expression] m] that
