@@ -106,6 +106,7 @@
 
 .platforms table td
 {
+  vertical-align: top;
   padding-right: 2.0em;
 }
 .platforms table tbody,
@@ -123,3 +124,11 @@
   font-family: monospace;
 }
 
+.shaders td,
+.shaders th
+{
+  vertical-align: top;
+  padding-right: 2.0em;
+  font-size:   8pt;
+  font-family: monospace;
+}

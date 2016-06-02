@@ -1,0 +1,7 @@
+[section [title Shaders: Light] [id di.shaders.light]]
+[subsection [title Overview] [id di.shaders.light.overview]]
+[paragraph]
+A [term [type term] light shader] is a shader used to render the contributions
+of a [link [target di.deferred.light] light source]. Light shaders in the
+[term [type package] r2] package are only used within the context of
+[link [target di.deferred] deferred rendering].

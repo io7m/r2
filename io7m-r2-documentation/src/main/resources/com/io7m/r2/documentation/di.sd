@@ -8,6 +8,8 @@
   [import "di-instance.sdi"]
   [import "di-render-target.sdi"]
   [import "di-shader.sdi"]
+  [import "di-shader-instance.sdi"]
+  [import "di-shader-light.sdi"]
   [import "di-stencil.sdi"]
   [import "di-lighting-directional.sdi"]
   [import "di-lighting-spherical.sdi"]

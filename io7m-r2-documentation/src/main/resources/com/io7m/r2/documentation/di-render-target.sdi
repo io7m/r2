@@ -1,7 +1,8 @@
 [section [title Render Targets] [id di.render-target]]
 [subsection [title Overview] [id di.render-target.overview]]
 [paragraph]
-Render targets.
+A [term [type term] render target] is a rectangular region of memory allocated
+on the GPU that can accept the results of a rendering operation.
 
 [subsection [title Types] [id di.render-target.types]]
 [paragraph]
