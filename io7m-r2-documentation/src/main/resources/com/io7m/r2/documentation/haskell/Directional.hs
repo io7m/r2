@@ -19,7 +19,7 @@ directional view n position light specular (Vector4f.V4 sr sg sb _) =
     light_color     = LightDirectional.color light
     light_intensity = LightDirectional.intensity light
     light_d         = LightDiffuse.diffuse stl n light_color light_intensity
-    light_s         = LightSpecular.specular stl view n light_color light_intensity specular
+    light_s         = LightSpecular.specularBlinnPhong stl view n light_color light_intensity specular
     lit_d           = Vector3f.mult3 (Vector3f.V3 sr sg sb) light_d
     lit_s           = Vector3f.add3 lit_d light_s
   in

@@ -23,10 +23,10 @@ spherical view n surface_position light specular (Vector4f.V4 sr sg sb _) =
     light_color     = LightSpherical.color light
     light_intensity = LightSpherical.intensity light
     light_d         = LightDiffuse.diffuse stl n light_color light_intensity
-    light_s         = LightSpecular.specular stl view n light_color light_intensity specular
+    light_s         = LightSpecular.specularBlinnPhong stl view n light_color light_intensity specular
     light_da        = Vector3f.scale light_d attenuation
     light_sa        = Vector3f.scale light_s attenuation
     lit_d           = Vector3f.mult3 (Vector3f.V3 sr sg sb) light_da
     lit_s           = Vector3f.add3 lit_d light_sa
-  in 
+  in
     lit_s

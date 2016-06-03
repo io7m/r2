@@ -1,4 +1,37 @@
 [section [title Lighting: Directional] [id di.lighting.directional]]
 [subsection [title Overview] [id di.lighting.directional.overview]]
 [paragraph]
-Directional lighting.
+[term [type term] Directional lighting] is the most trivial form of lighting
+provided by the [term [type package] r2] package. A directional light is a light
+that emits parallel rays of light in a given eye space
+[term [type term] direction]. It has a [term [type term] color] and an
+[term [type term] intensity], but does not have an [term [type term] origin]
+and therefore is not attenuated over distance. It does not cause objects to cast
+shadows.
+
+[formal-item [title Directional lighting]]
+[image [target "images/directional_diagram.png"] Directional lighting]
+
+[subsection [title Attenuation] [id di.lighting.directional.attenuation]]
+[paragraph]
+Directional lights do not have origins and cannot therefore be attenuated over
+distance.
+
+[subsection [title Application] [id di.lighting.directional.application]]
+[paragraph]
+The final light applied to the surface is given by
+[term [type function] directional]
+(link-ext (target "haskell/Directional.hs") "(Directional.hs)"), where
+[term [type variable] sr], [term [type variable] sg],
+[term [type variable] sb] are the red, green, and blue channels, respectively,
+of the surface being lit. Note that the surface-to-light vector
+[term [type variable] stl] is simply the negation of the light direction.
+
+[formal-item [title "Directional lighting (Application)"]]
+[verbatim [include "haskell/Directional.hs"]]
+
+[subsection [title Types] [id di.lighting.directional.types]]
+[paragraph]
+Directional lights are represented in the [term [type package] r2] package
+by the [link-ext [target "apidocs/com/io7m/r2/core/R2LightDirectionalScreenSingle.html"] R2LightDirectionalScreenSingle]
+type.

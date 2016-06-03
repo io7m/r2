@@ -1,4 +1,158 @@
 [section [title Lighting: Projective] [id di.lighting.projective]]
 [subsection [title Overview] [id di.lighting.projective.overview]]
 [paragraph]
-Projective lighting.
+A [term [type term] projective light] in the [term [type package] r2]
+package is a light that [term [type term] projects] " a" texture onto the
+scene from a given [term [type term] origin] specified in
+(link (target di.coords.eye) eye space) up to a given maximum
+[term [type term] radius]. Projective lights are the only types of lights in
+the [term [type package] r2] package that are able to project
+[term [type term] shadows].
+
+[formal-item [title Projective lighting]]
+[image [target "images/projective.png"] Projective lighting]
+
+[formal-item [title "Projective lighting (Texture)"]]
+[image [target "images/sunflower.png"] "Projective lighting (Texture)"]
+
+[subsection [title Algorithm] [id di.lighting.projective.algorithm]]
+[paragraph]
+At a basic level, a projective light performs the same operations that occur
+when an ordinary 3D position is projected onto the screen during rendering.
+During normal rendering, a point [term [type expression] p] given in
+(link (target di.coords.world) world space) is transformed to
+(link (target di.coords.eye) eye space) given the current camera's
+[term [type term] view matrix], and is then transformed to
+(link (target di.coords.clip) clip space) using the current camera's
+[term [type term] projection matrix]. During rendering of a scene lit by a
+projective light, a given point [term [type expression] q] in the scene is
+transformed back to [term [type term] world space] given the current camera's
+[term [type term] inverse view matrix], and is then transformed to
+[term [type term] eye space from the point of view of the light] "(subsequently"
+referred to as [term [type term] light eye space] ")" using the light's
+[term [type term] view matrix]. Finally, [term [type expression] q] is
+transformed to [term [type term] clip space from the point of view of the light]
+"(subsequently" referred to as [term [type term] light clip space] ")" using the
+light's [term [type term] projection matrix]. It should be noted "(in" order to
+indicate that there is nothing unusual about the light's view or projection
+"matrices)" that if the camera and light have the same position, orientation,
+scale, and projection, then the resulting transformed values of
+[term [type expression] q] and [term [type expression] p] are identical. The
+resulting transformed value of [term [type expression] q] is mapped from the
+range [term [type expression] "[(-1, -1, -1), (1, 1, 1)]"] to
+[term [type expression] "[(0, 0, 0), (1, 1, 1)]"] , and the resulting
+coordinates are used to retrieve a texel from the 2D texture associated with the
+light.
+
+[paragraph]
+Intuitively, an ordinary [term [type term] perspective projection] will cause
+the light to appear to take the shape of a [term [type term] frustum] :
+
+[formal-item [title "Projective lighting (Frustum)"]]
+[image [target "images/projective_frustum.png"] "Projective lighting (Frustum)"]
+
+[paragraph]
+There are two issues with the projective lighting algorithm that also have to be
+solved:
+(link (target di.lighting.projective.back-projection) back projection) and
+(link (target di.lighting.projective.clamping) clamping) .
+
+[subsection [title Back projection]
+[id di.lighting.projective.back-projection]]
+[paragraph]
+The (link (target di.lighting.projective.algorithm) algorithm) described
+above will produce a so-called [term [type term] dual] or
+[term [type term] back projection]. In other words, the texture will be
+projected along the view direction of the camera, but will also be projected
+along the [term [type term] negative] view direction
+[footnote-ref di.lighting.projective.back_clip]. The visual result is that it appears that
+there are two projective lights in the scene, oriented in opposite directions.
+As (link (target di.coords.clip) mentioned previously) , given the
+typical projection matrix, the [term [type expression] w] component of a given
+clip space position is the negation of the eye space [term [type expression] z]
+component. Because it is assumed that the observer is looking towards the
+negative [term [type expression] z] direction, all positions that are in front
+of the observer must have positive [term [type expression] w] components.
+Therefore, if [term [type expression] w] is negative, then the position is
+behind the observer. The standard fix for this problem is to check to see if the
+[term [type expression] w] component of the [term [type term] light-clip space]
+coordinate is negative, and simply return a pure black color "(indicating" no
+light "contribution)" rather than sampling from the projected texture.
+
+[footnote [id di.lighting.projective.back_clip]]
+The same issue occurs when performing ordinary rendering of points in a scene.
+The issue is solved there by clipping primitives based on their
+[term [type expression] w] component so that primitives that are "\"behind\""
+the observer are not rendered.
+
+[subsection [title Clamping] [id di.lighting.projective.clamping]]
+[paragraph]
+The (link (target di.lighting.projective.algorithm) algorithm) described
+above takes an arbitrary point in the scene and projects it from the point of
+view of the light. There is no guarantee that the point actually falls within
+the light's view frustum "(although" this is mitigated slightly by the
+[term [type package] r2] package's use of
+(link (target di.lighting.projective.back-projection.volume) light volumes)
+for deferred "rendering)," and therefore the calculated texture coordinates used
+to sample from the projected texture are not guaranteed to be in the range
+[term [type expression] "[(0, 0), (1, 1)]"] . In order to get the intended
+visual effect, the texture used must be set to [term [type term] clamp-to-edge]
+and have black pixels on all of the edges of the texture image, or
+[term [type term] clamp-to-border] with a black border color. Failing to do this
+can result in strange visual anomalies, as the texture will be unexpectedly
+repeated or smeared across the area outside of the intersection between the
+light volume and the receiving surface:
+
+[formal-item [title "Projective lighting (Correct, clamped)"]]
+[image [target "images/projective_clamped.png"]
+"Projective lighting (Correct, clamped)"]
+
+[formal-item [title "Projective lighting (Incorrect, not clamped)"]]
+[image [target "images/projective_not_clamped.png"]
+"Projective lighting (Incorrect, not clamped)"]
+
+[paragraph]
+The [term [type package] r2] package will raise an exception if a
+non-clamped texture is assigned to a projective light.
+
+[subsection [title Attenuation] [id di.lighting.projective.attenuation]]
+[paragraph]
+The light supports (link (target di.lighting.attenuation) attenuation) using
+the maximum range taken from the projection.
+
+[subsection [title Application] [id di.lighting.projective.application]]
+[paragraph]
+The final light applied to the surface is given by
+[term [type function] projective] in
+(link-ext (target "haskell/Projective.hs") Projective.hs), where
+[term [type variable] sr], [term [type variable] sg],
+[term [type variable] sb] are the red, green, and blue channels, respectively,
+of the surface being lit. The surface-to-light vector [term [type variable] stl]
+is calculated by normalizing the negation of the difference between the the
+current eye space [term [type variable] surface_position] and the eye space
+origin of the light.
+
+[formal-item [title "Projective lighting (Application)"]]
+[verbatim [include "haskell/Projective.hs"]]
+
+[paragraph]
+The given [term [type variable] shadow] factor is a value in the range
+[term [type expression] "[0, 1]"], where [term [type expression] 0] indicates
+that the lit point is fully in shadow for the current light, and
+[term [type expression] 1] indicates that the lit point is not in shadow. This
+is calculated for
+(link (target di.shadow-mapping.variance) variance) shadows and is assumed
+to be [term [type expression] 1] for lights without shadows. As can be seen, a
+value of [term [type expression] 0] has the effect of fully attenuating the
+light.
+
+[paragraph]
+The color denoted by [term [type variable] texture] is assumed to have been
+sampled from the projected texture. Assuming the eye space position being shaded
+[term [type expression] p], the matrix to get from eye space to light-clip
+space is given by The final light applied to the surface is given by
+[term [type function] projective_matrix] in
+(link-ext (target "haskell/ProjectiveMatrix.hs") ProjectiveMatrix.hs):
+
+[formal-item [title Projective matrix]]
+[verbatim [include "haskell/ProjectiveMatrix.hs"]]

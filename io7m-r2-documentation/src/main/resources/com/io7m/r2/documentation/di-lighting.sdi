@@ -1,8 +1,173 @@
 [section [title Lighting] [id di.lighting]]
 [subsection [title Overview] [id di.lighting.overview]]
 [paragraph]
-Lighting.
+The following sections of documentation attempt to describe the theory and
+implementation of [term [type term] lighting] in the
+[term [type package] r2] package. All lighting in the package is
+[term [type term] dynamic] - there is no support for precomputed lighting and
+all contributions from lights are recalculated every time a scene is rendered.
+Lighting is configured by adding instances of
+(link-ext (target "apidocs/com/io7m/r2/core/R2LightType.html") R2LightType)
+to a scene.
 
-[subsection [title Specular Lighting] [id di.lighting.specular]]
+[subsection [title Diffuse/Specular Terms] [id di.lighting.diffuse-specular]]
 [paragraph]
-Specular lighting.
+The light applied to a surface by a given light is divided into
+[term [type term] diffuse] and [term [type term] specular] terms
+[footnote-ref di.lighting.no_ambient]. The actual light applied to a surface is
+dependent upon the properties of the surface. Conceptually, the diffuse and
+specular terms are multiplied by the final color of the surface and summed. In
+practice, the materials applied to surfaces have control over how light is
+actually applied to the surface. For example, materials may include a
+[term [type term] specular map] which
+is used to manipulate the specular term as it is applied to the surface.
+Additionally, if a light supports [term [type term] attenuation], then the
+diffuse and specular terms are scaled by the attenuation factor prior to being
+applied.
+
+[paragraph [id di.lighting.diffuse]]
+The [term [type term] diffuse] term is modelled by
+(link-ext (target "http://en.wikipedia.org/wiki/Lambertian_reflectance")
+Lambertian reflectance). Specifically, the amount of diffuse light reflected
+from a surface is given by [term [type function] diffuse] in
+(link-ext (target "haskell/LightDiffuse.hs") LightDiffuse.hs):
+
+[formal-item [title Diffuse term]]
+[verbatim [include "haskell/LightDiffuse.hs"]]
+
+[paragraph]
+Where [term [type variable] stl] is a unit length direction vector from the
+surface to the light source, [term [type variable] n] is the surface normal
+vector, [term [type variable] light_color] is the light color, and
+[term [type variable] light_intensity] is the light intensity. Informally, the
+algorithm determines how much diffuse light should be reflected from a surface
+based on how directly that surface points towards the light. When
+[term [type expression] stl == n],
+[term [type expression] Vector3f.dot3 stl n == 1.0], and therefore the light is
+reflected exactly as received. When [term [type expression] stl] is
+perpendicular to [term [type expression] n] "(such" that
+[term [type expression] Vector3f.dot3 stl n == 0.0] ")," no light is reflected
+at all. If the two directions are greater than [term [type constant] 90°]
+perpendicular, the dot product is negative, but the algorithm clamps negative
+values to [term [type constant] 0.0] so the effect is the same.
+
+[formal-item [title Diffuse light]]
+[image [target "images/directional_diffuse.png"] Diffuse light]
+
+[paragraph [id di.lighting.specular]]
+The specular term is modelled either by
+(link-ext (target "http://en.wikipedia.org/wiki/Phong_reflection_model") Phong)
+or
+(link-ext (target "https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_shading_model") Blinn-Phong)
+reflection. The [term [type package] r2] package provides light shaders that
+provide both Phong and Blinn-Phong specular lighting and the user may freely
+pick between implementations. For the sake of simplicity, the rest of this
+documentation assumes that Blinn-Phong shading is being used. Specifically,
+the amount of specular light reflected from a surface is given by
+[term [type function] specularBlinnPhong] in
+(link-ext (target "haskell/LightSpecular.hs") LightSpecular.hs):
+
+[formal-item [title Specular Term]]
+[verbatim [include "haskell/LightSpecular.hs"]]
+
+[paragraph]
+Where [term [type variable] stl] is a unit length direction vector from the
+surface to the light source, [term [type variable] view] is a unit length
+direction vector from the observer to the surface, [term [type variable] n] is
+the surface normal vector, [term [type variable] light_color] is the light
+color, [term [type variable] light_intensity] is the light intensity,
+[term [type variable] surface_exponent] is the
+[term [type term] specular exponent] defined by the surface, and
+[term [type variable] surface_spec] is the surface specularity factor.
+
+[paragraph [id di.lighting.diffuse-specular.specular-exponent]]
+The specular exponent is a value, ordinarily in the range
+[term [type expression] "[0, 255]"], that controls how sharp the
+[term [type term] specular highlights] appear on the surface. The exponent is a
+property of the surface, as opposed to being a property of the light. Low
+specular exponents result in soft and widely dispersed specular highlights
+"(giving" the appearance of a rough "surface)," while high specular exponents
+result in hard and focused highlights "(giving" the appearance of a polished
+"surface)." As an example, three models lit with progressively lower specular
+exponents from left to right "(" [term [type constant] 128],
+[term [type constant] 32] , and [term [type constant] 8], "respectively):"
+
+[formal-item [title Specular exponents]]
+[image [target "images/directional_specular_exponents.png"] Specular exponents]
+
+[footnote [id di.lighting.no_ambient]]
+The [term [type package] r2] package does not use ambient terms.
+
+[subsection [title Diffuse-Only Lights] [id di.lighting.diffuse-only]]
+[paragraph]
+Some lights have [term [type term] diffuse-only] variants. Little explanation is
+required: The (link (target di.lighting.specular) specular)
+term is simply not calculated and only the [term [type term] diffuse] term is
+used.
+
+[subsection [title Attenuation] [id di.lighting.attenuation]]
+[paragraph]
+[term [type term] Attenuation] is the property of the influence of a given light
+on a surface in inverse proportion to the distance from the light to the
+surface. In other words, for lights that support attenuation, the further a
+surface is from a light source, the less that surface will appear to be lit by
+the light. For light types that support attenuation, an
+[term [type term] attenuation factor] is calculated based on a given
+[term [type variable] inverse_maximum_range] "(where" the
+[term [type variable] maximum_range] is a light-type specific positive value
+that represents the maximum possible range of influence for the "light)," a
+configurable [term [type term] inverse falloff] value, and the current
+[term [type variable] distance] between the surface being lit and the light
+source. The attenuation factor is a value in the range
+[term [type expression] "[0.0, 1.0]"], with [term [type expression] 1.0]
+meaning "\"no" "attenuation\"" and [term [type expression] 0.0] meaning
+"\"maximum" "attenuation\"." The resulting attenuation factor is multiplied by
+the raw unattenuated light values produced for the light in order to produce the
+illusion of distance attenuation. Specifically:
+
+[formal-item [title Attenuation]]
+[verbatim [include "haskell/Attenuation.hs"]]
+
+[paragraph]
+Given the above definitions, a number of observations can be made.
+
+[paragraph]
+If [term [type expression] falloff == 1] , then the attenuation is linear over
+distance [footnote-ref di.lighting.attenuation.geogebra]:
+
+[formal-item [title Linear attenuation] [id di.lighting.mathematics.attenuation-linear]]
+[image [target "images/attenuation_linear.png"] Linear attenuation]
+
+[paragraph]
+If [term [type expression] maximum_range == 0], then the inverse range is
+undefined, and therefore the results of lighting are undefined. The
+[term [type package] r2] package handles this case by raising an exception
+when the light is created.
+
+[paragraph]
+If [term [type expression] falloff == 0], then the inverse falloff is
+undefined, and therefore the results of lighting are undefined. The
+[term [type package] r2] package handles this case by raising an exception
+when the light is created.
+
+[paragraph]
+As [term [type expression] falloff] decreases towards
+[term [type expression] 0.0], then the attenuation curve remains at
+[term [type expression] 1.0] for increasingly higher distance values before
+falling sharply to [term [type expression] 0.0]:
+
+[formal-item [title Low falloff attenuation]]
+[image [target "images/attenuation_low_falloff.png"] Low falloff attenuation]
+
+[paragraph]
+As [term [type expression] falloff] increases away from
+[term [type expression] 0.0], then the attenuation curve decreases more for
+lower distance values:
+
+[formal-item [title High falloff attenuation]]
+[image [target "images/attenuation_high_falloff.png"] High falloff attenuation]
+
+[footnote [id di.lighting.attenuation.geogebra]]
+The attenuation function development is available for experimentation in the
+included (link-ext (target "http://geogebra.org") GeoGebra) file
+(link-ext (target "attenuation.ggb") attenuation.ggb).
