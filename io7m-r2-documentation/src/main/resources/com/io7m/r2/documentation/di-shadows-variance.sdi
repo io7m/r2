@@ -1,0 +1,138 @@
+[section [title Shadows: Variance Mapping] [id di.shadows.variance]]
+[subsection [title Overview] [id di.shadows.variance.overview]]
+[paragraph]
+[term [type term] Variance shadow mapping] is a technique that can give
+attractive soft-edged shadows. Using the same view and projection matrices used
+to apply (link (target di.lighting.projective) projective lights), a
+[term [type term] depth-variance] image of the current scene is rendered, and
+those stored depth distribution values are used to determine the probability
+that a given point in the scene is in shadow with respect to the current light.
+
+[paragraph]
+The algorithm implemented in the [term [type package] r2] package is
+described in
+(link-ext
+(target "http://http.developer.nvidia.com/GPUGems3/gpugems3_ch08.html")
+GPU Gems 3) , which is a set of improvements to the original variance shadow
+mapping algorithm by William Donnelly and Andrew Lauritzen. The
+[term [type package] r2] package implements all of the improvements to the
+algorithm except [term [type term] summed area tables] . The package also
+provides optional box blurring of shadows as described in the chapter.
+
+[subsection [title Algorithm] [id di.shadows.variance.algorithm]]
+[paragraph]
+Prior to actually (link (target di.deferred) rendering) a scene,
+[term [type term] shadow maps] are generated for all
+[term [type term] shadow-projecting] lights in the scene. A
+[term [type term] shadow map] for variance shadow mapping, for a light
+[term [type expression] k], is a two-component red/green image of all of the
+(link (target di.shadows.shadow-geometry) shadow casters) associated
+with [term [type expression] k] in the visible set. The image is produced by
+rendering the instances from the point of view of [term [type expression] k].
+The red channel of each pixel in the image represents the
+(link (target di.log_depth) logarithmic depth) of the closest surface at
+that pixel, and the green channel represents the depth squared "(literally"
+[term [type expression] depth * depth] ")." For example:
+
+[formal-item [title Depth-variance image]]
+[image [target "images/depth_variance.png"] Depth-variance image]
+
+[paragraph]
+Then, when actually applying lighting during rendering of the scene, a given
+(link (target di.coords.eye) eye space) position
+[term [type expression] p] is transformed to
+(link (target di.lighting.projective.algorithm) light-clip space) and then
+mapped to the range [term [type expression] "[(0, 0, 0), (1, 1, 1)]"] in order
+to sample the [term [type term] depth] and [term [type term] depth squared]
+values [term [type expression] "(d, ds)"] from the shadow map "(as" with
+sampling from a projected texture with projective "lighting)."
+
+[paragraph]
+As stated previously, the intent of variance shadow mapping is to essentially
+calculate the [term [type term] probability] that a given point is in shadow.
+A [term [type term] one-tailed] variant of
+(link-ext (target "https://en.wikipedia.org/wiki/Chebyshev%27s_inequality")
+Chebyshev's inequality) is used to calculate the upper bound
+[term [type expression] u] on the probability that, given
+[term [type expression] "(d, ds)"], a given point with depth
+[term [type expression] t] is in shadow:
+
+[formal-item [title Chebyshev 0]]
+[verbatim [include "haskell/ShadowVarianceChebyshev0.hs"]]
+
+[paragraph]
+One of the improvements suggested to the original variance shadow algorithm is
+to clamp the minimum variance to some small value "(the"
+[term [type package] r2] package uses [term [type constant] 0.00002] by
+default, but this is configurable on a per-shadow "basis)." The equation above
+becomes:
+
+[formal-item [title Chebyshev 1]]
+[verbatim [include "haskell/ShadowVarianceChebyshev1.hs"]]
+
+[paragraph]
+The above is sufficient to give shadows that are roughly equivalent in visual
+quality to basic shadow mapping with the added benefit of being generally
+better behaved and with far fewer artifacts. However, the algorithm can suffer from
+[term [type term] light bleeding], where the penumbrae of overlapping shadows
+can be unexpectedly bright despite the fact that the entire area should be in
+shadow. One of the suggested improvements to reduce light bleeding is to modify
+the upper bound [term [type expression] u] such that all values below a
+configurable threshold are mapped to zero, and values above the threshold are
+rescaled to map them to the range [term [type expression] "[0, 1]"]. The
+original article suggests a linear step function applied to
+[term [type expression] u]:
+
+[formal-item [title Chebyshev 2]]
+[verbatim [include "haskell/ShadowVarianceChebyshev2.hs"]]
+
+[paragraph]
+The amount of light bleed reduction is adjustable on a per-shadow basis.
+
+[paragraph]
+To reduce problems involving numeric inaccuracy, the original article suggests
+the use of 32-bit floating point textures in depth variance maps. The
+[term [type package] r2] package allows 16-bit or 32-bit textures,
+configurable on a per-shadow basis.
+
+[paragraph]
+Finally, as mentioned previously, the [term [type package] r2] package
+allows both optional box blurring and mipmap generation for shadow maps. Both
+blurring and mipmapping can reduce aliasing artifacts, with the former also
+allowing the edges of shadows to be significantly softened as a visual effect:
+
+[formal-item [title "Depth-variance shadows (Minimal blur)"]]
+[image [target "images/variance_0.png"] "Depth-variance shadows (Minimal blur)"]
+
+[formal-item [title "Depth-variance shadows (High blur)"]]
+[image [target "images/variance_1.png"] "Depth-variance shadows (High blur)"]
+
+[subsection [title Advantages] [id di.shadows.variance.advantages]]
+[paragraph]
+The main advantage of [term [type term] variance shadow mapping] is that they
+can essentially be thought of as much better behaved version of basic shadow
+mapping that just happen to have built-in softening and filtering. Variance
+shadows typically require far less in the way of scene-specific tuning to get
+good results.
+
+[subsection [title Disadvantages] [id di.shadows.variance.disadvantages]]
+[paragraph]
+One disadvantage of variance shadows is that for large shadow maps, filtering
+quickly becomes a major bottleneck. On reasonably old hardware such as the
+(link-ext (target "https://en.wikipedia.org/wiki/Radeon_HD_4670") Radeon 4670) ,
+one [term [type constant] 8192x8192] shadow map with two 16-bit components takes
+too long to filter to give a reliable [term [type constant] 60] frames per
+second rendering rate. Shadow maps of this size are usually used to simulate the
+influence of the sun over large outdoor scenes.
+
+[subsection [title Types] [id di.shadows.variance.types]]
+[paragraph]
+Variance mapped shadows are represented by the
+(link-ext (target "apidocs/com/io7m/r1/core/R2ShadowDepthVarianceType.html")
+R2ShadowDepthVarianceType) type, and can be associated with
+(link (target di.lighting.projective) projective lights).
+
+[paragraph]
+Rendering of depth-variance images is handled by implementations of the
+(link-ext (target "apidocs/com/io7m/r1/core/R2ShadowMapRendererType.html")
+R2ShadowMapRendererType) type.

@@ -6,7 +6,7 @@ of [link [target di.instances] instances]. Depending on the context, this may
 mean rendering the surface attributes of the instances into a
 [link [target di.deferred.geom.gbuffer] geometry buffer],
 [term [type term] forward rendering] the instance directly to the screen "(or
-other image)", rendering only the [link [target di.shadow-mapping.variance] depth]
+other image)", rendering only the [link [target di.shadows.variance] depth]
 of the surface, or perhaps not producing any output at all as shaders used
 simply for [link [target di.stencil] stencilling] are permitted to do.
 

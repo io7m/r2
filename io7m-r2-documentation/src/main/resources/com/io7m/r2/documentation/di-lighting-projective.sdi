@@ -91,8 +91,7 @@ The (link (target di.lighting.projective.algorithm) algorithm) described
 above takes an arbitrary point in the scene and projects it from the point of
 view of the light. There is no guarantee that the point actually falls within
 the light's view frustum "(although" this is mitigated slightly by the
-[term [type package] r2] package's use of
-(link (target di.lighting.projective.back-projection.volume) light volumes)
+[term [type package] r2] package's use of light volumes
 for deferred "rendering)," and therefore the calculated texture coordinates used
 to sample from the projected texture are not guaranteed to be in the range
 [term [type expression] "[(0, 0), (1, 1)]"] . In order to get the intended
@@ -140,8 +139,7 @@ The given [term [type variable] shadow] factor is a value in the range
 [term [type expression] "[0, 1]"], where [term [type expression] 0] indicates
 that the lit point is fully in shadow for the current light, and
 [term [type expression] 1] indicates that the lit point is not in shadow. This
-is calculated for
-(link (target di.shadow-mapping.variance) variance) shadows and is assumed
+is calculated for (link (target di.shadows.variance) variance) shadows and is assumed
 to be [term [type expression] 1] for lights without shadows. As can be seen, a
 value of [term [type expression] 0] has the effect of fully attenuating the
 light.
