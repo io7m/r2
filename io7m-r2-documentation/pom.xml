@@ -166,6 +166,22 @@
               </cssExtraStyles>
             </configuration>
           </execution>
+          <execution>
+            <id>make-documentation-multi</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>compileXHTML</goal>
+            </goals>
+            <configuration>
+              <documentFile>${project.build.directory}/documentation/documentation.sd</documentFile>
+              <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
+              <brandTopFile>${project.build.directory}/documentation/brand.xml</brandTopFile>
+              <pagination>XHTML_MULTI_PAGE</pagination>
+              <cssExtraStyles>
+                <param>documentation.css</param>
+              </cssExtraStyles>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
 
