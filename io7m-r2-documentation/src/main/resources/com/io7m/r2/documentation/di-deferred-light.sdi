@@ -1,17 +1,179 @@
 [section [title Deferred Rendering: Lighting] [id di.deferred.light]]
 [subsection [title Overview] [id di.deferred.light.overview]]
 [paragraph]
-Lighting.
+The second step in [term [type term] deferred rendering] involves rendering
+the light contributions of all light sources within a scene to
+a [link [target di.deferred.light.lbuffer] light buffer]. The rendering
+algorithm requires sampling from a populated
+[link [target di.deferred.geom.gbuffer] geometry buffer].
 
+[subsection [title Light Buffer] [id di.deferred.light.lbuffer]]
+[paragraph]
+A [term [type term] light buffer] is a
+[link [target di.render-target] render target] in which the light contributions
+of all light sources are summed in preparation for being combined with the
+surface albedo of a [link [target di.deferred.geom.gbuffer] geometry buffer]
+to produce a lit image.
+
+[paragraph]
+A light buffer consists of a 32-bit RGBA [term [type term] diffuse] image
+and a 32-bit RGBA [term [type term] specular] image. Currently, the alpha
+channels of both images are unused and exist solely because OpenGL 3.3 does
+not provide a color-renderable 24-bit RGB format.
+
+[paragraph]
+The [term [type package] r2] package offers the ability to disable
+[link [target di.lighting.specular] specular lighting] entirely if it is not
+needed, and so light buffer implementations provide the ability to avoid
+allocating an image for specular contributions if they will not be calculated.
+
+[paragraph]
+In the [term [type package] r2] package, light buffers are instances of
+[link-ext [target "apidocs/com/io7m/r2/core/R2LightBufferType.html"] R2LightBufferType].
+
+[subsection [title Light Clip Volumes] [id di.deferred.light.clip_volumes]]
+[paragraph]
+A [term [type light] light clip volume] is a means of constraining the
+contributions of groups of light sources to a provided [term [type term] volume].
+
+[paragraph]
+Because, like most renderers, the [term [type package] r2] package implements
+so-called [term [type term] local illumination], lights that do not have
+explicit [term [type term] shadow mapping] enabled are able to bleed through
+solid objects:
+
+[formal-item [title Local Light Bleed]]
+[image [target "images/lightbleed_noclip.png"] Local light bleeding.]
+
+[paragraph]
+Enabling shadow mapping for every single light source would be prohibitively
+expensive [footnote-ref di.concepts.shadow_expensive], but for some scenes,
+acceptable results can be achieved by simply preventing the light source from
+affecting pixels outside of a given [term [type term] clip volume].
+
+[formal-item [title Local Light Clipped]]
+[image [target "images/lightbleed_clip.png"] Local light clipped to a volume.]
+
+[paragraph]
+The technique is implemented using the [link [target di.stencil] stencil buffer],
+using a single [term [type term] light clip volume bit].
+
+[formal-item [title Algorithm]]
+[list-ordered
+  [item Disable depth writing, and enable depth testing using the
+        standard less-than-or-equal-to depth function is used.]
+
+  [item For each light clip volume [term [type expression] v]:
+    [list-ordered
+      [item Clear the [term [type term] light clip volume] bit in the stencil buffer.]
+      [item Configure stencil testing such that the stencil test always passes.]
+      [item Configure stencil writing such that:
+        [list-unordered
+          [item Only the light clip volume bit can be written.]
+          [item Pixels that fail the depth test will invert the value of
+                the light clip volume bit [term [type expression] "(GL_INVERT)"].]
+          [item Pixels that pass the depth test leave the value of the
+                light clip volume bit untouched.]
+          [item Pixels that pass the stencil test leave the value of the
+                light clip volume bit untouched.]
+        ]]
+
+      [item Render both the front and back faces of [term [type expression] v].]
+      [item Configure stencil testing such that only those pixels with
+            both the [link [target di.stencil.allow_bit] allow bit] and
+            light clip volume bit set will be touched.]
+      [item Render all of the light sources associated with
+            [term [type expression] v].]
+    ]
+  ]
+]
+
+[paragraph]
+The reason the algorithm works can be inferred from the following diagram:
+
+[formal-item [title Stencil Test Diagram]]
+[image [target "images/light_clip_volume_diagram.png"] Stencil test diagram]
+
+[paragraph]
+In the diagram, the grey polygons represent the already-rendered depths of
+the scene geometry [footnote-ref di.deferred.light.depth]. If a point is inside
+or behind "(from " the perspective of the "observer)" one of the polygons,
+then the depth of the point is considered to be
+[term [type term] greater] than the scene geometry.
+
+[footnote [id di.deferred.light.depth]]
+This is slightly misleading because the depth buffer is a simple heightmap and
+so of course only the nearest faces of each shape would be preserved by the
+depth buffer. Nevertheless, for the purposes of comprehension, the full shapes
+are shown.
+
+[paragraph]
+In the diagram, when rendering the front face of the light volume at point
+[term [type expression] P0], the depth of the light volume face at
+[term [type expression] P0] is less than the current scene depth, and so the
+depth test succeeds and the light clip volume bit is not touched. When
+rendering the back face of the light volume at point [term [type expression] P1],
+the depth of the light volume face at [term [type expression] P1] is greater
+than the current scene depth so the depth test fails, and the
+light clip volume bit is inverted, setting it to [term [type constant] true].
+This means that the scene geometry along that view ray is
+[term [type term] inside] the light clip volume.
+
+[paragraph]
+In the diagram, when rendering the front face of the light volume at point
+[term [type expression] P2], the depth of the light volume face at
+[term [type expression] P2] is greater than the current scene depth, and so the
+depth test fails and the light clip volume bit is inverted, setting it to
+[term [type constant] true]. When rendering the back face of the light volume
+at point [term [type expression] P3], the depth of the light volume face at
+[term [type expression] P3] is greater than the current scene depth, so the
+depth test fails and the light clip volume bit is inverted again, setting it to
+[term [type constant] false]. This means that the scene geometry along that
+view ray is [term [type term] outside] the light clip volume.
+
+[paragraph]
+In the diagram, when rendering the front face of the light volume at point
+[term [type expression] P4], the depth of the light volume face at
+[term [type expression] P4] is less than the current scene depth, and so the
+depth test succeeds and the light clip volume bit is not touched. When
+rendering the back face of the light volume
+at point [term [type expression] P5], the depth of the light volume face at
+[term [type expression] P5] is less than the current scene depth, and so the
+depth test succeeds and the light clip volume bit is not touched. Because
+the light clip volume bit is [term [type constant] false] by default and is
+not modified, this results in the scene geometry along that view ray being
+considered to be [term [type term] outside] the light clip volume.
+
+[paragraph]
+Given the initial depth buffer from an example scene:
+
+[formal-item [title Depth Buffer]]
+[image [target "images/light_clip_volume_depth.png"] Scene depth buffer.]
+
+[paragraph]
+The stencil buffer for the initial scene has all of the geometry with the
+[link [target di.stencil.allow_bit] allow bit] set:
+
+[formal-item [title Stencil Buffer "(Initial)"]]
+[image [target "images/light_clip_volume_stencil_before.png"] Scene stencil buffer "(initial)".]
+
+[paragraph]
+After rendering a cuboid-shaped light volume that is intended to constrain the
+contributions of a light source to a single area, all pixels that fell within
+the clip volume have the light clip volume bit set:
+
+[formal-item [title Stencil Buffer "(Result)"]]
+[image [target "images/light_clip_volume_stencil_after.png"] Scene stencil buffer "(result)".]
+
+[paragraph]
+Then, after rendering the light contribution of the constrainted light, the
+light contribution becomes:
+
+[formal-item [title Light Buffer "(Result)"]]
+[image [target "images/light_clip_volume_diffuse.png"] Scene light buffer "(result)".]
+
+[subsection [title Types] [id di.deferred.light.types]]
 [paragraph]
 In the [term [type package] r2] package, the primary implementation of the
 deferred light rendering algorithm is the
 [link-ext [target "apidocs/com/io7m/r2/core/R2LightRenderer.html"] R2LightRenderer] type.
-
-[subsection [title Light Buffer] [id di.deferred.light.lbuffer]]
-[paragraph]
-Light buffer.
-
-[paragraph]
-In the [term [type package] r2] package, geometry buffers are instances of
-[link-ext [target "apidocs/com/io7m/r2/core/R2LightBufferType.html"] R2LightBufferType].

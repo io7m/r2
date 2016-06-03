@@ -29,7 +29,7 @@ of [term [type expression] n] in the stencil buffer are allowed to be modified.
 
 [subsection [title Geometry Buffer] [id di.deferred.geom.gbuffer]]
 [paragraph]
-The [term [type term] geometry buffer] is a
+A [term [type term] geometry buffer] is a
 [link [target di.render-target] render target] in which the surface
 attributes of objects are stored prior to being combined with the contents
 of a [link [target di.deferred.light.lbuffer] light buffer] to produce a
