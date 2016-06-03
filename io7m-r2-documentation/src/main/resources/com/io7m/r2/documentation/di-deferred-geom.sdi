@@ -166,7 +166,7 @@ they will be delivered to a given consumer "(typically a geometry renderer)"
 via the [term [type function] opaquesExecute] method in the order that would be
 most efficient for rendering. Typically, this means that instances are first
 batched by [link [target di.shaders.instance] shader], because switching
-programs the second most expensive type of render state change. The shader-batched
+programs is the second most expensive type of render state change. The shader-batched
 instances are then batched by [link [target di.shaders.instance.material] material],
 in order to reduce the number of uniform updates that need to occur per shader.
 
