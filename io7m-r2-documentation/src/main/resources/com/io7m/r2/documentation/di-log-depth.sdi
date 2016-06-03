@@ -75,7 +75,7 @@ A graph of the functions is as follows:
 
 [paragraph]
 An interactive (link-ext (target "http://geogebra.org") GeoGebra) construction
-is provided in (link-ext (target "log_depth.ggb") "log_depth.ggb"):
+is provided in (link-ext (target "log_depth.ggb") "log_depth.ggb").
 
 [paragraph]
 The [term [type package] r2] package uses a slightly modified version of
