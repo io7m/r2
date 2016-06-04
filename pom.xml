@@ -353,6 +353,11 @@
           <feedAuthorName>io7m release robot</feedAuthorName>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.soebes.maven.plugins</groupId>
+        <artifactId>doxygen-maven-plugin</artifactId>
+        <version>1.1.0</version>
+      </plugin>
     </plugins>
   </reporting>
 

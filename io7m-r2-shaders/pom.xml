@@ -62,6 +62,18 @@
     </dependency>
   </dependencies>
 
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>com.soebes.maven.plugins</groupId>
+        <artifactId>doxygen-maven-plugin</artifactId>
+        <configuration>
+          <configurationFile>src/main/doxygen/glsl.conf</configurationFile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
   <build>
     <resources>
       <resource>
