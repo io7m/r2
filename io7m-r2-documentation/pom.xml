@@ -142,6 +142,21 @@
               <outputDirectory>${project.build.directory}/documentation/glsl/</outputDirectory>
             </configuration>
           </execution>
+          <execution>
+            <id>unpack-shaders-doxygen</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>${project.groupId}</includeGroupIds>
+              <includeArtifactIds>io7m-r2-shaders</includeArtifactIds>
+              <classifier>doxygen</classifier>
+              <type>zip</type>
+              <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+              <outputDirectory>${project.build.directory}/documentation/doxygen/</outputDirectory>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
 

@@ -62,18 +62,6 @@
     </dependency>
   </dependencies>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>com.soebes.maven.plugins</groupId>
-        <artifactId>doxygen-maven-plugin</artifactId>
-        <configuration>
-          <configurationFile>src/main/doxygen/glsl.conf</configurationFile>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <build>
     <resources>
       <resource>
@@ -124,6 +112,47 @@
               <sources>
                 <source>src/main/glsl</source>
               </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Generate Doxygen HTML for the shaders -->
+      <plugin>
+        <groupId>com.soebes.maven.plugins</groupId>
+        <artifactId>doxygen-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>doxygen-glsl</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <configurationFile>src/main/doxygen/glsl.conf</configurationFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Produce Doxygen archive -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/doxygen.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <appendAssemblyId>true</appendAssemblyId>
             </configuration>
           </execution>
         </executions>

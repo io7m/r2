@@ -134,7 +134,6 @@ public final class R2MeshTool implements Runnable
 
   }
 
-
   private class CommandRoot implements CommandType,
     R2MeshConverterListenerType
   {
