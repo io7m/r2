@@ -21,7 +21,7 @@ provides optional box blurring of shadows as described in the chapter.
 
 [subsection [title Algorithm] [id di.shadows.variance.algorithm]]
 [paragraph]
-Prior to actually (link (target di.deferred) rendering) a scene,
+Prior to actually (link (target di.deferred) rendering) " a" scene,
 [term [type term] shadow maps] are generated for all
 [term [type term] shadow-projecting] lights in the scene. A
 [term [type term] shadow map] for variance shadow mapping, for a light
