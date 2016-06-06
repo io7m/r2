@@ -464,7 +464,7 @@
         <plugin>
           <groupId>com.io7m.kstructural</groupId>
           <artifactId>io7m-kstructural-maven-plugin</artifactId>
-          <version>0.2.0-SNAPSHOT</version>
+          <version>0.2.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
