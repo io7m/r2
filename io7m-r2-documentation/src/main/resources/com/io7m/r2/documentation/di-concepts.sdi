@@ -1,0 +1,214 @@
+[section [title Concepts] [id di.concepts]]
+[subsection [title Overview]]
+[paragraph]
+This section attempts to provide a rough overview of the concepts present in
+the [term [type package] r2] package. Specific implementation details,
+mathematics, and other technical information is given in later sections that
+focus on each concept in detail.
+
+[subsection [title Renderer] [id di.concepts.renderer]]
+[paragraph]
+A [term [type term] renderer] is a function that takes an input of some
+type and produces an output to a
+[link [target di.concepts.render_target] render target].
+
+[paragraph]
+The renderers expose an interface of stateless functions from inputs
+to outputs. That is, the renderers should be considered to simply take input and
+produce return images as output. In reality, because the Java language is not
+pure and because the code is required to perform I/O in order to speak to the
+GPU, the renderer functions are not [term [type emphasis] really] pure.
+Nevertheless, for the sake of ease of use, lack of surprising results, and
+correctness, the renderers at least attempt to adhere to the idea of pure
+functional rendering! This means that the renderers are very easy to integrate
+into any existing system: They are simply functions that are evaluated whenever
+the programmer wants an image. The renderers do not have their own main loop,
+they do not have any concept of time, do not remember any images that they have
+produced previously, do not maintain any state of their own, and simply write
+their results to a programmer-provided render target. Passing the same input
+to a renderer multiple times should result in the same image each time.
+
+[subsection [title Render Target] [id di.concepts.render_target]]
+[paragraph]
+A [term [type term] render target] is a rectangular region of memory allocated
+on the GPU that can accept the results of a rendering operation. The programmer
+typically allocates one render target, passes it to a renderer along with
+a renderer-specific input value, and the renderer populates the given render
+target with the results. The programmer can then copy the contents of this
+render target to the screen for viewing, pass it on to a separate filter for
+extra visual effects, use it as a texture to be applied to objects in further
+rendered images, etc.
+
+[subsection [title Geometry Buffer] [id di.concepts.gbuffer]]
+[paragraph]
+A [term [type term] geometry buffer] is a specific type of
+[link [target di.concepts.render_target] render target] that contains the
+surface attributes of a set of rendered
+[link [target di.concepts.instance] instances]. It is a fundamental part of
+[term [type term] deferred rendering] that allows lighting to be efficiently
+calculated in [link [target di.coords.screen] screen space], touching only
+those pixels that will actually contribute to the final rendered image.
+
+[subsection [title Light Buffer] [id di.concepts.lbuffer]]
+[paragraph]
+A [term [type term] light buffer] is a specific type of
+[link [target di.concepts.render_target] render target] that contains the
+summed light contributions for each pixel in the currently rendered scene.
+
+[subsection [title Mesh] [id di.concepts.mesh]]
+[paragraph]
+A [term [type term] mesh] is a collection of vertices that define a polyhedral
+object, along with a list of indices that describe how to make triangles out of
+the given vertices.
+
+[paragraph]
+Meshes are allocated on the GPU and can be shared between any number of
+[link [target di.concepts.instance] instances] "(meaning" that rendering 100
+identical objects does not require storing 100 copies of the mesh "data)."
+
+[subsection [title Transform] [id di.concepts.transform]]
+[paragraph]
+A [term [type term] transform] moves coordinates in one
+[link [target di.coords] coordinate space] to another. Typically, a
+transform is used to position and orient a [link [target di.concepts.mesh] mesh]
+inside a visible set.
+
+[subsection [title Instance] [id di.concepts.instance]]
+[paragraph]
+An [term [type term] instance] is essentially an object or group of
+objects that can be rendered. Instances come in several forms:
+[term [type term] single], [term [type term] batched], and
+[term [type term] billboarded].
+
+[paragraph [id di.concepts.instance.single]]
+A [term [type term] single] instance consists of a reference to a
+[link [target di.concepts.mesh] mesh] and a
+[link [target di.concepts.transform] transform] for positioning the instance
+within a scene.
+
+[paragraph [id di.concepts.instance.batched]]
+A [term [type term] batched] instance consists of a reference to a
+mesh and an array of transforms. The results of rendering a batched instance
+are the same as if a single instance had been created and rendered for each
+transform in the array. The advantage of batched instances is efficiency:
+Batched instances are submitted to the GPU for rendering in a single
+[term [type term] draw call]. Reducing the total number of draw calls per
+scene is an important optimization on modern graphics hardware, and batched
+instances provide a means to achieve this.
+
+[paragraph [id di.concepts.instance.billboarded]]
+A [term [type term] billboarded] instance is a further specialization of a
+[term [type term] batched] instance intended for rendering large numbers of
+objects that always face towards the observer. Billboarding is a technique
+that is often used to render large numbers of distant objects in a scene:
+Rather than incur the overhead of rendering lots of barely-visible objects
+at full detail, the objects are replaced with billboarded
+[term [type term] sprites] at a fraction of the cost. There is also a
+significant saving in the memory used to store transforms, because a billboarded
+sprite need only store a [term [type term] position] and
+[term [type term] scale] as opposed to a full transform matrix per rendered
+object.
+
+[subsection [title Light] [id di.concepts.light]]
+[paragraph]
+A [term [type light] light] describes a light source within a scene. There are
+many different types of lights, each with different behaviours. Lights may or
+may not cast shadows, depending on their type. All lighting in the
+[term [type package] r2] package is completely dynamic; there is no support for
+static lighting in any form. Shadows are exclusively provided via
+shadow mapping, resulting in efficient per-pixel shadows.
+
+[subsection [title Light Clip Group] [id di.concepts.light_clip_group]]
+[paragraph]
+A [term [type light] light clip group] is a means of constraining the
+contributions of groups of [link [target di.concepts.light] lights] to a
+provided [term [type term] volume].
+
+[paragraph]
+Because, like most renderers, the [term [type package] r2] package implements
+so-called [term [type term] local illumination], lights that do not have
+explicit [term [type term] shadow mapping] enabled are able to bleed through
+solid objects:
+
+[formal-item [title Local Light Bleed]]
+[image [target "images/lightbleed_noclip.png"] Local light bleeding.]
+
+[paragraph]
+Enabling shadow mapping for every single light source would be prohibitively
+expensive [footnote-ref di.concepts.shadow_expensive], but for some scenes,
+acceptable results can be achieved by simply preventing the light source from
+affecting pixels outside of a given [term [type term] clip volume].
+
+[formal-item [title Local Light Clipped]]
+[image [target "images/lightbleed_clip.png"] Local light clipped to a volume.]
+
+[subsection [title Light Group] [id di.concepts.light_group]]
+[paragraph]
+A [term [type term] light group] is similar to a
+[link [target di.concepts.light_clip_group] light clip group] in that is
+intended to constrain the contributions of a set of lights. A light group
+instead requires the cooperation of a renderer that can mark groups of
+[link [target di.concepts.instance] instances] using the
+[term [type term] stencil] component of the current
+[link [target di.concepts.gbuffer] geometry buffer]. At most
+[term [type constant] 15] light groups can be present in a given scene, and
+for a given light group [term [type variable] n], only instances in group
+[term [type variable] n] will be affected by lights in group
+[term [type variable] n]. By default, if a group is not otherwise specified,
+all lights and instances are rendered in group [term [type constant] 1].
+
+[subsection [title Shader] [id di.concepts.shader]]
+[paragraph]
+A [term [type term] shader] is a small program that executes on the GPU
+and is used to produce images. The [term [type package] r2] package provides
+a wide array of general-purpose shaders, and the intention is that users of
+the package will [term [type emphasis] not] typically have to write their
+own [footnote-ref di.concepts.shader.r1_material].
+
+[paragraph]
+The package roughly divides shaders into categories.
+[term [type term] Single instance shaders] are typically used to calculate
+and render the surface attributes of
+[link [target di.concepts.instance.single] single instances] into a
+[link [target di.concepts.gbuffer] geometry buffer].
+[term [type term] Batched instance shaders] do the same for
+[link [target di.concepts.instance.batched] batched instances].
+[term [type term] Light shaders] render the contributions of light sources
+into a [link [target di.concepts.lbuffer] light buffer]. There are many other
+types of shader in the [term [type package] r2] package but users are generally
+not exposed to them directly.
+
+[paragraph]
+Shaders are intended to be effectively [term [type term] stateless]. A given
+shader [term [type type] S] is an opaque function that takes a single parameter
+value [term [type type] M], and the user actually supplies [term [type type] M]
+by configuring a [link [target di.concepts.material] material] for
+[term [type type] S] and then using it each frame.
+
+[subsection [title Material] [id di.concepts.material]]
+[paragraph]
+A [term [type term] material] is a pair consisting of a
+[link [target di.concepts.shader] shader] and a set of parameters for that
+shader [footnote-ref di.concepts.material.r1_material].
+
+[footnote [id di.concepts.material.r1_material]]
+The spiritual ancestor of [term [type package] r2], the
+[link-ext [target "http://io7m.github.io/r1"] r1] renderer, exposed only
+immutable materials. While these made it easier to demonstrate the correctness
+of the programs using the renderer, it also increased pressure on the garbage
+collector. Materials in the [term [type package] r2] may optionally be mutable
+or immutable, and the user is expected understand the difference and the
+consequences of using one over the other.
+
+[footnote [id di.concepts.shader.r1_material]]
+The spiritual ancestor of [term [type package] r2], the
+[link-ext [target "http://io7m.github.io/r1"] r1] renderer, exposed a
+fixed material system and did not expose shaders to the user at all. While
+this made it easier to demonstrate the correctness of the renderer
+implementation, it turned out to be needlessly inflexible and made it more
+difficult to experiment with new renderer features.
+
+[footnote [id di.concepts.shadow_expensive]]
+However, the [term [type package] r2] package places no limits on the number
+of lights that have shadow maps, so enabling them for all light sources is
+possible, if not actually advisable.

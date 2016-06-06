@@ -1,0 +1,64 @@
+[section [title Shaders: Instance] [id di.shaders.instance]]
+[subsection [title Overview] [id di.shaders.instance.overview]]
+[paragraph]
+An [term [type term] instance shader] is a shader used to render the surfaces
+of [link [target di.instances] instances]. Depending on the context, this may
+mean rendering the surface attributes of the instances into a
+[link [target di.deferred.geom.gbuffer] geometry buffer],
+[term [type term] forward rendering] the instance directly to the screen "(or
+other image)", rendering only the [link [target di.shadows.variance] depth]
+of the surface, or perhaps not producing any output at all as shaders used
+simply for [link [target di.stencil] stencilling] are permitted to do.
+
+Instance shaders are most often exposed to the programmer via
+[link [target di.shaders.instance.material] materials].
+
+[subsection [title Materials] [id di.shaders.instance.material]]
+[paragraph]
+A [term [type term] material] is a pair [term [type expression] "(s, i, p)"] where
+[term [type expression] "p"] is a value of type [term [type expression] m] that
+represents a set of shader parameters, [term [type expression] "s"] is
+a shader that takes parameters of type [term [type expression] m], and
+[term [type expression] "i"] is a unique identifier for the material. Materials
+primarily exist to facilitate [link [target di.deferred.geom.ordering] batching]:
+By assigning each material a unique identifier, the system can assume that
+two materials are the same if they have the same identifier, without needing
+to perform a relatively expensive structural equality comparison between the
+shaders and shader parameters.
+
+[subsection [title Provided Shaders] [id di.shaders.instance.provided]]
+[paragraph]
+Writing shaders is difficult. The programmer must be aware of an endless series
+of pitfalls inherent in the OpenGL API and the shading language. While the
+[term [type package] r2] package does allow users to write their own shaders,
+the intention has always been to provide a small set of general purpose shaders
+that cover the majority of the use cases in modern games and simulations. The
+instance shaders provided by default are:
+
+[formal-item [title Provided instance shaders]]
+[table
+  [summary Provided instance shaders]
+  [type shaders]
+  [head
+    [name Shader]
+    [name Description]]
+  [body
+    [row
+      [cell [link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2SurfaceShaderBasicSingle.html"] R2SurfaceShaderBasicSingle]]
+      [cell Basic textured surface with normal mapping, specular mapping, emission mapping, and conditional discarding based on alpha.]]]]
+
+[subsection [title Types] [id di.shaders.instance.types]]
+[paragraph]
+In the [term [type package] r2] package, materials are instances of
+[link-ext [target "apidocs/com/io7m/r2/core/R2MaterialType.html"] R2MaterialType].
+Geometry renderers primarily consume instances that are associated with values
+of the
+[link-ext [target "apidocs/com/io7m/r2/core/R2MaterialOpaqueSingleType.html"] R2MaterialOpaqueSingleType]
+and
+[link-ext [target "apidocs/com/io7m/r2/core/R2MaterialOpaqueBatchedType.html"] R2MaterialOpaqueBatchedType]
+types.
+Instance shaders are instances of the
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceSingle.html"] R2ShaderInstanceSingleType]
+and
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceBatched.html"] R2ShaderInstanceBatchedType]
+types.

@@ -1,0 +1,88 @@
+[section [title Shaders] [id di.shaders]]
+[subsection [title Overview] [id di.shaders.overview]]
+[paragraph]
+A [term [type term] shader] is a small program that executes on the GPU
+and is used to produce images. In the [term [type package] r2] package,
+shaders perform a variety of tasks and the programmer is not always exposed
+to them directly. The primary shader types to which the programmer is directly
+exposed are [link [target di.shaders.instance] instance] and
+[link [target di.shaders.light] light] shaders.
+
+[subsection [title Interface And Calling Protocol] [id di.shaders.interface]]
+[paragraph]
+Every shader in the [term [type package] r2] package has an associated Java
+class. Each class may implement one of the interfaces that are themselves
+subtypes of the
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderType.html"] R2ShaderType]
+interface. Each class is responsible for uploading parameters to the actual
+compiled GLSL shader on the GPU. Certain parameters, such as view matrices,
+the current size of the screen, etc, are only calculated during each rendering
+pass and therefore will be supplied to the shader classes at more or less the
+last possible moment. The calculated parameters are supplied via methods
+defined on the [term [type type] R2ShaderType] subinterfaces, and implementations
+of the subinterfaces can rely on the methods being called in a very strict
+predefined order. For example, instances of type
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceSingleUsableType.html"] R2ShaderInstanceSingleUsableType]
+will receive calls in exactly this order:
+
+[formal-item [title R2ShaderInstanceSingleUsableType call order]]
+[list-ordered
+  [item
+    First, [term [type function] onActivate] will be called. It is the
+    class's responsibility to [term [type term] activate] the GLSL shader
+    at this point.]
+  [item
+    Then [term [type function] onReceiveViewValues] will be called when the
+    current view-specific values have been calculated.]
+  [item
+    Now, for each material [term [type expression] m] that uses the
+    current shader:
+    [list-ordered
+      [item
+        [term [type function] onReceiveMaterialValues] will be called once.]
+      [item
+        For each instance [term [type expression] i] using that uses
+        a material that uses the current shader,
+        [term [type function] onReceiveInstanceTransformValues] will
+        be called, followed by
+        [term [type function] onValidate].]]]]
+
+[paragraph]
+The final [term [type function] onValidate] call allows the shader to check
+that all of the required method calls have actually been made by the caller,
+and the method is permitted to throw
+[link-ext [target "apidocs/com/io7m/r2/core/R2ExceptionShaderValidationFailed.html"] R2ExceptionShaderValidationFailed]
+if the caller makes a mistake at any point. The implicit promise is that
+callers will call all of the methods in the correct order and the correct number
+of times, and shaders are allowed to loudly complain if and when this does not
+happen.
+
+[paragraph]
+Of course, actually requiring the programmer to manually implement all of the
+above for each new shader would be unreasonable and would just become a new
+source of bugs.
+The [term [type package] r2] provides [term [type term] verifiers] to perform the
+run-time checks listed above without forcing the programmer to implement them all manually.
+The [link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceSingleVerifier.html"] R2ShaderInstanceSingleVerifier]
+type, for example, implements the
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceSingleUsableType.html"] R2ShaderInstanceSingleUsableType]
+interface and wraps call calls to an existing shader in calls that enforce
+the invariants and call order described above. The programmer writes the
+simple version of the shader that simply uploads parameters, and the
+[term [type term] verifier] prevents callers from calling shader methods
+in the wrong order.
+
+[paragraph]
+The calling protocol described
+both ensures that all shader parameters will be set
+and that the renderers themselves are insulated from the interfaces of actual
+GLSL shaders. Failing to set parameters, attempting to set parameters
+that no longer exist, or passing values of the wrong types to GLSL shaders
+is a common source of bugs in OpenGL programs and almost always results in
+either silent failure or corrupted visuals. The [term [type package] r2] package
+takes care to ensure that mistakes of that type are difficult to make.
+
+[subsection [title Types] [id di.shaders.types]]
+[paragraph]
+In the [term [type package] r2] package, shaders are instances of
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderType.html"] R2ShaderType].

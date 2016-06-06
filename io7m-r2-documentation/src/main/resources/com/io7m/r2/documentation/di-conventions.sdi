@@ -1,0 +1,22 @@
+[section [title Conventions] [id di.conventions]]
+[subsection [title Overview]]
+[paragraph]
+This section attempts to document the mathematical and typographical
+conventions used in the rest of the documentation.
+
+[subsection [title Mathematics] [id di.conventions.math]]
+[paragraph]
+Rather than rely on untyped and ambiguous mathematical notation, this
+documentation expresses all mathematics and type definitions in strict
+[link-ext [target "http://www.haskell.org/onlinereport/haskell2010/"] Haskell 2010]
+with no extensions. All Haskell sources are included along with the
+documentation and can therefore be executed from the command line
+[link-ext [target "http://www.haskell.org/haskellwiki/GHC/GHCi"] GHCi] tool
+in order to interactively check results and experiment with functions.
+
+[paragraph]
+When used within prose, functions are usually referred to using fully qualified
+notation, such as [term [type expression] "(Vector3f.cross n t)"]. This is the
+application of the [term [type function] cross] function defined in the
+[term [type package] Vector3f] module, to the arguments [term [type variable] n]
+and [term [type variable] t].

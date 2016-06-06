@@ -1,0 +1,48 @@
+[section [title Shadows] [id di.shadows]]
+[subsection [title Overview] [id di.shadows.overview]]
+[paragraph]
+Because the [term [type package] r2] package implements
+[term [type term] local illumination], it is necessary to associate
+[term [type term] shadows] with those light sources capable of projecting them
+"(currently" only (link (target di.lighting.projective) projective)
+"lights)." The [term [type package] r2] package currently only supports
+(link (target di.shadows.variance) variance)
+[term [type term] shadow mapping]. So-called [term [type term] mapped] shadows
+allow efficient per-pixel shadows to be calculated with varying degrees of
+visual quality.
+
+[subsection [title Shadow Geometry] [id di.shadows.shadow-geometry]]
+[paragraph]
+Because the system requires the programmer to explicitly and separately state
+that an opaque instance is visible in the scene, and that an opaque instance is
+casting a shadow, it becomes possible to effectively specify different
+[term [type term] shadow geometry] for a given instance. As an example, a very
+complex and high resolution mesh may still have the silhouette of a simple
+sphere, and therefore the user can separately add the high resolution mesh to a
+scene as a visible instance, but add a low resolution version of the mesh as an
+invisible shadow-casting instance with the same
+(link (target di.transforms) transform). As a rather extreme example,
+assuming a high resolution mesh [term [type variable] m0] added to the scene as
+both a visible instance and a shadow caster:
+
+[formal-item [title "Visible and shadow casting (High)"]]
+[image [target "images/shadow_geo_0.png"] "Visible and shadow casting (High)"]
+
+[paragraph]
+A low resolution mesh [term [type variable] m1] added to the scene as both a
+visible instance and shadow caster:
+
+[formal-item [title "Visible and shadow casting (Low)"]]
+[image [target "images/shadow_geo_1.png"] "Visible and shadow casting (Low)"]
+
+[paragraph]
+Now, with [term [type variable] m1] added as only a shadow caster, and
+[term [type variable] m0] added as only a visible instance:
+
+[formal-item [title "Visible and shadow casting (Low shadow, high visible)"]]
+[image [target "images/shadow_geo_2.png"]
+"Visible and shadow casting (Low shadow, high visible)"]
+
+[paragraph]
+Using lower resolution geometry for shadow casters can lead to efficiency gains
+on systems where vertex processing is expensive.

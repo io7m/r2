@@ -1,0 +1,41 @@
+[section [title Deferred Rendering] [id di.deferred]]
+[subsection [title Overview] [id di.deferred.overview]]
+[paragraph]
+[term [type term] Deferred rendering] is a rendering technique where all of the
+opaque objects in a given scene are rendered into a series of buffers, and then
+lighting is applied to those buffers in
+(link (target di.coords.screen) screen space). This is in contrast to
+[term [type term] forward rendering], where all lighting is applied to objects
+as they are rendered.
+
+[paragraph [id di.deferred.overview.shaders]]
+One major advantage of deferred rendering is a massive reduction in the number
+of shaders required "(traditional" forward rendering requires
+[term [type expression] s * l] shaders, where [term [type expression] s] is the
+number of different object surface types in the scene, and
+[term [type expression] l] is the number of different light "types)." In
+contrast, deferred rendering requires [term [type expression] s + l] shaders,
+because surface and lighting shaders are applied separately.
+
+[paragraph]
+Traditional forward rendering also suffers severe performance problems as the
+number of lights in the scene increases, because it is necessary to recompute
+all of the surface attributes of an object each time a light is applied. In
+contrast, deferred rendering calculates all surface attributes of all objects
+once, and then reuses them when lighting is applied.
+
+[paragraph]
+However, deferred renderers are usually incapable of rendering translucent
+objects. The deferred renderer in the [term [type package] r2] package is
+no exception, and a separate set of renderers are provided to render
+translucent objects.
+
+[paragraph]
+Due to the size of the subject, the deferred rendering infrastructure in the
+[term [type package] r2] package is described in several sections. The rendering
+of opaque geometry is described in the
+[link [target di.deferred.geom] Geometry] section, the subsequent lighting of
+that geometry is described in the [link [target di.deferred.light] Lighting]
+section. The details of the position reconstruction algorithm, an algorithm
+utterly fundamental to deferred rendering, is described in
+[link [target di.deferred-position-recon] Position Reconstruction].

@@ -1,0 +1,360 @@
+[section [title Coordinate Systems] [id di.coords]]
+
+[subsection [title Conventions] [id di.coords.conventions]]
+[paragraph]
+This section attempts to describe the mathematical conventions that the
+[term [type package] r2] package uses with respect to coordinate systems.
+The [term [type package] r2] package generally does not deviate from standard
+OpenGL conventions, and this section does not attempt to give a rigorous
+formal definition of these existing conventions. It does however attempt to
+establish the naming conventions that the package uses to refer to the standard
+coordinate spaces [footnote-ref di.coords.whining].
+
+[paragraph]
+The [term [type package] r2] package uses the
+[link-ext [target "http://io7m.github.io/jtensors"] jtensors] package for all
+mathematical operations on the CPU, and therefore shares its conventions with
+regards to coordinate system handedness. Important parts are repeated here, but
+the documentation for the [term [type package] jtensors] package should be
+inspected for details.
+
+[paragraph]
+Any of the matrix functions that deal with rotations assume a right-handed
+coordinate system. This matches the system conventionally used by
+[link-ext [target "http://opengl.org"] OpenGL] "(and" most mathematics
+"literature)". A right-handed coordinate system assumes
+that if the viewer is standing at the origin and looking towards negative
+infinity on the Z axis, then the X axis runs horizontally "(left" towards
+negative infinity and right towards positive "infinity)", and the Y axis runs
+vertically "(down" towards negative infinity and up towards positive
+"infinity)." The following image demonstrates this axis configuration:
+
+[formal-item [title Right Handed Coordinate System]]
+[image [target "images/axes2.png"] A right handed coordinate system diagram.]
+
+[paragraph]
+The [term [type package] jtensors] package adheres to the convention that a
+positive rotation around an axis represents a counter-clockwise rotation when
+viewing the system along the negative direction of the axis in question.
+
+[formal-item [title Rotations]]
+[image [target "images/rotations.png"] A diagram of right-handed rotations.]
+
+[paragraph]
+The package uses the following matrices to define rotations around each axis:
+
+[formal-item [title Rotation of r radians around the X axis]]
+[image [target "images/matrix_rx.png"] Rotation of r radians around the X axis.]
+
+[formal-item [title Rotation of r radians around the Y axis]]
+[image [target "images/matrix_ry.png"] Rotation of r radians around the Y axis.]
+
+[formal-item [title Rotation of r radians around the Z axis]]
+[image [target "images/matrix_rz.png"] Rotation of r radians around the Z axis.]
+
+[paragraph]
+Which results in the following matrix for rotating [term [type expression] r]
+radians around the axis given by [term [type expression] "(x, y, z)"],
+assuming [term [type expression] "s = sin(r)"] and
+[term [type expression] "c = cos(r)"]:
+
+[formal-item [title Rotation of r radians around an arbitrary axis]]
+[image [target "images/rot_matrix.png"] Rotation of r radians around an arbitrary axis.]
+
+[subsection [title Object Space] [id di.coords.object]]
+[paragraph]
+[term [type term] Object space] is the local coordinate system used to describe
+the positions of vertices in meshes. For example, a unit cube with the origin
+placed at the center of the cube would have eight vertices with positions
+expressed as object-space coordinates:
+
+[formal-item [title Unit cube vertices] [id di.coords.object.cube]]
+[verbatim "cube = {
+  (-0.5, -0.5, -0.5),
+  ( 0.5, -0.5, -0.5),
+  ( 0.5, -0.5,  0.5),
+  (-0.5, -0.5,  0.5),
+
+  (-0.5,  0.5, -0.5),
+  ( 0.5,  0.5, -0.5),
+  ( 0.5,  0.5,  0.5),
+  (-0.5,  0.5,  0.5)
+}"]
+
+[paragraph]
+In other rendering systems, object space is sometimes referred to as
+[term [type term] local space], or [term [type term] model space].
+
+[paragraph]
+In the [term [type package] r2] package, object space is represented by the
+[link-ext [target "apidocs/com/io7m/r2/spaces/R2SpaceObjectType.html"] R2SpaceObjectType].
+
+[subsection [title World Space] [id di.coords.world]]
+[paragraph]
+In order to position objects in a scene, they must be assigned a
+[link [target di.concepts.transform] transform] that
+can be applied to each of their [link [target di.coords.object] object space]
+vertices to yield absolute positions in so-called
+[term [type term] world space].
+
+[paragraph]
+As an example, if the [link [target di.coords.object.cube] unit cube] described
+above was assigned a transform that
+moved its origin to [term [type expression] "(3, 5, 1)"], then its object space
+vertex [term [type expression] "(-0.5, 0.5, 0.5)"]
+would end up at
+[term [type expression] "(3 + -0.5, 5 + 0.5, 1 + 0.5) = (2.5, 5.5, 1.5)"] in
+world space.
+
+[paragraph]
+In the [term [type package] r2] package, a transform applied to an object
+produces a 4x4 [term [type term] model matrix]. Multiplying the model matrix
+with the positions of the object space vertices yields vertices in world space.
+
+[paragraph]
+Note that, despite the name, [term [type term] world space] does not imply
+that users have to store their actual world representation in this coordinate
+space. For example, flight simulators often have to transform their planet-scale
+world representation to an [term [type term] aircraft relative] representation
+for rendering to work around the issues inherent in rendering extremely
+large scenes. The basic issue is that the relatively low level of floating
+point precision available on current graphics hardware means that if the
+coordinates of objects within the flight simulator's world were to be
+used directly, the values would tend to be drastically larger than those
+that could be expressed by the available limited-precision floating point
+types on the GPU. Instead, simulators often transform the locations of objects
+in their worlds such that the aircraft is placed at the origin
+[term [type expression] "(0, 0, 0)"] and the objects are positioned relative
+to the aircraft before being passed to the GPU for rendering.
+As a concrete example, within the simulator's world,
+the aircraft may be at [term [type expression] "(1882838.3, 450.0, 5892309.0)"],
+and a control tower nearby may be at
+[term [type expression] "(1883838.5, 0.0, 5892809.0)"]. These coordinate
+values would be far too large to pass to the GPU if a reasonable level of
+precision is required, but if the current aircraft location is subtracted from
+all positions, the coordinates in [term [type term] aircraft relative space]
+of the aircraft become [term [type expression] "(0, 0, 0)"] and the coordinates
+of the tower become
+[term [type expression] "(1883838.5 - 1882838.3, 0.0 - 450.0, 5892809.0 - 5892309.0) = (1000.19, -450.0, 500.0)"].
+The [term [type term] aircraft relative space] coordinates are certainly small
+enough to be given to the GPU directly without risking imprecision issues, and
+therefore the simulator would essentially treat
+[term [type term] aircraft relative space] and [term [type package] r2]
+[term [type term] world space] as equivalent [footnote-ref di.coords.minecraft].
+
+[paragraph]
+In the [term [type package] r2] package, world space is represented by the
+[link-ext [target "apidocs/com/io7m/r2/spaces/R2SpaceWorldType.html"] R2SpaceWorldType].
+
+[subsection [title Eye Space] [id di.coords.eye]]
+[paragraph]
+[term [type term] Eye space] represents a coordinate system with
+the observer implicitly fixed at the origin
+[term [type expression] "(0.0, 0.0, 0.0)"] and looking towards infinity in
+the negative Z direction.
+
+[paragraph]
+The main purpose of eye space is to simplify the mathematics required to
+implement various algorithms such as lighting. The problem with implementing
+these sorts of algorithms in [link [target di.coords.world] world space]
+is that one must constantly take into
+account the position of the observer "(typically" by subtracting the location of
+the observer from each set of world space coordinates and accounting for any
+change in orientation of the "observer)." By fixing the orientation of the
+observer towards negative Z, and the position of the observer at
+[term [type expression] "(0.0, 0.0, 0.0)"], and by transforming all vertices of
+all objects into the same system, the mathematics of lighting are greatly
+simplified. The majority of the rendering algorithms used in the
+[term [type package] r2] package are implemented in eye space.
+
+[paragraph [id di.coords.eye.modelview]]
+In the [term [type package] r2] package, the observer produces a 4x4
+[term [type term] view matrix]. Multiplying the view matrix with any given
+world space position yields a position in eye space. In practice, the
+view matrix [term [type expression] v]
+and the current object's model matrix [term [type expression] m] are
+concatenated "(multiplied)" to produce a [term [type term] model-view] matrix
+[term [type expression] "mv = v * m"][footnote-ref di.coords.eye.anticommut],
+and [term [type expression] mv] is then passed directly to the renderer's
+vertex shaders to transform the current object's vertices
+[footnote-ref di.coords.eye.efficient].
+
+[paragraph [id di.coords.eye.normal-matrix]]
+Additionally, as the [term [type package] r2] package does all lighting in
+eye space, it's necessary to transform the object space
+[term [type term] normal vectors] given in mesh data to eye space. However,
+the usual model-view matrix will almost certainly contain some sort of
+translational component and possibly a scaling component. Normal vectors are
+not supposed to be translated; they represent directions! A non-uniform scale
+applied to an object will also deform the normal vectors, making them
+non-perpendicular to the surface they're associated with:
+
+[formal-item [title Unit cube vertices] [id di.coords.eye.normals]]
+[image [target "images/normal_deform.png"] Deformed normal vectors.]
+
+[paragraph]
+With the scaled triangle on the right, the normal vector is now not
+perpendicular to the surface "(in" addition to no longer being of unit "length)."
+The red vector indicates what the surface normal [term [type emphasis] should]
+be.
+
+[paragraph]
+Therefore it's necessary to derive another 3x3 matrix known as the
+[term [type term] normal matrix] from the model-view matrix that contains just
+the rotational component of the original matrix. The full derivation of this
+matrix is given in [link-ext [target "http://www.mathfor3dgameprogramming.com/"]
+Mathematics for 3D Game Programming and Computer Graphics, Third Edition]
+[footnote-ref di.coords.eye.math3dgame]. Briefly, the normal matrix is equal to
+the inverse transpose of the top left 3x3 elements of an arbitrary 4x4
+model-view matrix.
+
+[paragraph]
+In other rendering systems, eye space is sometimes referred to as
+[term [type term] camera space], or [term [type term] view space].
+
+[footnote [id di.coords.eye.math3dgame]]
+See section 4.5, "Transforming normal vectors".
+
+[footnote [id di.coords.eye.anticommut]]
+Note that matrix multiplication is not commutative.
+
+[footnote [id di.coords.eye.efficient]]
+The reason for producing the concatenated matrix on the CPU and then passing
+it to the shader is efficiency; if a mesh had 1000 vertices,
+and the shader was passed m and v separately, the shader would repeatedly
+perform the same [term [type expression] "mv = v * m"] multiplication to
+produce mv for each vertex - yielding the exact same
+[term [type expression] mv] each time!
+
+[paragraph]
+In the [term [type package] r2] package, eye space is represented by the
+[link-ext [target "apidocs/com/io7m/r2/spaces/R2SpaceEyeType.html"] R2SpaceEyeType].
+
+[subsection [title Clip Space] [id di.coords.clip]]
+[paragraph]
+[term [type term] Clip space] is a homogeneous coordinate system in which
+OpenGL performs clipping of primitives "(such" as "triangles)." In OpenGL,
+clip space is effectively a left-handed coordinate system by default
+[footnote-ref di.coords.clip.invert]. Intuitively,
+coordinates in eye space are transformed with a [term [type term] projection]
+"(normally" either an
+[term [type term] orthographic] or [term [type term] perspective] "projection)"
+such that  all vertices are projected into a homogeneous unit cube placed at the
+origin - [term [type term] clip space] " -" resulting in four-dimensional
+[term [type expression] "(x, y, z, w)"] positions.
+Positions that end up outside of the cube are clipped "(discarded)" by
+dedicated clipping hardware, usually producing more triangles as a result.
+
+[formal-item [title Primitive Clipping]]
+[image [target "images/clipping.png"] A diagram of primitive clipping.]
+
+[paragraph]
+A [term [type term] projection] effectively determines how objects in the
+three-dimensional scene are projected onto the two-dimensional [term [type term] viewing plane]
+"(a" computer screen, in most "cases)". A [term [type term] perspective]
+projection transforms vertices such that objects that are further away from the
+viewing plane appear to be smaller than objects that are close to it,
+while an [term [type term] orthographic] projection preserves the perceived
+sizes of objects regardless of their distance from the viewing plane.
+
+[formal-item [title Perspective projection]]
+[image [target "images/proj_perspective.png"] A diagram of perspective projection.]
+
+[formal-item [title Orthographic projection]]
+[image [target "images/proj_ortho.png"] A diagram of orthographic projection.]
+
+[paragraph]
+Because [link [target di.coords.eye] eye space] is a right-handed coordinate
+system by convention, but by default clip space is left-handed, the projection
+matrix used will invert the sign of the [term [type expression] z] component
+of any given point.
+
+[paragraph]
+In the [term [type package] r2] package, the observer produces a 4x4
+[term [type term] projection matrix].
+The projection matrix is passed, along with the
+[link [target di.coords.eye.modelview] model-view] matrix, to the
+renderer's vertex shaders. As is normal in OpenGL, the vertex shader produces
+clip space coordinates which are then used by the hardware rasterizer to
+produce color fragments onscreen.
+
+[paragraph]
+In the [term [type package] r2] package, clip space is represented by the
+[link-ext [target "apidocs/com/io7m/r2/spaces/R2SpaceClipType.html"] R2SpaceClipType].
+
+[footnote [id di.coords.clip.invert]]
+Because normalized device space is a left-handed system by default, with the
+viewer looking towards positive Z, and because the transformation from clip
+space to normalized device space for a given point is the division of the
+components of that point by the point's own [term [type expression] w] component.
+
+[subsection [title Normalized-Device Space] [id di.coords.ndevice]]
+[paragraph]
+[term [type term] Normalized-device space] is, by default, a left-handed
+[footnote-ref di.coords.ndevice.left]
+coordinate space in which [link [target di.coords.clip] clip space]
+coordinates have been divided by their own
+[term [type expression] w] component "(discarding" the resulting
+[term [type expression] w = 1] component in the "process),"
+yielding three dimensional coordinates. The range of values in the resulting
+coordinates are effectively normalized by the division to fall within the
+ranges [term [type expression] "[(-1, -1, -1), (1, 1, 1)]"]
+[footnote-ref di.coords.ndevice.division]. The
+coordinate space represents a simplifying intermediate step between having
+clip space coordinates and getting something projected into a two-dimensional
+image [link [target di.coords.screen] "(screen space)"] for viewing.
+
+[paragraph]
+The [term [type package] r2] package does not directly use or manipulate values
+in normalized-device space; it is mentioned here for completeness.
+
+[footnote [id di.coords.ndevice.left]]
+The handedness of the coordinate space is dependent on the
+[link [target di.coords.screen.depth] depth range] configured for screen space.
+
+[footnote [id di.coords.ndevice.division]]
+It is actually the division by [term [type expression] w] that produces the
+scaling effect necessary to produce the illusion of perspective in perspective
+projections.
+
+[subsection [title Screen Space] [id di.coords.screen]]
+[paragraph]
+[term [type term] Screen space] is, by default, a left-handed coordinate system
+representing the screen "(or window)" that is displaying the actual results of
+rendering. If the screen is of width [term [type expression] w] and height
+[term [type expression] h], and the current [term [type term] depth range] of
+the window is [term [type expression] "[n, f]"], then the range of values in
+screen space coordinates runs from
+[term [type expression] "[(0, 0, n), (w, h, f)]"]. The origin
+[term [type expression] "(0, 0, 0)"] is assumed to be at the bottom-left corner.
+
+[paragraph [id di.coords.screen.depth]]
+The depth range is actually a configurable value, but the
+[term [type package] r2] package keeps the OpenGL default.
+From the [term [type function] glDepthRange] function manual page:
+
+[formal-item [title glDepthRange]]
+[verbatim "
+After clipping and division by w, depth coordinates range from -1 to 1,
+corresponding to the near and far clipping planes. glDepthRange specifies a
+linear mapping of the normalized depth coordinates in this range to window
+depth coordinates. Regardless of the actual depth buffer implementation,
+window coordinate depth values are treated as though they range from 0
+through 1 (like color components). Thus, the values accepted by
+glDepthRange are both clamped to this range before they are accepted.
+The setting of (0,1) maps the near plane to 0 and the far plane to 1.
+With this mapping, the depth buffer range is fully utilized."]
+
+[paragraph]
+As OpenGL, by default, specifies a depth range of
+[term [type expression] "[0, 1]"], the positive Z axis points away from the
+observer and so the coordinate system is left handed.
+
+[footnote [id di.coords.whining]]
+Almost all rendering systems use different names to refer to the same concepts,
+without ever bothering to document their conventions. This harms comprehension
+and generally wastes everybody's time.
+
+[footnote [id di.coords.minecraft]]
+A classic example of a modern game title that failed to anticipate precision
+issues is [link-ext [target "http://minecraft.gamepedia.com/Far_Lands"] Minecraft].

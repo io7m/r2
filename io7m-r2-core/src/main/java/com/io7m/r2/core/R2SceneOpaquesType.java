@@ -47,7 +47,7 @@ public interface R2SceneOpaquesType
   /**
    * Add a single instance to the scene using the given material. The instance
    * is placed into the specified {@code group}, which must be a value in the
-   * range {@code [1, 127]}.
+   * range {@code [1, {@link R2Stencils#MAXIMUM_GROUPS}]}.
    *
    * @param i     The instance
    * @param m     The material
