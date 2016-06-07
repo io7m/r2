@@ -117,13 +117,13 @@ public final class R2MBMappedReader implements R2MBReaderType
       && (int) m2 == (int) 'B'
       && (int) m3 == (int) '\n')) {
       final StringBuilder sb = new StringBuilder(128);
-      sb.append("Bad magic number.\n");
-      sb.append("Expected: 0x52 0x32 0x42 0x0A\n");
+      sb.append("Bad magic number.%n");
+      sb.append("Expected: 0x52 0x32 0x42 0x0A%n");
       sb.append("Got:      ");
       sb.append(String.format("0x%02X ", Byte.valueOf(m0)));
       sb.append(String.format("0x%02X ", Byte.valueOf(m1)));
       sb.append(String.format("0x%02X ", Byte.valueOf(m2)));
-      sb.append(String.format("0x%02X\n", Byte.valueOf(m3)));
+      sb.append(String.format("0x%02X%n", Byte.valueOf(m3)));
       pl.onError(Optional.empty(), sb.toString());
       return false;
     }

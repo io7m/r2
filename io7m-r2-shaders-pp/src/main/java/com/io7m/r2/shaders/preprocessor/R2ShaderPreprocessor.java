@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,7 +95,7 @@ public final class R2ShaderPreprocessor implements R2ShaderPreprocessorType
 
           throw new LexerException(
             String.format(
-              "%d:%d: %s\n",
+              "%d:%d: %s%n",
               Integer.valueOf(line),
               Integer.valueOf(column), msg));
         }
@@ -102,7 +103,7 @@ public final class R2ShaderPreprocessor implements R2ShaderPreprocessorType
 
       try (final ByteArrayOutputStream bao =
         new ByteArrayOutputStream(2 << 14)) {
-        try (final PrintStream baos = new PrintStream(bao)) {
+        try (final PrintStream baos = new PrintStream(bao, false, "UTF-8")) {
           baos.println("#version 330 core");
           while (true) {
             final Token tok = pp.token();
@@ -114,6 +115,7 @@ public final class R2ShaderPreprocessor implements R2ShaderPreprocessorType
             }
             baos.print(tok.getText());
           }
+          baos.flush();
         }
 
         try (final ByteArrayInputStream bai =

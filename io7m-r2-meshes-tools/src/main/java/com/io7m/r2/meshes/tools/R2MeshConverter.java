@@ -51,6 +51,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -241,9 +242,9 @@ public final class R2MeshConverter implements R2MeshConverterType
              StandardOpenOption.TRUNCATE_EXISTING,
              StandardOpenOption.WRITE)) {
 
-      try (final BufferedWriter w =
-             new BufferedWriter(new OutputStreamWriter(os))) {
-
+      final OutputStreamWriter ow =
+        new OutputStreamWriter(os, StandardCharsets.UTF_8);
+      try (final BufferedWriter w = new BufferedWriter(ow)) {
         w.write("o ");
         w.write(name);
         w.newLine();

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +62,10 @@ public final class R2ShaderSourcesResources implements R2ShaderSourcesType
       if (is == null) {
         throw new R2RendererExceptionNoSuchShader(name);
       }
-      try (final BufferedReader r =
-             new BufferedReader(new InputStreamReader(is))) {
+
+      final InputStreamReader ir =
+        new InputStreamReader(is, StandardCharsets.UTF_8);
+      try (final BufferedReader r = new BufferedReader(ir)) {
         while (true) {
           final String line = r.readLine();
           if (line == null) {
