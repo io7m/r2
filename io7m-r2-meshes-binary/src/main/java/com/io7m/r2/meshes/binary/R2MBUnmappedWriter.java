@@ -16,6 +16,7 @@
 
 package com.io7m.r2.meshes.binary;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jpra.runtime.java.JPRACursor1DByteBufferedChecked;
 import com.io7m.jpra.runtime.java.JPRACursor1DType;
@@ -39,7 +40,6 @@ import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.BigList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -65,10 +65,10 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
   }
 
   private final WritableByteChannel channel;
-  private final ByteBuffer          buffer_header;
-  private final ByteBuffer          buffer_vertex;
-  private final ByteBuffer          buffer_tri;
-  private final R2MeshTangentsType  mesh;
+  private final ByteBuffer buffer_header;
+  private final ByteBuffer buffer_vertex;
+  private final ByteBuffer buffer_tri;
+  private final R2MeshTangentsType mesh;
 
   private R2MBUnmappedWriter(
     final WritableByteChannel in_channel,
@@ -224,19 +224,31 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
           final double y = k.getYD();
           final double z = k.getZD();
 
-          Assertive.ensure(
-            Double.isFinite(x), "Position [%d].x must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(y), "Position [%d].y must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(z), "Position [%d].z must be finite", bi);
+          Invariants.checkInvariantD(
+            x,
+            Double.isFinite(x),
+            n -> String.format("Position [%d].x must be finite", bi));
+          Invariants.checkInvariantD(
+            y,
+            Double.isFinite(y),
+            n -> String.format("Position [%d].y must be finite", bi));
+          Invariants.checkInvariantD(
+            z,
+            Double.isFinite(z),
+            n -> String.format("Position [%d].z must be finite", bi));
 
-          Assertive.ensure(
-            !Double.isNaN(x), "Position [%d].x must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(y), "Position [%d].y must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(z), "Position [%d].z must be a valid number", bi);
+          Invariants.checkInvariantD(
+            x,
+            !Double.isNaN(x),
+            n -> String.format("Position [%d].x must be a valid number", bi));
+          Invariants.checkInvariantD(
+            y,
+            !Double.isNaN(y),
+            n -> String.format("Position [%d].y must be a valid number", bi));
+          Invariants.checkInvariantD(
+            z,
+            !Double.isNaN(z),
+            n -> String.format("Position [%d].z must be a valid number", bi));
 
           v_pos.set3F((float) x, (float) y, (float) z);
         }
@@ -249,19 +261,31 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
           final double y = k.getYD();
           final double z = k.getZD();
 
-          Assertive.ensure(
-            Double.isFinite(x), "Normal [%d].x must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(y), "Normal [%d].y must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(z), "Normal [%d].z must be finite", bi);
+          Invariants.checkInvariantD(
+            x,
+            Double.isFinite(x),
+            n -> String.format("Normal [%d].x must be finite", bi));
+          Invariants.checkInvariantD(
+            y,
+            Double.isFinite(y),
+            n -> String.format("Normal [%d].y must be finite", bi));
+          Invariants.checkInvariantD(
+            z,
+            Double.isFinite(z),
+            n -> String.format("Normal [%d].z must be finite", bi));
 
-          Assertive.ensure(
-            !Double.isNaN(x), "Normal [%d].x must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(y), "Normal [%d].y must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(z), "Normal [%d].z must be a valid number", bi);
+          Invariants.checkInvariantD(
+            x,
+            !Double.isNaN(x),
+            n -> String.format("Normal [%d].x must be a valid number", bi));
+          Invariants.checkInvariantD(
+            y,
+            !Double.isNaN(y),
+            n -> String.format("Normal [%d].y must be a valid number", bi));
+          Invariants.checkInvariantD(
+            z,
+            !Double.isNaN(z),
+            n -> String.format("Normal [%d].z must be a valid number", bi));
 
           v_nor.set3F((float) x, (float) y, (float) z);
         }
@@ -275,23 +299,39 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
           final double z = k.getZD();
           final double w = k.getWD();
 
-          Assertive.ensure(
-            Double.isFinite(x), "Tangent [%d].x must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(y), "Tangent [%d].y must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(z), "Tangent [%d].z must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(w), "Tangent [%d].w must be finite", bi);
+          Invariants.checkInvariantD(
+            x,
+            Double.isFinite(x),
+            n -> String.format("Tangent [%d].x must be finite", bi));
+          Invariants.checkInvariantD(
+            y,
+            Double.isFinite(y),
+            n -> String.format("Tangent [%d].y must be finite", bi));
+          Invariants.checkInvariantD(
+            z,
+            Double.isFinite(z),
+            n -> String.format("Tangent [%d].z must be finite", bi));
+          Invariants.checkInvariantD(
+            w,
+            Double.isFinite(z),
+            n -> String.format("Tangent [%d].w must be finite", bi));
 
-          Assertive.ensure(
-            !Double.isNaN(x), "Tangent [%d].x must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(y), "Tangent [%d].y must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(z), "Tangent [%d].z must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(w), "Tangent [%d].w must be a valid number", bi);
+          Invariants.checkInvariantD(
+            x,
+            !Double.isNaN(x),
+            n -> String.format("Tangent [%d].x must be a valid number", bi));
+          Invariants.checkInvariantD(
+            y,
+            !Double.isNaN(y),
+            n -> String.format("Tangent [%d].y must be a valid number", bi));
+          Invariants.checkInvariantD(
+            z,
+            !Double.isNaN(z),
+            n -> String.format("Tangent [%d].z must be a valid number", bi));
+          Invariants.checkInvariantD(
+            w,
+            !Double.isNaN(w),
+            n -> String.format("Tangent [%d].w must be a valid number", bi));
 
           v_tan.set4F((float) x, (float) y, (float) z, (float) w);
         }
@@ -303,15 +343,23 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
           final double x = k.getXD();
           final double y = k.getYD();
 
-          Assertive.ensure(
-            Double.isFinite(x), "UV [%d].x must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(y), "UV [%d].y must be finite", bi);
+          Invariants.checkInvariantD(
+            x,
+            Double.isFinite(x),
+            n -> String.format("UV [%d].x must be finite", bi));
+          Invariants.checkInvariantD(
+            y,
+            Double.isFinite(y),
+            n -> String.format("UV [%d].y must be finite", bi));
 
-          Assertive.ensure(
-            !Double.isNaN(x), "UV [%d].x must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(y), "UV [%d].y must be a valid number", bi);
+          Invariants.checkInvariantD(
+            x,
+            !Double.isNaN(x),
+            n -> String.format("UV [%d].x must be a valid number", bi));
+          Invariants.checkInvariantD(
+            y,
+            !Double.isNaN(y),
+            n -> String.format("UV [%d].y must be a valid number", bi));
 
           v_uv.set2F((float) x, (float) y);
         }

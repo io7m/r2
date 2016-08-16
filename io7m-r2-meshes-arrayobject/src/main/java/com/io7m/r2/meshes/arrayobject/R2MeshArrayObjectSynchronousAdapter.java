@@ -56,25 +56,25 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     LOG = LoggerFactory.getLogger(R2MeshArrayObjectSynchronousAdapter.class);
   }
 
-  private final JCGLArrayObjectsType                   g_ao;
-  private final JCGLArrayBuffersType                   g_ab;
-  private final JCGLIndexBuffersType                   g_ib;
-  private final JCGLUsageHint                          array_usage;
-  private       JCGLUnsignedType                       index_type_actual;
-  private final JCGLUsageHint                          index_usage;
+  private final JCGLArrayObjectsType g_ao;
+  private final JCGLArrayBuffersType g_ab;
+  private final JCGLIndexBuffersType g_ib;
+  private final JCGLUsageHint array_usage;
+  private JCGLUnsignedType index_type_actual;
+  private final JCGLUsageHint index_usage;
   private final R2VertexCursorProducerType<ByteBuffer> cursor_producer;
-  private final R2VertexCursorProducerInfoType         cursor_info;
-  private final JCGLUnsignedType                       index_type_minimum;
-  private       boolean                                failed;
-  private       JCGLArrayBufferType                    array_buffer;
-  private       JCGLIndexBufferType                    index_buffer;
-  private JCGLArrayObjectType                       array_object;
+  private final R2VertexCursorProducerInfoType cursor_info;
+  private final JCGLUnsignedType index_type_minimum;
+  private boolean failed;
+  private JCGLArrayBufferType array_buffer;
+  private JCGLIndexBufferType index_buffer;
+  private JCGLArrayObjectType array_object;
   private JCGLBufferUpdateType<JCGLArrayBufferType> array_update;
   private JCGLBufferUpdateType<JCGLIndexBufferType> index_update;
-  private R2VertexCursorType                        array_cursor;
-  private Optional<Throwable>                       error_ex;
-  private String                                    error_message;
-  private OptionalLong                              vertex_count;
+  private R2VertexCursorType array_cursor;
+  private Optional<Throwable> error_ex;
+  private String error_message;
+  private OptionalLong vertex_count;
 
   private R2MeshArrayObjectSynchronousAdapter(
     final JCGLArrayObjectsType in_g_ao,

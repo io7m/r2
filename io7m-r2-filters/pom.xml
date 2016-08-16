@@ -12,7 +12,7 @@
   </parent>
   <artifactId>io7m-r2-filters</artifactId>
 
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>io7m-r2-filters</name>
   <description>3D renderer (Filters)</description>
   <url>http://io7m.github.io/r2/</url>
@@ -95,10 +95,6 @@
       <artifactId>fastutil</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.valid4j</groupId>
-      <artifactId>valid4j</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
@@ -143,6 +139,20 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+
+      <!-- Produce OSGi bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              com.io7m.r2.filters
+            </Export-Package>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

@@ -24,29 +24,34 @@ import java.util.Optional;
  * The type of preprocessor programs.
  */
 
-@Value.Immutable public interface R2ShaderPreprocessorProgramType
+@Value.Immutable
+public interface R2ShaderPreprocessorProgramType
 {
   /**
    * @return The program name
    */
 
-  @Value.Parameter String getProgramName();
+  @Value.Parameter
+  String getProgramName();
 
   /**
    * @return The vertex shader source file
    */
 
-  @Value.Parameter String getVertexShaderFile();
+  @Value.Parameter
+  String getVertexShaderFile();
 
   /**
    * @return The geometry shader source file
    */
 
-  @Value.Parameter Optional<String> getGeometryShaderFile();
+  @Value.Parameter
+  Optional<String> getGeometryShaderFile();
 
   /**
    * @return The fragment shader source file
    */
 
-  @Value.Parameter String getFragmentShaderFile();
+  @Value.Parameter
+  String getFragmentShaderFile();
 }

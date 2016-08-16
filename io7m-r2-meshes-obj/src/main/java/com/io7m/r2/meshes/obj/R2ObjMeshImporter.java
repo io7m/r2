@@ -16,6 +16,7 @@
 
 package com.io7m.r2.meshes.obj;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jlexing.core.LexicalPositionType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jobj.core.JOParser;
@@ -34,7 +35,6 @@ import it.unimi.dsi.fastutil.ints.Int2LongMap;
 import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -86,19 +86,19 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
 
   private static final class Listener implements JOParserEventListenerType
   {
-    private final Int2LongMap                  mesh_positions;
-    private final Int2LongMap                  mesh_normals;
-    private final Int2LongOpenHashMap          mesh_textures;
-    private final R2ObjMeshErrorListenerType   error;
+    private final Int2LongMap mesh_positions;
+    private final Int2LongMap mesh_normals;
+    private final Int2LongOpenHashMap mesh_textures;
+    private final R2ObjMeshErrorListenerType error;
     private final Map<String, R2MeshBasicType> meshes;
-    private       R2MeshBasicBuilderType       builder;
-    private       Optional<String>             mesh;
-    private       int                          face_current;
-    private       long                         f_v0;
-    private       long                         f_v1;
-    private       long                         f_v2;
-    private       int                          face_vertices;
-    private       boolean                      mesh_malformed;
+    private R2MeshBasicBuilderType builder;
+    private Optional<String> mesh;
+    private int face_current;
+    private long f_v0;
+    private long f_v1;
+    private long f_v2;
+    private int face_vertices;
+    private boolean mesh_malformed;
 
     Listener(final R2ObjMeshErrorListenerType in_error)
     {
@@ -162,9 +162,14 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
 
     private void finishCurrentMesh()
     {
-      Assertive.require(this.mesh.isPresent());
+      Preconditions.checkPrecondition(
+        this.mesh.isPresent(), "Mesh must be present");
+
       final String name = this.mesh.get();
-      Assertive.require(!this.meshes.containsKey(name));
+
+      Preconditions.checkPrecondition(
+        !this.meshes.containsKey(name), "Mesh must not already exist");
+
       final R2MeshBasicType m = this.builder.build();
       R2ObjMeshImporter.LOG.debug("loaded {}", name);
       this.meshes.put(name, m);
@@ -312,9 +317,18 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         return;
       }
 
-      Assertive.require(this.mesh_positions.containsKey(v));
-      Assertive.require(this.mesh_normals.containsKey(vn));
-      Assertive.require(this.mesh_textures.containsKey(vt));
+      Preconditions.checkPreconditionI(
+        v,
+        this.mesh_positions.containsKey(v),
+        i -> "Mesh positions must not contain " + i);
+      Preconditions.checkPreconditionI(
+        vn,
+        this.mesh_normals.containsKey(vn),
+        i -> "Mesh normals must not contain " + i);
+      Preconditions.checkPreconditionI(
+        vt,
+        this.mesh_textures.containsKey(vt),
+        i -> "Mesh textures must not contain " + i);
 
       final long p_actual = this.mesh_positions.get(v);
       final long n_actual = this.mesh_normals.get(vn);
@@ -425,7 +439,8 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         return;
       }
 
-      Assertive.require(this.mesh.isPresent());
+      Preconditions.checkPrecondition(
+        this.mesh.isPresent(), "Mesh must be present");
       this.face_current = index;
     }
 
@@ -438,9 +453,9 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         return;
       }
 
-      Assertive.require(this.f_v0 != -1L);
-      Assertive.require(this.f_v1 != -1L);
-      Assertive.require(this.f_v2 != -1L);
+      Preconditions.checkPrecondition(this.f_v0 != -1L, "V0 must != -1");
+      Preconditions.checkPrecondition(this.f_v1 != -1L, "V1 must != -1");
+      Preconditions.checkPrecondition(this.f_v2 != -1L, "V2 must != -1");
 
       R2ObjMeshImporter.LOG.trace(
         "triangle {}/{}/{}",

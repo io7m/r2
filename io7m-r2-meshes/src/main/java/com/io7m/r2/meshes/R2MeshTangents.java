@@ -16,6 +16,7 @@
 
 package com.io7m.r2.meshes;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.OrthonormalizedI3D;
 import com.io7m.jtensors.VectorI3D;
@@ -36,7 +37,6 @@ import it.unimi.dsi.fastutil.objects.ObjectBigList;
 import it.unimi.dsi.fastutil.objects.ObjectBigLists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.util.NoSuchElementException;
 
@@ -52,13 +52,13 @@ public final class R2MeshTangents implements R2MeshTangentsType
     LOG = LoggerFactory.getLogger(R2MeshTangents.class);
   }
 
-  private final BigList<PVectorI3D<R2SpaceObjectType>>  positions;
-  private final BigList<PVectorI3D<R2SpaceObjectType>>  normals;
-  private final BigList<PVectorI4D<R2SpaceObjectType>>  tangents;
-  private final BigList<PVectorI3D<R2SpaceObjectType>>  bitangents;
+  private final BigList<PVectorI3D<R2SpaceObjectType>> positions;
+  private final BigList<PVectorI3D<R2SpaceObjectType>> normals;
+  private final BigList<PVectorI4D<R2SpaceObjectType>> tangents;
+  private final BigList<PVectorI3D<R2SpaceObjectType>> bitangents;
   private final BigList<PVectorI2D<R2SpaceTextureType>> uvs;
-  private final BigList<R2MeshTangentsVertexType>       vertices;
-  private final BigList<R2MeshTriangleType>             triangles;
+  private final BigList<R2MeshTangentsVertexType> vertices;
+  private final BigList<R2MeshTriangleType> triangles;
 
   private R2MeshTangents(
     final BigList<PVectorI3D<R2SpaceObjectType>> in_positions,
@@ -252,7 +252,10 @@ public final class R2MeshTangents implements R2MeshTangentsType
        * coordinate. Should be prevented by earlier checks.
        */
 
-      Assertive.ensure(d != 0.0, "d (%f) must be != 0.0", Double.valueOf(d));
+      Invariants.checkInvariantD(
+        d,
+        d != 0.0,
+        x -> String.format("d (%f) must be != 0.0", Double.valueOf(x)));
 
       final double r = 1.0 / d;
 
@@ -402,8 +405,8 @@ public final class R2MeshTangents implements R2MeshTangentsType
   {
     final boolean sharing =
       (v0.getUVIndex() == v1.getUVIndex())
-      || (v1.getUVIndex() == v2.getUVIndex())
-      || (v0.getUVIndex() == v2.getUVIndex());
+        || (v1.getUVIndex() == v2.getUVIndex())
+        || (v0.getUVIndex() == v2.getUVIndex());
 
     if (sharing) {
       final StringBuilder sb = new StringBuilder(128);
@@ -458,15 +461,24 @@ public final class R2MeshTangents implements R2MeshTangentsType
     final long index)
   {
     final Long bi = Long.valueOf(index);
-    Assertive.ensure(
-      Double.isFinite(v.getXD()), "%s [%d].x must be finite", name, bi);
-    Assertive.ensure(
-      Double.isFinite(v.getYD()), "%s [%d].y must be finite", name, bi);
 
-    Assertive.ensure(
-      !Double.isNaN(v.getXD()), "%s [%d].x must be a valid number", name, bi);
-    Assertive.ensure(
-      !Double.isNaN(v.getYD()), "%s [%d].y must be a valid number", name, bi);
+    Invariants.checkInvariantD(
+      v.getXD(),
+      Double.isFinite(v.getXD()),
+      x -> String.format("%s [%d].x must be finite", name, bi));
+    Invariants.checkInvariantD(
+      v.getYD(),
+      Double.isFinite(v.getYD()),
+      y -> String.format("%s [%d].y must be finite", name, bi));
+
+    Invariants.checkInvariantD(
+      v.getXD(),
+      !Double.isNaN(v.getXD()),
+      x -> String.format("%s [%d].x must be a valid number", name, bi));
+    Invariants.checkInvariantD(
+      v.getYD(),
+      !Double.isNaN(v.getYD()),
+      y -> String.format("%s [%d].y must be a valid number", name, bi));
   }
 
   private static void checkVector4D(
@@ -475,23 +487,40 @@ public final class R2MeshTangents implements R2MeshTangentsType
     final long index)
   {
     final Long bi = Long.valueOf(index);
-    Assertive.ensure(
-      Double.isFinite(v.getXD()), "%s [%d].x must be finite", name, bi);
-    Assertive.ensure(
-      Double.isFinite(v.getYD()), "%s [%d].y must be finite", name, bi);
-    Assertive.ensure(
-      Double.isFinite(v.getZD()), "%s [%d].z must be finite", name, bi);
-    Assertive.ensure(
-      Double.isFinite(v.getWD()), "%s [%d].w must be finite", name, bi);
 
-    Assertive.ensure(
-      !Double.isNaN(v.getXD()), "%s [%d].x must be a valid number", name, bi);
-    Assertive.ensure(
-      !Double.isNaN(v.getYD()), "%s [%d].y must be a valid number", name, bi);
-    Assertive.ensure(
-      !Double.isNaN(v.getZD()), "%s [%d].z must be a valid number", name, bi);
-    Assertive.ensure(
-      !Double.isNaN(v.getWD()), "%s [%d].w must be a valid number", name, bi);
+    Invariants.checkInvariantD(
+      v.getXD(),
+      Double.isFinite(v.getXD()),
+      x -> String.format("%s [%d].x must be finite", name, bi));
+    Invariants.checkInvariantD(
+      v.getYD(),
+      Double.isFinite(v.getYD()),
+      y -> String.format("%s [%d].y must be finite", name, bi));
+    Invariants.checkInvariantD(
+      v.getZD(),
+      Double.isFinite(v.getZD()),
+      z -> String.format("%s [%d].z must be finite", name, bi));
+    Invariants.checkInvariantD(
+      v.getWD(),
+      Double.isFinite(v.getWD()),
+      w -> String.format("%s [%d].w must be finite", name, bi));
+
+    Invariants.checkInvariantD(
+      v.getXD(),
+      !Double.isNaN(v.getXD()),
+      x -> String.format("%s [%d].x must be a valid number", name, bi));
+    Invariants.checkInvariantD(
+      v.getYD(),
+      !Double.isNaN(v.getYD()),
+      y -> String.format("%s [%d].y must be a valid number", name, bi));
+    Invariants.checkInvariantD(
+      v.getZD(),
+      !Double.isNaN(v.getZD()),
+      z -> String.format("%s [%d].z must be a valid number", name, bi));
+    Invariants.checkInvariantD(
+      v.getWD(),
+      !Double.isNaN(v.getWD()),
+      w -> String.format("%s [%d].w must be a valid number", name, bi));
   }
 
   private static void checkVector3D(
@@ -500,19 +529,32 @@ public final class R2MeshTangents implements R2MeshTangentsType
     final long index)
   {
     final Long bi = Long.valueOf(index);
-    Assertive.ensure(
-      Double.isFinite(v.getXD()), "%s [%d].x must be finite", name, bi);
-    Assertive.ensure(
-      Double.isFinite(v.getYD()), "%s [%d].y must be finite", name, bi);
-    Assertive.ensure(
-      Double.isFinite(v.getZD()), "%s [%d].z must be finite", name, bi);
 
-    Assertive.ensure(
-      !Double.isNaN(v.getXD()), "%s [%d].x must be a valid number", name, bi);
-    Assertive.ensure(
-      !Double.isNaN(v.getYD()), "%s [%d].y must be a valid number", name, bi);
-    Assertive.ensure(
-      !Double.isNaN(v.getZD()), "%s [%d].z must be a valid number", name, bi);
+    Invariants.checkInvariantD(
+      v.getXD(),
+      Double.isFinite(v.getXD()),
+      x -> String.format("%s [%d].x must be finite", name, bi));
+    Invariants.checkInvariantD(
+      v.getYD(),
+      Double.isFinite(v.getYD()),
+      y -> String.format("%s [%d].y must be finite", name, bi));
+    Invariants.checkInvariantD(
+      v.getZD(),
+      Double.isFinite(v.getZD()),
+      z -> String.format("%s [%d].z must be finite", name, bi));
+
+    Invariants.checkInvariantD(
+      v.getXD(),
+      !Double.isNaN(v.getXD()),
+      x -> String.format("%s [%d].x must be a valid number", name, bi));
+    Invariants.checkInvariantD(
+      v.getYD(),
+      !Double.isNaN(v.getYD()),
+      y -> String.format("%s [%d].y must be a valid number", name, bi));
+    Invariants.checkInvariantD(
+      v.getZD(),
+      !Double.isNaN(v.getZD()),
+      z -> String.format("%s [%d].z must be a valid number", name, bi));
   }
 
   private static void checkTriangleVertices(
@@ -637,13 +679,13 @@ public final class R2MeshTangents implements R2MeshTangentsType
 
   private static final class Builder implements R2MeshTangentsBuilderType
   {
-    private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  positions;
-    private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  normals;
-    private final ObjectBigList<PVectorI3D<R2SpaceObjectType>>  bitangents;
-    private final ObjectBigList<PVectorI4D<R2SpaceObjectType>>  tangents;
+    private final ObjectBigList<PVectorI3D<R2SpaceObjectType>> positions;
+    private final ObjectBigList<PVectorI3D<R2SpaceObjectType>> normals;
+    private final ObjectBigList<PVectorI3D<R2SpaceObjectType>> bitangents;
+    private final ObjectBigList<PVectorI4D<R2SpaceObjectType>> tangents;
     private final ObjectBigList<PVectorI2D<R2SpaceTextureType>> uvs;
-    private final ObjectBigList<R2MeshTangentsVertexType>       vertices;
-    private final ObjectBigList<R2MeshTriangleType>             triangles;
+    private final ObjectBigList<R2MeshTangentsVertexType> vertices;
+    private final ObjectBigList<R2MeshTriangleType> triangles;
 
     Builder(
       final long v_count,

@@ -204,7 +204,7 @@
       <dependency>
         <groupId>com.io7m.jobj</groupId>
         <artifactId>io7m-jobj-core</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcamera</groupId>
@@ -219,6 +219,11 @@
       <dependency>
         <groupId>com.io7m.jpuddle</groupId>
         <artifactId>io7m-jpuddle-core</artifactId>
+        <version>0.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jaffirm</groupId>
+        <artifactId>io7m-jaffirm-core</artifactId>
         <version>0.1.0</version>
       </dependency>
 
@@ -267,11 +272,6 @@
         <groupId>com.github.marschall</groupId>
         <artifactId>memoryfilesystem</artifactId>
         <version>0.7.7</version>
-      </dependency>
-      <dependency>
-        <groupId>org.valid4j</groupId>
-        <artifactId>valid4j</artifactId>
-        <version>0.4.0</version>
       </dependency>
       <dependency>
         <groupId>com.beust</groupId>
@@ -471,6 +471,12 @@
           <artifactId>truezip-maven-plugin</artifactId>
           <version>1.2</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>3.2.0</version>
+          <extensions>true</extensions>
+        </plugin>
 
         <!-- Require JDK >= 1.8 -->
         <plugin>
@@ -620,6 +626,26 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Produce OSGi bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Specification-Title>${project.name}</Specification-Title>
+            <Specification-Version>${project.version}</Specification-Version>
+            <Specification-Vendor>io7m.com</Specification-Vendor>
+            <Implementation-Title>${project.name}</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+            <Implementation-Vendor>io7m.com</Implementation-Vendor>
+            <Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
+            <Built-By>io7m</Built-By>
+            <Sealed>true</Sealed>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

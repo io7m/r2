@@ -12,7 +12,7 @@
   </parent>
   <artifactId>io7m-r2-meshes-binary</artifactId>
 
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>io7m-r2-meshes-binary</name>
   <description>3D renderer (Binary mesh format)</description>
   <url>http://io7m.github.io/r2/</url>
@@ -58,6 +58,11 @@
       <groupId>com.io7m.jtensors</groupId>
       <artifactId>io7m-jtensors-ieee754b16</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.jaffirm</groupId>
+      <artifactId>io7m-jaffirm-core</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -105,6 +110,21 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Produce OSGi bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              com.io7m.r2.meshes.binary,
+              com.io7m.r2.meshes.binary.r2mb
+            </Export-Package>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

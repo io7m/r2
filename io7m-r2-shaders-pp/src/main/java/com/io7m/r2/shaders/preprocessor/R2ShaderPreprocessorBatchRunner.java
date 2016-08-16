@@ -64,7 +64,8 @@ public final class R2ShaderPreprocessorBatchRunner
     return new R2ShaderPreprocessorBatchRunner(p);
   }
 
-  @Override public void process(
+  @Override
+  public void process(
     final Path output,
     final Map<String, R2ShaderPreprocessorProgramType> sources)
     throws IOException, LexerException

@@ -27,18 +27,19 @@ import java.lang.annotation.Target;
  * Style settings for generated immutable types.
  */
 
-@Target({ ElementType.PACKAGE, ElementType.TYPE })
+@Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS)
 @Value.Style(
-  get = { "is*", "get*" },
+  get = {"is*", "get*"},
   init = "set*",
-  typeAbstract = { "Abstract*", "*Type" },
+  typeAbstract = {"Abstract*", "*Type"},
   typeImmutable = "*",
   typeModifiable = "*Mutable",
   builder = "builder",
   build = "build",
   visibility = Value.Style.ImplementationVisibility.PUBLIC,
-  defaults = @Value.Immutable(copy = false)) @interface R2ShaderPreprocessorImmutableStyleType
+  defaults = @Value.Immutable(copy = false))
+@interface R2ShaderPreprocessorImmutableStyleType
 {
 
 }

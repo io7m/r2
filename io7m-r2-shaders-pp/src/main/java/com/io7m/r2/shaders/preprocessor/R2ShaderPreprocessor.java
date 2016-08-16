@@ -31,7 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,7 +73,8 @@ public final class R2ShaderPreprocessor implements R2ShaderPreprocessorType
     return new R2ShaderPreprocessor(NullCheck.notNull(in_fs));
   }
 
-  @Override public List<String> preprocessFile(final String file)
+  @Override
+  public List<String> preprocessFile(final String file)
     throws IOException, LexerException
   {
     try (final Preprocessor pp = new Preprocessor()) {
@@ -82,7 +82,8 @@ public final class R2ShaderPreprocessor implements R2ShaderPreprocessorType
       pp.addInput(this.fs.getFile(file).getSource());
       pp.setListener(new DefaultPreprocessorListener()
       {
-        @Override public void handleError(
+        @Override
+        public void handleError(
           final Source source,
           final int line,
           final int column,
@@ -102,7 +103,7 @@ public final class R2ShaderPreprocessor implements R2ShaderPreprocessorType
       });
 
       try (final ByteArrayOutputStream bao =
-        new ByteArrayOutputStream(2 << 14)) {
+             new ByteArrayOutputStream(2 << 14)) {
         try (final PrintStream baos = new PrintStream(bao, false, "UTF-8")) {
           baos.println("#version 330 core");
           while (true) {
@@ -119,7 +120,7 @@ public final class R2ShaderPreprocessor implements R2ShaderPreprocessorType
         }
 
         try (final ByteArrayInputStream bai =
-          new ByteArrayInputStream(bao.toByteArray())) {
+               new ByteArrayInputStream(bao.toByteArray())) {
           final List<String> lines = IOUtils.readLines(bai);
           return lines.stream()
             .filter(s -> !s.trim().isEmpty())
