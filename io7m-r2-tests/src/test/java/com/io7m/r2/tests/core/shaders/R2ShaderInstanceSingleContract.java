@@ -282,6 +282,55 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
   }
 
   @Test
+  public final void testReceiveMultipleInstances()
+    throws Exception
+  {
+    final JCGLContextType c =
+      this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g =
+      c.contextGetGL33();
+    final R2ShaderSourcesType sources =
+      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2IDPoolType pool =
+      R2IDPool.newPool();
+
+    final R2ShaderInstanceSingleType<T> f =
+      this.newShaderWithVerifier(g, sources, pool);
+    final T t =
+      this.newParameters(g);
+
+    final R2ProjectionReadableType proj =
+      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr = ta.getRootContext();
+    final JCGLTextureUnitContextType tc = tr.unitContextNew();
+
+    f.onActivate(g.getShaders());
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+
+    f.onReceiveInstanceTransformValues(
+      g_sh, new R2EmptyInstanceTransformValues());
+    f.onValidate();
+
+    f.onReceiveInstanceTransformValues(
+      g_sh, new R2EmptyInstanceTransformValues());
+    f.onValidate();
+
+    f.onReceiveInstanceTransformValues(
+      g_sh, new R2EmptyInstanceTransformValues());
+    f.onValidate();
+
+    f.onDeactivate(g_sh);
+  }
+
+  @Test
   public final void testNoReceiveView()
     throws Exception
   {
