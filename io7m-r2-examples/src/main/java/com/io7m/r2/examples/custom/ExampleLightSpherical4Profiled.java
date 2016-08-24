@@ -270,13 +270,13 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
   private JCGLProfilingFrameType profiling_frame;
   private JCGLProfilingContextType profiling_root;
   private R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool;
+
   private R2FilterType<
     R2FilterBoxBlurParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType>> filter_blur;
-
   private R2FilterType<R2FilterEmissionParametersType> filter_emission;
   private R2FilterEmissionParametersMutable filter_emission_params;
   private R2BlurParametersReadableType filter_emission_blur_params;
