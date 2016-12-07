@@ -24,6 +24,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableT
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
+import unquietcode.tools.esm.EnumStateMachine;
 
 /**
  * A verifier for filter shaders; a type that verifies that a renderer has
@@ -34,21 +35,29 @@ import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 
 public final class R2ShaderFilterVerifier<M> implements R2ShaderFilterType<M>
 {
-  private static final State[] VALUES_RECEIVED_OR_ACTIVATED = {
-    State.STATE_ACTIVATED,
-    State.STATE_VALUES_RECEIVED,
-  };
-
   private final R2ShaderFilterType<M> shader;
-  private final StringBuilder text;
-  private State state;
+  private final EnumStateMachine<State> state;
 
   private R2ShaderFilterVerifier(
     final R2ShaderFilterType<M> in_shader)
   {
     this.shader = NullCheck.notNull(in_shader);
-    this.text = new StringBuilder(128);
-    this.state = State.STATE_DEACTIVATED;
+
+    this.state = new EnumStateMachine<>(State.STATE_DEACTIVATED);
+    this.state.addTransition(
+      State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
+    this.state.addTransition(
+      State.STATE_ACTIVATED, State.STATE_VALUES_RECEIVED);
+    this.state.addTransition(
+      State.STATE_VALUES_RECEIVED, State.STATE_VALIDATED);
+    this.state.addTransition(
+      State.STATE_VALIDATED, State.STATE_VALUES_RECEIVED);
+
+    for (final State target : State.values()) {
+      if (target != State.STATE_DEACTIVATED) {
+        this.state.addTransition(target, State.STATE_DEACTIVATED);
+      }
+    }
   }
 
   /**
@@ -100,28 +109,23 @@ public final class R2ShaderFilterVerifier<M> implements R2ShaderFilterType<M>
   @Override
   public void onActivate(final JCGLShadersType g_sh)
   {
+    this.state.transition(State.STATE_ACTIVATED);
     this.shader.onActivate(g_sh);
-    this.state = State.STATE_ACTIVATED;
   }
 
   @Override
   public void onValidate()
     throws R2ExceptionShaderValidationFailed
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.shader.getShaderProgram().getName(),
-      State.STATE_VALUES_RECEIVED,
-      this.state);
-
+    this.state.transition(State.STATE_VALIDATED);
     this.shader.onValidate();
   }
 
   @Override
   public void onDeactivate(final JCGLShadersType g_sh)
   {
+    this.state.transition(State.STATE_DEACTIVATED);
     this.shader.onDeactivate(g_sh);
-    this.state = State.STATE_DEACTIVATED;
   }
 
   @Override
@@ -131,20 +135,15 @@ public final class R2ShaderFilterVerifier<M> implements R2ShaderFilterType<M>
     final JCGLTextureUnitContextMutableType tc,
     final M values)
   {
-    R2ShaderVerifiers.checkStates(
-      this.text,
-      this.shader.getShaderProgram().getName(),
-      R2ShaderFilterVerifier.VALUES_RECEIVED_OR_ACTIVATED,
-      this.state);
-
+    this.state.transition(State.STATE_VALUES_RECEIVED);
     this.shader.onReceiveFilterValues(g_tex, g_sh, tc, values);
-    this.state = State.STATE_VALUES_RECEIVED;
   }
 
   private enum State
   {
     STATE_DEACTIVATED,
     STATE_ACTIVATED,
-    STATE_VALUES_RECEIVED
+    STATE_VALUES_RECEIVED,
+    STATE_VALIDATED
   }
 }

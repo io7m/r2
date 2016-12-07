@@ -26,6 +26,7 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
+import unquietcode.tools.esm.EnumStateMachine;
 
 /**
  * A delegating verifier for single-instance depth shaders; a type that verifies
@@ -37,27 +38,33 @@ import com.io7m.r2.core.R2MatricesObserverValuesType;
 public final class R2ShaderDepthSingleVerifier<M> implements
   R2ShaderDepthSingleType<M>
 {
-  private static final State[] VIEW_MATERIAL_OR_INSTANCE_RECEIVED = {
-    State.STATE_MATERIAL_RECEIVED,
-    State.STATE_VIEW_RECEIVED,
-    State.STATE_INSTANCE_RECEIVED,
-  };
-
-  private static final State[] MATERIAL_OR_INSTANCE_RECEIVED = {
-    State.STATE_MATERIAL_RECEIVED,
-    State.STATE_INSTANCE_RECEIVED,
-  };
-
   private final R2ShaderDepthSingleType<M> shader;
-  private final StringBuilder text;
-  private State state;
+  private final EnumStateMachine<State> state;
 
   private R2ShaderDepthSingleVerifier(
     final R2ShaderDepthSingleType<M> in_shader)
   {
     this.shader = NullCheck.notNull(in_shader);
-    this.text = new StringBuilder(128);
-    this.state = State.STATE_DEACTIVATED;
+    this.state = new EnumStateMachine<State>(State.STATE_DEACTIVATED);
+
+    this.state.addTransition(
+      State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
+    this.state.addTransition(
+      State.STATE_ACTIVATED, State.STATE_VIEW_RECEIVED);
+    this.state.addTransition(
+      State.STATE_VIEW_RECEIVED, State.STATE_MATERIAL_RECEIVED);
+    this.state.addTransition(
+      State.STATE_MATERIAL_RECEIVED, State.STATE_INSTANCE_RECEIVED);
+    this.state.addTransition(
+      State.STATE_INSTANCE_RECEIVED, State.STATE_VALIDATED);
+    this.state.addTransition(
+      State.STATE_VALIDATED, State.STATE_MATERIAL_RECEIVED);
+
+    for (final State target : State.values()) {
+      if (target != State.STATE_DEACTIVATED) {
+        this.state.addTransition(target, State.STATE_DEACTIVATED);
+      }
+    }
   }
 
   /**
@@ -110,26 +117,21 @@ public final class R2ShaderDepthSingleVerifier<M> implements
   public void onActivate(final JCGLShadersType g_sh)
   {
     this.shader.onActivate(g_sh);
-    this.state = State.STATE_ACTIVATED;
+    this.state.transition(State.STATE_ACTIVATED);
   }
 
   @Override
   public void onValidate()
     throws R2ExceptionShaderValidationFailed
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_INSTANCE_RECEIVED,
-      this.state);
-
+    this.state.transition(State.STATE_VALIDATED);
     this.shader.onValidate();
   }
 
   @Override
   public void onDeactivate(final JCGLShadersType g_sh)
   {
-    this.state = State.STATE_DEACTIVATED;
+    this.state.transition(State.STATE_DEACTIVATED);
     this.shader.onDeactivate(g_sh);
   }
 
@@ -138,13 +140,7 @@ public final class R2ShaderDepthSingleVerifier<M> implements
     final JCGLShadersType g_sh,
     final R2MatricesObserverValuesType m)
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_ACTIVATED,
-      this.state);
-
-    this.state = State.STATE_VIEW_RECEIVED;
+    this.state.transition(State.STATE_VIEW_RECEIVED);
     this.shader.onReceiveViewValues(g_sh, m);
   }
 
@@ -155,13 +151,7 @@ public final class R2ShaderDepthSingleVerifier<M> implements
     final JCGLTextureUnitContextMutableType tc,
     final M values)
   {
-    R2ShaderVerifiers.checkStates(
-      this.text,
-      this.getShaderProgram().getName(),
-      R2ShaderDepthSingleVerifier.VIEW_MATERIAL_OR_INSTANCE_RECEIVED,
-      this.state);
-
-    this.state = State.STATE_MATERIAL_RECEIVED;
+    this.state.transition(State.STATE_MATERIAL_RECEIVED);
     this.shader.onReceiveMaterialValues(g_tex, g_sh, tc, values);
   }
 
@@ -170,13 +160,7 @@ public final class R2ShaderDepthSingleVerifier<M> implements
     final JCGLShadersType g_sh,
     final R2MatricesInstanceSingleValuesType m)
   {
-    R2ShaderVerifiers.checkStates(
-      this.text,
-      this.getShaderProgram().getName(),
-      R2ShaderDepthSingleVerifier.MATERIAL_OR_INSTANCE_RECEIVED,
-      this.state);
-
-    this.state = State.STATE_INSTANCE_RECEIVED;
+    this.state.transition(State.STATE_INSTANCE_RECEIVED);
     this.shader.onReceiveInstanceTransformValues(g_sh, m);
   }
 
@@ -186,6 +170,7 @@ public final class R2ShaderDepthSingleVerifier<M> implements
     STATE_ACTIVATED,
     STATE_MATERIAL_RECEIVED,
     STATE_INSTANCE_RECEIVED,
-    STATE_VIEW_RECEIVED
+    STATE_VIEW_RECEIVED,
+    STATE_VALIDATED
   }
 }

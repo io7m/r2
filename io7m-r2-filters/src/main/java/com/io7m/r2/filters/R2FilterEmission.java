@@ -361,7 +361,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         } finally {
           g_ao.arrayObjectUnbind();
-          this.shader_emission.onDeactivate(g_sh);
+          this.shader_copy.onDeactivate(g_sh);
         }
       } finally {
         tc.unitContextFinish(g_tex);

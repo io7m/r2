@@ -101,6 +101,10 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.unquietcode.tools.jstate</groupId>
+      <artifactId>jstate</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.immutables</groupId>

@@ -39,6 +39,7 @@ import com.io7m.r2.tests.core.R2TestUtilities;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import unquietcode.tools.esm.TransitionException;
 
 public final class R2ShaderDepthSingleVerifierTest
 {
@@ -149,7 +150,7 @@ public final class R2ShaderDepthSingleVerifierTest
     v.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
   }
 
@@ -169,7 +170,7 @@ public final class R2ShaderDepthSingleVerifierTest
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
   }
 
@@ -191,7 +192,7 @@ public final class R2ShaderDepthSingleVerifierTest
 
     v.onActivate(g_sh);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     v.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
   }
@@ -222,9 +223,8 @@ public final class R2ShaderDepthSingleVerifierTest
     v.onActivate(g.getShaders());
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     v.onValidate();
-    v.onDeactivate(g_sh);
   }
 
   @Test
@@ -248,7 +248,7 @@ public final class R2ShaderDepthSingleVerifierTest
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     v.onActivate(g_sh);
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
   }
 
@@ -268,7 +268,7 @@ public final class R2ShaderDepthSingleVerifierTest
     v.onActivate(g_sh);
     v.onDeactivate(g_sh);
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     v.onValidate();
   }
 }

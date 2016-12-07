@@ -39,6 +39,7 @@ import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import unquietcode.tools.esm.TransitionException;
 
 public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
   R2JCGLContract
@@ -182,7 +183,7 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
   }
 
@@ -209,7 +210,7 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
   }
 
@@ -238,7 +239,7 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     f.onActivate(g_sh);
     f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
   }
@@ -276,9 +277,8 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     f.onActivate(g.getShaders());
     f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     f.onValidate();
-    f.onDeactivate(g_sh);
   }
 
   @Test
@@ -358,7 +358,7 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     f.onActivate(g_sh);
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
   }
 
@@ -385,7 +385,7 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     f.onActivate(g_sh);
     f.onDeactivate(g_sh);
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     f.onValidate();
   }
 }

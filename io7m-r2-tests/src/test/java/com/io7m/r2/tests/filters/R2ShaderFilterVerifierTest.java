@@ -29,6 +29,7 @@ import com.io7m.r2.tests.core.R2TestUtilities;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import unquietcode.tools.esm.TransitionException;
 
 public final class R2ShaderFilterVerifierTest
 {
@@ -80,7 +81,7 @@ public final class R2ShaderFilterVerifierTest
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     v.onReceiveFilterValues(g_tex, g_sh, tc, new Object());
   }
 
@@ -98,7 +99,7 @@ public final class R2ShaderFilterVerifierTest
     final JCGLShadersType g_sh = g.getShaders();
 
     v.onActivate(g_sh);
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     v.onValidate();
   }
 
@@ -118,7 +119,7 @@ public final class R2ShaderFilterVerifierTest
     v.onActivate(g_sh);
     v.onDeactivate(g_sh);
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     v.onValidate();
   }
 }

@@ -57,6 +57,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import unquietcode.tools.esm.TransitionException;
 
 public abstract class R2ShaderLightProjectiveContract<
   T extends R2LightProjectiveReadableType>
@@ -219,7 +220,7 @@ public abstract class R2ShaderLightProjectiveContract<
 
     f.onActivate(g.getShaders());
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     mat.withObserver(view, proj, this, (mo, x) -> {
       f.onReceiveValues(g_tex, g_sh, tc, gbuffer.getArea(), params, mo);
       return Unit.unit();

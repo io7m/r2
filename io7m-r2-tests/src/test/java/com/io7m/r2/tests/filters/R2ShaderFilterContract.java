@@ -34,6 +34,7 @@ import com.io7m.r2.tests.core.R2JCGLContract;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import unquietcode.tools.esm.TransitionException;
 
 public abstract class R2ShaderFilterContract<T, TM extends T> extends
   R2JCGLContract
@@ -111,7 +112,7 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     f.onReceiveFilterValues(g_tex, g_sh, tc, t);
   }
 
@@ -136,7 +137,7 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     final JCGLShadersType g_sh = g.getShaders();
 
     f.onActivate(g_sh);
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     f.onValidate();
   }
 
@@ -163,7 +164,7 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     f.onActivate(g_sh);
     f.onDeactivate(g_sh);
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(TransitionException.class);
     f.onValidate();
   }
 }

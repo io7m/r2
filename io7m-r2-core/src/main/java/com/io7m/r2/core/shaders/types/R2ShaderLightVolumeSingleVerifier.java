@@ -30,6 +30,7 @@ import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2LightVolumeSingleReadableType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
+import unquietcode.tools.esm.EnumStateMachine;
 
 /**
  * A verifier for single-instance volume light shaders; a type that verifies
@@ -42,21 +43,31 @@ public final class R2ShaderLightVolumeSingleVerifier<
   M extends R2LightVolumeSingleReadableType> implements
   R2ShaderLightVolumeSingleType<M>
 {
-  private static final State[] GEOMETRY_BUFFER_OR_VOLUME = {
-    State.STATE_GEOMETRY_BUFFER_RECEIVED,
-    State.STATE_VOLUME_RECEIVED,
-  };
-
   private final R2ShaderLightVolumeSingleType<M> shader;
-  private final StringBuilder text;
-  private State state;
+  private final EnumStateMachine<State> state;
 
   private R2ShaderLightVolumeSingleVerifier(
     final R2ShaderLightVolumeSingleType<M> in_shader)
   {
+    this.state = new EnumStateMachine<>(State.STATE_DEACTIVATED);
+    this.state.addTransition(
+      State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
+    this.state.addTransition(
+      State.STATE_ACTIVATED, State.STATE_GEOMETRY_BUFFER_RECEIVED);
+    this.state.addTransition(
+      State.STATE_GEOMETRY_BUFFER_RECEIVED, State.STATE_VALUES_RECEIVED);
+    this.state.addTransition(
+      State.STATE_VALUES_RECEIVED, State.STATE_VOLUME_RECEIVED);
+    this.state.addTransition(
+      State.STATE_VOLUME_RECEIVED, State.STATE_VALIDATED);
+
+    for (final State target : State.values()) {
+      if (target != State.STATE_DEACTIVATED) {
+        this.state.addTransition(target, State.STATE_DEACTIVATED);
+      }
+    }
+
     this.shader = NullCheck.notNull(in_shader);
-    this.text = new StringBuilder(128);
-    this.state = State.STATE_DEACTIVATED;
   }
 
   /**
@@ -110,28 +121,23 @@ public final class R2ShaderLightVolumeSingleVerifier<
   @Override
   public void onActivate(final JCGLShadersType g_sh)
   {
+    this.state.transition(State.STATE_ACTIVATED);
     this.shader.onActivate(g_sh);
-    this.state = State.STATE_ACTIVATED;
   }
 
   @Override
   public void onValidate()
     throws R2ExceptionShaderValidationFailed
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_VOLUME_RECEIVED,
-      this.state);
-
+    this.state.transition(State.STATE_VALIDATED);
     this.shader.onValidate();
   }
 
   @Override
   public void onDeactivate(final JCGLShadersType g_sh)
   {
+    this.state.transition(State.STATE_DEACTIVATED);
     this.shader.onDeactivate(g_sh);
-    this.state = State.STATE_DEACTIVATED;
   }
 
   @Override
@@ -143,12 +149,7 @@ public final class R2ShaderLightVolumeSingleVerifier<
     final JCGLTextureUnitType unit_depth,
     final JCGLTextureUnitType unit_normals)
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_ACTIVATED,
-      this.state);
-
+    this.state.transition(State.STATE_GEOMETRY_BUFFER_RECEIVED);
     this.shader.onReceiveBoundGeometryBufferTextures(
       g_sh,
       g,
@@ -156,7 +157,6 @@ public final class R2ShaderLightVolumeSingleVerifier<
       unit_specular,
       unit_depth,
       unit_normals);
-    this.state = State.STATE_GEOMETRY_BUFFER_RECEIVED;
   }
 
   @Override
@@ -168,14 +168,8 @@ public final class R2ShaderLightVolumeSingleVerifier<
     final M values,
     final R2MatricesObserverValuesType m)
   {
-    R2ShaderVerifiers.checkStates(
-      this.text,
-      this.getShaderProgram().getName(),
-      R2ShaderLightVolumeSingleVerifier.GEOMETRY_BUFFER_OR_VOLUME,
-      this.state);
-
+    this.state.transition(State.STATE_VALUES_RECEIVED);
     this.shader.onReceiveValues(g_tex, g_sh, tc, area, values, m);
-    this.state = State.STATE_VALUES_RECEIVED;
   }
 
   @Override
@@ -183,14 +177,8 @@ public final class R2ShaderLightVolumeSingleVerifier<
     final JCGLShadersType g_sh,
     final R2MatricesVolumeLightValuesType m)
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_VALUES_RECEIVED,
-      this.state);
-
+    this.state.transition(State.STATE_VOLUME_RECEIVED);
     this.shader.onReceiveVolumeLightTransform(g_sh, m);
-    this.state = State.STATE_VOLUME_RECEIVED;
   }
 
   private enum State
@@ -199,6 +187,7 @@ public final class R2ShaderLightVolumeSingleVerifier<
     STATE_ACTIVATED,
     STATE_GEOMETRY_BUFFER_RECEIVED,
     STATE_VALUES_RECEIVED,
-    STATE_VOLUME_RECEIVED
+    STATE_VOLUME_RECEIVED,
+    STATE_VALIDATED
   }
 }

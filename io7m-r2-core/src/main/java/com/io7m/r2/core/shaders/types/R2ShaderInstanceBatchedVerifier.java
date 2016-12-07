@@ -25,8 +25,7 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-
-import java.util.Objects;
+import unquietcode.tools.esm.EnumStateMachine;
 
 /**
  * A verifier for batched instance shaders; a type that verifies that a renderer
@@ -38,21 +37,34 @@ import java.util.Objects;
 public final class R2ShaderInstanceBatchedVerifier<M> implements
   R2ShaderInstanceBatchedType<M>
 {
-  private static final State[] VIEW_OR_MATERIAL_RECEIVED = {
-    State.STATE_MATERIAL_RECEIVED,
-    State.STATE_VIEW_RECEIVED,
-  };
-
   private final R2ShaderInstanceBatchedType<M> shader;
-  private final StringBuilder text;
-  private State state;
+  private final EnumStateMachine<State> state;
 
   private R2ShaderInstanceBatchedVerifier(
     final R2ShaderInstanceBatchedType<M> in_shader)
   {
     this.shader = NullCheck.notNull(in_shader);
-    this.text = new StringBuilder(128);
-    this.state = State.STATE_DEACTIVATED;
+
+    this.state = new EnumStateMachine<State>(State.STATE_DEACTIVATED);
+
+    this.state.addTransition(
+      State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
+    this.state.addTransition(
+      State.STATE_ACTIVATED, State.STATE_VIEW_RECEIVED);
+    this.state.addTransition(
+      State.STATE_VIEW_RECEIVED, State.STATE_MATERIAL_RECEIVED);
+    this.state.addTransition(
+      State.STATE_MATERIAL_RECEIVED, State.STATE_MATERIAL_RECEIVED);
+    this.state.addTransition(
+      State.STATE_MATERIAL_RECEIVED, State.STATE_VALIDATED);
+    this.state.addTransition(
+      State.STATE_VALIDATED, State.STATE_MATERIAL_RECEIVED);
+
+    for (final State target : State.values()) {
+      if (target != State.STATE_DEACTIVATED) {
+        this.state.addTransition(target, State.STATE_DEACTIVATED);
+      }
+    }
   }
 
   /**
@@ -105,21 +117,21 @@ public final class R2ShaderInstanceBatchedVerifier<M> implements
   public void onActivate(final JCGLShadersType g_sh)
   {
     this.shader.onActivate(g_sh);
-    this.state = State.STATE_ACTIVATED;
+    this.state.transition(State.STATE_ACTIVATED);
   }
 
   @Override
   public void onValidate()
     throws R2ExceptionShaderValidationFailed
   {
-    this.checkState(State.STATE_MATERIAL_RECEIVED);
+    this.state.transition(State.STATE_VALIDATED);
     this.shader.onValidate();
   }
 
   @Override
   public void onDeactivate(final JCGLShadersType g_sh)
   {
-    this.state = State.STATE_DEACTIVATED;
+    this.state.transition(State.STATE_DEACTIVATED);
     this.shader.onDeactivate(g_sh);
   }
 
@@ -128,8 +140,7 @@ public final class R2ShaderInstanceBatchedVerifier<M> implements
     final JCGLShadersType g_sh,
     final R2MatricesObserverValuesType m)
   {
-    this.checkState(State.STATE_ACTIVATED);
-    this.state = State.STATE_VIEW_RECEIVED;
+    this.state.transition(State.STATE_VIEW_RECEIVED);
     this.shader.onReceiveViewValues(g_sh, m);
   }
 
@@ -140,58 +151,8 @@ public final class R2ShaderInstanceBatchedVerifier<M> implements
     final JCGLTextureUnitContextMutableType tc,
     final M values)
   {
-    this.checkStates(R2ShaderInstanceBatchedVerifier.VIEW_OR_MATERIAL_RECEIVED);
-    this.state = State.STATE_MATERIAL_RECEIVED;
+    this.state.transition(State.STATE_MATERIAL_RECEIVED);
     this.shader.onReceiveMaterialValues(g_tex, g_sh, tc, values);
-  }
-
-  private void checkState(final State s)
-  {
-    if (!Objects.equals(s, this.state)) {
-      this.text.setLength(0);
-      this.text.append("Failed to call shader correctly.");
-      this.text.append(System.lineSeparator());
-      this.text.append("Expected shader state: ");
-      this.text.append(s);
-      this.text.append(System.lineSeparator());
-      this.text.append("Actual shader state:   ");
-      this.text.append(this.state);
-      this.text.append(System.lineSeparator());
-      final String m = this.text.toString();
-      this.text.setLength(0);
-      throw new IllegalStateException(m);
-    }
-  }
-
-  private void checkStates(final State[] ss)
-  {
-    boolean ok = false;
-    for (int index = 0; index < ss.length; ++index) {
-      final State s = ss[index];
-      if (Objects.equals(s, this.state)) {
-        ok = true;
-        break;
-      }
-    }
-
-    if (!ok) {
-      this.text.setLength(0);
-      this.text.append("Failed to call shader correctly.");
-      this.text.append(System.lineSeparator());
-      this.text.append("Expected one of shader states: ");
-      for (int index = 0; index < ss.length; ++index) {
-        final State s = ss[index];
-        this.text.append(s);
-        this.text.append(" ");
-      }
-      this.text.append(System.lineSeparator());
-      this.text.append("Actual shader state:   ");
-      this.text.append(this.state);
-      this.text.append(System.lineSeparator());
-      final String m = this.text.toString();
-      this.text.setLength(0);
-      throw new IllegalStateException(m);
-    }
   }
 
   private enum State
@@ -199,6 +160,7 @@ public final class R2ShaderInstanceBatchedVerifier<M> implements
     STATE_DEACTIVATED,
     STATE_ACTIVATED,
     STATE_MATERIAL_RECEIVED,
-    STATE_VIEW_RECEIVED
+    STATE_VIEW_RECEIVED,
+    STATE_VALIDATED
   }
 }
