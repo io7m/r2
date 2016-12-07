@@ -16,6 +16,7 @@
 
 package com.io7m.r2.shaders.tests;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jcanephora.core.JCGLExceptionNonCompliant;
 import com.io7m.jcanephora.core.JCGLExceptionUnsupported;
 import com.io7m.jcanephora.core.api.JCGLContextType;
@@ -31,7 +32,6 @@ import com.jogamp.opengl.GLOffscreenAutoDrawable;
 import com.jogamp.opengl.GLProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -160,7 +160,9 @@ public final class R2TestContexts
       while (iter.hasNext()) {
         final String name = iter.next();
         R2TestContexts.LOG.debug("releasing drawable {}", name);
-        Assertive.require(R2TestContexts.CACHED_CONTEXTS.containsKey(name));
+        Invariants.checkInvariant(
+          R2TestContexts.CACHED_CONTEXTS.containsKey(name),
+          "Cached context " + name + " must exist");
         final GLOffscreenAutoDrawable drawable =
           R2TestContexts.CACHED_CONTEXTS.get(name);
         R2TestContexts.releaseDrawable(drawable);
@@ -174,7 +176,9 @@ public final class R2TestContexts
       while (iter.hasNext()) {
         final String name = iter.next();
         R2TestContexts.LOG.debug("destroying drawable {}", name);
-        Assertive.require(R2TestContexts.CACHED_CONTEXTS.containsKey(name));
+        Invariants.checkInvariant(
+          R2TestContexts.CACHED_CONTEXTS.containsKey(name),
+          "Cached context " + name + " must exist");
         final GLOffscreenAutoDrawable drawable =
           R2TestContexts.CACHED_CONTEXTS.get(name);
 

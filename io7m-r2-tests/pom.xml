@@ -92,6 +92,11 @@
       <groupId>com.io7m.jtensors</groupId>
       <artifactId>io7m-jtensors-core</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jtensors</groupId>
+      <artifactId>io7m-jtensors-tests</artifactId>
+      <scope>test</scope>
       <classifier>tests</classifier>
     </dependency>
     <dependency>

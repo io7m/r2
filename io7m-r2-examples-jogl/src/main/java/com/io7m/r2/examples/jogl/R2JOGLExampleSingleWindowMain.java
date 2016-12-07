@@ -256,7 +256,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     {
       try {
 
-        /**
+        /*
          * On the first frame, clear the screen. The second frame does
          * potentially very-long running resource initialization, so clearing
          * the frame here prevents the user from seeing the raw uncleared
@@ -273,7 +273,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           return;
         }
 
-        /**
+        /*
          * On the second frame, initialize all resources for the example.
          */
 
@@ -297,7 +297,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           return;
         }
 
-        /**
+        /*
          * Integrate the camera for the current frame.
          */
 
@@ -306,7 +306,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           this.want_cursor_warp = true;
         }
 
-        /**
+        /*
          * Render the current example.
          */
 
@@ -318,7 +318,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           this.r2_main,
           this.frame - 2);
 
-        /**
+        /*
          * The camera has requested that the cursor be warped to the center
          * of the screen.
          */
@@ -363,7 +363,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     {
       assert e != null;
 
-      /**
+      /*
        * Services are not available until the second frame. As unlikely as it
        * is that the user will be able to press a key in the 1/60th of a second
        * before they're available...
@@ -373,7 +373,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         return;
       }
 
-      /**
+      /*
        * Ignore events that are the result of keyboard auto-repeat. This means
        * there's one single event when a key is pressed, and another when it is
        * released (as opposed to an endless stream of both when the key is held
@@ -387,7 +387,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
       switch (e.getKeyCode()) {
 
-        /**
+        /*
          * Standard WASD camera controls, with E and Q moving up and down,
          * respectively.
          */
@@ -424,7 +424,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     {
       assert e != null;
 
-      /**
+      /*
        * Services are not available until the second frame. As unlikely as it
        * is that the user will be able to press a key in the 1/60th of a second
        * before they're available...
@@ -434,7 +434,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         return;
       }
 
-      /**
+      /*
        * Ignore events that are the result of keyboard auto-repeat. This means
        * there's one single event when a key is pressed, and another when it is
        * released (as opposed to an endless stream of both when the key is held
@@ -448,7 +448,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
       switch (e.getKeyCode()) {
 
-        /**
+        /*
          * Pressing 'M' enables/disables the camera.
          */
 
@@ -457,7 +457,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           break;
         }
 
-        /**
+        /*
          * Pressing 'P' makes the mouse cursor visible/invisible.
          */
 
@@ -469,7 +469,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           break;
         }
 
-        /**
+        /*
          * Standard WASD camera controls, with E and Q moving up and down,
          * respectively.
          */
@@ -680,7 +680,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
     void integrateCamera()
     {
-      /**
+      /*
        * Integrate the camera as many times as necessary for each rendering
        * frame interval.
        */
@@ -699,7 +699,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         this.camera_time_accum -= (double) sim_delta;
       }
 
-      /**
+      /*
        * Determine how far the current time is between the current camera state
        * and the next, and use that value to interpolate between the two saved
        * states.

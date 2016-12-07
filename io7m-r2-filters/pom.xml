@@ -104,33 +104,6 @@
       <artifactId>value</artifactId>
       <scope>provided</scope>
     </dependency>
-
-    <dependency>
-      <groupId>com.io7m.jcanephora</groupId>
-      <artifactId>io7m-jcanephora-fake</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.jcanephora</groupId>
-      <artifactId>io7m-jcanephora-jogl</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.jtensors</groupId>
-      <artifactId>io7m-jtensors-core</artifactId>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
