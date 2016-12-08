@@ -18,6 +18,7 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
+import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -65,11 +66,11 @@ public final class R2ShaderDebugColorVerticesWorldPosition extends
     R2ShaderParameters.checkUniformParameterCount(p, 3);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_projection");
+      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_view");
+      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.depth_coefficient");
+      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
   }
 
   /**

@@ -75,7 +75,7 @@ public final class R2ShaderParametersTest
       }
     };
 
-    R2ShaderParameters.getUniformChecked(p, "nonexistent");
+    R2ShaderParameters.getUniformChecked(p, "nonexistent", JCGLType.TYPE_FLOAT);
   }
 
   @Test
@@ -157,7 +157,90 @@ public final class R2ShaderParametersTest
     u.put("exists", uu);
 
     final JCGLProgramUniformType ur =
-      R2ShaderParameters.getUniformChecked(p, "exists");
+      R2ShaderParameters.getUniformChecked(p, "exists", JCGLType.TYPE_FLOAT_VECTOR_4);
+    Assert.assertEquals(uu, ur);
+  }
+
+  @Test
+  public void testShaderParametersWrongType()
+  {
+    final Map<String, JCGLProgramUniformType> u = new HashMap<>();
+    final JCGLProgramShaderUsableType p = new JCGLProgramShaderUsableType()
+    {
+      @Override
+      public String getName()
+      {
+        return "p";
+      }
+
+      @Override
+      public Map<String, JCGLProgramAttributeType> getAttributes()
+      {
+        return new HashMap<>();
+      }
+
+      @Override
+      public Map<String, JCGLProgramUniformType> getUniforms()
+      {
+        return u;
+      }
+
+      @Override
+      public int getGLName()
+      {
+        return 1;
+      }
+
+      @Override
+      public Set<JCGLReferableType> getReferences()
+      {
+        return new HashSet<>();
+      }
+
+      @Override
+      public boolean isDeleted()
+      {
+        return false;
+      }
+    };
+
+    final JCGLProgramUniformType uu = new JCGLProgramUniformType()
+    {
+      @Override
+      public String getName()
+      {
+        return "exists";
+      }
+
+      @Override
+      public JCGLProgramShaderUsableType getProgram()
+      {
+        return p;
+      }
+
+      @Override
+      public JCGLType getType()
+      {
+        return JCGLType.TYPE_FLOAT_VECTOR_4;
+      }
+
+      @Override
+      public int getSize()
+      {
+        return 1;
+      }
+
+      @Override
+      public int getGLName()
+      {
+        return 0;
+      }
+    };
+
+    u.put("exists", uu);
+
+    final JCGLProgramUniformType ur =
+      R2ShaderParameters.getUniformChecked(p, "exists", JCGLType.TYPE_FLOAT_VECTOR_3);
     Assert.assertEquals(uu, ur);
   }
 }

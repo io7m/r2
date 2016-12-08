@@ -18,9 +18,11 @@ package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
+import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.r2.core.R2ExceptionShaderParameterCountMismatch;
 import com.io7m.r2.core.R2ExceptionShaderParameterNotPresent;
+import com.io7m.r2.core.R2ExceptionShaderParameterWrongType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,7 @@ public final class R2ShaderParameters
    *
    * @param p    The program
    * @param name The parameter name
+   * @param type The expected type of the parameter
    *
    * @return The parameter, if it exists
    *
@@ -53,12 +56,33 @@ public final class R2ShaderParameters
 
   public static JCGLProgramUniformType getUniformChecked(
     final JCGLProgramShaderUsableType p,
-    final String name)
+    final String name,
+    final JCGLType type)
     throws R2ExceptionShaderParameterNotPresent
   {
     final Map<String, JCGLProgramUniformType> u = p.getUniforms();
     if (u.containsKey(name)) {
-      return u.get(name);
+      final JCGLProgramUniformType uu = u.get(name);
+      if (uu.getType() == type) {
+        return uu;
+      }
+
+      final StringBuilder sb = new StringBuilder(128);
+      sb.append("Shader parameter is of an unexpected type.\n");
+      sb.append("Program name: ");
+      sb.append(p.getName());
+      sb.append("\n");
+      sb.append("Parameter name: ");
+      sb.append(name);
+      sb.append("\n");
+      sb.append("Expected type: ");
+      sb.append(type);
+      sb.append("\n");
+      sb.append("Received type: ");
+      sb.append(uu.getType());
+      sb.append("\n");
+      R2ShaderParameters.dumpParameters(u, sb);
+      throw new R2ExceptionShaderParameterWrongType(sb.toString());
     }
 
     final StringBuilder sb = new StringBuilder(128);

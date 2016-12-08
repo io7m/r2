@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -99,68 +100,68 @@ public final class R2ShaderSSAO extends
 
     this.u_gbuffer_albedo =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.albedo");
+        p, "R2_gbuffer.albedo", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_normal =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.normal");
+        p, "R2_gbuffer.normal", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_specular =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.specular");
+        p, "R2_gbuffer.specular", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_depth =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.depth");
+        p, "R2_gbuffer.depth", JCGLType.TYPE_SAMPLER_2D);
 
     this.u_ssao_noise_uv_scale =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_noise_uv_scale");
+        p, "R2_ssao_noise_uv_scale", JCGLType.TYPE_FLOAT_VECTOR_2);
     this.u_ssao_kernel =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_kernel[0]");
+        p, "R2_ssao_kernel[0]", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_ssao_kernel_size =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_kernel_size");
+        p, "R2_ssao_kernel_size", JCGLType.TYPE_INTEGER);
     this.u_ssao_texture_noise =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_noise");
+        p, "R2_ssao_noise", JCGLType.TYPE_SAMPLER_2D);
     this.u_ssao_sample_radius =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_sample_radius");
+        p, "R2_ssao_sample_radius", JCGLType.TYPE_FLOAT);
     this.u_ssao_power =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_power");
+        p, "R2_ssao_power", JCGLType.TYPE_FLOAT);
     this.u_ssao_transform_projection =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_transform_projection");
+        p, "R2_ssao_transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
 
     this.u_depth_coefficient =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_depth_coefficient");
+        p, "R2_depth_coefficient", JCGLType.TYPE_FLOAT);
 
     this.u_view_rays_origin_x0y0 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.origin_x0y0");
+        p, "R2_view_rays.origin_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y0 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.origin_x1y0");
+        p, "R2_view_rays.origin_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x0y1 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.origin_x0y1");
+        p, "R2_view_rays.origin_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y1 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.origin_x1y1");
+        p, "R2_view_rays.origin_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
 
     this.u_view_rays_ray_x0y0 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.ray_x0y0");
+        p, "R2_view_rays.ray_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y0 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.ray_x1y0");
+        p, "R2_view_rays.ray_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x0y1 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.ray_x0y1");
+        p, "R2_view_rays.ray_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y1 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.ray_x1y1");
+        p, "R2_view_rays.ray_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
   }
 
   /**

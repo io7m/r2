@@ -19,6 +19,7 @@ package com.io7m.r2.core.shaders.provided;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -84,41 +85,52 @@ public final class R2SurfaceShaderBasicSingle extends
     R2ShaderParameters.checkUniformParameterCount(p, 16);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_projection");
+      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_view");
+      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.depth_coefficient");
+      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
 
     this.u_transform_normal = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_matrices_instance.transform_normal");
+      p,
+      "R2_surface_matrices_instance.transform_normal",
+      JCGLType.TYPE_FLOAT_MATRIX_3);
     this.u_transform_modelview = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_matrices_instance.transform_modelview");
+      p,
+      "R2_surface_matrices_instance.transform_modelview",
+      JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_uv = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_matrices_instance.transform_uv");
+      p,
+      "R2_surface_matrices_instance.transform_uv",
+      JCGLType.TYPE_FLOAT_MATRIX_3);
 
     this.u_emission_amount = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_parameters.emission_amount");
+      p, "R2_basic_surface_parameters.emission_amount", JCGLType.TYPE_FLOAT);
     this.u_albedo_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_parameters.albedo_color");
+      p,
+      "R2_basic_surface_parameters.albedo_color",
+      JCGLType.TYPE_FLOAT_VECTOR_4);
     this.u_albedo_mix = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_parameters.albedo_mix");
+      p, "R2_basic_surface_parameters.albedo_mix", JCGLType.TYPE_FLOAT);
     this.u_specular_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_parameters.specular_color");
+      p,
+      "R2_basic_surface_parameters.specular_color",
+      JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_specular_exponent = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_parameters.specular_exponent");
+      p, "R2_basic_surface_parameters.specular_exponent", JCGLType.TYPE_FLOAT);
     this.u_alpha_discard_threshold = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_parameters.alpha_discard_threshold");
+      p,
+      "R2_basic_surface_parameters.alpha_discard_threshold",
+      JCGLType.TYPE_FLOAT);
 
     this.u_texture_normal = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_textures.normal");
-
+      p, "R2_surface_textures.normal", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_albedo = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_textures.albedo");
+      p, "R2_basic_surface_textures.albedo", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_specular = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_textures.specular");
+      p, "R2_basic_surface_textures.specular", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_emission = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_textures.emission");
+      p, "R2_basic_surface_textures.emission", JCGLType.TYPE_SAMPLER_2D);
   }
 
   /**

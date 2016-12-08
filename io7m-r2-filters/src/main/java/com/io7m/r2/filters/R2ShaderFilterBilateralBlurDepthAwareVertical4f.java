@@ -19,6 +19,7 @@ package com.io7m.r2.filters;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -74,25 +75,25 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
     R2ShaderParameters.checkUniformParameterCount(p, 7);
 
     this.u_texture_image =
-      R2ShaderParameters.getUniformChecked(p, "R2_texture_image");
+      R2ShaderParameters.getUniformChecked(p, "R2_texture_image", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_depth =
-      R2ShaderParameters.getUniformChecked(p, "R2_texture_depth");
+      R2ShaderParameters.getUniformChecked(p, "R2_texture_depth", JCGLType.TYPE_SAMPLER_2D);
 
     this.u_blur_depth_coefficient =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_blur.depth_coefficient");
+        p, "R2_blur.depth_coefficient", JCGLType.TYPE_FLOAT);
     this.u_blur_radius =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_blur.radius");
+        p, "R2_blur.radius", JCGLType.TYPE_FLOAT);
     this.u_blur_sharpness =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_blur.sharpness");
+        p, "R2_blur.sharpness", JCGLType.TYPE_FLOAT);
     this.u_blur_falloff =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_blur.falloff");
+        p, "R2_blur.falloff", JCGLType.TYPE_FLOAT);
     this.u_blur_output_image_size_inverse =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_blur.output_image_size_inverse");
+        p, "R2_blur.output_image_size_inverse", JCGLType.TYPE_FLOAT_VECTOR_2);
 
     this.inverse_size = new VectorM2F();
   }

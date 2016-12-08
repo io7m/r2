@@ -20,6 +20,7 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -79,27 +80,27 @@ public final class R2ShaderFilterDebugEyeZ extends
 
     this.u_gbuffer_albedo =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.albedo");
+        p, "R2_gbuffer.albedo", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_normal =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.normal");
+        p, "R2_gbuffer.normal", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_specular =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.specular");
+        p, "R2_gbuffer.specular", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_depth =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.depth");
+        p, "R2_gbuffer.depth", JCGLType.TYPE_SAMPLER_2D);
 
     this.u_viewport_inverse_width =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_viewport.inverse_width");
+        p, "R2_viewport.inverse_width", JCGLType.TYPE_FLOAT);
     this.u_viewport_inverse_height =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_viewport.inverse_height");
+        p, "R2_viewport.inverse_height", JCGLType.TYPE_FLOAT);
 
     this.u_depth_coefficient =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_depth_coefficient");
+        p, "R2_depth_coefficient", JCGLType.TYPE_FLOAT);
   }
 
   /**

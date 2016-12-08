@@ -19,6 +19,7 @@ package com.io7m.r2.filters;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -66,11 +67,11 @@ public final class R2ShaderFilterLightApplicator extends
     R2ShaderParameters.checkUniformParameterCount(p, 3);
 
     this.u_texture_albedo =
-      R2ShaderParameters.getUniformChecked(p, "R2_textures_albedo");
+      R2ShaderParameters.getUniformChecked(p, "R2_textures_albedo", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_specular =
-      R2ShaderParameters.getUniformChecked(p, "R2_textures_specular");
+      R2ShaderParameters.getUniformChecked(p, "R2_textures_specular", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_diffuse =
-      R2ShaderParameters.getUniformChecked(p, "R2_textures_diffuse");
+      R2ShaderParameters.getUniformChecked(p, "R2_textures_diffuse", JCGLType.TYPE_SAMPLER_2D);
   }
 
   /**

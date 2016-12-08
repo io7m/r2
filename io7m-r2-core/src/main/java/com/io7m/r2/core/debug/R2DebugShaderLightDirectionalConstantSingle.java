@@ -20,6 +20,7 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -96,27 +97,27 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
 
     this.u_light_directional_color =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_directional.color");
+        p, "R2_light_directional.color", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_light_directional_direction =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_directional.direction");
+        p, "R2_light_directional.direction", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_light_directional_intensity =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_directional.intensity");
+        p, "R2_light_directional.intensity", JCGLType.TYPE_FLOAT);
 
     this.u_transform_volume_modelview =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_volume_modelview");
+        p, "R2_light_matrices.transform_volume_modelview", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_projection");
+        p, "R2_light_matrices.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection_inverse =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_projection_inverse");
+        p, "R2_light_matrices.transform_projection_inverse", JCGLType.TYPE_FLOAT_MATRIX_4);
 
     this.u_depth_coefficient =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_depth_coefficient");
+        p, "R2_light_depth_coefficient", JCGLType.TYPE_FLOAT);
   }
 
   /**

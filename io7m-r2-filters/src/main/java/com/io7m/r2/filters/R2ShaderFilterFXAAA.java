@@ -20,6 +20,7 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -75,19 +76,19 @@ public final class R2ShaderFilterFXAAA extends
 
     this.u_image =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.image");
+        p, "R2_fxaa.image", JCGLType.TYPE_SAMPLER_2D);
     this.u_screen_inverse =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.screen_inverse");
+        p, "R2_fxaa.screen_inverse", JCGLType.TYPE_FLOAT_VECTOR_2);
     this.u_subpixel_aliasing_removal =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.subpixel_aliasing_removal");
+        p, "R2_fxaa.subpixel_aliasing_removal", JCGLType.TYPE_FLOAT);
     this.u_edge_threshold =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.edge_threshold");
+        p, "R2_fxaa.edge_threshold", JCGLType.TYPE_FLOAT);
     this.u_edge_threshold_minimum =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.edge_threshold_minimum");
+        p, "R2_fxaa.edge_threshold_minimum", JCGLType.TYPE_FLOAT);
 
     this.screen_inverse = new VectorM2F();
   }
