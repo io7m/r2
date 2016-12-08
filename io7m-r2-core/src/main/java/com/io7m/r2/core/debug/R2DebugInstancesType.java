@@ -14,10 +14,40 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Types and functions associated with debugging.
- */
-
-@com.io7m.jnull.NonNullByDefault
 package com.io7m.r2.core.debug;
 
+import com.io7m.r2.core.R2ImmutableStyleType;
+import org.immutables.value.Value;
+
+import java.util.List;
+
+/**
+ * Extra instances for displaying debugging data.
+ */
+
+@Value.Immutable
+@Value.Modifiable
+@R2ImmutableStyleType
+public interface R2DebugInstancesType
+{
+  /**
+   * @return The set of line segments to display
+   */
+
+  @Value.Parameter
+  List<R2DebugLineSegment> lineSegments();
+
+  /**
+   * @return The set of debug cubes to display
+   */
+
+  @Value.Parameter
+  List<R2DebugCubeInstance> cubes();
+
+  /**
+   * @return The set of single instances to display
+   */
+
+  @Value.Parameter
+  List<R2DebugInstanceSingle> instanceSingles();
+}

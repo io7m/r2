@@ -59,14 +59,14 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
   implements R2ShaderLightScreenSingleType<R2LightDirectionalScreenSingle>
 {
   private final JCGLProgramUniformType u_transform_volume_modelview;
-  private final JCGLProgramUniformType          u_transform_projection;
-  private final JCGLProgramUniformType          u_transform_projection_inverse;
-  private final JCGLProgramUniformType          u_depth_coefficient;
-  private final JCGLProgramUniformType          u_light_directional_color;
-  private final JCGLProgramUniformType          u_light_directional_direction;
-  private final JCGLProgramUniformType          u_light_directional_intensity;
-  private final PVector4FType<R2SpaceEyeType>   direction_eye;
-  private final PVector3FType<R2SpaceEyeType>   direction_eye3;
+  private final JCGLProgramUniformType u_transform_projection;
+  private final JCGLProgramUniformType u_transform_projection_inverse;
+  private final JCGLProgramUniformType u_depth_coefficient;
+  private final JCGLProgramUniformType u_light_directional_color;
+  private final JCGLProgramUniformType u_light_directional_direction;
+  private final JCGLProgramUniformType u_light_directional_intensity;
+  private final PVector4FType<R2SpaceEyeType> direction_eye;
+  private final PVector3FType<R2SpaceEyeType> direction_eye3;
   private final PVector4FType<R2SpaceWorldType> direction_world;
 
   private R2DebugShaderLightDirectionalConstantSingle(

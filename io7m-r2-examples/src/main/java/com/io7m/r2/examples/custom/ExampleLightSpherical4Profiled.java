@@ -47,6 +47,8 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVector3FType;
+import com.io7m.jtensors.parameterized.PVectorI3F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
@@ -116,7 +118,14 @@ import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformSiOT;
+import com.io7m.r2.core.R2TransformT;
 import com.io7m.r2.core.R2UnitSphereType;
+import com.io7m.r2.core.debug.R2DebugCube;
+import com.io7m.r2.core.debug.R2DebugCubeInstance;
+import com.io7m.r2.core.debug.R2DebugCubeType;
+import com.io7m.r2.core.debug.R2DebugInstanceSingle;
+import com.io7m.r2.core.debug.R2DebugInstances;
+import com.io7m.r2.core.debug.R2DebugLineSegment;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
@@ -261,6 +270,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
   private JCGLInterfaceGL33Type g;
 
+  private R2DebugCubeType debug_cube;
   private R2DebugVisualizerRendererParametersMutable debug_params;
   private R2ShadowMapContextType shadow_context;
 
@@ -712,10 +722,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         m.getIDPool());
     this.proj_light.setRadius(10.0f);
     this.proj_light.getColorWritable().set3F(1.0f, 1.0f, 1.0f);
-    this.proj_light.getTransformWritable().getTranslation().set3F(
-      0.0f,
-      0.0f,
-      3.0f);
+    this.proj_light.getTransformWritable().getTranslation()
+      .set3F(0.0f, 0.0f, 3.0f);
 
     this.proj_shadow_instances = R2DepthInstances.newDepthInstances();
 
@@ -733,10 +741,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       (float) R2UnitSphere.getUVSphereApproximationScaleFactor(30.0f, 8));
 
     this.sphere_light_bounded_transform = R2TransformSiOT.newTransform();
-    this.sphere_light_bounded_transform.getTranslation().set3F(
-      -10.0f,
-      1.0f,
-      0.0f);
+    this.sphere_light_bounded_transform.getTranslation()
+      .set3F(-10.0f, 1.0f, 0.0f);
     this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
     this.sphere_light_bounds =
@@ -749,22 +755,46 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       R2LightSphericalSingle.newLight(this.sphere, id_pool);
     this.sphere_light_bounded.getColorWritable().set3F(1.0f, 0.0f, 0.0f);
     this.sphere_light_bounded.setIntensity(1.0f);
-    this.sphere_light_bounded.getOriginPositionWritable().set3F(
-      -10.0f,
-      1.0f,
-      0.0f);
+    this.sphere_light_bounded.getOriginPositionWritable()
+      .set3F(-10.0f, 1.0f, 0.0f);
     this.sphere_light_bounded.setRadius(9.0f);
 
     this.filter_light =
       R2FilterLightApplicator.newFilter(sources, gx, id_pool, m.getUnitQuad());
 
     {
+      this.debug_cube = R2DebugCube.newDebugCube(gx);
+
       this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
       this.debug_params.setOpaqueInstances(this.opaques);
       this.debug_params.setShowOpaqueInstances(false);
       this.debug_params.setShowLights(true);
       this.debug_params.setLights(this.lights);
       this.debug_params.setUnitSphere(this.sphere);
+      this.debug_params.setDebugCube(this.debug_cube);
+
+      final R2DebugInstances.Builder ib = R2DebugInstances.builder();
+
+      for (int y = 0; y < 100; ++y) {
+        ib.addLineSegments(R2DebugLineSegment.of(
+          new PVectorI3F<>(-20.0f, y, 0.0f),
+          new PVectorI4F<>(1.0f, 0.0f, 1.0f, 1.0f),
+          new PVectorI3F<>(20.0f, y, 0.0f),
+          new PVectorI4F<>(0.0f, 1.0f, 1.0f, 1.0f)));
+      }
+
+      for (int x = 0; x < 20; x += 2) {
+        final R2TransformT t = R2TransformT.newTransform();
+        t.getTranslation().set3F((float) x, 1.0f, 1.0f);
+        ib.addCubes(R2DebugCubeInstance.of(t, new PVectorI4F<>(0.0f, 1.0f, 0.0f, 1.0f)));
+      }
+
+      ib.addInstanceSingles(R2DebugInstanceSingle.of(
+        this.instance,
+        new PVectorI4F<>(1.0f, 0.0f, 1.0f, 1.0f)
+      ));
+
+      this.debug_params.setDebugInstances(ib.build());
       Assertive.ensure(this.debug_params.isInitialized());
     }
 
@@ -917,7 +947,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         final JCGLStencilBuffersType g_sb = t.g.getStencilBuffers();
         final JCGLDepthBuffersType g_db = t.g.getDepthBuffers();
 
-        /**
+        /*
          * Populate geometry buffer.
          */
 
@@ -937,7 +967,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           mo,
           t.opaques);
 
-        /**
+        /*
          * Evaluate and blur ambient occlusion.
          */
 
@@ -962,7 +992,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         t.filter_blur_ssao.runFilter(
           t.profiling_root, uc, t.filter_blur_ssao_params);
 
-        /**
+        /*
          * Populate light buffer.
          */
 
@@ -978,7 +1008,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           mo,
           t.lights);
 
-        /**
+        /*
          * Apply ambient occlusion to light buffer.
          */
 
@@ -992,7 +1022,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         t.filter_ssao_app.runFilter(
           t.profiling_root, uc, t.filter_ssao_app_params);
 
-        /**
+        /*
          * Combine light and geometry buffers into lit image.
          */
 
@@ -1028,7 +1058,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         Assertive.require(t.filter_light_params.isInitialized());
         t.filter_light.runFilter(t.profiling_root, uc, t.filter_light_params);
 
-        /**
+        /*
          * Apply emission.
          */
 
@@ -1047,7 +1077,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         t.filter_emission.runFilter(
           t.profiling_root, uc, t.filter_emission_params);
 
-        /**
+        /*
          * Render debug geometry.
          */
 
@@ -1058,7 +1088,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           mo,
           t.debug_params);
 
-        /**
+        /*
          * Filter the lit image with FXAA, writing it to the screen.
          */
 

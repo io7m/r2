@@ -14,10 +14,33 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Types and functions associated with debugging.
- */
-
-@com.io7m.jnull.NonNullByDefault
 package com.io7m.r2.core.debug;
 
+import com.io7m.jtensors.parameterized.PVectorI4F;
+import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2TransformReadableType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
+import org.immutables.value.Value;
+
+/**
+ * A cube.
+ */
+
+@Value.Immutable
+@R2ImmutableStyleType
+public interface R2DebugCubeInstanceType
+{
+  /**
+   * @return The transform applied to the center of the cube
+   */
+
+  @Value.Parameter
+  R2TransformReadableType transform();
+
+  /**
+   * @return The color of the cube
+   */
+
+  @Value.Parameter
+  PVectorI4F<R2SpaceRGBAType> color();
+}

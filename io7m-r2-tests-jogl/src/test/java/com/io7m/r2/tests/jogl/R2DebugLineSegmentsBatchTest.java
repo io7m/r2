@@ -14,10 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Types and functions associated with debugging.
- */
+package com.io7m.r2.tests.jogl;
 
-@com.io7m.jnull.NonNullByDefault
-package com.io7m.r2.core.debug;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.debug.R2DebugLineSegmentsBatchContract;
 
+public final class R2DebugLineSegmentsBatchTest extends
+  R2DebugLineSegmentsBatchContract
+{
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
+}

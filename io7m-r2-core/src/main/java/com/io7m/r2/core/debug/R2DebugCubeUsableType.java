@@ -14,21 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.jogl.shaders;
+package com.io7m.r2.core.debug;
 
-import com.io7m.jcanephora.core.api.JCGLContextType;
-import com.io7m.r2.tests.core.shaders.R2ShaderDebugVisualScreenContract;
-import com.io7m.r2.tests.jogl.R2TestContexts;
+import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
+import com.io7m.jcanephora.core.JCGLResourceSizedType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
 
-public final class R2ShaderDebugVisualScreenTest extends
-  R2ShaderDebugVisualScreenContract
+/**
+ * The type of usable debug cubes.
+ */
+
+public interface R2DebugCubeUsableType extends JCGLResourceUsableType,
+  JCGLResourceSizedType
 {
-  @Override
-  protected JCGLContextType newGL33Context(
-    final String name,
-    final int depth_bits,
-    final int stencil_bits)
-  {
-    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
-  }
+  /**
+   * @return The array object for the cube
+   */
+
+  JCGLArrayObjectUsableType arrayObject();
 }

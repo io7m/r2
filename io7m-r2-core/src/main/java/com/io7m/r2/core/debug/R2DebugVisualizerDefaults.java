@@ -25,11 +25,6 @@ import com.io7m.junreachable.UnreachableCodeException;
 
 public final class R2DebugVisualizerDefaults
 {
-  private R2DebugVisualizerDefaults()
-  {
-    throw new UnreachableCodeException();
-  }
-
   /**
    * The default color for rendering opaque instances.
    */
@@ -38,5 +33,10 @@ public final class R2DebugVisualizerDefaults
 
   static {
     DEFAULT_GROUP_COLOR = new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f);
+  }
+
+  private R2DebugVisualizerDefaults()
+  {
+    throw new UnreachableCodeException();
   }
 }

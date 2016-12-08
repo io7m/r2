@@ -14,10 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/**
- * Types and functions associated with debugging.
- */
-
-@com.io7m.jnull.NonNullByDefault
 package com.io7m.r2.core.debug;
 
+import com.io7m.r2.core.R2DeletableType;
+
+/**
+ * <p>The type of debug cubes, from {@code (-0.5, -0.5, -0.5)} to {@code (0.5,
+ * 0.5, 0.5)}.</p>
+ *
+ * <p>Debug cubes are implicitly assumed to be rendered as {@link
+ * com.io7m.jcanephora.core.JCGLPrimitives#PRIMITIVE_LINES} and therefore the
+ * associated index buffer is populated with a set of line segments.</p>
+ */
+
+public interface R2DebugCubeType extends R2DebugCubeUsableType, R2DeletableType
+{
+  // No extra methods
+}

@@ -21,4 +21,20 @@
   (field tangent  [vector [float 16] 4])
 ])
 
+(record R2RGBA8 [
+  (field color_r [integer unsigned 8])
+  (field color_g [integer unsigned 8])
+  (field color_b [integer unsigned 8])
+  (field color_a [integer unsigned 8])
+])
+
+(record R2VertexP32RGBA8 [
+  (field position [vector [float 32] 3])
+  (field color    R2RGBA8)
+])
+
+(record R2VertexP16 [
+  (field position [vector [float 16] 3])
+])
+
 (package-end)
