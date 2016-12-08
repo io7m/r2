@@ -118,7 +118,11 @@ import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformSiOT;
+import com.io7m.r2.core.R2TransformT;
 import com.io7m.r2.core.R2UnitSphereType;
+import com.io7m.r2.core.debug.R2DebugCube;
+import com.io7m.r2.core.debug.R2DebugCubeInstance;
+import com.io7m.r2.core.debug.R2DebugCubeType;
 import com.io7m.r2.core.debug.R2DebugInstances;
 import com.io7m.r2.core.debug.R2DebugLineSegment;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
@@ -265,6 +269,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
   private JCGLInterfaceGL33Type g;
 
+  private R2DebugCubeType debug_cube;
   private R2DebugVisualizerRendererParametersMutable debug_params;
   private R2ShadowMapContextType shadow_context;
 
@@ -757,12 +762,15 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       R2FilterLightApplicator.newFilter(sources, gx, id_pool, m.getUnitQuad());
 
     {
+      this.debug_cube = R2DebugCube.newDebugCube(gx);
+
       this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
       this.debug_params.setOpaqueInstances(this.opaques);
       this.debug_params.setShowOpaqueInstances(false);
       this.debug_params.setShowLights(true);
       this.debug_params.setLights(this.lights);
       this.debug_params.setUnitSphere(this.sphere);
+      this.debug_params.setDebugCube(this.debug_cube);
 
       final R2DebugInstances.Builder ib = R2DebugInstances.builder();
 
@@ -772,6 +780,12 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           new PVectorI4F<>(1.0f, 0.0f, 1.0f, 1.0f),
           new PVectorI3F<>(20.0f, y, 0.0f),
           new PVectorI4F<>(0.0f, 1.0f, 1.0f, 1.0f)));
+      }
+
+      for (int x = 0; x < 20; x += 2) {
+        final R2TransformT t = R2TransformT.newTransform();
+        t.getTranslation().set3F((float) x, 1.0f, 1.0f);
+        ib.addCubes(R2DebugCubeInstance.of(t, new PVectorI4F<>(0.0f, 1.0f, 0.0f, 1.0f)));
       }
 
       this.debug_params.setDebugInstances(ib.build());

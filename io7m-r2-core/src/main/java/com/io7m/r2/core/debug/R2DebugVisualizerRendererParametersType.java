@@ -42,6 +42,13 @@ public interface R2DebugVisualizerRendererParametersType
   R2UnitSphereUsableType unitSphere();
 
   /**
+   * @return A debug cube used to render various pieces of debug geometry
+   */
+
+  @Value.Parameter
+  R2DebugCubeUsableType debugCube();
+
+  /**
    * @return The opaque instances in the scene.
    */
 

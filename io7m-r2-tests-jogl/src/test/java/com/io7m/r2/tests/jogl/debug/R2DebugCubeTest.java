@@ -14,33 +14,20 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.debug;
+package com.io7m.r2.tests.jogl.debug;
 
-import com.io7m.r2.core.R2ImmutableStyleType;
-import org.immutables.value.Value;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.debug.R2DebugCubeContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-import java.util.List;
-
-/**
- * Extra instances for displaying debugging data.
- */
-
-@Value.Immutable
-@Value.Modifiable
-@R2ImmutableStyleType
-public interface R2DebugInstancesType
+public final class R2DebugCubeTest extends R2DebugCubeContract
 {
-  /**
-   * @return The set of line segments to display
-   */
-
-  @Value.Parameter
-  List<R2DebugLineSegment> lineSegments();
-
-  /**
-   * @return The set of debug cubes to display
-   */
-
-  @Value.Parameter
-  List<R2DebugCubeInstance> cubes();
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }

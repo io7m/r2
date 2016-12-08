@@ -248,10 +248,69 @@ public final class R2DebugVisualizerRenderer implements
     final AreaInclusiveUnsignedLType area,
     final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
-    final R2DebugVisualizerRendererParametersType s)
+    final R2DebugVisualizerRendererParametersType p)
   {
-    final R2DebugInstancesType extras = s.debugInstances();
+    final R2DebugInstancesType extras = p.debugInstances();
     this.renderSceneExtrasLineSegments(area, uc, m, extras);
+    this.renderSceneExtrasBoxes(area, uc, m, p, extras);
+  }
+
+  private void renderSceneExtrasBoxes(
+    final AreaInclusiveUnsignedLType area,
+    final JCGLTextureUnitContextParentType uc,
+    final R2MatricesObserverType m,
+    final R2DebugVisualizerRendererParametersType p,
+    final R2DebugInstancesType extras)
+  {
+    final List<R2DebugCubeInstance> cubes = extras.cubes();
+    if (!cubes.isEmpty()) {
+      final JCGLViewportsType g_v = this.g.getViewports();
+      g_v.viewportSet(area);
+
+      JCGLRenderStates.activate(this.g, this.render_geom_state_base);
+
+      final JCGLTextureUnitContextType tc = uc.unitContextNew();
+      try {
+        this.shader_single.onActivate(this.g.getShaders());
+        try {
+          this.shader_single.onReceiveViewValues(this.g.getShaders(), m);
+
+          final JCGLArrayObjectUsableType ao = p.debugCube().arrayObject();
+          final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
+          try {
+            g_ao.arrayObjectBind(ao);
+
+            for (int index = 0; index < cubes.size(); ++index) {
+              final R2DebugCubeInstance cube = cubes.get(index);
+
+              this.shader_single.onReceiveMaterialValues(
+                this.g.getTextures(), this.g.getShaders(), tc, cube.color());
+
+              m.withTransform(
+                cube.transform(),
+                PMatrixI3x3F.identity(),
+                this,
+                (m_instance, t) -> {
+                  t.shader_single.onReceiveInstanceTransformValues(
+                    t.g.getShaders(),
+                    m_instance);
+                  t.shader_single.onValidate();
+                  t.g.getDraw().drawElements(JCGLPrimitives.PRIMITIVE_LINES);
+                  return Unit.unit();
+                });
+            }
+
+          } finally {
+            g_ao.arrayObjectUnbind();
+          }
+
+        } finally {
+          this.shader_single.onDeactivate(this.g.getShaders());
+        }
+      } finally {
+        tc.unitContextFinish(this.g.getTextures());
+      }
+    }
   }
 
   private void renderSceneExtrasLineSegments(

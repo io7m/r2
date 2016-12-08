@@ -16,31 +16,20 @@
 
 package com.io7m.r2.core.debug;
 
-import com.io7m.r2.core.R2ImmutableStyleType;
-import org.immutables.value.Value;
-
-import java.util.List;
+import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
+import com.io7m.jcanephora.core.JCGLResourceSizedType;
+import com.io7m.jcanephora.core.JCGLResourceUsableType;
 
 /**
- * Extra instances for displaying debugging data.
+ * The type of usable debug cubes.
  */
 
-@Value.Immutable
-@Value.Modifiable
-@R2ImmutableStyleType
-public interface R2DebugInstancesType
+public interface R2DebugCubeUsableType extends JCGLResourceUsableType,
+  JCGLResourceSizedType
 {
   /**
-   * @return The set of line segments to display
+   * @return The array object for the cube
    */
 
-  @Value.Parameter
-  List<R2DebugLineSegment> lineSegments();
-
-  /**
-   * @return The set of debug cubes to display
-   */
-
-  @Value.Parameter
-  List<R2DebugCubeInstance> cubes();
+  JCGLArrayObjectUsableType arrayObject();
 }

@@ -16,31 +16,18 @@
 
 package com.io7m.r2.core.debug;
 
-import com.io7m.r2.core.R2ImmutableStyleType;
-import org.immutables.value.Value;
-
-import java.util.List;
+import com.io7m.r2.core.R2DeletableType;
 
 /**
- * Extra instances for displaying debugging data.
+ * <p>The type of debug cubes, from {@code (-0.5, -0.5, -0.5)} to {@code (0.5,
+ * 0.5, 0.5)}.</p>
+ *
+ * <p>Debug cubes are implicitly assumed to be rendered as {@link
+ * com.io7m.jcanephora.core.JCGLPrimitives#PRIMITIVE_LINES} and therefore the
+ * associated index buffer is populated with a set of line segments.</p>
  */
 
-@Value.Immutable
-@Value.Modifiable
-@R2ImmutableStyleType
-public interface R2DebugInstancesType
+public interface R2DebugCubeType extends R2DebugCubeUsableType, R2DeletableType
 {
-  /**
-   * @return The set of line segments to display
-   */
-
-  @Value.Parameter
-  List<R2DebugLineSegment> lineSegments();
-
-  /**
-   * @return The set of debug cubes to display
-   */
-
-  @Value.Parameter
-  List<R2DebugCubeInstance> cubes();
+  // No extra methods
 }

@@ -16,31 +16,31 @@
 
 package com.io7m.r2.core.debug;
 
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2TransformReadableType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
 import org.immutables.value.Value;
 
-import java.util.List;
-
 /**
- * Extra instances for displaying debugging data.
+ * A cube.
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
-public interface R2DebugInstancesType
+public interface R2DebugCubeInstanceType
 {
   /**
-   * @return The set of line segments to display
+   * @return The transform applied to the center of the cube
    */
 
   @Value.Parameter
-  List<R2DebugLineSegment> lineSegments();
+  R2TransformReadableType transform();
 
   /**
-   * @return The set of debug cubes to display
+   * @return The color of the cube
    */
 
   @Value.Parameter
-  List<R2DebugCubeInstance> cubes();
+  PVectorI4F<R2SpaceRGBAType> color();
 }
