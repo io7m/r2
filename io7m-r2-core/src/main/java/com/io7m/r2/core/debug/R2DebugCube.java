@@ -39,7 +39,6 @@ import com.io7m.r2.core.R2AttributeConventions;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.cursors.R2VertexP16ByteBuffered;
 import com.io7m.r2.core.cursors.R2VertexP16Type;
-import com.io7m.r2.core.cursors.R2VertexPUNT16ByteBuffered;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

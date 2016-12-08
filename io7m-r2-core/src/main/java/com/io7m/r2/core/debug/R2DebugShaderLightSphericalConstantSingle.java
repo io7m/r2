@@ -69,8 +69,8 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
   private final JCGLProgramUniformType u_light_spherical_inverse_range;
   private final JCGLProgramUniformType u_light_spherical_inverse_falloff;
 
-  private final PVector4FType<R2SpaceEyeType>   position_eye;
-  private final PVector3FType<R2SpaceEyeType>   position_eye3;
+  private final PVector4FType<R2SpaceEyeType> position_eye;
+  private final PVector3FType<R2SpaceEyeType> position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
 
   private R2DebugShaderLightSphericalConstantSingle(
