@@ -17,6 +17,7 @@
 package com.io7m.r2.core.debug;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFaceWindingOrder;
@@ -65,6 +66,7 @@ import com.io7m.r2.core.R2SceneOpaquesConsumerType;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2TransformST;
 import com.io7m.r2.core.R2UnitSphereUsableType;
+import com.io7m.r2.core.shaders.provided.R2ShaderDebugColorVerticesWorldPosition;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualBatched;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualScreen;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualSingle;
@@ -81,6 +83,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.valid4j.Assertive;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -102,10 +105,12 @@ public final class R2DebugVisualizerRenderer implements
   private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
   private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
   private final R2ShaderInstanceSingleScreenType<VectorReadable4FType> shader_screen;
+  private final R2ShaderInstanceSingleScreenType<Unit> shader_lines;
 
   private final JCGLRenderState render_geom_state_base;
   private final OpaqueConsumer opaque_consumer;
   private final LightConsumer light_consumer;
+  private final R2DebugLineSegmentsBatch lines_batch;
 
   private R2DebugVisualizerRenderer(
     final JCGLInterfaceGL33Type in_g,
@@ -119,11 +124,13 @@ public final class R2DebugVisualizerRenderer implements
       this.g.getShaders(), in_sources, in_pool);
     this.shader_screen = R2ShaderDebugVisualScreen.newShader(
       this.g.getShaders(), in_sources, in_pool);
+    this.shader_lines = R2ShaderDebugColorVerticesWorldPosition.newShader(
+      this.g.getShaders(), in_sources, in_pool);
 
     {
       final JCGLRenderState.Builder b = JCGLRenderState.builder();
 
-      /**
+      /*
        * Only front faces are rendered.
        */
 
@@ -131,7 +138,7 @@ public final class R2DebugVisualizerRenderer implements
         JCGLFaceSelection.FACE_BACK,
         JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
-      /**
+      /*
        * Enable depth testing and clamping. Note that the geometry in the
        * scene was originally rendered with DEPTH_LESS_THAN, so overwriting
        * is allowed here with DEPTH_LESS_THAN_OR_EQUAL.
@@ -144,7 +151,7 @@ public final class R2DebugVisualizerRenderer implements
         JCGLDepthClamping.DEPTH_CLAMP_ENABLED
       ));
 
-      /**
+      /*
        * Only render wireframes.
        */
 
@@ -162,6 +169,8 @@ public final class R2DebugVisualizerRenderer implements
       this.shader_single,
       this.shader_batched,
       this.shader_screen);
+
+    this.lines_batch = new R2DebugLineSegmentsBatch(this.g);
   }
 
   /**
@@ -201,22 +210,90 @@ public final class R2DebugVisualizerRenderer implements
     final JCGLProfilingContextType pc_base =
       pc.getChildContext("debug-visualizer");
 
-    final JCGLProfilingContextType pc_opaques =
-      pc_base.getChildContext("opaques");
-    pc_opaques.startMeasuringIfEnabled();
-    try {
-      this.renderSceneOpaques(area, uc, m, s);
-    } finally {
-      pc_opaques.stopMeasuringIfEnabled();
+    {
+      final JCGLProfilingContextType pc_opaques =
+        pc_base.getChildContext("opaques");
+      pc_opaques.startMeasuringIfEnabled();
+      try {
+        this.renderSceneOpaques(area, uc, m, s);
+      } finally {
+        pc_opaques.stopMeasuringIfEnabled();
+      }
     }
 
-    final JCGLProfilingContextType pc_lights =
-      pc_base.getChildContext("lights");
-    pc_lights.startMeasuringIfEnabled();
-    try {
-      this.renderSceneLights(area, uc, m, s);
-    } finally {
-      pc_lights.stopMeasuringIfEnabled();
+    {
+      final JCGLProfilingContextType pc_lights =
+        pc_base.getChildContext("lights");
+      pc_lights.startMeasuringIfEnabled();
+      try {
+        this.renderSceneLights(area, uc, m, s);
+      } finally {
+        pc_lights.stopMeasuringIfEnabled();
+      }
+    }
+
+    {
+      final JCGLProfilingContextType pc_extras =
+        pc_base.getChildContext("extras");
+      pc_extras.startMeasuringIfEnabled();
+      try {
+        this.renderSceneExtras(area, uc, m, s);
+      } finally {
+        pc_extras.stopMeasuringIfEnabled();
+      }
+    }
+  }
+
+  private void renderSceneExtras(
+    final AreaInclusiveUnsignedLType area,
+    final JCGLTextureUnitContextParentType uc,
+    final R2MatricesObserverType m,
+    final R2DebugVisualizerRendererParametersType s)
+  {
+    final R2DebugInstancesType extras = s.debugInstances();
+    this.renderSceneExtrasLineSegments(area, uc, m, extras);
+  }
+
+  private void renderSceneExtrasLineSegments(
+    final AreaInclusiveUnsignedLType area,
+    final JCGLTextureUnitContextParentType uc,
+    final R2MatricesObserverType m,
+    final R2DebugInstancesType extras)
+  {
+    final List<R2DebugLineSegment> segments = extras.lineSegments();
+    if (!segments.isEmpty()) {
+      this.lines_batch.setLineSegments(segments);
+
+      final JCGLViewportsType g_v = this.g.getViewports();
+      g_v.viewportSet(area);
+
+      JCGLRenderStates.activate(this.g, this.render_geom_state_base);
+
+      final JCGLTextureUnitContextType tc = uc.unitContextNew();
+      try {
+        this.shader_lines.onActivate(this.g.getShaders());
+        try {
+          this.shader_lines.onReceiveViewValues(this.g.getShaders(), m);
+          this.shader_lines.onReceiveMaterialValues(
+            this.g.getTextures(), this.g.getShaders(), tc, Unit.unit());
+          this.shader_lines.onValidate();
+
+          final JCGLArrayObjectUsableType ao = this.lines_batch.arrayObject();
+          final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
+          final JCGLDrawType g_d = this.g.getDraw();
+          try {
+            g_ao.arrayObjectBind(ao);
+            g_d.draw(JCGLPrimitives.PRIMITIVE_LINES, 0, segments.size());
+          } finally {
+            g_ao.arrayObjectUnbind();
+          }
+
+        } finally {
+          this.shader_lines.onDeactivate(this.g.getShaders());
+        }
+      } finally {
+        tc.unitContextFinish(this.g.getTextures());
+      }
     }
   }
 
@@ -226,16 +303,16 @@ public final class R2DebugVisualizerRenderer implements
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
-    final R2SceneLightsType so = s.getLights();
+    final R2SceneLightsType so = s.lights();
     final JCGLViewportsType g_v = this.g.getViewports();
 
     final long light_count = so.lightsCount();
-    if (light_count > 0L && s.getShowLights()) {
+    if (light_count > 0L && s.showLights()) {
       g_v.viewportSet(area);
 
       this.light_consumer.matrices = m;
       this.light_consumer.texture_context = uc;
-      this.light_consumer.sphere = s.getUnitSphere();
+      this.light_consumer.sphere = s.unitSphere();
       try {
         so.lightsExecute(this.light_consumer);
       } finally {
@@ -252,11 +329,11 @@ public final class R2DebugVisualizerRenderer implements
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
-    final R2SceneOpaquesType so = s.getOpaqueInstances();
+    final R2SceneOpaquesType so = s.opaqueInstances();
     final JCGLViewportsType g_v = this.g.getViewports();
 
     final long instance_count = so.opaquesCount();
-    if (instance_count > 0L && s.getShowOpaqueInstances()) {
+    if (instance_count > 0L && s.showOpaqueInstances()) {
       g_v.viewportSet(area);
 
       this.opaque_consumer.render_state.from(this.render_geom_state_base);
@@ -281,6 +358,8 @@ public final class R2DebugVisualizerRenderer implements
       this.shader_batched.delete(ig);
       this.shader_single.delete(ig);
       this.shader_screen.delete(ig);
+      this.shader_lines.delete(ig);
+      this.lines_batch.delete(ig);
     }
   }
 
@@ -335,11 +414,11 @@ public final class R2DebugVisualizerRenderer implements
       JCGLRenderStates.activate(this.g33, this.render_state);
 
       final Int2ReferenceMap<VectorReadable4FType> g_colors =
-        this.parameters.getGeometryGroupColors();
+        this.parameters.geometryGroupColors();
       if (g_colors.containsKey(group)) {
         this.color = g_colors.get(group);
       } else {
-        this.color = this.parameters.getGeometryDefaultColor();
+        this.color = this.parameters.geometryDefaultColor();
       }
     }
 

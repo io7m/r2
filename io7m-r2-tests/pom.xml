@@ -86,38 +86,27 @@
     <dependency>
       <groupId>com.io7m.jcanephora</groupId>
       <artifactId>io7m-jcanephora-fake</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.jtensors</groupId>
-      <artifactId>io7m-jtensors-core</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.io7m.jtensors</groupId>
       <artifactId>io7m-jtensors-tests</artifactId>
-      <scope>test</scope>
       <classifier>tests</classifier>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.github.marschall</groupId>
       <artifactId>memoryfilesystem</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

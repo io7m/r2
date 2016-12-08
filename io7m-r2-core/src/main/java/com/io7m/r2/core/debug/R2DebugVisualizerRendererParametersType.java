@@ -39,21 +39,28 @@ public interface R2DebugVisualizerRendererParametersType
    */
 
   @Value.Parameter
-  R2UnitSphereUsableType getUnitSphere();
+  R2UnitSphereUsableType unitSphere();
 
   /**
    * @return The opaque instances in the scene.
    */
 
   @Value.Parameter
-  R2SceneOpaquesType getOpaqueInstances();
+  R2SceneOpaquesType opaqueInstances();
 
   /**
    * @return The lights in the scene.
    */
 
   @Value.Parameter
-  R2SceneLightsType getLights();
+  R2SceneLightsType lights();
+
+  /**
+   * @return The extra debugging instances
+   */
+
+  @Value.Parameter
+  R2DebugInstancesType debugInstances();
 
   /**
    * @return {@code true} iff opaque instances should be rendered
@@ -61,7 +68,7 @@ public interface R2DebugVisualizerRendererParametersType
 
   @Value.Parameter
   @Value.Default
-  default boolean getShowOpaqueInstances()
+  default boolean showOpaqueInstances()
   {
     return true;
   }
@@ -72,7 +79,7 @@ public interface R2DebugVisualizerRendererParametersType
 
   @Value.Parameter
   @Value.Default
-  default boolean getShowLights()
+  default boolean showLights()
   {
     return true;
   }
@@ -84,12 +91,12 @@ public interface R2DebugVisualizerRendererParametersType
    *
    * @return A mapping from groups to colors
    *
-   * @see #getGeometryDefaultColor()
+   * @see #geometryDefaultColor()
    */
 
   @Value.Parameter
   @Value.Default
-  default Int2ReferenceMap<VectorReadable4FType> getGeometryGroupColors()
+  default Int2ReferenceMap<VectorReadable4FType> geometryGroupColors()
   {
     return new Int2ReferenceLinkedOpenHashMap<>();
   }
@@ -98,12 +105,12 @@ public interface R2DebugVisualizerRendererParametersType
    * @return The default color with which to render instances, if no specific
    * color has been set
    *
-   * @see #getGeometryGroupColors()
+   * @see #geometryGroupColors()
    */
 
   @Value.Parameter
   @Value.Default
-  default VectorReadable4FType getGeometryDefaultColor()
+  default VectorReadable4FType geometryDefaultColor()
   {
     return R2DebugVisualizerDefaults.DEFAULT_GROUP_COLOR;
   }

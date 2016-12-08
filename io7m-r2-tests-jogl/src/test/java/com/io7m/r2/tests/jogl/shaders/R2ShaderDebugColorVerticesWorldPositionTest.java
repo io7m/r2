@@ -17,11 +17,12 @@
 package com.io7m.r2.tests.jogl.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.shaders.R2ShaderDebugColorVerticesWorldPositionContract;
 import com.io7m.r2.tests.core.shaders.R2ShaderDebugVisualScreenContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public final class R2ShaderDebugVisualScreenTest extends
-  R2ShaderDebugVisualScreenContract
+public final class R2ShaderDebugColorVerticesWorldPositionTest extends
+  R2ShaderDebugColorVerticesWorldPositionContract
 {
   @Override
   protected JCGLContextType newGL33Context(
