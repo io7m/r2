@@ -253,6 +253,66 @@ public final class R2DebugVisualizerRenderer implements
     final R2DebugInstancesType extras = p.debugInstances();
     this.renderSceneExtrasLineSegments(area, uc, m, extras);
     this.renderSceneExtrasBoxes(area, uc, m, p, extras);
+    this.renderSceneExtrasInstanceSingles(area, uc, m, p, extras);
+  }
+
+  private void renderSceneExtrasInstanceSingles(
+    final AreaInclusiveUnsignedLType area,
+    final JCGLTextureUnitContextParentType uc,
+    final R2MatricesObserverType m,
+    final R2DebugVisualizerRendererParametersType p,
+    final R2DebugInstancesType extras)
+  {
+    final List<R2DebugInstanceSingle> singles = extras.instanceSingles();
+    if (!singles.isEmpty()) {
+      final JCGLViewportsType g_v = this.g.getViewports();
+      g_v.viewportSet(area);
+
+      JCGLRenderStates.activate(this.g, this.render_geom_state_base);
+
+      final JCGLTextureUnitContextType tc = uc.unitContextNew();
+      try {
+        this.shader_single.onActivate(this.g.getShaders());
+        try {
+          this.shader_single.onReceiveViewValues(this.g.getShaders(), m);
+
+          for (int index = 0; index < singles.size(); ++index) {
+            final R2DebugInstanceSingle single = singles.get(index);
+
+            final JCGLArrayObjectUsableType ao = single.instance().getArrayObject();
+            final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
+            try {
+              g_ao.arrayObjectBind(ao);
+
+              this.shader_single.onReceiveMaterialValues(
+                this.g.getTextures(), this.g.getShaders(), tc, single.color());
+
+              m.withTransform(
+                single.instance().getTransform(),
+                PMatrixI3x3F.identity(),
+                this,
+                (m_instance, t) -> {
+                  t.shader_single.onReceiveInstanceTransformValues(
+                    t.g.getShaders(),
+                    m_instance);
+                  t.shader_single.onValidate();
+                  t.g.getDraw().drawElements(
+                    JCGLPrimitives.PRIMITIVE_TRIANGLES);
+                  return Unit.unit();
+                });
+
+            } finally {
+              g_ao.arrayObjectUnbind();
+            }
+          }
+
+        } finally {
+          this.shader_single.onDeactivate(this.g.getShaders());
+        }
+      } finally {
+        tc.unitContextFinish(this.g.getTextures());
+      }
+    }
   }
 
   private void renderSceneExtrasBoxes(

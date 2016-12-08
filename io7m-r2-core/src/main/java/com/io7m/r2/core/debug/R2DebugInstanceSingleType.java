@@ -16,38 +16,31 @@
 
 package com.io7m.r2.core.debug;
 
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2InstanceSingleType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
 import org.immutables.value.Value;
 
-import java.util.List;
-
 /**
- * Extra instances for displaying debugging data.
+ * A single instance.
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
-public interface R2DebugInstancesType
+public interface R2DebugInstanceSingleType
 {
   /**
-   * @return The set of line segments to display
+   * @return The actual instance
    */
 
   @Value.Parameter
-  List<R2DebugLineSegment> lineSegments();
+  R2InstanceSingleType instance();
 
   /**
-   * @return The set of debug cubes to display
+   * @return The color of the instance
    */
 
   @Value.Parameter
-  List<R2DebugCubeInstance> cubes();
-
-  /**
-   * @return The set of single instances to display
-   */
-
-  @Value.Parameter
-  List<R2DebugInstanceSingle> instanceSingles();
+  PVectorI4F<R2SpaceRGBAType> color();
 }

@@ -123,6 +123,7 @@ import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.debug.R2DebugCube;
 import com.io7m.r2.core.debug.R2DebugCubeInstance;
 import com.io7m.r2.core.debug.R2DebugCubeType;
+import com.io7m.r2.core.debug.R2DebugInstanceSingle;
 import com.io7m.r2.core.debug.R2DebugInstances;
 import com.io7m.r2.core.debug.R2DebugLineSegment;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
@@ -787,6 +788,11 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         t.getTranslation().set3F((float) x, 1.0f, 1.0f);
         ib.addCubes(R2DebugCubeInstance.of(t, new PVectorI4F<>(0.0f, 1.0f, 0.0f, 1.0f)));
       }
+
+      ib.addInstanceSingles(R2DebugInstanceSingle.of(
+        this.instance,
+        new PVectorI4F<>(1.0f, 0.0f, 1.0f, 1.0f)
+      ));
 
       this.debug_params.setDebugInstances(ib.build());
       Assertive.ensure(this.debug_params.isInitialized());
