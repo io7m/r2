@@ -9,6 +9,7 @@ jdk:
 addons:
   apt:
     packages:
+      - doxygen
       - oracle-java8-installer
 
 script:
