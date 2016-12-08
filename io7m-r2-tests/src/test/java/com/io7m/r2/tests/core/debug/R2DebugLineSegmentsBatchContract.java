@@ -21,7 +21,9 @@ import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jtensors.parameterized.PVectorI3D;
+import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.jtensors.parameterized.PVectorI4D;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.debug.R2DebugLineSegment;
 import com.io7m.r2.core.debug.R2DebugLineSegmentsBatch;
 import com.io7m.r2.tests.core.R2JCGLContract;
@@ -75,19 +77,19 @@ public abstract class R2DebugLineSegmentsBatchContract extends R2JCGLContract
     b.setLineSegments(segments);
 
     segments.add(R2DebugLineSegment.of(
-      new PVectorI3D<>(0.0, 0.0, 0.0),
-      new PVectorI4D<>(1.0, 0.0, 0.0, 1.0),
-      new PVectorI3D<>(1.0, 0.0, 0.0),
-      new PVectorI4D<>(1.0, 0.0, 0.0, 1.0)
+      new PVectorI3F<>(0.0f, 0.0f, 0.0f),
+      new PVectorI4F<>(1.0f, 0.0f, 0.0f, 1.0f),
+      new PVectorI3F<>(1.0f, 0.0f, 0.0f),
+      new PVectorI4F<>(1.0f, 0.0f, 0.0f, 1.0f)
     ));
 
     b.setLineSegments(segments);
 
     segments.add(R2DebugLineSegment.of(
-      new PVectorI3D<>(0.0, 0.0, 0.0),
-      new PVectorI4D<>(1.0, 0.0, 0.0, 1.0),
-      new PVectorI3D<>(1.0, 0.0, 0.0),
-      new PVectorI4D<>(1.0, 0.0, 0.0, 1.0)
+      new PVectorI3F<>(0.0f, 0.0f, 0.0f),
+      new PVectorI4F<>(1.0f, 0.0f, 0.0f, 1.0f),
+      new PVectorI3F<>(1.0f, 0.0f, 0.0f),
+      new PVectorI4F<>(1.0f, 0.0f, 0.0f, 1.0f)
     ));
 
     b.setLineSegments(segments);

@@ -47,8 +47,8 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.jtensors.parameterized.PVectorI3D;
-import com.io7m.jtensors.parameterized.PVectorI4D;
+import com.io7m.jtensors.parameterized.PVectorI3F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
@@ -768,10 +768,10 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
       for (int y = 0; y < 100; ++y) {
         ib.addLineSegments(R2DebugLineSegment.of(
-          new PVectorI3D<>(-20.0, y, 0.0),
-          new PVectorI4D<>(1.0, 0.0, 1.0, 1.0),
-          new PVectorI3D<>(20.0, y, 0.0),
-          new PVectorI4D<>(0.0, 1.0, 1.0, 1.0)));
+          new PVectorI3F<>(-20.0f, y, 0.0f),
+          new PVectorI4F<>(1.0f, 0.0f, 1.0f, 1.0f),
+          new PVectorI3F<>(20.0f, y, 0.0f),
+          new PVectorI4F<>(0.0f, 1.0f, 1.0f, 1.0f)));
       }
 
       this.debug_params.setDebugInstances(ib.build());

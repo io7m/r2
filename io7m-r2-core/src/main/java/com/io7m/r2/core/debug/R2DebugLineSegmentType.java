@@ -16,8 +16,8 @@
 
 package com.io7m.r2.core.debug;
 
-import com.io7m.jtensors.parameterized.PVectorI3D;
-import com.io7m.jtensors.parameterized.PVectorI4D;
+import com.io7m.jtensors.parameterized.PVectorI3F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.spaces.R2SpaceRGBAType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -36,26 +36,26 @@ public interface R2DebugLineSegmentType
    */
 
   @Value.Parameter
-  PVectorI3D<R2SpaceWorldType> from();
+  PVectorI3F<R2SpaceWorldType> from();
 
   /**
    * @return The color of the start of the line segment
    */
 
   @Value.Parameter
-  PVectorI4D<R2SpaceRGBAType> fromColor();
+  PVectorI4F<R2SpaceRGBAType> fromColor();
 
   /**
    * @return The world-space position of the end of the line segment
    */
 
   @Value.Parameter
-  PVectorI3D<R2SpaceWorldType> to();
+  PVectorI3F<R2SpaceWorldType> to();
 
   /**
    * @return The color of the end of the line segment
    */
 
   @Value.Parameter
-  PVectorI4D<R2SpaceRGBAType> toColor();
+  PVectorI4F<R2SpaceRGBAType> toColor();
 }

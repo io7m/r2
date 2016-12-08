@@ -32,8 +32,8 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jpra.runtime.java.JPRACursor1DByteBufferedChecked;
 import com.io7m.jpra.runtime.java.JPRACursor1DType;
 import com.io7m.jtensors.Vector3FType;
-import com.io7m.jtensors.parameterized.PVectorI3D;
-import com.io7m.jtensors.parameterized.PVectorI4D;
+import com.io7m.jtensors.parameterized.PVectorI3F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2AttributeConventions;
 import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2Exception;
@@ -166,22 +166,19 @@ public final class R2DebugLineSegmentsBatch implements R2DeletableType
       int element = 0;
       for (int index = 0; index < segments.size(); ++index) {
         final R2DebugLineSegment segment = segments.get(index);
-        final PVectorI3D<R2SpaceWorldType> from = segment.from();
-        final PVectorI4D<R2SpaceRGBAType> from_color = segment.fromColor();
-        final PVectorI3D<R2SpaceWorldType> to = segment.to();
-        final PVectorI4D<R2SpaceRGBAType> to_color = segment.toColor();
+        final PVectorI3F<R2SpaceWorldType> from = segment.from();
+        final PVectorI4F<R2SpaceRGBAType> from_color = segment.fromColor();
+        final PVectorI3F<R2SpaceWorldType> to = segment.to();
+        final PVectorI4F<R2SpaceRGBAType> to_color = segment.toColor();
 
         c.setElementIndex(element);
-        pc.set3F(
-          (float) from.getXD(),
-          (float) from.getYD(),
-          (float) from.getZD());
+        pc.set3F(from.getXF(), from.getYF(), from.getZF());
 
         {
-          final int r = (int) (from_color.getXD() * 255.0);
-          final int g = (int) (from_color.getYD() * 255.0);
-          final int b = (int) (from_color.getZD() * 255.0);
-          final int a = (int) (from_color.getWD() * 255.0);
+          final int r = (int) (from_color.getXF() * 255.0f);
+          final int g = (int) (from_color.getYF() * 255.0f);
+          final int b = (int) (from_color.getZF() * 255.0f);
+          final int a = (int) (from_color.getWF() * 255.0f);
           cc.setColorR((byte) (r & 0xff));
           cc.setColorG((byte) (g & 0xff));
           cc.setColorB((byte) (b & 0xff));
@@ -189,16 +186,13 @@ public final class R2DebugLineSegmentsBatch implements R2DeletableType
         }
 
         c.setElementIndex(element + 1);
-        pc.set3F(
-          (float) to.getXD(),
-          (float) to.getYD(),
-          (float) to.getZD());
+        pc.set3F(to.getXF(), to.getYF(), to.getZF());
 
         {
-          final int r = (int) (to_color.getXD() * 255.0);
-          final int g = (int) (to_color.getYD() * 255.0);
-          final int b = (int) (to_color.getZD() * 255.0);
-          final int a = (int) (to_color.getWD() * 255.0);
+          final int r = (int) (to_color.getXF() * 255.0f);
+          final int g = (int) (to_color.getYF() * 255.0f);
+          final int b = (int) (to_color.getZF() * 255.0f);
+          final int a = (int) (to_color.getWF() * 255.0f);
           cc.setColorR((byte) (r & 0xff));
           cc.setColorG((byte) (g & 0xff));
           cc.setColorB((byte) (b & 0xff));
