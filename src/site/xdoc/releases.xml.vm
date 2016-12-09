@@ -21,6 +21,7 @@
       <ul>
         <li><a href="documentation/index-m.xhtml">XHTML - one page per section</a></li>
         <li><a href="documentation/index.xhtml">XHTML - single page</a></li>
+        <li><a href="documentation/main.txt">UTF-8 plain text</a></li>
       </ul>
       <p>
         Older documentation is archived in the

@@ -11,7 +11,8 @@
   <body>
     <subsection name="${project.name}">
       <p>
-        The <b>${project.name}</b> package...
+        The <b>${project.name}</b> package implements an aggressively
+        minimalist deferred rendering system.
       </p>
     </subsection>
     <subsection name="Features">

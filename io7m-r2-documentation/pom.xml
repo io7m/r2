@@ -166,15 +166,29 @@
         <artifactId>io7m-kstructural-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>make-documentation-single</id>
-            <phase>process-resources</phase>
+            <id>exec-multi</id>
             <goals>
               <goal>compileXHTML</goal>
             </goals>
+            <phase>process-resources</phase>
             <configuration>
               <documentFile>${project.build.directory}/documentation/documentation.sd</documentFile>
               <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
-              <brandTopFile>${project.build.directory}/documentation/brand.xml</brandTopFile>
+              <pagination>XHTML_MULTI_PAGE</pagination>
+              <cssExtraStyles>
+                <param>documentation.css</param>
+              </cssExtraStyles>
+            </configuration>
+          </execution>
+          <execution>
+            <id>exec-single</id>
+            <goals>
+              <goal>compileXHTML</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <documentFile>${project.build.directory}/documentation/documentation.sd</documentFile>
+              <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
               <pagination>XHTML_SINGLE_PAGE</pagination>
               <cssExtraStyles>
                 <param>documentation.css</param>
@@ -182,19 +196,14 @@
             </configuration>
           </execution>
           <execution>
-            <id>make-documentation-multi</id>
-            <phase>process-resources</phase>
+            <id>exec-plain</id>
             <goals>
-              <goal>compileXHTML</goal>
+              <goal>compilePlain</goal>
             </goals>
+            <phase>process-resources</phase>
             <configuration>
               <documentFile>${project.build.directory}/documentation/documentation.sd</documentFile>
               <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
-              <brandTopFile>${project.build.directory}/documentation/brand.xml</brandTopFile>
-              <pagination>XHTML_MULTI_PAGE</pagination>
-              <cssExtraStyles>
-                <param>documentation.css</param>
-              </cssExtraStyles>
             </configuration>
           </execution>
         </executions>
