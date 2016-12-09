@@ -32,7 +32,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -51,17 +51,17 @@ public final class R2ShaderDebugVisualBatched extends
 
   private R2ShaderDebugVisualBatched(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2DebugVisualConstantBatched",
-      "R2DebugVisualConstantBatched.vert",
+      "com.io7m.r2.shaders.core.R2ShaderDebugVisualBatched",
+      "com.io7m.r2.shaders.core/R2SurfaceBatched.vert",
       Optional.empty(),
-      "R2DebugVisualConstantBatched.frag");
+      "com.io7m.r2.shaders.core/R2DebugVisualConstant.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 4);
@@ -80,20 +80,20 @@ public final class R2ShaderDebugVisualBatched extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env A shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
 
   public static R2ShaderInstanceBatchedType<VectorReadable4FType> newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderInstanceBatchedVerifier.newVerifier(
-      new R2ShaderDebugVisualBatched(in_shaders, in_sources, in_pool));
+      new R2ShaderDebugVisualBatched(in_shaders, in_shader_env, in_pool));
   }
 
   @Override

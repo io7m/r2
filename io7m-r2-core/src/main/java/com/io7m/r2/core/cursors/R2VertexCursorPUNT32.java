@@ -118,7 +118,7 @@ public final class R2VertexCursorPUNT32 implements
   private static final class Cursor implements R2VertexCursorType
   {
     private final JPRACursor1DType<R2VertexPUNT32Type> cursor;
-    private final R2VertexPUNT32Type                   view;
+    private final R2VertexPUNT32Type view;
 
     private Cursor(final JPRACursor1DType<R2VertexPUNT32Type> c)
     {

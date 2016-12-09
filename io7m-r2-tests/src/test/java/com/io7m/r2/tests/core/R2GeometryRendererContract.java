@@ -25,14 +25,13 @@ import com.io7m.jcanephora.profiler.JCGLProfiling;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
 import com.io7m.jcanephora.profiler.JCGLProfilingType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixI4x4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferComponents;
 import com.io7m.r2.core.R2GeometryBufferDescription;
@@ -54,13 +53,10 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -74,8 +70,8 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
     final R2UnitQuadType quad,
     final R2IDPoolType id_pool)
   {
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
 
     final R2InstanceSingleType i =
       R2InstanceSingle.newInstance(
@@ -87,7 +83,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
     final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> ds =
       R2SurfaceShaderBasicSingle.newShader(
         g.getShaders(),
-        ss,
+        sources,
         id_pool);
 
     final R2SurfaceShaderBasicParameters ds_param =

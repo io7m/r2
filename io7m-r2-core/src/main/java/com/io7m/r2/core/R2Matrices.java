@@ -168,7 +168,6 @@ public final class R2Matrices implements R2MatricesType
     }
 
 
-
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceLightEyeType>
     getMatrixProjectiveEyeToLightEye()
@@ -255,9 +254,9 @@ public final class R2Matrices implements R2MatricesType
 
   private static final class VolumeLight implements R2MatricesVolumeLightType
   {
-    private boolean active;
     private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m_model;
     private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceEyeType> m_modelview;
+    private boolean active;
 
     VolumeLight()
     {

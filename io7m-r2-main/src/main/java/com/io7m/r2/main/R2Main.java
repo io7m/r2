@@ -57,11 +57,15 @@ import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRenderer;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
+import com.io7m.sombrero.core.SoShaderPreprocessorType;
+import com.io7m.sombrero.core.SoShaderResolver;
+import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 
 import java.lang.reflect.Field;
+import java.util.OptionalInt;
 import java.util.function.Supplier;
 
 /**
@@ -81,7 +85,7 @@ public final class R2Main implements R2MainType
   }
 
   private final R2IDPoolType pool;
-  private final R2ShaderSourcesType sources;
+  private final R2ShaderPreprocessingEnvironmentType sources;
   private final R2StencilRendererType stencil_renderer;
   private final R2MatricesType matrices;
   private final JCGLViewMatricesType view_matrices;
@@ -101,7 +105,7 @@ public final class R2Main implements R2MainType
 
   private R2Main(
     final R2IDPoolType in_pool,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentType in_sources,
     final R2StencilRendererType in_stencil_renderer,
     final R2MatricesType in_matrices,
     final JCGLViewMatricesType in_view_matrices,
@@ -172,7 +176,7 @@ public final class R2Main implements R2MainType
   }
 
   @Override
-  public R2ShaderSourcesType getShaderSources()
+  public R2ShaderPreprocessingEnvironmentType getShaderPreprocessingEnvironment()
   {
     return this.sources;
   }
@@ -297,7 +301,7 @@ public final class R2Main implements R2MainType
   private static final class Builder implements R2MainBuilderType
   {
     private @Nullable R2StencilRendererType stencil_renderer;
-    private @Nullable R2ShaderSourcesType sources;
+    private @Nullable R2ShaderPreprocessingEnvironmentType sources;
     private @Nullable R2IDPoolType pool;
     private @Nullable R2MatricesType matrices;
     private @Nullable JCGLViewMatricesType view_matrices;
@@ -331,17 +335,26 @@ public final class R2Main implements R2MainType
     }
 
     @Override
-    public R2MainType build(final JCGLInterfaceGL33Type g)
+    public R2MainType build(
+      final JCGLInterfaceGL33Type g)
     {
       NullCheck.notNull(g);
 
       final R2IDPoolType ex_pool =
         Builder.compute(this.pool, R2IDPool::newPool);
 
-      final R2ShaderSourcesType ex_sources =
+      final R2ShaderPreprocessingEnvironmentType ex_sources =
         Builder.compute(
           this.sources,
-          () -> R2ShaderSourcesResources.newSources(R2Shaders.class));
+          () -> {
+            final SoShaderPreprocessorConfig.Builder b =
+              SoShaderPreprocessorConfig.builder();
+            b.setResolver(SoShaderResolver.create());
+            b.setVersion(OptionalInt.of(330));
+            final SoShaderPreprocessorType p =
+              SoShaderPreprocessorJCPP.create(b.build());
+            return R2ShaderPreprocessingEnvironment.create(p);
+          });
 
       final R2UnitQuadType ex_quad = Builder.compute(
         this.unit_quad,

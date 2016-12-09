@@ -33,7 +33,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -53,31 +53,37 @@ public final class R2ShaderFilterBilateralBlurDepthAwareHorizontal4f extends
   private final JCGLProgramUniformType u_blur_sharpness;
   private final JCGLProgramUniformType u_blur_falloff;
   private final JCGLProgramUniformType u_blur_output_image_size_inverse;
-  private final VectorM2F              inverse_size;
-  private       JCGLTextureUnitType    unit_texture_image;
-  private       JCGLTextureUnitType    unit_texture_depth;
+  private final VectorM2F inverse_size;
+  private JCGLTextureUnitType unit_texture_image;
+  private JCGLTextureUnitType unit_texture_depth;
 
   private R2ShaderFilterBilateralBlurDepthAwareHorizontal4f(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2FilterBilateralBlurDepthAwareHorizontal4f",
-      "R2FilterBilateralBlurDepthAwareHorizontal4f.vert",
+      "com.io7m.r2.shaders.core.R2ShaderFilterBilateralBlurDepthAwareHorizontal4f",
+      "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "R2FilterBilateralBlurDepthAwareHorizontal4f.frag");
+      "com.io7m.r2.shaders.core/R2FilterBilateralBlurDepthAwareHorizontal4f.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 7);
 
     this.u_texture_image =
-      R2ShaderParameters.getUniformChecked(p, "R2_texture_image", JCGLType.TYPE_SAMPLER_2D);
+      R2ShaderParameters.getUniformChecked(
+        p,
+        "R2_texture_image",
+        JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_depth =
-      R2ShaderParameters.getUniformChecked(p, "R2_texture_depth", JCGLType.TYPE_SAMPLER_2D);
+      R2ShaderParameters.getUniformChecked(
+        p,
+        "R2_texture_depth",
+        JCGLType.TYPE_SAMPLER_2D);
 
     this.u_blur_depth_coefficient =
       R2ShaderParameters.getUniformChecked(
@@ -101,23 +107,22 @@ public final class R2ShaderFilterBilateralBlurDepthAwareHorizontal4f extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
 
-  public static
-  R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParametersType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderFilterVerifier.newVerifier(
       new R2ShaderFilterBilateralBlurDepthAwareHorizontal4f(
-        in_shaders, in_sources, in_pool));
+        in_shaders, in_shader_env, in_pool));
   }
 
   @Override

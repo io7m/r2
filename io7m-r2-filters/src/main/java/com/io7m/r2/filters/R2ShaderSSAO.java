@@ -38,7 +38,7 @@ import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -50,7 +50,7 @@ public final class R2ShaderSSAO extends
   R2AbstractShader<R2ShaderSSAOParametersType>
   implements R2ShaderFilterType<R2ShaderSSAOParametersType>
 {
-  private final VectorM2F              noise_uv_scale;
+  private final VectorM2F noise_uv_scale;
   private final JCGLProgramUniformType u_ssao_noise_uv_scale;
   private final JCGLProgramUniformType u_ssao_kernel;
   private final JCGLProgramUniformType u_ssao_kernel_size;
@@ -76,22 +76,22 @@ public final class R2ShaderSSAO extends
   private JCGLTextureUnitType unit_normals;
   private JCGLTextureUnitType unit_noise;
 
-  private long                     kernel_version;
+  private long kernel_version;
   private R2SSAOKernelReadableType kernel_last;
 
   private R2ShaderSSAO(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2SSAO",
-      "R2SSAO.vert",
+      "com.io7m.r2.shaders.core.R2SSAO",
+      "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "R2SSAO.frag");
+      "com.io7m.r2.shaders.core/R2SSAO.frag");
 
     this.noise_uv_scale = new VectorM2F();
 
@@ -167,9 +167,9 @@ public final class R2ShaderSSAO extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -177,11 +177,11 @@ public final class R2ShaderSSAO extends
   public static R2ShaderFilterType<R2ShaderSSAOParametersType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderSSAO(in_shaders, in_sources, in_pool));
+      new R2ShaderSSAO(in_shaders, in_shader_env, in_pool));
   }
 
   @Override

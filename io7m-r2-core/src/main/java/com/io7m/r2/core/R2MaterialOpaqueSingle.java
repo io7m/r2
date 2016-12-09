@@ -29,8 +29,8 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 public final class R2MaterialOpaqueSingle<M> implements
   R2MaterialOpaqueSingleType<M>
 {
-  private final long                                id;
-  private final M                                   params;
+  private final long id;
+  private final M params;
   private final R2ShaderInstanceSingleUsableType<M> shader;
 
   private R2MaterialOpaqueSingle(

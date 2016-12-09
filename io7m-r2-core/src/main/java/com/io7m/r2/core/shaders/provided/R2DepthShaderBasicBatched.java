@@ -32,7 +32,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -53,17 +53,17 @@ public final class R2DepthShaderBasicBatched extends
 
   private R2DepthShaderBasicBatched(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2DepthBasicBatched",
-      "R2DepthBasicBatched.vert",
+      "com.io7m.r2.shaders.core.R2DepthBasicBatched",
+      "com.io7m.r2.shaders.core/R2DepthBatched.vert",
       Optional.empty(),
-      "R2DepthBasicBatched.frag");
+      "com.io7m.r2.shaders.core/R2DepthBasicBatched.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 5);
@@ -84,9 +84,9 @@ public final class R2DepthShaderBasicBatched extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env The shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -94,11 +94,11 @@ public final class R2DepthShaderBasicBatched extends
   public static R2ShaderDepthBatchedType<R2DepthShaderBasicParametersType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     final R2DepthShaderBasicBatched s =
-      new R2DepthShaderBasicBatched(in_shaders, in_sources, in_pool);
+      new R2DepthShaderBasicBatched(in_shaders, in_shader_env, in_pool);
     final R2ShaderDepthBatchedType<R2DepthShaderBasicParametersType> v =
       R2ShaderDepthBatchedVerifier.newVerifier(s);
     return v;

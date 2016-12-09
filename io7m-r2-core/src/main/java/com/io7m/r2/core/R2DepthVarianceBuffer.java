@@ -82,10 +82,10 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
       true);
   }
 
-  private final R2Texture2DType                      t_depth;
-  private final R2Texture2DType                      t_variance;
-  private final JCGLFramebufferType                  framebuffer;
-  private final UnsignedRangeInclusiveL              range;
+  private final R2Texture2DType t_depth;
+  private final R2Texture2DType t_variance;
+  private final JCGLFramebufferType framebuffer;
+  private final UnsignedRangeInclusiveL range;
   private final R2DepthVarianceBufferDescriptionType desc;
 
   private R2DepthVarianceBuffer(

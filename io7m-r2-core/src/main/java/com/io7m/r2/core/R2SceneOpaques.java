@@ -43,8 +43,8 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     LOG = LoggerFactory.getLogger(R2SceneOpaques.class);
   }
 
-  private final Singles       singles;
-  private final Batches       batches;
+  private final Singles singles;
+  private final Batches batches;
   private final StringBuilder text;
 
   private R2SceneOpaques()
@@ -424,11 +424,11 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
   private static final class Singles
   {
-    private final Group[]                                         groups;
+    private final Group[] groups;
     private final Long2ReferenceOpenHashMap<R2InstanceSingleType> instances;
     private final ObjectArrayList<R2InstanceSingleType>
-                                                                  instances_sorted;
-    private       int                                             group_max;
+      instances_sorted;
+    private int group_max;
 
     Singles()
     {
@@ -491,9 +491,9 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
   private static final class Batches
   {
-    private final Group[]                                          groups;
+    private final Group[] groups;
     private final Long2ReferenceOpenHashMap<R2InstanceBatchedType> instances;
-    private       int                                              group_max;
+    private int group_max;
 
     Batches()
     {
@@ -519,15 +519,15 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     {
       private final Long2LongOpenHashMap instance_to_material;
       private final Long2ReferenceOpenHashMap<LongSet>
-                                         material_to_instances;
+        material_to_instances;
       private final Long2ReferenceOpenHashMap<LongSet>
-                                         shader_to_materials;
+        shader_to_materials;
       private final Long2ReferenceOpenHashMap<R2MaterialOpaqueBatchedType<?>>
-                                         instance_materials;
+        instance_materials;
       private final Long2ReferenceOpenHashMap<R2ShaderInstanceBatchedUsableType<?>>
-                                         instance_shaders;
+        instance_shaders;
       private final Long2ReferenceOpenHashMap<R2InstanceBatchedType>
-                                         instances;
+        instances;
 
       Group()
       {

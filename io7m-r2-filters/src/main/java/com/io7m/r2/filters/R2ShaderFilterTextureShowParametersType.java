@@ -42,7 +42,8 @@ public interface R2ShaderFilterTextureShowParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getIntensity() {
+  default float getIntensity()
+  {
     return 1.0f;
   }
 }

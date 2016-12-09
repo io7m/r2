@@ -78,9 +78,9 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
       true);
   }
 
-  private final R2Texture2DType                  t_depth;
-  private final JCGLFramebufferType              framebuffer;
-  private final UnsignedRangeInclusiveL          range;
+  private final R2Texture2DType t_depth;
+  private final JCGLFramebufferType framebuffer;
+  private final UnsignedRangeInclusiveL range;
   private final R2DepthOnlyBufferDescriptionType desc;
 
   private R2DepthOnlyBuffer(

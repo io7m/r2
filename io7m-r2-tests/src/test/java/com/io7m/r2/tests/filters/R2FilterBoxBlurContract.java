@@ -22,11 +22,14 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.jcanephora.profiler.JCGLProfiling;
+import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
+import com.io7m.jcanephora.profiler.JCGLProfilingType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
@@ -42,16 +45,11 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.jcanephora.profiler.JCGLProfiling;
-import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
-import com.io7m.jcanephora.profiler.JCGLProfilingType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterBoxBlur;
 import com.io7m.r2.filters.R2FilterBoxBlurParameters;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -66,8 +64,8 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLTexturesType g_t =
@@ -91,7 +89,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBoxBlur.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
     Assert.assertFalse(f.isDeleted());
     f.delete(g);
@@ -105,8 +103,8 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -138,7 +136,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBoxBlur.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -185,8 +183,8 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -218,7 +216,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBoxBlur.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -267,8 +265,8 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -300,7 +298,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBoxBlur.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -347,8 +345,8 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -380,7 +378,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBoxBlur.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -427,8 +425,8 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -460,7 +458,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBoxBlur.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),

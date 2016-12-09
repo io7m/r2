@@ -47,7 +47,9 @@ public interface R2GeometryBufferUsableType
    * Return either the allocated specular texture, or a suitable default
    * replacement that behaves as if the geometry buffer contains no specular
    * components.
+   *
    * @param td The texture defaults
+   *
    * @return A specular texture, or a default replacement
    */
 

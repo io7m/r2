@@ -55,9 +55,9 @@ import java.util.Optional;
 
 public final class R2DepthOnlyRenderer implements R2DepthRendererType
 {
-  private final DepthConsumer         depth_consumer;
+  private final DepthConsumer depth_consumer;
   private final JCGLInterfaceGL33Type g;
-  private       boolean               deleted;
+  private boolean deleted;
 
   private R2DepthOnlyRenderer(final JCGLInterfaceGL33Type in_g)
   {
@@ -173,17 +173,17 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
           JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE));
     }
 
-    private final JCGLInterfaceGL33Type  g33;
-    private final JCGLShadersType        shaders;
-    private final JCGLTexturesType       textures;
-    private final JCGLArrayObjectsType   array_objects;
-    private final JCGLDrawType           draw;
+    private final JCGLInterfaceGL33Type g33;
+    private final JCGLShadersType shaders;
+    private final JCGLTexturesType textures;
+    private final JCGLArrayObjectsType array_objects;
+    private final JCGLDrawType draw;
     private final JCGLRenderStateMutable render_state;
 
-    private @Nullable R2MatricesObserverType         matrices;
+    private @Nullable R2MatricesObserverType matrices;
     private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable JCGLTextureUnitContextType material_texture_context;
-    private @Nullable R2MaterialDepthSingleType<?>  material_single;
+    private @Nullable R2MaterialDepthSingleType<?> material_single;
     private @Nullable JCGLFaceSelection culling;
 
     private DepthConsumer(

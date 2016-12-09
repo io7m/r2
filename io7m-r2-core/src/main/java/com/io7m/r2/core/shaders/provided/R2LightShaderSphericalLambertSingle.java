@@ -45,7 +45,7 @@ import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
@@ -90,17 +90,17 @@ public final class R2LightShaderSphericalLambertSingle extends
 
   private R2LightShaderSphericalLambertSingle(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2LightSphericalLambertSingle",
-      "R2LightSphericalLambertSingle.vert",
+      "com.io7m.r2.shaders.core.R2LightShaderSphericalLambertSingle",
+      "com.io7m.r2.shaders.core/R2LightPositionalSingle.vert",
       Optional.empty(),
-      "R2LightSphericalLambertSingle.frag");
+      "com.io7m.r2.shaders.core/R2LightSphericalLambertSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 23);
@@ -195,9 +195,9 @@ public final class R2LightShaderSphericalLambertSingle extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env A shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -205,12 +205,12 @@ public final class R2LightShaderSphericalLambertSingle extends
   public static R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderLightVolumeSingleVerifier.newVerifier(
       new R2LightShaderSphericalLambertSingle(
-        in_shaders, in_sources, in_pool));
+        in_shaders, in_shader_env, in_pool));
   }
 
   @Override

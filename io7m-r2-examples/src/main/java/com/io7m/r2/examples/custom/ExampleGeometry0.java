@@ -46,16 +46,20 @@ import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.main.R2MainType;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
+import com.io7m.sombrero.core.SoShaderPreprocessorType;
+import com.io7m.sombrero.core.SoShaderResolver;
+import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 // CHECKSTYLE_JAVADOC:OFF
 
@@ -122,13 +126,18 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       transform,
       PMatrixI3x3F.identity());
 
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final SoShaderPreprocessorConfig.Builder b =
+      SoShaderPreprocessorConfig.builder();
+    b.setResolver(SoShaderResolver.create());
+    b.setVersion(OptionalInt.of(330));
+    final SoShaderPreprocessorType p =
+      SoShaderPreprocessorJCPP.create(b.build());
+    final R2ShaderPreprocessingEnvironmentType sources =
+      R2ShaderPreprocessingEnvironment.create(p);
+
     this.shader =
       R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(),
-        sources,
-        m.getIDPool());
+        g.getShaders(), sources, m.getIDPool());
     this.shader_params =
       R2SurfaceShaderBasicParameters.newParameters(m.getTextureDefaults());
 

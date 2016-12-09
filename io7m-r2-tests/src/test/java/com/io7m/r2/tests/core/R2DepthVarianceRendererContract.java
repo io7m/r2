@@ -22,14 +22,13 @@ import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixI4x4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2DepthInstances;
 import com.io7m.r2.core.R2DepthInstancesType;
 import com.io7m.r2.core.R2DepthPrecision;
@@ -57,9 +56,7 @@ import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import org.junit.Test;
 
 public abstract class R2DepthVarianceRendererContract extends R2JCGLContract
@@ -122,13 +119,13 @@ public abstract class R2DepthVarianceRendererContract extends R2JCGLContract
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
 
     final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> ds =
       R2DepthShaderBasicSingle.newShader(
         g.getShaders(),
-        ss,
+        sources,
         id_pool);
 
     final R2DepthShaderBasicParametersMutable ds_param =

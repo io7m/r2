@@ -20,7 +20,7 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterOcclusionApplicator;
 import com.io7m.r2.filters.R2ShaderFilterOcclusionApplicatorParametersType;
 import com.io7m.r2.tests.filters.R2ShaderFilterOcclusionApplicatorContract;
@@ -42,7 +42,7 @@ public final class R2ShaderFilterOcclusionApplicatorTest extends
   protected R2ShaderFilterType
     <R2ShaderFilterOcclusionApplicatorParametersType> newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderSourcesType sources,
+    final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
     return R2ShaderFilterOcclusionApplicator.newShader(

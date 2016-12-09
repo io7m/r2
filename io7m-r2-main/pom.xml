@@ -36,6 +36,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.io7m.sombrero</groupId>
+      <artifactId>io7m-sombrero-jcpp</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.io7m.jnull</groupId>
       <artifactId>io7m-jnull-core</artifactId>
     </dependency>

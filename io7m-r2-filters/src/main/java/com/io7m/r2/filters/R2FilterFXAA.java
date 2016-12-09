@@ -35,7 +35,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.valid4j.Assertive;
 
 import java.util.EnumMap;
@@ -69,17 +69,17 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
   /**
    * Create a new FXAA filter.
    *
-   * @param in_g       A GL interface
-   * @param in_sources Shader sources
-   * @param in_id_pool An ID pool
-   * @param in_quad    A unit quad
+   * @param in_g          A GL interface
+   * @param in_shader_env Shader sources
+   * @param in_id_pool    An ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new filter
    */
 
   public static R2FilterType<R2FilterFXAAParametersType> newFilter(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_id_pool,
     final R2UnitQuadUsableType in_quad)
   {
@@ -89,7 +89,8 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
 
     final JCGLShadersType g_sh = in_g.getShaders();
     for (final R2FilterFXAAQuality c : R2FilterFXAAQuality.values()) {
-      sh.put(c, R2ShaderFilterFXAAA.newShader(g_sh, in_sources, in_id_pool, c));
+      sh.put(
+        c, R2ShaderFilterFXAAA.newShader(g_sh, in_shader_env, in_id_pool, c));
     }
 
     return new R2FilterFXAA(in_g, sh, in_quad);

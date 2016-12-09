@@ -18,5 +18,6 @@
  * Default provided filters.
  */
 
-@com.io7m.jnull.NonNullByDefault package com.io7m.r2.filters;
+@com.io7m.jnull.NonNullByDefault
+package com.io7m.r2.filters;
 

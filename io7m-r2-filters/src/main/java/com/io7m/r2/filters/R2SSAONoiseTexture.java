@@ -37,6 +37,7 @@ import com.io7m.jpra.runtime.java.JPRACursor2DType;
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
+
 /**
  * Functions for allocating noise textures for rotating SSAO kernels.
  */

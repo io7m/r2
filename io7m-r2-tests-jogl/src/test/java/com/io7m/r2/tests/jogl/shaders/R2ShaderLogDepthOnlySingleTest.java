@@ -22,7 +22,7 @@ import com.io7m.jfunctional.Unit;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.provided.R2ShaderLogDepthOnlySingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.shaders.R2ShaderLogDepthOnlySingleContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
@@ -41,7 +41,7 @@ public final class R2ShaderLogDepthOnlySingleTest extends
   @Override
   protected R2ShaderInstanceSingleType<Unit> newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderSourcesType sources,
+    final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
     return R2ShaderLogDepthOnlySingle.newShader(g.getShaders(), sources, pool);

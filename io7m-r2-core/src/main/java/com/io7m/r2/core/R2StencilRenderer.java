@@ -44,7 +44,7 @@ import com.io7m.r2.core.shaders.provided.R2StencilShaderScreen;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,20 +62,20 @@ public final class R2StencilRenderer implements R2StencilRendererType
     LOG = LoggerFactory.getLogger(R2StencilRenderer.class);
   }
 
-  private final StencilConsumer                        stencil_consumer;
-  private final R2ShaderInstanceSingleType<Unit>       program_instance;
+  private final StencilConsumer stencil_consumer;
+  private final R2ShaderInstanceSingleType<Unit> program_instance;
   private final R2ShaderInstanceSingleScreenType<Unit> program_screen;
-  private final R2UnitQuadUsableType                   quad;
-  private final JCGLInterfaceGL33Type                  g;
-  private       boolean                                deleted;
+  private final R2UnitQuadUsableType quad;
+  private final JCGLInterfaceGL33Type g;
+  private boolean deleted;
 
   private R2StencilRenderer(
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final JCGLInterfaceGL33Type in_g,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_sources);
+    NullCheck.notNull(in_shader_env);
     this.g = NullCheck.notNull(in_g);
     NullCheck.notNull(in_pool);
     this.quad = NullCheck.notNull(in_quad);
@@ -84,9 +84,9 @@ public final class R2StencilRenderer implements R2StencilRendererType
 
     final JCGLShadersType g_sh = in_g.getShaders();
     this.program_instance =
-      R2StencilShaderSingle.newShader(g_sh, in_sources, in_pool);
+      R2StencilShaderSingle.newShader(g_sh, in_shader_env, in_pool);
     this.program_screen =
-      R2StencilShaderScreen.newShader(g_sh, in_sources, in_pool);
+      R2StencilShaderScreen.newShader(g_sh, in_shader_env, in_pool);
     this.stencil_consumer =
       new StencilConsumer(this.program_instance);
 
@@ -94,21 +94,21 @@ public final class R2StencilRenderer implements R2StencilRendererType
   }
 
   /**
-   * @param in_sources Shader source access
-   * @param in_g       An OpenGL interface
-   * @param in_pool    The ID pool
-   * @param in_quad    A unit quad
+   * @param in_shader_env Shader source access
+   * @param in_g          An OpenGL interface
+   * @param in_pool       The ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new renderer
    */
 
   public static R2StencilRendererType newRenderer(
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final JCGLInterfaceGL33Type in_g,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    return new R2StencilRenderer(in_sources, in_g, in_pool, in_quad);
+    return new R2StencilRenderer(in_shader_env, in_g, in_pool, in_quad);
   }
 
   @Override
@@ -321,14 +321,14 @@ public final class R2StencilRenderer implements R2StencilRendererType
   private static final class StencilConsumer implements
     R2SceneStencilsConsumerType
   {
-    private final     R2ShaderInstanceSingleType<Unit> program;
-    private @Nullable JCGLInterfaceGL33Type            g33;
-    private @Nullable JCGLShadersType                  shaders;
-    private @Nullable JCGLArrayObjectsType             array_objects;
-    private @Nullable JCGLDrawType                     draw;
-    private @Nullable R2MatricesObserverType           matrices;
-    private @Nullable JCGLTextureUnitContextParentType   texture_context;
-    private @Nullable JCGLTexturesType                 textures;
+    private final R2ShaderInstanceSingleType<Unit> program;
+    private @Nullable JCGLInterfaceGL33Type g33;
+    private @Nullable JCGLShadersType shaders;
+    private @Nullable JCGLArrayObjectsType array_objects;
+    private @Nullable JCGLDrawType draw;
+    private @Nullable R2MatricesObserverType matrices;
+    private @Nullable JCGLTextureUnitContextParentType texture_context;
+    private @Nullable JCGLTexturesType textures;
 
     StencilConsumer(
       final R2ShaderInstanceSingleType<Unit> in_program)

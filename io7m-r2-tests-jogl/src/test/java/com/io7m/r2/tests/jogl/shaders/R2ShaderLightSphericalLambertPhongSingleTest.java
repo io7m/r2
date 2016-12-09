@@ -17,10 +17,7 @@
 package com.io7m.r2.tests.jogl.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
-
-
-import com.io7m.r2.tests.core.shaders
-  .R2ShaderLightSphericalLambertPhongSingleContract;
+import com.io7m.r2.tests.core.shaders.R2ShaderLightSphericalLambertPhongSingleContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
 public final class R2ShaderLightSphericalLambertPhongSingleTest extends

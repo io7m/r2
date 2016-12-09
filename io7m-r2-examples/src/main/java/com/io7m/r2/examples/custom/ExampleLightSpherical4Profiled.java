@@ -142,8 +142,8 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.filters.R2BlurParametersReadableType;
@@ -177,13 +177,17 @@ import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitCube;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
+import com.io7m.sombrero.core.SoShaderPreprocessorType;
+import com.io7m.sombrero.core.SoShaderResolver;
+import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 import org.valid4j.Assertive;
 
 import javax.swing.SwingUtilities;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.concurrent.atomic.AtomicReference;
 
 // CHECKSTYLE:OFF
@@ -459,7 +463,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       R2FilterSSAOParametersMutable.create();
     this.filter_ssao =
       R2FilterSSAO.newFilter(
-        m.getShaderSources(),
+        m.getShaderPreprocessingEnvironment(),
         gx,
         m.getTextureDefaults(),
         m.getTextureUnitAllocator().getRootContext(),
@@ -488,7 +492,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
       this.filter_blur_ssao =
         R2FilterBilateralBlurDepthAware.newFilter(
-          m.getShaderSources(),
+          m.getShaderPreprocessingEnvironment(),
           gx,
           m.getTextureDefaults(),
           this.pool_ssao,
@@ -498,7 +502,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
     this.filter_ssao_app =
       R2FilterOcclusionApplicator.newFilter(
-        m.getShaderSources(),
+        m.getShaderPreprocessingEnvironment(),
         m.getTextureDefaults(),
         gx,
         m.getIDPool(),
@@ -509,7 +513,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
     this.filter_compositor =
       R2FilterCompositor.newFilter(
-        m.getShaderSources(),
+        m.getShaderPreprocessingEnvironment(),
         m.getTextureDefaults(),
         gx,
         m.getIDPool(),
@@ -518,7 +522,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     this.filter_fxaa =
       R2FilterFXAA.newFilter(
         gx,
-        m.getShaderSources(),
+        m.getShaderPreprocessingEnvironment(),
         m.getIDPool(),
         m.getUnitQuad());
 
@@ -571,11 +575,17 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       }
     }
 
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final SoShaderPreprocessorConfig.Builder b =
+      SoShaderPreprocessorConfig.builder();
+    b.setResolver(SoShaderResolver.create());
+    b.setVersion(OptionalInt.of(330));
+    final SoShaderPreprocessorType p =
+      SoShaderPreprocessorJCPP.create(b.build());
+    final R2ShaderPreprocessingEnvironmentType sources =
+      R2ShaderPreprocessingEnvironment.create(p);
 
     this.depth_shader = R2DepthShaderBasicSingle.newShader(
-      gx.getShaders(), m.getShaderSources(), m.getIDPool());
+      gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
     this.depth_params =
       R2DepthShaderBasicParametersMutable.create();
     this.depth_params.setAlphaDiscardThreshold(0.1f);
@@ -786,7 +796,13 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       for (int x = 0; x < 20; x += 2) {
         final R2TransformT t = R2TransformT.newTransform();
         t.getTranslation().set3F((float) x, 1.0f, 1.0f);
-        ib.addCubes(R2DebugCubeInstance.of(t, new PVectorI4F<>(0.0f, 1.0f, 0.0f, 1.0f)));
+        ib.addCubes(R2DebugCubeInstance.of(
+          t,
+          new PVectorI4F<>(
+            0.0f,
+            1.0f,
+            0.0f,
+            1.0f)));
       }
 
       ib.addInstanceSingles(R2DebugInstanceSingle.of(
@@ -808,7 +824,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         gx, 1024L * 768L * 4L, Long.MAX_VALUE);
 
       this.filter_blur = R2FilterBoxBlur.newFilter(
-        m.getShaderSources(),
+        m.getShaderPreprocessingEnvironment(),
         gx,
         m.getTextureDefaults(),
         this.image_pool,
@@ -825,7 +841,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
       this.filter_emission = R2FilterEmission.newFilter(
         gx,
-        m.getShaderSources(),
+        m.getShaderPreprocessingEnvironment(),
         m.getIDPool(),
         this.filter_blur,
         this.image_pool,

@@ -46,13 +46,12 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAware;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParameters;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.R2TestUtilities;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -68,8 +67,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLTexturesType g_t =
@@ -93,7 +92,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     Assert.assertFalse(f.isDeleted());
     f.delete(g);
@@ -107,8 +106,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -140,7 +139,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -189,8 +188,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -222,7 +221,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -273,8 +272,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -306,7 +305,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -355,8 +354,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -388,7 +387,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -437,8 +436,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -470,7 +469,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),

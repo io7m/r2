@@ -28,8 +28,8 @@ import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
 public final class R2MaterialDepthBatched<M> implements
   R2MaterialDepthBatchedType<M>
 {
-  private final long                              id;
-  private final M                                 params;
+  private final long id;
+  private final M params;
   private final R2ShaderDepthBatchedUsableType<M> shader;
 
   private R2MaterialDepthBatched(

@@ -33,7 +33,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -69,17 +69,17 @@ public final class R2SurfaceShaderBasicSingle extends
 
   private R2SurfaceShaderBasicSingle(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2SurfaceBasicSingle",
-      "R2SurfaceBasicSingle.vert",
+      "com.io7m.r2.shaders.core.R2SurfaceShaderBasicSingle",
+      "com.io7m.r2.shaders.core/R2SurfaceSingle.vert",
       Optional.empty(),
-      "R2SurfaceBasicSingle.frag");
+      "com.io7m.r2.shaders.core/R2SurfaceBasicSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 16);
@@ -136,9 +136,9 @@ public final class R2SurfaceShaderBasicSingle extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env A shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -146,11 +146,11 @@ public final class R2SurfaceShaderBasicSingle extends
   public static R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderInstanceSingleVerifier.newVerifier(
-      new R2SurfaceShaderBasicSingle(in_shaders, in_sources, in_pool));
+      new R2SurfaceShaderBasicSingle(in_shaders, in_shader_env, in_pool));
   }
 
   @Override

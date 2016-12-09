@@ -30,7 +30,7 @@ import com.io7m.r2.core.R2ProjectionType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 
 public abstract class R2ShaderLightProjectiveLambertBlinnPhongSingleContract
   extends R2ShaderLightProjectiveContract<R2LightProjectiveReadableType>
@@ -39,7 +39,7 @@ public abstract class R2ShaderLightProjectiveLambertBlinnPhongSingleContract
   protected final R2ShaderLightProjectiveType<R2LightProjectiveReadableType>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderSourcesType sources,
+    final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
     return R2LightShaderProjectiveLambertBlinnPhongSingle.newShader(

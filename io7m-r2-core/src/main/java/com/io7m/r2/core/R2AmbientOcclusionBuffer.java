@@ -83,9 +83,9 @@ public final class R2AmbientOcclusionBuffer implements
       true);
   }
 
-  private final R2Texture2DType                         t_occ;
-  private final JCGLFramebufferType                     framebuffer;
-  private final UnsignedRangeInclusiveL                 range;
+  private final R2Texture2DType t_occ;
+  private final JCGLFramebufferType framebuffer;
+  private final UnsignedRangeInclusiveL range;
   private final R2AmbientOcclusionBufferDescriptionType desc;
 
   private R2AmbientOcclusionBuffer(

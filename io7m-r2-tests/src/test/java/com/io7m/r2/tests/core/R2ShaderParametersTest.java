@@ -22,9 +22,12 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLReferableType;
 import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.r2.core.R2ExceptionShaderParameterNotPresent;
+import com.io7m.r2.core.R2ExceptionShaderParameterWrongType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +36,8 @@ import java.util.Set;
 
 public final class R2ShaderParametersTest
 {
-  @Test(expected = R2ExceptionShaderParameterNotPresent.class)
+  @Rule public ExpectedException expected = ExpectedException.none();
+
   public void testShaderParametersNonexistent()
   {
     final JCGLProgramShaderUsableType p = new JCGLProgramShaderUsableType()
@@ -75,6 +79,7 @@ public final class R2ShaderParametersTest
       }
     };
 
+    this.expected.expect(R2ExceptionShaderParameterNotPresent.class);
     R2ShaderParameters.getUniformChecked(p, "nonexistent", JCGLType.TYPE_FLOAT);
   }
 
@@ -157,7 +162,10 @@ public final class R2ShaderParametersTest
     u.put("exists", uu);
 
     final JCGLProgramUniformType ur =
-      R2ShaderParameters.getUniformChecked(p, "exists", JCGLType.TYPE_FLOAT_VECTOR_4);
+      R2ShaderParameters.getUniformChecked(
+        p,
+        "exists",
+        JCGLType.TYPE_FLOAT_VECTOR_4);
     Assert.assertEquals(uu, ur);
   }
 
@@ -239,8 +247,10 @@ public final class R2ShaderParametersTest
 
     u.put("exists", uu);
 
-    final JCGLProgramUniformType ur =
-      R2ShaderParameters.getUniformChecked(p, "exists", JCGLType.TYPE_FLOAT_VECTOR_3);
-    Assert.assertEquals(uu, ur);
+    this.expected.expect(R2ExceptionShaderParameterWrongType.class);
+    R2ShaderParameters.getUniformChecked(
+      p,
+      "exists",
+      JCGLType.TYPE_FLOAT_VECTOR_3);
   }
 }

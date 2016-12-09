@@ -45,12 +45,10 @@ import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
-import org.valid4j.Assertive;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -92,24 +90,20 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
 
   private R2DebugShaderLightSphericalAttenuationSingle(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2LightSphericalDebugAttenuationSingle",
-      "R2LightSphericalDebugAttenuationSingle.vert",
+      "com.io7m.r2.shaders.core.R2DebugShaderLightSphericalAttenuationSingle",
+      "com.io7m.r2.shaders.core/R2LightPositionalSingle.vert",
       Optional.empty(),
-      "R2LightSphericalDebugAttenuationSingle.frag");
+      "com.io7m.r2.shaders.core/R2LightSphericalDebugAttenuationSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    final Map<String, JCGLProgramUniformType> us = p.getUniforms();
-    Assertive.ensure(
-      us.size() == 23,
-      "Expected number of parameters is 23 (got %d)",
-      Integer.valueOf(us.size()));
+    R2ShaderParameters.checkUniformParameterCount(p, 23);
 
     this.u_light_spherical_color =
       R2ShaderParameters.getUniformChecked(
@@ -129,13 +123,19 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
 
     this.u_transform_volume_modelview =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_volume_modelview", JCGLType.TYPE_FLOAT_MATRIX_4);
+        p,
+        "R2_light_matrices.transform_volume_modelview",
+        JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
+        p,
+        "R2_light_matrices.transform_projection",
+        JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection_inverse =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_projection_inverse", JCGLType.TYPE_FLOAT_MATRIX_4);
+        p,
+        "R2_light_matrices.transform_projection_inverse",
+        JCGLType.TYPE_FLOAT_MATRIX_4);
 
     this.u_gbuffer_albedo =
       R2ShaderParameters.getUniformChecked(
@@ -195,9 +195,9 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env A shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -206,12 +206,12 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
     R2LightSphericalSingleReadableType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderLightVolumeSingleVerifier.newVerifier(
       new R2DebugShaderLightSphericalAttenuationSingle(
-        in_shaders, in_sources, in_pool));
+        in_shaders, in_shader_env, in_pool));
   }
 
   @Override

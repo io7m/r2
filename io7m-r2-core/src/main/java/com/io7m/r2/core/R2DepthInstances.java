@@ -43,10 +43,10 @@ public final class R2DepthInstances implements R2DepthInstancesType
     LOG = LoggerFactory.getLogger(R2DepthInstances.class);
   }
 
-  private final Singles           singles;
-  private final Batches           batches;
-  private final StringBuilder     text;
-  private       JCGLFaceSelection culling;
+  private final Singles singles;
+  private final Batches batches;
+  private final StringBuilder text;
+  private JCGLFaceSelection culling;
 
   private R2DepthInstances()
   {
@@ -431,15 +431,15 @@ public final class R2DepthInstances implements R2DepthInstancesType
   {
     private final Long2LongOpenHashMap instance_to_material;
     private final Long2ReferenceOpenHashMap<LongSet>
-                                       material_to_instances;
+      material_to_instances;
     private final Long2ReferenceOpenHashMap<LongSet>
-                                       shader_to_materials;
+      shader_to_materials;
     private final Long2ReferenceOpenHashMap<R2MaterialDepthBatchedType<?>>
-                                       instance_materials;
+      instance_materials;
     private final Long2ReferenceOpenHashMap<R2ShaderDepthBatchedUsableType<?>>
-                                       instance_shaders;
+      instance_shaders;
     private final Long2ReferenceOpenHashMap<R2InstanceBatchedType>
-                                       instances;
+      instances;
 
     Batches()
     {

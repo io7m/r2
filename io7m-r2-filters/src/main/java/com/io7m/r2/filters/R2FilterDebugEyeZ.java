@@ -43,7 +43,7 @@ import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
@@ -72,34 +72,34 @@ public final class R2FilterDebugEyeZ implements
 
   private R2FilterDebugEyeZ(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader = R2ShaderFilterDebugEyeZ.newShader(
-      this.g.getShaders(), in_sources, in_pool);
+      this.g.getShaders(), in_shader_env, in_pool);
     this.render_state =
       JCGLRenderStateMutable.create();
     this.quad = NullCheck.notNull(in_quad);
   }
 
   /**
-   * @param in_g       An OpenGL interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
-   * @param in_quad    A unit quad
+   * @param in_g          An OpenGL interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new renderer
    */
 
   public static R2FilterType<R2FilterDebugEyeZParametersType> newFilter(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    return new R2FilterDebugEyeZ(in_g, in_sources, in_pool, in_quad);
+    return new R2FilterDebugEyeZ(in_g, in_shader_env, in_pool, in_quad);
   }
 
   @Override

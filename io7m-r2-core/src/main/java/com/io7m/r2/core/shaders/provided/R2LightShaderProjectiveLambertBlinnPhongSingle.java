@@ -46,7 +46,7 @@ import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
@@ -94,17 +94,17 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
 
   private R2LightShaderProjectiveLambertBlinnPhongSingle(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2LightProjectiveLambertBlinnPhongSingle",
-      "R2LightProjectiveLambertBlinnPhongSingle.vert",
+      "com.io7m.r2.shaders.core.R2LightShaderProjectiveLambertBlinnPhongSingle",
+      "com.io7m.r2.shaders.core/R2LightPositionalSingle.vert",
       Optional.empty(),
-      "R2LightProjectiveLambertBlinnPhongSingle.frag");
+      "com.io7m.r2.shaders.core/R2LightProjectiveLambertBlinnPhongSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 26);
@@ -209,9 +209,9 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env A shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -219,12 +219,12 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
   public static R2ShaderLightProjectiveType<R2LightProjectiveReadableType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderLightProjectiveVerifier.newVerifier(
       new R2LightShaderProjectiveLambertBlinnPhongSingle(
-        in_shaders, in_sources, in_pool));
+        in_shaders, in_shader_env, in_pool));
   }
 
   @Override

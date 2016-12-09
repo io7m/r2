@@ -35,10 +35,8 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import org.valid4j.Assertive;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -67,24 +65,20 @@ public final class R2ShaderFilterDebugEyePosition extends
 
   private R2ShaderFilterDebugEyePosition(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2DebugEyePositionReconstruction",
-      "R2DebugEyePositionReconstruction.vert",
+      "com.io7m.r2.shaders.core.R2ShaderFilterDebugEyePosition",
+      "com.io7m.r2.shaders.core/R2DebugPositionOnly.vert",
       Optional.empty(),
-      "R2DebugEyePositionReconstruction.frag");
+      "com.io7m.r2.shaders.core/R2DebugEyePositionReconstruction.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    final Map<String, JCGLProgramUniformType> us = p.getUniforms();
-    Assertive.ensure(
-      us.size() == 15,
-      "Expected number of parameters is 15 (got %d)",
-      Integer.valueOf(us.size()));
+    R2ShaderParameters.checkUniformParameterCount(p, 15);
 
     this.u_gbuffer_albedo =
       R2ShaderParameters.getUniformChecked(
@@ -140,19 +134,22 @@ public final class R2ShaderFilterDebugEyePosition extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
 
   public static R2ShaderFilterDebugEyePosition newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return new R2ShaderFilterDebugEyePosition(in_shaders, in_sources, in_pool);
+    return new R2ShaderFilterDebugEyePosition(
+      in_shaders,
+      in_shader_env,
+      in_pool);
   }
 
   @Override
@@ -192,10 +189,13 @@ public final class R2ShaderFilterDebugEyePosition extends
       tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture().get());
 
     final JCGLTextureUnitType unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getAlbedoEmissiveTexture().get());
+      tc.unitContextBindTexture2D(
+        g_tex,
+        gbuffer.getAlbedoEmissiveTexture().get());
     final JCGLTextureUnitType unit_specular =
       tc.unitContextBindTexture2D(
-        g_tex, gbuffer.getSpecularTextureOrDefault(values.getTextureDefaults()).get());
+        g_tex,
+        gbuffer.getSpecularTextureOrDefault(values.getTextureDefaults()).get());
 
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);

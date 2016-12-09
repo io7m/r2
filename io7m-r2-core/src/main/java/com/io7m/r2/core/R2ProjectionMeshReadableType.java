@@ -38,8 +38,7 @@ public interface R2ProjectionMeshReadableType
 
   /**
    * @return {@code true} iff the values of the projection have changed more
-   * recently than the last call to
-   * {@link R2ProjectionMeshWritableType#updateProjection(com.io7m.jcanephora.core.api.JCGLArrayBuffersType)}
+   * recently than the last call to {@link R2ProjectionMeshWritableType#updateProjection(com.io7m.jcanephora.core.api.JCGLArrayBuffersType)}
    */
 
   boolean isUpdateRequired();

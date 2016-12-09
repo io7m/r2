@@ -51,12 +51,12 @@ import org.valid4j.Assertive;
 public final class R2InstanceBatchedDynamic implements
   R2InstanceBatchedDynamicType
 {
-  private final long                                      instance_id;
-  private final R2TransformOrthogonalReadableType[]       members;
-  private final IntSortedSet                              free;
-  private final int                                       max_size;
-  private final JCGLArrayBufferType                       matrix_vbo;
-  private final JCGLArrayObjectType                       matrix_vao;
+  private final long instance_id;
+  private final R2TransformOrthogonalReadableType[] members;
+  private final IntSortedSet free;
+  private final int max_size;
+  private final JCGLArrayBufferType matrix_vbo;
+  private final JCGLArrayObjectType matrix_vao;
   private final JCGLBufferUpdateType<JCGLArrayBufferType> update_vbo;
 
   private final PMatrixByteBuffered4x4FType<R2SpaceObjectType,

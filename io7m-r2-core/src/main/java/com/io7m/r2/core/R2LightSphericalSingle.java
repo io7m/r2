@@ -157,15 +157,15 @@ public final class R2LightSphericalSingle implements
   }
 
   @Override
+  public float getGeometryScaleFactor()
+  {
+    return this.scale_factor;
+  }
+
+  @Override
   public void setGeometryScaleFactor(final float f)
   {
     this.scale_factor = Math.max(0.001f, f);
     this.transform.setScale(this.radius * this.scale_factor);
-  }
-
-  @Override
-  public float getGeometryScaleFactor()
-  {
-    return this.scale_factor;
   }
 }

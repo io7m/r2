@@ -36,6 +36,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>io7m-r2-shaders-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>io7m-r2-filters</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -62,11 +67,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>io7m-r2-meshes-arrayobject</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>io7m-r2-shaders-pp</artifactId>
       <version>${project.version}</version>
     </dependency>
 

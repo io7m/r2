@@ -76,7 +76,7 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import org.slf4j.Logger;
@@ -114,18 +114,18 @@ public final class R2DebugVisualizerRenderer implements
 
   private R2DebugVisualizerRenderer(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader_single = R2ShaderDebugVisualSingle.newShader(
-      this.g.getShaders(), in_sources, in_pool);
+      this.g.getShaders(), in_shader_env, in_pool);
     this.shader_batched = R2ShaderDebugVisualBatched.newShader(
-      this.g.getShaders(), in_sources, in_pool);
+      this.g.getShaders(), in_shader_env, in_pool);
     this.shader_screen = R2ShaderDebugVisualScreen.newShader(
-      this.g.getShaders(), in_sources, in_pool);
+      this.g.getShaders(), in_shader_env, in_pool);
     this.shader_lines = R2ShaderDebugColorVerticesWorldPosition.newShader(
-      this.g.getShaders(), in_sources, in_pool);
+      this.g.getShaders(), in_shader_env, in_pool);
 
     {
       final JCGLRenderState.Builder b = JCGLRenderState.builder();
@@ -176,19 +176,19 @@ public final class R2DebugVisualizerRenderer implements
   /**
    * Construct a new renderer.
    *
-   * @param in_g       An OpenGL interface
-   * @param in_pool    The ID pool
-   * @param in_sources Access to shader sources
+   * @param in_g          An OpenGL interface
+   * @param in_pool       The ID pool
+   * @param in_shader_env Access to shader sources
    *
    * @return A new renderer
    */
 
   public static R2DebugVisualizerRendererType newRenderer(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return new R2DebugVisualizerRenderer(in_g, in_sources, in_pool);
+    return new R2DebugVisualizerRenderer(in_g, in_shader_env, in_pool);
   }
 
   @Override

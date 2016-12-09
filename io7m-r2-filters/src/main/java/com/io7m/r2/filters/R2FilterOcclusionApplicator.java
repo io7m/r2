@@ -42,7 +42,7 @@ import com.io7m.r2.core.R2LightBufferUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 /**
  * A filter that applies ambient occlusion to a light buffer.
@@ -72,24 +72,24 @@ public final class R2FilterOcclusionApplicator implements
   /**
    * Construct a new filter.
    *
-   * @param in_sources  Shader sources
-   * @param in_textures A texture interface
-   * @param in_g        A GL interface
-   * @param in_pool     An ID pool
-   * @param in_quad     A unit quad
+   * @param in_shader_env Shader sources
+   * @param in_textures   A texture interface
+   * @param in_g          A GL interface
+   * @param in_pool       An ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new filter
    */
 
   public static R2FilterType<R2FilterOcclusionApplicatorParametersType>
   newFilter(
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2TextureDefaultsType in_textures,
     final JCGLInterfaceGL33Type in_g,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_sources);
+    NullCheck.notNull(in_shader_env);
     NullCheck.notNull(in_textures);
     NullCheck.notNull(in_g);
     NullCheck.notNull(in_pool);
@@ -99,7 +99,7 @@ public final class R2FilterOcclusionApplicator implements
       s =
       R2ShaderFilterOcclusionApplicator.newShader(
         in_g.getShaders(),
-        in_sources,
+        in_shader_env,
         in_pool);
 
     return new R2FilterOcclusionApplicator(in_g, s, in_quad);

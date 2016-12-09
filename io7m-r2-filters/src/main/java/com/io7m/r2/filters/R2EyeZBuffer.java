@@ -50,10 +50,10 @@ import java.util.List;
 
 public final class R2EyeZBuffer implements R2EyeZBufferType
 {
-  private final R2Texture2DType            t_eye;
-  private final R2Texture2DType            t_depth;
-  private final JCGLFramebufferType        framebuffer;
-  private final UnsignedRangeInclusiveL    range;
+  private final R2Texture2DType t_eye;
+  private final R2Texture2DType t_depth;
+  private final JCGLFramebufferType framebuffer;
+  private final UnsignedRangeInclusiveL range;
   private final AreaInclusiveUnsignedLType area;
 
   private R2EyeZBuffer(

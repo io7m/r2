@@ -28,8 +28,8 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 public final class R2MaterialOpaqueBatched<M> implements
   R2MaterialOpaqueBatchedType<M>
 {
-  private final long                                 id;
-  private final M                                    params;
+  private final long id;
+  private final M params;
   private final R2ShaderInstanceBatchedUsableType<M> shader;
 
   private R2MaterialOpaqueBatched(

@@ -31,12 +31,12 @@ import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 
 public final class R2TransformContext implements R2TransformContextType
 {
-  private final Matrix4x4FType           m4x4_0;
-  private final Matrix4x4FType           m4x4_1;
+  private final Matrix4x4FType m4x4_0;
+  private final Matrix4x4FType m4x4_1;
   private final PMatrixM4x4F.ContextPM4F context_pm4;
-  private final MatrixM4x4F.ContextMM4F  context_m4;
-  private final QuaternionM4F            q0;
-  private final Vector3FType             v3_0;
+  private final MatrixM4x4F.ContextMM4F context_m4;
+  private final QuaternionM4F q0;
+  private final Vector3FType v3_0;
 
   private R2TransformContext()
   {

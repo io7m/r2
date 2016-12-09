@@ -37,7 +37,7 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -62,17 +62,17 @@ public final class R2LightShaderAmbientSingle extends
 
   private R2LightShaderAmbientSingle(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2LightAmbientSingle",
-      "R2LightAmbientSingle.vert",
+      "com.io7m.r2.shaders.core.R2LightShaderAmbientSingle",
+      "com.io7m.r2.shaders.core/R2LightAmbientSingle.vert",
       Optional.empty(),
-      "R2LightAmbientSingle.frag");
+      "com.io7m.r2.shaders.core/R2LightAmbientSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 9);
@@ -118,9 +118,9 @@ public final class R2LightShaderAmbientSingle extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env The shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -128,11 +128,11 @@ public final class R2LightShaderAmbientSingle extends
   public static R2ShaderLightSingleType<R2LightAmbientScreenSingle>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderLightScreenSingleVerifier.newVerifier(
-      new R2LightShaderAmbientSingle(in_shaders, in_sources, in_pool));
+      new R2LightShaderAmbientSingle(in_shaders, in_shader_env, in_pool));
   }
 
   @Override

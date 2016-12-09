@@ -28,11 +28,8 @@
     <module>io7m-r2-meshes-obj</module>
     <module>io7m-r2-meshes-tools</module>
     <module>io7m-r2-meshes</module>
-    <module>io7m-r2-shaders-checker</module>
-    <module>io7m-r2-shaders-maven-plugin</module>
-    <module>io7m-r2-shaders-pp</module>
+    <module>io7m-r2-shaders-core</module>
     <module>io7m-r2-shaders-tests</module>
-    <module>io7m-r2-shaders</module>
     <module>io7m-r2-spaces</module>
     <module>io7m-r2-tests-jogl</module>
     <module>io7m-r2-tests</module>
@@ -224,6 +221,16 @@
       <dependency>
         <groupId>com.io7m.jaffirm</groupId>
         <artifactId>io7m-jaffirm-core</artifactId>
+        <version>0.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.sombrero</groupId>
+        <artifactId>io7m-sombrero-core</artifactId>
+        <version>0.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.sombrero</groupId>
+        <artifactId>io7m-sombrero-jcpp</artifactId>
         <version>0.1.0</version>
       </dependency>
 

@@ -29,18 +29,18 @@ import com.io7m.r2.spaces.R2SpaceEyeType;
 
 public final class R2ProjectionFrustum implements R2ProjectionType
 {
-  private final JCGLProjectionMatricesType                context;
+  private final JCGLProjectionMatricesType context;
   private final R2WatchableType<R2ProjectionReadableType> watchable;
-  private       float                                     far_x_min;
-  private       float                                     far_x_max;
-  private       float                                     far_y_min;
-  private       float                                     far_y_max;
-  private       float                                     far_z;
-  private       float                                     near_x_max;
-  private       float                                     near_x_min;
-  private       float                                     near_y_max;
-  private       float                                     near_y_min;
-  private       float                                     near_z;
+  private float far_x_min;
+  private float far_x_max;
+  private float far_y_min;
+  private float far_y_max;
+  private float far_z;
+  private float near_x_max;
+  private float near_x_min;
+  private float near_y_max;
+  private float near_y_min;
+  private float near_z;
 
   private R2ProjectionFrustum(
     final JCGLProjectionMatricesType in_context,

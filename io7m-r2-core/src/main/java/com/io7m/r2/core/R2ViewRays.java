@@ -56,14 +56,14 @@ public final class R2ViewRays implements R2ViewRaysType
     FAR_X1Y1 = new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
-  private final Vector4FType                  origin_x0y0;
-  private final Vector4FType                  origin_x0y1;
-  private final Vector4FType                  origin_x1y0;
-  private final Vector4FType                  origin_x1y1;
-  private final Vector4FType                  ray_x0y0;
-  private final Vector4FType                  ray_x0y1;
-  private final Vector4FType                  ray_x1y0;
-  private final Vector4FType                  ray_x1y1;
+  private final Vector4FType origin_x0y0;
+  private final Vector4FType origin_x0y1;
+  private final Vector4FType origin_x1y0;
+  private final Vector4FType origin_x1y1;
+  private final Vector4FType ray_x0y0;
+  private final Vector4FType ray_x0y1;
+  private final Vector4FType ray_x1y0;
+  private final Vector4FType ray_x1y1;
   private final PVector4FType<R2SpaceEyeType> temp_near;
   private final PVector4FType<R2SpaceEyeType> temp_far;
 

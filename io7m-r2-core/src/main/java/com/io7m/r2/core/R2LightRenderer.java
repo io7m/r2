@@ -63,7 +63,7 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowUsableTyp
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.valid4j.Assertive;
@@ -119,7 +119,7 @@ public final class R2LightRenderer implements R2LightRendererType
    * Construct a new renderer.
    *
    * @param in_g                An OpenGL interface
-   * @param in_sources          Access to shader sources
+   * @param in_shader_env       Access to shader sources
    * @param in_texture_defaults A set of default textures
    * @param in_pool             An ID pool
    * @param in_quad             A usable unit quad
@@ -130,17 +130,17 @@ public final class R2LightRenderer implements R2LightRendererType
   public static R2LightRendererType newRenderer(
     final JCGLInterfaceGL33Type in_g,
     final R2TextureDefaultsType in_texture_defaults,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
     final JCGLShadersType g_sh = in_g.getShaders();
     final R2ShaderInstanceSingleType<Unit> volume_stencil =
       R2ShaderLogDepthOnlySingle.newShader(
-        g_sh, in_sources, in_pool);
+        g_sh, in_shader_env, in_pool);
     final R2ShaderInstanceSingleScreenType<Unit> screen_stencil =
       R2StencilShaderScreen.newShader(
-        g_sh, in_sources, in_pool);
+        g_sh, in_shader_env, in_pool);
 
     return new R2LightRenderer(
       in_g, in_texture_defaults, volume_stencil, screen_stencil, in_quad);

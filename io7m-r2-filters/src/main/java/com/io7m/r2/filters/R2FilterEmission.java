@@ -49,7 +49,7 @@ import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.valid4j.Assertive;
 
 import java.util.Optional;
@@ -125,7 +125,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
    * Construct a new emission filter.
    *
    * @param in_g                  A GL interface
-   * @param in_sources            Access to shader sources
+   * @param in_shader_env         Access to shader sources
    * @param in_id_pool            An ID pool
    * @param in_blur               A blur filter
    * @param in_render_target_pool A pool of render targets for the blur filter
@@ -136,7 +136,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
 
   public static R2FilterType<R2FilterEmissionParametersType> newFilter(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_id_pool,
     final R2FilterUsableType<
       R2FilterBoxBlurParameters<
@@ -153,10 +153,10 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
 
     final R2ShaderFilterType<
       R2ShaderFilterEmissionParametersType> in_shader_emission =
-      R2ShaderFilterEmission.newShader(g_sh, in_sources, in_id_pool);
+      R2ShaderFilterEmission.newShader(g_sh, in_shader_env, in_id_pool);
     final R2ShaderFilterType<
       R2ShaderFilterTextureShowParametersType> in_shader_copy =
-      R2ShaderFilterTextureShow.newShader(g_sh, in_sources, in_id_pool);
+      R2ShaderFilterTextureShow.newShader(g_sh, in_shader_env, in_id_pool);
 
     return new R2FilterEmission(
       in_blur,

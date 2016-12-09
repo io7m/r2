@@ -57,11 +57,11 @@ public final class R2UnitQuad implements R2UnitQuadType
     LOG = LoggerFactory.getLogger(R2UnitQuad.class);
   }
 
-  private final JCGLArrayObjectType     array_object;
-  private final JCGLArrayBufferType     array;
-  private final JCGLIndexBufferType     index;
+  private final JCGLArrayObjectType array_object;
+  private final JCGLArrayBufferType array;
+  private final JCGLIndexBufferType index;
   private final UnsignedRangeInclusiveL range;
-  private       boolean                 deleted;
+  private boolean deleted;
 
   private R2UnitQuad(
     final JCGLArrayObjectType in_array_object,

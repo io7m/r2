@@ -36,7 +36,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -50,10 +50,10 @@ public final class R2FilterCompositor implements
   private final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType>
     shader;
 
-  private final JCGLInterfaceGL33Type                      g;
-  private final R2UnitQuadUsableType                       quad;
+  private final JCGLInterfaceGL33Type g;
+  private final R2UnitQuadUsableType quad;
   private final R2ShaderFilterTextureShowParametersMutable shader_params;
-  private final JCGLRenderStateMutable                     render_state;
+  private final JCGLRenderStateMutable render_state;
 
   private R2FilterCompositor(
     final JCGLInterfaceGL33Type in_g,
@@ -70,24 +70,24 @@ public final class R2FilterCompositor implements
   /**
    * Construct a new filter.
    *
-   * @param in_sources  Shader sources
-   * @param in_textures A texture interface
-   * @param in_g        A GL interface
-   * @param in_pool     An ID pool
-   * @param in_quad     A unit quad
+   * @param in_shader_env Shader sources
+   * @param in_textures   A texture interface
+   * @param in_g          A GL interface
+   * @param in_pool       An ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new filter
    */
 
   public static R2FilterType<R2FilterCompositorParametersType>
   newFilter(
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2TextureDefaultsType in_textures,
     final JCGLInterfaceGL33Type in_g,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_sources);
+    NullCheck.notNull(in_shader_env);
     NullCheck.notNull(in_textures);
     NullCheck.notNull(in_g);
     NullCheck.notNull(in_pool);
@@ -95,7 +95,7 @@ public final class R2FilterCompositor implements
 
     final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType> s =
       R2ShaderFilterTextureShow.newShader(
-        in_g.getShaders(), in_sources, in_pool);
+        in_g.getShaders(), in_shader_env, in_pool);
 
     return new R2FilterCompositor(in_g, s, in_quad);
   }

@@ -35,10 +35,8 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import org.valid4j.Assertive;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -59,24 +57,20 @@ public final class R2ShaderFilterDebugEyeZ extends
 
   private R2ShaderFilterDebugEyeZ(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2DebugEyeZReconstruction",
-      "R2DebugEyeZReconstruction.vert",
+      "com.io7m.r2.shaders.core.R2ShaderFilterDebugEyeZ",
+      "com.io7m.r2.shaders.core/R2DebugPositionOnly.vert",
       Optional.empty(),
-      "R2DebugEyeZReconstruction.frag");
+      "com.io7m.r2.shaders.core/R2DebugEyeZReconstruction.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    final Map<String, JCGLProgramUniformType> us = p.getUniforms();
-    Assertive.ensure(
-      us.size() == 7,
-      "Expected number of parameters is 7 (got %d)",
-      Integer.valueOf(us.size()));
+    R2ShaderParameters.checkUniformParameterCount(p, 7);
 
     this.u_gbuffer_albedo =
       R2ShaderParameters.getUniformChecked(
@@ -106,20 +100,20 @@ public final class R2ShaderFilterDebugEyeZ extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
 
   public static R2ShaderFilterType<R2FilterDebugEyeZParametersType> newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterDebugEyeZ(in_shaders, in_sources, in_pool));
+      new R2ShaderFilterDebugEyeZ(in_shaders, in_shader_env, in_pool));
   }
 
   @Override

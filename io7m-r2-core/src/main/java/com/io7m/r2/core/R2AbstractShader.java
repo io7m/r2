@@ -24,11 +24,14 @@ import com.io7m.jcanephora.core.JCGLVertexShaderType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderType;
+import com.io7m.sombrero.core.SoShaderException;
+import com.io7m.sombrero.core.SoShaderPreprocessorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -45,42 +48,61 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
     LOG = LoggerFactory.getLogger(R2AbstractShader.class);
   }
 
-  private final long                  id;
+  private final long id;
   private final JCGLProgramShaderType program;
-  private       boolean               deleted;
+  private boolean deleted;
 
   protected R2AbstractShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final String in_name,
     final String in_vertex,
     final Optional<String> in_geometry,
     final String in_fragment)
+    throws R2ExceptionShaderPreprocessingFailed
   {
-    this.id = NullCheck.notNull(in_pool).getFreshID();
-    NullCheck.notNull(in_sources);
+    try {
+      this.id = NullCheck.notNull(in_pool).getFreshID();
+      NullCheck.notNull(in_shader_env);
 
-    if (R2AbstractShader.LOG.isDebugEnabled()) {
-      R2AbstractShader.LOG.debug("compiling shader {}", in_name);
+      if (R2AbstractShader.LOG.isDebugEnabled()) {
+        R2AbstractShader.LOG.debug("compiling shader {}", in_name);
+      }
+
+      final SoShaderPreprocessorType pp =
+        in_shader_env.preprocessor();
+      final Map<String, String> pp_defines =
+        in_shader_env.preprocessorDefines();
+
+      final JCGLVertexShaderType v =
+        in_shaders.shaderCompileVertex(
+          in_vertex, pp.preprocessFile(pp_defines, in_vertex));
+
+      final Optional<JCGLGeometryShaderType> g;
+      if (in_geometry.isPresent()) {
+        final String s = in_geometry.get();
+        g = Optional.of(
+          in_shaders.shaderCompileGeometry(
+            s,
+            pp.preprocessFile(pp_defines, s)));
+      } else {
+        g = Optional.empty();
+      }
+
+      final JCGLFragmentShaderType f =
+        in_shaders.shaderCompileFragment(
+          in_fragment, pp.preprocessFile(pp_defines, in_fragment));
+
+      this.program = in_shaders.shaderLinkProgram(in_name, v, g.map(s -> s), f);
+      in_shaders.shaderDeleteVertex(v);
+      g.ifPresent(in_shaders::shaderDeleteGeometry);
+      in_shaders.shaderDeleteFragment(f);
+
+      this.deleted = false;
+    } catch (final SoShaderException e) {
+      throw new R2ExceptionShaderPreprocessingFailed(e);
     }
-
-    final JCGLVertexShaderType v =
-      in_shaders.shaderCompileVertex(
-        in_vertex, in_sources.getSourceLines(in_vertex));
-    final Optional<JCGLGeometryShaderType> g =
-      in_geometry.map(
-        s -> in_shaders.shaderCompileGeometry(s, in_sources.getSourceLines(s)));
-    final JCGLFragmentShaderType f =
-      in_shaders.shaderCompileFragment(
-        in_fragment, in_sources.getSourceLines(in_fragment));
-
-    this.program = in_shaders.shaderLinkProgram(in_name, v, g.map(s -> s), f);
-    in_shaders.shaderDeleteVertex(v);
-    g.ifPresent(in_shaders::shaderDeleteGeometry);
-    in_shaders.shaderDeleteFragment(f);
-
-    this.deleted = false;
   }
 
   @Override

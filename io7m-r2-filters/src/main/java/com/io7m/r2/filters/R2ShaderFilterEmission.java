@@ -30,7 +30,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -43,35 +43,38 @@ public final class R2ShaderFilterEmission extends
   implements R2ShaderFilterType<R2ShaderFilterEmissionParametersType>
 {
   private final JCGLProgramUniformType u_texture;
-  private       JCGLTextureUnitType    unit_texture;
+  private JCGLTextureUnitType unit_texture;
 
   private R2ShaderFilterEmission(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2FilterEmission",
-      "R2FilterEmission.vert",
+      "com.io7m.r2.shaders.core.R2ShaderFilterEmission",
+      "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "R2FilterEmission.frag");
+      "com.io7m.r2.shaders.core/R2FilterEmission.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 1);
 
     this.u_texture =
-      R2ShaderParameters.getUniformChecked(p, "R2_albedo_emission", JCGLType.TYPE_SAMPLER_2D);
+      R2ShaderParameters.getUniformChecked(
+        p,
+        "R2_albedo_emission",
+        JCGLType.TYPE_SAMPLER_2D);
   }
 
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -79,11 +82,11 @@ public final class R2ShaderFilterEmission extends
   public static R2ShaderFilterType<R2ShaderFilterEmissionParametersType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterEmission(in_shaders, in_sources, in_pool));
+      new R2ShaderFilterEmission(in_shaders, in_shader_env, in_pool));
   }
 
   @Override

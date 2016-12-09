@@ -29,14 +29,14 @@ import com.io7m.r2.spaces.R2SpaceEyeType;
 
 public final class R2ProjectionOrthographic implements R2ProjectionType
 {
-  private final JCGLProjectionMatricesType                context;
+  private final JCGLProjectionMatricesType context;
   private final R2WatchableType<R2ProjectionReadableType> watchable;
-  private       float                                     x_max;
-  private       float                                     x_min;
-  private       float                                     y_max;
-  private       float                                     y_min;
-  private       float                                     z_far;
-  private       float                                     z_near;
+  private float x_max;
+  private float x_min;
+  private float y_max;
+  private float y_min;
+  private float z_far;
+  private float z_near;
 
   private R2ProjectionOrthographic(
     final JCGLProjectionMatricesType in_context,

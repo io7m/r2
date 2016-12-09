@@ -45,7 +45,7 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.valid4j.Assertive;
 
 import java.util.EnumSet;
@@ -114,7 +114,7 @@ public final class R2FilterBoxBlur<
   /**
    * Construct a new filter.
    *
-   * @param in_sources      Shader sources
+   * @param in_shader_env   Shader sources
    * @param in_g            A GL interface
    * @param in_tex_defaults The set of default textures
    * @param in_rtp_pool     A render target pool
@@ -135,14 +135,14 @@ public final class R2FilterBoxBlur<
     D extends R2RenderTargetUsableType<DD>>
   R2FilterType<R2FilterBoxBlurParameters<SD, S, DD, D>>
   newFilter(
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final JCGLInterfaceGL33Type in_g,
     final R2TextureDefaultsType in_tex_defaults,
     final R2RenderTargetPoolUsableType<DD, D> in_rtp_pool,
     final R2IDPoolType in_id_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_sources);
+    NullCheck.notNull(in_shader_env);
     NullCheck.notNull(in_g);
     NullCheck.notNull(in_tex_defaults);
     NullCheck.notNull(in_id_pool);
@@ -151,9 +151,15 @@ public final class R2FilterBoxBlur<
 
     final JCGLShadersType g_sh = in_g.getShaders();
     final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType> s_blur_h =
-      R2ShaderFilterBoxBlurHorizontal4f.newShader(g_sh, in_sources, in_id_pool);
+      R2ShaderFilterBoxBlurHorizontal4f.newShader(
+        g_sh,
+        in_shader_env,
+        in_id_pool);
     final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType> s_blur_v =
-      R2ShaderFilterBoxBlurVertical4f.newShader(g_sh, in_sources, in_id_pool);
+      R2ShaderFilterBoxBlurVertical4f.newShader(
+        g_sh,
+        in_shader_env,
+        in_id_pool);
 
     return new R2FilterBoxBlur<>(
       in_g, in_rtp_pool, in_quad, s_blur_h, s_blur_v);

@@ -42,7 +42,8 @@ public interface R2ShaderFilterBoxBlurParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getBlurRadius() {
+  default float getBlurRadius()
+  {
     return 1.0f;
   }
 }

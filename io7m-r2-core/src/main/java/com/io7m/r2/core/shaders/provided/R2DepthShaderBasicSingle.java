@@ -33,7 +33,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -57,17 +57,17 @@ public final class R2DepthShaderBasicSingle extends
 
   private R2DepthShaderBasicSingle(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2DepthBasicSingle",
-      "R2DepthBasicSingle.vert",
+      "com.io7m.r2.shaders.core.R2DepthBasicSingle",
+      "com.io7m.r2.shaders.core/R2DepthSingle.vert",
       Optional.empty(),
-      "R2DepthBasicSingle.frag");
+      "com.io7m.r2.shaders.core/R2DepthBasicSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 8);
@@ -101,9 +101,9 @@ public final class R2DepthShaderBasicSingle extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env The shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -111,11 +111,11 @@ public final class R2DepthShaderBasicSingle extends
   public static R2ShaderDepthSingleType<R2DepthShaderBasicParametersType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     final R2DepthShaderBasicSingle s =
-      new R2DepthShaderBasicSingle(in_shaders, in_sources, in_pool);
+      new R2DepthShaderBasicSingle(in_shaders, in_shader_env, in_pool);
     final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> v =
       R2ShaderDepthSingleVerifier.newVerifier(s);
     return v;

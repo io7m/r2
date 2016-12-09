@@ -35,7 +35,7 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -56,20 +56,19 @@ public final class R2ShaderFilterFXAAA extends
 
   private R2ShaderFilterFXAAA(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final String in_name,
-    final String in_vertex,
     final String in_fragment)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      in_name,
-      in_vertex,
+      "com.io7m.r2.shaders.core." + in_name,
+      "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      in_fragment);
+      "com.io7m.r2.shaders.core/" + in_fragment);
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 5);
@@ -96,10 +95,10 @@ public final class R2ShaderFilterFXAAA extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
-   * @param q          The quality preset
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
+   * @param q             The quality preset
    *
    * @return A new shader
    */
@@ -107,18 +106,17 @@ public final class R2ShaderFilterFXAAA extends
   public static R2ShaderFilterType<R2ShaderFilterFXAAParametersType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final R2FilterFXAAQuality q)
   {
     NullCheck.notNull(q);
 
     final String n = R2ShaderFilterFXAAA.qualityToShaderName(q);
-    final String v = n + ".vert";
     final String f = n + ".frag";
 
     return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterFXAAA(in_shaders, in_sources, in_pool, n, v, f));
+      new R2ShaderFilterFXAAA(in_shaders, in_shader_env, in_pool, n, f));
   }
 
   private static String qualityToShaderName(

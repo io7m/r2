@@ -48,7 +48,7 @@ import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
@@ -102,17 +102,17 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
 
   private R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2LightProjectiveLambertBlinnPhongShadowVarianceSingle",
-      "R2LightProjectiveLambertBlinnPhongShadowVarianceSingle.vert",
+      "com.io7m.r2.shaders.core.R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle",
+      "com.io7m.r2.shaders.core/R2LightPositionalSingle.vert",
       Optional.empty(),
-      "R2LightProjectiveLambertBlinnPhongShadowVarianceSingle.frag");
+      "com.io7m.r2.shaders.core/R2LightProjectiveLambertBlinnPhongShadowVarianceSingle.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 31);
@@ -233,9 +233,9 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env The shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -243,13 +243,13 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
   public static R2ShaderLightProjectiveWithShadowType<R2LightProjectiveWithShadowVarianceType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderLightProjectiveWithShadowVerifier.newVerifier(
       new R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle(
         in_shaders,
-        in_sources,
+        in_shader_env,
         in_pool));
   }
 

@@ -23,7 +23,7 @@ import com.io7m.r2.core.R2LightRenderer;
 import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.R2LightRendererContract;
 
 public final class R2LightRendererTest extends R2LightRendererContract
@@ -32,7 +32,7 @@ public final class R2LightRendererTest extends R2LightRendererContract
   protected R2LightRendererType getRenderer(
     final JCGLInterfaceGL33Type g,
     final R2TextureDefaultsType td,
-    final R2ShaderSourcesType ss,
+    final R2ShaderPreprocessingEnvironmentType ss,
     final R2IDPoolType id_pool,
     final R2UnitQuadUsableType quad)
   {

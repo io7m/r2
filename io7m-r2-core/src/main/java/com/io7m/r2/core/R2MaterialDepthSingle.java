@@ -29,8 +29,8 @@ import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
 public final class R2MaterialDepthSingle<M> implements
   R2MaterialDepthSingleType<M>
 {
-  private final long                                id;
-  private final M                                   params;
+  private final long id;
+  private final M params;
   private final R2ShaderDepthSingleUsableType<M> shader;
 
   private R2MaterialDepthSingle(

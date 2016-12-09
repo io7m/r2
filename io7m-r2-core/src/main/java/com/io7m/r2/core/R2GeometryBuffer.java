@@ -239,7 +239,10 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
       fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_norm.get());
       if (p_spec != null) {
         rt_spec = R2Texture2DStatic.of(p_spec.getRight());
-        fbb.attachColorTexture2DAt(points.get(2), buffers.get(2), rt_spec.get());
+        fbb.attachColorTexture2DAt(
+          points.get(2),
+          buffers.get(2),
+          rt_spec.get());
       }
       fbb.attachDepthStencilTexture2D(rt_depth.get());
 

@@ -30,7 +30,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -44,37 +44,43 @@ public final class R2ShaderFilterBoxBlurHorizontal4f extends
 {
   private final JCGLProgramUniformType u_texture;
   private final JCGLProgramUniformType u_blur_size;
-  private       JCGLTextureUnitType    unit_texture;
+  private JCGLTextureUnitType unit_texture;
 
   private R2ShaderFilterBoxBlurHorizontal4f(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2FilterBoxBlurHorizontal4f",
-      "R2FilterBoxBlurHorizontal4f.vert",
+      "com.io7m.r2.shaders.core.R2ShaderFilterBoxBlurHorizontal4f",
+      "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "R2FilterBoxBlurHorizontal4f.frag");
+      "com.io7m.r2.shaders.core/R2FilterBoxBlurHorizontal4f.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 2);
 
     this.u_texture =
-      R2ShaderParameters.getUniformChecked(p, "R2_texture", JCGLType.TYPE_SAMPLER_2D);
+      R2ShaderParameters.getUniformChecked(
+        p,
+        "R2_texture",
+        JCGLType.TYPE_SAMPLER_2D);
     this.u_blur_size =
-      R2ShaderParameters.getUniformChecked(p, "R2_blur_size", JCGLType.TYPE_FLOAT);
+      R2ShaderParameters.getUniformChecked(
+        p,
+        "R2_blur_size",
+        JCGLType.TYPE_FLOAT);
   }
 
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -82,11 +88,14 @@ public final class R2ShaderFilterBoxBlurHorizontal4f extends
   public static R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterBoxBlurHorizontal4f(in_shaders, in_sources, in_pool));
+      new R2ShaderFilterBoxBlurHorizontal4f(
+        in_shaders,
+        in_shader_env,
+        in_pool));
   }
 
   @Override

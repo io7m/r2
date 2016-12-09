@@ -30,11 +30,11 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.R2JCGLContract;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -47,7 +47,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
 
   protected abstract R2ShaderDepthBatchedType<T> newShaderWithVerifier(
     JCGLInterfaceGL33Type g,
-    R2ShaderSourcesType sources,
+    R2ShaderPreprocessingEnvironmentReadableType sources,
     R2IDPoolType pool);
 
   protected abstract TM newParameters(
@@ -61,8 +61,10 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
+
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
@@ -101,8 +103,8 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
@@ -146,8 +148,8 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
@@ -184,8 +186,8 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
@@ -211,8 +213,8 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
@@ -240,8 +242,8 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
@@ -272,8 +274,8 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool =
       R2IDPool.newPool();
 

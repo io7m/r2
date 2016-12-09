@@ -76,8 +76,8 @@ import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAware;
@@ -93,11 +93,15 @@ import com.io7m.r2.filters.R2SSAOKernel;
 import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
+import com.io7m.sombrero.core.SoShaderPreprocessorType;
+import com.io7m.sombrero.core.SoShaderResolver;
+import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 // CHECKSTYLE_JAVADOC:OFF
 
@@ -197,7 +201,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     this.filter_ssao_params.setOutputBuffer(this.ssao_buffer);
 
     this.filter_ssao = R2FilterSSAO.newFilter(
-      m.getShaderSources(),
+      m.getShaderPreprocessingEnvironment(),
       g,
       m.getTextureDefaults(),
       m.getTextureUnitAllocator().getRootContext(),
@@ -237,7 +241,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
 
       this.filter_blur_ssao =
         R2FilterBilateralBlurDepthAware.newFilter(
-          m.getShaderSources(),
+          m.getShaderPreprocessingEnvironment(),
           g,
           m.getTextureDefaults(),
           this.pool_ssao,
@@ -301,7 +305,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
 
     this.filter_compositor =
       R2FilterCompositor.newFilter(
-        m.getShaderSources(),
+        m.getShaderPreprocessingEnvironment(),
         m.getTextureDefaults(),
         g,
         m.getIDPool(),
@@ -353,14 +357,17 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       }
     }
 
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final SoShaderPreprocessorConfig.Builder b =
+      SoShaderPreprocessorConfig.builder();
+    b.setResolver(SoShaderResolver.create());
+    b.setVersion(OptionalInt.of(330));
+    final SoShaderPreprocessorType p =
+      SoShaderPreprocessorJCPP.create(b.build());
+    final R2ShaderPreprocessingEnvironmentType sources =
+      R2ShaderPreprocessingEnvironment.create(p);
 
     this.geom_shader =
-      R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(),
-        sources,
-        id_pool);
+      R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     this.geom_shader_params =
       R2SurfaceShaderBasicParameters.newParameters(
         m.getTextureDefaults());

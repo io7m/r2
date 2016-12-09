@@ -53,11 +53,11 @@ public interface R2MatricesObserverType extends R2MatricesObserverValuesType
    * Evaluate matrices for a given projective light, relative to the current
    * observer.
    *
-   * @param t    The light
-   * @param f    The function that will receive matrices
-   * @param x    A context value passed to {@code f}
-   * @param <A>  The type of consumed values
-   * @param <B>  The type of returned values
+   * @param t   The light
+   * @param f   The function that will receive matrices
+   * @param x   A context value passed to {@code f}
+   * @param <A> The type of consumed values
+   * @param <B> The type of returned values
    *
    * @return A value of {@code B}
    *
@@ -74,11 +74,11 @@ public interface R2MatricesObserverType extends R2MatricesObserverValuesType
    * Evaluate matrices for a given volume light, relative to the current
    * observer.
    *
-   * @param t    The light
-   * @param f    The function that will receive matrices
-   * @param x    A context value passed to {@code f}
-   * @param <A>  The type of consumed values
-   * @param <B>  The type of returned values
+   * @param t   The light
+   * @param f   The function that will receive matrices
+   * @param x   A context value passed to {@code f}
+   * @param <A> The type of consumed values
+   * @param <B> The type of returned values
    *
    * @return A value of {@code B}
    *

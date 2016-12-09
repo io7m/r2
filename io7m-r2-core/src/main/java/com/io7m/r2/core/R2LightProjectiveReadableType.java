@@ -77,12 +77,12 @@ public interface R2LightProjectiveReadableType extends
   /**
    * Match on the type of projective light.
    *
-   * @param context   A context value
+   * @param context       A context value
    * @param on_shadowless Evaluated for projective lights without shadows
-   * @param on_shadowed Evaluated for projective lights with shadows
-   * @param <A>       The type of context values
-   * @param <B>       The type of returned values
-   * @param <E>       The type of raised exceptions
+   * @param on_shadowed   Evaluated for projective lights with shadows
+   * @param <A>           The type of context values
+   * @param <B>           The type of returned values
+   * @param <E>           The type of raised exceptions
    *
    * @return A value of type {@code B}
    *

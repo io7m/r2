@@ -38,7 +38,7 @@ public final class R2TransformMatrix4x4 implements
   R2TransformNonOrthogonalReadableType,
   PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType>, R2TransformType
 {
-  private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType>  model;
+  private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> model;
   private final R2WatchableType<R2TransformNonOrthogonalReadableType> watchable;
 
   private R2TransformMatrix4x4()

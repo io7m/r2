@@ -41,13 +41,12 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterOcclusionApplicator;
 import com.io7m.r2.filters.R2FilterOcclusionApplicatorParametersMutable;
 import com.io7m.r2.filters.R2FilterOcclusionApplicatorParametersType;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -60,8 +59,8 @@ public abstract class R2FilterOcclusionApplicatorContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLTexturesType g_t =
@@ -77,7 +76,7 @@ public abstract class R2FilterOcclusionApplicatorContract extends R2JCGLContract
       R2UnitQuad.newUnitQuad(g);
 
     final R2FilterType<R2FilterOcclusionApplicatorParametersType> f =
-      R2FilterOcclusionApplicator.newFilter(ss, td, g, id, quad);
+      R2FilterOcclusionApplicator.newFilter(sources, td, g, id, quad);
 
     Assert.assertFalse(f.isDeleted());
     Assert.assertFalse(f.isDeleted());
@@ -92,8 +91,8 @@ public abstract class R2FilterOcclusionApplicatorContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -129,7 +128,7 @@ public abstract class R2FilterOcclusionApplicatorContract extends R2JCGLContract
         R2LightBufferComponents.R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR));
 
     final R2FilterType<R2FilterOcclusionApplicatorParametersType> f =
-      R2FilterOcclusionApplicator.newFilter(ss, td, g, id, quad);
+      R2FilterOcclusionApplicator.newFilter(sources, td, g, id, quad);
 
     g_fb.framebufferDrawUnbind();
     g_fb.framebufferReadUnbind();

@@ -47,13 +47,13 @@ import java.nio.ByteBuffer;
 
 public final class R2ProjectionMesh implements R2ProjectionMeshType
 {
-  private final JCGLArrayObjectType                       array_object;
-  private final JCGLArrayBufferType                       array_buffer;
-  private final JCGLIndexBufferType                       index_buffer;
+  private final JCGLArrayObjectType array_object;
+  private final JCGLArrayBufferType array_buffer;
+  private final JCGLIndexBufferType index_buffer;
   private final JCGLBufferUpdateType<JCGLArrayBufferType> array_update;
-  private final JPRACursor1DType<R2VertexP32UNT16Type>    array_cursor;
-  private final R2ProjectionType                          projection;
-  private       boolean                                   mesh_needs_update;
+  private final JPRACursor1DType<R2VertexP32UNT16Type> array_cursor;
+  private final R2ProjectionType projection;
+  private boolean mesh_needs_update;
 
   private R2ProjectionMesh(
     final R2ProjectionType in_p,

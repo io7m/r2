@@ -20,7 +20,7 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderSSAO;
 import com.io7m.r2.filters.R2ShaderSSAOParametersType;
 import com.io7m.r2.tests.filters.R2ShaderSSAOContract;
@@ -41,7 +41,7 @@ public final class R2ShaderSSAOTest extends
   @Override
   protected R2ShaderFilterType<R2ShaderSSAOParametersType> newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderSourcesType sources,
+    final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
     return R2ShaderSSAO.newShader(g.getShaders(), sources, pool);

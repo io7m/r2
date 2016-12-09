@@ -27,7 +27,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>io7m-r2-shaders</artifactId>
+      <artifactId>io7m-r2-shaders-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -91,6 +91,10 @@
     <dependency>
       <groupId>com.io7m.jpuddle</groupId>
       <artifactId>io7m-jpuddle-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.sombrero</groupId>
+      <artifactId>io7m-sombrero-core</artifactId>
     </dependency>
 
     <dependency>

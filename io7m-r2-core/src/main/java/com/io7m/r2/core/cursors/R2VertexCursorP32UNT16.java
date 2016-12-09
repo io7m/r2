@@ -120,7 +120,7 @@ public final class R2VertexCursorP32UNT16 implements
   private static final class Cursor implements R2VertexCursorType
   {
     private final JPRACursor1DType<R2VertexP32UNT16Type> cursor;
-    private final R2VertexP32UNT16Type                   view;
+    private final R2VertexP32UNT16Type view;
 
     private Cursor(final JPRACursor1DType<R2VertexP32UNT16Type> c)
     {

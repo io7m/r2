@@ -45,10 +45,10 @@ public final class R2SSAOKernel implements R2SSAOKernelType
     VALID_SIZES = new RangeInclusiveI(1, 128);
   }
 
-  private final FloatBuffer              data;
+  private final FloatBuffer data;
   private final VectorByteBuffered3FType data_cursor;
-  private       int                      size;
-  private       long                     version;
+  private int size;
+  private long version;
 
   private R2SSAOKernel(
     final ByteBuffer in_data,

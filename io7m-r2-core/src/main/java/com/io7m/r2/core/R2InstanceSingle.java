@@ -28,8 +28,8 @@ import com.io7m.r2.spaces.R2SpaceTextureType;
 public final class R2InstanceSingle implements R2InstanceSingleType
 {
   private final JCGLArrayObjectUsableType array_object;
-  private final R2TransformReadableType   transform;
-  private final long                      id;
+  private final R2TransformReadableType transform;
+  private final long id;
 
   private final PMatrixReadable3x3FType<R2SpaceTextureType,
     R2SpaceTextureType> uv;

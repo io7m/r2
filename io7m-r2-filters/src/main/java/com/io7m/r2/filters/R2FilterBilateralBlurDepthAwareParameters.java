@@ -49,18 +49,18 @@ public final class R2FilterBilateralBlurDepthAwareParameters<
   private BiFunction<DD, AreaInclusiveUnsignedLType, DD>
     output_desc_scaler;
 
-  private           R2Texture2DUsableType               depth;
-  private           Function<S, R2Texture2DUsableType>  source_value_selector;
-  private           Function<D, R2Texture2DUsableType>  output_value_selector;
-  private           S                                   source_buffer;
-  private           D                                   output_buffer;
-  private           R2RenderTargetPoolUsableType<DD, D> render_target_pool;
-  private           float                               blur_sharpness;
-  private           float                               blur_radius;
-  private           float                               blur_scale;
-  private           int                                 blur_passes;
-  private           JCGLFramebufferBlitFilter           blur_scale_filter;
-  private @Nullable R2MatricesObserverValuesType        matrices;
+  private R2Texture2DUsableType depth;
+  private Function<S, R2Texture2DUsableType> source_value_selector;
+  private Function<D, R2Texture2DUsableType> output_value_selector;
+  private S source_buffer;
+  private D output_buffer;
+  private R2RenderTargetPoolUsableType<DD, D> render_target_pool;
+  private float blur_sharpness;
+  private float blur_radius;
+  private float blur_scale;
+  private int blur_passes;
+  private JCGLFramebufferBlitFilter blur_scale_filter;
+  private @Nullable R2MatricesObserverValuesType matrices;
 
   private R2FilterBilateralBlurDepthAwareParameters(
     final S in_source_buffer,

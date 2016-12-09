@@ -20,14 +20,13 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PMatrixI4x4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingle;
@@ -45,16 +44,14 @@ import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import org.junit.Test;
 
 public abstract class R2StencilRendererContract extends R2JCGLContract
 {
   protected abstract R2StencilRendererType getRenderer(
     final JCGLInterfaceGL33Type g,
-    R2ShaderSourcesType in_sources,
+    R2ShaderPreprocessingEnvironmentType in_sources,
     R2IDPoolType in_pool,
     R2UnitQuadUsableType in_quad);
 
@@ -74,8 +71,8 @@ public abstract class R2StencilRendererContract extends R2JCGLContract
       R2UnitQuad.newUnitQuad(g);
     final R2IDPoolType id_pool =
       R2IDPool.newPool();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
 
     final R2StencilRendererType r =
       this.getRenderer(g, sources, id_pool, quad);
