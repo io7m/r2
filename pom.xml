@@ -271,11 +271,6 @@
         <version>2.5</version>
       </dependency>
       <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>2.8.5</version>
-      </dependency>
-      <dependency>
         <groupId>com.github.marschall</groupId>
         <artifactId>memoryfilesystem</artifactId>
         <version>0.9.0</version>
@@ -299,38 +294,6 @@
         <groupId>org.jogamp.gluegen</groupId>
         <artifactId>gluegen-rt-main</artifactId>
         <version>2.3.2</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-plugin-api</artifactId>
-        <version>3.3.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-core</artifactId>
-        <version>3.3.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-compat</artifactId>
-        <version>3.3.3</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.plugin-tools</groupId>
-        <artifactId>maven-plugin-annotations</artifactId>
-        <version>3.4</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.plugin-tools</groupId>
-        <artifactId>maven-plugin-tools-api</artifactId>
-        <version>3.4</version>
-      </dependency>
-      <dependency>
-        <groupId>io.takari.maven.plugins</groupId>
-        <artifactId>takari-plugin-testing</artifactId>
-        <version>2.9.0</version>
       </dependency>
 
       <dependency>
