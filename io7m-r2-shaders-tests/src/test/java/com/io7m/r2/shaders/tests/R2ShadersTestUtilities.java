@@ -61,6 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.IntBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -224,14 +225,14 @@ public final class R2ShadersTestUtilities
     final String f_path = "/com/io7m/r2/shaders/" + name + ".frag";
     final Class<R2Shaders> cl = R2Shaders.class;
     final List<String> vs =
-      IOUtils.readLines(cl.getResourceAsStream(v_path))
+      IOUtils.readLines(cl.getResourceAsStream(v_path), StandardCharsets.UTF_8)
         .stream()
         .map(line -> {
           R2ShadersTestUtilities.LOG.trace("[{}][vertex]: {}", name, line);
           return line + "\n";
         }).collect(Collectors.toList());
     final List<String> fs =
-      IOUtils.readLines(cl.getResourceAsStream(f_path))
+      IOUtils.readLines(cl.getResourceAsStream(f_path), StandardCharsets.UTF_8)
         .stream()
         .map(line -> {
           R2ShadersTestUtilities.LOG.trace("[{}][fragment]: {}", name, line);
