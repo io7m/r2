@@ -81,8 +81,10 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
+import com.io7m.r2.filters.R2BlurParametersMutable;
 import com.io7m.r2.filters.R2FilterBoxBlur;
 import com.io7m.r2.filters.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
 import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
 import com.io7m.r2.filters.R2FilterCompositorParameters;
@@ -144,8 +146,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private R2FilterSSAOParametersMutable filter_ssao_params;
   private R2FilterType<R2FilterSSAOParametersType> filter_ssao;
   private R2RenderTargetPoolUsableType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> pool_ssao;
-  private R2FilterType<R2FilterBoxBlurParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
-  private R2FilterBoxBlurParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
+  private R2FilterType<R2FilterBoxBlurParametersType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
+  private R2FilterBoxBlurParametersType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
 
   public ExampleSSAO0()
   {
@@ -221,23 +223,22 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     }
 
     {
+      final R2BlurParametersMutable blur = R2BlurParametersMutable.create();
       this.filter_blur_ssao_params =
-        R2FilterBoxBlurParameters.newParameters(
+        R2FilterBoxBlurParameters.of(
           this.ssao_buffer,
           R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
           this.ssao_buffer,
           R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
+          this.pool_ssao,
+          blur,
           (d, a) -> {
             final R2AmbientOcclusionBufferDescription.Builder b =
               R2AmbientOcclusionBufferDescription.builder();
             b.from(d);
             b.setArea(a);
             return b.build();
-          },
-          this.pool_ssao);
-      this.filter_blur_ssao_params.setBlurSize(1.0f);
-      this.filter_blur_ssao_params.setBlurPasses(1);
-      this.filter_blur_ssao_params.setBlurScale(1.0f);
+          });
       this.filter_blur_ssao = R2FilterBoxBlur.newFilter(
         m.getShaderPreprocessingEnvironment(),
         g,

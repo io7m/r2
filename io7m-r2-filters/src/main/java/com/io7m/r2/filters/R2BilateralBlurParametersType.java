@@ -17,38 +17,69 @@
 package com.io7m.r2.filters;
 
 import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
+import com.io7m.r2.core.R2ImmutableStyleType;
+import org.immutables.value.Value;
 
 /**
- * The type of readable blur parameters.
+ * The type of blur parameters specific to bilateral blurs.
  */
 
-public interface R2BlurParametersReadableType
+@R2ImmutableStyleType
+@Value.Immutable
+@Value.Modifiable
+public interface R2BilateralBlurParametersType
 {
   /**
    * @return The current blur size in texels
    */
 
+  @Value.Parameter
+  @Value.Default
   default float blurSize()
   {
     return 1.0f;
   }
 
   /**
+   * The amount by which the image will be scaled during the blur operation.
+   * By scaling an image down, blurring it, and then scaling it back up again,
+   * the blur effect is emphasized without requiring additional passes.
+   *
    * @return The scale value for intermediate images
    */
 
+  @Value.Parameter
+  @Value.Default
   default float blurScale()
   {
     return 1.0f;
   }
 
   /**
+   * The number of blur passes that will be used. If a value of {@code 0} is
+   * given here, the image will only be scaled and not actually blurred (and
+   * will not actually even be scaled, if a value of {@code 1.0} is given for
+   * {@link #blurScale()}).
+   *
    * @return The number of blur passes that will be used
    */
 
+  @Value.Parameter
+  @Value.Default
   default int blurPasses()
   {
     return 1;
+  }
+
+  /**
+   * @return The current blur sharpness amount
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default float blurSharpness()
+  {
+    return 0.01f;
   }
 
   /**
@@ -56,6 +87,8 @@ public interface R2BlurParametersReadableType
    * framebuffer blitting
    */
 
+  @Value.Parameter
+  @Value.Default
   default JCGLFramebufferBlitFilter blurScaleFilter()
   {
     return JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_LINEAR;

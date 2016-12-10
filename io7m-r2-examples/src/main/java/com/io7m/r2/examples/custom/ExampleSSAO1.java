@@ -81,8 +81,10 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
+import com.io7m.r2.filters.R2BilateralBlurParametersMutable;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAware;
-import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParameters;
+import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParametersMutable;
+import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParametersType;
 import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
 import com.io7m.r2.filters.R2FilterCompositorParameters;
@@ -137,9 +139,23 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
   private R2MainType main;
 
   private R2AmbientOcclusionBufferType ssao_buffer;
-  private R2RenderTargetPoolUsableType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> pool_ssao;
-  private R2FilterType<R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
-  private R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
+  private R2RenderTargetPoolUsableType<
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferUsableType> pool_ssao;
+
+  private R2FilterType<
+    R2FilterBilateralBlurDepthAwareParametersType<
+      R2AmbientOcclusionBufferDescriptionType,
+      R2AmbientOcclusionBufferUsableType,
+      R2AmbientOcclusionBufferDescriptionType,
+      R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
+
+  private R2FilterBilateralBlurDepthAwareParametersMutable<
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferUsableType,
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
+
   private R2FilterSSAOParametersMutable filter_ssao_params;
   private R2FilterType<R2FilterSSAOParametersType> filter_ssao;
 
@@ -219,26 +235,34 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     }
 
     {
-      this.filter_blur_ssao_params =
-        R2FilterBilateralBlurDepthAwareParameters.newParameters(
-          this.ssao_buffer,
-          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
-          this.geom_buffer.depthTexture(),
-          this.ssao_buffer,
-          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
-          (d, a) -> {
-            final R2AmbientOcclusionBufferDescription.Builder b =
-              R2AmbientOcclusionBufferDescription.builder();
-            b.from(d);
-            b.setArea(a);
-            return b.build();
-          },
-          this.pool_ssao);
+      final R2BilateralBlurParametersMutable blur =
+        R2BilateralBlurParametersMutable.create();
+      blur.setBlurPasses(1);
+      blur.setBlurSize(2.0f);
+      blur.setBlurScale(1.0f);
+      blur.setBlurSharpness(4.0f);
 
-      this.filter_blur_ssao_params.setBlurPasses(1);
-      this.filter_blur_ssao_params.setBlurRadius(2.0f);
-      this.filter_blur_ssao_params.setBlurScale(1.0f);
-      this.filter_blur_ssao_params.setBlurSharpness(4.0f);
+      this.filter_blur_ssao_params =
+        R2FilterBilateralBlurDepthAwareParametersMutable.create();
+      this.filter_blur_ssao_params.setSourceRenderTarget(
+        this.ssao_buffer);
+      this.filter_blur_ssao_params.setSourceTextureSelector(
+        R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture);
+      this.filter_blur_ssao_params.setOutputTextureSelector(
+        R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture);
+      this.filter_blur_ssao_params.setOutputRenderTarget(
+        this.ssao_buffer);
+      this.filter_blur_ssao_params.setOutputDescriptionScaler((d, a) -> {
+        final R2AmbientOcclusionBufferDescription.Builder b =
+          R2AmbientOcclusionBufferDescription.builder();
+        b.from(d);
+        b.setArea(a);
+        return b.build();
+      });
+      this.filter_blur_ssao_params.setDepthTexture(
+        this.geom_buffer.depthTexture());
+      this.filter_blur_ssao_params.setBlurParameters(
+        blur);
 
       this.filter_blur_ssao =
         R2FilterBilateralBlurDepthAware.newFilter(

@@ -21,7 +21,6 @@ import com.io7m.jcanephora.core.JCGLScalarType;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.cursors.R2VertexP16ByteBuffered;
-import com.io7m.r2.core.cursors.R2VertexPUNT16ByteBuffered;
 import com.io7m.r2.core.debug.R2DebugCube;
 import com.io7m.r2.core.debug.R2DebugCubeType;
 import com.io7m.r2.tests.core.R2JCGLContract;

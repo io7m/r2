@@ -60,7 +60,7 @@ import java.util.Optional;
 
 public final class R2FilterEmission implements R2FilterType<R2FilterEmissionParametersType>
 {
-  private final R2FilterUsableType<R2FilterBoxBlurParameters<
+  private final R2FilterUsableType<R2FilterBoxBlurParametersType<
     R2ImageBufferDescriptionType,
     R2ImageBufferUsableType,
     R2ImageBufferDescriptionType,
@@ -75,14 +75,14 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   private final R2ShaderFilterEmissionParametersMutable shader_emission_params;
   private final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType> shader_copy;
   private final R2ShaderFilterTextureShowParametersMutable shader_copy_params;
-  private @Nullable R2FilterBoxBlurParameters<
+  private @Nullable R2FilterBoxBlurParametersMutable<
     R2ImageBufferDescriptionType,
     R2ImageBufferUsableType,
     R2ImageBufferDescriptionType,
     R2ImageBufferUsableType> filter_blur_params;
 
   private R2FilterEmission(
-    final R2FilterUsableType<R2FilterBoxBlurParameters<R2ImageBufferDescriptionType, R2ImageBufferUsableType, R2ImageBufferDescriptionType, R2ImageBufferUsableType>> in_blur,
+    final R2FilterUsableType<R2FilterBoxBlurParametersType<R2ImageBufferDescriptionType, R2ImageBufferUsableType, R2ImageBufferDescriptionType, R2ImageBufferUsableType>> in_blur,
     final R2ShaderFilterType<R2ShaderFilterEmissionParametersType> in_shader_emission,
     final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType> in_shader_copy,
     final JCGLInterfaceGL33Type in_g,
@@ -139,7 +139,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_id_pool,
     final R2FilterUsableType<
-      R2FilterBoxBlurParameters<
+      R2FilterBoxBlurParametersType<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -197,7 +197,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     final JCGLProfilingContextType pc_base =
       pc.getChildContext("emission");
 
-    final Optional<R2BlurParametersReadableType> blur_opt =
+    final Optional<R2BlurParametersType> blur_opt =
       parameters.blurParameters();
 
     if (blur_opt.isPresent()) {
@@ -236,7 +236,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     final JCGLProfilingContextType pc_base,
     final JCGLTextureUnitContextParentType uc,
     final R2FilterEmissionParametersType parameters,
-    final R2BlurParametersReadableType blur_parameters)
+    final R2BlurParametersType blur_parameters)
   {
     final JCGLProfilingContextType pc_blurred =
       pc_base.getChildContext("blurred");
@@ -259,7 +259,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
 
     try {
 
-      /**
+      /*
        * Render the albedo components of the texture, multiplied by the
        * emission level, to the output.
        */
@@ -272,11 +272,11 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
         parameters.albedoEmissionMap(),
         this.render_state);
 
-      /**
+      /*
        * Blur the image.
        */
 
-      final R2FilterBoxBlurParameters<
+      final R2FilterBoxBlurParametersMutable<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -285,26 +285,24 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       if (this.filter_blur_params != null) {
         bp = this.filter_blur_params;
       } else {
-        bp = R2FilterBoxBlurParameters.newParameters(
+        bp = R2FilterBoxBlurParametersMutable.create(
           temp,
           R2ImageBufferUsableType::imageTexture,
           temp,
           R2ImageBufferUsableType::imageTexture,
-          (i, a) -> R2ImageBufferDescription.of(a, Optional.empty()),
-          this.render_target_pool);
+          this.render_target_pool,
+          blur_parameters,
+          (i, a) -> R2ImageBufferDescription.of(a, Optional.empty()));
       }
 
       bp.setOutputRenderTarget(temp);
       bp.setSourceRenderTarget(temp);
-      bp.setBlurPasses(blur_parameters.blurPasses());
-      bp.setBlurScale(blur_parameters.blurScale());
-      bp.setBlurScaleFilter(blur_parameters.blurScaleFilter());
-      bp.setBlurSize(blur_parameters.blurSize());
+      bp.setBlurParameters(blur_parameters);
 
       this.filter_blur_params = bp;
       this.filter_blur.runFilter(pc_blurred, uc, bp);
 
-      /**
+      /*
        * Blend the blurred emissive image into the output framebuffer.
        */
 

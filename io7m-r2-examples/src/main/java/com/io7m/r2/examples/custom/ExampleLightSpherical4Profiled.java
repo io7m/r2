@@ -52,7 +52,6 @@ import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
-import com.io7m.r2.core.R2AmbientOcclusionBufferDescriptionScaler;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescriptionType;
 import com.io7m.r2.core.R2AmbientOcclusionBufferPool;
 import com.io7m.r2.core.R2AmbientOcclusionBufferType;
@@ -147,11 +146,13 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
-import com.io7m.r2.filters.R2BlurParametersReadableType;
+import com.io7m.r2.filters.R2BilateralBlurParametersMutable;
+import com.io7m.r2.filters.R2BlurParametersMutable;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAware;
-import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParameters;
+import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParametersMutable;
+import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParametersType;
 import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
 import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
 import com.io7m.r2.filters.R2FilterCompositorParameters;
@@ -262,9 +263,23 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
   private R2MainType main;
 
-  private R2RenderTargetPoolUsableType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> pool_ssao;
-  private R2FilterType<R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
-  private R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
+  private R2RenderTargetPoolUsableType<
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferUsableType> pool_ssao;
+  private R2FilterType<
+    R2FilterBilateralBlurDepthAwareParametersType<
+      R2AmbientOcclusionBufferDescriptionType,
+      R2AmbientOcclusionBufferUsableType,
+      R2AmbientOcclusionBufferDescriptionType,
+      R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
+
+  private R2FilterBilateralBlurDepthAwareParametersMutable<
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferUsableType,
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
+  private R2BilateralBlurParametersMutable filter_blur_ssao_blur_params;
+
   private R2FilterType<R2FilterOcclusionApplicatorParametersType> filter_ssao_app;
   private R2FilterOcclusionApplicatorParametersMutable filter_ssao_app_params;
   private R2SSAOKernelType filter_ssao_kernel;
@@ -287,14 +302,14 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
   private R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool;
 
   private R2FilterType<
-    R2FilterBoxBlurParameters<
+    R2FilterBoxBlurParametersType<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType>> filter_blur;
   private R2FilterType<R2FilterEmissionParametersType> filter_emission;
   private R2FilterEmissionParametersMutable filter_emission_params;
-  private R2BlurParametersReadableType filter_emission_blur_params;
+  private R2BlurParametersMutable filter_emission_blur_params;
 
   public ExampleLightSpherical4Profiled()
   {
@@ -481,15 +496,34 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     }
 
     {
+      this.filter_blur_ssao_blur_params =
+        R2BilateralBlurParametersMutable.create();
+      this.filter_blur_ssao_blur_params.setBlurPasses(1);
+      this.filter_blur_ssao_blur_params.setBlurSize(2.0f);
+      this.filter_blur_ssao_blur_params.setBlurScale(1.0f);
+      this.filter_blur_ssao_blur_params.setBlurSharpness(4.0f);
+
       this.filter_blur_ssao_params =
-        R2FilterBilateralBlurDepthAwareParameters.newParameters(
-          this.abuffer,
-          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
-          this.gbuffer.depthTexture(),
-          this.abuffer,
-          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
-          R2AmbientOcclusionBufferDescriptionScaler.get(),
-          this.pool_ssao);
+        R2FilterBilateralBlurDepthAwareParametersMutable.create();
+      this.filter_blur_ssao_params.setSourceRenderTarget(
+        this.abuffer);
+      this.filter_blur_ssao_params.setSourceTextureSelector(
+        R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture);
+      this.filter_blur_ssao_params.setOutputTextureSelector(
+        R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture);
+      this.filter_blur_ssao_params.setOutputRenderTarget(
+        this.abuffer);
+      this.filter_blur_ssao_params.setOutputDescriptionScaler((d, a) -> {
+        final R2AmbientOcclusionBufferDescription.Builder b =
+          R2AmbientOcclusionBufferDescription.builder();
+        b.from(d);
+        b.setArea(a);
+        return b.build();
+      });
+      this.filter_blur_ssao_params.setDepthTexture(
+        this.gbuffer.depthTexture());
+      this.filter_blur_ssao_params.setBlurParameters(
+        this.filter_blur_ssao_blur_params);
 
       this.filter_blur_ssao =
         R2FilterBilateralBlurDepthAware.newFilter(
@@ -832,10 +866,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       this.filter_emission_params =
         R2FilterEmissionParametersMutable.create();
       this.filter_emission_blur_params =
-        new R2BlurParametersReadableType()
-        {
-
-        };
+        R2BlurParametersMutable.create();
 
       this.filter_emission = R2FilterEmission.newFilter(
         gx,
@@ -996,10 +1027,11 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         Assertive.require(t.filter_ssao_params.isInitialized());
         t.filter_ssao.runFilter(t.profiling_root, uc, t.filter_ssao_params);
 
-        t.filter_blur_ssao_params.setBlurPasses(1);
-        t.filter_blur_ssao_params.setBlurRadius(2.0f);
-        t.filter_blur_ssao_params.setBlurScale(1.0f);
-        t.filter_blur_ssao_params.setBlurSharpness(16.0f);
+        t.filter_blur_ssao_blur_params.setBlurPasses(1);
+        t.filter_blur_ssao_blur_params.setBlurSize(2.0f);
+        t.filter_blur_ssao_blur_params.setBlurScale(1.0f);
+        t.filter_blur_ssao_blur_params.setBlurSharpness(16.0f);
+
         t.filter_blur_ssao_params.setDepthTexture(t.gbuffer.depthTexture());
         t.filter_blur_ssao_params.setOutputRenderTarget(t.abuffer);
         t.filter_blur_ssao_params.setSceneObserverValues(mo);

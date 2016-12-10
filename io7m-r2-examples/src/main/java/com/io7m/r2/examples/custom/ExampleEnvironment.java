@@ -121,9 +121,9 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
-import com.io7m.r2.filters.R2BlurParametersReadableType;
+import com.io7m.r2.filters.R2BlurParametersMutable;
 import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
 import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
 import com.io7m.r2.filters.R2FilterCompositorParameters;
@@ -219,14 +219,14 @@ public final class ExampleEnvironment implements R2ExampleCustomType
   private R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool;
 
   private R2FilterType<
-    R2FilterBoxBlurParameters<
+    R2FilterBoxBlurParametersType<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType>> filter_blur;
   private R2FilterType<R2FilterEmissionParametersType> filter_emission;
   private R2FilterEmissionParametersMutable filter_emission_params;
-  private R2BlurParametersReadableType filter_emission_blur_params;
+  private R2BlurParametersMutable filter_emission_blur_params;
 
   public ExampleEnvironment()
   {
@@ -543,10 +543,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       this.filter_emission_params =
         R2FilterEmissionParametersMutable.create();
       this.filter_emission_blur_params =
-        new R2BlurParametersReadableType()
-        {
-
-        };
+        R2BlurParametersMutable.create();
 
       this.filter_emission = R2FilterEmission.newFilter(
         gx,

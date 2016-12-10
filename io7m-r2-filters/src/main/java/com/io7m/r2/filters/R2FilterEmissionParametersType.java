@@ -77,5 +77,5 @@ public interface R2FilterEmissionParametersType
    */
 
   @Value.Parameter
-  Optional<R2BlurParametersReadableType> blurParameters();
+  Optional<R2BlurParametersType> blurParameters();
 }
