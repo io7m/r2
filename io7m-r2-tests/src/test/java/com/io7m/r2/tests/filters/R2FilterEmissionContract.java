@@ -158,7 +158,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParametersMutable params =
       R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.getWhiteTexture());
+    params.setAlbedoEmissionMap(td.texture2DWhite());
     params.setBlurParameters(Optional.empty());
     params.setOutputViewport(area);
     params.setOutputFramebuffer(Optional.empty());
@@ -232,7 +232,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParametersMutable params =
       R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.getWhiteTexture());
+    params.setAlbedoEmissionMap(td.texture2DWhite());
     params.setBlurParameters(Optional.empty());
     params.setOutputViewport(area);
     params.setOutputFramebuffer(Optional.of(ib.getPrimaryFramebuffer()));
@@ -306,7 +306,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParametersMutable params =
       R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.getWhiteTexture());
+    params.setAlbedoEmissionMap(td.texture2DWhite());
     params.setBlurParameters(Optional.of(new R2BlurParametersReadableType()
     {
 
@@ -383,7 +383,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParametersMutable params =
       R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.getWhiteTexture());
+    params.setAlbedoEmissionMap(td.texture2DWhite());
     params.setBlurParameters(Optional.of(new R2BlurParametersReadableType()
     {
       @Override
@@ -464,7 +464,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParametersMutable params =
       R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.getWhiteTexture());
+    params.setAlbedoEmissionMap(td.texture2DWhite());
     params.setBlurParameters(Optional.of(new R2BlurParametersReadableType()
     {
       @Override

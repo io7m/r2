@@ -86,6 +86,6 @@ public abstract class R2ShaderLightProjectiveLambertShadowVarianceSingleContract
           R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16));
 
     return R2LightProjectiveWithShadowVariance.newLight(
-      pm, td.getWhiteProjectiveTexture(), sh, pool);
+      pm, td.texture2DProjectiveWhite(), sh, pool);
   }
 }

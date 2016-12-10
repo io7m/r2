@@ -139,7 +139,7 @@ public abstract class R2FilterCompositorContract extends R2JCGLContract
     final R2FilterCompositorParametersMutable params =
       R2FilterCompositorParametersMutable.create();
     params.addItems(R2FilterCompositorItem.of(
-      td.getBlackTexture(),
+      td.texture2DBlack(),
       area,
       1.0f,
       Optional.empty()));

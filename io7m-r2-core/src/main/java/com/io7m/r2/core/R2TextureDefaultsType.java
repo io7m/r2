@@ -26,23 +26,29 @@ public interface R2TextureDefaultsType extends R2DeletableType
    * @return A flat normal texture
    */
 
-  R2Texture2DUsableType getNormalTexture();
+  R2Texture2DUsableType texture2DNormal();
 
   /**
    * @return A flat white texture
    */
 
-  R2Texture2DUsableType getWhiteTexture();
+  R2Texture2DUsableType texture2DWhite();
 
   /**
    * @return A flat black texture
    */
 
-  R2Texture2DUsableType getBlackTexture();
+  R2Texture2DUsableType texture2DBlack();
 
   /**
    * @return A hard-edged white projective light texture
    */
 
-  R2Texture2DUsableType getWhiteProjectiveTexture();
+  R2Texture2DUsableType texture2DProjectiveWhite();
+
+  /**
+   * @return A flat black texture
+   */
+
+  R2TextureCubeUsableType textureCubeBlack();
 }

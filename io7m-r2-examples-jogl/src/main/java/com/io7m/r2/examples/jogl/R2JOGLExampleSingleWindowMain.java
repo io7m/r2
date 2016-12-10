@@ -30,14 +30,18 @@ import com.io7m.jcamera.JCameraFPSStyleType;
 import com.io7m.jcamera.JCameraRotationCoefficients;
 import com.io7m.jcamera.JCameraScreenOrigin;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
+import com.io7m.jcanephora.core.JCGLCubeMapFaceRH;
 import com.io7m.jcanephora.core.JCGLExceptionNonCompliant;
 import com.io7m.jcanephora.core.JCGLExceptionUnsupported;
 import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTexture2DUpdateType;
+import com.io7m.jcanephora.core.JCGLTextureCubeType;
+import com.io7m.jcanephora.core.JCGLTextureCubeUpdateType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLTextureWrapR;
 import com.io7m.jcanephora.core.JCGLTextureWrapS;
 import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.JCGLUnsignedType;
@@ -63,6 +67,9 @@ import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.R2TextureCubeStatic;
+import com.io7m.r2.core.R2TextureCubeType;
+import com.io7m.r2.core.R2TextureCubeUsableType;
 import com.io7m.r2.core.cursors.R2VertexCursorPUNT32;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.examples.R2ExampleType;
@@ -524,7 +531,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private final JCGLTLTextureUpdateProviderType  update_prov;
     private final JCGLTexturesType                 textures;
     private final List<JCGLTextureUnitType>        units;
-    private final Map<String, R2Texture2DType>     texture_cache;
+    private final Map<String, R2Texture2DType> texture_2d_cache;
+    private final Map<String, R2TextureCubeType> texture_cube_cache;
     private final Map<String, JCGLArrayObjectType> mesh_cache;
     private final JCameraFPSStyleType              camera;
     private final JCameraFPSStyleInputType         camera_input;
@@ -555,7 +563,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       this.units = this.textures.textureGetUnits();
       this.data_prov = JCGLAWTTextureDataProvider.newProvider();
       this.update_prov = JCGLTLTextureUpdateProvider.newProvider();
-      this.texture_cache = new HashMap<>(128);
+      this.texture_2d_cache = new HashMap<>(128);
+      this.texture_cube_cache = new HashMap<>(128);
       this.mesh_cache = new HashMap<>(128);
 
       this.camera = JCameraFPSStyle.newCamera();
@@ -591,8 +600,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     public R2Texture2DUsableType getTexture2D(
       final String name)
     {
-      if (this.texture_cache.containsKey(name)) {
-        return this.texture_cache.get(name);
+      if (this.texture_2d_cache.containsKey(name)) {
+        return this.texture_2d_cache.get(name);
       }
 
       final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
@@ -610,14 +619,111 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
             JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
             JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
         final JCGLTexture2DUpdateType update =
-          this.update_prov.getTextureUpdate(t, data);
+          this.update_prov.getTextureUpdate2D(t, data);
         this.textures.texture2DUpdate(u0, update);
         final R2Texture2DType r2 = R2Texture2DStatic.of(t);
-        this.texture_cache.put(name, r2);
+        this.texture_2d_cache.put(name, r2);
         return r2;
       } catch (final IOException e) {
         throw new UncheckedIOException(e);
       }
+    }
+
+    @Override
+    public R2TextureCubeUsableType getTextureCube(
+      final String name)
+    {
+      if (this.texture_cube_cache.containsKey(name)) {
+        return this.texture_cube_cache.get(name);
+      }
+
+      final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
+
+      final String name_positive_x = name + "/positive_x.png";
+      final String name_positive_y = name + "/positive_y.png";
+      final String name_positive_z = name + "/positive_z.png";
+      final String name_negative_x = name + "/negative_x.png";
+      final String name_negative_y = name + "/negative_y.png";
+      final String name_negative_z = name + "/negative_z.png";
+
+      final JCGLTextureUnitType u0 = this.units.get(0);
+      final JCGLTextureCubeType t;
+
+      try (final InputStream is = c.getResourceAsStream(name_positive_x)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+
+        t =
+          this.textures.textureCubeAllocate(
+            u0,
+            data.getWidth(),
+            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+            JCGLTextureWrapR.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+            JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_POSITIVE_X, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_positive_y)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_POSITIVE_Y, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_positive_z)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_POSITIVE_Z, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_negative_x)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_NEGATIVE_X, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_negative_y)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_NEGATIVE_Y, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_negative_z)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_NEGATIVE_Z, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      final R2TextureCubeType r2 = R2TextureCubeStatic.of(t);
+      this.texture_cube_cache.put(name, r2);
+      return r2;
     }
 
     @Override

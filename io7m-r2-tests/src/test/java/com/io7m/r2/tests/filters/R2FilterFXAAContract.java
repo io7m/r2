@@ -122,7 +122,7 @@ public abstract class R2FilterFXAAContract extends R2JCGLContract
 
     final R2FilterFXAAParametersMutable params =
       R2FilterFXAAParametersMutable.create();
-    params.setTexture(td.getBlackTexture());
+    params.setTexture(td.texture2DBlack());
     Assert.assertTrue(params.isInitialized());
 
     f.runFilter(pro_root, tc, params);
@@ -180,7 +180,7 @@ public abstract class R2FilterFXAAContract extends R2JCGLContract
 
     final R2FilterFXAAParametersMutable params =
       R2FilterFXAAParametersMutable.create();
-    params.setTexture(td.getBlackTexture());
+    params.setTexture(td.texture2DBlack());
     Assert.assertTrue(params.isInitialized());
 
     g_fb.framebufferDrawBind(ib.getPrimaryFramebuffer());

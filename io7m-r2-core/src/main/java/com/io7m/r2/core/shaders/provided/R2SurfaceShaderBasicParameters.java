@@ -84,13 +84,13 @@ public final class R2SurfaceShaderBasicParameters
     return new R2SurfaceShaderBasicParameters(
       new PVectorM4F<>(1.0f, 1.0f, 1.0f, 1.0f),
       0.0f,
-      t.getWhiteTexture(),
+      t.texture2DWhite(),
       0.0f,
-      t.getWhiteTexture(),
-      t.getNormalTexture(),
+      t.texture2DWhite(),
+      t.texture2DNormal(),
       new PVectorM3F<>(0.0f, 0.0f, 0.0f),
       0.0f,
-      t.getWhiteTexture(),
+      t.texture2DWhite(),
       0.0f
     );
   }

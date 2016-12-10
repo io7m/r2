@@ -168,7 +168,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
       return mo.withProjectiveLight(params, this, (mp, y) -> {
         f.onReceiveVolumeLightTransform(g_sh, mp);
         f.onReceiveProjectiveLight(g_sh, mp);
-        f.onReceiveShadowMap(g_tex, g_sh, tc, td.getWhiteTexture());
+        f.onReceiveShadowMap(g_tex, g_sh, tc, td.texture2DWhite());
         f.onValidate();
         f.onDeactivate(g_sh);
         return Unit.unit();

@@ -61,7 +61,7 @@ public abstract class R2DepthShaderBasicBatchedContract extends
         R2TextureDefaults.newDefaults(g.getTextures(), tc_alloc);
       final R2DepthShaderBasicParametersMutable p =
         R2DepthShaderBasicParametersMutable.create();
-      p.setAlbedoTexture(t.getWhiteTexture());
+      p.setAlbedoTexture(t.texture2DWhite());
       return p;
     } finally {
       tc_alloc.unitContextFinish(g_tex);

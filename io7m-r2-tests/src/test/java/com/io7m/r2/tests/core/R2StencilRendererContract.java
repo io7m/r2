@@ -99,7 +99,7 @@ public abstract class R2StencilRendererContract extends R2JCGLContract
 
     final R2DepthShaderBasicParametersMutable ds_param =
       R2DepthShaderBasicParametersMutable.create();
-    ds_param.setAlbedoTexture(td.getWhiteTexture());
+    ds_param.setAlbedoTexture(td.texture2DWhite());
 
     final R2ProjectionOrthographic proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());

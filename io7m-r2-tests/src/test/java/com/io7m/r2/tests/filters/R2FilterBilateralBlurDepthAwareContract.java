@@ -163,7 +163,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib,
         R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        td.texture2DWhite(),
         ib,
         R2ImageBufferUsableType::getRGBATexture,
         R2ImageBufferDescriptionScaler.get(), rtp);
@@ -247,7 +247,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib0,
         R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        td.texture2DWhite(),
         ib1,
         R2ImageBufferUsableType::getRGBATexture,
         R2ImageBufferDescriptionScaler.get(), rtp);
@@ -329,7 +329,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib,
         R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        td.texture2DWhite(),
         ib,
         R2ImageBufferUsableType::getRGBATexture,
         R2ImageBufferDescriptionScaler.get(), rtp);
@@ -411,7 +411,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib,
         R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        td.texture2DWhite(),
         ib,
         R2ImageBufferUsableType::getRGBATexture,
         R2ImageBufferDescriptionScaler.get(), rtp);
@@ -493,7 +493,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib,
         R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        td.texture2DWhite(),
         ib,
         R2ImageBufferUsableType::getRGBATexture,
         R2ImageBufferDescriptionScaler.get(), rtp);

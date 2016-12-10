@@ -66,7 +66,7 @@ public final class R2LightAmbientScreenSingle implements R2LightScreenSingleType
     NullCheck.notNull(in_defaults);
 
     return new R2LightAmbientScreenSingle(
-      q, pool.getFreshID(), in_defaults.getWhiteTexture());
+      q, pool.getFreshID(), in_defaults.texture2DWhite());
   }
 
   @Override

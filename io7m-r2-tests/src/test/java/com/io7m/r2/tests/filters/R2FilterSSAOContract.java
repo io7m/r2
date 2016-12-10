@@ -153,7 +153,7 @@ public abstract class R2FilterSSAOContract extends R2JCGLContract
 
     final R2FilterSSAOParametersMutable params =
       R2FilterSSAOParametersMutable.create();
-    params.setNoiseTexture(td.getNormalTexture());
+    params.setNoiseTexture(td.texture2DNormal());
     params.setOutputBuffer(abuffer);
     params.setKernel(k);
     params.setGeometryBuffer(gbuffer);

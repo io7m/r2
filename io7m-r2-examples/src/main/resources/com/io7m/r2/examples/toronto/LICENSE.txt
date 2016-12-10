@@ -1,0 +1,22 @@
+Title:
+
+  CN Tower 2
+  http://www.humus.name/index.php?page=Textures&ID=30
+
+Original author:
+
+  Emil Persson
+  http://humus.name
+
+Modified by io7m.com:
+
+  http://io7m.com
+
+Licensed under:
+
+  http://creativecommons.org/licenses/by/3.0/
+
+Modifications:
+
+  Scaling, marking of directions on cube faces.
+

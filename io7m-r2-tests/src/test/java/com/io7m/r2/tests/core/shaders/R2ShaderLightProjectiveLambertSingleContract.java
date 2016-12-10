@@ -59,6 +59,6 @@ public abstract class R2ShaderLightProjectiveLambertSingleContract
       R2ProjectionMesh.newMesh(
         g, p, JCGLUsageHint.USAGE_STATIC_DRAW, JCGLUsageHint.USAGE_STATIC_DRAW);
     return R2LightProjectiveWithoutShadow.newLight(
-      pm, td.getWhiteProjectiveTexture(), pool);
+      pm, td.texture2DProjectiveWhite(), pool);
   }
 }

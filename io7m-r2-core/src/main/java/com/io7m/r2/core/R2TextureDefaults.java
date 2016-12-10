@@ -16,13 +16,17 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jcanephora.core.JCGLCubeMapFaceRH;
 import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTexture2DUpdateType;
+import com.io7m.jcanephora.core.JCGLTextureCubeType;
+import com.io7m.jcanephora.core.JCGLTextureCubeUpdateType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLTextureUpdates;
+import com.io7m.jcanephora.core.JCGLTextureWrapR;
 import com.io7m.jcanephora.core.JCGLTextureWrapS;
 import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
@@ -52,21 +56,24 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
     LOG = LoggerFactory.getLogger(R2TextureDefaults.class);
   }
 
-  private final R2Texture2DType normal;
-  private final R2Texture2DType white;
-  private final R2Texture2DType black;
-  private final R2Texture2DType projective;
+  private final R2Texture2DType t2d_normal;
+  private final R2Texture2DType t2d_white;
+  private final R2Texture2DType t2d_black;
+  private final R2Texture2DType t2d_projective;
+  private final R2TextureCubeType cube_black;
 
   private R2TextureDefaults(
-    final R2Texture2DType in_white,
-    final R2Texture2DType in_normal,
-    final R2Texture2DType in_black,
-    final R2Texture2DType in_projective)
+    final R2Texture2DType in_t2d_white,
+    final R2Texture2DType in_t2d_normal,
+    final R2Texture2DType in_t2d_black,
+    final R2Texture2DType in_t2d_projective,
+    final R2TextureCubeType in_cube_black)
   {
-    this.white = NullCheck.notNull(in_white);
-    this.normal = NullCheck.notNull(in_normal);
-    this.black = NullCheck.notNull(in_black);
-    this.projective = NullCheck.notNull(in_projective);
+    this.t2d_white = NullCheck.notNull(in_t2d_white);
+    this.t2d_normal = NullCheck.notNull(in_t2d_normal);
+    this.t2d_black = NullCheck.notNull(in_t2d_black);
+    this.t2d_projective = NullCheck.notNull(in_t2d_projective);
+    this.cube_black = NullCheck.notNull(in_cube_black);
   }
 
   /**
@@ -89,16 +96,18 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
 
     final JCGLTextureUnitContextType cc = tc.unitContextNewWithReserved(3);
     try {
-      final R2Texture2DType t_n =
+      final R2Texture2DType t2d_n =
         R2TextureDefaults.newTextureRGB(g_t, cc, 0.5, 0.5, 1.0);
-      final R2Texture2DType t_w =
+      final R2Texture2DType t2d_w =
         R2TextureDefaults.newTextureRGB(g_t, cc, 1.0, 1.0, 1.0);
-      final R2Texture2DType t_b =
+      final R2Texture2DType t2d_b =
         R2TextureDefaults.newTextureRGB(g_t, cc, 0.0, 0.0, 0.0);
-      final R2Texture2DType t_proj =
+      final R2Texture2DType t2d_proj =
         R2TextureDefaults.newTextureProjectiveRGB(g_t, cc, 1.0, 1.0, 1.0);
+      final R2TextureCubeType tc_b =
+        R2TextureDefaults.newCubeRGB(g_t, cc, 0.0, 0.0, 0.0);
 
-      return new R2TextureDefaults(t_w, t_n, t_b, t_proj);
+      return new R2TextureDefaults(t2d_w, t2d_n, t2d_b, t2d_proj, tc_b);
     } finally {
       cc.unitContextFinish(g_t);
     }
@@ -156,6 +165,49 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
     return R2Texture2DStatic.of(t);
   }
 
+  private static R2TextureCubeType newCubeRGB(
+    final JCGLTexturesType g_tx,
+    final JCGLTextureUnitContextType cc,
+    final double r,
+    final double g,
+    final double b)
+  {
+    final Pair<JCGLTextureUnitType, JCGLTextureCubeType> p =
+      cc.unitContextAllocateTextureCube(
+        g_tx,
+        2L,
+        JCGLTextureFormat.TEXTURE_FORMAT_RGB_8_3BPP,
+        JCGLTextureWrapR.TEXTURE_WRAP_REPEAT,
+        JCGLTextureWrapS.TEXTURE_WRAP_REPEAT,
+        JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
+        JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
+        JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
+
+    final JCGLTextureCubeType t = p.getRight();
+    final JCGLTextureCubeUpdateType up =
+      JCGLTextureUpdates.newUpdateReplacingAllCube(t);
+    final ByteBuffer d = up.getData();
+    final JPRACursor2DType<JCGLRGB8Type> c =
+      JPRACursor2DByteBufferedUnchecked.newCursor(
+        d, 2, 2, JCGLRGB8ByteBuffered::newValueWithOffset);
+    final JCGLRGB8Type v = c.getElementView();
+
+    for (int y = 0; y < 2; ++y) {
+      for (int x = 0; x < 2; ++x) {
+        c.setElementPosition(x, y);
+        v.setR(r);
+        v.setG(g);
+        v.setB(b);
+      }
+    }
+
+    for (final JCGLCubeMapFaceRH face : JCGLCubeMapFaceRH.values()) {
+      g_tx.textureCubeUpdateRH(p.getLeft(), face, up);
+    }
+
+    return R2TextureCubeStatic.of(t);
+  }
+
   private static R2Texture2DType newTextureRGB(
     final JCGLTexturesType g_tx,
     final JCGLTextureUnitContextType cc,
@@ -197,45 +249,52 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
   }
 
   @Override
-  public R2Texture2DUsableType getNormalTexture()
+  public R2Texture2DUsableType texture2DNormal()
   {
-    return this.normal;
+    return this.t2d_normal;
   }
 
   @Override
-  public R2Texture2DUsableType getWhiteTexture()
+  public R2Texture2DUsableType texture2DWhite()
   {
-    return this.white;
+    return this.t2d_white;
   }
 
   @Override
-  public R2Texture2DUsableType getBlackTexture()
+  public R2Texture2DUsableType texture2DBlack()
   {
-    return this.black;
+    return this.t2d_black;
   }
 
   @Override
-  public R2Texture2DUsableType getWhiteProjectiveTexture()
+  public R2Texture2DUsableType texture2DProjectiveWhite()
   {
-    return this.projective;
+    return this.t2d_projective;
+  }
+
+  @Override
+  public R2TextureCubeUsableType textureCubeBlack()
+  {
+    return this.cube_black;
   }
 
   @Override
   public void delete(final JCGLInterfaceGL33Type g)
     throws R2Exception
   {
-    if (!this.normal.isDeleted()) {
+    if (!this.t2d_normal.isDeleted()) {
       R2TextureDefaults.LOG.debug("delete");
-      this.normal.delete(g);
-      this.white.delete(g);
-      this.black.delete(g);
-      this.projective.delete(g);
+      this.t2d_normal.delete(g);
+      this.t2d_white.delete(g);
+      this.t2d_black.delete(g);
+      this.t2d_projective.delete(g);
+      this.cube_black.delete(g);
     }
   }
 
   @Override
   public boolean isDeleted()
   {
-    return this.normal.isDeleted();
+    return this.t2d_normal.isDeleted();
   }
 }
