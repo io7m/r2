@@ -1,8 +1,0 @@
-(package-begin com.io7m.r2.shaders.tests.cursors)
-
-(record VertexUV [
-  (field position [vector [float 32] 3])
-  (field uv       [vector [float 32] 2])
-])
-
-(package-end)

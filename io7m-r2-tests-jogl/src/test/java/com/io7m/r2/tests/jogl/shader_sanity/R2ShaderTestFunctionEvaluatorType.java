@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.shaders.tests;
+package com.io7m.r2.tests.jogl.shader_sanity;
 
 import com.io7m.jtensors.VectorI2F;
 import com.io7m.jtensors.VectorI3F;

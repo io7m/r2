@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.shaders.tests;
+package com.io7m.r2.tests.jogl.shader_sanity;
 
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jtensors.VectorI4F;
@@ -36,7 +36,8 @@ public final class R2SanityTest extends R2ShaderTest
   {
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();
     final R2ShaderTestFunctionEvaluator eval =
-      new R2ShaderTestFunctionEvaluator(gg, "R2DebugIdentity");
+      new R2ShaderTestFunctionEvaluator(
+        gg, "R2DebugPositionOnly", "R2DebugIdentity");
 
     for (int index = 0; index < 10; ++index) {
       final VectorI4F in = new VectorI4F(

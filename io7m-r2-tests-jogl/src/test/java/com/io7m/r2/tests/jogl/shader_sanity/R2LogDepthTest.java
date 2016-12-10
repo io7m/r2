@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.shaders.tests;
+package com.io7m.r2.tests.jogl.shader_sanity;
 
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jtensors.VectorI2F;
@@ -51,7 +51,8 @@ public final class R2LogDepthTest extends R2ShaderTest
   {
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();
     final R2ShaderTestFunctionEvaluator eval =
-      new R2ShaderTestFunctionEvaluator(gg, "R2DebugLogDepth");
+      new R2ShaderTestFunctionEvaluator(
+        gg, "R2DebugPositionOnly", "R2DebugLogDepth");
 
     final List<VectorI2F> vectors = new ArrayList<>(16);
     vectors.add(new VectorI2F(0.0f, R2LogDepthTest.depthCoefficient(100.0f)));
@@ -73,7 +74,8 @@ public final class R2LogDepthTest extends R2ShaderTest
   {
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();
     final R2ShaderTestFunctionEvaluator eval =
-      new R2ShaderTestFunctionEvaluator(gg, "R2DebugLogDepthComposed");
+      new R2ShaderTestFunctionEvaluator(
+        gg, "R2DebugPositionOnly", "R2DebugLogDepthComposed");
 
     final List<VectorI2F> vectors = new ArrayList<>(16);
     vectors.add(new VectorI2F(0.0f, R2LogDepthTest.depthCoefficient(100.0f)));

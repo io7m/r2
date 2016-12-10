@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.io7m.r2</groupId>
   <artifactId>io7m-r2</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <name>io7m-r2</name>
@@ -29,7 +29,6 @@
     <module>io7m-r2-meshes-tools</module>
     <module>io7m-r2-meshes</module>
     <module>io7m-r2-shaders-core</module>
-    <module>io7m-r2-shaders-tests</module>
     <module>io7m-r2-spaces</module>
     <module>io7m-r2-tests-jogl</module>
     <module>io7m-r2-tests</module>
