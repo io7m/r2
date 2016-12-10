@@ -45,7 +45,11 @@ instance shaders provided by default are:
   [body
     [row
       [cell [link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2SurfaceShaderBasicSingle.html"] R2SurfaceShaderBasicSingle]]
-      [cell Basic textured surface with normal mapping, specular mapping, emission mapping, and conditional discarding based on alpha.]]]]
+      [cell Basic textured surface with normal mapping, specular mapping, emission mapping, and conditional discarding based on alpha.]]
+    [row
+      [cell [link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2SurfaceShaderBasicReflectiveSingle.html"] R2SurfaceShaderBasicReflectiveSingle]]
+      [cell Basic textured surface with pseudo reflections from a cube map, normal mapping, specular mapping, emission mapping, and conditional discarding based on alpha.]]
+  ]]
 
 [subsection [title Types] [id di.shaders.instance.types]]
 [paragraph]

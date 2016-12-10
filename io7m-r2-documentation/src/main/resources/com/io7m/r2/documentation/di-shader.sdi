@@ -82,6 +82,43 @@ is a common source of bugs in OpenGL programs and almost always results in
 either silent failure or corrupted visuals. The [term [type package] r2] package
 takes care to ensure that mistakes of that type are difficult to make.
 
+[subsection [title Shader Modules] [id di.shaders.modules]]
+[paragraph]
+Although the GLSL shading language is anti-modular in the sense that it has
+one large namespace, the [term [type package] r2] package attempts to relieve
+some of the pain of shader management by delegating to the
+[link-ext [target "http://io7m.github.io/sombrero"] sombrero] package. The
+[term [type package] sombrero] package provides a preprocessor for shader
+code, allowing shader code to make use of [term [type function] "#include"]
+directives. It also provides a system for publishing and importing modules
+full of shaders based internally on the standard Java
+[link-ext [target "https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html"] ServiceLoader]
+API. This allows users that want to write their own shaders to import much of
+the re-usable shader code from the [term [type package] r2] package into
+their own shaders without needing to do anything more than have the correct
+shader jar on the Java classpath [footnote-ref di.shaders.modules.classpath].
+
+[paragraph]
+As a simple example, if the user writing custom shaders wants to take advantage
+of the bilinear interpolation functions used in many [term [type package] r2]
+shaders, the following [term [type function] "#include"] is sufficient:
+
+[formal-item [title Include]]
+[verbatim "#include <com.io7m.r2.shaders.core/R2Bilinear.h>
+
+vec3 x = R2_bilinearInterpolate3(...);"]
+
+[paragraph]
+The text [term [type package] "com.io7m.r2.shaders.core"] is considered
+to be the module name, and the [term [type file] "R2Bilinear.h"] name
+refers to that file within the module. The [term [type package] sombrero]
+resolver maps the request to a concrete resource on the filesystem or in
+a jar file and returns the content for inclusion.
+
+[footnote [id di.shaders.modules.classpath]]
+The core of the [term [type package] r2] package depends directly on the
+shader package, so the correct jars will inevitably be on the classpath already.
+
 [subsection [title Types] [id di.shaders.types]]
 [paragraph]
 In the [term [type package] r2] package, shaders are instances of
