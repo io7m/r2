@@ -57,7 +57,7 @@ public abstract class R2ShaderFilterEmissionContract extends
       R2TextureDefaults.newDefaults(g_tex, tc_alloc);
     final R2ShaderFilterEmissionParametersMutable p =
       R2ShaderFilterEmissionParametersMutable.create();
-    p.setAlbedoEmissionTexture(td.getWhiteTexture());
+    p.setAlbedoEmissionTexture(td.texture2DWhite());
     return p;
   }
 

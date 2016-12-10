@@ -1,0 +1,7 @@
+name       = toronto
+positive-z = positive_z.png
+positive-y = positive_y.png
+positive-x = positive_x.png
+negative-z = negative_z.png
+negative-y = negative_y.png
+negative-x = negative_x.png

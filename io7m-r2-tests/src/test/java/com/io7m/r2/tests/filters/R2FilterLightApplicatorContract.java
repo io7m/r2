@@ -148,8 +148,8 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
 
     final R2FilterLightApplicatorParametersMutable params =
       R2FilterLightApplicatorParametersMutable.create();
-    params.setLightDiffuseTexture(td.getBlackTexture());
-    params.setLightSpecularTexture(td.getBlackTexture());
+    params.setLightDiffuseTexture(td.texture2DBlack());
+    params.setLightSpecularTexture(td.texture2DBlack());
     params.setGeometryBuffer(gbuffer);
     params.setOutputViewport(area);
     params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
@@ -218,8 +218,8 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
 
     final R2FilterLightApplicatorParametersMutable params =
       R2FilterLightApplicatorParametersMutable.create();
-    params.setLightDiffuseTexture(td.getBlackTexture());
-    params.setLightSpecularTexture(td.getBlackTexture());
+    params.setLightDiffuseTexture(td.texture2DBlack());
+    params.setLightSpecularTexture(td.texture2DBlack());
     params.setGeometryBuffer(gbuffer);
     params.setOutputViewport(area);
     params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED);
@@ -291,8 +291,8 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
 
     final R2FilterLightApplicatorParametersMutable params =
       R2FilterLightApplicatorParametersMutable.create();
-    params.setLightDiffuseTexture(td.getBlackTexture());
-    params.setLightSpecularTexture(td.getBlackTexture());
+    params.setLightDiffuseTexture(td.texture2DBlack());
+    params.setLightSpecularTexture(td.texture2DBlack());
     params.setGeometryBuffer(gbuffer);
     params.setOutputViewport(area);
     params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
@@ -363,8 +363,8 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
 
     final R2FilterLightApplicatorParametersMutable params =
       R2FilterLightApplicatorParametersMutable.create();
-    params.setLightDiffuseTexture(td.getBlackTexture());
-    params.setLightSpecularTexture(td.getBlackTexture());
+    params.setLightDiffuseTexture(td.texture2DBlack());
+    params.setLightSpecularTexture(td.texture2DBlack());
     params.setGeometryBuffer(gbuffer);
     params.setOutputViewport(area);
     params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED);

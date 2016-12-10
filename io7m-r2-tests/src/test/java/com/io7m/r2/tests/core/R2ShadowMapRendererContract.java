@@ -226,7 +226,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       R2IDPool.newPool();
     final R2DepthShaderBasicParametersMutable ds_param =
       R2DepthShaderBasicParametersMutable.create();
-    ds_param.setAlbedoTexture(td.getWhiteTexture());
+    ds_param.setAlbedoTexture(td.texture2DWhite());
 
     final R2ShaderPreprocessingEnvironmentType sources =
       ShaderPreprocessing.preprocessor();
@@ -277,7 +277,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
         JCGLUsageHint.USAGE_STATIC_DRAW,
         JCGLUsageHint.USAGE_STATIC_DRAW);
     final R2Texture2DUsableType image =
-      td.getWhiteProjectiveTexture();
+      td.texture2DProjectiveWhite();
 
     final R2DepthVarianceBufferDescription.Builder db =
       R2DepthVarianceBufferDescription.builder();
@@ -345,7 +345,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       R2IDPool.newPool();
     final R2DepthShaderBasicParametersMutable ds_param =
       R2DepthShaderBasicParametersMutable.create();
-    ds_param.setAlbedoTexture(td.getWhiteTexture());
+    ds_param.setAlbedoTexture(td.texture2DWhite());
 
     final R2ShaderPreprocessingEnvironmentType sources =
       ShaderPreprocessing.preprocessor();
@@ -394,7 +394,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
         JCGLUsageHint.USAGE_STATIC_DRAW,
         JCGLUsageHint.USAGE_STATIC_DRAW);
     final R2Texture2DUsableType image =
-      td.getWhiteProjectiveTexture();
+      td.texture2DProjectiveWhite();
 
     final R2DepthVarianceBufferDescription.Builder db =
       R2DepthVarianceBufferDescription.builder();

@@ -16,8 +16,8 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.JCGLTexture2DType;
-import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
+import com.io7m.jcanephora.core.JCGLTextureCubeType;
+import com.io7m.jcanephora.core.JCGLTextureCubeUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jnull.NullCheck;
@@ -28,12 +28,12 @@ import java.util.function.BiFunction;
  * A simple static texture.
  */
 
-public final class R2Texture2DStatic implements R2Texture2DType
+public final class R2TextureCubeStatic implements R2TextureCubeType
 {
-  private final JCGLTexture2DType texture;
+  private final JCGLTextureCubeType texture;
 
-  private R2Texture2DStatic(
-    final JCGLTexture2DType in_texture)
+  private R2TextureCubeStatic(
+    final JCGLTextureCubeType in_texture)
   {
     this.texture = NullCheck.notNull(in_texture);
   }
@@ -46,9 +46,9 @@ public final class R2Texture2DStatic implements R2Texture2DType
    * @return A texture
    */
 
-  public static R2Texture2DType of(final JCGLTexture2DType t)
+  public static R2TextureCubeType of(final JCGLTextureCubeType t)
   {
-    return new R2Texture2DStatic(t);
+    return new R2TextureCubeStatic(t);
   }
 
   @Override
@@ -58,12 +58,12 @@ public final class R2Texture2DStatic implements R2Texture2DType
   {
     if (!this.texture.isDeleted()) {
       final JCGLTexturesType g_tx = g.getTextures();
-      g_tx.texture2DDelete(this.texture);
+      g_tx.textureCubeDelete(this.texture);
     }
   }
 
   @Override
-  public JCGLTexture2DUsableType get()
+  public JCGLTextureCubeUsableType get()
   {
     return this.texture;
   }
@@ -75,7 +75,7 @@ public final class R2Texture2DStatic implements R2Texture2DType
   }
 
   @Override
-  public JCGLTexture2DType getReal()
+  public JCGLTextureCubeType getReal()
   {
     return this.texture;
   }
@@ -86,6 +86,6 @@ public final class R2Texture2DStatic implements R2Texture2DType
     final BiFunction<A, R2Texture2DUsableType, B> on_2d,
     final BiFunction<A, R2TextureCubeUsableType, B> on_cube)
   {
-    return on_2d.apply(context, this);
+    return on_cube.apply(context, this);
   }
 }

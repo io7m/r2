@@ -139,7 +139,7 @@ public abstract class R2FilterOcclusionApplicatorContract extends R2JCGLContract
     final R2FilterOcclusionApplicatorParametersMutable params =
       R2FilterOcclusionApplicatorParametersMutable.create();
     params.setIntensity(1.0f);
-    params.setOcclusionTexture(td.getBlackTexture());
+    params.setOcclusionTexture(td.texture2DBlack());
     params.setOutputLightBuffer(lbuffer);
 
     f.runFilter(pro_root, tc, params);

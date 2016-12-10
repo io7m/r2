@@ -177,7 +177,7 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
     this.depth_shader_params =
       R2DepthShaderBasicParametersMutable.create();
     this.depth_shader_params.setAlbedoTexture(
-      m.getTextureDefaults().getWhiteTexture());
+      m.getTextureDefaults().texture2DWhite());
 
     this.depth_shader =
       R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);

@@ -62,7 +62,7 @@ public interface R2GeometryBufferUsableType
     if (s_opt.isPresent()) {
       return s_opt.get();
     }
-    return td.getBlackTexture();
+    return td.texture2DBlack();
     // CHECKSTYLE:ON
   }
 

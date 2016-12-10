@@ -117,7 +117,7 @@ public abstract class R2DepthRendererContract extends R2JCGLContract
 
     final R2DepthShaderBasicParametersMutable ds_param =
       R2DepthShaderBasicParametersMutable.create();
-    ds_param.setAlbedoTexture(td.getWhiteTexture());
+    ds_param.setAlbedoTexture(td.texture2DWhite());
 
     final R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> mat =
       R2MaterialDepthSingle.newMaterial(id_pool, ds, ds_param);
