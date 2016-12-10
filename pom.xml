@@ -29,7 +29,6 @@
     <module>io7m-r2-meshes-tools</module>
     <module>io7m-r2-meshes</module>
     <module>io7m-r2-shaders-core</module>
-    <module>io7m-r2-shaders-tests</module>
     <module>io7m-r2-spaces</module>
     <module>io7m-r2-tests-jogl</module>
     <module>io7m-r2-tests</module>

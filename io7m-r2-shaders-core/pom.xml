@@ -23,6 +23,18 @@
     <developerConnection>${project.parent.scm.developerConnection}</developerConnection>
   </scm>
 
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>com.soebes.maven.plugins</groupId>
+        <artifactId>doxygen-maven-plugin</artifactId>
+        <configuration>
+          <configurationFile>src/main/doxygen/glsl.conf</configurationFile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
   <dependencies>
     <dependency>
       <groupId>com.io7m.jnull</groupId>

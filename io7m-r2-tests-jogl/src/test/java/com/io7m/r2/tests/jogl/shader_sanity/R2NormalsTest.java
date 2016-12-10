@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.shaders.tests;
+package com.io7m.r2.tests.jogl.shader_sanity;
 
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jtensors.VectorI2F;
@@ -59,7 +59,8 @@ public final class R2NormalsTest extends R2ShaderTest
     return new VectorI3F(x, y, z);
   }
 
-  @Test public void testNormals()
+  @Test
+  public void testNormals()
   {
     final List<VectorI3F> normals = new ArrayList<>(16);
     normals.add(new VectorI3F(0.0f, 0.0f, 1.0f));
@@ -80,12 +81,14 @@ public final class R2NormalsTest extends R2ShaderTest
     }
   }
 
-  @Test public void testNormalCompressionIdentity()
+  @Test
+  public void testNormalCompressionIdentity()
     throws Exception
   {
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();
     final R2ShaderTestFunctionEvaluator eval =
-      new R2ShaderTestFunctionEvaluator(gg, "R2DebugNormalCompression");
+      new R2ShaderTestFunctionEvaluator(
+        gg, "R2DebugPositionOnly", "R2DebugNormalCompression");
 
     final List<VectorI3F> vectors = new ArrayList<>(16);
     vectors.add(new VectorI3F(-1.0f, -1.0f, 0.0f));

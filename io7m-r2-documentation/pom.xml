@@ -31,7 +31,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>io7m-r2-shaders</artifactId>
+      <artifactId>io7m-r2-shaders-core</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
@@ -87,11 +87,6 @@
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
-          <artifactId>io7m-r2-shaders-checker</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
           <artifactId>io7m-r2-spaces</artifactId>
           <version>${project.version}</version>
         </dependency>
@@ -138,7 +133,7 @@
             </goals>
             <configuration>
               <includeGroupIds>${project.groupId}</includeGroupIds>
-              <includeArtifactIds>io7m-r2-shaders</includeArtifactIds>
+              <includeArtifactIds>io7m-r2-shaders-core</includeArtifactIds>
               <outputDirectory>${project.build.directory}/documentation/glsl/</outputDirectory>
             </configuration>
           </execution>
@@ -150,10 +145,9 @@
             </goals>
             <configuration>
               <includeGroupIds>${project.groupId}</includeGroupIds>
-              <includeArtifactIds>io7m-r2-shaders</includeArtifactIds>
+              <includeArtifactIds>io7m-r2-shaders-core</includeArtifactIds>
               <classifier>doxygen</classifier>
               <type>zip</type>
-              <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
               <outputDirectory>${project.build.directory}/documentation/doxygen/</outputDirectory>
             </configuration>
           </execution>

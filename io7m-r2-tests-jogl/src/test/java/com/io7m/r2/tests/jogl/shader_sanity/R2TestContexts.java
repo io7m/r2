@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.shaders.tests;
+package com.io7m.r2.tests.jogl.shader_sanity;
 
 import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jcanephora.core.JCGLExceptionNonCompliant;

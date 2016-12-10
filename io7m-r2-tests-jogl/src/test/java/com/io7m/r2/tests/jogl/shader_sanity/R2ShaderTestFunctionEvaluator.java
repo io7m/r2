@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.shaders.tests;
+package com.io7m.r2.tests.jogl.shader_sanity;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLFramebufferColorAttachmentPointType;
@@ -37,10 +37,16 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jpra.runtime.java.JPRACursor2DByteBufferedChecked;
 import com.io7m.jpra.runtime.java.JPRACursor2DType;
 import com.io7m.jtensors.VectorI4F;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
+import com.io7m.sombrero.core.SoShaderResolver;
+import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.OptionalInt;
 
 public final class R2ShaderTestFunctionEvaluator
   implements R2ShaderTestFunctionEvaluatorType
@@ -52,7 +58,8 @@ public final class R2ShaderTestFunctionEvaluator
 
   public R2ShaderTestFunctionEvaluator(
     final JCGLInterfaceGL33Type gg,
-    final String shader_name)
+    final String v_shader_name,
+    final String f_shader_name)
     throws IOException
   {
     final JCGLShadersType gs = gg.getShaders();
@@ -66,8 +73,18 @@ public final class R2ShaderTestFunctionEvaluator
       JCGLTextureFormat.TEXTURE_FORMAT_RGBA_32F_16BPP;
     this.framebuffer =
       R2ShadersTestUtilities.newColorFramebuffer(gg, fmt, 2, 2);
+
+    final SoShaderPreprocessorConfig config =
+      SoShaderPreprocessorConfig.of(
+        SoShaderResolver.create(),
+        OptionalInt.of(330));
+    final R2ShaderPreprocessingEnvironmentType env =
+      R2ShaderPreprocessingEnvironment.create(
+        SoShaderPreprocessorJCPP.create(config));
+
     this.program =
-      R2ShadersTestUtilities.compilerShaderVF(gs, shader_name);
+      R2ShadersTestUtilities.compilerShaderVF(
+        gs, env, v_shader_name, f_shader_name);
     this.quad =
       R2ShadersTestUtilities.newScreenQuad(gg);
     this.gl = NullCheck.notNull(gg);

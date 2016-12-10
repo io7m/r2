@@ -1,4 +1,4 @@
-package com.io7m.r2.tests.shaders;
+package com.io7m.r2.tests.jogl.shader_sanity;
 
 import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;

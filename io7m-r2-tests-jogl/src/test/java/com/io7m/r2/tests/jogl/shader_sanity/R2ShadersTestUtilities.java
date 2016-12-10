@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.shaders.tests;
+package com.io7m.r2.tests.jogl.shader_sanity;
 
 import com.io7m.jcanephora.core.JCGLArrayBufferType;
 import com.io7m.jcanephora.core.JCGLArrayObjectBuilderType;
@@ -52,19 +52,19 @@ import com.io7m.jpra.runtime.java.JPRACursor1DType;
 import com.io7m.jtensors.Vector2FType;
 import com.io7m.jtensors.Vector3FType;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.shaders.R2Shaders;
-import com.io7m.r2.shaders.tests.cursors.VertexUVByteBuffered;
-import com.io7m.r2.shaders.tests.cursors.VertexUVType;
-import org.apache.commons.io.IOUtils;
+import com.io7m.r2.core.cursors.R2VertexPU32ByteBuffered;
+import com.io7m.r2.core.cursors.R2VertexPU32Type;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.sombrero.core.SoShaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.IntBuffer;
-import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public final class R2ShadersTestUtilities
 {
@@ -115,7 +115,7 @@ public final class R2ShadersTestUtilities
       g_ib.indexBufferUnbind();
     }
 
-    final int vertex_size = VertexUVByteBuffered.sizeInOctets();
+    final int vertex_size = R2VertexPU32ByteBuffered.sizeInOctets();
     final JCGLArrayBufferType ab =
       g_ab.arrayBufferAllocate(
         (long) vertex_size * 4L, JCGLUsageHint.USAGE_STATIC_DRAW);
@@ -124,10 +124,10 @@ public final class R2ShadersTestUtilities
       final JCGLBufferUpdateType<JCGLArrayBufferType> u =
         JCGLBufferUpdates.newUpdateReplacingAll(ab);
 
-      final JPRACursor1DType<VertexUVType> c =
+      final JPRACursor1DType<R2VertexPU32Type> c =
         JPRACursor1DByteBufferedChecked.newCursor(
-          u.getData(), VertexUVByteBuffered::newValueWithOffset);
-      final VertexUVType v = c.getElementView();
+          u.getData(), R2VertexPU32ByteBuffered::newValueWithOffset);
+      final R2VertexPU32Type v = c.getElementView();
       final Vector3FType pv = v.getPositionWritable();
       final Vector2FType uv = v.getUvWritable();
 
@@ -159,7 +159,7 @@ public final class R2ShadersTestUtilities
       3,
       JCGLScalarType.TYPE_FLOAT,
       vertex_size,
-      (long) VertexUVByteBuffered.metaPositionStaticOffsetFromType(),
+      (long) R2VertexPU32ByteBuffered.metaPositionStaticOffsetFromType(),
       false);
     aob.setAttributeFloatingPoint(
       1,
@@ -167,7 +167,7 @@ public final class R2ShadersTestUtilities
       2,
       JCGLScalarType.TYPE_FLOAT,
       vertex_size,
-      (long) VertexUVByteBuffered.metaUvStaticOffsetFromType(),
+      (long) R2VertexPU32ByteBuffered.metaUvStaticOffsetFromType(),
       false);
 
     final JCGLArrayObjectType ao = g_ao.arrayObjectAllocate(aob);
@@ -191,7 +191,7 @@ public final class R2ShadersTestUtilities
     final List<JCGLTextureUnitType> units = gt.textureGetUnits();
     final JCGLTextureUnitType u = units.get(0);
     final JCGLTexture2DType t =
-      R2ShadersTestUtilities.newTexture2D(g, f, w, h, u);
+      newTexture2D(g, f, w, h, u);
 
     fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), t);
     return fb.framebufferAllocate(fbb);
@@ -218,29 +218,28 @@ public final class R2ShadersTestUtilities
 
   static JCGLProgramShaderType compilerShaderVF(
     final JCGLShadersType gs,
-    final String name)
+    final R2ShaderPreprocessingEnvironmentReadableType env,
+    final String v_name,
+    final String f_name)
     throws IOException
   {
-    final String v_path = "/com/io7m/r2/shaders/" + name + ".vert";
-    final String f_path = "/com/io7m/r2/shaders/" + name + ".frag";
-    final Class<R2Shaders> cl = R2Shaders.class;
-    final List<String> vs =
-      IOUtils.readLines(cl.getResourceAsStream(v_path), StandardCharsets.UTF_8)
-        .stream()
-        .map(line -> {
-          R2ShadersTestUtilities.LOG.trace("[{}][vertex]: {}", name, line);
-          return line + "\n";
-        }).collect(Collectors.toList());
-    final List<String> fs =
-      IOUtils.readLines(cl.getResourceAsStream(f_path), StandardCharsets.UTF_8)
-        .stream()
-        .map(line -> {
-          R2ShadersTestUtilities.LOG.trace("[{}][fragment]: {}", name, line);
-          return line + "\n";
-        }).collect(Collectors.toList());
+    try {
+      final String v_path = "com.io7m.r2.shaders.core/" + v_name + ".vert";
+      final String f_path = "com.io7m.r2.shaders.core/" + f_name + ".frag";
 
-    final JCGLVertexShaderType v = gs.shaderCompileVertex(name, vs);
-    final JCGLFragmentShaderType f = gs.shaderCompileFragment(name, fs);
-    return gs.shaderLinkProgram(name, v, Optional.empty(), f);
+      final List<String> v_lines =
+        env.preprocessor().preprocessFile(Collections.emptyMap(), v_path);
+      final List<String> f_lines =
+        env.preprocessor().preprocessFile(Collections.emptyMap(), f_path);
+      final JCGLVertexShaderType v =
+        gs.shaderCompileVertex(v_name, v_lines);
+      final JCGLFragmentShaderType f =
+        gs.shaderCompileFragment(f_name, f_lines);
+      return gs.shaderLinkProgram(
+        "(" + v_name + " + " + f_name + ")", v, Optional.empty(), f);
+
+    } catch (final SoShaderException e) {
+      throw new IOException(e);
+    }
   }
 }
