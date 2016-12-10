@@ -147,11 +147,11 @@ public final class R2DepthShaderBasicBatched extends
     NullCheck.notNull(values);
 
     this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.getAlbedoTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().get());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, this.unit_albedo);
     g_sh.shaderUniformPutFloat(
-      this.u_alpha_discard_threshold, values.getAlphaDiscardThreshold());
+      this.u_alpha_discard_threshold, values.alphaDiscardThreshold());
   }
 }

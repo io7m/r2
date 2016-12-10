@@ -29,8 +29,11 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
@@ -77,8 +80,8 @@ public abstract class R2DepthShaderBasicSingleContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> s =
-      R2SurfaceShaderBasicSingle.newShader(
+    final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> s =
+      R2DepthShaderBasicSingle.newShader(
         g.getShaders(),
         sources,
         pool);

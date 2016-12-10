@@ -54,6 +54,7 @@ import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
@@ -80,16 +81,16 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
-    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> ds =
+    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> ds =
       R2SurfaceShaderBasicSingle.newShader(
         g.getShaders(),
         sources,
         id_pool);
 
     final R2SurfaceShaderBasicParameters ds_param =
-      R2SurfaceShaderBasicParameters.newParameters(td);
+      R2SurfaceShaderBasicParameters.of(td);
 
-    final R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> mat =
+    final R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> mat =
       R2MaterialOpaqueSingle.newMaterial(id_pool, ds, ds_param);
 
     final R2SceneOpaquesType s = R2SceneOpaques.newOpaques();

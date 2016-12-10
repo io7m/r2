@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.shaders.R2SurfaceShaderBasicBatchedContract;
@@ -39,7 +40,7 @@ public final class R2ShaderSurfaceBasicBatchedTest extends
   }
 
   @Override
-  protected R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters>
+  protected R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParametersType>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,

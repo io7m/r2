@@ -41,8 +41,8 @@ import java.util.Optional;
  */
 
 public final class R2SurfaceShaderBasicBatched extends
-  R2AbstractShader<R2SurfaceShaderBasicParameters>
-  implements R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters>
+  R2AbstractShader<R2SurfaceShaderBasicParametersType>
+  implements R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParametersType>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_view;
@@ -141,7 +141,7 @@ public final class R2SurfaceShaderBasicBatched extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters>
+  public static R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParametersType>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -152,9 +152,9 @@ public final class R2SurfaceShaderBasicBatched extends
   }
 
   @Override
-  public Class<R2SurfaceShaderBasicParameters> getShaderParametersType()
+  public Class<R2SurfaceShaderBasicParametersType> getShaderParametersType()
   {
-    return R2SurfaceShaderBasicParameters.class;
+    return R2SurfaceShaderBasicParametersType.class;
   }
 
   @Override
@@ -186,7 +186,7 @@ public final class R2SurfaceShaderBasicBatched extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2SurfaceShaderBasicParameters values)
+    final R2SurfaceShaderBasicParametersType values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(g_sh);
@@ -194,13 +194,13 @@ public final class R2SurfaceShaderBasicBatched extends
     NullCheck.notNull(values);
 
     this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.getAlbedoTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().get());
     this.unit_emission =
-      tc.unitContextBindTexture2D(g_tex, values.getEmissionTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().get());
     this.unit_normal =
-      tc.unitContextBindTexture2D(g_tex, values.getNormalTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.normalTexture().get());
     this.unit_specular =
-      tc.unitContextBindTexture2D(g_tex, values.getSpecularTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.specularTexture().get());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, this.unit_albedo);
@@ -212,19 +212,19 @@ public final class R2SurfaceShaderBasicBatched extends
       this.u_texture_specular, this.unit_specular);
 
     g_sh.shaderUniformPutVector4f(
-      this.u_albedo_color, values.getAlbedoColor());
+      this.u_albedo_color, values.albedoColor());
     g_sh.shaderUniformPutFloat(
-      this.u_albedo_mix, values.getAlbedoMix());
+      this.u_albedo_mix, values.albedoMix());
 
     g_sh.shaderUniformPutFloat(
-      this.u_emission_amount, values.getEmission());
+      this.u_emission_amount, values.emission());
 
     g_sh.shaderUniformPutVector3f(
-      this.u_specular_color, values.getSpecularColor());
+      this.u_specular_color, values.specularColor());
     g_sh.shaderUniformPutFloat(
-      this.u_specular_exponent, values.getSpecularExponent());
+      this.u_specular_exponent, values.specularExponent());
 
     g_sh.shaderUniformPutFloat(
-      this.u_alpha_discard_threshold, values.getAlphaDiscardThreshold());
+      this.u_alpha_discard_threshold, values.alphaDiscardThreshold());
   }
 }

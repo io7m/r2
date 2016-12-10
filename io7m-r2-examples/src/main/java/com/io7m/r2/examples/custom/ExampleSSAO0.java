@@ -72,7 +72,8 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersMutable;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -122,15 +123,15 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private JCGLClearSpecification screen_clear_spec;
 
   private R2GeometryBufferType geom_buffer;
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> geom_shader;
-  private R2SurfaceShaderBasicParameters geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> geom_shader;
+  private R2SurfaceShaderBasicParametersMutable geom_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> geom_material;
 
   private R2UnitSphereType sphere;
   private R2InstanceBatchedDynamicType batched_instance;
   private R2TransformSOT[] batched_transforms;
-  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
-  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
+  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParametersType> batched_geom_shader;
+  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParametersType> batched_geom_material;
 
   // Compositor
 
@@ -366,9 +367,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     this.geom_shader =
       R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     this.geom_shader_params =
-      R2SurfaceShaderBasicParameters.newParameters(
-        m.getTextureDefaults());
-    this.geom_shader_params.getSpecularColor().set3F(1.0f, 1.0f, 1.0f);
+      R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
+    this.geom_shader_params.specularColor().set3F(1.0f, 1.0f, 1.0f);
     this.geom_shader_params.setSpecularExponent(64.0f);
     this.geom_material = R2MaterialOpaqueSingle.newMaterial(
       id_pool, this.geom_shader, this.geom_shader_params);

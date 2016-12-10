@@ -134,7 +134,8 @@ import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersMutable;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
@@ -208,9 +209,9 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
   private R2ImageBufferType ibuffer;
   private R2AmbientOcclusionBufferType abuffer;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> geom_shader;
-  private R2SurfaceShaderBasicParameters geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> geom_shader;
+  private R2SurfaceShaderBasicParametersMutable geom_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> geom_material;
 
   private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
@@ -231,21 +232,21 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
   private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
 
   private R2InstanceSingleType golden;
-  private R2SurfaceShaderBasicParameters golden_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> golden_material;
+  private R2SurfaceShaderBasicParametersMutable golden_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> golden_material;
   private R2DepthShaderBasicParametersMutable golden_depth_params;
   private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> golden_depth_material;
 
   private R2InstanceSingleType glow;
-  private R2SurfaceShaderBasicParameters glow_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> glow_material;
+  private R2SurfaceShaderBasicParametersMutable glow_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> glow_material;
   private R2DepthShaderBasicParametersMutable glow_depth_params;
   private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> glow_depth_material;
 
   private R2InstanceBatchedDynamicType batched_instance;
   private R2TransformSOT[] batched_transforms;
-  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
-  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
+  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParametersType> batched_geom_shader;
+  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParametersType> batched_geom_material;
 
   private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
   private R2FilterLightApplicatorParametersMutable filter_light_params;
@@ -600,9 +601,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         sources,
         id_pool);
     this.geom_shader_params =
-      R2SurfaceShaderBasicParameters.newParameters(
-        m.getTextureDefaults());
-    this.geom_shader_params.getSpecularColor().set3F(1.0f, 1.0f, 1.0f);
+      R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
+    this.geom_shader_params.specularColor().set3F(1.0f, 1.0f, 1.0f);
     this.geom_shader_params.setSpecularExponent(64.0f);
     this.geom_shader_params.setAlbedoTexture(
       serv.getTexture2D("halls_complex_albedo.png"));
@@ -622,9 +622,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           PMatrixI3x3F.identity());
 
       this.golden_shader_params =
-        R2SurfaceShaderBasicParameters.newParameters(
-          m.getTextureDefaults());
-      this.golden_shader_params.getAlbedoColor().set4F(0.0f, 0.0f, 0.0f, 0.0f);
+        R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
+      this.golden_shader_params.albedoColor().set4F(0.0f, 0.0f, 0.0f, 0.0f);
       this.golden_shader_params.setAlbedoTexture(
         serv.getTexture2D("golden_albedo.png"));
       this.golden_shader_params.setAlbedoMix(1.0f);
@@ -637,7 +636,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         R2DepthShaderBasicParametersMutable.create();
       this.golden_depth_params.setAlphaDiscardThreshold(0.1f);
       this.golden_depth_params.setAlbedoTexture(
-        this.golden_shader_params.getAlbedoTexture());
+        this.golden_shader_params.albedoTexture());
       this.golden_depth_material = R2MaterialDepthSingle.newMaterial(
         m.getIDPool(), this.depth_shader, this.golden_depth_params);
     }
@@ -654,9 +653,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
           PMatrixI3x3F.identity());
 
       this.glow_shader_params =
-        R2SurfaceShaderBasicParameters.newParameters(
-          m.getTextureDefaults());
-      this.glow_shader_params.getAlbedoColor().set4F(1.0f, 1.0f, 1.0f, 1.0f);
+        R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
+      this.glow_shader_params.albedoColor().set4F(1.0f, 1.0f, 1.0f, 1.0f);
       this.glow_shader_params.setAlbedoMix(0.0f);
       this.glow_shader_params.setAlphaDiscardThreshold(0.0f);
       this.glow_shader_params.setEmission(1.0f);
@@ -668,7 +666,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         R2DepthShaderBasicParametersMutable.create();
       this.glow_depth_params.setAlphaDiscardThreshold(0.0f);
       this.glow_depth_params.setAlbedoTexture(
-        this.glow_shader_params.getAlbedoTexture());
+        this.glow_shader_params.albedoTexture());
       this.glow_depth_material = R2MaterialDepthSingle.newMaterial(
         m.getIDPool(), this.depth_shader, this.glow_depth_params);
     }

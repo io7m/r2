@@ -53,6 +53,7 @@ import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -79,9 +80,9 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
 
   private R2ProjectionFOV projection;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> shader;
   private R2SurfaceShaderBasicParameters shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> material;
 
   private R2UnitSphereType sphere;
   private R2InstanceSingleType instance;
@@ -167,12 +168,10 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
         sources,
         id_pool);
     this.shader_params =
-      R2SurfaceShaderBasicParameters.newParameters(m.getTextureDefaults());
+      R2SurfaceShaderBasicParameters.of(m.getTextureDefaults());
 
     this.material = R2MaterialOpaqueSingle.newMaterial(
-      id_pool,
-      this.shader,
-      this.shader_params);
+      id_pool, this.shader, this.shader_params);
 
     this.depth_shader_params =
       R2DepthShaderBasicParametersMutable.create();
