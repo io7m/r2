@@ -98,13 +98,13 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
 
     final R2AmbientOcclusionBufferUsableType b0 = p.get(tc_root, desc);
     Assert.assertFalse(b0.isDeleted());
-    Assert.assertEquals(area, b0.getArea());
+    Assert.assertEquals(area, b0.area());
 
     p.returnValue(tc_root, b0);
 
     final R2AmbientOcclusionBufferUsableType b1 = p.get(tc_root, desc);
     Assert.assertFalse(b1.isDeleted());
-    Assert.assertEquals(area, b1.getArea());
+    Assert.assertEquals(area, b1.area());
     Assert.assertEquals(b0, b1);
 
     p.returnValue(tc_root, b1);

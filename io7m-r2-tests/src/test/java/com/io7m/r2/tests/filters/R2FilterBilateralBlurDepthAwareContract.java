@@ -162,10 +162,10 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2ImageBufferUsableType> params =
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         td.texture2DWhite(),
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         R2ImageBufferDescriptionScaler.get(), rtp);
 
     params.setSourceRenderTarget(ib);
@@ -178,7 +178,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -246,10 +246,10 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2ImageBufferUsableType> params =
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib0,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         td.texture2DWhite(),
         ib1,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         R2ImageBufferDescriptionScaler.get(), rtp);
 
     params.setSourceRenderTarget(ib0);
@@ -262,7 +262,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib1.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib1.primaryFramebuffer()));
   }
 
   @Test
@@ -328,10 +328,10 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2ImageBufferUsableType> params =
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         td.texture2DWhite(),
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         R2ImageBufferDescriptionScaler.get(), rtp);
 
     params.setSourceRenderTarget(ib);
@@ -344,7 +344,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -410,10 +410,10 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2ImageBufferUsableType> params =
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         td.texture2DWhite(),
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         R2ImageBufferDescriptionScaler.get(), rtp);
 
     params.setSourceRenderTarget(ib);
@@ -426,7 +426,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -492,10 +492,10 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2ImageBufferUsableType> params =
       R2FilterBilateralBlurDepthAwareParameters.newParameters(
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         td.texture2DWhite(),
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
+        R2ImageBufferUsableType::imageTexture,
         R2ImageBufferDescriptionScaler.get(), rtp);
 
     params.setSourceRenderTarget(ib);
@@ -508,6 +508,6 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 }

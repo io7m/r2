@@ -190,9 +190,9 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+      this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
     /**
      * Upload the scene's depth coefficient.
@@ -200,7 +200,7 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
 
     /**
      * Transform the light's direction to eye-space and upload it.
@@ -210,10 +210,10 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
     this.direction_world.copyFrom3F(direction);
     this.direction_world.setWF(0.0f);
 
-    final R2TransformContextType trc = m.getTransformContext();
+    final R2TransformContextType trc = m.transformContext();
     PMatrixM4x4F.multiplyVector4F(
-      trc.getContextPM4F(),
-      m.getMatrixView(),
+      trc.contextPM4F(),
+      m.matrixView(),
       this.direction_world,
       this.direction_eye);
 
@@ -227,8 +227,8 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_directional_color, values.getColor());
+      this.u_light_directional_color, values.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_directional_intensity, values.getIntensity());
+      this.u_light_directional_intensity, values.intensity());
   }
 }

@@ -29,7 +29,7 @@ public interface R2LightWritableType
    * @return The readable/writable light color
    */
 
-  PVector3FType<R2SpaceRGBType> getColorWritable();
+  PVector3FType<R2SpaceRGBType> colorWritable();
 
   /**
    * Set the current light intensity

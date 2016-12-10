@@ -256,13 +256,13 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
    */
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.array_object;
   }
 
   @Override
-  public R2ProjectionReadableType getProjectionReadable()
+  public R2ProjectionReadableType projectionReadable()
   {
     return this.projection;
   }
@@ -359,7 +359,7 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
   }
 
   @Override
-  public R2ProjectionType getProjectionWritable()
+  public R2ProjectionType projectionWritable()
   {
     return this.projection;
   }

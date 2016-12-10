@@ -34,7 +34,7 @@ public interface R2ShaderFilterOcclusionApplicatorParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getTexture();
+  R2Texture2DUsableType texture();
 
   /**
    * @return The occlusion intensity
@@ -42,7 +42,7 @@ public interface R2ShaderFilterOcclusionApplicatorParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getIntensity()
+  default float intensity()
   {
     return 1.0f;
   }

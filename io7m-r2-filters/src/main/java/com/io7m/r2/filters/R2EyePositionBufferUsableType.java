@@ -33,17 +33,17 @@ public interface R2EyePositionBufferUsableType extends JCGLResourceSizedType,
    * @return The eye-position texture
    */
 
-  R2Texture2DUsableType getEyePositionTexture();
+  R2Texture2DUsableType eyePositionTexture();
 
   /**
    * @return The framebuffer
    */
 
-  JCGLFramebufferUsableType getFramebuffer();
+  JCGLFramebufferUsableType framebuffer();
 
   /**
    * @return The viewport area
    */
 
-  AreaInclusiveUnsignedLType getArea();
+  AreaInclusiveUnsignedLType area();
 }

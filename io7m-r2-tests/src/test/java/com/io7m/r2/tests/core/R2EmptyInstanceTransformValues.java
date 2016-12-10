@@ -31,21 +31,21 @@ public final class R2EmptyInstanceTransformValues implements
 {
   @Override
   public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-  getMatrixModelView()
+  matrixModelView()
   {
     return PMatrixDirectM4x4F.newMatrix();
   }
 
   @Override
   public PMatrixDirectReadable3x3FType<R2SpaceObjectType,
-    R2SpaceNormalEyeType> getMatrixNormal()
+    R2SpaceNormalEyeType> matrixNormal()
   {
     return PMatrixDirectM3x3F.newMatrix();
   }
 
   @Override
   public PMatrixDirectReadable3x3FType<R2SpaceTextureType,
-    R2SpaceTextureType> getMatrixUV()
+    R2SpaceTextureType> matrixUV()
   {
     return PMatrixDirectM3x3F.newMatrix();
   }

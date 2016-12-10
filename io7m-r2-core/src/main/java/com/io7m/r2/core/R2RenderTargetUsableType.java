@@ -38,19 +38,19 @@ public interface R2RenderTargetUsableType<D extends
    * @return The framebuffer
    */
 
-  JCGLFramebufferUsableType getPrimaryFramebuffer();
+  JCGLFramebufferUsableType primaryFramebuffer();
 
   /**
    * @return The viewport area
    */
 
-  AreaInclusiveUnsignedLType getArea();
+  AreaInclusiveUnsignedLType area();
 
   /**
    * @return The description used to create the render target
    */
 
-  D getDescription();
+  D description();
 
   /**
    * Clear the primary framebuffer to render target specific default values,

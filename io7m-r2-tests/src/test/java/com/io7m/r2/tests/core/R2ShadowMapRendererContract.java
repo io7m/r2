@@ -241,7 +241,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2InstanceSingleType i =
       R2InstanceSingle.newInstance(
         id_pool,
-        quad.getArrayObject(),
+        quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
@@ -295,14 +295,14 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2DepthVarianceBufferDescription desc = db.build();
 
     final R2ShadowDepthVariance shadow =
-      R2ShadowDepthVariance.of(id_pool.getFreshID(), desc);
+      R2ShadowDepthVariance.of(id_pool.freshID(), desc);
 
     final R2LightProjectiveWithShadowVarianceType ls =
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 
-    final R2TransformOTType tr = ls.getTransformWritable();
-    tr.getTranslation().set3F(0.0f, 0.0f, 10.0f);
+    final R2TransformOTType tr = ls.transformWritable();
+    tr.translation().set3F(0.0f, 0.0f, 10.0f);
 
     rc.shadowExecRenderLight(R2FakeProfilingContext.newFake(), tc, m, ls, di);
 
@@ -310,9 +310,9 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       rc.shadowExecComplete();
 
     final R2Texture2DUsableType rt_map = mc.shadowMapGet(ls);
-    final JCGLTexture2DUsableType map = rt_map.get();
+    final JCGLTexture2DUsableType map = rt_map.texture();
     Assert.assertEquals(
-      map.textureGetArea(), desc.getArea());
+      map.textureGetArea(), desc.area());
     Assert.assertEquals(
       map.textureGetWrapS(), JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE);
     Assert.assertEquals(
@@ -360,7 +360,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2InstanceSingleType i =
       R2InstanceSingle.newInstance(
         id_pool,
-        quad.getArrayObject(),
+        quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
@@ -412,14 +412,14 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2DepthVarianceBufferDescription desc = db.build();
 
     final R2ShadowDepthVariance shadow =
-      R2ShadowDepthVariance.of(id_pool.getFreshID(), desc);
+      R2ShadowDepthVariance.of(id_pool.freshID(), desc);
 
     final R2LightProjectiveWithShadowVarianceType ls =
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 
-    final R2TransformOTType tr = ls.getTransformWritable();
-    tr.getTranslation().set3F(0.0f, 0.0f, 10.0f);
+    final R2TransformOTType tr = ls.transformWritable();
+    tr.translation().set3F(0.0f, 0.0f, 10.0f);
 
     final R2ShadowMapContextUsableType mc =
       rc.shadowExecComplete();

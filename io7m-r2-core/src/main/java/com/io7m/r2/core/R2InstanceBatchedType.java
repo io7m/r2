@@ -36,7 +36,7 @@ public interface R2InstanceBatchedType extends R2InstanceType
    * @return The instance array object
    */
 
-  JCGLArrayObjectType getArrayObject();
+  JCGLArrayObjectType arrayObject();
 
   /**
    * Update any data required for rendering on the GPU.
@@ -53,5 +53,5 @@ public interface R2InstanceBatchedType extends R2InstanceType
    * @return The number of instances that will be rendered.
    */
 
-  int getRenderCount();
+  int renderCount();
 }

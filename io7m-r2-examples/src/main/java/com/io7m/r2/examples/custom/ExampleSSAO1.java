@@ -222,10 +222,10 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       this.filter_blur_ssao_params =
         R2FilterBilateralBlurDepthAwareParameters.newParameters(
           this.ssao_buffer,
-          R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
-          this.geom_buffer.getDepthTexture(),
+          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
+          this.geom_buffer.depthTexture(),
           this.ssao_buffer,
-          R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
+          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
           (d, a) -> {
             final R2AmbientOcclusionBufferDescription.Builder b =
               R2AmbientOcclusionBufferDescription.builder();
@@ -255,7 +255,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
         R2FilterCompositorParameters.builder();
 
       b.addItems(R2FilterCompositorItem.of(
-        this.ssao_buffer.getAmbientOcclusionTexture(),
+        this.ssao_buffer.ambientOcclusionTexture(),
         area,
         1.0f,
         Optional.empty()));
@@ -264,7 +264,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       final long y = 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getAlbedoEmissiveTexture(),
+        this.geom_buffer.albedoEmissiveTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -274,7 +274,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getNormalTexture(),
+        this.geom_buffer.normalTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -294,7 +294,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getDepthTexture(),
+        this.geom_buffer.depthTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -335,7 +335,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
         id_pool,
         g.getArrayBuffers(),
         g.getArrayObjects(),
-        this.sphere.getArrayObject(),
+        this.sphere.arrayObject(),
         instance_count);
 
     this.batched_transforms = new R2TransformSOT[instance_count];
@@ -431,7 +431,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       final JCGLTextureUnitContextParentType uc =
         t.main.getTextureUnitAllocator().getRootContext();
       final JCGLFramebufferUsableType gbuffer_fb =
-        t.geom_buffer.getPrimaryFramebuffer();
+        t.geom_buffer.primaryFramebuffer();
 
       final JCGLFramebuffersType g_fb =
         t.g33.getFramebuffers();
@@ -457,10 +457,10 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
         mo,
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
-        t.geom_buffer.getArea(),
+        t.geom_buffer.area(),
         t.stencils);
       t.main.getGeometryRenderer().renderGeometry(
-        t.geom_buffer.getArea(),
+        t.geom_buffer.area(),
         Optional.empty(),
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),

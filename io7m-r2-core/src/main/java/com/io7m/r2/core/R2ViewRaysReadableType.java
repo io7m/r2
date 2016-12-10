@@ -28,47 +28,47 @@ public interface R2ViewRaysReadableType
    * @return The x0y0 origin
    */
 
-  VectorReadable4FType getOriginX0Y0();
+  VectorReadable4FType originX0Y0();
 
   /**
    * @return The x0y1 origin
    */
 
-  VectorReadable4FType getOriginX0Y1();
+  VectorReadable4FType originX0Y1();
 
   /**
    * @return The x1y0 origin
    */
 
-  VectorReadable4FType getOriginX1Y0();
+  VectorReadable4FType originX1Y0();
 
   /**
    * @return The x1y1 origin
    */
 
-  VectorReadable4FType getOriginX1Y1();
+  VectorReadable4FType originX1Y1();
 
   /**
    * @return The x0y0 view ray
    */
 
-  VectorReadable4FType getRayX0Y0();
+  VectorReadable4FType rayX0Y0();
 
   /**
    * @return The x0y1 view ray
    */
 
-  VectorReadable4FType getRayX0Y1();
+  VectorReadable4FType rayX0Y1();
 
   /**
    * @return The x1y0 view ray
    */
 
-  VectorReadable4FType getRayX1Y0();
+  VectorReadable4FType rayX1Y0();
 
   /**
    * @return The x1y1 view ray
    */
 
-  VectorReadable4FType getRayX1Y1();
+  VectorReadable4FType rayX1Y1();
 }

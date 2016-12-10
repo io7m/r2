@@ -93,9 +93,9 @@ public final class R2DepthInstances implements R2DepthInstancesType
     NullCheck.notNull(i);
     NullCheck.notNull(m);
 
-    final long i_id = i.getInstanceID();
-    final long m_id = m.getMaterialID();
-    final R2ShaderDepthSingleUsableType<?> shader = m.getShader();
+    final long i_id = i.instanceID();
+    final long m_id = m.materialID();
+    final R2ShaderDepthSingleUsableType<?> shader = m.shader();
     final long s_id = shader.getShaderID();
 
     /**
@@ -153,7 +153,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
     this.text.setLength(0);
     this.text.append("Instance is already visible.\n");
     this.text.append("Instance:         ");
-    this.text.append(i.getInstanceID());
+    this.text.append(i.instanceID());
     return new R2RendererExceptionInstanceAlreadyVisible(this.text.toString());
   }
 
@@ -165,9 +165,9 @@ public final class R2DepthInstances implements R2DepthInstancesType
     NullCheck.notNull(i);
     NullCheck.notNull(m);
 
-    final long i_id = i.getInstanceID();
-    final long m_id = m.getMaterialID();
-    final R2ShaderDepthBatchedUsableType<?> shader = m.getShader();
+    final long i_id = i.instanceID();
+    final long m_id = m.materialID();
+    final R2ShaderDepthBatchedUsableType<?> shader = m.shader();
     final long s_id = shader.getShaderID();
 
     /**
@@ -283,8 +283,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
         }
 
         this.singles.instances_sorted.sort((a, b) -> {
-          final JCGLArrayObjectUsableType ao = a.getArrayObject();
-          final JCGLArrayObjectUsableType bo = b.getArrayObject();
+          final JCGLArrayObjectUsableType ao = a.arrayObject();
+          final JCGLArrayObjectUsableType bo = b.arrayObject();
           return Integer.compare(ao.getGLName(), bo.getGLName());
         });
 
@@ -298,7 +298,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
         for (int index = 0; index < sorted_size; ++index) {
           final R2InstanceSingleType i =
             this.singles.instances_sorted.get(index);
-          final JCGLArrayObjectUsableType array_object = i.getArrayObject();
+          final JCGLArrayObjectUsableType array_object = i.arrayObject();
           final int next_array = array_object.getGLName();
           if (next_array != current_array) {
             c.onInstanceSingleArrayStart(i);

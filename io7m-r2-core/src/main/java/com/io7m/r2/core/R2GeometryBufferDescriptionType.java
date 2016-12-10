@@ -30,7 +30,7 @@ public interface R2GeometryBufferDescriptionType extends
 {
   @Override
   @Value.Parameter
-  AreaInclusiveUnsignedLType getArea();
+  AreaInclusiveUnsignedLType area();
 
   /**
    * @return The components that will be allocated in the geometry buffer
@@ -38,7 +38,7 @@ public interface R2GeometryBufferDescriptionType extends
 
   @Value.Parameter
   @Value.Default
-  default R2GeometryBufferComponents getComponents()
+  default R2GeometryBufferComponents components()
   {
     return R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
   }

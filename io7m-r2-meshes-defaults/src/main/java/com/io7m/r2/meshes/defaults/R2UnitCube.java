@@ -157,7 +157,7 @@ public final class R2UnitCube implements R2UnitCubeType
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.array_object;
   }

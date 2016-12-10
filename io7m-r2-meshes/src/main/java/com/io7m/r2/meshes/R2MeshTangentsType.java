@@ -34,43 +34,43 @@ public interface R2MeshTangentsType extends R2MeshType
    * @return The list of normal vectors
    */
 
-  BigList<PVectorI3D<R2SpaceObjectType>> getNormals();
+  BigList<PVectorI3D<R2SpaceObjectType>> normals();
 
   /**
    * @return The list of bitangent vectors
    */
 
-  BigList<PVectorI3D<R2SpaceObjectType>> getBitangents();
+  BigList<PVectorI3D<R2SpaceObjectType>> bitangents();
 
   /**
    * @return The list of tangent vectors
    */
 
-  BigList<PVectorI4D<R2SpaceObjectType>> getTangents();
+  BigList<PVectorI4D<R2SpaceObjectType>> tangents();
 
   /**
    * @return The list of position vectors
    */
 
-  BigList<PVectorI3D<R2SpaceObjectType>> getPositions();
+  BigList<PVectorI3D<R2SpaceObjectType>> positions();
 
   /**
    * @return The list of UV vectors
    */
 
-  BigList<PVectorI2D<R2SpaceTextureType>> getUVs();
+  BigList<PVectorI2D<R2SpaceTextureType>> uvs();
 
   /**
    * @return The list of vertices
    */
 
-  BigList<R2MeshTangentsVertexType> getVertices();
+  BigList<R2MeshTangentsVertexType> vertices();
 
   /**
    * @return The list of triangles
    */
 
-  BigList<R2MeshTriangleType> getTriangles();
+  BigList<R2MeshTriangleType> triangles();
 
   @Override
   default <A, E extends Exception> A matchMesh(

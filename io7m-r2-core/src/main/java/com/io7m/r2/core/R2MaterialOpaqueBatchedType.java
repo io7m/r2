@@ -31,5 +31,5 @@ public interface R2MaterialOpaqueBatchedType<M> extends R2MaterialType<M>
    */
 
   @Override
-  R2ShaderInstanceBatchedUsableType<M> getShader();
+  R2ShaderInstanceBatchedUsableType<M> shader();
 }

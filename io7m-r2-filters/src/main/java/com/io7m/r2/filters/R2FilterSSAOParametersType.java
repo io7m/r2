@@ -39,7 +39,7 @@ public interface R2FilterSSAOParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getExponent()
+  default float exponent()
   {
     return 1.0f;
   }
@@ -50,14 +50,14 @@ public interface R2FilterSSAOParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getNoiseTexture();
+  R2Texture2DUsableType noiseTexture();
 
   /**
    * @return The sampling kernel
    */
 
   @Value.Parameter
-  R2SSAOKernelType getKernel();
+  R2SSAOKernelType kernel();
 
   /**
    * @return The maximum distance, in eye-space units, from which samples will
@@ -66,7 +66,7 @@ public interface R2FilterSSAOParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getSampleRadius()
+  default float sampleRadius()
   {
     return 0.25f;
   }
@@ -76,7 +76,7 @@ public interface R2FilterSSAOParametersType
    */
 
   @Value.Parameter
-  R2GeometryBufferUsableType getGeometryBuffer();
+  R2GeometryBufferUsableType geometryBuffer();
 
   /**
    * @return The ambient occlusion buffer that will contain the results of the
@@ -84,12 +84,12 @@ public interface R2FilterSSAOParametersType
    */
 
   @Value.Parameter
-  R2AmbientOcclusionBufferUsableType getOutputBuffer();
+  R2AmbientOcclusionBufferUsableType outputBuffer();
 
   /**
    * @return The observer values that were used to produce the original scene
    */
 
   @Value.Parameter
-  R2MatricesObserverValuesType getSceneObserverValues();
+  R2MatricesObserverValuesType sceneObserverValues();
 }

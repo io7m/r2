@@ -121,13 +121,13 @@ public final class R2ShaderDebugVisualScreen extends
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_view, m.getMatrixView());
+      this.u_transform_view, m.matrixView());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+      this.u_transform_projection_inverse, m.matrixProjectionInverse());
   }
 
   @Override

@@ -163,6 +163,6 @@ public abstract class R2FilterSSAOContract extends R2JCGLContract
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(abuffer.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(abuffer.primaryFramebuffer()));
   }
 }

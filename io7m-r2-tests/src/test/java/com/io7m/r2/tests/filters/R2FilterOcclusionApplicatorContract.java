@@ -145,6 +145,6 @@ public abstract class R2FilterOcclusionApplicatorContract extends R2JCGLContract
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(lbuffer.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(lbuffer.primaryFramebuffer()));
   }
 }

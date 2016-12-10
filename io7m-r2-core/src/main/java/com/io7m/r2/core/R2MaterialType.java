@@ -31,17 +31,17 @@ public interface R2MaterialType<M>
    * @return The material ID
    */
 
-  long getMaterialID();
+  long materialID();
 
   /**
    * @return The shader parameters
    */
 
-  M getShaderParameters();
+  M shaderParameters();
 
   /**
    * @return The material shader
    */
 
-  R2ShaderUsableType<M> getShader();
+  R2ShaderUsableType<M> shader();
 }

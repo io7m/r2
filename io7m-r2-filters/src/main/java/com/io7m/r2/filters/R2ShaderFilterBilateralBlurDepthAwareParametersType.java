@@ -35,14 +35,14 @@ public interface R2ShaderFilterBilateralBlurDepthAwareParametersType
    */
 
   @Value.Parameter
-  R2MatricesObserverValuesType getViewMatrices();
+  R2MatricesObserverValuesType viewMatrices();
 
   /**
    * @return The image texture that will be blurred
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getImageTexture();
+  R2Texture2DUsableType imageTexture();
 
   /**
    * @return The depth texture that will be sampled to determine the
@@ -50,21 +50,21 @@ public interface R2ShaderFilterBilateralBlurDepthAwareParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getDepthTexture();
+  R2Texture2DUsableType depthTexture();
 
   /**
    * @return The depth coefficient used to produce the scene
    */
 
   @Value.Parameter
-  float getDepthCoefficient();
+  float depthCoefficient();
 
   /**
    * @return The blur falloff
    */
 
   @Value.Parameter
-  float getBlurFalloff();
+  float blurFalloff();
 
   /**
    * @return The radius of the blur effect in texels
@@ -72,7 +72,7 @@ public interface R2ShaderFilterBilateralBlurDepthAwareParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getBlurRadius()
+  default float blurRadius()
   {
     return 4.0f;
   }
@@ -83,7 +83,7 @@ public interface R2ShaderFilterBilateralBlurDepthAwareParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getBlurSharpness()
+  default float blurSharpness()
   {
     return 16.0f;
   }
@@ -93,12 +93,12 @@ public interface R2ShaderFilterBilateralBlurDepthAwareParametersType
    */
 
   @Value.Parameter
-  float getBlurOutputInverseWidth();
+  float blurOutputInverseWidth();
 
   /**
    * @return The inverse height of the output image: (1 / height)
    */
 
   @Value.Parameter
-  float getBlurOutputInverseHeight();
+  float blurOutputInverseHeight();
 }

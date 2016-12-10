@@ -60,23 +60,23 @@ public final class R2MaterialDepthBatched<M> implements
   {
     NullCheck.notNull(in_pool);
     return new R2MaterialDepthBatched<>(
-      in_pool.getFreshID(), in_shader, in_params);
+      in_pool.freshID(), in_shader, in_params);
   }
 
   @Override
-  public long getMaterialID()
+  public long materialID()
   {
     return this.id;
   }
 
   @Override
-  public M getShaderParameters()
+  public M shaderParameters()
   {
     return this.params;
   }
 
   @Override
-  public R2ShaderDepthBatchedUsableType<M> getShader()
+  public R2ShaderDepthBatchedUsableType<M> shader()
   {
     return this.shader;
   }

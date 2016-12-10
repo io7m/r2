@@ -165,26 +165,26 @@ public final class R2MeshTangents implements R2MeshTangentsType
     for (long tri_index = 0L; tri_index < triangles.size64(); ++tri_index) {
       final R2MeshTriangleType triangle = triangles.get(tri_index);
       R2MeshTangents.checkTriangleVertices(
-        triangle.getV0(),
-        triangle.getV1(),
-        triangle.getV2(),
+        triangle.v0(),
+        triangle.v1(),
+        triangle.v2(),
         vertices.size64(),
         triangles);
 
-      final R2MeshBasicVertexType v0 = vertices.get(triangle.getV0());
-      final R2MeshBasicVertexType v1 = vertices.get(triangle.getV1());
-      final R2MeshBasicVertexType v2 = vertices.get(triangle.getV2());
+      final R2MeshBasicVertexType v0 = vertices.get(triangle.v0());
+      final R2MeshBasicVertexType v1 = vertices.get(triangle.v1());
+      final R2MeshBasicVertexType v2 = vertices.get(triangle.v2());
 
       final PVectorI3D<R2SpaceObjectType> v0p =
-        positions.get(v0.getPositionIndex());
+        positions.get(v0.positionIndex());
       final PVectorI3D<R2SpaceObjectType> v1p =
-        positions.get(v1.getPositionIndex());
+        positions.get(v1.positionIndex());
       final PVectorI3D<R2SpaceObjectType> v2p =
-        positions.get(v2.getPositionIndex());
+        positions.get(v2.positionIndex());
 
-      R2MeshTangents.checkVector3D(v0p, "Position", v0.getPositionIndex());
-      R2MeshTangents.checkVector3D(v1p, "Position", v1.getPositionIndex());
-      R2MeshTangents.checkVector3D(v2p, "Position", v2.getPositionIndex());
+      R2MeshTangents.checkVector3D(v0p, "Position", v0.positionIndex());
+      R2MeshTangents.checkVector3D(v1p, "Position", v1.positionIndex());
+      R2MeshTangents.checkVector3D(v2p, "Position", v2.positionIndex());
 
       /**
        * Fetch whatever tangent and bitangent vectors are currently
@@ -192,34 +192,34 @@ public final class R2MeshTangents implements R2MeshTangentsType
        */
 
       final PVectorI4D<R2SpaceObjectType> v0t =
-        tangents.get(v0.getNormalIndex());
+        tangents.get(v0.normalIndex());
       final PVectorI4D<R2SpaceObjectType> v1t =
-        tangents.get(v1.getNormalIndex());
+        tangents.get(v1.normalIndex());
       final PVectorI4D<R2SpaceObjectType> v2t =
-        tangents.get(v2.getNormalIndex());
+        tangents.get(v2.normalIndex());
 
-      R2MeshTangents.checkVector4D(v0t, "Tangent", v0.getNormalIndex());
-      R2MeshTangents.checkVector4D(v1t, "Tangent", v1.getNormalIndex());
-      R2MeshTangents.checkVector4D(v2t, "Tangent", v2.getNormalIndex());
+      R2MeshTangents.checkVector4D(v0t, "Tangent", v0.normalIndex());
+      R2MeshTangents.checkVector4D(v1t, "Tangent", v1.normalIndex());
+      R2MeshTangents.checkVector4D(v2t, "Tangent", v2.normalIndex());
 
       final PVectorI3D<R2SpaceObjectType> v0b =
-        bitangents.get(v0.getNormalIndex());
+        bitangents.get(v0.normalIndex());
       final PVectorI3D<R2SpaceObjectType> v1b =
-        bitangents.get(v1.getNormalIndex());
+        bitangents.get(v1.normalIndex());
       final PVectorI3D<R2SpaceObjectType> v2b =
-        bitangents.get(v2.getNormalIndex());
+        bitangents.get(v2.normalIndex());
 
-      R2MeshTangents.checkVector3D(v0b, "Bitangent", v0.getNormalIndex());
-      R2MeshTangents.checkVector3D(v1b, "Bitangent", v1.getNormalIndex());
-      R2MeshTangents.checkVector3D(v2b, "Bitangent", v2.getNormalIndex());
+      R2MeshTangents.checkVector3D(v0b, "Bitangent", v0.normalIndex());
+      R2MeshTangents.checkVector3D(v1b, "Bitangent", v1.normalIndex());
+      R2MeshTangents.checkVector3D(v2b, "Bitangent", v2.normalIndex());
 
-      final PVectorI2D<R2SpaceTextureType> v0u = uvs.get(v0.getUVIndex());
-      final PVectorI2D<R2SpaceTextureType> v1u = uvs.get(v1.getUVIndex());
-      final PVectorI2D<R2SpaceTextureType> v2u = uvs.get(v2.getUVIndex());
+      final PVectorI2D<R2SpaceTextureType> v0u = uvs.get(v0.uvIndex());
+      final PVectorI2D<R2SpaceTextureType> v1u = uvs.get(v1.uvIndex());
+      final PVectorI2D<R2SpaceTextureType> v2u = uvs.get(v2.uvIndex());
 
-      R2MeshTangents.checkVector2D(v0u, "UV", v0.getUVIndex());
-      R2MeshTangents.checkVector2D(v1u, "UV", v1.getUVIndex());
-      R2MeshTangents.checkVector2D(v2u, "UV", v2.getUVIndex());
+      R2MeshTangents.checkVector2D(v0u, "UV", v0.uvIndex());
+      R2MeshTangents.checkVector2D(v1u, "UV", v1.uvIndex());
+      R2MeshTangents.checkVector2D(v2u, "UV", v2.uvIndex());
 
       /**
        * In the case where, for example, two vertices in a triangle share the
@@ -287,15 +287,15 @@ public final class R2MeshTangents implements R2MeshTangentsType
           1.0);
 
       R2MeshTangents.checkVector4D(
-        v0t_acc, "Generated Tangent", v0.getNormalIndex());
+        v0t_acc, "Generated Tangent", v0.normalIndex());
       R2MeshTangents.checkVector4D(
-        v1t_acc, "Generated Tangent", v1.getNormalIndex());
+        v1t_acc, "Generated Tangent", v1.normalIndex());
       R2MeshTangents.checkVector4D(
-        v2t_acc, "Generated Tangent", v2.getNormalIndex());
+        v2t_acc, "Generated Tangent", v2.normalIndex());
 
-      tangents.set(v0.getNormalIndex(), v0t_acc);
-      tangents.set(v1.getNormalIndex(), v1t_acc);
-      tangents.set(v2.getNormalIndex(), v2t_acc);
+      tangents.set(v0.normalIndex(), v0t_acc);
+      tangents.set(v1.normalIndex(), v1t_acc);
+      tangents.set(v2.normalIndex(), v2t_acc);
 
       final PVectorI3D<R2SpaceObjectType> v0b_acc =
         new PVectorI3D<>(v0b.getXD() + bx, v0b.getYD() + by, v0b.getZD() + bz);
@@ -305,15 +305,15 @@ public final class R2MeshTangents implements R2MeshTangentsType
         new PVectorI3D<>(v2b.getXD() + bx, v2b.getYD() + by, v2b.getZD() + bz);
 
       R2MeshTangents.checkVector3D(
-        v0b_acc, "Generated Bitangent", v0.getNormalIndex());
+        v0b_acc, "Generated Bitangent", v0.normalIndex());
       R2MeshTangents.checkVector3D(
-        v1b_acc, "Generated Bitangent", v1.getNormalIndex());
+        v1b_acc, "Generated Bitangent", v1.normalIndex());
       R2MeshTangents.checkVector3D(
-        v2b_acc, "Generated Bitangent", v2.getNormalIndex());
+        v2b_acc, "Generated Bitangent", v2.normalIndex());
 
-      bitangents.set(v0.getNormalIndex(), v0b_acc);
-      bitangents.set(v1.getNormalIndex(), v1b_acc);
-      bitangents.set(v2.getNormalIndex(), v2b_acc);
+      bitangents.set(v0.normalIndex(), v0b_acc);
+      bitangents.set(v1.normalIndex(), v1b_acc);
+      bitangents.set(v2.normalIndex(), v2b_acc);
     }
 
     /**
@@ -371,11 +371,11 @@ public final class R2MeshTangents implements R2MeshTangentsType
     for (long index = 0L; index < vertices.size64(); ++index) {
       final R2MeshBasicVertexType v = vertices.get(index);
       tan_vertices.add(R2MeshTangentsVertex.of(
-        v.getPositionIndex(),
-        v.getNormalIndex(),
-        v.getNormalIndex(),
-        v.getNormalIndex(),
-        v.getUVIndex()));
+        v.positionIndex(),
+        v.normalIndex(),
+        v.normalIndex(),
+        v.normalIndex(),
+        v.uvIndex()));
     }
 
     return new R2MeshTangents(
@@ -404,9 +404,9 @@ public final class R2MeshTangents implements R2MeshTangentsType
     final PVectorI2D<R2SpaceTextureType> v2u)
   {
     final boolean sharing =
-      (v0.getUVIndex() == v1.getUVIndex())
-        || (v1.getUVIndex() == v2.getUVIndex())
-        || (v0.getUVIndex() == v2.getUVIndex());
+      (v0.uvIndex() == v1.uvIndex())
+        || (v1.uvIndex() == v2.uvIndex())
+        || (v0.uvIndex() == v2.uvIndex());
 
     if (sharing) {
       final StringBuilder sb = new StringBuilder(128);
@@ -423,29 +423,29 @@ public final class R2MeshTangents implements R2MeshTangentsType
       sb.append(System.lineSeparator());
 
       sb.append("Triangle vertices: ");
-      sb.append(triangle.getV0());
+      sb.append(triangle.v0());
       sb.append(" ");
-      sb.append(triangle.getV1());
+      sb.append(triangle.v1());
       sb.append(" ");
-      sb.append(triangle.getV2());
+      sb.append(triangle.v2());
       sb.append(System.lineSeparator());
 
       sb.append("UV of V0: ");
-      sb.append(v0.getUVIndex());
+      sb.append(v0.uvIndex());
       sb.append(" (");
       sb.append(v0u);
       sb.append(")");
       sb.append(System.lineSeparator());
 
       sb.append("UV of V1: ");
-      sb.append(v1.getUVIndex());
+      sb.append(v1.uvIndex());
       sb.append(" (");
       sb.append(v1u);
       sb.append(")");
       sb.append(System.lineSeparator());
 
       sb.append("UV of V2: ");
-      sb.append(v2.getUVIndex());
+      sb.append(v2.uvIndex());
       sb.append(" (");
       sb.append(v2u);
       sb.append(")");
@@ -603,43 +603,43 @@ public final class R2MeshTangents implements R2MeshTangentsType
   }
 
   @Override
-  public BigList<PVectorI3D<R2SpaceObjectType>> getNormals()
+  public BigList<PVectorI3D<R2SpaceObjectType>> normals()
   {
     return this.normals;
   }
 
   @Override
-  public BigList<PVectorI3D<R2SpaceObjectType>> getBitangents()
+  public BigList<PVectorI3D<R2SpaceObjectType>> bitangents()
   {
     return this.bitangents;
   }
 
   @Override
-  public BigList<PVectorI4D<R2SpaceObjectType>> getTangents()
+  public BigList<PVectorI4D<R2SpaceObjectType>> tangents()
   {
     return this.tangents;
   }
 
   @Override
-  public BigList<PVectorI3D<R2SpaceObjectType>> getPositions()
+  public BigList<PVectorI3D<R2SpaceObjectType>> positions()
   {
     return this.positions;
   }
 
   @Override
-  public BigList<PVectorI2D<R2SpaceTextureType>> getUVs()
+  public BigList<PVectorI2D<R2SpaceTextureType>> uvs()
   {
     return this.uvs;
   }
 
   @Override
-  public BigList<R2MeshTangentsVertexType> getVertices()
+  public BigList<R2MeshTangentsVertexType> vertices()
   {
     return this.vertices;
   }
 
   @Override
-  public BigList<R2MeshTriangleType> getTriangles()
+  public BigList<R2MeshTriangleType> triangles()
   {
     return this.triangles;
   }
@@ -655,25 +655,25 @@ public final class R2MeshTangents implements R2MeshTangentsType
     }
 
     final R2MeshTangents that = (R2MeshTangents) o;
-    return this.getPositions().equals(that.getPositions())
-      && this.getNormals().equals(that.getNormals())
-      && this.getTangents().equals(that.getTangents())
-      && this.getBitangents().equals(that.getBitangents())
-      && this.getUVs().equals(that.getUVs())
-      && this.getVertices().equals(that.getVertices())
-      && this.getTriangles().equals(that.getTriangles());
+    return this.positions().equals(that.positions())
+      && this.normals().equals(that.normals())
+      && this.tangents().equals(that.tangents())
+      && this.bitangents().equals(that.bitangents())
+      && this.uvs().equals(that.uvs())
+      && this.vertices().equals(that.vertices())
+      && this.triangles().equals(that.triangles());
   }
 
   @Override
   public int hashCode()
   {
-    int result = this.getPositions().hashCode();
-    result = 31 * result + this.getNormals().hashCode();
-    result = 31 * result + this.getTangents().hashCode();
-    result = 31 * result + this.getBitangents().hashCode();
+    int result = this.positions().hashCode();
+    result = 31 * result + this.normals().hashCode();
+    result = 31 * result + this.tangents().hashCode();
+    result = 31 * result + this.bitangents().hashCode();
     result = 31 * result + this.uvs.hashCode();
-    result = 31 * result + this.getVertices().hashCode();
-    result = 31 * result + this.getTriangles().hashCode();
+    result = 31 * result + this.vertices().hashCode();
+    result = 31 * result + this.triangles().hashCode();
     return result;
   }
 

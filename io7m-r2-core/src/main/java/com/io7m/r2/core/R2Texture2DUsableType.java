@@ -28,5 +28,5 @@ public interface R2Texture2DUsableType extends R2TextureUsableType
    * @return The current texture
    */
 
-  JCGLTexture2DUsableType get();
+  JCGLTexture2DUsableType texture();
 }

@@ -198,7 +198,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       pc.getChildContext("emission");
 
     final Optional<R2BlurParametersReadableType> blur_opt =
-      parameters.getBlurParameters();
+      parameters.blurParameters();
 
     if (blur_opt.isPresent()) {
       this.runFilterBlurred(pc_base, uc, parameters, blur_opt.get());
@@ -219,7 +219,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     final JCGLFramebuffersType g_fb =
       this.g.getFramebuffers();
     final Optional<JCGLFramebufferUsableType> fb_opt =
-      parameters.getOutputFramebuffer();
+      parameters.outputFramebuffer();
     if (fb_opt.isPresent()) {
       g_fb.framebufferDrawBind(fb_opt.get());
     }
@@ -227,8 +227,8 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     this.copyEmissive(
       uc,
       pc_unblurred.getChildContext("draw"),
-      parameters.getOutputViewport(),
-      parameters.getAlbedoEmissionMap(),
+      parameters.outputViewport(),
+      parameters.albedoEmissionMap(),
       this.render_state_additive);
   }
 
@@ -250,7 +250,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
 
     final AreaInclusiveUnsignedLType area_scaled =
       R2RenderTargetDescriptions.scaleAreaInclusive(
-        parameters.getOutputViewport(), parameters.getScale());
+        parameters.outputViewport(), parameters.scale());
     final R2ImageBufferDescription temp_desc =
       R2ImageBufferDescription.of(area_scaled, Optional.empty());
 
@@ -264,12 +264,12 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
        * emission level, to the output.
        */
 
-      g_fb.framebufferDrawBind(temp.getPrimaryFramebuffer());
+      g_fb.framebufferDrawBind(temp.primaryFramebuffer());
       this.copyEmissive(
         uc,
         pc_draw,
         area_scaled,
-        parameters.getAlbedoEmissionMap(),
+        parameters.albedoEmissionMap(),
         this.render_state);
 
       /**
@@ -287,19 +287,19 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       } else {
         bp = R2FilterBoxBlurParameters.newParameters(
           temp,
-          R2ImageBufferUsableType::getRGBATexture,
+          R2ImageBufferUsableType::imageTexture,
           temp,
-          R2ImageBufferUsableType::getRGBATexture,
+          R2ImageBufferUsableType::imageTexture,
           (i, a) -> R2ImageBufferDescription.of(a, Optional.empty()),
           this.render_target_pool);
       }
 
       bp.setOutputRenderTarget(temp);
       bp.setSourceRenderTarget(temp);
-      bp.setBlurPasses(blur_parameters.getBlurPasses());
-      bp.setBlurScale(blur_parameters.getBlurScale());
-      bp.setBlurScaleFilter(blur_parameters.getBlurScaleFilter());
-      bp.setBlurSize(blur_parameters.getBlurSize());
+      bp.setBlurPasses(blur_parameters.blurPasses());
+      bp.setBlurScale(blur_parameters.blurScale());
+      bp.setBlurScaleFilter(blur_parameters.blurScaleFilter());
+      bp.setBlurSize(blur_parameters.blurSize());
 
       this.filter_blur_params = bp;
       this.filter_blur.runFilter(pc_blurred, uc, bp);
@@ -309,7 +309,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
        */
 
       final Optional<JCGLFramebufferUsableType> fb_opt =
-        parameters.getOutputFramebuffer();
+        parameters.outputFramebuffer();
       if (fb_opt.isPresent()) {
         g_fb.framebufferDrawBind(fb_opt.get());
       } else {
@@ -319,8 +319,8 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       this.copyOut(
         uc,
         pc_copy_out,
-        parameters.getOutputViewport(),
-        temp.getRGBATexture(),
+        parameters.outputViewport(),
+        temp.imageTexture(),
         this.render_state_additive);
 
     } finally {
@@ -357,7 +357,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
           this.shader_copy.onReceiveFilterValues(
             g_tex, g_sh, tc, this.shader_copy_params);
           this.shader_copy.onValidate();
-          g_ao.arrayObjectBind(this.quad.getArrayObject());
+          g_ao.arrayObjectBind(this.quad.arrayObject());
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         } finally {
           g_ao.arrayObjectUnbind();
@@ -399,7 +399,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
           this.shader_emission.onReceiveFilterValues(
             g_tex, g_sh, tc, this.shader_emission_params);
           this.shader_emission.onValidate();
-          g_ao.arrayObjectBind(this.quad.getArrayObject());
+          g_ao.arrayObjectBind(this.quad.arrayObject());
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         } finally {
           g_ao.arrayObjectUnbind();

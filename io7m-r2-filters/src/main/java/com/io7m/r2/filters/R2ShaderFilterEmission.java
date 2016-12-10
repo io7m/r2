@@ -117,7 +117,7 @@ public final class R2ShaderFilterEmission extends
 
     this.unit_texture =
       tc.unitContextBindTexture2D(
-        g_tex, values.getAlbedoEmissionTexture().get());
+        g_tex, values.albedoEmissionTexture().texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture, this.unit_texture);
   }

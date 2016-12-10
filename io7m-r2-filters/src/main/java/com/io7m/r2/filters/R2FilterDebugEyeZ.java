@@ -142,11 +142,11 @@ public final class R2FilterDebugEyeZ implements
     final R2FilterDebugEyeZParametersType parameters)
   {
     final R2GeometryBufferUsableType gbuffer =
-      parameters.getGeometryBuffer();
+      parameters.geometryBuffer();
     final R2EyeZBufferUsableType zbuffer =
-      parameters.getEyeZBuffer();
+      parameters.eyeZBuffer();
 
-    final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
+    final JCGLFramebufferUsableType gb_fb = gbuffer.primaryFramebuffer();
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
     final JCGLTexturesType g_tex = this.g.getTextures();
@@ -155,7 +155,7 @@ public final class R2FilterDebugEyeZ implements
     final JCGLViewportsType g_v = this.g.getViewports();
 
     try {
-      g_fb.framebufferDrawBind(zbuffer.getFramebuffer());
+      g_fb.framebufferDrawBind(zbuffer.framebuffer());
 
       /**
        * Copy the contents of the depth/stencil attachment of the G-Buffer to
@@ -164,8 +164,8 @@ public final class R2FilterDebugEyeZ implements
 
       g_fb.framebufferReadBind(gb_fb);
       g_fb.framebufferBlit(
-        gbuffer.getArea(),
-        zbuffer.getArea(),
+        gbuffer.area(),
+        zbuffer.area(),
         R2FilterDebugEyeZ.DEPTH_STENCIL,
         JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
       g_fb.framebufferReadUnbind();
@@ -178,12 +178,12 @@ public final class R2FilterDebugEyeZ implements
 
       try {
         JCGLRenderStates.activate(this.g, this.render_state);
-        g_v.viewportSet(zbuffer.getArea());
+        g_v.viewportSet(zbuffer.area());
 
         try {
-          g_ao.arrayObjectBind(this.quad.getArrayObject());
+          g_ao.arrayObjectBind(this.quad.arrayObject());
 
-          final R2MatricesObserverType m = parameters.getObserverValues();
+          final R2MatricesObserverType m = parameters.observerValues();
 
           this.shader.onActivate(g_sh);
           this.shader.onReceiveFilterValues(g_tex, g_sh, tc, parameters);

@@ -291,7 +291,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
      */
 
     g_sh.shaderActivateProgram(this.program_screen.getShaderProgram());
-    g_ao.arrayObjectBind(this.quad.getArrayObject());
+    g_ao.arrayObjectBind(this.quad.arrayObject());
     g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
     g_ao.arrayObjectUnbind();
     g_sh.shaderDeactivateProgram();
@@ -351,16 +351,16 @@ public final class R2StencilRenderer implements R2StencilRendererType
     @Override
     public void onInstanceSingleStartArray(final R2InstanceSingleType i)
     {
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.array_objects.arrayObjectBind(i.arrayObject());
     }
 
     @Override
     public void onInstanceSingle(final R2InstanceSingleType i)
     {
       final R2TransformReadableType it =
-        i.getTransform();
+        i.transform();
       final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uv =
-        i.getUVMatrix();
+        i.uvMatrix();
 
       this.matrices.withTransform(it, uv, this, (mi, t) -> {
         final JCGLTextureUnitContextType tc = t.texture_context.unitContextNew();

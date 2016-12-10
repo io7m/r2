@@ -30,7 +30,7 @@ public interface R2ShadowType
    */
 
   @Value.Parameter
-  long getShadowID();
+  long shadowID();
 
   /**
    * The level to which the shadow is allowed to attenuate light. A value of
@@ -41,7 +41,7 @@ public interface R2ShadowType
    */
 
   @Value.Parameter
-  default float getMinimumFactor()
+  default float minimumFactor()
   {
     return 0.2f;
   }

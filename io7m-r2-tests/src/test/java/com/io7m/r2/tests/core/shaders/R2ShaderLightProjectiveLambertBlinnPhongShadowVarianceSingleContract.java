@@ -57,7 +57,7 @@ public abstract class R2ShaderLightProjectiveLambertBlinnPhongShadowVarianceSing
         g, p, JCGLUsageHint.USAGE_STATIC_DRAW, JCGLUsageHint.USAGE_STATIC_DRAW);
 
     final R2ShadowDepthVariance shadow = R2ShadowDepthVariance.of(
-      pool.getFreshID(),
+      pool.freshID(),
       R2DepthVarianceBufferDescription.of(
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(0L, 63L),

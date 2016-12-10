@@ -26,5 +26,5 @@ public interface R2InstanceType
    * @return The unique instance ID
    */
 
-  long getInstanceID();
+  long instanceID();
 }

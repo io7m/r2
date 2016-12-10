@@ -50,10 +50,10 @@ public abstract class R2ProjectionMeshContract extends R2JCGLContract
         JCGLUsageHint.USAGE_DYNAMIC_DRAW);
 
     Assert.assertFalse(m.isDeleted());
-    Assert.assertFalse(m.getArrayObject().isDeleted());
+    Assert.assertFalse(m.arrayObject().isDeleted());
     Assert.assertFalse(m.isUpdateRequired());
-    Assert.assertEquals(p, m.getProjectionReadable());
-    Assert.assertEquals(p, m.getProjectionWritable());
+    Assert.assertEquals(p, m.projectionReadable());
+    Assert.assertEquals(p, m.projectionWritable());
 
     p.projectionSetZFar(2.0f);
     Assert.assertTrue(m.isUpdateRequired());
@@ -89,10 +89,10 @@ public abstract class R2ProjectionMeshContract extends R2JCGLContract
         JCGLUsageHint.USAGE_DYNAMIC_DRAW);
 
     Assert.assertFalse(m.isDeleted());
-    Assert.assertFalse(m.getArrayObject().isDeleted());
+    Assert.assertFalse(m.arrayObject().isDeleted());
     Assert.assertFalse(m.isUpdateRequired());
-    Assert.assertEquals(p, m.getProjectionReadable());
-    Assert.assertEquals(p, m.getProjectionWritable());
+    Assert.assertEquals(p, m.projectionReadable());
+    Assert.assertEquals(p, m.projectionWritable());
 
     p.projectionSetZFar(2.0f);
     Assert.assertTrue(m.isUpdateRequired());

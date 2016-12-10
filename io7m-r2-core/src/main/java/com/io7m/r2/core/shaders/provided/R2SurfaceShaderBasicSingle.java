@@ -174,11 +174,11 @@ public final class R2SurfaceShaderBasicSingle extends
     NullCheck.notNull(m);
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
+      this.u_transform_modelview, m.matrixModelView());
     g_sh.shaderUniformPutMatrix3x3f(
-      this.u_transform_normal, m.getMatrixNormal());
+      this.u_transform_normal, m.matrixNormal());
     g_sh.shaderUniformPutMatrix3x3f(
-      this.u_transform_uv, m.getMatrixUV());
+      this.u_transform_uv, m.matrixUV());
   }
 
   @Override
@@ -191,11 +191,11 @@ public final class R2SurfaceShaderBasicSingle extends
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_view, m.getMatrixView());
+      this.u_transform_view, m.matrixView());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
   }
 
   @Override
@@ -211,13 +211,13 @@ public final class R2SurfaceShaderBasicSingle extends
     NullCheck.notNull(values);
 
     this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
     this.unit_emission =
-      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().texture());
     this.unit_normal =
-      tc.unitContextBindTexture2D(g_tex, values.normalTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.normalTexture().texture());
     this.unit_specular =
-      tc.unitContextBindTexture2D(g_tex, values.specularTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.specularTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, this.unit_albedo);

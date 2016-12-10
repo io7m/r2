@@ -28,11 +28,11 @@ public interface R2AmbientOcclusionBufferUsableType extends
    */
 
   @Override
-  R2AmbientOcclusionBufferDescriptionType getDescription();
+  R2AmbientOcclusionBufferDescriptionType description();
 
   /**
    * @return The ambient occlusion texture
    */
 
-  R2Texture2DUsableType getAmbientOcclusionTexture();
+  R2Texture2DUsableType ambientOcclusionTexture();
 }

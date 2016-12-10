@@ -215,7 +215,7 @@ public final class R2FilterBilateralBlurDepthAware<
       parameters.getOutputRenderTarget();
 
     final DD desc_scaled = R2RenderTargetDescriptions.scale(
-      destination.getDescription(),
+      destination.description(),
       parameters.getOutputDescriptionScaler(),
       parameters.getBlurScale());
 
@@ -236,11 +236,11 @@ public final class R2FilterBilateralBlurDepthAware<
 
         pc_copy_in.startMeasuringIfEnabled();
         try {
-          g_fb.framebufferReadBind(source.getPrimaryFramebuffer());
-          g_fb.framebufferDrawBind(temporary_a.getPrimaryFramebuffer());
+          g_fb.framebufferReadBind(source.primaryFramebuffer());
+          g_fb.framebufferDrawBind(temporary_a.primaryFramebuffer());
           g_fb.framebufferBlit(
-            source.getArea(),
-            temporary_a.getArea(),
+            source.area(),
+            temporary_a.area(),
             R2FilterBilateralBlurDepthAware.BLIT_BUFFERS,
             parameters.getBlurScaleFilter());
           g_fb.framebufferReadUnbind();
@@ -261,15 +261,15 @@ public final class R2FilterBilateralBlurDepthAware<
               parameters,
               parameters.getOutputValueTextureSelector().apply(temporary_a),
               depth,
-              temporary_b.getArea(),
-              temporary_b.getPrimaryFramebuffer());
+              temporary_b.area(),
+              temporary_b.primaryFramebuffer());
             this.evaluateBlurV(
               uc,
               parameters,
               parameters.getOutputValueTextureSelector().apply(temporary_b),
               depth,
-              temporary_a.getArea(),
-              temporary_a.getPrimaryFramebuffer());
+              temporary_a.area(),
+              temporary_a.primaryFramebuffer());
           }
         } finally {
           pc_blur.stopMeasuringIfEnabled();
@@ -281,11 +281,11 @@ public final class R2FilterBilateralBlurDepthAware<
 
         pc_copy_out.startMeasuringIfEnabled();
         try {
-          g_fb.framebufferReadBind(temporary_a.getPrimaryFramebuffer());
-          g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
+          g_fb.framebufferReadBind(temporary_a.primaryFramebuffer());
+          g_fb.framebufferDrawBind(destination.primaryFramebuffer());
           g_fb.framebufferBlit(
-            temporary_a.getArea(),
-            destination.getArea(),
+            temporary_a.area(),
+            destination.area(),
             R2FilterBilateralBlurDepthAware.BLIT_BUFFERS,
             parameters.getBlurScaleFilter());
           g_fb.framebufferReadUnbind();
@@ -335,7 +335,7 @@ public final class R2FilterBilateralBlurDepthAware<
           g_tex, g_sh, tc, this.shader_params);
         this.shader_blur_h.onValidate();
 
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
@@ -380,7 +380,7 @@ public final class R2FilterBilateralBlurDepthAware<
           g_tex, g_sh, tc, this.shader_params);
         this.shader_blur_v.onValidate();
 
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
@@ -397,7 +397,7 @@ public final class R2FilterBilateralBlurDepthAware<
     final R2Texture2DUsableType source_depth_texture)
   {
     final AreaInclusiveUnsignedLType source_area =
-      source_value_texture.get().textureGetArea();
+      source_value_texture.texture().textureGetArea();
     final UnsignedRangeInclusiveL range_x =
       source_area.getRangeX();
     final UnsignedRangeInclusiveL range_y =
@@ -423,7 +423,7 @@ public final class R2FilterBilateralBlurDepthAware<
     this.shader_params.setBlurRadius(parameters.getBlurRadius());
     this.shader_params.setBlurSharpness(parameters.getBlurSharpness());
     this.shader_params.setDepthCoefficient(
-      (float) R2Projections.getDepthCoefficient(m_observer.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m_observer.projection()));
     this.shader_params.setDepthTexture(source_depth_texture);
     this.shader_params.setImageTexture(source_value_texture);
     this.shader_params.setViewMatrices(m_observer);

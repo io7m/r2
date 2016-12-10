@@ -186,9 +186,9 @@ public final class R2LightShaderAmbientSingle extends
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+      this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
     /**
      * Upload the viewport.
@@ -209,20 +209,20 @@ public final class R2LightShaderAmbientSingle extends
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
 
     /**
      * Upload the occlusion texture and light values.
      */
 
     this.unit_ao =
-      tc.unitContextBindTexture2D(g_tex, values.getOcclusionMap().get());
+      tc.unitContextBindTexture2D(g_tex, values.getOcclusionMap().texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_occlusion, this.unit_ao);
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_color, values.getColor());
+      this.u_light_color, values.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_intensity, values.getIntensity());
+      this.u_light_intensity, values.intensity());
   }
 }

@@ -111,7 +111,7 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
     NullCheck.notNull(m);
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
   }
 
   @Override
@@ -136,6 +136,6 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
     NullCheck.notNull(m);
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
+      this.u_transform_modelview, m.matrixModelView());
   }
 }

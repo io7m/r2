@@ -235,14 +235,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     params.setAlbedoEmissionMap(td.texture2DWhite());
     params.setBlurParameters(Optional.empty());
     params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.of(ib.getPrimaryFramebuffer()));
+    params.setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()));
     params.setScale(1.0f);
     Assert.assertTrue(params.isInitialized());
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -312,14 +312,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     }));
     params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.of(ib.getPrimaryFramebuffer()));
+    params.setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()));
     params.setScale(1.0f);
     Assert.assertTrue(params.isInitialized());
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -387,20 +387,20 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     params.setBlurParameters(Optional.of(new R2BlurParametersReadableType()
     {
       @Override
-      public float getBlurScale()
+      public float blurScale()
       {
         return 0.5f;
       }
     }));
     params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.of(ib.getPrimaryFramebuffer()));
+    params.setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()));
     params.setScale(0.5f);
     Assert.assertTrue(params.isInitialized());
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -468,7 +468,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     params.setBlurParameters(Optional.of(new R2BlurParametersReadableType()
     {
       @Override
-      public float getBlurScale()
+      public float blurScale()
       {
         return 0.5f;
       }

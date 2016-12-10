@@ -174,11 +174,11 @@ public final class R2SurfaceShaderBasicBatched extends
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_view, m.getMatrixView());
+      this.u_transform_view, m.matrixView());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
   }
 
   @Override
@@ -194,13 +194,13 @@ public final class R2SurfaceShaderBasicBatched extends
     NullCheck.notNull(values);
 
     this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
     this.unit_emission =
-      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().texture());
     this.unit_normal =
-      tc.unitContextBindTexture2D(g_tex, values.normalTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.normalTexture().texture());
     this.unit_specular =
-      tc.unitContextBindTexture2D(g_tex, values.specularTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.specularTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, this.unit_albedo);

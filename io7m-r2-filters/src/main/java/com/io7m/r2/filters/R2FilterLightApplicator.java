@@ -157,11 +157,11 @@ public final class R2FilterLightApplicator implements
     final R2FilterLightApplicatorParametersType parameters)
   {
     final R2Texture2DUsableType ldiff =
-      parameters.getLightDiffuseTexture();
+      parameters.lightDiffuseTexture();
     final R2Texture2DUsableType lspec =
-      parameters.getLightSpecularTexture();
+      parameters.lightSpecularTexture();
     final R2GeometryBufferUsableType gb =
-      parameters.getGeometryBuffer();
+      parameters.geometryBuffer();
 
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();
@@ -170,12 +170,12 @@ public final class R2FilterLightApplicator implements
     final JCGLViewportsType g_v = this.g.getViewports();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
-    switch (parameters.getCopyDepth()) {
+    switch (parameters.copyDepth()) {
       case R2_COPY_DEPTH_ENABLED: {
-        g_fb.framebufferReadBind(gb.getPrimaryFramebuffer());
+        g_fb.framebufferReadBind(gb.primaryFramebuffer());
         g_fb.framebufferBlit(
-          gb.getArea(),
-          parameters.getOutputViewport(),
+          gb.area(),
+          parameters.outputViewport(),
           R2FilterLightApplicator.BLIT_BUFFERS,
           JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
         g_fb.framebufferReadUnbind();
@@ -186,12 +186,12 @@ public final class R2FilterLightApplicator implements
       }
     }
 
-    g_v.viewportSet(parameters.getOutputViewport());
+    g_v.viewportSet(parameters.outputViewport());
     JCGLRenderStates.activate(this.g, this.render_state);
 
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
-      this.shader_params.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
+      this.shader_params.setAlbedoTexture(gb.albedoEmissiveTexture());
       this.shader_params.setDiffuseTexture(ldiff);
       this.shader_params.setSpecularTexture(lspec);
 
@@ -200,7 +200,7 @@ public final class R2FilterLightApplicator implements
         this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
         this.shader.onValidate();
 
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();

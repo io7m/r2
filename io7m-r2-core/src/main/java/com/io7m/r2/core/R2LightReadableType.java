@@ -29,17 +29,17 @@ public interface R2LightReadableType
    * @return The unique light ID
    */
 
-  long getLightID();
+  long lightID();
 
   /**
    * @return The readable light color
    */
 
-  PVectorReadable3FType<R2SpaceRGBType> getColor();
+  PVectorReadable3FType<R2SpaceRGBType> color();
 
   /**
    * @return The current light intensity
    */
 
-  float getIntensity();
+  float intensity();
 }

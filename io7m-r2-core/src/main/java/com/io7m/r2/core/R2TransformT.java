@@ -126,11 +126,11 @@ public final class R2TransformT implements
     NullCheck.notNull(m);
 
     final Matrix4x4FType m_tmp0 =
-      context.getTemporaryMatrix4x4_0();
+      context.temporaryMatrix4x4_0();
     final Matrix4x4FType m_tmp1 =
-      context.getTemporaryMatrix4x4_1();
+      context.temporaryMatrix4x4_1();
     final Vector3FType v_tmp =
-      context.getTemporaryVector3();
+      context.temporaryVector3();
 
     v_tmp.set3F(
       -this.translation.getXF(),

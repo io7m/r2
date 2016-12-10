@@ -43,7 +43,7 @@ public abstract class R2SSAONoiseTextureContract extends R2JCGLContract
     final R2Texture2DType tt =
       R2SSAONoiseTexture.newNoiseTexture(gt, tc.getRootContext());
 
-    final JCGLTexture2DUsableType t = tt.get();
+    final JCGLTexture2DUsableType t = tt.texture();
     Assert.assertEquals(64L, t.textureGetWidth());
     Assert.assertEquals(64L, t.textureGetWidth());
     Assert.assertEquals(

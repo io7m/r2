@@ -141,7 +141,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
 
       if (gbuffer.isPresent()) {
         final R2GeometryBufferUsableType gb = gbuffer.get();
-        g_fb.framebufferDrawBind(gb.getPrimaryFramebuffer());
+        g_fb.framebufferDrawBind(gb.primaryFramebuffer());
       }
 
       if (s.opaquesCount() > 0L) {
@@ -247,7 +247,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public void onInstanceBatchedUpdate(
       final R2InstanceBatchedType i)
     {
-      i.update(this.g33, this.matrices.getTransformContext());
+      i.update(this.g33, this.matrices.transformContext());
     }
 
     @Override
@@ -264,8 +264,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     {
       this.material_texture_context = this.texture_context.unitContextNew();
 
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
-      final M p = material.getShaderParameters();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.shader();
+      final M p = material.shaderParameters();
       s.onReceiveMaterialValues(
         this.textures, this.shaders, this.material_texture_context, p);
     }
@@ -275,12 +275,12 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2MaterialOpaqueBatchedType<M> material,
       final R2InstanceBatchedType i)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.shader();
       s.onValidate();
 
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.array_objects.arrayObjectBind(i.arrayObject());
       this.draw.drawElementsInstanced(
-        JCGLPrimitives.PRIMITIVE_TRIANGLES, i.getRenderCount());
+        JCGLPrimitives.PRIMITIVE_TRIANGLES, i.renderCount());
     }
 
     @Override
@@ -313,8 +313,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.material_single = material;
       this.material_texture_context = this.texture_context.unitContextNew();
 
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
-      final M p = material.getShaderParameters();
+      final R2ShaderInstanceSingleUsableType<M> s = material.shader();
+      final M p = material.shaderParameters();
       s.onReceiveMaterialValues(
         this.textures, this.shaders, this.material_texture_context, p);
     }
@@ -323,7 +323,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public void onInstanceSingleArrayStart(
       final R2InstanceSingleType i)
     {
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.array_objects.arrayObjectBind(i.arrayObject());
     }
 
     @Override
@@ -332,12 +332,12 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2InstanceSingleType i)
     {
       this.matrices.withTransform(
-        i.getTransform(),
-        i.getUVMatrix(),
+        i.transform(),
+        i.uvMatrix(),
         this,
         (mi, t) -> {
           final R2ShaderInstanceSingleUsableType<?> s =
-            t.material_single.getShader();
+            t.material_single.shader();
           s.onReceiveInstanceTransformValues(t.shaders, mi);
           s.onValidate();
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);

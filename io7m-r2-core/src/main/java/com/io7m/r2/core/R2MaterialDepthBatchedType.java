@@ -31,5 +31,5 @@ public interface R2MaterialDepthBatchedType<M> extends R2MaterialType<M>
    */
 
   @Override
-  R2ShaderDepthBatchedUsableType<M> getShader();
+  R2ShaderDepthBatchedUsableType<M> shader();
 }

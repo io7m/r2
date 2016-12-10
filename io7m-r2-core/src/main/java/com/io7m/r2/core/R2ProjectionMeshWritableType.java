@@ -37,5 +37,5 @@ public interface R2ProjectionMeshWritableType
    * @return A writable reference to the mesh's projection
    */
 
-  R2ProjectionType getProjectionWritable();
+  R2ProjectionType projectionWritable();
 }

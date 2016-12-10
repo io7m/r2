@@ -63,7 +63,7 @@ public final class R2Texture2DStatic implements R2Texture2DType
   }
 
   @Override
-  public JCGLTexture2DUsableType get()
+  public JCGLTexture2DUsableType texture()
   {
     return this.texture;
   }
@@ -75,7 +75,7 @@ public final class R2Texture2DStatic implements R2Texture2DType
   }
 
   @Override
-  public JCGLTexture2DType getReal()
+  public JCGLTexture2DType textureWritable()
   {
     return this.texture;
   }

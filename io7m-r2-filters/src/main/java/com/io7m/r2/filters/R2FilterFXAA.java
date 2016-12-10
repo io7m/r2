@@ -146,23 +146,23 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
     final JCGLTexturesType g_tx = this.g.getTextures();
     final JCGLViewportsType g_v = this.g.getViewports();
 
-    final R2Texture2DUsableType t = parameters.getTexture();
+    final R2Texture2DUsableType t = parameters.texture();
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
       this.shader_params.clear();
       this.shader_params.setTexture(t);
       this.shader_params.setEdgeThreshold(
-        parameters.getEdgeThreshold());
+        parameters.edgeThreshold());
       this.shader_params.setEdgeThresholdMinimum(
-        parameters.getEdgeThresholdMinimum());
+        parameters.edgeThresholdMinimum());
       this.shader_params.setSubPixelAliasingRemoval(
-        parameters.getSubPixelAliasingRemoval());
+        parameters.subPixelAliasingRemoval());
       Assertive.ensure(this.shader_params.isInitialized());
 
       final R2ShaderFilterType<R2ShaderFilterFXAAParametersType> sh =
-        this.shaders.get(parameters.getQuality());
+        this.shaders.get(parameters.quality());
 
-      g_v.viewportSet(t.get().textureGetArea());
+      g_v.viewportSet(t.texture().textureGetArea());
       JCGLRenderStates.activate(this.g, this.render_state);
 
       try {
@@ -170,7 +170,7 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
         sh.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
         sh.onValidate();
 
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();

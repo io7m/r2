@@ -30,5 +30,5 @@ public interface R2MeshTangentsAdapterType extends
    * @return The mesh generated iff the parse completed without errors.
    */
 
-  Optional<R2MeshTangentsType> getMesh();
+  Optional<R2MeshTangentsType> mesh();
 }

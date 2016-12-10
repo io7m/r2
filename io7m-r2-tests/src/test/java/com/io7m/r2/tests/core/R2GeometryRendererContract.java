@@ -77,7 +77,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
     final R2InstanceSingleType i =
       R2InstanceSingle.newInstance(
         id_pool,
-        quad.getArrayObject(),
+        quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
@@ -223,7 +223,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
 
     g_fb.framebufferReadUnbind();
     g_fb.framebufferDrawUnbind();
-    g_fb.framebufferDrawBind(gbuffer.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(gbuffer.primaryFramebuffer());
 
     final R2MatricesType m = R2Matrices.newMatrices();
     m.withObserver(PMatrixI4x4F.identity(), proj, Unit.unit(), (x, y) -> {
@@ -233,7 +233,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertTrue(
-      g_fb.framebufferDrawIsBound(gbuffer.getPrimaryFramebuffer()));
+      g_fb.framebufferDrawIsBound(gbuffer.primaryFramebuffer()));
   }
 
   @Test
@@ -297,6 +297,6 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertTrue(
-      g_fb.framebufferDrawIsBound(gbuffer.getPrimaryFramebuffer()));
+      g_fb.framebufferDrawIsBound(gbuffer.primaryFramebuffer()));
   }
 }

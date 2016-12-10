@@ -34,19 +34,19 @@ public interface R2MatricesInstanceSingleValuesType
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-  getMatrixModelView();
+  matrixModelView();
 
   /**
    * @return The current normal matrix for an instance
    */
 
   PMatrixDirectReadable3x3FType<R2SpaceObjectType, R2SpaceNormalEyeType>
-  getMatrixNormal();
+  matrixNormal();
 
   /**
    * @return The current UV matrix for an instance
    */
 
   PMatrixDirectReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType>
-  getMatrixUV();
+  matrixUV();
 }

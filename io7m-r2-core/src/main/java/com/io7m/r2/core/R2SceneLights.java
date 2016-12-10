@@ -174,7 +174,7 @@ public final class R2SceneLights implements R2SceneLightsType
             final R2LightSingleReadableType i =
               this.lights_sorted.get(index);
             final JCGLArrayObjectUsableType array_object =
-              i.getArrayObject();
+              i.arrayObject();
             final int next_array = array_object.getGLName();
             if (next_array != current_array) {
               gv.onLightSingleArrayStart(i);
@@ -230,7 +230,7 @@ public final class R2SceneLights implements R2SceneLightsType
     final Group g =
       (Group) cg.getGroup();
     final R2SceneLightsClipGroupConsumerType cgc =
-      c.onStartClipGroup(cg.volume, g.getID());
+      c.onStartClipGroup(cg.volume, g.groupID());
 
     try {
       cgc.onStart();
@@ -271,7 +271,7 @@ public final class R2SceneLights implements R2SceneLightsType
           final R2LightSingleReadableType i =
             this.lights_sorted.get(index);
           final JCGLArrayObjectUsableType array_object =
-            i.getArrayObject();
+            i.arrayObject();
           final int next_array = array_object.getGLName();
           if (next_array != current_array) {
             cgc.onLightSingleArrayStart(i);
@@ -304,12 +304,12 @@ public final class R2SceneLights implements R2SceneLightsType
      */
 
     ls.sort((a, b) -> {
-      final JCGLArrayObjectUsableType ao = a.getArrayObject();
-      final JCGLArrayObjectUsableType bo = b.getArrayObject();
+      final JCGLArrayObjectUsableType ao = a.arrayObject();
+      final JCGLArrayObjectUsableType bo = b.arrayObject();
 
       final int ac = Integer.compareUnsigned(ao.getGLName(), bo.getGLName());
       if (ac == 0) {
-        return Long.compareUnsigned(a.getLightID(), b.getLightID());
+        return Long.compareUnsigned(a.lightID(), b.lightID());
       }
 
       return ac;
@@ -348,7 +348,7 @@ public final class R2SceneLights implements R2SceneLightsType
     }
 
     @Override
-    public int getID()
+    public int groupID()
     {
       return this.id;
     }
@@ -362,7 +362,7 @@ public final class R2SceneLights implements R2SceneLightsType
       NullCheck.notNull(shader);
 
       final R2SceneLights ls = R2SceneLights.this;
-      final long l_id = light.getLightID();
+      final long l_id = light.lightID();
       final long s_id = shader.getShaderID();
 
       /**
@@ -378,7 +378,7 @@ public final class R2SceneLights implements R2SceneLightsType
         sb.append(l_id);
         sb.append(System.lineSeparator());
         sb.append("Group: ");
-        sb.append(this.getID());
+        sb.append(this.groupID());
         sb.append(System.lineSeparator());
         throw new R2RendererExceptionLightAlreadyVisible(sb.toString());
       }
@@ -418,7 +418,7 @@ public final class R2SceneLights implements R2SceneLightsType
     {
       NullCheck.notNull(i);
 
-      final long iid = i.getInstanceID();
+      final long iid = i.instanceID();
       Assertive.require(!this.clip_groups.containsKey(iid));
 
       final R2SceneLights ls = R2SceneLights.this;
@@ -478,7 +478,7 @@ public final class R2SceneLights implements R2SceneLightsType
             "Clip group has been deleted");
         }
 
-        final long l_id = light.getLightID();
+        final long l_id = light.lightID();
         final long s_id = shader.getShaderID();
 
         /**
@@ -494,7 +494,7 @@ public final class R2SceneLights implements R2SceneLightsType
           sb.append(l_id);
           sb.append(System.lineSeparator());
           sb.append("Group: ");
-          sb.append(Group.this.getID());
+          sb.append(Group.this.groupID());
           sb.append(System.lineSeparator());
           throw new R2RendererExceptionLightAlreadyVisible(sb.toString());
         }
@@ -520,7 +520,7 @@ public final class R2SceneLights implements R2SceneLightsType
           R2SceneLights.LOG.trace(
             "light add single (light {}, shader {}, clip group {})",
             Long.valueOf(l_id),
-            Long.valueOf(this.volume.getInstanceID()),
+            Long.valueOf(this.volume.instanceID()),
             Long.valueOf(s_id));
         }
       }

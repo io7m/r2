@@ -28,17 +28,17 @@ import org.immutables.value.Value;
    * @return The index of the first vertex
    */
 
-  @Value.Parameter long getV0();
+  @Value.Parameter long v0();
 
   /**
    * @return The index of the second vertex
    */
 
-  @Value.Parameter long getV1();
+  @Value.Parameter long v1();
 
   /**
    * @return The index of the third vertex
    */
 
-  @Value.Parameter long getV2();
+  @Value.Parameter long v2();
 }

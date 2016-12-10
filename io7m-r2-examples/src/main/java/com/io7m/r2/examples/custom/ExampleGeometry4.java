@@ -142,7 +142,7 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
     final R2TransformReadableType tr = R2TransformSOT.newTransform();
     this.instance = R2InstanceSingle.newInstance(
       id_pool,
-      this.sphere.getArrayObject(),
+      this.sphere.arrayObject(),
       tr,
       PMatrixI3x3F.identity());
 
@@ -184,7 +184,7 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
     this.opaques.opaquesAddSingleInstance(this.instance, this.material);
 
     final JCGLFramebufferUsableType fb =
-      this.gbuffer.getPrimaryFramebuffer();
+      this.gbuffer.primaryFramebuffer();
     final JCGLFramebuffersType g_fb =
       g.getFramebuffers();
 
@@ -204,10 +204,10 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
         mo,
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
-        t.gbuffer.getArea(),
+        t.gbuffer.area(),
         t.stencils);
       t.geom_renderer.renderGeometry(
-        t.gbuffer.getArea(),
+        t.gbuffer.area(),
         Optional.empty(),
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),

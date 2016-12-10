@@ -38,11 +38,11 @@ public abstract class R2UnitQuadContract extends R2JCGLContract
 
     uq.delete(g);
     Assert.assertTrue(uq.isDeleted());
-    Assert.assertTrue(uq.getArrayObject().isDeleted());
+    Assert.assertTrue(uq.arrayObject().isDeleted());
 
     uq.delete(g);
     Assert.assertTrue(uq.isDeleted());
-    Assert.assertTrue(uq.getArrayObject().isDeleted());
+    Assert.assertTrue(uq.arrayObject().isDeleted());
   }
 
   @Test
@@ -63,7 +63,7 @@ public abstract class R2UnitQuadContract extends R2JCGLContract
     {
       final JCGLArrayVertexAttributeFloatingPointType a =
         (JCGLArrayVertexAttributeFloatingPointType)
-          uq.getArrayObject().getAttributeAt(0).get();
+          uq.arrayObject().getAttributeAt(0).get();
       Assert.assertEquals(3L, (long) a.getElements());
       Assert.assertEquals(0L, (long) a.getIndex());
       Assert.assertEquals(
@@ -79,7 +79,7 @@ public abstract class R2UnitQuadContract extends R2JCGLContract
     {
       final JCGLArrayVertexAttributeFloatingPointType a =
         (JCGLArrayVertexAttributeFloatingPointType)
-          uq.getArrayObject().getAttributeAt(1).get();
+          uq.arrayObject().getAttributeAt(1).get();
       Assert.assertEquals(2L, (long) a.getElements());
       Assert.assertEquals(1L, (long) a.getIndex());
       Assert.assertEquals(
@@ -95,7 +95,7 @@ public abstract class R2UnitQuadContract extends R2JCGLContract
     {
       final JCGLArrayVertexAttributeFloatingPointType a =
         (JCGLArrayVertexAttributeFloatingPointType)
-          uq.getArrayObject().getAttributeAt(2).get();
+          uq.arrayObject().getAttributeAt(2).get();
       Assert.assertEquals(3L, (long) a.getElements());
       Assert.assertEquals(2L, (long) a.getIndex());
       Assert.assertEquals(
@@ -111,7 +111,7 @@ public abstract class R2UnitQuadContract extends R2JCGLContract
     {
       final JCGLArrayVertexAttributeFloatingPointType a =
         (JCGLArrayVertexAttributeFloatingPointType)
-          uq.getArrayObject().getAttributeAt(3).get();
+          uq.arrayObject().getAttributeAt(3).get();
       Assert.assertEquals(4L, (long) a.getElements());
       Assert.assertEquals(3L, (long) a.getIndex());
       Assert.assertEquals(

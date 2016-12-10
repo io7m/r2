@@ -63,7 +63,7 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
     throws R2ExceptionShaderPreprocessingFailed
   {
     try {
-      this.id = NullCheck.notNull(in_pool).getFreshID();
+      this.id = NullCheck.notNull(in_pool).freshID();
       NullCheck.notNull(in_shader_env);
 
       if (R2AbstractShader.LOG.isDebugEnabled()) {

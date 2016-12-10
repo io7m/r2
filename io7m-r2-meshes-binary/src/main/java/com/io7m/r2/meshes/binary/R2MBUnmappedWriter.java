@@ -159,8 +159,8 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
     throws IOException
   {
     long bc = 0L;
-    final long v_count = this.mesh.getVertices().size64();
-    final long t_count = this.mesh.getTriangles().size64();
+    final long v_count = this.mesh.vertices().size64();
+    final long t_count = this.mesh.triangles().size64();
 
     /**
      * Write header.
@@ -200,15 +200,15 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
       final Vector2FType v_uv = v.getUvWritable();
 
       final BigList<R2MeshTangentsVertexType> vertices =
-        this.mesh.getVertices();
+        this.mesh.vertices();
       final BigList<PVectorI3D<R2SpaceObjectType>> m_pos =
-        this.mesh.getPositions();
+        this.mesh.positions();
       final BigList<PVectorI3D<R2SpaceObjectType>> m_nor =
-        this.mesh.getNormals();
+        this.mesh.normals();
       final BigList<PVectorI4D<R2SpaceObjectType>> m_tan =
-        this.mesh.getTangents();
+        this.mesh.tangents();
       final BigList<PVectorI2D<R2SpaceTextureType>> m_uv =
-        this.mesh.getUVs();
+        this.mesh.uvs();
 
       for (long index = 0L; index < v_count; ++index) {
         this.buffer_vertex.rewind();
@@ -218,7 +218,7 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
 
         {
           final PVectorI3D<R2SpaceObjectType> k =
-            m_pos.get(vv.getPositionIndex());
+            m_pos.get(vv.positionIndex());
 
           final double x = k.getXD();
           final double y = k.getYD();
@@ -255,7 +255,7 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
 
         {
           final PVectorI3D<R2SpaceObjectType> k =
-            m_nor.get(vv.getNormalIndex());
+            m_nor.get(vv.normalIndex());
 
           final double x = k.getXD();
           final double y = k.getYD();
@@ -292,7 +292,7 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
 
         {
           final PVectorI4D<R2SpaceObjectType> k =
-            m_tan.get(vv.getTangentIndex());
+            m_tan.get(vv.tangentIndex());
 
           final double x = k.getXD();
           final double y = k.getYD();
@@ -338,7 +338,7 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
 
         {
           final PVectorI2D<R2SpaceTextureType> k =
-            m_uv.get(vv.getUVIndex());
+            m_uv.get(vv.uvIndex());
 
           final double x = k.getXD();
           final double y = k.getYD();
@@ -381,15 +381,15 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
       final R2MBTriangleType v = c.getElementView();
 
       final BigList<R2MeshTriangleType> m_tri =
-        this.mesh.getTriangles();
+        this.mesh.triangles();
 
       for (long index = 0L; index < t_count; ++index) {
         this.buffer_tri.rewind();
 
         final R2MeshTriangleType t = m_tri.get(index);
-        v.setV0((int) (t.getV0() & 0xFFFFFFFFL));
-        v.setV1((int) (t.getV1() & 0xFFFFFFFFL));
-        v.setV2((int) (t.getV2() & 0xFFFFFFFFL));
+        v.setV0((int) (t.v0() & 0xFFFFFFFFL));
+        v.setV1((int) (t.v1() & 0xFFFFFFFFL));
+        v.setV2((int) (t.v2() & 0xFFFFFFFFL));
 
         bc += R2MBUnmappedWriter.writeAll(this.buffer_tri, this.channel);
       }

@@ -26,5 +26,5 @@ public interface R2LightBufferWithDiffuseUsableType
    * @return The diffuse texture
    */
 
-  R2Texture2DUsableType getDiffuseTexture();
+  R2Texture2DUsableType diffuseTexture();
 }

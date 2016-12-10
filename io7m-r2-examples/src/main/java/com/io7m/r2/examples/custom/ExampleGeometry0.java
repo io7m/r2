@@ -122,7 +122,7 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
 
     this.instance = R2InstanceSingle.newInstance(
       m.getIDPool(),
-      m.getUnitQuad().getArrayObject(),
+      m.getUnitQuad().arrayObject(),
       transform,
       PMatrixI3x3F.identity());
 
@@ -174,16 +174,16 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       final JCGLProfilingContextType pro_root =
         pro_frame.getChildContext("main");
 
-      g_fb.framebufferDrawBind(t.gbuffer.getPrimaryFramebuffer());
+      g_fb.framebufferDrawBind(t.gbuffer.primaryFramebuffer());
       t.gbuffer.clearBoundPrimaryFramebuffer(g);
       t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
         mo,
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
-        t.gbuffer.getArea(),
+        t.gbuffer.area(),
         t.stencils);
       t.main.getGeometryRenderer().renderGeometry(
-        t.gbuffer.getArea(),
+        t.gbuffer.area(),
         Optional.empty(),
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),

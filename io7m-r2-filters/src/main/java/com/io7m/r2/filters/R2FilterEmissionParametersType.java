@@ -38,14 +38,14 @@ public interface R2FilterEmissionParametersType
    * framebuffer is specified, the output will go to the default framebuffer.
    */
 
-  Optional<JCGLFramebufferUsableType> getOutputFramebuffer();
+  Optional<JCGLFramebufferUsableType> outputFramebuffer();
 
   /**
    * @return The viewport for the output framebuffer
    */
 
   @Value.Parameter
-  AreaInclusiveUnsignedLType getOutputViewport();
+  AreaInclusiveUnsignedLType outputViewport();
 
   /**
    * @return A texture with the surface albedo in the {@code (r, g, b)}
@@ -53,7 +53,7 @@ public interface R2FilterEmissionParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getAlbedoEmissionMap();
+  R2Texture2DUsableType albedoEmissionMap();
 
   /**
    * If blurring is to be used, the value returned here specifies the scale at
@@ -67,7 +67,7 @@ public interface R2FilterEmissionParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getScale()
+  default float scale()
   {
     return 0.5f;
   }
@@ -77,5 +77,5 @@ public interface R2FilterEmissionParametersType
    */
 
   @Value.Parameter
-  Optional<R2BlurParametersReadableType> getBlurParameters();
+  Optional<R2BlurParametersReadableType> blurParameters();
 }

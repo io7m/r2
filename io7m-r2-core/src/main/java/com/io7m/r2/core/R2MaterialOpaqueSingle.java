@@ -61,23 +61,23 @@ public final class R2MaterialOpaqueSingle<M> implements
   {
     NullCheck.notNull(in_pool);
     return new R2MaterialOpaqueSingle<>(
-      in_pool.getFreshID(), in_shader, in_params);
+      in_pool.freshID(), in_shader, in_params);
   }
 
   @Override
-  public long getMaterialID()
+  public long materialID()
   {
     return this.id;
   }
 
   @Override
-  public M getShaderParameters()
+  public M shaderParameters()
   {
     return this.params;
   }
 
   @Override
-  public R2ShaderInstanceSingleUsableType<M> getShader()
+  public R2ShaderInstanceSingleUsableType<M> shader()
   {
     return this.shader;
   }

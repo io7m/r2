@@ -34,5 +34,5 @@ public interface R2ShaderFilterEmissionParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getAlbedoEmissionTexture();
+  R2Texture2DUsableType albedoEmissionTexture();
 }

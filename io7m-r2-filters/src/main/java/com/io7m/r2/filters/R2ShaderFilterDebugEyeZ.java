@@ -146,19 +146,19 @@ public final class R2ShaderFilterDebugEyeZ extends
      * Set each of the required G-Buffer textures.
      */
 
-    final R2GeometryBufferUsableType gbuffer = values.getGeometryBuffer();
+    final R2GeometryBufferUsableType gbuffer = values.geometryBuffer();
     final JCGLTextureUnitType unit_albedo =
       tc.unitContextBindTexture2D(
         g_tex,
-        gbuffer.getAlbedoEmissiveTexture().get());
+        gbuffer.albedoEmissiveTexture().texture());
     final JCGLTextureUnitType unit_normals =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.normalTexture().texture());
     final JCGLTextureUnitType unit_specular =
       tc.unitContextBindTexture2D(
         g_tex,
-        gbuffer.getSpecularTextureOrDefault(values.getTextureDefaults()).get());
+        gbuffer.getSpecularTextureOrDefault(values.textureDefaults()).texture());
     final JCGLTextureUnitType unit_depth =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.depthTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);
@@ -169,7 +169,7 @@ public final class R2ShaderFilterDebugEyeZ extends
      * Upload the viewport.
      */
 
-    final AreaInclusiveUnsignedLType area = gbuffer.getDescription().getArea();
+    final AreaInclusiveUnsignedLType area = gbuffer.description().area();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
     g_sh.shaderUniformPutFloat(
@@ -183,9 +183,9 @@ public final class R2ShaderFilterDebugEyeZ extends
      * Upload the scene's depth coefficient.
      */
 
-    final R2MatricesObserverValuesType m = values.getObserverValues();
+    final R2MatricesObserverValuesType m = values.observerValues();
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
   }
 }

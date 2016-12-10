@@ -156,20 +156,20 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
      */
 
     final R2MatricesObserverValuesType view_matrices =
-      values.getViewMatrices();
+      values.viewMatrices();
 
     g_sh.shaderUniformPutFloat(
       this.u_blur_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(view_matrices.getProjection()));
+      (float) R2Projections.getDepthCoefficient(view_matrices.projection()));
 
     /*
      * Upload textures and parameters.
      */
 
     this.unit_texture_image =
-      tc.unitContextBindTexture2D(g_tex, values.getImageTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.imageTexture().texture());
     this.unit_texture_depth =
-      tc.unitContextBindTexture2D(g_tex, values.getDepthTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.depthTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_image, this.unit_texture_image);
@@ -177,14 +177,14 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
       this.u_texture_depth, this.unit_texture_depth);
 
     g_sh.shaderUniformPutFloat(
-      this.u_blur_falloff, values.getBlurFalloff());
+      this.u_blur_falloff, values.blurFalloff());
     g_sh.shaderUniformPutFloat(
-      this.u_blur_radius, values.getBlurRadius());
+      this.u_blur_radius, values.blurRadius());
     g_sh.shaderUniformPutFloat(
-      this.u_blur_sharpness, values.getBlurSharpness());
+      this.u_blur_sharpness, values.blurSharpness());
 
     this.inverse_size.set2F(
-      values.getBlurOutputInverseWidth(), values.getBlurOutputInverseHeight());
+      values.blurOutputInverseWidth(), values.blurOutputInverseHeight());
     g_sh.shaderUniformPutVector2f(
       this.u_blur_output_image_size_inverse, this.inverse_size);
   }

@@ -165,24 +165,24 @@ public final class R2FilterSSAO implements
     final JCGLClearType g_cl = this.g.getClear();
 
     final R2AmbientOcclusionBufferUsableType destination =
-      parameters.getOutputBuffer();
+      parameters.outputBuffer();
 
-    g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(destination.primaryFramebuffer());
 
     JCGLRenderStates.activate(this.g, this.render_state);
-    g_v.viewportSet(destination.getArea());
+    g_v.viewportSet(destination.area());
     g_cl.clear(this.clear);
 
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
       this.shader_params.clear();
-      this.shader_params.setExponent(parameters.getExponent());
-      this.shader_params.setGeometryBuffer(parameters.getGeometryBuffer());
-      this.shader_params.setKernel(parameters.getKernel());
-      this.shader_params.setNoiseTexture(parameters.getNoiseTexture());
-      this.shader_params.setSampleRadius(parameters.getSampleRadius());
-      this.shader_params.setViewport(destination.getArea());
-      this.shader_params.setViewMatrices(parameters.getSceneObserverValues());
+      this.shader_params.setExponent(parameters.exponent());
+      this.shader_params.setGeometryBuffer(parameters.geometryBuffer());
+      this.shader_params.setKernel(parameters.kernel());
+      this.shader_params.setNoiseTexture(parameters.noiseTexture());
+      this.shader_params.setSampleRadius(parameters.sampleRadius());
+      this.shader_params.setViewport(destination.area());
+      this.shader_params.setViewMatrices(parameters.sceneObserverValues());
       Assertive.ensure(this.shader_params.isInitialized());
 
       try {
@@ -192,7 +192,7 @@ public final class R2FilterSSAO implements
         this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
         this.shader.onValidate();
 
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();

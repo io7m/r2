@@ -246,7 +246,7 @@ public final class R2FilterBoxBlurParameters<
   }
 
   @Override
-  public float getBlurSize()
+  public float blurSize()
   {
     return this.blur_size;
   }
@@ -258,7 +258,7 @@ public final class R2FilterBoxBlurParameters<
   }
 
   @Override
-  public float getBlurScale()
+  public float blurScale()
   {
     return this.blur_scale;
   }
@@ -270,7 +270,7 @@ public final class R2FilterBoxBlurParameters<
   }
 
   @Override
-  public int getBlurPasses()
+  public int blurPasses()
   {
     return this.blur_passes;
   }
@@ -282,7 +282,7 @@ public final class R2FilterBoxBlurParameters<
   }
 
   @Override
-  public JCGLFramebufferBlitFilter getBlurScaleFilter()
+  public JCGLFramebufferBlitFilter blurScaleFilter()
   {
     return this.blur_scale_filter;
   }

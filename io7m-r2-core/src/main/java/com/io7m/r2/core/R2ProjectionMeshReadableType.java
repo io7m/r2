@@ -28,13 +28,13 @@ public interface R2ProjectionMeshReadableType
    * @return The array object for the mesh
    */
 
-  JCGLArrayObjectUsableType getArrayObject();
+  JCGLArrayObjectUsableType arrayObject();
 
   /**
    * @return A readable reference to the mesh's projection
    */
 
-  R2ProjectionReadableType getProjectionReadable();
+  R2ProjectionReadableType projectionReadable();
 
   /**
    * @return {@code true} iff the values of the projection have changed more

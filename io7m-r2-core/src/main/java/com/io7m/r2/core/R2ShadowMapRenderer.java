@@ -156,23 +156,23 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
        */
 
       this.variance.current = this.variance.pool.get(
-        this.texture_context, sv.getMapDescription());
+        this.texture_context, sv.mapDescription());
       this.variance.used.put(
-        sv.getShadowID(), this.variance.current);
+        sv.shadowID(), this.variance.current);
 
       /**
        * Transform the light volume.
        */
 
       final R2TransformContextType trc =
-        this.matrices.getTransformContext();
+        this.matrices.transformContext();
       final R2TransformViewReadableType tr =
-        lp.getTransform();
+        lp.transform();
       tr.transformMakeViewMatrix4x4F(trc, this.view);
 
       this.matrices.withObserver(
         this.view,
-        lp.getProjection(),
+        lp.projection(),
         this,
         (z, t) -> {
 
@@ -188,10 +188,10 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
            */
 
           gfb.framebufferDrawBind(
-            buffer.getPrimaryFramebuffer());
+            buffer.primaryFramebuffer());
           buffer.clearBoundPrimaryFramebuffer(t.g33);
           t.variance.renderer.renderDepthVarianceWithBoundBuffer(
-            buffer.getArea(),
+            buffer.area(),
             t.texture_context,
             z,
             t.instances);
@@ -202,9 +202,9 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
            */
 
           final R2Texture2DUsableType rt_texture =
-            buffer.getDepthVarianceTexture();
+            buffer.depthVarianceTexture();
           final JCGLTexture2DUsableType texture =
-            rt_texture.get();
+            rt_texture.texture();
 
           switch (texture.textureGetMinificationFilter()) {
             case TEXTURE_FILTER_LINEAR:
@@ -220,7 +220,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
               try {
                 final JCGLTextureUnitType u =
-                  tc.unitContextBindTexture2D(gt, rt_texture.get());
+                  tc.unitContextBindTexture2D(gt, rt_texture.texture());
                 gt.texture2DRegenerateMipmaps(u);
               } finally {
                 tc.unitContextFinish(gt);
@@ -273,7 +273,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
         });
       };
 
-      final R2ShadowType s = ls.getShadow();
+      final R2ShadowType s = ls.shadow();
       s.matchShadow(this, on_variance);
     }
 
@@ -364,12 +364,12 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
           RuntimeException>
           on_projective_with_shadow =
           (t, lp) ->
-            lp.getShadow().matchShadow(t, (t1, sv) -> {
-              final long shadow_id = sv.getShadowID();
+            lp.shadow().matchShadow(t, (t1, sv) -> {
+              final long shadow_id = sv.shadowID();
               if (t1.variance.used.containsKey(shadow_id)) {
                 final R2DepthVarianceBufferUsableType map =
                   t1.variance.used.get(shadow_id);
-                return map.getDepthVarianceTexture();
+                return map.depthVarianceTexture();
               }
 
               final StringBuilder sb = new StringBuilder(128);

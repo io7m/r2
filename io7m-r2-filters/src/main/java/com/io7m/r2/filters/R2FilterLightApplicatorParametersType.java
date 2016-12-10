@@ -39,7 +39,7 @@ public interface R2FilterLightApplicatorParametersType
 
   @Value.Parameter
   @Value.Default
-  default R2CopyDepth getCopyDepth()
+  default R2CopyDepth copyDepth()
   {
     return R2CopyDepth.R2_COPY_DEPTH_ENABLED;
   }
@@ -49,26 +49,26 @@ public interface R2FilterLightApplicatorParametersType
    */
 
   @Value.Parameter
-  R2GeometryBufferUsableType getGeometryBuffer();
+  R2GeometryBufferUsableType geometryBuffer();
 
   /**
    * @return The diffuse light texture that will be used to produce a lit image
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getLightDiffuseTexture();
+  R2Texture2DUsableType lightDiffuseTexture();
 
   /**
    * @return The specular light texture that will be used to produce a lit image
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getLightSpecularTexture();
+  R2Texture2DUsableType lightSpecularTexture();
 
   /**
    * @return The size of the current viewport
    */
 
   @Value.Parameter
-  AreaInclusiveUnsignedLType getOutputViewport();
+  AreaInclusiveUnsignedLType outputViewport();
 }

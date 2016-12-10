@@ -168,7 +168,7 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
     final R2TransformReadableType tr = R2TransformSOT.newTransform();
     this.instance = R2InstanceSingle.newInstance(
       id_pool,
-      this.sphere.getArrayObject(),
+      this.sphere.arrayObject(),
       tr,
       PMatrixI3x3F.identity());
 
@@ -249,9 +249,9 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
       final JCGLDepthBuffersType g_db = t.g33.getDepthBuffers();
 
       final JCGLFramebufferUsableType gbuffer_fb =
-        t.gbuffer.getPrimaryFramebuffer();
+        t.gbuffer.primaryFramebuffer();
       final JCGLFramebufferUsableType eye_buffer_fb =
-        t.eye_buffer.getFramebuffer();
+        t.eye_buffer.framebuffer();
 
       final JCGLProfilingType pro =
         t.main.getProfiling();
@@ -271,10 +271,10 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
         mo,
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
-        t.gbuffer.getArea(),
+        t.gbuffer.area(),
         t.stencils);
       t.main.getGeometryRenderer().renderGeometry(
-        t.gbuffer.getArea(),
+        t.gbuffer.area(),
         Optional.empty(),
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),

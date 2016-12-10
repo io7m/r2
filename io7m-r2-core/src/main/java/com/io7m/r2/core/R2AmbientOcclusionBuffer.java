@@ -98,7 +98,7 @@ public final class R2AmbientOcclusionBuffer implements
     this.desc = NullCheck.notNull(in_desc);
 
     long size = 0L;
-    size += this.t_occ.get().getRange().getInterval();
+    size += this.t_occ.texture().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
   }
 
@@ -124,7 +124,7 @@ public final class R2AmbientOcclusionBuffer implements
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
-    final AreaInclusiveUnsignedLType area = d.getArea();
+    final AreaInclusiveUnsignedLType area = d.area();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -143,7 +143,7 @@ public final class R2AmbientOcclusionBuffer implements
 
       final R2Texture2DType rt_occ = R2Texture2DStatic.of(p_occ.getRight());
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_occ.get());
+      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_occ.texture());
 
       final R2AmbientOcclusionBufferDescription.Builder ab =
         R2AmbientOcclusionBufferDescription.builder();
@@ -157,25 +157,25 @@ public final class R2AmbientOcclusionBuffer implements
   }
 
   @Override
-  public R2Texture2DUsableType getAmbientOcclusionTexture()
+  public R2Texture2DUsableType ambientOcclusionTexture()
   {
     return this.t_occ;
   }
 
   @Override
-  public JCGLFramebufferUsableType getPrimaryFramebuffer()
+  public JCGLFramebufferUsableType primaryFramebuffer()
   {
     return this.framebuffer;
   }
 
   @Override
-  public AreaInclusiveUnsignedLType getArea()
+  public AreaInclusiveUnsignedLType area()
   {
-    return this.t_occ.get().textureGetArea();
+    return this.t_occ.texture().textureGetArea();
   }
 
   @Override
-  public R2AmbientOcclusionBufferDescriptionType getDescription()
+  public R2AmbientOcclusionBufferDescriptionType description()
   {
     return this.desc;
   }

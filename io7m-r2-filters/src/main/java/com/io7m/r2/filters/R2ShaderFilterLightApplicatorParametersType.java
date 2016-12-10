@@ -34,19 +34,19 @@ public interface R2ShaderFilterLightApplicatorParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getAlbedoTexture();
+  R2Texture2DUsableType albedoTexture();
 
   /**
    * @return The texture that contains the diffuse lighting term
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getDiffuseTexture();
+  R2Texture2DUsableType diffuseTexture();
 
   /**
    * @return The texture that contains the specular lighting term
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getSpecularTexture();
+  R2Texture2DUsableType specularTexture();
 }

@@ -31,13 +31,13 @@ public interface R2LightSphericalSingleWritableType extends
    * @return The position of the origin of the light in world-space
    */
 
-  PVector3FType<R2SpaceWorldType> getOriginPositionWritable();
+  PVector3FType<R2SpaceWorldType> originPositionWritable();
 
   /**
    * Set the geometry scale factor.
    *
    * The final rendered scale of the light volume
-   * geometry is given by {@link R2LightSphericalSingleReadableType#getRadius()}
+   * geometry is given by {@link R2LightSphericalSingleReadableType#radius()}
    * * {@code f}. This is used to artificially enlarge the light volume to
    * account for, for example, the fact that a low-polygon approximation of a
    * sphere will typically have a smaller volume than a real sphere would.

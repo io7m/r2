@@ -130,11 +130,11 @@ public final class R2ShaderFilterLightApplicator extends
     NullCheck.notNull(values);
 
     this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.getAlbedoTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
     this.unit_diffuse =
-      tc.unitContextBindTexture2D(g_tex, values.getDiffuseTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.diffuseTexture().texture());
     this.unit_specular =
-      tc.unitContextBindTexture2D(g_tex, values.getSpecularTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.specularTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, this.unit_albedo);

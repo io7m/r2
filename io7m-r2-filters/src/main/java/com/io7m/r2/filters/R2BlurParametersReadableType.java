@@ -28,7 +28,7 @@ public interface R2BlurParametersReadableType
    * @return The current blur size in texels
    */
 
-  default float getBlurSize()
+  default float blurSize()
   {
     return 1.0f;
   }
@@ -37,7 +37,7 @@ public interface R2BlurParametersReadableType
    * @return The scale value for intermediate images
    */
 
-  default float getBlurScale()
+  default float blurScale()
   {
     return 1.0f;
   }
@@ -46,7 +46,7 @@ public interface R2BlurParametersReadableType
    * @return The number of blur passes that will be used
    */
 
-  default int getBlurPasses()
+  default int blurPasses()
   {
     return 1;
   }
@@ -56,7 +56,7 @@ public interface R2BlurParametersReadableType
    * framebuffer blitting
    */
 
-  default JCGLFramebufferBlitFilter getBlurScaleFilter()
+  default JCGLFramebufferBlitFilter blurScaleFilter()
   {
     return JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_LINEAR;
   }

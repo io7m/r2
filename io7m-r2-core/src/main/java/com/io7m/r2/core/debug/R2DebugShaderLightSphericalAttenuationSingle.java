@@ -273,24 +273,24 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
      * Upload the current view rays.
      */
 
-    final R2ViewRaysReadableType view_rays = m.getViewRays();
+    final R2ViewRaysReadableType view_rays = m.viewRays();
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y0, view_rays.getOriginX0Y0());
+      this.u_view_rays_origin_x0y0, view_rays.originX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y0, view_rays.getOriginX1Y0());
+      this.u_view_rays_origin_x1y0, view_rays.originX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y1, view_rays.getOriginX0Y1());
+      this.u_view_rays_origin_x0y1, view_rays.originX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y1, view_rays.getOriginX1Y1());
+      this.u_view_rays_origin_x1y1, view_rays.originX1Y1());
 
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y0, view_rays.getRayX0Y0());
+      this.u_view_rays_ray_x0y0, view_rays.rayX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y0, view_rays.getRayX1Y0());
+      this.u_view_rays_ray_x1y0, view_rays.rayX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y1, view_rays.getRayX0Y1());
+      this.u_view_rays_ray_x0y1, view_rays.rayX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y1, view_rays.getRayX1Y1());
+      this.u_view_rays_ray_x1y1, view_rays.rayX1Y1());
 
     /**
      * Upload the viewport.
@@ -311,30 +311,30 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
 
     /**
      * Upload the projection for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+      this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
     /**
      * Transform the light's position to eye-space and upload it.
      */
 
     final PVectorReadable3FType<R2SpaceWorldType> position =
-      values.getOriginPosition();
+      values.originPosition();
     this.position_world.copyFrom3F(position);
     this.position_world.setWF(1.0f);
 
-    final R2TransformContextType trc = m.getTransformContext();
+    final R2TransformContextType trc = m.transformContext();
     PMatrixM4x4F.multiplyVector4F(
-      trc.getContextPM4F(),
-      m.getMatrixView(),
+      trc.contextPM4F(),
+      m.matrixView(),
       this.position_world,
       this.position_eye);
 
@@ -348,13 +348,13 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_spherical_color, values.getColor());
+      this.u_light_spherical_color, values.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_spherical_intensity, values.getIntensity());
+      this.u_light_spherical_intensity, values.intensity());
     g_sh.shaderUniformPutFloat(
-      this.u_light_spherical_inverse_falloff, 1.0f / values.getFalloff());
+      this.u_light_spherical_inverse_falloff, 1.0f / values.falloff());
     g_sh.shaderUniformPutFloat(
-      this.u_light_spherical_inverse_range, 1.0f / values.getRadius());
+      this.u_light_spherical_inverse_range, 1.0f / values.radius());
   }
 
   @Override
@@ -370,6 +370,6 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_volume_modelview, m.getMatrixLightModelView());
+      this.u_transform_volume_modelview, m.matrixLightModelView());
   }
 }

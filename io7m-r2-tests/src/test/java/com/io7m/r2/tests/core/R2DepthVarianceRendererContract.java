@@ -115,7 +115,7 @@ public abstract class R2DepthVarianceRendererContract extends R2JCGLContract
     final R2InstanceSingleType i =
       R2InstanceSingle.newInstance(
         id_pool,
-        quad.getArrayObject(),
+        quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 

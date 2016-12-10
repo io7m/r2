@@ -186,23 +186,23 @@ public final class R2InstanceBatchedDynamic implements
   {
     NullCheck.notNull(pool);
     return new R2InstanceBatchedDynamic(
-      g_ab, g_ao, o, pool.getFreshID(), count);
+      g_ab, g_ao, o, pool.freshID(), count);
   }
 
   @Override
-  public int getMaximumSize()
+  public int maximumSize()
   {
     return this.max_size;
   }
 
   @Override
-  public int getEnabledCount()
+  public int enabledCount()
   {
     return this.max_size - this.free.size();
   }
 
   @Override
-  public int getRenderCount()
+  public int renderCount()
   {
     return this.max_size;
   }
@@ -227,7 +227,7 @@ public final class R2InstanceBatchedDynamic implements
   {
     NullCheck.notNull(t);
 
-    if (this.getEnabledCount() == this.max_size) {
+    if (this.enabledCount() == this.max_size) {
       final StringBuilder sb = new StringBuilder(64);
       sb.append("Batch is full (capacity is ");
       sb.append(this.max_size);
@@ -290,13 +290,13 @@ public final class R2InstanceBatchedDynamic implements
   }
 
   @Override
-  public JCGLArrayObjectType getArrayObject()
+  public JCGLArrayObjectType arrayObject()
   {
     return this.matrix_vao;
   }
 
   @Override
-  public long getInstanceID()
+  public long instanceID()
   {
     return this.instance_id;
   }

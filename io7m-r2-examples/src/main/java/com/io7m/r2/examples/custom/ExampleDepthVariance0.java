@@ -149,7 +149,7 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
     final R2TransformReadableType tr = R2TransformSOT.newTransform();
     this.instance = R2InstanceSingle.newInstance(
       id_pool,
-      this.sphere.getArrayObject(),
+      this.sphere.arrayObject(),
       tr,
       PMatrixI3x3F.identity());
 
@@ -212,7 +212,7 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
     final R2MatricesType matrices = m.getMatrices();
     matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
       final JCGLFramebufferUsableType dbuffer_fb =
-        t.depth_buffer.getPrimaryFramebuffer();
+        t.depth_buffer.primaryFramebuffer();
 
       final JCGLFramebuffersType g_fb = t.g33.getFramebuffers();
       final JCGLClearType g_cl = t.g33.getClear();
@@ -221,7 +221,7 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
       g_fb.framebufferDrawBind(dbuffer_fb);
       t.depth_buffer.clearBoundPrimaryFramebuffer(t.g33);
       t.depth_variance_renderer.renderDepthVarianceWithBoundBuffer(
-        t.depth_buffer.getArea(),
+        t.depth_buffer.area(),
         t.main.getTextureUnitAllocator().getRootContext(),
         mo,
         t.depth_instances);

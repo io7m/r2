@@ -157,9 +157,9 @@ public final class R2FilterOcclusionApplicator implements
     final JCGLViewportsType g_v = this.g.getViewports();
 
     final R2LightBufferUsableType lb =
-      parameters.getOutputLightBuffer();
+      parameters.outputLightBuffer();
 
-    g_fb.framebufferDrawBind(lb.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(lb.primaryFramebuffer());
 
     if (g_db.depthBufferGetBits() > 0) {
       g_db.depthBufferTestDisable();
@@ -180,21 +180,21 @@ public final class R2FilterOcclusionApplicator implements
 
     g_cu.cullingDisable();
     g_cm.colorBufferMask(true, true, true, true);
-    g_v.viewportSet(lb.getArea());
+    g_v.viewportSet(lb.area());
 
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
       try {
         this.shader_params.setTexture(
-          parameters.getOcclusionTexture());
+          parameters.occlusionTexture());
         this.shader_params.setIntensity(
-          parameters.getIntensity());
+          parameters.intensity());
 
         g_sh.shaderActivateProgram(this.shader.getShaderProgram());
         this.shader.onActivate(g_sh);
         this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
         this.shader.onValidate();
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
