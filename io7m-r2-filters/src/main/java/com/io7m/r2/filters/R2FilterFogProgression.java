@@ -14,29 +14,29 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
-
-import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+package com.io7m.r2.filters;
 
 /**
- * The type of usable image filters.
- *
- * @param <P> The precise type of parameters
+ * The type of fog progression.
  */
 
-public interface R2FilterUsableType<P>
+public enum R2FilterFogProgression
 {
   /**
-   * Run the filter for the given parameters.
-   *
-   * @param pc         A profiling context
-   * @param uc         A texture unit context
-   * @param parameters The filter parameters
+   * Fog progresses linearly.
    */
 
-  void runFilter(
-    final JCGLProfilingContextType pc,
-    final JCGLTextureUnitContextParentType uc,
-    final P parameters);
+  FOG_LINEAR,
+
+  /**
+   * Fog progresses quadratically.
+   */
+
+  FOG_QUADRATIC,
+
+  /**
+   * Fog progresses inverse quadratically.
+   */
+
+  FOG_QUADRATIC_INVERSE
 }

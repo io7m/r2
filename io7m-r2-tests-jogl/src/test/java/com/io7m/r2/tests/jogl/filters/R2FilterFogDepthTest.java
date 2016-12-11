@@ -14,29 +14,22 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.tests.jogl.filters;
 
-import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.filters.R2FilterFogDepthContract;
+import com.io7m.r2.tests.filters.R2FilterSSAOContract;
+import com.io7m.r2.tests.jogl.R2TestContexts;
 
-/**
- * The type of usable image filters.
- *
- * @param <P> The precise type of parameters
- */
-
-public interface R2FilterUsableType<P>
+public final class R2FilterFogDepthTest extends
+  R2FilterFogDepthContract
 {
-  /**
-   * Run the filter for the given parameters.
-   *
-   * @param pc         A profiling context
-   * @param uc         A texture unit context
-   * @param parameters The filter parameters
-   */
-
-  void runFilter(
-    final JCGLProfilingContextType pc,
-    final JCGLTextureUnitContextParentType uc,
-    final P parameters);
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
+  {
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
 }

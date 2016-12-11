@@ -125,7 +125,10 @@ public final class R2EyeZBuffer implements R2EyeZBufferType
       final R2Texture2DType rt_depth = R2Texture2DStatic.of(p_depth.getRight());
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_eye.texture());
+      fbb.attachColorTexture2DAt(
+        points.get(0),
+        buffers.get(0),
+        rt_eye.texture());
       fbb.attachDepthStencilTexture2D(rt_depth.texture());
 
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);

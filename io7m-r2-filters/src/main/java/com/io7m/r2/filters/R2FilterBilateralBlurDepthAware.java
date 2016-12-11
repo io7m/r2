@@ -405,7 +405,6 @@ public final class R2FilterBilateralBlurDepthAware<
     final UnsignedRangeInclusiveL range_y =
       source_area.getRangeX();
 
-
     final R2MatricesObserverValuesType m_observer =
       parameters.sceneObserverValues();
 
