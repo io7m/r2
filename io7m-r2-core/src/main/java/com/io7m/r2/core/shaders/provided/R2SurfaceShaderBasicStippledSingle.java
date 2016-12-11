@@ -76,7 +76,7 @@ public final class R2SurfaceShaderBasicStippledSingle extends
   private JCGLTextureUnitType unit_stipple;
   private long viewport_w;
   private long viewport_h;
-  private VectorM2F noise_uv_scale;
+  private final VectorM2F noise_uv_scale;
 
   private R2SurfaceShaderBasicStippledSingle(
     final JCGLShadersType in_shaders,
