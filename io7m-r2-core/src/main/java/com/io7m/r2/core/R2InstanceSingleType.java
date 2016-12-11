@@ -33,17 +33,17 @@ public interface R2InstanceSingleType extends R2InstanceType
    * @return The instance transform
    */
 
-  R2TransformReadableType getTransform();
+  R2TransformReadableType transform();
 
   /**
    * @return The instance UV matrix
    */
 
-  PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> getUVMatrix();
+  PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uvMatrix();
 
   /**
    * @return The instance array object
    */
 
-  JCGLArrayObjectUsableType getArrayObject();
+  JCGLArrayObjectUsableType arrayObject();
 }

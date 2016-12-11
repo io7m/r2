@@ -135,15 +135,15 @@ public abstract class R2ShaderLightProjectiveContract<
     final JCGLTextureUnitType ua =
       tc.unitContextBindTexture2D(
         g_tex,
-        gbuffer.getAlbedoEmissiveTexture().get());
+        gbuffer.albedoEmissiveTexture().texture());
     final JCGLTextureUnitType un =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.normalTexture().texture());
     final JCGLTextureUnitType us =
       tc.unitContextBindTexture2D(
         g_tex,
-        gbuffer.getSpecularTextureOrDefault(td).get());
+        gbuffer.getSpecularTextureOrDefault(td).texture());
     final JCGLTextureUnitType ud =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.depthTexture().texture());
 
     final R2ShaderLightProjectiveType<T> f =
       this.newShaderWithVerifier(g, sources, pool);
@@ -160,7 +160,7 @@ public abstract class R2ShaderLightProjectiveContract<
     mat.withObserver(view, proj, this, (mo, x) -> {
       f.onActivate(g.getShaders());
       f.onReceiveBoundGeometryBufferTextures(g_sh, gbuffer, ua, us, ud, un);
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.getArea(), params, mo);
+      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
 
       return mo.withProjectiveLight(params, this, (mp, y) -> {
         f.onReceiveVolumeLightTransform(g_sh, mp);
@@ -221,7 +221,7 @@ public abstract class R2ShaderLightProjectiveContract<
 
     this.expected.expect(TransitionException.class);
     mat.withObserver(view, proj, this, (mo, x) -> {
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.getArea(), params, mo);
+      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
       return Unit.unit();
     });
   }
@@ -258,7 +258,7 @@ public abstract class R2ShaderLightProjectiveContract<
     final Class<?> s_class = s.getShaderParametersType();
     final Class<?> l_class = light.getClass();
     Assert.assertTrue(s_class.isAssignableFrom(l_class));
-    Assert.assertTrue(light.getLightID() >= 0L);
+    Assert.assertTrue(light.lightID() >= 0L);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

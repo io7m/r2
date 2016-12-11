@@ -144,7 +144,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    g_fb.framebufferDrawBind(ib.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 
     final R2FilterLightApplicatorParametersMutable params =
       R2FilterLightApplicatorParametersMutable.create();
@@ -157,7 +157,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -214,7 +214,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    g_fb.framebufferDrawBind(ib.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 
     final R2FilterLightApplicatorParametersMutable params =
       R2FilterLightApplicatorParametersMutable.create();
@@ -227,7 +227,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
 
@@ -287,7 +287,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    g_fb.framebufferDrawBind(ib.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 
     final R2FilterLightApplicatorParametersMutable params =
       R2FilterLightApplicatorParametersMutable.create();
@@ -300,7 +300,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -359,7 +359,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    g_fb.framebufferDrawBind(ib.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 
     final R2FilterLightApplicatorParametersMutable params =
       R2FilterLightApplicatorParametersMutable.create();
@@ -372,6 +372,6 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 }

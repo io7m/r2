@@ -31,5 +31,5 @@ public interface R2UnitQuadUsableType extends JCGLResourceUsableType,
    * @return The array object for the quad
    */
 
-  JCGLArrayObjectUsableType getArrayObject();
+  JCGLArrayObjectUsableType arrayObject();
 }

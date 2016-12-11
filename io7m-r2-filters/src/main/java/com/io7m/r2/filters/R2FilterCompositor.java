@@ -150,30 +150,30 @@ public final class R2FilterCompositor implements
 
     try {
       this.shader.onActivate(g_sh);
-      g_ao.arrayObjectBind(this.quad.getArrayObject());
+      g_ao.arrayObjectBind(this.quad.arrayObject());
 
-      for (final R2FilterCompositorItemType i : parameters.getItems()) {
+      for (final R2FilterCompositorItemType i : parameters.items()) {
         final Optional<R2FilterCompositorBlendingType> blend_opt =
-          i.getBlending();
+          i.blending();
         if (blend_opt.isPresent()) {
           final R2FilterCompositorBlendingType blend = blend_opt.get();
           g_b.blendingEnableSeparateWithEquationSeparate(
-            blend.getBlendFunctionSourceRGB(),
-            blend.getBlendFunctionSourceAlpha(),
-            blend.getBlendFunctionTargetRGB(),
-            blend.getBlendFunctionTargetAlpha(),
-            blend.getBlendEquationRGB(),
-            blend.getBlendEquationAlpha());
+            blend.blendFunctionSourceRGB(),
+            blend.blendFunctionSourceAlpha(),
+            blend.blendFunctionTargetRGB(),
+            blend.blendFunctionTargetAlpha(),
+            blend.blendEquationRGB(),
+            blend.blendEquationAlpha());
         } else {
           g_b.blendingDisable();
         }
 
         final JCGLTextureUnitContextType c = uc.unitContextNew();
         try {
-          g_v.viewportSet(i.getOutputViewport());
+          g_v.viewportSet(i.outputViewport());
 
-          this.shader_params.setIntensity(i.getIntensity());
-          this.shader_params.setTexture(i.getTexture());
+          this.shader_params.setIntensity(i.intensity());
+          this.shader_params.setTexture(i.texture());
           this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
           this.shader.onValidate();
 

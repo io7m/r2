@@ -82,7 +82,7 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
   }
 
   @Override
-  public Optional<R2MeshTangentsType> getMesh()
+  public Optional<R2MeshTangentsType> mesh()
   {
     return this.mesh;
   }

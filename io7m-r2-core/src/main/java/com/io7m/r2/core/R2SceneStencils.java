@@ -87,7 +87,7 @@ public final class R2SceneStencils implements R2SceneStencilsType
   {
     NullCheck.notNull(i);
 
-    final long i_id = i.getInstanceID();
+    final long i_id = i.instanceID();
 
     this.instances.put(i_id, i);
     if (R2SceneStencils.LOG.isTraceEnabled()) {
@@ -115,11 +115,11 @@ public final class R2SceneStencils implements R2SceneStencilsType
     }
 
     this.instances_sorted.sort((a, b) -> {
-      final JCGLArrayObjectUsableType ao = a.getArrayObject();
-      final JCGLArrayObjectUsableType bo = b.getArrayObject();
+      final JCGLArrayObjectUsableType ao = a.arrayObject();
+      final JCGLArrayObjectUsableType bo = b.arrayObject();
       final int ac = Integer.compare(ao.getGLName(), bo.getGLName());
       if (ac == 0) {
-        return Long.compare(a.getInstanceID(), b.getInstanceID());
+        return Long.compare(a.instanceID(), b.instanceID());
       }
       return ac;
     });
@@ -127,7 +127,7 @@ public final class R2SceneStencils implements R2SceneStencilsType
     int current_array = -1;
     for (int index = 0; index < this.instances_sorted.size(); ++index) {
       final R2InstanceSingleType i = this.instances_sorted.get(index);
-      final JCGLArrayObjectUsableType array_object = i.getArrayObject();
+      final JCGLArrayObjectUsableType array_object = i.arrayObject();
       final int next_array = array_object.getGLName();
       if (next_array != current_array) {
         c.onInstanceSingleStartArray(i);

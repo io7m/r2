@@ -54,6 +54,7 @@ import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
@@ -76,20 +77,20 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
     final R2InstanceSingleType i =
       R2InstanceSingle.newInstance(
         id_pool,
-        quad.getArrayObject(),
+        quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
-    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> ds =
+    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> ds =
       R2SurfaceShaderBasicSingle.newShader(
         g.getShaders(),
         sources,
         id_pool);
 
     final R2SurfaceShaderBasicParameters ds_param =
-      R2SurfaceShaderBasicParameters.newParameters(td);
+      R2SurfaceShaderBasicParameters.of(td);
 
-    final R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> mat =
+    final R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> mat =
       R2MaterialOpaqueSingle.newMaterial(id_pool, ds, ds_param);
 
     final R2SceneOpaquesType s = R2SceneOpaques.newOpaques();
@@ -222,7 +223,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
 
     g_fb.framebufferReadUnbind();
     g_fb.framebufferDrawUnbind();
-    g_fb.framebufferDrawBind(gbuffer.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(gbuffer.primaryFramebuffer());
 
     final R2MatricesType m = R2Matrices.newMatrices();
     m.withObserver(PMatrixI4x4F.identity(), proj, Unit.unit(), (x, y) -> {
@@ -232,7 +233,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertTrue(
-      g_fb.framebufferDrawIsBound(gbuffer.getPrimaryFramebuffer()));
+      g_fb.framebufferDrawIsBound(gbuffer.primaryFramebuffer()));
   }
 
   @Test
@@ -296,6 +297,6 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertTrue(
-      g_fb.framebufferDrawIsBound(gbuffer.getPrimaryFramebuffer()));
+      g_fb.framebufferDrawIsBound(gbuffer.primaryFramebuffer()));
   }
 }

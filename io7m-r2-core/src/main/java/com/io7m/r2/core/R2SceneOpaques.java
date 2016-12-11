@@ -81,9 +81,9 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     NullCheck.notNull(m);
     R2Stencils.checkValidGroup(group);
 
-    final long i_id = i.getInstanceID();
-    final long m_id = m.getMaterialID();
-    final R2ShaderInstanceSingleUsableType<?> shader = m.getShader();
+    final long i_id = i.instanceID();
+    final long m_id = m.materialID();
+    final R2ShaderInstanceSingleUsableType<?> shader = m.shader();
     final long s_id = shader.getShaderID();
 
     /**
@@ -155,9 +155,9 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     NullCheck.notNull(m);
     R2Stencils.checkValidGroup(group);
 
-    final long i_id = i.getInstanceID();
-    final long m_id = m.getMaterialID();
-    final R2ShaderInstanceBatchedUsableType<?> shader = m.getShader();
+    final long i_id = i.instanceID();
+    final long m_id = m.materialID();
+    final R2ShaderInstanceBatchedUsableType<?> shader = m.shader();
     final long s_id = shader.getShaderID();
 
     /**
@@ -318,8 +318,8 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
         }
 
         this.singles.instances_sorted.sort((a, b) -> {
-          final JCGLArrayObjectUsableType ao = a.getArrayObject();
-          final JCGLArrayObjectUsableType bo = b.getArrayObject();
+          final JCGLArrayObjectUsableType ao = a.arrayObject();
+          final JCGLArrayObjectUsableType bo = b.arrayObject();
           return Integer.compare(ao.getGLName(), bo.getGLName());
         });
 
@@ -333,7 +333,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
         for (int index = 0; index < sorted_size; ++index) {
           final R2InstanceSingleType i =
             this.singles.instances_sorted.get(index);
-          final JCGLArrayObjectUsableType array_object = i.getArrayObject();
+          final JCGLArrayObjectUsableType array_object = i.arrayObject();
           final int next_array = array_object.getGLName();
           if (next_array != current_array) {
             c.onInstanceSingleArrayStart(i);
@@ -418,7 +418,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     this.text.setLength(0);
     this.text.append("Instance is already visible.\n");
     this.text.append("Instance:         ");
-    this.text.append(i.getInstanceID());
+    this.text.append(i.instanceID());
     return new R2RendererExceptionInstanceAlreadyVisible(this.text.toString());
   }
 

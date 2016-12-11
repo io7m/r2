@@ -35,7 +35,7 @@ public interface R2FilterFXAAParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getTexture();
+  R2Texture2DUsableType texture();
 
   /**
    * @return The FXAA quality preset
@@ -43,7 +43,7 @@ public interface R2FilterFXAAParametersType
 
   @Value.Parameter
   @Value.Default
-  default R2FilterFXAAQuality getQuality()
+  default R2FilterFXAAQuality quality()
   {
     return R2FilterFXAAQuality.R2_FXAA_QUALITY_25;
   }
@@ -59,7 +59,7 @@ public interface R2FilterFXAAParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getSubPixelAliasingRemoval()
+  default float subPixelAliasingRemoval()
   {
     return 0.75f;
   }
@@ -77,7 +77,7 @@ public interface R2FilterFXAAParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getEdgeThreshold()
+  default float edgeThreshold()
   {
     return 0.166f;
   }
@@ -100,7 +100,7 @@ public interface R2FilterFXAAParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getEdgeThresholdMinimum()
+  default float edgeThresholdMinimum()
   {
     return 0.0833f;
   }

@@ -121,7 +121,7 @@ public final class R2TestUtilities
     return new R2InstanceSingleType()
     {
       @Override
-      public long getInstanceID()
+      public long instanceID()
       {
         return id;
       }
@@ -135,20 +135,20 @@ public final class R2TestUtilities
       }
 
       @Override
-      public JCGLArrayObjectUsableType getArrayObject()
+      public JCGLArrayObjectUsableType arrayObject()
       {
         return ao;
       }
 
       @Override
-      public R2TransformReadableType getTransform()
+      public R2TransformReadableType transform()
       {
         return R2TransformSiOT.newTransform();
       }
 
       @Override
       public PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType>
-      getUVMatrix()
+      uvMatrix()
       {
         return PMatrixI3x3F.identity();
       }
@@ -189,13 +189,13 @@ public final class R2TestUtilities
     return new R2MaterialOpaqueSingleType<Object>()
     {
       @Override
-      public R2ShaderInstanceSingleUsableType<Object> getShader()
+      public R2ShaderInstanceSingleUsableType<Object> shader()
       {
         return sh;
       }
 
       @Override
-      public long getMaterialID()
+      public long materialID()
       {
         return id;
       }
@@ -207,7 +207,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Object getShaderParameters()
+      public Object shaderParameters()
       {
         return p;
       }
@@ -223,13 +223,13 @@ public final class R2TestUtilities
     return new R2MaterialDepthSingleType<Object>()
     {
       @Override
-      public R2ShaderDepthSingleUsableType<Object> getShader()
+      public R2ShaderDepthSingleUsableType<Object> shader()
       {
         return sh;
       }
 
       @Override
-      public long getMaterialID()
+      public long materialID()
       {
         return id;
       }
@@ -241,7 +241,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Object getShaderParameters()
+      public Object shaderParameters()
       {
         return p;
       }
@@ -534,7 +534,7 @@ public final class R2TestUtilities
     return new R2InstanceBatchedType()
     {
       @Override
-      public JCGLArrayObjectType getArrayObject()
+      public JCGLArrayObjectType arrayObject()
       {
         return a0;
       }
@@ -548,13 +548,13 @@ public final class R2TestUtilities
       }
 
       @Override
-      public int getRenderCount()
+      public int renderCount()
       {
         return 1;
       }
 
       @Override
-      public long getInstanceID()
+      public long instanceID()
       {
         return l;
       }
@@ -776,13 +776,13 @@ public final class R2TestUtilities
     return new R2MaterialDepthBatchedType<Object>()
     {
       @Override
-      public R2ShaderDepthBatchedUsableType<Object> getShader()
+      public R2ShaderDepthBatchedUsableType<Object> shader()
       {
         return sh;
       }
 
       @Override
-      public long getMaterialID()
+      public long materialID()
       {
         return id;
       }
@@ -794,7 +794,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Object getShaderParameters()
+      public Object shaderParameters()
       {
         return p;
       }
@@ -810,13 +810,13 @@ public final class R2TestUtilities
     return new R2MaterialOpaqueBatchedType<Object>()
     {
       @Override
-      public R2ShaderInstanceBatchedUsableType<Object> getShader()
+      public R2ShaderInstanceBatchedUsableType<Object> shader()
       {
         return sh;
       }
 
       @Override
-      public long getMaterialID()
+      public long materialID()
       {
         return id;
       }
@@ -828,7 +828,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Object getShaderParameters()
+      public Object shaderParameters()
       {
         return p;
       }
@@ -1028,19 +1028,19 @@ public final class R2TestUtilities
     return new R2LightSingleType()
     {
       @Override
-      public PVector3FType<R2SpaceRGBType> getColorWritable()
+      public PVector3FType<R2SpaceRGBType> colorWritable()
       {
         return black;
       }
 
       @Override
-      public JCGLArrayObjectUsableType getArrayObject()
+      public JCGLArrayObjectUsableType arrayObject()
       {
         return a0;
       }
 
       @Override
-      public R2TransformReadableType getTransform()
+      public R2TransformReadableType transform()
       {
         return R2TransformIdentity.getInstance();
       }
@@ -1056,19 +1056,19 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getLightID()
+      public long lightID()
       {
         return light_id;
       }
 
       @Override
-      public PVector3FType<R2SpaceRGBType> getColor()
+      public PVector3FType<R2SpaceRGBType> color()
       {
         return black;
       }
 
       @Override
-      public float getIntensity()
+      public float intensity()
       {
         return 1.0f;
       }
@@ -1101,43 +1101,43 @@ public final class R2TestUtilities
     return new R2MatricesObserverValuesType()
     {
       @Override
-      public R2ProjectionReadableType getProjection()
+      public R2ProjectionReadableType projection()
       {
         return p;
       }
 
       @Override
-      public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceClipType> getMatrixProjection()
+      public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceClipType> matrixProjection()
       {
         return (PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceClipType>) m;
       }
 
       @Override
-      public PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType> getMatrixProjectionInverse()
+      public PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType> matrixProjectionInverse()
       {
         return (PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType>) m;
       }
 
       @Override
-      public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType> getMatrixView()
+      public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType> matrixView()
       {
         return (PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType>) m;
       }
 
       @Override
-      public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType> getMatrixViewInverse()
+      public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType> matrixViewInverse()
       {
         return (PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType>) m;
       }
 
       @Override
-      public R2ViewRaysReadableType getViewRays()
+      public R2ViewRaysReadableType viewRays()
       {
         return vr;
       }
 
       @Override
-      public R2TransformContextType getTransformContext()
+      public R2TransformContextType transformContext()
       {
         return tc;
       }

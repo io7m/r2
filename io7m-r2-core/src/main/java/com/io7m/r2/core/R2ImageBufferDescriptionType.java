@@ -32,12 +32,12 @@ public interface R2ImageBufferDescriptionType extends
 {
   @Override
   @Value.Parameter
-  AreaInclusiveUnsignedLType getArea();
+  AreaInclusiveUnsignedLType area();
 
   /**
    * @return The precision of the depth buffer, if one is to be provided
    */
 
   @Value.Parameter
-  Optional<R2DepthPrecision> getDepthPrecision();
+  Optional<R2DepthPrecision> depthPrecision();
 }

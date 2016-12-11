@@ -38,13 +38,13 @@ public abstract class R2SSAOKernelContract
   public final void testKernel()
   {
     final R2SSAOKernelType k = this.newKernel(128);
-    Assert.assertEquals(128L, (long) k.getSize());
+    Assert.assertEquals(128L, (long) k.size());
 
     final Set<VectorReadable3FType> points = new HashSet<>(256);
 
     final VectorM3F v = new VectorM3F();
     for (int index = 0; index < 128; ++index) {
-      k.getSample(index, v);
+      k.sample(index, v);
       System.out.printf(
         "%f,%f,%f\n",
         Float.valueOf(v.getXF()),
@@ -69,10 +69,10 @@ public abstract class R2SSAOKernelContract
     }
 
     k.regenerate(128);
-    Assert.assertEquals(128L, (long) k.getSize());
+    Assert.assertEquals(128L, (long) k.size());
 
     for (int index = 0; index < 128; ++index) {
-      k.getSample(index, v);
+      k.sample(index, v);
       final float mag = VectorM3F.magnitude(v);
       Assert.assertTrue(
         String.format("Magnitude %f must be >= 0.099999", Float.valueOf(mag)),
@@ -91,7 +91,7 @@ public abstract class R2SSAOKernelContract
     final VectorM3F v = new VectorM3F();
     final R2SSAOKernelType k = this.newKernel(2);
     this.expected.expect(RangeCheckException.class);
-    k.getSample(2, v);
+    k.sample(2, v);
   }
 
   @Test
@@ -102,7 +102,7 @@ public abstract class R2SSAOKernelContract
 
     k.regenerate(100);
     this.expected.expect(RangeCheckException.class);
-    k.getSample(101, v);
+    k.sample(101, v);
   }
 
   @Test

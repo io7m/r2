@@ -144,11 +144,11 @@ public abstract class R2FilterCompositorContract extends R2JCGLContract
       1.0f,
       Optional.empty()));
 
-    g_fb.framebufferDrawBind(ib.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 }

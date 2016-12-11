@@ -714,7 +714,7 @@ public final class R2SceneOpaquesTest
     {
       this.ops.add(String.format(
         "onInstanceBatchedUpdate %d",
-        Long.valueOf(i.getInstanceID())));
+        Long.valueOf(i.instanceID())));
     }
 
     @Override
@@ -731,13 +731,13 @@ public final class R2SceneOpaquesTest
     public <M> void onInstanceBatchedMaterialStart(
       final R2MaterialOpaqueBatchedType<M> material)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.shader();
       Assert.assertEquals(this.shader_current, s);
       this.material_current = material;
       this.ops.add(String.format(
         "onInstanceBatchedMaterialStart %d %d",
         Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
+        Long.valueOf(material.materialID())));
     }
 
     @Override
@@ -745,26 +745,26 @@ public final class R2SceneOpaquesTest
       final R2MaterialOpaqueBatchedType<M> material,
       final R2InstanceBatchedType i)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.shader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       this.ops.add(String.format(
         "onInstanceBatched %d",
-        Long.valueOf(i.getInstanceID())));
+        Long.valueOf(i.instanceID())));
     }
 
     @Override
     public <M> void onInstanceBatchedMaterialFinish(
       final R2MaterialOpaqueBatchedType<M> material)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.shader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       this.material_current = null;
       this.ops.add(String.format(
         "onInstanceBatchedMaterialFinish %d %d",
         Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
+        Long.valueOf(material.materialID())));
     }
 
     @Override
@@ -792,20 +792,20 @@ public final class R2SceneOpaquesTest
     public <M> void onInstanceSingleMaterialStart(
       final R2MaterialOpaqueSingleType<M> material)
     {
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+      final R2ShaderInstanceSingleUsableType<M> s = material.shader();
       Assert.assertEquals(this.shader_current, s);
       this.material_current = material;
       this.ops.add(String.format(
         "onInstanceSingleMaterialStart %d %d",
         Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
+        Long.valueOf(material.materialID())));
     }
 
     @Override
     public void onInstanceSingleArrayStart(
       final R2InstanceSingleType i)
     {
-      this.array_current = i.getArrayObject();
+      this.array_current = i.arrayObject();
       this.ops.add(String.format(
         "onInstanceSingleArrayStart %d",
         Integer.valueOf(this.array_current.getGLName())));
@@ -816,27 +816,27 @@ public final class R2SceneOpaquesTest
       final R2MaterialOpaqueSingleType<M> material,
       final R2InstanceSingleType i)
     {
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+      final R2ShaderInstanceSingleUsableType<M> s = material.shader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
-      Assert.assertEquals(i.getArrayObject(), this.array_current);
+      Assert.assertEquals(i.arrayObject(), this.array_current);
       this.ops.add(String.format(
         "onInstanceSingle %d",
-        Long.valueOf(i.getInstanceID())));
+        Long.valueOf(i.instanceID())));
     }
 
     @Override
     public <M> void onInstanceSingleMaterialFinish(
       final R2MaterialOpaqueSingleType<M> material)
     {
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+      final R2ShaderInstanceSingleUsableType<M> s = material.shader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       this.material_current = null;
       this.ops.add(String.format(
         "onInstanceSingleMaterialFinish %d %d",
         Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
+        Long.valueOf(material.materialID())));
     }
 
     @Override

@@ -77,7 +77,7 @@ public abstract class R2ShaderLightProjectiveLambertShadowVarianceSingleContract
 
     final R2ShadowDepthVariance sh =
       R2ShadowDepthVariance.of(
-        pool.getFreshID(),
+        pool.freshID(),
         R2DepthVarianceBufferDescription.of(
           area,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR,

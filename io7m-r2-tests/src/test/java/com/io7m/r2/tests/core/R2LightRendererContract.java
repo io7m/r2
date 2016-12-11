@@ -296,7 +296,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertTrue(g_fb.framebufferDrawIsBound(
-      lbuffer.getPrimaryFramebuffer()));
+      lbuffer.primaryFramebuffer()));
   }
 
   @Test
@@ -369,7 +369,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
 
     g_fb.framebufferReadUnbind();
     Assert.assertTrue(g_fb.framebufferDrawIsBound(
-      lbuffer.getPrimaryFramebuffer()));
+      lbuffer.primaryFramebuffer()));
 
     final R2MatricesType m = R2Matrices.newMatrices();
     m.withObserver(PMatrixI4x4F.identity(), proj, Unit.unit(), (x, y) -> {
@@ -387,6 +387,6 @@ public abstract class R2LightRendererContract extends R2JCGLContract
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertTrue(g_fb.framebufferDrawIsBound(
-      lbuffer.getPrimaryFramebuffer()));
+      lbuffer.primaryFramebuffer()));
   }
 }

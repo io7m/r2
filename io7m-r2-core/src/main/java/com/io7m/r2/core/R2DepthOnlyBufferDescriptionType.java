@@ -32,7 +32,7 @@ public interface R2DepthOnlyBufferDescriptionType extends
    */
 
   @Value.Default
-  default R2DepthPrecision getDepthPrecision()
+  default R2DepthPrecision depthPrecision()
   {
     return R2DepthPrecision.R2_DEPTH_PRECISION_24;
   }

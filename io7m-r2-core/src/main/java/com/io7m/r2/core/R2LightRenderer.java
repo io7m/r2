@@ -198,7 +198,7 @@ public final class R2LightRenderer implements R2LightRendererType
       if (lbuffer.isPresent()) {
         final R2LightBufferUsableType lb = lbuffer.get();
         final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-        g_fb.framebufferDrawBind(lb.getPrimaryFramebuffer());
+        g_fb.framebufferDrawBind(lb.primaryFramebuffer());
       }
 
       this.renderCopyDepthStencil(gbuffer, area);
@@ -245,13 +245,13 @@ public final class R2LightRenderer implements R2LightRendererType
     final R2GeometryBufferUsableType gbuffer,
     final AreaInclusiveUnsignedLType lbuffer_area)
   {
-    final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
+    final JCGLFramebufferUsableType gb_fb = gbuffer.primaryFramebuffer();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
 
     g_fb.framebufferReadBind(gb_fb);
     g_fb.framebufferBlit(
-      gbuffer.getArea(),
+      gbuffer.area(),
       lbuffer_area,
       R2LightRenderer.DEPTH_STENCIL,
       JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
@@ -491,7 +491,7 @@ public final class R2LightRenderer implements R2LightRendererType
     public void onLightSingleArrayStart(
       final R2LightSingleReadableType i)
     {
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.array_objects.arrayObjectBind(i.arrayObject());
     }
 
     private void onLightSingleScreen(
@@ -1029,15 +1029,15 @@ public final class R2LightRenderer implements R2LightRendererType
             this.textures, this.shaders, tc, Unit.unit());
 
           this.input_state.parent.matrices.withTransform(
-            this.input_state.volume.getTransform(),
-            this.input_state.volume.getUVMatrix(),
+            this.input_state.volume.transform(),
+            this.input_state.volume.uvMatrix(),
             this,
             (mi, t) -> {
               t.clip_volume_stencil.onReceiveInstanceTransformValues(
                 t.shaders, mi);
               t.clip_volume_stencil.onValidate();
               t.array_objects.arrayObjectBind(
-                t.input_state.volume.getArrayObject());
+                t.input_state.volume.arrayObject());
 
               try {
                 t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1080,7 +1080,7 @@ public final class R2LightRenderer implements R2LightRendererType
             this.shaders, this.input_state.parent.matrices);
           this.clip_screen_stencil.onValidate();
 
-          this.array_objects.arrayObjectBind(this.quad.getArrayObject());
+          this.array_objects.arrayObjectBind(this.quad.arrayObject());
           try {
             this.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
           } finally {
@@ -1219,7 +1219,7 @@ public final class R2LightRenderer implements R2LightRendererType
     public void onLightSingleArrayStart(
       final R2LightSingleReadableType i)
     {
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.array_objects.arrayObjectBind(i.arrayObject());
     }
 
     @Override
@@ -1401,20 +1401,20 @@ public final class R2LightRenderer implements R2LightRendererType
       this.unit_albedo =
         this.light_base_context.unitContextBindTexture2D(
           this.textures,
-          this.input_state.gbuffer.getAlbedoEmissiveTexture().get());
+          this.input_state.gbuffer.albedoEmissiveTexture().texture());
       this.unit_normals =
         this.light_base_context.unitContextBindTexture2D(
           this.textures,
-          this.input_state.gbuffer.getNormalTexture().get());
+          this.input_state.gbuffer.normalTexture().texture());
       this.unit_specular =
         this.light_base_context.unitContextBindTexture2D(
           this.textures,
           this.input_state.gbuffer.getSpecularTextureOrDefault(
-            this.texture_defaults).get());
+            this.texture_defaults).texture());
       this.unit_depth =
         this.light_base_context.unitContextBindTexture2D(
           this.textures,
-          this.input_state.gbuffer.getDepthTexture().get());
+          this.input_state.gbuffer.depthTexture().texture());
     }
 
     @Override

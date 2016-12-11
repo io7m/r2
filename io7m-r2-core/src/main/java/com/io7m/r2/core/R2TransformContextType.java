@@ -33,25 +33,25 @@ public interface R2TransformContextType
    * @return Preallocated storage for vectors
    */
 
-  Vector3FType getTemporaryVector3();
+  Vector3FType temporaryVector3();
 
   /**
    * @return Preallocated storage for quaternions
    */
 
-  Quaternion4FType getTemporaryQuaternion();
+  Quaternion4FType temporaryQuaternion();
 
   /**
    * @return Preallocated storage for mutable matrices
    */
 
-  PMatrixM4x4F.ContextPM4F getContextPM4F();
+  PMatrixM4x4F.ContextPM4F contextPM4F();
 
   /**
    * @return Preallocated storage for mutable matrices
    */
 
-  MatrixM4x4F.ContextMM4F getContextMM4F();
+  MatrixM4x4F.ContextMM4F contextMM4F();
 
   /**
    * @return A reference to a temporary 4x4 matrix. Note that this matrix is
@@ -59,7 +59,7 @@ public interface R2TransformContextType
    * between all callers of this function.
    */
 
-  Matrix4x4FType getTemporaryMatrix4x4_0();
+  Matrix4x4FType temporaryMatrix4x4_0();
 
   /**
    * @return A reference to a temporary 4x4 matrix. Note that this matrix is
@@ -67,5 +67,5 @@ public interface R2TransformContextType
    * between all callers of this function.
    */
 
-  Matrix4x4FType getTemporaryMatrix4x4_1();
+  Matrix4x4FType temporaryMatrix4x4_1();
 }

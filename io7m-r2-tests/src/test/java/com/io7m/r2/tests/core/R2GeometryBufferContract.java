@@ -21,11 +21,9 @@ import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferComponents;
 import com.io7m.r2.core.R2GeometryBufferDescription;
@@ -65,35 +63,35 @@ public abstract class R2GeometryBufferContract extends R2JCGLContract
       Assert.assertFalse(gb.isDeleted());
 
       final R2Texture2DUsableType t_rgba =
-        gb.getAlbedoEmissiveTexture();
+        gb.albedoEmissiveTexture();
       final R2Texture2DUsableType t_dept =
-        gb.getDepthTexture();
+        gb.depthTexture();
       final Optional<R2Texture2DUsableType> t_spec =
-        gb.getSpecularTexture();
+        gb.specularTexture();
       final R2Texture2DUsableType t_norm =
-        gb.getNormalTexture();
+        gb.normalTexture();
       final JCGLFramebufferUsableType fb =
-        gb.getPrimaryFramebuffer();
+        gb.primaryFramebuffer();
 
-      Assert.assertEquals(desc, gb.getDescription());
-      Assert.assertEquals(area, gb.getArea());
+      Assert.assertEquals(desc, gb.description());
+      Assert.assertEquals(area, gb.area());
 
       Assert.assertEquals(
         JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-        t_rgba.get().textureGetFormat());
+        t_rgba.texture().textureGetFormat());
       Assert.assertEquals(
         JCGLTextureFormat.TEXTURE_FORMAT_RG_16F_4BPP,
-        t_norm.get().textureGetFormat());
+        t_norm.texture().textureGetFormat());
       Assert.assertEquals(
         JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
-        t_dept.get().textureGetFormat());
+        t_dept.texture().textureGetFormat());
 
       switch (cc) {
         case R2_GEOMETRY_BUFFER_FULL: {
           Assert.assertEquals(640L * 480L * 16L, gb.getRange().getInterval());
           Assert.assertEquals(
             JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-            t_spec.get().get().textureGetFormat());
+            t_spec.get().texture().textureGetFormat());
           break;
         }
         case R2_GEOMETRY_BUFFER_NO_SPECULAR: {

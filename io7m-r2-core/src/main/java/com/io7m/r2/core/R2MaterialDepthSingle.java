@@ -61,23 +61,23 @@ public final class R2MaterialDepthSingle<M> implements
   {
     NullCheck.notNull(in_pool);
     return new R2MaterialDepthSingle<>(
-      in_pool.getFreshID(), in_shader, in_params);
+      in_pool.freshID(), in_shader, in_params);
   }
 
   @Override
-  public long getMaterialID()
+  public long materialID()
   {
     return this.id;
   }
 
   @Override
-  public M getShaderParameters()
+  public M shaderParameters()
   {
     return this.params;
   }
 
   @Override
-  public R2ShaderDepthSingleUsableType<M> getShader()
+  public R2ShaderDepthSingleUsableType<M> shader()
   {
     return this.shader;
   }

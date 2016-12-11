@@ -121,9 +121,9 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
-import com.io7m.r2.filters.R2BlurParametersReadableType;
+import com.io7m.r2.filters.R2BlurParametersMutable;
 import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
 import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
 import com.io7m.r2.filters.R2FilterCompositorParameters;
@@ -219,14 +219,14 @@ public final class ExampleEnvironment implements R2ExampleCustomType
   private R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool;
 
   private R2FilterType<
-    R2FilterBoxBlurParameters<
+    R2FilterBoxBlurParametersType<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType>> filter_blur;
   private R2FilterType<R2FilterEmissionParametersType> filter_emission;
   private R2FilterEmissionParametersMutable filter_emission_params;
-  private R2BlurParametersReadableType filter_emission_blur_params;
+  private R2BlurParametersMutable filter_emission_blur_params;
 
   public ExampleEnvironment()
   {
@@ -294,7 +294,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       long y = 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.gbuffer.getAlbedoEmissiveTexture(),
+        this.gbuffer.albedoEmissiveTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -304,7 +304,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.gbuffer.getNormalTexture(),
+        this.gbuffer.normalTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -324,7 +324,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.gbuffer.getDepthTexture(),
+        this.gbuffer.depthTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -339,7 +339,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
           (R2LightBufferDiffuseSpecularUsableType) this.lbuffer;
 
         b.addItems(R2FilterCompositorItem.of(
-          lbb.getDiffuseTexture(),
+          lbb.diffuseTexture(),
           AreaInclusiveUnsignedL.of(
             new UnsignedRangeInclusiveL(x, x + 128L),
             new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -349,7 +349,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
         x += 128L + 20L;
 
         b.addItems(R2FilterCompositorItem.of(
-          lbb.getSpecularTexture(),
+          lbb.specularTexture(),
           AreaInclusiveUnsignedL.of(
             new UnsignedRangeInclusiveL(x, x + 128L),
             new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -438,7 +438,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       R2LightAmbientScreenSingle.newLight(
         m.getUnitQuad(), id_pool, m.getTextureDefaults());
     this.light_ambient.setIntensity(0.15f);
-    this.light_ambient.getColorWritable().set3F(0.0f, 1.0f, 1.0f);
+    this.light_ambient.colorWritable().set3F(0.0f, 1.0f, 1.0f);
 
     this.proj_light_shader =
       R2LightShaderProjectiveLambertShadowVarianceSingle.newShader(
@@ -466,7 +466,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
 
       this.proj_shadow =
         R2ShadowDepthVariance.of(
-          m.getIDPool().getFreshID(),
+          m.getIDPool().freshID(),
           R2DepthVarianceBufferDescription.of(
             shadow_area,
             JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR,
@@ -482,8 +482,8 @@ public final class ExampleEnvironment implements R2ExampleCustomType
         this.proj_shadow,
         m.getIDPool());
     this.proj_light.setRadius(10.0f);
-    this.proj_light.getColorWritable().set3F(1.0f, 1.0f, 1.0f);
-    this.proj_light.getTransformWritable().getTranslation()
+    this.proj_light.colorWritable().set3F(1.0f, 1.0f, 1.0f);
+    this.proj_light.transformWritable().translation()
       .set3F(0.0f, 0.0f, 3.0f);
 
     this.proj_shadow_instances = R2DepthInstances.newDepthInstances();
@@ -494,9 +494,9 @@ public final class ExampleEnvironment implements R2ExampleCustomType
 
     this.sphere_light =
       R2LightSphericalSingle.newLight(this.sphere, id_pool);
-    this.sphere_light.getColorWritable().set3F(1.0f, 1.0f, 1.0f);
+    this.sphere_light.colorWritable().set3F(1.0f, 1.0f, 1.0f);
     this.sphere_light.setIntensity(1.0f);
-    this.sphere_light.getOriginPositionWritable().set3F(0.0f, 1.0f, 1.0f);
+    this.sphere_light.originPositionWritable().set3F(0.0f, 1.0f, 1.0f);
     this.sphere_light.setRadius(30.0f);
     this.sphere_light.setGeometryScaleFactor(
       (float) R2UnitSphere.getUVSphereApproximationScaleFactor(30.0f, 8));
@@ -509,14 +509,14 @@ public final class ExampleEnvironment implements R2ExampleCustomType
     this.sphere_light_bounds =
       R2InstanceSingle.newInstance(
         id_pool,
-        R2UnitCube.newUnitCube(gx).getArrayObject(),
+        R2UnitCube.newUnitCube(gx).arrayObject(),
         this.sphere_light_bounded_transform,
         PMatrixI3x3F.identity());
     this.sphere_light_bounded =
       R2LightSphericalSingle.newLight(this.sphere, id_pool);
-    this.sphere_light_bounded.getColorWritable().set3F(1.0f, 0.0f, 0.0f);
+    this.sphere_light_bounded.colorWritable().set3F(1.0f, 0.0f, 0.0f);
     this.sphere_light_bounded.setIntensity(1.0f);
-    this.sphere_light_bounded.getOriginPositionWritable()
+    this.sphere_light_bounded.originPositionWritable()
       .set3F(-10.0f, 1.0f, 0.0f);
     this.sphere_light_bounded.setRadius(9.0f);
 
@@ -543,10 +543,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       this.filter_emission_params =
         R2FilterEmissionParametersMutable.create();
       this.filter_emission_blur_params =
-        new R2BlurParametersReadableType()
-        {
-
-        };
+        R2BlurParametersMutable.create();
 
       this.filter_emission = R2FilterEmission.newFilter(
         gx,
@@ -654,9 +651,9 @@ public final class ExampleEnvironment implements R2ExampleCustomType
         final JCGLTextureUnitContextParentType uc =
           t.main.getTextureUnitAllocator().getRootContext();
         final JCGLFramebufferUsableType gbuffer_fb =
-          t.gbuffer.getPrimaryFramebuffer();
+          t.gbuffer.primaryFramebuffer();
         final JCGLFramebufferUsableType lbuffer_fb =
-          t.lbuffer.getPrimaryFramebuffer();
+          t.lbuffer.primaryFramebuffer();
 
         final JCGLFramebuffersType g_fb = t.g.getFramebuffers();
         final JCGLClearType g_cl = t.g.getClear();
@@ -674,10 +671,10 @@ public final class ExampleEnvironment implements R2ExampleCustomType
           mo,
           t.profiling_root,
           t.main.getTextureUnitAllocator().getRootContext(),
-          t.gbuffer.getArea(),
+          t.gbuffer.area(),
           t.stencils);
         t.main.getGeometryRenderer().renderGeometry(
-          t.gbuffer.getArea(),
+          t.gbuffer.area(),
           Optional.empty(),
           t.profiling_root,
           uc,
@@ -692,7 +689,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
         t.lbuffer.clearBoundPrimaryFramebuffer(t.g);
         t.main.getLightRenderer().renderLights(
           t.gbuffer,
-          t.lbuffer.getArea(),
+          t.lbuffer.area(),
           Optional.empty(),
           t.profiling_root,
           uc,
@@ -704,18 +701,18 @@ public final class ExampleEnvironment implements R2ExampleCustomType
          * Combine light and geometry buffers into lit image.
          */
 
-        g_fb.framebufferDrawBind(t.ibuffer.getPrimaryFramebuffer());
+        g_fb.framebufferDrawBind(t.ibuffer.primaryFramebuffer());
         t.ibuffer.clearBoundPrimaryFramebuffer(t.g);
         t.filter_light_params.clear();
         t.filter_light_params.setGeometryBuffer(t.gbuffer);
-        t.filter_light_params.setOutputViewport(t.ibuffer.getArea());
+        t.filter_light_params.setOutputViewport(t.ibuffer.area());
         t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
         t.lbuffer.matchLightBuffer(
           this,
           (tt, lbdo) -> {
             final R2TextureDefaultsType td = tt.main.getTextureDefaults();
             tt.filter_light_params.setLightDiffuseTexture(
-              lbdo.getDiffuseTexture());
+              lbdo.diffuseTexture());
             tt.filter_light_params.setLightSpecularTexture(
               td.texture2DBlack());
             return Unit.unit();
@@ -724,13 +721,13 @@ public final class ExampleEnvironment implements R2ExampleCustomType
             tt.filter_light_params.setLightDiffuseTexture(
               td.texture2DBlack());
             tt.filter_light_params.setLightSpecularTexture(
-              lbso.getSpecularTexture());
+              lbso.specularTexture());
             return Unit.unit();
           }, (tt, lb) -> {
             tt.filter_light_params.setLightDiffuseTexture(
-              lb.getDiffuseTexture());
+              lb.diffuseTexture());
             tt.filter_light_params.setLightSpecularTexture(
-              lb.getSpecularTexture());
+              lb.specularTexture());
             return Unit.unit();
           });
         Assertive.require(t.filter_light_params.isInitialized());
@@ -742,13 +739,13 @@ public final class ExampleEnvironment implements R2ExampleCustomType
 
         t.filter_emission_params.clear();
         t.filter_emission_params.setAlbedoEmissionMap(
-          t.gbuffer.getAlbedoEmissiveTexture());
+          t.gbuffer.albedoEmissiveTexture());
         t.filter_emission_params.setBlurParameters(
           t.filter_emission_blur_params);
         t.filter_emission_params.setOutputFramebuffer(
-          Optional.of(t.ibuffer.getPrimaryFramebuffer()));
+          Optional.of(t.ibuffer.primaryFramebuffer()));
         t.filter_emission_params.setOutputViewport(
-          t.ibuffer.getArea());
+          t.ibuffer.area());
         t.filter_emission_params.setScale(0.25f);
         Assertive.ensure(t.filter_emission_params.isInitialized());
 
@@ -771,7 +768,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
         t.filter_fxaa_params.setEdgeThreshold(0.333f);
         t.filter_fxaa_params.setEdgeThresholdMinimum(0.0833f);
         t.filter_fxaa_params.setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10);
-        t.filter_fxaa_params.setTexture(t.ibuffer.getRGBATexture());
+        t.filter_fxaa_params.setTexture(t.ibuffer.imageTexture());
         Assertive.require(t.filter_fxaa_params.isInitialized());
         t.filter_fxaa.runFilter(t.profiling_root, uc, t.filter_fxaa_params);
 

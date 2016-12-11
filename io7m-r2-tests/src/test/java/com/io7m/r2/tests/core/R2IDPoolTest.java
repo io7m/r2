@@ -34,9 +34,9 @@ public final class R2IDPoolTest
   public void testInitial()
   {
     final R2IDPoolType p = R2IDPool.newPool();
-    Assert.assertEquals(0L, p.getFreshID());
-    Assert.assertEquals(1L, p.getFreshID());
-    Assert.assertEquals(2L, p.getFreshID());
+    Assert.assertEquals(0L, p.freshID());
+    Assert.assertEquals(1L, p.freshID());
+    Assert.assertEquals(2L, p.freshID());
   }
 
   @Test
@@ -50,6 +50,6 @@ public final class R2IDPoolTest
     af.set(p, new AtomicLong(Long.MAX_VALUE));
 
     this.expected.expect(IllegalStateException.class);
-    p.getFreshID();
+    p.freshID();
   }
 }

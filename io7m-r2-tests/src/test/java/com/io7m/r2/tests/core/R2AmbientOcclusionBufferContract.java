@@ -69,16 +69,16 @@ public abstract class R2AmbientOcclusionBufferContract extends R2JCGLContract
       Assert.assertFalse(ab.isDeleted());
 
       final R2Texture2DUsableType t_ao =
-        ab.getAmbientOcclusionTexture();
+        ab.ambientOcclusionTexture();
       final JCGLFramebufferUsableType fb =
-        ab.getPrimaryFramebuffer();
+        ab.primaryFramebuffer();
 
-      Assert.assertEquals(desc, ab.getDescription());
-      Assert.assertEquals(area, ab.getArea());
+      Assert.assertEquals(desc, ab.description());
+      Assert.assertEquals(area, ab.area());
 
       Assert.assertEquals(
         JCGLTextureFormat.TEXTURE_FORMAT_R_8_1BPP,
-        t_ao.get().textureGetFormat());
+        t_ao.texture().textureGetFormat());
 
       ab.delete(g);
       Assert.assertTrue(fb.isDeleted());

@@ -42,47 +42,47 @@ public final class R2EmptyObserverValues implements
   }
 
   @Override
-  public R2ProjectionReadableType getProjection()
+  public R2ProjectionReadableType projection()
   {
     return this.proj;
   }
 
   @Override
   public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceClipType>
-  getMatrixProjection()
+  matrixProjection()
   {
     return PMatrixDirectM4x4F.newMatrix();
   }
 
   @Override
   public PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType>
-  getMatrixProjectionInverse()
+  matrixProjectionInverse()
   {
     return PMatrixDirectM4x4F.newMatrix();
   }
 
   @Override
   public PMatrixDirectReadable4x4FType<R2SpaceWorldType,
-    R2SpaceEyeType> getMatrixView()
+    R2SpaceEyeType> matrixView()
   {
     return PMatrixDirectM4x4F.newMatrix();
   }
 
   @Override
   public PMatrixDirectReadable4x4FType<R2SpaceEyeType,
-    R2SpaceWorldType> getMatrixViewInverse()
+    R2SpaceWorldType> matrixViewInverse()
   {
     return PMatrixDirectM4x4F.newMatrix();
   }
 
   @Override
-  public R2ViewRaysReadableType getViewRays()
+  public R2ViewRaysReadableType viewRays()
   {
     return R2ViewRays.newViewRays(new PMatrixM4x4F.ContextPM4F());
   }
 
   @Override
-  public R2TransformContextType getTransformContext()
+  public R2TransformContextType transformContext()
   {
     return R2TransformContext.newContext();
   }

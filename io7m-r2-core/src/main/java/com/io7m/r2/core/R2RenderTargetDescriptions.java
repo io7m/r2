@@ -64,7 +64,7 @@ public final class R2RenderTargetDescriptions
     }
 
     final AreaInclusiveUnsignedLType b =
-      R2RenderTargetDescriptions.scaleAreaInclusive(a.getArea(), scale);
+      R2RenderTargetDescriptions.scaleAreaInclusive(a.area(), scale);
     final T r = constructor.apply(a, b);
     Assertive.ensure(Objects.equals(a.getClass(), r.getClass()));
 

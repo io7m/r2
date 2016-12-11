@@ -183,10 +183,10 @@ public abstract class R2FilterFXAAContract extends R2JCGLContract
     params.setTexture(td.texture2DBlack());
     Assert.assertTrue(params.isInitialized());
 
-    g_fb.framebufferDrawBind(ib.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(ib.primaryFramebuffer());
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 }

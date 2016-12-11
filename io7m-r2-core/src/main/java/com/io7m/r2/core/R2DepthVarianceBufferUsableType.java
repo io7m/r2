@@ -27,5 +27,5 @@ public interface R2DepthVarianceBufferUsableType
    * @return The depth variance texture
    */
 
-  R2Texture2DUsableType getDepthVarianceTexture();
+  R2Texture2DUsableType depthVarianceTexture();
 }

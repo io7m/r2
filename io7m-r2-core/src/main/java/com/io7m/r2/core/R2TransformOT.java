@@ -116,13 +116,13 @@ public final class R2TransformOT implements R2TransformOTType
   }
 
   @Override
-  public Quaternion4FType getOrientation()
+  public Quaternion4FType orientation()
   {
     return this.orientation;
   }
 
   @Override
-  public PVector3FType<R2SpaceWorldType> getTranslation()
+  public PVector3FType<R2SpaceWorldType> translation()
   {
     return this.translation;
   }
@@ -135,7 +135,7 @@ public final class R2TransformOT implements R2TransformOTType
     NullCheck.notNull(context);
     NullCheck.notNull(m);
 
-    final Matrix4x4FType accum = context.getTemporaryMatrix4x4_0();
+    final Matrix4x4FType accum = context.temporaryMatrix4x4_0();
     MatrixM4x4F.setIdentity(accum);
 
     {
@@ -143,7 +143,7 @@ public final class R2TransformOT implements R2TransformOTType
     }
 
     {
-      final Matrix4x4FType temporary = context.getTemporaryMatrix4x4_1();
+      final Matrix4x4FType temporary = context.temporaryMatrix4x4_1();
       QuaternionM4F.makeRotationMatrix4x4(this.orientation, temporary);
       MatrixM4x4F.multiply(accum, temporary, m);
     }
@@ -158,11 +158,11 @@ public final class R2TransformOT implements R2TransformOTType
     NullCheck.notNull(context);
     NullCheck.notNull(m);
 
-    final Matrix4x4FType m_tmp0 = context.getTemporaryMatrix4x4_0();
-    final Matrix4x4FType m_tmp1 = context.getTemporaryMatrix4x4_1();
-    final Vector3FType v_tmp = context.getTemporaryVector3();
+    final Matrix4x4FType m_tmp0 = context.temporaryMatrix4x4_0();
+    final Matrix4x4FType m_tmp1 = context.temporaryMatrix4x4_1();
+    final Vector3FType v_tmp = context.temporaryVector3();
 
-    final Quaternion4FType o_inv = context.getTemporaryQuaternion();
+    final Quaternion4FType o_inv = context.temporaryQuaternion();
     QuaternionM4F.conjugate(this.orientation, o_inv);
     QuaternionM4F.makeRotationMatrix4x4(o_inv, m_tmp0);
 
@@ -175,13 +175,13 @@ public final class R2TransformOT implements R2TransformOTType
   }
 
   @Override
-  public QuaternionReadable4FType getOrientationReadable()
+  public QuaternionReadable4FType orientationReadable()
   {
     return this.orientation;
   }
 
   @Override
-  public PVectorReadable3FType<R2SpaceWorldType> getTranslationReadable()
+  public PVectorReadable3FType<R2SpaceWorldType> translationReadable()
   {
     return this.translation;
   }

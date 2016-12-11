@@ -34,7 +34,7 @@ public interface R2ShaderFilterTextureShowParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getTexture();
+  R2Texture2DUsableType texture();
 
   /**
    * @return The texture intensity
@@ -42,7 +42,7 @@ public interface R2ShaderFilterTextureShowParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getIntensity()
+  default float intensity()
   {
     return 1.0f;
   }

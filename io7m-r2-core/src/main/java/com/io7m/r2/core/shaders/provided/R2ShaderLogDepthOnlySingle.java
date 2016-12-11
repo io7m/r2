@@ -120,12 +120,12 @@ public final class R2ShaderLogDepthOnlySingle extends R2AbstractShader<Unit>
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_view, m.getMatrixView());
+      this.u_transform_view, m.matrixView());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
   }
 
   @Override
@@ -150,6 +150,6 @@ public final class R2ShaderLogDepthOnlySingle extends R2AbstractShader<Unit>
     NullCheck.notNull(m);
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.getMatrixModelView());
+      this.u_transform_modelview, m.matrixModelView());
   }
 }

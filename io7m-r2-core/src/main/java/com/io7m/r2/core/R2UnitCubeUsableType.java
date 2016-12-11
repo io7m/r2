@@ -31,5 +31,5 @@ public interface R2UnitCubeUsableType extends JCGLResourceUsableType,
    * @return The array object for the cube
    */
 
-  JCGLArrayObjectUsableType getArrayObject();
+  JCGLArrayObjectUsableType arrayObject();
 }

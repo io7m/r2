@@ -26,7 +26,7 @@ public interface R2LightProjectiveWritableType extends R2LightWritableType
    * @return The writable transform for the light origin
    */
 
-  R2TransformOTType getTransformWritable();
+  R2TransformOTType transformWritable();
 
   /**
    * Set the light radius in world-space units.

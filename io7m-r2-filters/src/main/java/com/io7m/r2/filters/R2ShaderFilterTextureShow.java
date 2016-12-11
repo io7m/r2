@@ -122,11 +122,11 @@ public final class R2ShaderFilterTextureShow extends
     NullCheck.notNull(values);
 
     this.unit_texture =
-      tc.unitContextBindTexture2D(g_tex, values.getTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.texture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture, this.unit_texture);
     g_sh.shaderUniformPutFloat(
-      this.u_intensity, values.getIntensity());
+      this.u_intensity, values.intensity());
   }
 }

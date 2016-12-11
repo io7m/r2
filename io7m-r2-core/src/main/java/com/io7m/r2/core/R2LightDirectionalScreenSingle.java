@@ -62,7 +62,7 @@ public final class R2LightDirectionalScreenSingle implements
     final R2IDPoolType pool)
   {
     NullCheck.notNull(pool);
-    return new R2LightDirectionalScreenSingle(q, pool.getFreshID());
+    return new R2LightDirectionalScreenSingle(q, pool.freshID());
   }
 
   /**
@@ -70,7 +70,7 @@ public final class R2LightDirectionalScreenSingle implements
    */
 
   @Override
-  public PVectorReadable3FType<R2SpaceRGBType> getColor()
+  public PVectorReadable3FType<R2SpaceRGBType> color()
   {
     return this.color;
   }
@@ -85,7 +85,7 @@ public final class R2LightDirectionalScreenSingle implements
   }
 
   @Override
-  public float getIntensity()
+  public float intensity()
   {
     return this.intensity;
   }
@@ -98,25 +98,25 @@ public final class R2LightDirectionalScreenSingle implements
   }
 
   @Override
-  public PVector3FType<R2SpaceRGBType> getColorWritable()
+  public PVector3FType<R2SpaceRGBType> colorWritable()
   {
     return this.color;
   }
 
   @Override
-  public long getLightID()
+  public long lightID()
   {
     return this.id;
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
-    return this.quad.getArrayObject();
+    return this.quad.arrayObject();
   }
 
   @Override
-  public R2TransformReadableType getTransform()
+  public R2TransformReadableType transform()
   {
     return R2TransformIdentity.getInstance();
   }

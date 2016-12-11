@@ -35,25 +35,25 @@ public interface R2MatricesProjectiveLightValuesType extends
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceLightEyeType>
-  getMatrixProjectiveEyeToLightEye();
+  matrixProjectiveEyeToLightEye();
 
   /**
    * @return The current projection matrix for the projective light
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceLightEyeType, R2SpaceLightClipType>
-  getMatrixProjectiveProjection();
+  matrixProjectiveProjection();
 
   /**
    * @return The current view matrix for the projective light
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceLightEyeType>
-  getMatrixProjectiveView();
+  matrixProjectiveView();
 
   /**
    * @return The projection for the current projective light.
    */
 
-  R2ProjectionType getProjectiveProjection();
+  R2ProjectionType projectiveProjection();
 }

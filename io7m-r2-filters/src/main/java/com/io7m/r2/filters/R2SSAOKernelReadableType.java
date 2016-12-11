@@ -31,7 +31,7 @@ public interface R2SSAOKernelReadableType
    * @param out   The output vector
    */
 
-  void getSample(
+  void sample(
     final int index,
     VectorWritable3FType out);
 
@@ -39,17 +39,17 @@ public interface R2SSAOKernelReadableType
    * @return The number of times this kernel has been regenerated
    */
 
-  long getVersion();
+  long version();
 
   /**
    * @return The number of samples in the kernel
    */
 
-  int getSize();
+  int size();
 
   /**
    * @return The raw float buffer that backs the kernel
    */
 
-  FloatBuffer getFloatBuffer();
+  FloatBuffer floatBuffer();
 }

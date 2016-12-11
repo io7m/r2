@@ -108,9 +108,9 @@ public abstract class R2ShaderFilterLightApplicatorContract extends
 
       g_fb.framebufferDrawUnbind();
 
-      p.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
-      p.setDiffuseTexture(diff_spec.getDiffuseTexture());
-      p.setSpecularTexture(diff_spec.getSpecularTexture());
+      p.setAlbedoTexture(gb.albedoEmissiveTexture());
+      p.setDiffuseTexture(diff_spec.diffuseTexture());
+      p.setSpecularTexture(diff_spec.specularTexture());
 
     } finally {
       tc_alloc.unitContextFinish(g_tex);

@@ -134,7 +134,7 @@ public final class R2AmbientOcclusionBufferPool implements
       final JCGLTextureUnitContextParentType tc,
       final R2AmbientOcclusionBufferDescriptionType key)
     {
-      final AreaInclusiveUnsignedLType area = key.getArea();
+      final AreaInclusiveUnsignedLType area = key.area();
       final UnsignedRangeInclusiveL range_x = area.getRangeX();
       final UnsignedRangeInclusiveL range_y = area.getRangeY();
       return range_x.getInterval() * range_y.getInterval();

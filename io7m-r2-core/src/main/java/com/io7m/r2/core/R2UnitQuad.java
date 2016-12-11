@@ -244,7 +244,7 @@ public final class R2UnitQuad implements R2UnitQuadType
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.array_object;
   }

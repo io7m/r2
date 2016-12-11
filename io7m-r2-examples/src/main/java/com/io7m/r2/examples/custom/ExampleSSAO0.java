@@ -72,7 +72,8 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersMutable;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -80,8 +81,10 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
+import com.io7m.r2.filters.R2BlurParametersMutable;
 import com.io7m.r2.filters.R2FilterBoxBlur;
 import com.io7m.r2.filters.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
 import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
 import com.io7m.r2.filters.R2FilterCompositorParameters;
@@ -122,15 +125,15 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private JCGLClearSpecification screen_clear_spec;
 
   private R2GeometryBufferType geom_buffer;
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> geom_shader;
-  private R2SurfaceShaderBasicParameters geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> geom_shader;
+  private R2SurfaceShaderBasicParametersMutable geom_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> geom_material;
 
   private R2UnitSphereType sphere;
   private R2InstanceBatchedDynamicType batched_instance;
   private R2TransformSOT[] batched_transforms;
-  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
-  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
+  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParametersType> batched_geom_shader;
+  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParametersType> batched_geom_material;
 
   // Compositor
 
@@ -143,8 +146,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private R2FilterSSAOParametersMutable filter_ssao_params;
   private R2FilterType<R2FilterSSAOParametersType> filter_ssao;
   private R2RenderTargetPoolUsableType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> pool_ssao;
-  private R2FilterType<R2FilterBoxBlurParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
-  private R2FilterBoxBlurParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
+  private R2FilterType<R2FilterBoxBlurParametersType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
+  private R2FilterBoxBlurParametersType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
 
   public ExampleSSAO0()
   {
@@ -220,23 +223,22 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     }
 
     {
+      final R2BlurParametersMutable blur = R2BlurParametersMutable.create();
       this.filter_blur_ssao_params =
-        R2FilterBoxBlurParameters.newParameters(
+        R2FilterBoxBlurParameters.of(
           this.ssao_buffer,
-          R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
+          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
           this.ssao_buffer,
-          R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
+          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
+          this.pool_ssao,
+          blur,
           (d, a) -> {
             final R2AmbientOcclusionBufferDescription.Builder b =
               R2AmbientOcclusionBufferDescription.builder();
             b.from(d);
             b.setArea(a);
             return b.build();
-          },
-          this.pool_ssao);
-      this.filter_blur_ssao_params.setBlurSize(1.0f);
-      this.filter_blur_ssao_params.setBlurPasses(1);
-      this.filter_blur_ssao_params.setBlurScale(1.0f);
+          });
       this.filter_blur_ssao = R2FilterBoxBlur.newFilter(
         m.getShaderPreprocessingEnvironment(),
         g,
@@ -251,7 +253,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         R2FilterCompositorParameters.builder();
 
       b.addItems(R2FilterCompositorItem.of(
-        this.ssao_buffer.getAmbientOcclusionTexture(),
+        this.ssao_buffer.ambientOcclusionTexture(),
         area,
         1.0f,
         Optional.empty()));
@@ -260,7 +262,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       final long y = 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getAlbedoEmissiveTexture(),
+        this.geom_buffer.albedoEmissiveTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -270,7 +272,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getNormalTexture(),
+        this.geom_buffer.normalTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -290,7 +292,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getDepthTexture(),
+        this.geom_buffer.depthTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -331,7 +333,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         id_pool,
         g.getArrayBuffers(),
         g.getArrayObjects(),
-        this.sphere.getArrayObject(),
+        this.sphere.arrayObject(),
         instance_count);
 
     this.batched_transforms = new R2TransformSOT[instance_count];
@@ -366,9 +368,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     this.geom_shader =
       R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     this.geom_shader_params =
-      R2SurfaceShaderBasicParameters.newParameters(
-        m.getTextureDefaults());
-    this.geom_shader_params.getSpecularColor().set3F(1.0f, 1.0f, 1.0f);
+      R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
+    this.geom_shader_params.specularColor().set3F(1.0f, 1.0f, 1.0f);
     this.geom_shader_params.setSpecularExponent(64.0f);
     this.geom_material = R2MaterialOpaqueSingle.newMaterial(
       id_pool, this.geom_shader, this.geom_shader_params);
@@ -425,7 +426,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       final JCGLTextureUnitContextParentType uc =
         t.main.getTextureUnitAllocator().getRootContext();
       final JCGLFramebufferUsableType gbuffer_fb =
-        t.geom_buffer.getPrimaryFramebuffer();
+        t.geom_buffer.primaryFramebuffer();
 
       final JCGLFramebuffersType g_fb =
         t.g33.getFramebuffers();
@@ -451,10 +452,10 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         mo,
         pro_root,
         m.getTextureUnitAllocator().getRootContext(),
-        t.geom_buffer.getArea(),
+        t.geom_buffer.area(),
         t.stencils);
       t.main.getGeometryRenderer().renderGeometry(
-        t.geom_buffer.getArea(),
+        t.geom_buffer.area(),
         Optional.empty(),
         pro_root,
         m.getTextureUnitAllocator().getRootContext(),

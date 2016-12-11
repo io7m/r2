@@ -28,17 +28,17 @@ import org.immutables.value.Value;
    * @return The index of the position attribute
    */
 
-  @Value.Parameter long getPositionIndex();
+  @Value.Parameter long positionIndex();
 
   /**
    * @return The index of the normal attribute
    */
 
-  @Value.Parameter long getNormalIndex();
+  @Value.Parameter long normalIndex();
 
   /**
    * @return The index of the UV attribute
    */
 
-  @Value.Parameter long getUVIndex();
+  @Value.Parameter long uvIndex();
 }

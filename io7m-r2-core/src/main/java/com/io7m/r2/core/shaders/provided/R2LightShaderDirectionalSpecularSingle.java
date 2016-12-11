@@ -261,24 +261,24 @@ public final class R2LightShaderDirectionalSpecularSingle extends
      * Upload the current view rays.
      */
 
-    final R2ViewRaysReadableType view_rays = m.getViewRays();
+    final R2ViewRaysReadableType view_rays = m.viewRays();
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y0, view_rays.getOriginX0Y0());
+      this.u_view_rays_origin_x0y0, view_rays.originX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y0, view_rays.getOriginX1Y0());
+      this.u_view_rays_origin_x1y0, view_rays.originX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y1, view_rays.getOriginX0Y1());
+      this.u_view_rays_origin_x0y1, view_rays.originX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y1, view_rays.getOriginX1Y1());
+      this.u_view_rays_origin_x1y1, view_rays.originX1Y1());
 
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y0, view_rays.getRayX0Y0());
+      this.u_view_rays_ray_x0y0, view_rays.rayX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y0, view_rays.getRayX1Y0());
+      this.u_view_rays_ray_x1y0, view_rays.rayX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y1, view_rays.getRayX0Y1());
+      this.u_view_rays_ray_x0y1, view_rays.rayX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y1, view_rays.getRayX1Y1());
+      this.u_view_rays_ray_x1y1, view_rays.rayX1Y1());
 
     /**
      * Upload the viewport.
@@ -298,9 +298,9 @@ public final class R2LightShaderDirectionalSpecularSingle extends
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+      this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
     /**
      * Upload the scene's depth coefficient.
@@ -308,7 +308,7 @@ public final class R2LightShaderDirectionalSpecularSingle extends
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
 
     /**
      * Transform the light's direction to eye-space and upload it.
@@ -318,10 +318,10 @@ public final class R2LightShaderDirectionalSpecularSingle extends
     this.direction_world.copyFrom3F(direction);
     this.direction_world.setWF(0.0f);
 
-    final R2TransformContextType trc = m.getTransformContext();
+    final R2TransformContextType trc = m.transformContext();
     PMatrixM4x4F.multiplyVector4F(
-      trc.getContextPM4F(),
-      m.getMatrixView(),
+      trc.contextPM4F(),
+      m.matrixView(),
       this.direction_world,
       this.direction_eye);
 
@@ -335,8 +335,8 @@ public final class R2LightShaderDirectionalSpecularSingle extends
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_directional_color, values.getColor());
+      this.u_light_directional_color, values.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_directional_intensity, values.getIntensity());
+      this.u_light_directional_intensity, values.intensity());
   }
 }

@@ -24,5 +24,5 @@ public interface R2LightProjectiveWithShadowVarianceType extends
   R2LightProjectiveWithShadowType
 {
   @Override
-  R2ShadowDepthVarianceType getShadow();
+  R2ShadowDepthVarianceType shadow();
 }

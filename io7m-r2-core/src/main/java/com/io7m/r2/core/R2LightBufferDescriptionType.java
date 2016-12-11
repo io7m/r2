@@ -30,7 +30,7 @@ public interface R2LightBufferDescriptionType extends
 {
   @Override
   @Value.Parameter
-  AreaInclusiveUnsignedLType getArea();
+  AreaInclusiveUnsignedLType area();
 
   /**
    * @return The components that will be allocated in the light buffer
@@ -38,7 +38,7 @@ public interface R2LightBufferDescriptionType extends
 
   @Value.Parameter
   @Value.Default
-  default R2LightBufferComponents getComponents()
+  default R2LightBufferComponents components()
   {
     return R2LightBufferComponents.R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR;
   }

@@ -131,7 +131,7 @@ public abstract class R2MBWriterContract
     final R2MBReaderType r = this.getReader(path, ma);
     r.run();
 
-    Assert.assertTrue(ma.getMesh().isPresent());
-    Assert.assertEquals(m, ma.getMesh().get());
+    Assert.assertTrue(ma.mesh().isPresent());
+    Assert.assertEquals(m, ma.mesh().get());
   }
 }

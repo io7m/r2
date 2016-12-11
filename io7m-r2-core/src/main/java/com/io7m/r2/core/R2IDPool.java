@@ -44,7 +44,7 @@ public final class R2IDPool implements R2IDPoolType
   }
 
   @Override
-  public long getFreshID()
+  public long freshID()
   {
     return this.next.getAndUpdate(x -> {
       if (x == Long.MAX_VALUE) {

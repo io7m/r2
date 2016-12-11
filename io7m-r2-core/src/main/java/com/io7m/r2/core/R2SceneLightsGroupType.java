@@ -30,7 +30,7 @@ public interface R2SceneLightsGroupType
    * @see R2Stencils#checkValidGroup(int)
    */
 
-  int getID();
+  int groupID();
 
   /**
    * Add a light to the group.

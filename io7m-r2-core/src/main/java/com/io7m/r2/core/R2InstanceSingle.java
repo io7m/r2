@@ -64,33 +64,33 @@ public final class R2InstanceSingle implements R2InstanceSingleType
     final PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> in_uv)
   {
     return new R2InstanceSingle(
-      NullCheck.notNull(in_pool).getFreshID(),
+      NullCheck.notNull(in_pool).freshID(),
       in_array_object,
       in_transform,
       in_uv);
   }
 
   @Override
-  public long getInstanceID()
+  public long instanceID()
   {
     return this.id;
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.array_object;
   }
 
   @Override
-  public R2TransformReadableType getTransform()
+  public R2TransformReadableType transform()
   {
     return this.transform;
   }
 
   @Override
   public PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType>
-  getUVMatrix()
+  uvMatrix()
   {
     return this.uv;
   }

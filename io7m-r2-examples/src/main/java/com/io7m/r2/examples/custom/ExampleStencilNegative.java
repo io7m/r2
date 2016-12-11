@@ -90,7 +90,7 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
     final R2TransformSiOT transform = R2TransformSiOT.newTransform();
     this.instance = R2InstanceSingle.newInstance(
       m.getIDPool(),
-      this.quad.getArrayObject(),
+      this.quad.arrayObject(),
       transform,
       PMatrixI3x3F.identity());
   }

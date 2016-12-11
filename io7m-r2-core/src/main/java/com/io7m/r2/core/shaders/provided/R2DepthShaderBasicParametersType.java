@@ -30,11 +30,14 @@ import org.immutables.value.Value;
 public interface R2DepthShaderBasicParametersType
 {
   /**
+   * <p>An albedo map which is used primarily used to determine the opacity
+   * of the shaded surface.</p>
+   *
    * @return The albedo texture for the surface
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getAlbedoTexture();
+  R2Texture2DUsableType albedoTexture();
 
   /**
    * The threshold value that defines whether or not the surface fragment will
@@ -47,7 +50,7 @@ public interface R2DepthShaderBasicParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getAlphaDiscardThreshold()
+  default float alphaDiscardThreshold()
   {
     return 0.0f;
   }

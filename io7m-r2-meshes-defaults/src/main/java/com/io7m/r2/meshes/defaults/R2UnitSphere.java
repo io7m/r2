@@ -261,7 +261,7 @@ public final class R2UnitSphere implements R2UnitSphereType
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.array_object;
   }

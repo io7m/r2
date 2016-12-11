@@ -33,17 +33,17 @@ public interface R2EyeZBufferUsableType extends JCGLResourceSizedType,
    * @return The eye-Z texture
    */
 
-  R2Texture2DUsableType getEyeZTexture();
+  R2Texture2DUsableType eyeZTexture();
 
   /**
    * @return The framebuffer
    */
 
-  JCGLFramebufferUsableType getFramebuffer();
+  JCGLFramebufferUsableType framebuffer();
 
   /**
    * @return The viewport area
    */
 
-  AreaInclusiveUnsignedLType getArea();
+  AreaInclusiveUnsignedLType area();
 }

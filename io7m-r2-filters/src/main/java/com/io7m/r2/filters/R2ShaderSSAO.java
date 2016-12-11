@@ -205,7 +205,7 @@ public final class R2ShaderSSAO extends
       return true;
     }
 
-    return this.kernel_version != k.getVersion();
+    return this.kernel_version != k.version();
   }
 
   @Override
@@ -224,32 +224,32 @@ public final class R2ShaderSSAO extends
      * Upload the current view rays.
      */
 
-    final R2MatricesObserverValuesType view = values.getViewMatrices();
-    final R2ViewRaysReadableType view_rays = view.getViewRays();
+    final R2MatricesObserverValuesType view = values.viewMatrices();
+    final R2ViewRaysReadableType view_rays = view.viewRays();
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y0, view_rays.getOriginX0Y0());
+      this.u_view_rays_origin_x0y0, view_rays.originX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y0, view_rays.getOriginX1Y0());
+      this.u_view_rays_origin_x1y0, view_rays.originX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y1, view_rays.getOriginX0Y1());
+      this.u_view_rays_origin_x0y1, view_rays.originX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y1, view_rays.getOriginX1Y1());
+      this.u_view_rays_origin_x1y1, view_rays.originX1Y1());
 
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y0, view_rays.getRayX0Y0());
+      this.u_view_rays_ray_x0y0, view_rays.rayX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y0, view_rays.getRayX1Y0());
+      this.u_view_rays_ray_x1y0, view_rays.rayX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y1, view_rays.getRayX0Y1());
+      this.u_view_rays_ray_x0y1, view_rays.rayX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y1, view_rays.getRayX1Y1());
+      this.u_view_rays_ray_x1y1, view_rays.rayX1Y1());
 
     /**
      * Upload the projections for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_ssao_transform_projection, view.getMatrixProjection());
+      this.u_ssao_transform_projection, view.matrixProjection());
 
     /**
      * Upload the scene's depth coefficient.
@@ -257,20 +257,20 @@ public final class R2ShaderSSAO extends
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(view.getProjection()));
+      (float) R2Projections.getDepthCoefficient(view.projection()));
 
     this.unit_noise =
-      tc.unitContextBindTexture2D(g_tex, values.getNoiseTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.noiseTexture().texture());
 
     /**
      * Upload the geometry buffer.
      */
 
-    final R2GeometryBufferUsableType gbuffer = values.getGeometryBuffer();
+    final R2GeometryBufferUsableType gbuffer = values.geometryBuffer();
     this.unit_depth =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.depthTexture().texture());
     this.unit_normals =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.normalTexture().texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_gbuffer_normal, this.unit_normals);
     g_sh.shaderUniformPutTexture2DUnit(
@@ -280,11 +280,11 @@ public final class R2ShaderSSAO extends
      * Upload the SSAO-specific parameters.
      */
 
-    final AreaInclusiveUnsignedLType viewport_area = values.getViewport();
+    final AreaInclusiveUnsignedLType viewport_area = values.viewport();
     final UnsignedRangeInclusiveL range_x = viewport_area.getRangeX();
     final UnsignedRangeInclusiveL range_y = viewport_area.getRangeY();
 
-    final JCGLTexture2DUsableType noise = values.getNoiseTexture().get();
+    final JCGLTexture2DUsableType noise = values.noiseTexture().texture();
     this.noise_uv_scale.set2F(
       (float) (range_x.getInterval() / noise.textureGetWidth()),
       (float) (range_y.getInterval() / noise.textureGetHeight())
@@ -295,16 +295,16 @@ public final class R2ShaderSSAO extends
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_ssao_texture_noise, this.unit_noise);
     g_sh.shaderUniformPutFloat(
-      this.u_ssao_sample_radius, values.getSampleRadius());
+      this.u_ssao_sample_radius, values.sampleRadius());
     g_sh.shaderUniformPutFloat(
-      this.u_ssao_power, values.getExponent());
+      this.u_ssao_power, values.exponent());
 
-    final R2SSAOKernelReadableType k = values.getKernel();
+    final R2SSAOKernelReadableType k = values.kernel();
     if (this.shouldSetKernel(k)) {
-      g_sh.shaderUniformPutVectorf(this.u_ssao_kernel, k.getFloatBuffer());
-      g_sh.shaderUniformPutInteger(this.u_ssao_kernel_size, k.getSize());
+      g_sh.shaderUniformPutVectorf(this.u_ssao_kernel, k.floatBuffer());
+      g_sh.shaderUniformPutInteger(this.u_ssao_kernel_size, k.size());
       this.kernel_last = k;
-      this.kernel_version = k.getVersion();
+      this.kernel_version = k.version();
     }
   }
 }

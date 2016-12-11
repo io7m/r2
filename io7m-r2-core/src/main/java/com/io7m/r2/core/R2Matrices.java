@@ -107,7 +107,7 @@ public final class R2Matrices implements R2MatricesType
       this.observer.active = true;
       MatrixM4x4F.copy(view, this.observer.m_view);
       MatrixM4x4F.invert(
-        this.context_tr.getContextMM4F(),
+        this.context_tr.contextMM4F(),
         this.observer.m_view,
         this.observer.m_view_inverse);
 
@@ -117,7 +117,7 @@ public final class R2Matrices implements R2MatricesType
 
       projection.projectionMakeMatrix(this.observer.m_projection);
       PMatrixM4x4F.invert(
-        this.context_tr.getContextPM4F(),
+        this.context_tr.contextPM4F(),
         this.observer.m_projection,
         this.observer.m_projection_inverse);
 
@@ -137,7 +137,7 @@ public final class R2Matrices implements R2MatricesType
   }
 
   @Override
-  public R2TransformContextType getTransformContext()
+  public R2TransformContextType transformContext()
   {
     return this.context_tr;
   }
@@ -170,7 +170,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceLightEyeType>
-    getMatrixProjectiveEyeToLightEye()
+    matrixProjectiveEyeToLightEye()
     {
       Assertive.require(this.active, "Projective is active");
       return this.m_projective_eye_to_light_eye;
@@ -178,7 +178,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceLightEyeType,
-      R2SpaceLightClipType> getMatrixProjectiveProjection()
+      R2SpaceLightClipType> matrixProjectiveProjection()
     {
       Assertive.require(this.active, "Projective is active");
       return this.m_projective_projection;
@@ -186,14 +186,14 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceLightEyeType>
-    getMatrixProjectiveView()
+    matrixProjectiveView()
     {
       Assertive.require(this.active, "Projective is active");
       return this.m_projective_view;
     }
 
     @Override
-    public R2ProjectionType getProjectiveProjection()
+    public R2ProjectionType projectiveProjection()
     {
       Assertive.require(this.active, "Projective is active");
       return this.projection;
@@ -201,7 +201,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixLightModelView()
+    matrixLightModelView()
     {
       Assertive.require(this.active, "Projective is active");
       return this.m_modelview;
@@ -229,7 +229,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixModelView()
+    matrixModelView()
     {
       Assertive.require(this.active, "Instance is active");
       return this.m_modelview;
@@ -237,7 +237,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable3x3FType<R2SpaceObjectType,
-      R2SpaceNormalEyeType> getMatrixNormal()
+      R2SpaceNormalEyeType> matrixNormal()
     {
       Assertive.require(this.active, "Instance is active");
       return this.m_normal;
@@ -245,7 +245,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable3x3FType<R2SpaceTextureType,
-      R2SpaceTextureType> getMatrixUV()
+      R2SpaceTextureType> matrixUV()
     {
       Assertive.require(this.active, "Instance is active");
       return this.m_uv;
@@ -267,7 +267,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixLightModelView()
+    matrixLightModelView()
     {
       Assertive.require(this.active, "Volume light is active");
       return this.m_modelview;
@@ -310,7 +310,7 @@ public final class R2Matrices implements R2MatricesType
     }
 
     @Override
-    public R2ProjectionReadableType getProjection()
+    public R2ProjectionReadableType projection()
     {
       Assertive.require(this.active, "Observer is active");
       return this.projection;
@@ -318,7 +318,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceClipType>
-    getMatrixProjection()
+    matrixProjection()
     {
       Assertive.require(this.active, "Observer is active");
       return this.m_projection;
@@ -326,7 +326,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType>
-    getMatrixProjectionInverse()
+    matrixProjectionInverse()
     {
       Assertive.require(this.active, "Observer is active");
       return this.m_projection_inverse;
@@ -334,7 +334,7 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType>
-    getMatrixView()
+    matrixView()
     {
       Assertive.require(this.active, "Observer is active");
       return this.m_view;
@@ -342,14 +342,14 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType>
-    getMatrixViewInverse()
+    matrixViewInverse()
     {
       Assertive.require(this.active, "Observer is active");
       return this.m_view_inverse;
     }
 
     @Override
-    public R2ViewRaysReadableType getViewRays()
+    public R2ViewRaysReadableType viewRays()
     {
       Assertive.require(this.active, "Observer is active");
       return this.view_rays;
@@ -445,7 +445,7 @@ public final class R2Matrices implements R2MatricesType
          * Produce a modelview matrix for the light.
          */
 
-        final R2TransformViewReadableType ot = t.getTransform();
+        final R2TransformViewReadableType ot = t.transform();
 
         ot.transformMakeMatrix4x4F(
           this.context_tr, this.projective.m_model);
@@ -464,7 +464,7 @@ public final class R2Matrices implements R2MatricesType
           this.context_tr,
           this.projective.m_projective_view);
 
-        final R2ProjectionReadableType p = t.getProjection();
+        final R2ProjectionReadableType p = t.projection();
 
         p.projectionMakeMatrixUntyped(
           this.projective.m_projective_projection);
@@ -520,7 +520,7 @@ public final class R2Matrices implements R2MatricesType
          * Produce a modelview matrix for the light.
          */
 
-        final R2TransformReadableType ot = t.getTransform();
+        final R2TransformReadableType ot = t.transform();
 
         ot.transformMakeMatrix4x4F(
           this.context_tr, this.volume.m_model);
@@ -537,7 +537,7 @@ public final class R2Matrices implements R2MatricesType
     }
 
     @Override
-    public R2TransformContextType getTransformContext()
+    public R2TransformContextType transformContext()
     {
       return this.context_tr;
     }

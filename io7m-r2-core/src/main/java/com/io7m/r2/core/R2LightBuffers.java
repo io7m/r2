@@ -114,7 +114,7 @@ public final class R2LightBuffers
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
-    final AreaInclusiveUnsignedLType area = desc.getArea();
+    final AreaInclusiveUnsignedLType area = desc.area();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -131,7 +131,7 @@ public final class R2LightBuffers
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      switch (desc.getComponents()) {
+      switch (desc.components()) {
         case R2_LIGHT_BUFFER_DIFFUSE_ONLY: {
           final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_diff =
             cc.unitContextAllocateTexture2D(
@@ -226,9 +226,9 @@ public final class R2LightBuffers
     final R2Texture2DType rt_spec = R2Texture2DStatic.of(p_spec.getRight());
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_diff.get());
-    fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_spec.get());
-    fbb.attachDepthStencilTexture2D(rt_depth.get());
+    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_diff.texture());
+    fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_spec.texture());
+    fbb.attachDepthStencilTexture2D(rt_depth.texture());
 
     final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
     return new R2LightBuffers.LightBufferDiffuseSpecular(
@@ -247,8 +247,8 @@ public final class R2LightBuffers
     final R2Texture2DType rt_spec = R2Texture2DStatic.of(p_spec.getRight());
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-    fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_spec.get());
-    fbb.attachDepthStencilTexture2D(rt_depth.get());
+    fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_spec.texture());
+    fbb.attachDepthStencilTexture2D(rt_depth.texture());
 
     final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
     return new R2LightBuffers.LightBufferSpecularOnly(
@@ -267,8 +267,8 @@ public final class R2LightBuffers
     final R2Texture2DType rt_diff = R2Texture2DStatic.of(p_diff.getRight());
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_diff.get());
-    fbb.attachDepthStencilTexture2D(rt_depth.get());
+    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_diff.texture());
+    fbb.attachDepthStencilTexture2D(rt_depth.texture());
 
     final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
     return new R2LightBuffers.LightBufferDiffuseOnly(
@@ -319,38 +319,38 @@ public final class R2LightBuffers
       this.description = NullCheck.notNull(in_desc);
 
       long size = 0L;
-      size += this.t_diffuse.get().getRange().getInterval();
-      size += this.t_specular.get().getRange().getInterval();
-      size += this.t_depth.get().getRange().getInterval();
+      size += this.t_diffuse.texture().getRange().getInterval();
+      size += this.t_specular.texture().getRange().getInterval();
+      size += this.t_depth.texture().getRange().getInterval();
       this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
     }
 
     @Override
-    public R2Texture2DUsableType getDiffuseTexture()
+    public R2Texture2DUsableType diffuseTexture()
     {
       return this.t_diffuse;
     }
 
     @Override
-    public R2Texture2DUsableType getSpecularTexture()
+    public R2Texture2DUsableType specularTexture()
     {
       return this.t_specular;
     }
 
     @Override
-    public JCGLFramebufferUsableType getPrimaryFramebuffer()
+    public JCGLFramebufferUsableType primaryFramebuffer()
     {
       return this.framebuffer;
     }
 
     @Override
-    public AreaInclusiveUnsignedLType getArea()
+    public AreaInclusiveUnsignedLType area()
     {
-      return this.description.getArea();
+      return this.description.area();
     }
 
     @Override
-    public R2LightBufferDescriptionType getDescription()
+    public R2LightBufferDescriptionType description()
     {
       return this.description;
     }
@@ -412,31 +412,31 @@ public final class R2LightBuffers
       this.description = NullCheck.notNull(in_desc);
 
       long size = 0L;
-      size += this.t_specular.get().getRange().getInterval();
-      size += this.t_depth.get().getRange().getInterval();
+      size += this.t_specular.texture().getRange().getInterval();
+      size += this.t_depth.texture().getRange().getInterval();
       this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
     }
 
     @Override
-    public R2Texture2DUsableType getSpecularTexture()
+    public R2Texture2DUsableType specularTexture()
     {
       return this.t_specular;
     }
 
     @Override
-    public JCGLFramebufferUsableType getPrimaryFramebuffer()
+    public JCGLFramebufferUsableType primaryFramebuffer()
     {
       return this.framebuffer;
     }
 
     @Override
-    public AreaInclusiveUnsignedLType getArea()
+    public AreaInclusiveUnsignedLType area()
     {
-      return this.description.getArea();
+      return this.description.area();
     }
 
     @Override
-    public R2LightBufferDescriptionType getDescription()
+    public R2LightBufferDescriptionType description()
     {
       return this.description;
     }
@@ -497,31 +497,31 @@ public final class R2LightBuffers
       this.description = NullCheck.notNull(in_desc);
 
       long size = 0L;
-      size += this.t_diffuse.get().getRange().getInterval();
-      size += this.t_depth.get().getRange().getInterval();
+      size += this.t_diffuse.texture().getRange().getInterval();
+      size += this.t_depth.texture().getRange().getInterval();
       this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
     }
 
     @Override
-    public R2Texture2DUsableType getDiffuseTexture()
+    public R2Texture2DUsableType diffuseTexture()
     {
       return this.t_diffuse;
     }
 
     @Override
-    public JCGLFramebufferUsableType getPrimaryFramebuffer()
+    public JCGLFramebufferUsableType primaryFramebuffer()
     {
       return this.framebuffer;
     }
 
     @Override
-    public AreaInclusiveUnsignedLType getArea()
+    public AreaInclusiveUnsignedLType area()
     {
-      return this.description.getArea();
+      return this.description.area();
     }
 
     @Override
-    public R2LightBufferDescriptionType getDescription()
+    public R2LightBufferDescriptionType description()
     {
       return this.description;
     }

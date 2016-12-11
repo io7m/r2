@@ -35,5 +35,5 @@ public interface R2FilterCompositorParametersType
    */
 
   @Value.Parameter
-  List<R2FilterCompositorItemType> getItems();
+  List<R2FilterCompositorItemType> items();
 }

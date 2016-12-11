@@ -37,26 +37,26 @@ public interface R2FilterDebugEyeZParametersType
    */
 
   @Value.Parameter
-  R2GeometryBufferUsableType getGeometryBuffer();
+  R2GeometryBufferUsableType geometryBuffer();
 
   /**
    * @return The output eye-Z buffer
    */
 
   @Value.Parameter
-  R2EyeZBufferUsableType getEyeZBuffer();
+  R2EyeZBufferUsableType eyeZBuffer();
 
   /**
    * @return The observer matrix values that were used to produce the scene
    */
 
   @Value.Parameter
-  R2MatricesObserverType getObserverValues();
+  R2MatricesObserverType observerValues();
 
   /**
    * @return A set of default textures
    */
 
   @Value.Parameter
-  R2TextureDefaultsType getTextureDefaults();
+  R2TextureDefaultsType textureDefaults();
 }

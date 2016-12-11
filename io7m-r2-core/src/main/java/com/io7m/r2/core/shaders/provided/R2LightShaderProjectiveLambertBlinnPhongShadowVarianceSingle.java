@@ -302,9 +302,9 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
     NullCheck.notNull(m);
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_eye_to_light_eye, m.getMatrixProjectiveEyeToLightEye());
+      this.u_transform_eye_to_light_eye, m.matrixProjectiveEyeToLightEye());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_light_projection, m.getMatrixProjectiveProjection());
+      this.u_transform_light_projection, m.matrixProjectiveProjection());
   }
 
   @Override
@@ -326,24 +326,24 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
      * Upload the current view rays.
      */
 
-    final R2ViewRaysReadableType view_rays = m.getViewRays();
+    final R2ViewRaysReadableType view_rays = m.viewRays();
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y0, view_rays.getOriginX0Y0());
+      this.u_view_rays_origin_x0y0, view_rays.originX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y0, view_rays.getOriginX1Y0());
+      this.u_view_rays_origin_x1y0, view_rays.originX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y1, view_rays.getOriginX0Y1());
+      this.u_view_rays_origin_x0y1, view_rays.originX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y1, view_rays.getOriginX1Y1());
+      this.u_view_rays_origin_x1y1, view_rays.originX1Y1());
 
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y0, view_rays.getRayX0Y0());
+      this.u_view_rays_ray_x0y0, view_rays.rayX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y0, view_rays.getRayX1Y0());
+      this.u_view_rays_ray_x1y0, view_rays.rayX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y1, view_rays.getRayX0Y1());
+      this.u_view_rays_ray_x0y1, view_rays.rayX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y1, view_rays.getRayX1Y1());
+      this.u_view_rays_ray_x1y1, view_rays.rayX1Y1());
 
     /**
      * Upload the viewport.
@@ -364,31 +364,31 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
 
     /**
      * Upload the projection for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+      this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
     /**
      * Transform the light's position to eye-space and upload it.
      */
 
     final PVectorReadable3FType<R2SpaceWorldType> position =
-      values.getPosition();
+      values.position();
 
     this.position_world.copyFrom3F(position);
     this.position_world.setWF(1.0f);
 
-    final R2TransformContextType trc = m.getTransformContext();
+    final R2TransformContextType trc = m.transformContext();
     PMatrixM4x4F.multiplyVector4F(
-      trc.getContextPM4F(),
-      m.getMatrixView(),
+      trc.contextPM4F(),
+      m.matrixView(),
       this.position_world,
       this.position_eye);
 
@@ -402,7 +402,7 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
      */
 
     this.unit_image =
-      tc.unitContextBindTexture2D(g_tex, values.getImage().get());
+      tc.unitContextBindTexture2D(g_tex, values.image().texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_projective_image,
       this.unit_image);
@@ -412,13 +412,13 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_projective_color, values.getColor());
+      this.u_light_projective_color, values.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_projective_intensity, values.getIntensity());
+      this.u_light_projective_intensity, values.intensity());
     g_sh.shaderUniformPutFloat(
-      this.u_light_projective_inverse_falloff, 1.0f / values.getFalloff());
+      this.u_light_projective_inverse_falloff, 1.0f / values.falloff());
     g_sh.shaderUniformPutFloat(
-      this.u_light_projective_inverse_range, 1.0f / values.getRadius());
+      this.u_light_projective_inverse_range, 1.0f / values.radius());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_projective_image, this.unit_image);
 
@@ -426,16 +426,16 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
      * Upload the shadow values.
      */
 
-    final R2ShadowDepthVarianceType shadow = values.getShadow();
+    final R2ShadowDepthVarianceType shadow = values.shadow();
     g_sh.shaderUniformPutFloat(
-      this.u_shadow_bleed_reduction, shadow.getLightBleedReduction());
+      this.u_shadow_bleed_reduction, shadow.lightBleedReduction());
     g_sh.shaderUniformPutFloat(
       this.u_shadow_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(values.getProjection()));
+      (float) R2Projections.getDepthCoefficient(values.projection()));
     g_sh.shaderUniformPutFloat(
-      this.u_shadow_factor_minimum, shadow.getMinimumFactor());
+      this.u_shadow_factor_minimum, shadow.minimumFactor());
     g_sh.shaderUniformPutFloat(
-      this.u_shadow_variance_minimum, shadow.getMinimumVariance());
+      this.u_shadow_variance_minimum, shadow.minimumVariance());
   }
 
   @Override
@@ -451,7 +451,7 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
     NullCheck.notNull(map);
 
     this.unit_shadow =
-      tc.unitContextBindTexture2D(g_tex, map.get());
+      tc.unitContextBindTexture2D(g_tex, map.texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_shadow_map, this.unit_shadow);
   }
@@ -465,6 +465,6 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
     NullCheck.notNull(m);
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_volume_modelview, m.getMatrixLightModelView());
+      this.u_transform_volume_modelview, m.matrixLightModelView());
   }
 }

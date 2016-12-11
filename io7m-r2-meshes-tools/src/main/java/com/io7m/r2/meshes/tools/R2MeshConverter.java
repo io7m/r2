@@ -269,13 +269,13 @@ public final class R2MeshConverter implements R2MeshConverterType
     throws IOException
   {
     final BigList<PVectorI3D<R2SpaceObjectType>> ps =
-      tangents.getPositions();
+      tangents.positions();
     final BigList<PVectorI3D<R2SpaceObjectType>> ns =
-      tangents.getNormals();
+      tangents.normals();
     final BigList<PVectorI2D<R2SpaceTextureType>> us =
-      tangents.getUVs();
+      tangents.uvs();
     final BigList<R2MeshTriangleType> tris =
-      tangents.getTriangles();
+      tangents.triangles();
 
     for (long index = 0L; index < ps.size64(); ++index) {
       final PVectorI3D<R2SpaceObjectType> pv = ps.get(index);
@@ -312,32 +312,32 @@ public final class R2MeshConverter implements R2MeshConverterType
     for (long index = 0L; index < tris.size64(); ++index) {
       final R2MeshTriangleType t = tris.get(index);
       final R2MeshTangentsVertexType v0 =
-        tangents.getVertices().get(t.getV0());
+        tangents.vertices().get(t.v0());
       final R2MeshTangentsVertexType v1 =
-        tangents.getVertices().get(t.getV1());
+        tangents.vertices().get(t.v1());
       final R2MeshTangentsVertexType v2 =
-        tangents.getVertices().get(t.getV2());
+        tangents.vertices().get(t.v2());
 
       w.write("f ");
-      w.write(Long.toString(v0.getPositionIndex() + 1L));
+      w.write(Long.toString(v0.positionIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v0.getUVIndex() + 1L));
+      w.write(Long.toString(v0.uvIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v0.getNormalIndex() + 1L));
+      w.write(Long.toString(v0.normalIndex() + 1L));
 
       w.write(" ");
-      w.write(Long.toString(v1.getPositionIndex() + 1L));
+      w.write(Long.toString(v1.positionIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v1.getUVIndex() + 1L));
+      w.write(Long.toString(v1.uvIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v1.getNormalIndex() + 1L));
+      w.write(Long.toString(v1.normalIndex() + 1L));
 
       w.write(" ");
-      w.write(Long.toString(v2.getPositionIndex() + 1L));
+      w.write(Long.toString(v2.positionIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v2.getUVIndex() + 1L));
+      w.write(Long.toString(v2.uvIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v2.getNormalIndex() + 1L));
+      w.write(Long.toString(v2.normalIndex() + 1L));
 
       w.newLine();
     }
@@ -392,32 +392,32 @@ public final class R2MeshConverter implements R2MeshConverterType
     for (long index = 0L; index < tris.size64(); ++index) {
       final R2MeshTriangleType t = tris.get(index);
       final R2MeshBasicVertexType v0 =
-        basic.getVertices().get(t.getV0());
+        basic.getVertices().get(t.v0());
       final R2MeshBasicVertexType v1 =
-        basic.getVertices().get(t.getV1());
+        basic.getVertices().get(t.v1());
       final R2MeshBasicVertexType v2 =
-        basic.getVertices().get(t.getV2());
+        basic.getVertices().get(t.v2());
 
       w.write("f ");
-      w.write(Long.toString(v0.getPositionIndex() + 1L));
+      w.write(Long.toString(v0.positionIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v0.getUVIndex() + 1L));
+      w.write(Long.toString(v0.uvIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v0.getNormalIndex() + 1L));
+      w.write(Long.toString(v0.normalIndex() + 1L));
 
       w.write(" ");
-      w.write(Long.toString(v1.getPositionIndex() + 1L));
+      w.write(Long.toString(v1.positionIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v1.getUVIndex() + 1L));
+      w.write(Long.toString(v1.uvIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v1.getNormalIndex() + 1L));
+      w.write(Long.toString(v1.normalIndex() + 1L));
 
       w.write(" ");
-      w.write(Long.toString(v2.getPositionIndex() + 1L));
+      w.write(Long.toString(v2.positionIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v2.getUVIndex() + 1L));
+      w.write(Long.toString(v2.uvIndex() + 1L));
       w.write("/");
-      w.write(Long.toString(v2.getNormalIndex() + 1L));
+      w.write(Long.toString(v2.normalIndex() + 1L));
 
       w.newLine();
     }
@@ -438,7 +438,7 @@ public final class R2MeshConverter implements R2MeshConverterType
         adapter);
       r.run();
 
-      final Optional<R2MeshTangentsType> m_opt = adapter.getMesh();
+      final Optional<R2MeshTangentsType> m_opt = adapter.mesh();
       if (m_opt.isPresent()) {
         final String name = p.getFileName().toString();
         final R2MeshTangentsType m = m_opt.get();
@@ -465,7 +465,7 @@ public final class R2MeshConverter implements R2MeshConverterType
         R2MBMappedReader.newMappedReaderForFileChannel(fc, adapter);
       mr.run();
 
-      final Optional<R2MeshTangentsType> m_opt = adapter.getMesh();
+      final Optional<R2MeshTangentsType> m_opt = adapter.mesh();
       if (m_opt.isPresent()) {
         final String name = p.getFileName().toString();
         final R2MeshTangentsType m = m_opt.get();

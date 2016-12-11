@@ -45,9 +45,10 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
-import com.io7m.r2.filters.R2BlurParametersReadableType;
+import com.io7m.r2.filters.R2BlurParameters;
+import com.io7m.r2.filters.R2BlurParametersMutable;
 import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
 import com.io7m.r2.filters.R2FilterEmission;
 import com.io7m.r2.filters.R2FilterEmissionParametersMutable;
 import com.io7m.r2.filters.R2FilterEmissionParametersType;
@@ -87,7 +88,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       R2ImageBufferPool.newPool(g, Long.MAX_VALUE, Long.MAX_VALUE);
 
     final R2FilterType<
-      R2FilterBoxBlurParameters<
+      R2FilterBoxBlurParametersType<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -139,7 +140,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParameters<
+      R2FilterBoxBlurParametersType<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -206,7 +207,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParameters<
+      R2FilterBoxBlurParametersType<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -235,14 +236,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     params.setAlbedoEmissionMap(td.texture2DWhite());
     params.setBlurParameters(Optional.empty());
     params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.of(ib.getPrimaryFramebuffer()));
+    params.setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()));
     params.setScale(1.0f);
     Assert.assertTrue(params.isInitialized());
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -280,7 +281,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParameters<
+      R2FilterBoxBlurParametersType<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -307,19 +308,16 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     final R2FilterEmissionParametersMutable params =
       R2FilterEmissionParametersMutable.create();
     params.setAlbedoEmissionMap(td.texture2DWhite());
-    params.setBlurParameters(Optional.of(new R2BlurParametersReadableType()
-    {
-
-    }));
+    params.setBlurParameters(Optional.of(R2BlurParametersMutable.create()));
     params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.of(ib.getPrimaryFramebuffer()));
+    params.setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()));
     params.setScale(1.0f);
     Assert.assertTrue(params.isInitialized());
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -357,7 +355,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParameters<
+      R2FilterBoxBlurParametersType<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -384,23 +382,20 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     final R2FilterEmissionParametersMutable params =
       R2FilterEmissionParametersMutable.create();
     params.setAlbedoEmissionMap(td.texture2DWhite());
-    params.setBlurParameters(Optional.of(new R2BlurParametersReadableType()
-    {
-      @Override
-      public float getBlurScale()
-      {
-        return 0.5f;
-      }
-    }));
+
+    final R2BlurParameters.Builder bpb = R2BlurParameters.builder();
+    bpb.setBlurScale(0.5f);
+
+    params.setBlurParameters(Optional.of(bpb.build()));
     params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.of(ib.getPrimaryFramebuffer()));
+    params.setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()));
     params.setScale(0.5f);
     Assert.assertTrue(params.isInitialized());
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -438,7 +433,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParameters<
+      R2FilterBoxBlurParametersType<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -465,14 +460,11 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     final R2FilterEmissionParametersMutable params =
       R2FilterEmissionParametersMutable.create();
     params.setAlbedoEmissionMap(td.texture2DWhite());
-    params.setBlurParameters(Optional.of(new R2BlurParametersReadableType()
-    {
-      @Override
-      public float getBlurScale()
-      {
-        return 0.5f;
-      }
-    }));
+
+    final R2BlurParameters.Builder bpb = R2BlurParameters.builder();
+    bpb.setBlurScale(0.5f);
+
+    params.setBlurParameters(Optional.of(bpb.build()));
     params.setOutputViewport(area);
     params.setOutputFramebuffer(Optional.empty());
     params.setScale(0.5f);

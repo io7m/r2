@@ -34,7 +34,7 @@ public interface R2ShaderFilterFXAAParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getTexture();
+  R2Texture2DUsableType texture();
 
   /**
    * <p>The amount of subpixel aliasing removal.</p>
@@ -47,7 +47,7 @@ public interface R2ShaderFilterFXAAParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getSubPixelAliasingRemoval()
+  default float subPixelAliasingRemoval()
   {
     return 0.75f;
   }
@@ -65,7 +65,7 @@ public interface R2ShaderFilterFXAAParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getEdgeThreshold()
+  default float edgeThreshold()
   {
     return 0.166f;
   }
@@ -88,7 +88,7 @@ public interface R2ShaderFilterFXAAParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getEdgeThresholdMinimum()
+  default float edgeThresholdMinimum()
   {
     return 0.0833f;
   }

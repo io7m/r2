@@ -143,12 +143,12 @@ public final class R2FilterDebugEyePosition implements
     final R2FilterDebugEyePositionParametersType parameters)
   {
     final R2GeometryBufferUsableType gbuffer =
-      parameters.getGeometryBuffer();
+      parameters.geometryBuffer();
     final R2EyePositionBufferUsableType ebuffer =
-      parameters.getEyePositionBuffer();
+      parameters.eyePositionBuffer();
 
     final JCGLFramebufferUsableType gb_fb =
-      gbuffer.getPrimaryFramebuffer();
+      gbuffer.primaryFramebuffer();
 
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
@@ -158,7 +158,7 @@ public final class R2FilterDebugEyePosition implements
     final JCGLViewportsType g_v = this.g.getViewports();
 
     try {
-      g_fb.framebufferDrawBind(ebuffer.getFramebuffer());
+      g_fb.framebufferDrawBind(ebuffer.framebuffer());
 
       /**
        * Copy the contents of the depth/stencil attachment of the G-Buffer to
@@ -167,8 +167,8 @@ public final class R2FilterDebugEyePosition implements
 
       g_fb.framebufferReadBind(gb_fb);
       g_fb.framebufferBlit(
-        gbuffer.getArea(),
-        ebuffer.getArea(),
+        gbuffer.area(),
+        ebuffer.area(),
         R2FilterDebugEyePosition.DEPTH_STENCIL,
         JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
       g_fb.framebufferReadUnbind();
@@ -177,16 +177,16 @@ public final class R2FilterDebugEyePosition implements
 
       try {
         JCGLRenderStates.activate(this.g, this.render_state);
-        g_v.viewportSet(ebuffer.getArea());
+        g_v.viewportSet(ebuffer.area());
 
         try {
-          g_ao.arrayObjectBind(this.quad.getArrayObject());
+          g_ao.arrayObjectBind(this.quad.arrayObject());
 
           this.shader.onActivate(g_sh);
           this.shader.onReceiveFilterValues(g_tex, g_sh, tc, parameters);
           this.shader.onValidate();
 
-          final R2MatricesObserverType m = parameters.getObserverValues();
+          final R2MatricesObserverType m = parameters.observerValues();
 
           m.withTransform(
             R2TransformIdentity.getInstance(),

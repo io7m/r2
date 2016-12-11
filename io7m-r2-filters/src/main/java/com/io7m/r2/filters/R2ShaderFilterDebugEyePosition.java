@@ -182,20 +182,20 @@ public final class R2ShaderFilterDebugEyePosition extends
      * Set each of the required G-Buffer textures.
      */
 
-    final R2GeometryBufferUsableType gbuffer = values.getGeometryBuffer();
+    final R2GeometryBufferUsableType gbuffer = values.geometryBuffer();
     final JCGLTextureUnitType unit_normals =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.normalTexture().texture());
     final JCGLTextureUnitType unit_depth =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.depthTexture().texture());
 
     final JCGLTextureUnitType unit_albedo =
       tc.unitContextBindTexture2D(
         g_tex,
-        gbuffer.getAlbedoEmissiveTexture().get());
+        gbuffer.albedoEmissiveTexture().texture());
     final JCGLTextureUnitType unit_specular =
       tc.unitContextBindTexture2D(
         g_tex,
-        gbuffer.getSpecularTextureOrDefault(values.getTextureDefaults()).get());
+        gbuffer.getSpecularTextureOrDefault(values.textureDefaults()).texture());
 
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);
@@ -206,7 +206,7 @@ public final class R2ShaderFilterDebugEyePosition extends
      * Upload the viewport.
      */
 
-    final AreaInclusiveUnsignedLType area = gbuffer.getDescription().getArea();
+    final AreaInclusiveUnsignedLType area = gbuffer.description().area();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
     g_sh.shaderUniformPutFloat(
@@ -220,32 +220,32 @@ public final class R2ShaderFilterDebugEyePosition extends
      * Upload the scene's depth coefficient.
      */
 
-    final R2MatricesObserverValuesType m = values.getObserverValues();
+    final R2MatricesObserverValuesType m = values.observerValues();
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
 
     /**
      * Upload the current view rays.
      */
 
-    final R2ViewRaysReadableType view_rays = m.getViewRays();
+    final R2ViewRaysReadableType view_rays = m.viewRays();
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y0, view_rays.getOriginX0Y0());
+      this.u_view_rays_origin_x0y0, view_rays.originX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y0, view_rays.getOriginX1Y0());
+      this.u_view_rays_origin_x1y0, view_rays.originX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y1, view_rays.getOriginX0Y1());
+      this.u_view_rays_origin_x0y1, view_rays.originX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y1, view_rays.getOriginX1Y1());
+      this.u_view_rays_origin_x1y1, view_rays.originX1Y1());
 
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y0, view_rays.getRayX0Y0());
+      this.u_view_rays_ray_x0y0, view_rays.rayX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y0, view_rays.getRayX1Y0());
+      this.u_view_rays_ray_x1y0, view_rays.rayX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y1, view_rays.getRayX0Y1());
+      this.u_view_rays_ray_x0y1, view_rays.rayX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y1, view_rays.getRayX1Y1());
+      this.u_view_rays_ray_x1y1, view_rays.rayX1Y1());
   }
 }

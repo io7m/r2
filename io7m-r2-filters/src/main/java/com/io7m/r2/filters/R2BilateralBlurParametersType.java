@@ -17,48 +17,80 @@
 package com.io7m.r2.filters;
 
 import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
+import com.io7m.r2.core.R2ImmutableStyleType;
+import org.immutables.value.Value;
 
 /**
- * The type of writable blur parameters.
+ * The type of blur parameters specific to bilateral blurs.
  */
 
-public interface R2BlurParametersWritableType
+@R2ImmutableStyleType
+@Value.Immutable
+@Value.Modifiable
+public interface R2BilateralBlurParametersType
 {
   /**
-   * Set the blur size in texels.
-   *
-   * @param s The size
+   * @return The current blur size in texels
    */
 
-  void setBlurSize(float s);
+  @Value.Parameter
+  @Value.Default
+  default float blurSize()
+  {
+    return 1.0f;
+  }
 
   /**
-   * Set the amount by which the image will be scaled during the blur operation.
+   * The amount by which the image will be scaled during the blur operation.
    * By scaling an image down, blurring it, and then scaling it back up again,
    * the blur effect is emphasized without requiring additional passes.
    *
-   * @param s The scale amount
+   * @return The scale value for intermediate images
    */
 
-  void setBlurScale(float s);
+  @Value.Parameter
+  @Value.Default
+  default float blurScale()
+  {
+    return 1.0f;
+  }
 
   /**
-   * Set the number of blur passes that will be used. If a value of {@code 0} is
+   * The number of blur passes that will be used. If a value of {@code 0} is
    * given here, the image will only be scaled and not actually blurred (and
    * will not actually even be scaled, if a value of {@code 1.0} is given for
-   * {@link #setBlurScale(float)}).
+   * {@link #blurScale()}).
    *
-   * @param p The number of blur passes
+   * @return The number of blur passes that will be used
    */
 
-  void setBlurPasses(int p);
+  @Value.Parameter
+  @Value.Default
+  default int blurPasses()
+  {
+    return 1;
+  }
 
   /**
-   * Set the filter that will be used when an image is resized using framebuffer
-   * blitting.
-   *
-   * @param f The filter
+   * @return The current blur sharpness amount
    */
 
-  void setBlurScaleFilter(JCGLFramebufferBlitFilter f);
+  @Value.Parameter
+  @Value.Default
+  default float blurSharpness()
+  {
+    return 0.01f;
+  }
+
+  /**
+   * @return The filter that will be used when an image is scaled via
+   * framebuffer blitting
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default JCGLFramebufferBlitFilter blurScaleFilter()
+  {
+    return JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_LINEAR;
+  }
 }

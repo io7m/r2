@@ -31,5 +31,5 @@ public interface R2MatricesVolumeLightValuesType
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-  getMatrixLightModelView();
+  matrixLightModelView();
 }

@@ -834,7 +834,7 @@ public abstract class R2SceneLightsContract
     {
       this.log.add(String.format(
         "ClipGroup.onLightSingleArrayStart %d",
-        Long.valueOf(i.getLightID())));
+        Long.valueOf(i.lightID())));
     }
 
     @Override
@@ -846,7 +846,7 @@ public abstract class R2SceneLightsContract
       this.log.add(String.format(
         "ClipGroup.onLightSingle %d %d",
         Long.valueOf(s.getShaderID()),
-        Long.valueOf(i.getLightID())));
+        Long.valueOf(i.lightID())));
     }
 
     @Override
@@ -905,7 +905,7 @@ public abstract class R2SceneLightsContract
     {
       this.log.add(String.format(
         "Group.onLightSingleArrayStart %d",
-        Long.valueOf(i.getLightID())));
+        Long.valueOf(i.lightID())));
     }
 
     @Override
@@ -917,7 +917,7 @@ public abstract class R2SceneLightsContract
       this.log.add(String.format(
         "Group.onLightSingle %d %d",
         Long.valueOf(s.getShaderID()),
-        Long.valueOf(i.getLightID())));
+        Long.valueOf(i.lightID())));
     }
 
     @Override
@@ -968,7 +968,7 @@ public abstract class R2SceneLightsContract
     {
       this.log.add(String.format(
         "onStartClipGroup %d %d",
-        Long.valueOf(i.getInstanceID()),
+        Long.valueOf(i.instanceID()),
         Integer.valueOf(group)));
 
       return this.clip_group_cons.apply(this.log, i, group);

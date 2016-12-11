@@ -63,7 +63,7 @@ public final class R2TextureCubeStatic implements R2TextureCubeType
   }
 
   @Override
-  public JCGLTextureCubeUsableType get()
+  public JCGLTextureCubeUsableType texture()
   {
     return this.texture;
   }
@@ -75,7 +75,7 @@ public final class R2TextureCubeStatic implements R2TextureCubeType
   }
 
   @Override
-  public JCGLTextureCubeType getReal()
+  public JCGLTextureCubeType textureWritable()
   {
     return this.texture;
   }

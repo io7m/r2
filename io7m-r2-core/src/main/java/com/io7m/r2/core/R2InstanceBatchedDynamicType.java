@@ -28,13 +28,13 @@ public interface R2InstanceBatchedDynamicType extends R2InstanceBatchedType,
    * @return The maximum number of instances that can be placed into the batch
    */
 
-  int getMaximumSize();
+  int maximumSize();
 
   /**
    * @return The current number of enabled instances in the batch
    */
 
-  int getEnabledCount();
+  int enabledCount();
 
   /**
    * Disable rendering of all instances

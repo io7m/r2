@@ -129,7 +129,7 @@ public abstract class R2MatricesContract
       (mm, u0) -> mm);
 
     this.expected.expect(RequireViolation.class);
-    r.getMatrixProjection();
+    r.matrixProjection();
   }
 
   @Test
@@ -145,7 +145,7 @@ public abstract class R2MatricesContract
       (mm, u0) -> mm);
 
     this.expected.expect(RequireViolation.class);
-    r.getMatrixView();
+    r.matrixView();
   }
 
   @Test
@@ -161,7 +161,7 @@ public abstract class R2MatricesContract
       (mm, u0) -> mm);
 
     this.expected.expect(RequireViolation.class);
-    r.getMatrixViewInverse();
+    r.matrixViewInverse();
   }
 
   @Test
@@ -177,7 +177,7 @@ public abstract class R2MatricesContract
       (mm, u0) -> mm);
 
     this.expected.expect(RequireViolation.class);
-    r.getViewRays();
+    r.viewRays();
   }
 
   @Test

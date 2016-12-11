@@ -24,8 +24,8 @@ public interface R2ImageBufferUsableType
   extends R2RenderTargetUsableType<R2ImageBufferDescriptionType>
 {
   /**
-   * @return The diffuse texture
+   * @return The image texture
    */
 
-  R2Texture2DUsableType getRGBATexture();
+  R2Texture2DUsableType imageTexture();
 }

@@ -31,5 +31,5 @@ public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
    */
 
   @Override
-  R2ShaderInstanceSingleUsableType<M> getShader();
+  R2ShaderInstanceSingleUsableType<M> shader();
 }

@@ -32,7 +32,7 @@ public interface R2LightSphericalSingleReadableType extends
    * @see R2LightSphericalSingleWritableType#setGeometryScaleFactor(float)
    */
 
-  float getGeometryScaleFactor();
+  float geometryScaleFactor();
 
   @Override
   default <A, B, E extends Throwable> B matchLightVolumeSingleReadable(

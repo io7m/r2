@@ -29,5 +29,5 @@ public interface R2TextureCubeType extends R2TextureCubeUsableType,
    * @return The current texture
    */
 
-  JCGLTextureCubeType getReal();
+  JCGLTextureCubeType textureWritable();
 }

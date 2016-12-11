@@ -279,7 +279,7 @@ public final class R2DebugVisualizerRenderer implements
           for (int index = 0; index < singles.size(); ++index) {
             final R2DebugInstanceSingle single = singles.get(index);
 
-            final JCGLArrayObjectUsableType ao = single.instance().getArrayObject();
+            final JCGLArrayObjectUsableType ao = single.instance().arrayObject();
             final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
             try {
               g_ao.arrayObjectBind(ao);
@@ -288,7 +288,7 @@ public final class R2DebugVisualizerRenderer implements
                 this.g.getTextures(), this.g.getShaders(), tc, single.color());
 
               m.withTransform(
-                single.instance().getTransform(),
+                single.instance().transform(),
                 PMatrixI3x3F.identity(),
                 this,
                 (m_instance, t) -> {
@@ -545,7 +545,7 @@ public final class R2DebugVisualizerRenderer implements
     public void onInstanceBatchedUpdate(
       final R2InstanceBatchedType i)
     {
-      i.update(this.g33, this.matrices.getTransformContext());
+      i.update(this.g33, this.matrices.transformContext());
     }
 
     @Override
@@ -575,9 +575,9 @@ public final class R2DebugVisualizerRenderer implements
     {
       this.shader_batched.onValidate();
 
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.array_objects.arrayObjectBind(i.arrayObject());
       this.draw.drawElementsInstanced(
-        JCGLPrimitives.PRIMITIVE_TRIANGLES, i.getRenderCount());
+        JCGLPrimitives.PRIMITIVE_TRIANGLES, i.renderCount());
     }
 
     @Override
@@ -619,7 +619,7 @@ public final class R2DebugVisualizerRenderer implements
     public void onInstanceSingleArrayStart(
       final R2InstanceSingleType i)
     {
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.array_objects.arrayObjectBind(i.arrayObject());
     }
 
     @Override
@@ -628,8 +628,8 @@ public final class R2DebugVisualizerRenderer implements
       final R2InstanceSingleType i)
     {
       this.matrices.withTransform(
-        i.getTransform(),
-        i.getUVMatrix(),
+        i.transform(),
+        i.uvMatrix(),
         this,
         (mi, t) -> {
           final R2ShaderInstanceSingleUsableType<?> s = t.shader_single;
@@ -843,18 +843,18 @@ public final class R2DebugVisualizerRenderer implements
 
         try {
           c.shader_single.onActivate(c.shaders);
-          c.array_objects.arrayObjectBind(c.sphere.getArrayObject());
+          c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(ls.getColor());
-            VectorM4F.scaleInPlace(c.light_color, (double) ls.getIntensity());
+            c.light_color.copyFrom3F(ls.color());
+            VectorM4F.scaleInPlace(c.light_color, (double) ls.intensity());
 
             /**
              * Render a tiny sphere at the light origin.
              */
 
             c.sphere_transform.setScale(0.1f);
-            c.sphere_transform.getTranslation().copyFrom3F(ls.getOriginPosition());
+            c.sphere_transform.getTranslation().copyFrom3F(ls.originPosition());
             c.matrices.withTransform(c.sphere_transform, im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_fill);
               c.shader_single.onReceiveViewValues(
@@ -873,8 +873,8 @@ public final class R2DebugVisualizerRenderer implements
              * Render the light volume in wireframe mode.
              */
 
-            c.array_objects.arrayObjectBind(ls.getArrayObject());
-            c.matrices.withTransform(ls.getTransform(), im, this, (mi, lc) -> {
+            c.array_objects.arrayObjectBind(ls.arrayObject());
+            c.matrices.withTransform(ls.transform(), im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_lines);
               c.shader_single.onReceiveMaterialValues(
                 c.textures, c.shaders, lc.group_texture_context, c.light_color);
@@ -907,18 +907,18 @@ public final class R2DebugVisualizerRenderer implements
 
         try {
           c.shader_single.onActivate(c.shaders);
-          c.array_objects.arrayObjectBind(c.sphere.getArrayObject());
+          c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(lp.getColor());
-            VectorM4F.scaleInPlace(c.light_color, (double) lp.getIntensity());
+            c.light_color.copyFrom3F(lp.color());
+            VectorM4F.scaleInPlace(c.light_color, (double) lp.intensity());
 
             /**
              * Render a tiny sphere at the light origin.
              */
 
             c.sphere_transform.setScale(0.1f);
-            c.sphere_transform.getTranslation().copyFrom3F(lp.getPosition());
+            c.sphere_transform.getTranslation().copyFrom3F(lp.position());
             c.matrices.withTransform(c.sphere_transform, im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_fill);
               c.shader_single.onReceiveViewValues(
@@ -937,8 +937,8 @@ public final class R2DebugVisualizerRenderer implements
              * Render the light volume in wireframe mode.
              */
 
-            c.array_objects.arrayObjectBind(lp.getArrayObject());
-            c.matrices.withTransform(lp.getTransform(), im, this, (mi, lc) -> {
+            c.array_objects.arrayObjectBind(lp.arrayObject());
+            c.matrices.withTransform(lp.transform(), im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_lines);
               c.shader_single.onReceiveMaterialValues(
                 c.textures, c.shaders, lc.group_texture_context, c.light_color);
@@ -1003,7 +1003,7 @@ public final class R2DebugVisualizerRenderer implements
 
           try {
             c.shader_single.onActivate(c.shaders);
-            c.array_objects.arrayObjectBind(this.volume.getArrayObject());
+            c.array_objects.arrayObjectBind(this.volume.arrayObject());
 
             try {
               c.light_color.set4F(1.0f, 1.0f, 1.0f, 1.0f);
@@ -1013,7 +1013,7 @@ public final class R2DebugVisualizerRenderer implements
                */
 
               c.matrices.withTransform(
-                this.volume.getTransform(),
+                this.volume.transform(),
                 im,
                 this,
                 (mi, lc) -> {
@@ -1109,18 +1109,18 @@ public final class R2DebugVisualizerRenderer implements
 
         try {
           c.shader_single.onActivate(c.shaders);
-          c.array_objects.arrayObjectBind(c.sphere.getArrayObject());
+          c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(ls.getColor());
-            VectorM4F.scaleInPlace(c.light_color, (double) ls.getIntensity());
+            c.light_color.copyFrom3F(ls.color());
+            VectorM4F.scaleInPlace(c.light_color, (double) ls.intensity());
 
             /**
              * Render a tiny sphere at the light origin.
              */
 
             c.sphere_transform.setScale(0.1f);
-            c.sphere_transform.getTranslation().copyFrom3F(ls.getOriginPosition());
+            c.sphere_transform.getTranslation().copyFrom3F(ls.originPosition());
             c.matrices.withTransform(c.sphere_transform, im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_fill);
               c.shader_single.onReceiveViewValues(
@@ -1139,8 +1139,8 @@ public final class R2DebugVisualizerRenderer implements
              * Render the light volume in wireframe mode.
              */
 
-            c.array_objects.arrayObjectBind(ls.getArrayObject());
-            c.matrices.withTransform(ls.getTransform(), im, this, (mi, lc) -> {
+            c.array_objects.arrayObjectBind(ls.arrayObject());
+            c.matrices.withTransform(ls.transform(), im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_lines);
               c.shader_single.onReceiveMaterialValues(
                 c.textures, c.shaders, lc.texture_context, c.light_color);
@@ -1173,18 +1173,18 @@ public final class R2DebugVisualizerRenderer implements
 
         try {
           c.shader_single.onActivate(c.shaders);
-          c.array_objects.arrayObjectBind(c.sphere.getArrayObject());
+          c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(lp.getColor());
-            VectorM4F.scaleInPlace(c.light_color, (double) lp.getIntensity());
+            c.light_color.copyFrom3F(lp.color());
+            VectorM4F.scaleInPlace(c.light_color, (double) lp.intensity());
 
             /**
              * Render a tiny sphere at the light origin.
              */
 
             c.sphere_transform.setScale(0.1f);
-            c.sphere_transform.getTranslation().copyFrom3F(lp.getPosition());
+            c.sphere_transform.getTranslation().copyFrom3F(lp.position());
             c.matrices.withTransform(c.sphere_transform, im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_fill);
               c.shader_single.onReceiveViewValues(
@@ -1203,8 +1203,8 @@ public final class R2DebugVisualizerRenderer implements
              * Render the light volume in wireframe mode.
              */
 
-            c.array_objects.arrayObjectBind(lp.getArrayObject());
-            c.matrices.withTransform(lp.getTransform(), im, this, (mi, lc) -> {
+            c.array_objects.arrayObjectBind(lp.arrayObject());
+            c.matrices.withTransform(lp.transform(), im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_lines);
               c.shader_single.onReceiveMaterialValues(
                 c.textures, c.shaders, lc.texture_context, c.light_color);

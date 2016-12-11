@@ -214,7 +214,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getOriginX0Y0()
+  public VectorReadable4FType originX0Y0()
   {
     return this.origin_x0y0;
   }
@@ -224,7 +224,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getOriginX0Y1()
+  public VectorReadable4FType originX0Y1()
   {
     return this.origin_x0y1;
   }
@@ -234,7 +234,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getOriginX1Y0()
+  public VectorReadable4FType originX1Y0()
   {
     return this.origin_x1y0;
   }
@@ -244,7 +244,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getOriginX1Y1()
+  public VectorReadable4FType originX1Y1()
   {
     return this.origin_x1y1;
   }
@@ -254,7 +254,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getRayX0Y0()
+  public VectorReadable4FType rayX0Y0()
   {
     return this.ray_x0y0;
   }
@@ -264,7 +264,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getRayX0Y1()
+  public VectorReadable4FType rayX0Y1()
   {
     return this.ray_x0y1;
   }
@@ -274,7 +274,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getRayX1Y0()
+  public VectorReadable4FType rayX1Y0()
   {
     return this.ray_x1y0;
   }
@@ -284,7 +284,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getRayX1Y1()
+  public VectorReadable4FType rayX1Y1()
   {
     return this.ray_x1y1;
   }

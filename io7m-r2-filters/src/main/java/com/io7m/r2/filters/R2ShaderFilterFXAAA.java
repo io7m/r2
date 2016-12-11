@@ -152,15 +152,15 @@ public final class R2ShaderFilterFXAAA extends
      */
 
     final JCGLTextureUnitType u =
-      tc.unitContextBindTexture2D(g_tex, values.getTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.texture().texture());
     g_sh.shaderUniformPutTexture2DUnit(this.u_image, u);
 
     /**
      * Upload the viewport.
      */
 
-    final R2Texture2DUsableType texture = values.getTexture();
-    final AreaInclusiveUnsignedLType area = texture.get().textureGetArea();
+    final R2Texture2DUsableType texture = values.texture();
+    final AreaInclusiveUnsignedLType area = texture.texture().textureGetArea();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -175,11 +175,11 @@ public final class R2ShaderFilterFXAAA extends
      */
 
     g_sh.shaderUniformPutFloat(
-      this.u_edge_threshold, values.getEdgeThreshold());
+      this.u_edge_threshold, values.edgeThreshold());
     g_sh.shaderUniformPutFloat(
-      this.u_edge_threshold_minimum, values.getEdgeThresholdMinimum());
+      this.u_edge_threshold_minimum, values.edgeThresholdMinimum());
     g_sh.shaderUniformPutFloat(
-      this.u_subpixel_aliasing_removal, values.getSubPixelAliasingRemoval());
+      this.u_subpixel_aliasing_removal, values.subPixelAliasingRemoval());
   }
 
   @Override

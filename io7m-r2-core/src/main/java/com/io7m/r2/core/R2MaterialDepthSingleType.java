@@ -32,5 +32,5 @@ public interface R2MaterialDepthSingleType<M> extends R2MaterialType<M>
    */
 
   @Override
-  R2ShaderDepthSingleUsableType<M> getShader();
+  R2ShaderDepthSingleUsableType<M> shader();
 }

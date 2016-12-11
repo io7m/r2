@@ -124,7 +124,7 @@ public final class R2SSAOKernel implements R2SSAOKernelType
   }
 
   @Override
-  public void getSample(
+  public void sample(
     final int index,
     final VectorWritable3FType out)
   {
@@ -135,19 +135,19 @@ public final class R2SSAOKernel implements R2SSAOKernelType
   }
 
   @Override
-  public long getVersion()
+  public long version()
   {
     return this.version;
   }
 
   @Override
-  public int getSize()
+  public int size()
   {
     return this.size;
   }
 
   @Override
-  public FloatBuffer getFloatBuffer()
+  public FloatBuffer floatBuffer()
   {
     return this.data;
   }

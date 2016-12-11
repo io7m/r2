@@ -44,6 +44,7 @@ import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
@@ -73,10 +74,9 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private R2SceneOpaquesType opaques;
   private R2GeometryBufferType gbuffer;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
-  private R2SurfaceShaderBasicParameters shader_params;
-
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> shader;
+  private R2SurfaceShaderBasicParametersType shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> material;
 
   private R2MainType main;
 
@@ -122,7 +122,7 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
 
     this.instance = R2InstanceSingle.newInstance(
       m.getIDPool(),
-      m.getUnitQuad().getArrayObject(),
+      m.getUnitQuad().arrayObject(),
       transform,
       PMatrixI3x3F.identity());
 
@@ -139,7 +139,7 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       R2SurfaceShaderBasicSingle.newShader(
         g.getShaders(), sources, m.getIDPool());
     this.shader_params =
-      R2SurfaceShaderBasicParameters.newParameters(m.getTextureDefaults());
+      R2SurfaceShaderBasicParameters.of(m.getTextureDefaults());
 
     this.material = R2MaterialOpaqueSingle.newMaterial(
       m.getIDPool(),
@@ -174,16 +174,16 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       final JCGLProfilingContextType pro_root =
         pro_frame.getChildContext("main");
 
-      g_fb.framebufferDrawBind(t.gbuffer.getPrimaryFramebuffer());
+      g_fb.framebufferDrawBind(t.gbuffer.primaryFramebuffer());
       t.gbuffer.clearBoundPrimaryFramebuffer(g);
       t.main.getStencilRenderer().renderStencilsWithBoundBuffer(
         mo,
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
-        t.gbuffer.getArea(),
+        t.gbuffer.area(),
         t.stencils);
       t.main.getGeometryRenderer().renderGeometry(
-        t.gbuffer.getArea(),
+        t.gbuffer.area(),
         Optional.empty(),
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
