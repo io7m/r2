@@ -31,56 +31,56 @@ public interface R2VertexCursorProducerInfoType
    * @return The scalar type used to hold the elements of position vectors
    */
 
-  JCGLScalarType getPositionElementType();
+  JCGLScalarType positionElementType();
 
   /**
    * @return The offset in octets of the position vector from the start of each
    * vertex
    */
 
-  long getPositionOffset();
+  long positionOffset();
 
   /**
    * @return The scalar type used to hold the elements of normal vectors
    */
 
-  JCGLScalarType getNormalElementType();
+  JCGLScalarType normalElementType();
 
   /**
    * @return The offset in octets of the normal vector from the start of each
    * vertex
    */
 
-  long getNormalOffset();
+  long normalOffset();
 
   /**
    * @return The scalar type used to hold the elements of UV vectors
    */
 
-  JCGLScalarType getUVElementType();
+  JCGLScalarType uvElementType();
 
   /**
    * @return The offset in octets of the UV vector from the start of each vertex
    */
 
-  long getUVOffset();
+  long uvOffset();
 
   /**
    * @return The scalar type used to hold the elements of tangent vectors
    */
 
-  JCGLScalarType getTangent4ElementType();
+  JCGLScalarType tangent4ElementType();
 
   /**
    * @return The offset in octets of the tangent4 vector from the start of each
    * vertex
    */
 
-  long getTangent4Offset();
+  long tangent4Offset();
 
   /**
    * @return The size in octets of one vertex
    */
 
-  long getVertexSize();
+  long vertexSize();
 }

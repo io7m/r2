@@ -155,7 +155,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
 
     this.array_buffer =
       this.g_ab.arrayBufferAllocate(
-        count * this.cursor_info.getVertexSize(),
+        count * this.cursor_info.vertexSize(),
         this.array_usage);
     this.g_ab.arrayBufferUnbind();
 
@@ -187,33 +187,33 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
       R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
       this.array_buffer,
       3,
-      this.cursor_info.getPositionElementType(),
-      (int) this.cursor_info.getVertexSize(),
-      this.cursor_info.getPositionOffset(),
+      this.cursor_info.positionElementType(),
+      (int) this.cursor_info.vertexSize(),
+      this.cursor_info.positionOffset(),
       false);
     aob.setAttributeFloatingPoint(
       R2AttributeConventions.UV_ATTRIBUTE_INDEX,
       this.array_buffer,
       2,
-      this.cursor_info.getUVElementType(),
-      (int) this.cursor_info.getVertexSize(),
-      this.cursor_info.getUVOffset(),
+      this.cursor_info.uvElementType(),
+      (int) this.cursor_info.vertexSize(),
+      this.cursor_info.uvOffset(),
       false);
     aob.setAttributeFloatingPoint(
       R2AttributeConventions.NORMAL_ATTRIBUTE_INDEX,
       this.array_buffer,
       3,
-      this.cursor_info.getNormalElementType(),
-      (int) this.cursor_info.getVertexSize(),
-      this.cursor_info.getNormalOffset(),
+      this.cursor_info.normalElementType(),
+      (int) this.cursor_info.vertexSize(),
+      this.cursor_info.normalOffset(),
       false);
     aob.setAttributeFloatingPoint(
       R2AttributeConventions.TANGENT4_ATTRIBUTE_INDEX,
       this.array_buffer,
       4,
-      this.cursor_info.getTangent4ElementType(),
-      (int) this.cursor_info.getVertexSize(),
-      this.cursor_info.getTangent4Offset(),
+      this.cursor_info.tangent4ElementType(),
+      (int) this.cursor_info.vertexSize(),
+      this.cursor_info.tangent4Offset(),
       false);
     aob.setIndexBuffer(this.index_buffer);
     this.array_object = this.g_ao.arrayObjectAllocate(aob);
@@ -400,7 +400,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public JCGLArrayBufferType getArrayBuffer()
+  public JCGLArrayBufferType arrayBuffer()
   {
     if (this.failed) {
       throw new IllegalStateException("Parsing failed");
@@ -409,7 +409,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public JCGLIndexBufferType getIndexBuffer()
+  public JCGLIndexBufferType indexBuffer()
   {
     if (this.failed) {
       throw new IllegalStateException("Parsing failed");
@@ -418,7 +418,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public JCGLArrayObjectType getArrayObject()
+  public JCGLArrayObjectType arrayObject()
   {
     if (this.failed) {
       throw new IllegalStateException("Parsing failed");
@@ -427,7 +427,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public Optional<Throwable> getErrorException()
+  public Optional<Throwable> errorException()
   {
     if (!this.failed) {
       throw new IllegalStateException("Parsing did not fail");
@@ -436,7 +436,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public String getErrorMessage()
+  public String errorMessage()
   {
     if (!this.failed) {
       throw new IllegalStateException("Parsing did not fail");

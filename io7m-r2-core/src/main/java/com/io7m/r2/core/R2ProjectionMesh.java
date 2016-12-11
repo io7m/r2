@@ -116,7 +116,7 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
       final R2VertexCursorP32UNT16 vci =
         R2VertexCursorP32UNT16.getInstance();
 
-      final long array_size = vci.getVertexSize() * 8L;
+      final long array_size = vci.vertexSize() * 8L;
       ab = ga.arrayBufferAllocate(array_size, array_hint);
       array_update =
         JCGLBufferUpdates.newUpdateReplacingAll(ab);

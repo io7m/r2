@@ -755,15 +755,15 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         r.run();
 
         if (adapter.hasFailed()) {
-          adapter.getErrorException().ifPresent(x -> {
+          adapter.errorException().ifPresent(x -> {
             throw new RuntimeException(
-              "Failed to load " + name + ": " + adapter.getErrorMessage(), x);
+              "Failed to load " + name + ": " + adapter.errorMessage(), x);
           });
           throw new RuntimeException(
-            "Failed to load " + name + ": " + adapter.getErrorMessage());
+            "Failed to load " + name + ": " + adapter.errorMessage());
         }
 
-        final JCGLArrayObjectType ao = adapter.getArrayObject();
+        final JCGLArrayObjectType ao = adapter.arrayObject();
         this.mesh_cache.put(name, ao);
         return ao;
       } catch (final IOException e) {
