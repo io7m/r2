@@ -285,7 +285,8 @@ public final class R2TestUtilities
       @Override
       public void onReceiveViewValues(
         final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m)
+        final R2MatricesObserverValuesType m,
+        AreaInclusiveUnsignedLType viewport)
       {
 
       }
@@ -396,7 +397,8 @@ public final class R2TestUtilities
       @Override
       public void onReceiveViewValues(
         final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m)
+        final R2MatricesObserverValuesType m,
+        AreaInclusiveUnsignedLType viewport)
       {
 
       }
@@ -598,7 +600,8 @@ public final class R2TestUtilities
       @Override
       public void onReceiveViewValues(
         final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m)
+        final R2MatricesObserverValuesType m,
+        AreaInclusiveUnsignedLType viewport)
       {
 
       }

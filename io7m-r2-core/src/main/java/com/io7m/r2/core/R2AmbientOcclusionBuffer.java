@@ -143,7 +143,10 @@ public final class R2AmbientOcclusionBuffer implements
 
       final R2Texture2DType rt_occ = R2Texture2DStatic.of(p_occ.getRight());
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_occ.texture());
+      fbb.attachColorTexture2DAt(
+        points.get(0),
+        buffers.get(0),
+        rt_occ.texture());
 
       final R2AmbientOcclusionBufferDescription.Builder ab =
         R2AmbientOcclusionBufferDescription.builder();

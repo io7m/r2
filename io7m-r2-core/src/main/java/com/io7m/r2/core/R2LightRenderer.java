@@ -1024,7 +1024,10 @@ public final class R2LightRenderer implements R2LightRendererType
 
         try {
           this.clip_volume_stencil.onReceiveViewValues(
-            this.shaders, this.input_state.parent.matrices);
+            this.shaders,
+            this.input_state.parent.matrices,
+            this.input_state.viewport);
+
           this.clip_volume_stencil.onReceiveMaterialValues(
             this.textures, this.shaders, tc, Unit.unit());
 

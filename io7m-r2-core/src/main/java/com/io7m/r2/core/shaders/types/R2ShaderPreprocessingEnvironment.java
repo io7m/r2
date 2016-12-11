@@ -42,6 +42,7 @@ public final class R2ShaderPreprocessingEnvironment implements
   private final Map<String, String> defines;
   private final Map<String, String> defines_view;
   private final SoShaderPreprocessorType preproc;
+
   private R2ShaderPreprocessingEnvironment(
     final SoShaderPreprocessorType in_preproc)
   {

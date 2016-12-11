@@ -16,6 +16,8 @@
 
 package com.io7m.r2.tests.core.shaders;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedL;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
@@ -25,6 +27,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
@@ -86,8 +89,12 @@ public abstract class R2ShaderDepthSingleContract<T, TM extends T> extends
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
+    final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
+      new UnsignedRangeInclusiveL(0L, 639L),
+      new UnsignedRangeInclusiveL(0L, 479L));
+
     f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
@@ -125,8 +132,12 @@ public abstract class R2ShaderDepthSingleContract<T, TM extends T> extends
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
+    final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
+      new UnsignedRangeInclusiveL(0L, 639L),
+      new UnsignedRangeInclusiveL(0L, 479L));
+
     f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
 
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
     f.onReceiveInstanceTransformValues(
@@ -173,17 +184,21 @@ public abstract class R2ShaderDepthSingleContract<T, TM extends T> extends
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
+    final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
+      new UnsignedRangeInclusiveL(0L, 639L),
+      new UnsignedRangeInclusiveL(0L, 479L));
+
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
     f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
 
     this.expected.expect(TransitionException.class);
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
   }
 
   @Test
@@ -206,11 +221,15 @@ public abstract class R2ShaderDepthSingleContract<T, TM extends T> extends
 
     final JCGLShadersType g_sh = g.getShaders();
 
+    final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
+      new UnsignedRangeInclusiveL(0L, 639L),
+      new UnsignedRangeInclusiveL(0L, 479L));
+
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
     this.expected.expect(TransitionException.class);
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
   }
 
   @Test
@@ -234,10 +253,14 @@ public abstract class R2ShaderDepthSingleContract<T, TM extends T> extends
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
+    final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
+      new UnsignedRangeInclusiveL(0L, 639L),
+      new UnsignedRangeInclusiveL(0L, 479L));
+
     final JCGLShadersType g_sh = g.getShaders();
 
     f.onActivate(g_sh);
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     this.expected.expect(TransitionException.class);
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
@@ -264,6 +287,10 @@ public abstract class R2ShaderDepthSingleContract<T, TM extends T> extends
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
+    final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
+      new UnsignedRangeInclusiveL(0L, 639L),
+      new UnsignedRangeInclusiveL(0L, 479L));
+
     final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLTextureUnitAllocatorType ta =
@@ -274,7 +301,7 @@ public abstract class R2ShaderDepthSingleContract<T, TM extends T> extends
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
     this.expected.expect(TransitionException.class);
     f.onValidate();

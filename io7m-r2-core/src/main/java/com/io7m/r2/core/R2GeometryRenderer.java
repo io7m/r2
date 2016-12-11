@@ -78,7 +78,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     {
       final JCGLRenderState.Builder b = JCGLRenderState.builder();
 
-      /**
+      /*
        * Only front faces are rendered.
        */
 
@@ -86,7 +86,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
         JCGLFaceSelection.FACE_BACK,
         JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
-      /**
+      /*
        * Enable depth testing, writing, and clamping.
        */
 
@@ -150,11 +150,13 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
         this.opaque_consumer.render_state.from(this.render_state_base);
         this.opaque_consumer.matrices = m;
         this.opaque_consumer.texture_context = uc;
+        this.opaque_consumer.gbuffer_area = area;
         try {
           s.opaquesExecute(this.opaque_consumer);
         } finally {
           this.opaque_consumer.texture_context = null;
           this.opaque_consumer.matrices = null;
+          this.opaque_consumer.gbuffer_area = null;
         }
       }
     } finally {
@@ -191,6 +193,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable JCGLTextureUnitContextType material_texture_context;
     private @Nullable R2MaterialOpaqueSingleType<?> material_single;
+    private @Nullable AreaInclusiveUnsignedLType gbuffer_area;
 
     private OpaqueConsumer(
       final JCGLInterfaceGL33Type ig)
@@ -213,7 +216,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     @Override
     public void onStartGroup(final int group)
     {
-      /**
+      /*
        * Only touch pixels that have the `ALLOW_BIT` set, and write the
        * given `group` number to the stencil buffer. Back faces are culled,
        * so are left unconfigured here.
@@ -255,7 +258,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderInstanceBatchedUsableType<M> s)
     {
       s.onActivate(this.shaders);
-      s.onReceiveViewValues(this.shaders, this.matrices);
+      s.onReceiveViewValues(this.shaders, this.matrices, this.gbuffer_area);
     }
 
     @Override
@@ -303,7 +306,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderInstanceSingleUsableType<M> s)
     {
       s.onActivate(this.shaders);
-      s.onReceiveViewValues(this.shaders, this.matrices);
+      s.onReceiveViewValues(this.shaders, this.matrices, this.gbuffer_area);
     }
 
     @Override

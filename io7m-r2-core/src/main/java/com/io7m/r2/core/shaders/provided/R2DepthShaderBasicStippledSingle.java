@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.shaders.provided;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
@@ -180,10 +181,12 @@ public final class R2DepthShaderBasicStippledSingle extends
   @Override
   public void onReceiveViewValues(
     final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m)
+    final R2MatricesObserverValuesType m,
+    final AreaInclusiveUnsignedLType viewport)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(m);
+    NullCheck.notNull(viewport);
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
@@ -197,9 +200,8 @@ public final class R2DepthShaderBasicStippledSingle extends
      * Upload the viewport.
      */
 
-    // XXX: Use the real viewport!
-    this.viewport_w = 640L;
-    this.viewport_h = 480L;
+    this.viewport_w = viewport.getRangeX().getInterval();
+    this.viewport_h = viewport.getRangeY().getInterval();
 
     g_sh.shaderUniformPutFloat(
       this.u_viewport_inverse_width,
@@ -234,7 +236,9 @@ public final class R2DepthShaderBasicStippledSingle extends
     this.unit_albedo =
       tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
     this.unit_stipple =
-      tc.unitContextBindTexture2D(g_tex, values.stippleNoiseTexture().texture());
+      tc.unitContextBindTexture2D(
+        g_tex,
+        values.stippleNoiseTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, this.unit_albedo);

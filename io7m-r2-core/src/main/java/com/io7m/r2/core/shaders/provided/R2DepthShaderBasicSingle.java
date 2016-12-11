@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.shaders.provided;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
@@ -153,10 +154,12 @@ public final class R2DepthShaderBasicSingle extends
   @Override
   public void onReceiveViewValues(
     final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m)
+    final R2MatricesObserverValuesType m,
+    final AreaInclusiveUnsignedLType viewport)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(m);
+    NullCheck.notNull(viewport);
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,

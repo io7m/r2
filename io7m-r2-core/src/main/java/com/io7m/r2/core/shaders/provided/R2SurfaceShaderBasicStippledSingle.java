@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.shaders.provided;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
@@ -215,10 +216,12 @@ public final class R2SurfaceShaderBasicStippledSingle extends
   @Override
   public void onReceiveViewValues(
     final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m)
+    final R2MatricesObserverValuesType m,
+    final AreaInclusiveUnsignedLType viewport)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(m);
+    NullCheck.notNull(viewport);
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
@@ -232,9 +235,8 @@ public final class R2SurfaceShaderBasicStippledSingle extends
      * Upload the viewport.
      */
 
-    // XXX: Use the real viewport!
-    this.viewport_w = 640L;
-    this.viewport_h = 480L;
+    this.viewport_w = viewport.getRangeX().getInterval();
+    this.viewport_h = viewport.getRangeY().getInterval();
 
     g_sh.shaderUniformPutFloat(
       this.u_viewport_inverse_width,
