@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.shaders.types;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
@@ -138,10 +139,11 @@ public final class R2ShaderInstanceBatchedVerifier<M> implements
   @Override
   public void onReceiveViewValues(
     final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m)
+    final R2MatricesObserverValuesType m,
+    final AreaInclusiveUnsignedLType viewport)
   {
     this.state.transition(State.STATE_VIEW_RECEIVED);
-    this.shader.onReceiveViewValues(g_sh, m);
+    this.shader.onReceiveViewValues(g_sh, m, viewport);
   }
 
   @Override

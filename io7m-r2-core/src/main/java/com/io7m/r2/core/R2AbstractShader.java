@@ -31,6 +31,7 @@ import com.io7m.sombrero.core.SoShaderPreprocessorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,9 +44,19 @@ import java.util.Optional;
 public abstract class R2AbstractShader<M> implements R2ShaderType<M>
 {
   private static final Logger LOG;
+  private static final Logger LOG_VS;
+  private static final Logger LOG_FS;
+  private static final Logger LOG_GS;
 
   static {
-    LOG = LoggerFactory.getLogger(R2AbstractShader.class);
+    LOG = LoggerFactory.getLogger(
+      R2AbstractShader.class);
+    LOG_VS = LoggerFactory.getLogger(
+      R2AbstractShader.class.getCanonicalName() + ".vertex");
+    LOG_FS = LoggerFactory.getLogger(
+      R2AbstractShader.class.getCanonicalName() + ".fragment");
+    LOG_GS = LoggerFactory.getLogger(
+      R2AbstractShader.class.getCanonicalName() + ".geometry");
   }
 
   private final long id;
@@ -75,24 +86,57 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
       final Map<String, String> pp_defines =
         in_shader_env.preprocessorDefines();
 
+      final List<String> v_lines =
+        pp.preprocessFile(pp_defines, in_vertex);
+
+      if (R2AbstractShader.LOG_VS.isTraceEnabled()) {
+        for (int index = 0; index < v_lines.size(); ++index) {
+          R2AbstractShader.LOG_VS.trace(
+            "{}:{}: {}",
+            in_vertex,
+            Integer.valueOf(index + 1),
+            v_lines.get(index).replaceAll("\\s+$", ""));
+        }
+      }
+
       final JCGLVertexShaderType v =
-        in_shaders.shaderCompileVertex(
-          in_vertex, pp.preprocessFile(pp_defines, in_vertex));
+        in_shaders.shaderCompileVertex(in_vertex, v_lines);
 
       final Optional<JCGLGeometryShaderType> g;
       if (in_geometry.isPresent()) {
         final String s = in_geometry.get();
-        g = Optional.of(
-          in_shaders.shaderCompileGeometry(
-            s,
-            pp.preprocessFile(pp_defines, s)));
+        final List<String> g_lines = pp.preprocessFile(pp_defines, s);
+
+        if (R2AbstractShader.LOG_GS.isTraceEnabled()) {
+          for (int index = 0; index < g_lines.size(); ++index) {
+            R2AbstractShader.LOG_GS.trace(
+              "{}:{}: {}",
+              s,
+              Integer.valueOf(index + 1),
+              g_lines.get(index).replaceAll("\\s+$", ""));
+          }
+        }
+
+        g = Optional.of(in_shaders.shaderCompileGeometry(s, g_lines));
       } else {
         g = Optional.empty();
       }
 
+      final List<String> f_lines =
+        pp.preprocessFile(pp_defines, in_fragment);
+
+      if (R2AbstractShader.LOG_FS.isTraceEnabled()) {
+        for (int index = 0; index < f_lines.size(); ++index) {
+          R2AbstractShader.LOG_FS.trace(
+            "{}:{}: {}",
+            in_fragment,
+            Integer.valueOf(index + 1),
+            f_lines.get(index).replaceAll("\\s+$", ""));
+        }
+      }
+
       final JCGLFragmentShaderType f =
-        in_shaders.shaderCompileFragment(
-          in_fragment, pp.preprocessFile(pp_defines, in_fragment));
+        in_shaders.shaderCompileFragment(in_fragment, f_lines);
 
       this.program = in_shaders.shaderLinkProgram(in_name, v, g.map(s -> s), f);
       in_shaders.shaderDeleteVertex(v);

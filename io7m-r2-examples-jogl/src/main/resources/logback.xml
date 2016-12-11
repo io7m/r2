@@ -10,6 +10,16 @@
     <target>System.err</target>
   </appender>
 
+  <logger
+    name="com.io7m.r2.core.R2AbstractShader.vertex"
+    level="TRACE"/>
+  <logger
+    name="com.io7m.r2.core.R2AbstractShader.fragment"
+    level="TRACE"/>
+  <logger
+    name="com.io7m.r2.core.R2AbstractShader.geometry"
+    level="TRACE"/>
+
   <root level="DEBUG">
     <appender-ref ref="STDERR"/>
   </root>

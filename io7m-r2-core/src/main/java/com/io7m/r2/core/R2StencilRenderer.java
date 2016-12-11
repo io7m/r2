@@ -144,13 +144,14 @@ public final class R2StencilRenderer implements R2StencilRendererType
     pc_instances.startMeasuringIfEnabled();
 
     try {
-      this.renderInstances(m, uc, s);
+      this.renderInstances(area, m, uc, s);
     } finally {
       pc_instances.stopMeasuringIfEnabled();
     }
   }
 
   private void renderInstances(
+    final AreaInclusiveUnsignedLType area,
     final R2MatricesObserverType m,
     final JCGLTextureUnitContextParentType uc,
     final R2SceneStencilsType s)
@@ -160,7 +161,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
       switch (s.stencilsGetMode()) {
         case STENCIL_MODE_INSTANCES_ARE_NEGATIVE: {
 
-          /**
+          /*
            * Each instance will unset the {@link R2Stencils#ALLOW_BIT} for
            * each affected pixel.
            */
@@ -175,7 +176,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
         }
         case STENCIL_MODE_INSTANCES_ARE_POSITIVE: {
 
-          /**
+          /*
            * Each instance will set the {@link R2Stencils#ALLOW_BIT} for
            * each affected pixel.
            */
@@ -194,12 +195,14 @@ public final class R2StencilRenderer implements R2StencilRendererType
         this.stencil_consumer.g33 = this.g;
         this.stencil_consumer.matrices = m;
         this.stencil_consumer.texture_context = uc;
+        this.stencil_consumer.viewport_area = area;
 
         s.stencilsExecute(this.stencil_consumer);
       } finally {
         this.stencil_consumer.g33 = null;
         this.stencil_consumer.texture_context = null;
         this.stencil_consumer.matrices = null;
+        this.stencil_consumer.viewport_area = null;
       }
     }
   }
@@ -218,7 +221,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     final JCGLDrawType g_dr = this.g.getDraw();
     final JCGLViewportsType g_v = this.g.getViewports();
 
-    /**
+    /*
      * Configure state for rendering stencil instances.
      */
 
@@ -232,7 +235,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     g_db.depthBufferTestDisable();
     g_v.viewportSet(area);
 
-    /**
+    /*
      * Populate the stencil buffer with the values required for each
      * mode.
      */
@@ -245,7 +248,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
       JCGLStencilOperation.STENCIL_OP_KEEP,
       JCGLStencilOperation.STENCIL_OP_REPLACE);
 
-    /**
+    /*
      * Allow writing to the {@link R2Stencils#ALLOW_BIT}.
      */
 
@@ -256,7 +259,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     switch (s.stencilsGetMode()) {
       case STENCIL_MODE_INSTANCES_ARE_NEGATIVE: {
 
-        /**
+        /*
          * Set the {@link R2Stencils#ALLOW_BIT} for each pixel in the current
          * framebuffer, leaving other bits untouched.
          */
@@ -271,7 +274,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
       }
       case STENCIL_MODE_INSTANCES_ARE_POSITIVE: {
 
-        /**
+        /*
          * Unset the {@link R2Stencils#ALLOW_BIT} for each pixel in the current
          * framebuffer, leaving other bits untouched.
          */
@@ -286,7 +289,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
       }
     }
 
-    /**
+    /*
      * Render a screen-sized quad to provide the base stencil value.
      */
 
@@ -329,6 +332,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     private @Nullable R2MatricesObserverType matrices;
     private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable JCGLTexturesType textures;
+    private @Nullable AreaInclusiveUnsignedLType viewport_area;
 
     StencilConsumer(
       final R2ShaderInstanceSingleType<Unit> in_program)
@@ -345,7 +349,8 @@ public final class R2StencilRenderer implements R2StencilRendererType
       this.draw = this.g33.getDraw();
 
       this.program.onActivate(this.shaders);
-      this.program.onReceiveViewValues(this.shaders, this.matrices);
+      this.program.onReceiveViewValues(
+        this.shaders, this.matrices, this.viewport_area);
     }
 
     @Override

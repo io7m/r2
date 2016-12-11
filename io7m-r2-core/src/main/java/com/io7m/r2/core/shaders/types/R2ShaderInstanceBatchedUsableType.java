@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.shaders.types;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -36,13 +37,15 @@ public interface R2ShaderInstanceBatchedUsableType<M> extends
    * <p>This method will be called exactly once between calls to {@link
    * #onActivate(JCGLShadersType)} and {@link #onValidate()}.</p>
    *
-   * @param g_sh An OpenGL interface
-   * @param m    The view matrices
+   * @param g_sh     An OpenGL interface
+   * @param m        The view matrices
+   * @param viewport The target viewport
    */
 
   void onReceiveViewValues(
     JCGLShadersType g_sh,
-    R2MatricesObserverValuesType m);
+    R2MatricesObserverValuesType m,
+    AreaInclusiveUnsignedLType viewport);
 
   /**
    * <p>Set material values.</p>

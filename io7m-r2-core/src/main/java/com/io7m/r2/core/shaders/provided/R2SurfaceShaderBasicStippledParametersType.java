@@ -17,50 +17,46 @@
 package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2TextureCubeUsableType;
+import com.io7m.r2.core.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
 /**
- * Parameters for the basic reflective surface shader.
+ * Parameters for the basic stippled surface shader.
  */
 
 @R2ImmutableStyleType
 @Value.Immutable
 @Value.Modifiable
-public interface R2SurfaceShaderBasicReflectiveParametersType
+public interface R2SurfaceShaderBasicStippledParametersType
   extends R2SurfaceShaderBasicParametersBaseType
 {
   /**
-   * <p>An environment map used to simulate reflections on the rendered surface.
-   * The resulting surface appearance is a linear mix between the <i>albedo</i>
-   * and the reflection values sampled from the environment map, based on {@link
-   * #environmentMix()}.</p>
+   * The noise texture used to implement stippling. This is a random noise
+   * texture that is tiled across the screen, and values in the red channel are
+   * sampled for stippling.
    *
-   * @return The environment map
+   * @return A noise texture
    *
-   * @see #albedoMix()
+   * @see #stippleThreshold()
    */
 
-  @Value.Default
-  default R2TextureCubeUsableType environmentTexture()
-  {
-    return this.textureDefaults().textureCubeBlack();
-  }
+  @Value.Parameter
+  R2Texture2DUsableType stippleNoiseTexture();
 
   /**
-   * The linear mix between the surface's <i>albedo</i> and calculated
-   * reflection values. A value of {@code 0.0} specifies that the appearance
-   * of the surface will be entirely defined by the albedo. A value of
-   * {@code 1.0} specifies that the appearance of the surface will be entirely
-   * defined by the environment reflection.
+   * The stipple threshold value. For each pixel in the surface, the stipple
+   * threshold determine whether or not that pixel will be discarded.
+   * Essentially, the {@link #stippleNoiseTexture()} is sampled at each pixel,
+   * and if the sampled value is less than {@link #stippleThreshold()}, the
+   * pixel is discarded. Consequently, a stipple threshold of {@code 0.0} never
+   * discards pixels.
    *
-   * @return A mix value in the range {@code [0.0, 1.0]}
-   *
-   * @see #environmentTexture()
+   * @return The threshold value
    */
 
+  @Value.Parameter
   @Value.Default
-  default float environmentMix()
+  default float stippleThreshold()
   {
     return 0.0f;
   }

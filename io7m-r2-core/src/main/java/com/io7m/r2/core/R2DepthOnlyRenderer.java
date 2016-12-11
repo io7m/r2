@@ -140,11 +140,13 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       this.depth_consumer.matrices = m;
       this.depth_consumer.texture_context = uc;
       this.depth_consumer.culling = s.depthsGetFaceCulling();
+      this.depth_consumer.viewport_area = area;
       try {
         s.depthsExecute(this.depth_consumer);
       } finally {
         this.depth_consumer.texture_context = null;
         this.depth_consumer.matrices = null;
+        this.depth_consumer.viewport_area = null;
       }
     }
   }
@@ -185,6 +187,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
     private @Nullable JCGLTextureUnitContextType material_texture_context;
     private @Nullable R2MaterialDepthSingleType<?> material_single;
     private @Nullable JCGLFaceSelection culling;
+    private @Nullable AreaInclusiveUnsignedLType viewport_area;
 
     private DepthConsumer(
       final JCGLInterfaceGL33Type ig)
@@ -198,7 +201,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       {
         this.render_state = JCGLRenderStateMutable.create();
 
-        /**
+        /*
          * Disable any color buffer rendering (even though the
          * framebuffer configuration should already cause any
          * color output to be discarded).
@@ -207,7 +210,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
         this.render_state.setColorBufferMaskingState(
           JCGLColorBufferMaskingState.of(false, false, false, false));
 
-        /**
+        /*
          * Enable depth testing, writing, and clamping.
          */
 
@@ -299,7 +302,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       final R2ShaderDepthSingleUsableType<M> s)
     {
       s.onActivate(this.shaders);
-      s.onReceiveViewValues(this.shaders, this.matrices);
+      s.onReceiveViewValues(this.shaders, this.matrices, this.viewport_area);
     }
 
     @Override

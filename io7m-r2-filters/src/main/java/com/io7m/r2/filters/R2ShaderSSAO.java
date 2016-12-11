@@ -220,7 +220,7 @@ public final class R2ShaderSSAO extends
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);
 
-    /**
+    /*
      * Upload the current view rays.
      */
 
@@ -244,14 +244,14 @@ public final class R2ShaderSSAO extends
     g_sh.shaderUniformPutVector3f(
       this.u_view_rays_ray_x1y1, view_rays.rayX1Y1());
 
-    /**
+    /*
      * Upload the projections for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_ssao_transform_projection, view.matrixProjection());
 
-    /**
+    /*
      * Upload the scene's depth coefficient.
      */
 
@@ -262,7 +262,7 @@ public final class R2ShaderSSAO extends
     this.unit_noise =
       tc.unitContextBindTexture2D(g_tex, values.noiseTexture().texture());
 
-    /**
+    /*
      * Upload the geometry buffer.
      */
 
@@ -276,7 +276,7 @@ public final class R2ShaderSSAO extends
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_gbuffer_depth, this.unit_depth);
 
-    /**
+    /*
      * Upload the SSAO-specific parameters.
      */
 

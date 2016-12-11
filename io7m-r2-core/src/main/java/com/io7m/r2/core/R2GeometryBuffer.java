@@ -235,8 +235,14 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
       R2Texture2DType rt_spec = null;
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_rgba.texture());
-      fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_norm.texture());
+      fbb.attachColorTexture2DAt(
+        points.get(0),
+        buffers.get(0),
+        rt_rgba.texture());
+      fbb.attachColorTexture2DAt(
+        points.get(1),
+        buffers.get(1),
+        rt_norm.texture());
       if (p_spec != null) {
         rt_spec = R2Texture2DStatic.of(p_spec.getRight());
         fbb.attachColorTexture2DAt(
