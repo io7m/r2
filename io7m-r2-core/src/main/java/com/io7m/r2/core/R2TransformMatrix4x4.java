@@ -431,8 +431,7 @@ public final class R2TransformMatrix4x4 implements
   @SuppressWarnings("unchecked")
   public R2WatchableType<R2TransformReadableType> transformGetWatchable()
   {
-    final Object o = this.watchable;
-    return (R2WatchableType<R2TransformReadableType>) o;
+    return (R2WatchableType<R2TransformReadableType>) (Object) this.watchable;
   }
 
   @Override

@@ -117,9 +117,7 @@ public final class R2DepthShaderBasicSingle extends
   {
     final R2DepthShaderBasicSingle s =
       new R2DepthShaderBasicSingle(in_shaders, in_shader_env, in_pool);
-    final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> v =
-      R2ShaderDepthSingleVerifier.newVerifier(s);
-    return v;
+    return R2ShaderDepthSingleVerifier.newVerifier(s);
   }
 
   @Override

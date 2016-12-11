@@ -99,9 +99,7 @@ public final class R2DepthShaderBasicBatched extends
   {
     final R2DepthShaderBasicBatched s =
       new R2DepthShaderBasicBatched(in_shaders, in_shader_env, in_pool);
-    final R2ShaderDepthBatchedType<R2DepthShaderBasicParametersType> v =
-      R2ShaderDepthBatchedVerifier.newVerifier(s);
-    return v;
+    return R2ShaderDepthBatchedVerifier.newVerifier(s);
   }
 
   @Override

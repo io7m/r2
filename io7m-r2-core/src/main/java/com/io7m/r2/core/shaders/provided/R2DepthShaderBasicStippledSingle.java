@@ -144,9 +144,7 @@ public final class R2DepthShaderBasicStippledSingle extends
   {
     final R2DepthShaderBasicStippledSingle s =
       new R2DepthShaderBasicStippledSingle(in_shaders, in_shader_env, in_pool);
-    final R2ShaderDepthSingleType<R2DepthShaderBasicStippledParametersType> v =
-      R2ShaderDepthSingleVerifier.newVerifier(s);
-    return v;
+    return R2ShaderDepthSingleVerifier.newVerifier(s);
   }
 
   @Override

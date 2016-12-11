@@ -175,8 +175,7 @@ public final class R2TransformSOT implements
   @SuppressWarnings("unchecked")
   public R2WatchableType<R2TransformReadableType> transformGetWatchable()
   {
-    final Object o = this.watchable;
-    return (R2WatchableType<R2TransformReadableType>) o;
+    return (R2WatchableType<R2TransformReadableType>) (Object) this.watchable;
   }
 
   @Override
@@ -184,8 +183,7 @@ public final class R2TransformSOT implements
   public R2WatchableType<R2TransformOrthogonalReadableType>
   transformOrthogonalGetWatchable()
   {
-    final Object o = this.watchable;
-    return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
+    return (R2WatchableType<R2TransformOrthogonalReadableType>) this.watchable;
   }
 
   @Override

@@ -569,9 +569,7 @@ public final class R2DebugVisualizerRenderer implements
     {
       this.material_texture_context = this.texture_context.unitContextNew();
 
-      final R2ShaderInstanceBatchedType<VectorReadable4FType> s =
-        this.shader_batched;
-      s.onReceiveMaterialValues(
+      this.shader_batched.onReceiveMaterialValues(
         this.textures, this.shaders, this.material_texture_context, this.color);
     }
 
@@ -617,9 +615,7 @@ public final class R2DebugVisualizerRenderer implements
     {
       this.material_texture_context = this.texture_context.unitContextNew();
 
-      final R2ShaderInstanceSingleType<VectorReadable4FType> s =
-        this.shader_single;
-      s.onReceiveMaterialValues(
+      this.shader_single.onReceiveMaterialValues(
         this.textures, this.shaders, this.material_texture_context, this.color);
     }
 
