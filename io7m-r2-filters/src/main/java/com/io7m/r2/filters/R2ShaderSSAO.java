@@ -201,11 +201,7 @@ public final class R2ShaderSSAO extends
   private boolean shouldSetKernel(
     final R2SSAOKernelReadableType k)
   {
-    if (this.kernel_last == null) {
-      return true;
-    }
-
-    return this.kernel_version != k.version();
+    return this.kernel_last == null || this.kernel_version != k.version();
   }
 
   @Override
