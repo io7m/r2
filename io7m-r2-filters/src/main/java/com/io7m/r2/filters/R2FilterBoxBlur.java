@@ -217,7 +217,7 @@ public final class R2FilterBoxBlur<
         g_fb.framebufferBlit(
           source.area(),
           destination_scaled.area(),
-          R2FilterBoxBlur.BLIT_BUFFERS,
+          BLIT_BUFFERS,
           blur_params.blurScaleFilter());
 
         g_fb.framebufferReadBind(destination_scaled.primaryFramebuffer());
@@ -225,7 +225,7 @@ public final class R2FilterBoxBlur<
         g_fb.framebufferBlit(
           destination_scaled.area(),
           destination.area(),
-          R2FilterBoxBlur.BLIT_BUFFERS,
+          BLIT_BUFFERS,
           blur_params.blurScaleFilter());
 
       } finally {
@@ -276,7 +276,7 @@ public final class R2FilterBoxBlur<
         g_fb.framebufferBlit(
           source.area(),
           destination.area(),
-          R2FilterBoxBlur.BLIT_BUFFERS,
+          BLIT_BUFFERS,
           parameters.blurParameters().blurScaleFilter());
       } finally {
         g_fb.framebufferReadUnbind();
@@ -364,7 +364,7 @@ public final class R2FilterBoxBlur<
           g_fb.framebufferBlit(
             source.area(),
             temporary_a.area(),
-            R2FilterBoxBlur.BLIT_BUFFERS,
+            BLIT_BUFFERS,
             blur_params.blurScaleFilter());
 
           /*
@@ -395,7 +395,7 @@ public final class R2FilterBoxBlur<
           g_fb.framebufferBlit(
             temporary_a.area(),
             destination.area(),
-            R2FilterBoxBlur.BLIT_BUFFERS,
+            BLIT_BUFFERS,
             blur_params.blurScaleFilter());
           g_fb.framebufferReadUnbind();
 

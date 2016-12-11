@@ -90,8 +90,8 @@ public final class R2SceneStencils implements R2SceneStencilsType
     final long i_id = i.instanceID();
 
     this.instances.put(i_id, i);
-    if (R2SceneStencils.LOG.isTraceEnabled()) {
-      R2SceneStencils.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "stencil add single-mesh (instance {})",
         Long.valueOf(i_id));
     }

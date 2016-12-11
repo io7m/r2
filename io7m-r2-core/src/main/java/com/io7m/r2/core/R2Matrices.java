@@ -397,7 +397,7 @@ public final class R2Matrices implements R2MatricesType
           this.instance_single.m_model,
           this.instance_single.m_modelview);
 
-        R2Matrices.makeNormalMatrix(
+        makeNormalMatrix(
           this.context_3f,
           this.instance_single.m_modelview,
           this.instance_single.m_normal);

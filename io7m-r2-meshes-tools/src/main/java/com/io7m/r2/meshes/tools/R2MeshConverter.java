@@ -250,10 +250,10 @@ public final class R2MeshConverter implements R2MeshConverterType
         w.newLine();
 
         m.matchMesh(basic -> {
-          R2MeshConverter.writeObjBasic(w, basic);
+          writeObjBasic(w, basic);
           return Unit.unit();
         }, tangents -> {
-          R2MeshConverter.writeObjTangents(w, tangents);
+          writeObjTangents(w, tangents);
           return Unit.unit();
         });
       }

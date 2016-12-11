@@ -112,7 +112,7 @@ public final class R2ShaderFilterFXAAA extends
   {
     NullCheck.notNull(q);
 
-    final String n = R2ShaderFilterFXAAA.qualityToShaderName(q);
+    final String n = qualityToShaderName(q);
     final String f = n + ".frag";
 
     return R2ShaderFilterVerifier.newVerifier(

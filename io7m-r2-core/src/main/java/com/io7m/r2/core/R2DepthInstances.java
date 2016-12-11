@@ -80,7 +80,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
   @Override
   public void depthsReset()
   {
-    R2DepthInstances.LOG.trace("reset");
+    LOG.trace("reset");
     this.singles.clear();
     this.batches.clear();
   }
@@ -138,8 +138,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
     s_materials.add(m_id);
     this.singles.shader_to_materials.put(s_id, s_materials);
 
-    if (R2DepthInstances.LOG.isTraceEnabled()) {
-      R2DepthInstances.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "add single (instance {}, material {}, shader {})",
         Long.valueOf(i_id),
         Long.valueOf(m_id),
@@ -216,8 +216,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
     s_materials.add(m_id);
     this.batches.shader_to_materials.put(s_id, s_materials);
 
-    if (R2DepthInstances.LOG.isTraceEnabled()) {
-      R2DepthInstances.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "add batched (instance {}, material {}, shader {})",
         Long.valueOf(i_id),
         Long.valueOf(m_id),

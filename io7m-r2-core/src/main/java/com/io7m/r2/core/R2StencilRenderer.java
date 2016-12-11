@@ -80,7 +80,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     NullCheck.notNull(in_pool);
     this.quad = NullCheck.notNull(in_quad);
 
-    R2StencilRenderer.LOG.debug("initializing");
+    LOG.debug("initializing");
 
     final JCGLShadersType g_sh = in_g.getShaders();
     this.program_instance =
@@ -90,7 +90,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     this.stencil_consumer =
       new StencilConsumer(this.program_instance);
 
-    R2StencilRenderer.LOG.debug("initialized");
+    LOG.debug("initialized");
   }
 
   /**
@@ -306,7 +306,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
   {
     if (!this.isDeleted()) {
       try {
-        R2StencilRenderer.LOG.debug("delete");
+        LOG.debug("delete");
         this.program_instance.delete(gi);
         this.program_screen.delete(gi);
       } finally {

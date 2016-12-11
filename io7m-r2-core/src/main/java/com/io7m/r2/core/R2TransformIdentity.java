@@ -44,7 +44,7 @@ public final class R2TransformIdentity implements
 
   public static R2TransformOrthogonalReadableType getInstance()
   {
-    return R2TransformIdentity.INSTANCE;
+    return INSTANCE;
   }
 
   @Override

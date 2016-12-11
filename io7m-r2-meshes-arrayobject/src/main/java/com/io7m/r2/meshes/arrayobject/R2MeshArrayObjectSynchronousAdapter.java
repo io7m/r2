@@ -236,8 +236,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final double y,
     final double z)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] position: {} {} {}",
         Long.valueOf(index),
         Double.valueOf(x),
@@ -255,8 +255,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final double y,
     final double z)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] normal: {} {} {}",
         Long.valueOf(index),
         Double.valueOf(x),
@@ -275,8 +275,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final double z,
     final double w)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] tangent: {} {} {}",
         Long.valueOf(index),
         Double.valueOf(x),
@@ -293,8 +293,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final double x,
     final double y)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] uv: {} {}",
         Long.valueOf(index),
         Double.valueOf(x),
@@ -330,8 +330,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final long v1,
     final long v2)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] triangle: {} {} {}",
         Long.valueOf(index),
         Long.valueOf(v0),

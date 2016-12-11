@@ -48,7 +48,7 @@ public final class R2VertexCursorPUNT16 implements
 
   public static R2VertexCursorPUNT16 getInstance()
   {
-    return R2VertexCursorPUNT16.INSTANCE;
+    return INSTANCE;
   }
 
   @Override

@@ -348,8 +348,8 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
       throw new R2RendererExceptionFramebufferNotBound(sb.toString());
     }
 
-    JCGLRenderStates.activate(g, R2GeometryBuffer.CLEAR_STATE);
-    g.getClear().clear(R2GeometryBuffer.CLEAR_SPEC);
+    JCGLRenderStates.activate(g, CLEAR_STATE);
+    g.getClear().clear(CLEAR_SPEC);
   }
 
 }

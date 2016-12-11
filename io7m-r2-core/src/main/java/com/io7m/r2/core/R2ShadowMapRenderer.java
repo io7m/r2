@@ -103,7 +103,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
   public void delete(final JCGLInterfaceGL33Type g)
     throws R2Exception
   {
-    R2ShadowMapRenderer.LOG.debug("delete");
+    LOG.debug("delete");
     this.deleted = true;
   }
 

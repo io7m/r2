@@ -90,7 +90,7 @@ public final class R2DebugCube implements R2DebugCubeType
   public static R2DebugCubeType newDebugCube(
     final JCGLInterfaceGL33Type g)
   {
-    R2DebugCube.LOG.debug("allocating debug cube");
+    LOG.debug("allocating debug cube");
 
     final JCGLArrayBuffersType g_ab = g.getArrayBuffers();
     final JCGLIndexBuffersType g_ib = g.getIndexBuffers();
@@ -235,7 +235,7 @@ public final class R2DebugCube implements R2DebugCubeType
   {
     if (!this.isDeleted()) {
       try {
-        R2DebugCube.LOG.debug("delete");
+        LOG.debug("delete");
         final JCGLArrayBuffersType g_ab = g.getArrayBuffers();
         final JCGLIndexBuffersType g_ib = g.getIndexBuffers();
         final JCGLArrayObjectsType g_ao = g.getArrayObjects();

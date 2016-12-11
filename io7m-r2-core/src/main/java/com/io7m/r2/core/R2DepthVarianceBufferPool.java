@@ -167,8 +167,8 @@ public final class R2DepthVarianceBufferPool implements
       final R2DepthVarianceBufferDescriptionType key,
       final R2DepthVarianceBufferType value)
     {
-      if (R2DepthVarianceBufferPool.LOG.isTraceEnabled()) {
-        R2DepthVarianceBufferPool.LOG.trace("reuse {}", key);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("reuse {}", key);
       }
     }
 
@@ -178,8 +178,8 @@ public final class R2DepthVarianceBufferPool implements
       final R2DepthVarianceBufferDescriptionType key,
       final R2DepthVarianceBufferType value)
     {
-      if (R2DepthVarianceBufferPool.LOG.isTraceEnabled()) {
-        R2DepthVarianceBufferPool.LOG.trace("delete {}", value);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("delete {}", value);
       }
 
       value.delete(this.g);
@@ -192,7 +192,7 @@ public final class R2DepthVarianceBufferPool implements
       final Optional<R2DepthVarianceBufferType> value,
       final Throwable e)
     {
-      R2DepthVarianceBufferPool.LOG.error(
+      LOG.error(
         "Exception raised in cache listener: {}: ", key, e);
     }
   }

@@ -92,20 +92,20 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
     NullCheck.notNull(g_t);
     NullCheck.notNull(tc);
 
-    R2TextureDefaults.LOG.debug("allocating default textures");
+    LOG.debug("allocating default textures");
 
     final JCGLTextureUnitContextType cc = tc.unitContextNewWithReserved(3);
     try {
       final R2Texture2DType t2d_n =
-        R2TextureDefaults.newTextureRGB(g_t, cc, 0.5, 0.5, 1.0);
+        newTextureRGB(g_t, cc, 0.5, 0.5, 1.0);
       final R2Texture2DType t2d_w =
-        R2TextureDefaults.newTextureRGB(g_t, cc, 1.0, 1.0, 1.0);
+        newTextureRGB(g_t, cc, 1.0, 1.0, 1.0);
       final R2Texture2DType t2d_b =
-        R2TextureDefaults.newTextureRGB(g_t, cc, 0.0, 0.0, 0.0);
+        newTextureRGB(g_t, cc, 0.0, 0.0, 0.0);
       final R2Texture2DType t2d_proj =
-        R2TextureDefaults.newTextureProjectiveRGB(g_t, cc, 1.0, 1.0, 1.0);
+        newTextureProjectiveRGB(g_t, cc, 1.0, 1.0, 1.0);
       final R2TextureCubeType tc_b =
-        R2TextureDefaults.newCubeRGB(g_t, cc, 0.0, 0.0, 0.0);
+        newCubeRGB(g_t, cc, 0.0, 0.0, 0.0);
 
       return new R2TextureDefaults(t2d_w, t2d_n, t2d_b, t2d_proj, tc_b);
     } finally {
@@ -283,7 +283,7 @@ public final class R2TextureDefaults implements R2TextureDefaultsType
     throws R2Exception
   {
     if (!this.t2d_normal.isDeleted()) {
-      R2TextureDefaults.LOG.debug("delete");
+      LOG.debug("delete");
       this.t2d_normal.delete(g);
       this.t2d_white.delete(g);
       this.t2d_black.delete(g);

@@ -93,7 +93,7 @@ public final class R2UnitSphere implements R2UnitSphereType
     final JCGLUsageHint index_usage = JCGLUsageHint.USAGE_STATIC_DRAW;
     final R2VertexCursorPUNT16 ci = R2VertexCursorPUNT16.getInstance();
     final String name = "sphere8.r2b";
-    return R2UnitSphere.newUnitSphere(g, array_usage, index_usage, ci, name);
+    return newUnitSphere(g, array_usage, index_usage, ci, name);
   }
 
   private static <T extends
@@ -105,7 +105,7 @@ public final class R2UnitSphere implements R2UnitSphereType
     final T ci,
     final String name)
   {
-    R2UnitSphere.LOG.debug("allocating unit sphere");
+    LOG.debug("allocating unit sphere");
 
     final R2MeshArrayObjectSynchronousAdapterType adapter =
       R2MeshArrayObjectSynchronousAdapter.newAdapter(
@@ -185,7 +185,7 @@ public final class R2UnitSphere implements R2UnitSphereType
     Assertive.require(s > 0, "Segment count must be positive");
     Assertive.require(r > 0.0, "Radius must be positive");
 
-    final double a = R2UnitSphere.getUVSphereTriangleInteriorAngle(s);
+    final double a = getUVSphereTriangleInteriorAngle(s);
     final double rs = r * r;
     return 0.5 * rs * Math.sin(a);
   }
@@ -208,8 +208,8 @@ public final class R2UnitSphere implements R2UnitSphereType
     Assertive.require(s > 0, "Segment count must be positive");
     Assertive.require(r > 0.0, "Radius must be positive");
 
-    final double ac = R2UnitSphere.getCircleArea(r);
-    final double aa = R2UnitSphere.getUVSphereApproximationArea(r, s);
+    final double ac = getCircleArea(r);
+    final double aa = getUVSphereApproximationArea(r, s);
     return ac / aa;
   }
 
@@ -230,7 +230,7 @@ public final class R2UnitSphere implements R2UnitSphereType
     Assertive.require(s > 0, "Segment count must be positive");
     Assertive.require(r > 0.0, "Radius must be positive");
     final double ds = (double) s;
-    final double a = R2UnitSphere.getUVSphereApproximationTriangleArea(r, s);
+    final double a = getUVSphereApproximationTriangleArea(r, s);
     return ds * a;
   }
 

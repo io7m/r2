@@ -166,7 +166,7 @@ public final class R2FilterDebugEyeZ implements
       g_fb.framebufferBlit(
         gbuffer.area(),
         zbuffer.area(),
-        R2FilterDebugEyeZ.DEPTH_STENCIL,
+        DEPTH_STENCIL,
         JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
       g_fb.framebufferReadUnbind();
 

@@ -97,7 +97,7 @@ public final class R2MeshTool implements Runnable
       if (cmd == null) {
         final StringBuilder sb = new StringBuilder(128);
         this.commander.usage(sb);
-        R2MeshTool.LOG.info("Arguments required.\n{}", sb.toString());
+        LOG.info("Arguments required.\n{}", sb.toString());
         return;
       }
 
@@ -107,7 +107,7 @@ public final class R2MeshTool implements Runnable
     } catch (final ParameterException e) {
       final StringBuilder sb = new StringBuilder(128);
       this.commander.usage(sb);
-      R2MeshTool.LOG.error("{}\n{}", e.getMessage(), sb.toString());
+      LOG.error("{}\n{}", e.getMessage(), sb.toString());
       this.exit_code = 1;
     } catch (final R2MeshFileFormatUnrecognized e) {
       final StringBuilder sb = new StringBuilder(128);
@@ -121,10 +121,10 @@ public final class R2MeshTool implements Runnable
         }
       }
       sb.append("})\n");
-      R2MeshTool.LOG.error("{}", sb.toString());
+      LOG.error("{}", sb.toString());
       this.exit_code = 1;
     } catch (final Exception e) {
-      R2MeshTool.LOG.error("{}", e.getMessage(), e);
+      LOG.error("{}", e.getMessage(), e);
       this.exit_code = 1;
     }
   }
@@ -165,64 +165,64 @@ public final class R2MeshTool implements Runnable
       final String name,
       final R2MeshType m)
     {
-      R2MeshTool.LOG.info("{}: loaded {}", p, name);
+      LOG.info("{}: loaded {}", p, name);
 
       m.matchMesh(
         basic -> {
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: basic mesh",
             name);
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} positions",
             name,
             Long.valueOf(basic.getPositions().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} normals",
             name,
             Long.valueOf(basic.getNormals().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} uvs",
             name,
             Long.valueOf(basic.getUVs().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} unique vertices",
             name,
             Long.valueOf(basic.getVertices().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} triangles",
             name,
             Long.valueOf(basic.getTriangles().size64()));
           return Unit.unit();
         },
         with_tangents -> {
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: mesh with tangents",
             name);
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} positions",
             name,
             Long.valueOf(with_tangents.positions().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} normals",
             name,
             Long.valueOf(with_tangents.normals().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} uvs",
             name,
             Long.valueOf(with_tangents.uvs().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} tangents",
             name,
             Long.valueOf(with_tangents.tangents().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} bitangents",
             name,
             Long.valueOf(with_tangents.bitangents().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} unique vertices",
             name,
             Long.valueOf(with_tangents.vertices().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} triangles",
             name,
             Long.valueOf(with_tangents.triangles().size64()));
@@ -240,7 +240,7 @@ public final class R2MeshTool implements Runnable
         case LOG_TRACE:
         case LOG_DEBUG:
           if (e.isPresent()) {
-            R2MeshTool.LOG.error("{}: {}: ", p, message, e.get());
+            LOG.error("{}: {}: ", p, message, e.get());
           }
           break;
         case LOG_INFO:
@@ -249,7 +249,7 @@ public final class R2MeshTool implements Runnable
           break;
       }
 
-      R2MeshTool.LOG.error("{}: {}", p, message);
+      LOG.error("{}: {}", p, message);
       R2MeshTool.this.exit_code = 1;
     }
   }
@@ -308,7 +308,7 @@ public final class R2MeshTool implements Runnable
       }
 
       final Path out_name = Paths.get(this.out);
-      R2MeshTool.LOG.info("writing mesh {} to {}", this.name, out_name);
+      LOG.info("writing mesh {} to {}", this.name, out_name);
 
       if (this.out_format != null) {
         conv.writeMeshToFile(out_name, this.name, this.out_format);
@@ -357,7 +357,7 @@ public final class R2MeshTool implements Runnable
       }
 
       final Map<String, R2MeshType> ms = conv.getMeshes();
-      R2MeshTool.LOG.info("loaded {} meshes", Integer.valueOf(ms.size()));
+      LOG.info("loaded {} meshes", Integer.valueOf(ms.size()));
       return Unit.unit();
     }
   }
@@ -404,7 +404,7 @@ public final class R2MeshTool implements Runnable
       }
 
       final Map<String, R2MeshType> ms = conv.getMeshes();
-      R2MeshTool.LOG.info("loaded {} meshes", Integer.valueOf(ms.size()));
+      LOG.info("loaded {} meshes", Integer.valueOf(ms.size()));
 
       if (ms.containsKey(this.name)) {
         final R2MeshType m = ms.get(this.name);

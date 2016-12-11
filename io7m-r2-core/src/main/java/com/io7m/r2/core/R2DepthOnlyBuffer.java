@@ -130,7 +130,7 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
           g_t,
           range_x.getInterval(),
           range_y.getInterval(),
-          R2DepthOnlyBuffer.formatForPrecision(desc.depthPrecision()),
+          formatForPrecision(desc.depthPrecision()),
           JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,

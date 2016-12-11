@@ -341,10 +341,10 @@ public final class R2Main implements R2MainType
       NullCheck.notNull(g);
 
       final R2IDPoolType ex_pool =
-        Builder.compute(this.pool, R2IDPool::newPool);
+        compute(this.pool, R2IDPool::newPool);
 
       final R2ShaderPreprocessingEnvironmentType ex_sources =
-        Builder.compute(
+        compute(
           this.sources,
           () -> {
             final SoShaderPreprocessorConfig.Builder b =
@@ -356,45 +356,45 @@ public final class R2Main implements R2MainType
             return R2ShaderPreprocessingEnvironment.create(p);
           });
 
-      final R2UnitQuadType ex_quad = Builder.compute(
+      final R2UnitQuadType ex_quad = compute(
         this.unit_quad,
         () -> R2UnitQuad.newUnitQuad(g));
 
       final R2StencilRendererType ex_stencil_renderer =
-        Builder.compute(
+        compute(
           this.stencil_renderer,
           () -> R2StencilRenderer.newRenderer(ex_sources, g, ex_pool, ex_quad));
 
       final R2MatricesType ex_matrices =
-        Builder.compute(this.matrices, R2Matrices::newMatrices);
+        compute(this.matrices, R2Matrices::newMatrices);
 
       final JCGLViewMatricesType ex_view_matrices =
-        Builder.compute(
+        compute(
           this.view_matrices, JCGLViewMatrices::newMatrices);
       final JCGLProjectionMatricesType ex_proj_matrices =
-        Builder.compute(
+        compute(
           this.proj_matrices, JCGLProjectionMatrices::newMatrices);
 
       final JCGLTextureUnitAllocatorType ex_unit_alloc =
-        Builder.compute(
+        compute(
           this.texture_unit_alloc,
           () -> JCGLTextureUnitAllocator.newAllocatorWithStack(
             32,
             g.getTextures().textureGetUnits()));
 
       final R2TextureDefaultsType ex_texture_defaults =
-        Builder.compute(
+        compute(
           this.texture_defaults,
           () -> R2TextureDefaults.newDefaults(
             g.getTextures(),
             ex_unit_alloc.getRootContext()));
 
       final R2GeometryRendererType ex_geometry_renderer =
-        Builder.compute(
+        compute(
           this.geometry_renderer,
           () -> R2GeometryRenderer.newRenderer(g));
 
-      final R2LightRendererType ex_light_renderer = Builder.compute(
+      final R2LightRendererType ex_light_renderer = compute(
         this.light_renderer,
         () -> R2LightRenderer.newRenderer(
           g,
@@ -404,30 +404,30 @@ public final class R2Main implements R2MainType
           ex_quad));
 
       final R2DebugVisualizerRendererType ex_debug_visual_renderer =
-        Builder.compute(
+        compute(
           this.debug_visual_renderer,
           () -> R2DebugVisualizerRenderer.newRenderer(g, ex_sources, ex_pool));
 
       final R2DepthRendererType ex_depth_renderer =
-        Builder.compute(
+        compute(
           this.depth_renderer,
           () -> R2DepthOnlyRenderer.newRenderer(g));
 
       final R2DepthVarianceRendererType ex_depth_variance_renderer =
-        Builder.compute(
+        compute(
           this.depth_variance_renderer,
           () -> R2DepthVarianceRenderer.newRenderer(g));
 
       final R2RenderTargetPoolUsableType
         <R2DepthVarianceBufferDescriptionType,
           R2DepthVarianceBufferUsableType> ex_depth_variance_pool =
-        Builder.compute(
+        compute(
           this.depth_variance_pool,
           () -> R2DepthVarianceBufferPool.newPool(
-            g, R2Main.DEFAULT_DEPTH_VARIANCE_POOL_SOFT_LIMIT, Long.MAX_VALUE));
+            g, DEFAULT_DEPTH_VARIANCE_POOL_SOFT_LIMIT, Long.MAX_VALUE));
 
       final R2ShadowMapRendererType ex_shadow_map_renderer =
-        Builder.compute(
+        compute(
           this.shadow_map_renderer,
           () -> R2ShadowMapRenderer.newRenderer(
             g,
@@ -435,7 +435,7 @@ public final class R2Main implements R2MainType
             ex_depth_variance_pool));
 
       final JCGLProfilingType ex_profiling =
-        Builder.compute(
+        compute(
           this.profiling, () -> JCGLProfiling.newProfiling(g.getTimers()));
 
       return new R2Main(

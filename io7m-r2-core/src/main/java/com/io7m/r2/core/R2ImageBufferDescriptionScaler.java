@@ -46,7 +46,7 @@ public final class R2ImageBufferDescriptionScaler implements
 
   public static R2ImageBufferDescriptionScaler get()
   {
-    return R2ImageBufferDescriptionScaler.INSTANCE;
+    return INSTANCE;
   }
 
   @Override

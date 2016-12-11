@@ -169,7 +169,7 @@ public final class R2FilterDebugEyePosition implements
       g_fb.framebufferBlit(
         gbuffer.area(),
         ebuffer.area(),
-        R2FilterDebugEyePosition.DEPTH_STENCIL,
+        DEPTH_STENCIL,
         JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
       g_fb.framebufferReadUnbind();
 

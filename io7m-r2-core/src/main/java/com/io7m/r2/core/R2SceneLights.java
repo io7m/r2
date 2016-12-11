@@ -77,7 +77,7 @@ public final class R2SceneLights implements R2SceneLightsType
   @Override
   public void lightsReset()
   {
-    R2SceneLights.LOG.trace("reset");
+    LOG.trace("reset");
     this.clear();
   }
 
@@ -403,8 +403,8 @@ public final class R2SceneLights implements R2SceneLightsType
       m_lights.add(l_id);
       this.shader_to_lights.put(s_id, m_lights);
 
-      if (R2SceneLights.LOG.isTraceEnabled()) {
-        R2SceneLights.LOG.trace(
+      if (LOG.isTraceEnabled()) {
+        LOG.trace(
           "light add single (light {}, group {}, shader {})",
           Long.valueOf(l_id),
           Integer.valueOf(this.id),
@@ -516,8 +516,8 @@ public final class R2SceneLights implements R2SceneLightsType
         m_lights.add(l_id);
         this.shader_to_lights.put(s_id, m_lights);
 
-        if (R2SceneLights.LOG.isTraceEnabled()) {
-          R2SceneLights.LOG.trace(
+        if (LOG.isTraceEnabled()) {
+          LOG.trace(
             "light add single (light {}, shader {}, clip group {})",
             Long.valueOf(l_id),
             Long.valueOf(this.volume.instanceID()),

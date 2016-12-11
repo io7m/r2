@@ -167,8 +167,8 @@ public final class R2AmbientOcclusionBufferPool implements
       final R2AmbientOcclusionBufferDescriptionType key,
       final R2AmbientOcclusionBufferType value)
     {
-      if (R2AmbientOcclusionBufferPool.LOG.isTraceEnabled()) {
-        R2AmbientOcclusionBufferPool.LOG.trace("reuse {}", key);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("reuse {}", key);
       }
     }
 
@@ -178,8 +178,8 @@ public final class R2AmbientOcclusionBufferPool implements
       final R2AmbientOcclusionBufferDescriptionType key,
       final R2AmbientOcclusionBufferType value)
     {
-      if (R2AmbientOcclusionBufferPool.LOG.isTraceEnabled()) {
-        R2AmbientOcclusionBufferPool.LOG.trace("delete {}", value);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("delete {}", value);
       }
 
       value.delete(this.g);
@@ -192,7 +192,7 @@ public final class R2AmbientOcclusionBufferPool implements
       final Optional<R2AmbientOcclusionBufferType> value,
       final Throwable e)
     {
-      R2AmbientOcclusionBufferPool.LOG.error(
+      LOG.error(
         "Exception raised in cache listener: {}: ", key, e);
     }
   }

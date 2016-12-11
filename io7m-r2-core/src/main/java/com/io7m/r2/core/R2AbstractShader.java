@@ -77,8 +77,8 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
       this.id = NullCheck.notNull(in_pool).freshID();
       NullCheck.notNull(in_shader_env);
 
-      if (R2AbstractShader.LOG.isDebugEnabled()) {
-        R2AbstractShader.LOG.debug("compiling shader {}", in_name);
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("compiling shader {}", in_name);
       }
 
       final SoShaderPreprocessorType pp =
@@ -89,9 +89,9 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
       final List<String> v_lines =
         pp.preprocessFile(pp_defines, in_vertex);
 
-      if (R2AbstractShader.LOG_VS.isTraceEnabled()) {
+      if (LOG_VS.isTraceEnabled()) {
         for (int index = 0; index < v_lines.size(); ++index) {
-          R2AbstractShader.LOG_VS.trace(
+          LOG_VS.trace(
             "{}:{}: {}",
             in_vertex,
             Integer.valueOf(index + 1),
@@ -107,9 +107,9 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
         final String s = in_geometry.get();
         final List<String> g_lines = pp.preprocessFile(pp_defines, s);
 
-        if (R2AbstractShader.LOG_GS.isTraceEnabled()) {
+        if (LOG_GS.isTraceEnabled()) {
           for (int index = 0; index < g_lines.size(); ++index) {
-            R2AbstractShader.LOG_GS.trace(
+            LOG_GS.trace(
               "{}:{}: {}",
               s,
               Integer.valueOf(index + 1),
@@ -125,9 +125,9 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
       final List<String> f_lines =
         pp.preprocessFile(pp_defines, in_fragment);
 
-      if (R2AbstractShader.LOG_FS.isTraceEnabled()) {
+      if (LOG_FS.isTraceEnabled()) {
         for (int index = 0; index < f_lines.size(); ++index) {
-          R2AbstractShader.LOG_FS.trace(
+          LOG_FS.trace(
             "{}:{}: {}",
             in_fragment,
             Integer.valueOf(index + 1),

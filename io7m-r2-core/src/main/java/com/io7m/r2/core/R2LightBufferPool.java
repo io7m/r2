@@ -167,8 +167,8 @@ public final class R2LightBufferPool implements
       final R2LightBufferDescriptionType key,
       final R2LightBufferType value)
     {
-      if (R2LightBufferPool.LOG.isTraceEnabled()) {
-        R2LightBufferPool.LOG.trace("reuse {}", key);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("reuse {}", key);
       }
     }
 
@@ -178,8 +178,8 @@ public final class R2LightBufferPool implements
       final R2LightBufferDescriptionType key,
       final R2LightBufferType value)
     {
-      if (R2LightBufferPool.LOG.isTraceEnabled()) {
-        R2LightBufferPool.LOG.trace("delete {}", value);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("delete {}", value);
       }
 
       value.delete(this.g);
@@ -192,7 +192,7 @@ public final class R2LightBufferPool implements
       final Optional<R2LightBufferType> value,
       final Throwable e)
     {
-      R2LightBufferPool.LOG.error(
+      LOG.error(
         "Exception raised in cache listener: {}: ", key, e);
     }
   }

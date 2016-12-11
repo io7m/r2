@@ -146,43 +146,43 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
        * Front side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 1, 0, 3);
-      R2ProjectionMesh.triangle(d, 1, 3, 2);
+      triangle(d, 1, 0, 3);
+      triangle(d, 1, 3, 2);
 
       /**
        * Left side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 5, 4, 0);
-      R2ProjectionMesh.triangle(d, 5, 0, 1);
+      triangle(d, 5, 4, 0);
+      triangle(d, 5, 0, 1);
 
       /**
        * Right side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 6, 3, 7);
-      R2ProjectionMesh.triangle(d, 6, 2, 3);
+      triangle(d, 6, 3, 7);
+      triangle(d, 6, 2, 3);
 
       /**
        * Top side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 5, 1, 2);
-      R2ProjectionMesh.triangle(d, 5, 2, 6);
+      triangle(d, 5, 1, 2);
+      triangle(d, 5, 2, 6);
 
       /**
        * Bottom side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 4, 3, 0);
-      R2ProjectionMesh.triangle(d, 4, 7, 3);
+      triangle(d, 4, 3, 0);
+      triangle(d, 4, 7, 3);
 
       /**
        * Back side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 5, 7, 4);
-      R2ProjectionMesh.triangle(d, 6, 7, 5);
+      triangle(d, 5, 7, 4);
+      triangle(d, 6, 7, 5);
 
       d.rewind();
       gi.indexBufferUpdate(index_update);

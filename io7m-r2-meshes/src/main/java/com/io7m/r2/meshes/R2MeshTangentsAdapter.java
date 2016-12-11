@@ -101,7 +101,7 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
       this.state == State.RUNNING,
       s -> "State must be RUNNING");
 
-    R2MeshTangentsAdapter.LOG.trace(
+    LOG.trace(
       "expecting {} vertices", Long.valueOf(count));
   }
 
@@ -113,7 +113,7 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
       this.state == State.RUNNING,
       s -> "State must be RUNNING");
 
-    R2MeshTangentsAdapter.LOG.trace(
+    LOG.trace(
       "expecting {} triangles", Long.valueOf(count));
   }
 

@@ -168,41 +168,41 @@ public final class R2ViewRays implements R2ViewRaysType
     NullCheck.notNull(c);
     NullCheck.notNull(m);
 
-    R2ViewRays.calculateRayAndOrigin(
+    calculateRayAndOrigin(
       c,
       m,
-      R2ViewRays.NEAR_X0Y0,
-      R2ViewRays.FAR_X0Y0,
+      NEAR_X0Y0,
+      FAR_X0Y0,
       this.temp_near,
       this.temp_far,
       this.ray_x0y0,
       this.origin_x0y0);
 
-    R2ViewRays.calculateRayAndOrigin(
+    calculateRayAndOrigin(
       c,
       m,
-      R2ViewRays.NEAR_X1Y0,
-      R2ViewRays.FAR_X1Y0,
+      NEAR_X1Y0,
+      FAR_X1Y0,
       this.temp_near,
       this.temp_far,
       this.ray_x1y0,
       this.origin_x1y0);
 
-    R2ViewRays.calculateRayAndOrigin(
+    calculateRayAndOrigin(
       c,
       m,
-      R2ViewRays.NEAR_X0Y1,
-      R2ViewRays.FAR_X0Y1,
+      NEAR_X0Y1,
+      FAR_X0Y1,
       this.temp_near,
       this.temp_far,
       this.ray_x0y1,
       this.origin_x0y1);
 
-    R2ViewRays.calculateRayAndOrigin(
+    calculateRayAndOrigin(
       c,
       m,
-      R2ViewRays.NEAR_X1Y1,
-      R2ViewRays.FAR_X1Y1,
+      NEAR_X1Y1,
+      FAR_X1Y1,
       this.temp_near,
       this.temp_far,
       this.ray_x1y1,

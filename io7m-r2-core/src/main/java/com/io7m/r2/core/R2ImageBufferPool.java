@@ -167,8 +167,8 @@ public final class R2ImageBufferPool implements
       final R2ImageBufferDescriptionType key,
       final R2ImageBufferType value)
     {
-      if (R2ImageBufferPool.LOG.isTraceEnabled()) {
-        R2ImageBufferPool.LOG.trace("reuse {}", key);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("reuse {}", key);
       }
     }
 
@@ -178,8 +178,8 @@ public final class R2ImageBufferPool implements
       final R2ImageBufferDescriptionType key,
       final R2ImageBufferType value)
     {
-      if (R2ImageBufferPool.LOG.isTraceEnabled()) {
-        R2ImageBufferPool.LOG.trace("delete {}", value);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("delete {}", value);
       }
 
       value.delete(this.g);
@@ -192,7 +192,7 @@ public final class R2ImageBufferPool implements
       final Optional<R2ImageBufferType> value,
       final Throwable e)
     {
-      R2ImageBufferPool.LOG.error(
+      LOG.error(
         "Exception raised in cache listener: {}: ", key, e);
     }
   }

@@ -200,8 +200,8 @@ public final class R2AmbientOcclusionBuffer implements
       throw new R2RendererExceptionFramebufferNotBound(sb.toString());
     }
 
-    JCGLRenderStates.activate(g, R2AmbientOcclusionBuffer.CLEAR_STATE);
-    g.getClear().clear(R2AmbientOcclusionBuffer.CLEAR_SPEC);
+    JCGLRenderStates.activate(g, CLEAR_STATE);
+    g.getClear().clear(CLEAR_SPEC);
   }
 
   @Override

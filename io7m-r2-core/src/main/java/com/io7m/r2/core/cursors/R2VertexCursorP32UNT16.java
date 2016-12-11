@@ -48,7 +48,7 @@ public final class R2VertexCursorP32UNT16 implements
 
   public static R2VertexCursorP32UNT16 getInstance()
   {
-    return R2VertexCursorP32UNT16.INSTANCE;
+    return INSTANCE;
   }
 
   @Override

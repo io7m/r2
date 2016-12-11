@@ -90,7 +90,7 @@ public final class R2UnitQuad implements R2UnitQuadType
   public static R2UnitQuadType newUnitQuad(
     final JCGLInterfaceGL33Type g)
   {
-    R2UnitQuad.LOG.debug("allocating unit quad");
+    LOG.debug("allocating unit quad");
 
     final JCGLArrayBuffersType g_ab = g.getArrayBuffers();
     final JCGLIndexBuffersType g_ib = g.getIndexBuffers();
@@ -230,7 +230,7 @@ public final class R2UnitQuad implements R2UnitQuadType
   {
     if (!this.isDeleted()) {
       try {
-        R2UnitQuad.LOG.debug("delete");
+        LOG.debug("delete");
         final JCGLArrayBuffersType g_ab = g.getArrayBuffers();
         final JCGLIndexBuffersType g_ib = g.getIndexBuffers();
         final JCGLArrayObjectsType g_ao = g.getArrayObjects();

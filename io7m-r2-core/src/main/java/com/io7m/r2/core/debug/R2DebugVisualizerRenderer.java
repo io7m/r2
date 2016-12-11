@@ -478,7 +478,7 @@ public final class R2DebugVisualizerRenderer implements
     throws R2Exception
   {
     if (!this.isDeleted()) {
-      R2DebugVisualizerRenderer.LOG.debug("delete");
+      LOG.debug("delete");
       this.shader_batched.delete(ig);
       this.shader_single.delete(ig);
       this.shader_screen.delete(ig);

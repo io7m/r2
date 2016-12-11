@@ -92,7 +92,7 @@ public final class R2UnitCube implements R2UnitCubeType
     final JCGLUsageHint index_usage = JCGLUsageHint.USAGE_STATIC_DRAW;
     final R2VertexCursorPUNT16 ci = R2VertexCursorPUNT16.getInstance();
     final String name = "cube.r2b";
-    return R2UnitCube.newUnitCube(g, array_usage, index_usage, ci, name);
+    return newUnitCube(g, array_usage, index_usage, ci, name);
   }
 
   private static <T extends
@@ -104,7 +104,7 @@ public final class R2UnitCube implements R2UnitCubeType
     final T ci,
     final String name)
   {
-    R2UnitCube.LOG.debug("allocating unit cube");
+    LOG.debug("allocating unit cube");
 
     final R2MeshArrayObjectSynchronousAdapterType adapter =
       R2MeshArrayObjectSynchronousAdapter.newAdapter(

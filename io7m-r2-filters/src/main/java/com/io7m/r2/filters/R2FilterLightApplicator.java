@@ -176,7 +176,7 @@ public final class R2FilterLightApplicator implements
         g_fb.framebufferBlit(
           gb.area(),
           parameters.outputViewport(),
-          R2FilterLightApplicator.BLIT_BUFFERS,
+          BLIT_BUFFERS,
           JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
         g_fb.framebufferReadUnbind();
         break;

@@ -144,7 +144,7 @@ public final class R2LightBuffers
               JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-          return R2LightBuffers.newDiffuseOnly(
+          return newDiffuseOnly(
             g_fb,
             desc,
             points,
@@ -164,7 +164,7 @@ public final class R2LightBuffers
               JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-          return R2LightBuffers.newSpecularOnly(
+          return newSpecularOnly(
             g_fb,
             desc,
             points,
@@ -195,7 +195,7 @@ public final class R2LightBuffers
               JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-          return R2LightBuffers.newDiffuseSpecular(
+          return newDiffuseSpecular(
             g_fb,
             desc,
             points,
@@ -303,8 +303,8 @@ public final class R2LightBuffers
       throw new R2RendererExceptionFramebufferNotBound(sb.toString());
     }
 
-    JCGLRenderStates.activate(g, R2LightBuffers.CLEAR_STATE);
-    g.getClear().clear(R2LightBuffers.CLEAR_SPEC);
+    JCGLRenderStates.activate(g, CLEAR_STATE);
+    g.getClear().clear(CLEAR_SPEC);
   }
 
   private static final class LightBufferDiffuseSpecular
@@ -398,7 +398,7 @@ public final class R2LightBuffers
       final JCGLInterfaceGL33Type g)
       throws R2RendererExceptionFramebufferNotBound
     {
-      R2LightBuffers.clearFramebuffer(g, this.framebuffer);
+      clearFramebuffer(g, this.framebuffer);
     }
   }
 
@@ -483,7 +483,7 @@ public final class R2LightBuffers
       final JCGLInterfaceGL33Type g)
       throws R2RendererExceptionFramebufferNotBound
     {
-      R2LightBuffers.clearFramebuffer(g, this.framebuffer);
+      clearFramebuffer(g, this.framebuffer);
     }
   }
 
@@ -568,7 +568,7 @@ public final class R2LightBuffers
       final JCGLInterfaceGL33Type g)
       throws R2RendererExceptionFramebufferNotBound
     {
-      R2LightBuffers.clearFramebuffer(g, this.framebuffer);
+      clearFramebuffer(g, this.framebuffer);
     }
   }
 }

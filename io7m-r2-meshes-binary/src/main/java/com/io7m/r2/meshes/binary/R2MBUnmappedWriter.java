@@ -180,7 +180,7 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
       v.setTriangleCount((int) (t_count & 0xFFFFFFFFL));
       v.setVertexCount((int) (v_count & 0xFFFFFFFFL));
 
-      bc += R2MBUnmappedWriter.writeAll(this.buffer_header, this.channel);
+      bc += writeAll(this.buffer_header, this.channel);
     }
 
     /**
@@ -364,7 +364,7 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
           v_uv.set2F((float) x, (float) y);
         }
 
-        bc += R2MBUnmappedWriter.writeAll(this.buffer_vertex, this.channel);
+        bc += writeAll(this.buffer_vertex, this.channel);
       }
     }
 
@@ -391,7 +391,7 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
         v.setV1((int) (t.v1() & 0xFFFFFFFFL));
         v.setV2((int) (t.v2() & 0xFFFFFFFFL));
 
-        bc += R2MBUnmappedWriter.writeAll(this.buffer_tri, this.channel);
+        bc += writeAll(this.buffer_tri, this.channel);
       }
     }
 

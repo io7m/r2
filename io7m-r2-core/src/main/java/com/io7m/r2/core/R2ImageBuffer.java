@@ -153,7 +153,7 @@ public final class R2ImageBuffer implements R2ImageBufferType
       if (prec_opt.isPresent()) {
         final R2DepthPrecision prec = prec_opt.get();
         final JCGLTextureFormat format =
-          R2ImageBuffer.depthFormatForPrecision(prec);
+          depthFormatForPrecision(prec);
         final Pair<JCGLTextureUnitType, JCGLTexture2DType> pd =
           cc.unitContextAllocateTexture2D(
             g_t,
@@ -262,7 +262,7 @@ public final class R2ImageBuffer implements R2ImageBufferType
       throw new R2RendererExceptionFramebufferNotBound(sb.toString());
     }
 
-    JCGLRenderStates.activate(g, R2ImageBuffer.CLEAR_STATE);
-    g.getClear().clear(R2ImageBuffer.CLEAR_SPEC);
+    JCGLRenderStates.activate(g, CLEAR_STATE);
+    g.getClear().clear(CLEAR_SPEC);
   }
 }

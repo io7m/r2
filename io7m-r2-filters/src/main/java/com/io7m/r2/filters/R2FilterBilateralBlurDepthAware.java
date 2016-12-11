@@ -243,7 +243,7 @@ public final class R2FilterBilateralBlurDepthAware<
           g_fb.framebufferBlit(
             source.area(),
             temporary_a.area(),
-            R2FilterBilateralBlurDepthAware.BLIT_BUFFERS,
+            BLIT_BUFFERS,
             blur_params.blurScaleFilter());
           g_fb.framebufferReadUnbind();
         } finally {
@@ -288,7 +288,7 @@ public final class R2FilterBilateralBlurDepthAware<
           g_fb.framebufferBlit(
             temporary_a.area(),
             destination.area(),
-            R2FilterBilateralBlurDepthAware.BLIT_BUFFERS,
+            BLIT_BUFFERS,
             blur_params.blurScaleFilter());
           g_fb.framebufferReadUnbind();
         } finally {

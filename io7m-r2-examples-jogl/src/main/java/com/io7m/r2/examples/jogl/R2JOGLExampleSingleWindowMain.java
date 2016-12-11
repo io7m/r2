@@ -142,7 +142,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     throws Exception
   {
     if (args.length < 1) {
-      R2JOGLExampleSingleWindowMain.LOG.error("usage: class-name");
+      LOG.error("usage: class-name");
       System.exit(1);
     }
 
@@ -182,9 +182,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         public void windowDestroyed(
           final WindowEvent e)
         {
-          R2JOGLExampleSingleWindowMain.LOG.debug("Stopping animator");
+          LOG.debug("Stopping animator");
           anim.stop();
-          R2JOGLExampleSingleWindowMain.LOG.debug("Exiting");
+          LOG.debug("Exiting");
           System.exit(0);
         }
       });
@@ -193,9 +193,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       anim.start();
       win.setVisible(true);
     } catch (final InstantiationException e) {
-      R2JOGLExampleSingleWindowMain.LOG.error("instantiation error: {}", e);
+      LOG.error("instantiation error: {}", e);
     } catch (final IllegalAccessException e) {
-      R2JOGLExampleSingleWindowMain.LOG.error("access error: {}", e);
+      LOG.error("access error: {}", e);
     }
   }
 
@@ -254,7 +254,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     @Override
     public void dispose(final GLAutoDrawable drawable)
     {
-      R2JOGLExampleSingleWindowMain.LOG.debug("finishing example");
+      LOG.debug("finishing example");
       this.example.onFinish(this.context.contextGetGL33(), this.r2_main);
     }
 
@@ -297,10 +297,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           this.r2_main = R2Main.newBuilder().build(g33);
           this.services = new Services(this.window, g33);
 
-          R2JOGLExampleSingleWindowMain.LOG.debug("initializing example");
+          LOG.debug("initializing example");
           this.example.onInitialize(
             this.services, g33, this.area, this.r2_main);
-          R2JOGLExampleSingleWindowMain.LOG.debug("initialized example");
+          LOG.debug("initialized example");
           return;
         }
 
@@ -339,9 +339,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         }
 
       } catch (final JCGLExceptionUnsupported x) {
-        R2JOGLExampleSingleWindowMain.LOG.error("unsupported: ", x);
+        LOG.error("unsupported: ", x);
       } catch (final JCGLExceptionNonCompliant x) {
-        R2JOGLExampleSingleWindowMain.LOG.error("non compliant: ", x);
+        LOG.error("non compliant: ", x);
       } finally {
         ++this.frame;
       }
@@ -469,7 +469,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
          */
 
         case KeyEvent.VK_P: {
-          R2JOGLExampleSingleWindowMain.LOG.debug(
+          LOG.debug(
             "Making pointer {}\n",
             this.window.isPointerVisible() ? "invisible" : "visible");
           this.window.setPointerVisible(!this.window.isPointerVisible());
@@ -511,10 +511,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private void toggleCameraEnabled()
     {
       if (this.services.camera_enabled) {
-        R2JOGLExampleSingleWindowMain.LOG.debug("Disabling camera");
+        LOG.debug("Disabling camera");
         this.window.confinePointer(false);
       } else {
-        R2JOGLExampleSingleWindowMain.LOG.debug("Enabling camera");
+        LOG.debug("Enabling camera");
         this.window.confinePointer(true);
         this.want_cursor_warp = true;
         this.services.camera_input.setRotationHorizontal(0.0F);
@@ -733,10 +733,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         return this.mesh_cache.get(name);
       }
 
-      R2JOGLExampleSingleWindowMain.LOG.debug("loading mesh {}", name);
+      LOG.debug("loading mesh {}", name);
 
       final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
-      try (final InputStream is = Services.getMeshStream(name, c)) {
+      try (final InputStream is = getMeshStream(name, c)) {
 
         final R2MeshArrayObjectSynchronousAdapterType adapter =
           R2MeshArrayObjectSynchronousAdapter.newAdapter(

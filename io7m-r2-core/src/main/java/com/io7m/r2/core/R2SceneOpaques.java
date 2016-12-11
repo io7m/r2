@@ -66,7 +66,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
   @Override
   public void opaquesReset()
   {
-    R2SceneOpaques.LOG.trace("reset");
+    LOG.trace("reset");
     this.singles.clear();
     this.batches.clear();
   }
@@ -135,8 +135,8 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     s_materials.add(m_id);
     g.shader_to_materials.put(s_id, s_materials);
 
-    if (R2SceneOpaques.LOG.isTraceEnabled()) {
-      R2SceneOpaques.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "opaque add single (instance {}, group {}, material {}, shader {})",
         Long.valueOf(i_id),
         Integer.valueOf(group),
@@ -209,8 +209,8 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     s_materials.add(m_id);
     g.shader_to_materials.put(s_id, s_materials);
 
-    if (R2SceneOpaques.LOG.isTraceEnabled()) {
-      R2SceneOpaques.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "opaque add batched (instance {}, group {}, material {}, shader {})",
         Long.valueOf(i_id),
         Integer.valueOf(group),

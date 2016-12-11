@@ -60,7 +60,7 @@ public final class R2SSAOKernel implements R2SSAOKernelType
       VectorByteBufferedM3F.newVectorFromByteBuffer(in_data, 0L);
     this.size =
       RangeCheck.checkIncludedInInteger(
-        in_size, "Size", R2SSAOKernel.VALID_SIZES, "Valid sizes");
+        in_size, "Size", VALID_SIZES, "Valid sizes");
     this.version = 0L;
   }
 
@@ -75,10 +75,10 @@ public final class R2SSAOKernel implements R2SSAOKernelType
   public static R2SSAOKernelType newKernel(final int in_size)
   {
     RangeCheck.checkIncludedInInteger(
-      in_size, "Size", R2SSAOKernel.VALID_SIZES, "Valid sizes");
+      in_size, "Size", VALID_SIZES, "Valid sizes");
 
     final ByteBuffer bb =
-      ByteBuffer.allocateDirect(R2SSAOKernel.VALID_SIZES.getUpper() * (3 * 4))
+      ByteBuffer.allocateDirect(VALID_SIZES.getUpper() * (3 * 4))
         .order(ByteOrder.nativeOrder());
 
     final R2SSAOKernel k = new R2SSAOKernel(bb, in_size);
@@ -90,7 +90,7 @@ public final class R2SSAOKernel implements R2SSAOKernelType
   public void regenerate(final int new_size)
   {
     RangeCheck.checkIncludedInInteger(
-      new_size, "Size", R2SSAOKernel.VALID_SIZES, "Valid sizes");
+      new_size, "Size", VALID_SIZES, "Valid sizes");
 
     /**
      * Generate a hemisphere of random sample vectors.

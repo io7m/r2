@@ -239,13 +239,13 @@ public final class R2DepthVarianceRenderer implements
 
       switch (this.culling) {
         case FACE_BACK:
-          this.render_state.setCullingState(DepthConsumer.CULL_BACK);
+          this.render_state.setCullingState(CULL_BACK);
           break;
         case FACE_FRONT:
-          this.render_state.setCullingState(DepthConsumer.CULL_FRONT);
+          this.render_state.setCullingState(CULL_FRONT);
           break;
         case FACE_FRONT_AND_BACK:
-          this.render_state.setCullingState(DepthConsumer.CULL_BOTH);
+          this.render_state.setCullingState(CULL_BOTH);
           break;
       }
 

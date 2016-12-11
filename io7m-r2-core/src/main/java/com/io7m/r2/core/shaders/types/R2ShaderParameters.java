@@ -81,7 +81,7 @@ public final class R2ShaderParameters
       sb.append("Received type: ");
       sb.append(uu.getType());
       sb.append("\n");
-      R2ShaderParameters.dumpParameters(u, sb);
+      dumpParameters(u, sb);
       throw new R2ExceptionShaderParameterWrongType(sb.toString());
     }
 
@@ -93,7 +93,7 @@ public final class R2ShaderParameters
     sb.append("Parameter name: ");
     sb.append(name);
     sb.append("\n");
-    R2ShaderParameters.dumpParameters(u, sb);
+    dumpParameters(u, sb);
     throw new R2ExceptionShaderParameterNotPresent(sb.toString());
   }
 
@@ -153,7 +153,7 @@ public final class R2ShaderParameters
       sb.append("Actual parameter count:   ");
       sb.append(u.size());
       sb.append("\n");
-      R2ShaderParameters.dumpParameters(u, sb);
+      dumpParameters(u, sb);
       throw new R2ExceptionShaderParameterCountMismatch(sb.toString());
     }
   }

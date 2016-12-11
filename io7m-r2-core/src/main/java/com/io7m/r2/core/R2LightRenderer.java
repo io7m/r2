@@ -153,7 +153,7 @@ public final class R2LightRenderer implements R2LightRendererType
     NullCheck.notNull(g3);
 
     if (!this.clip_volume_stencil.isDeleted()) {
-      R2LightRenderer.LOG.debug("delete");
+      LOG.debug("delete");
       this.clip_volume_stencil.delete(g3);
       this.clip_screen_stencil.delete(g3);
     }
@@ -253,7 +253,7 @@ public final class R2LightRenderer implements R2LightRendererType
     g_fb.framebufferBlit(
       gbuffer.area(),
       lbuffer_area,
-      R2LightRenderer.DEPTH_STENCIL,
+      DEPTH_STENCIL,
       JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
     g_fb.framebufferReadUnbind();
   }
@@ -464,10 +464,10 @@ public final class R2LightRenderer implements R2LightRendererType
         pc_base.getChildContext("instances");
       this.profiling_instances.startMeasuringIfEnabled();
 
-      LightGroupConsumer.configureStencilState(
+      configureStencilState(
         this.input_state.group, this.stencil_state_screen);
       this.render_state_screen.setStencilState(this.stencil_state_screen);
-      LightGroupConsumer.configureStencilState(
+      configureStencilState(
         this.input_state.group, this.stencil_state_volume);
       this.render_state_volume.setStencilState(this.stencil_state_volume);
     }

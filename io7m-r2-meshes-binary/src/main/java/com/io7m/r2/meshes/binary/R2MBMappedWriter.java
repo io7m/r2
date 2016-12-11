@@ -93,8 +93,8 @@ public final class R2MBMappedWriter implements R2MBWriterType
     NullCheck.notNull(p);
     NullCheck.notNull(m);
 
-    final long size = R2MBMappedWriter.expectedSize(m);
-    R2MBMappedWriter.LOG.debug("map {} ({} bytes)", p, Long.valueOf(size));
+    final long size = expectedSize(m);
+    LOG.debug("map {} ({} bytes)", p, Long.valueOf(size));
 
     final FileChannel fc = FileChannel.open(
       p,

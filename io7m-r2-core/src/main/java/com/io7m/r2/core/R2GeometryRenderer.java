@@ -168,7 +168,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
   public void delete(final JCGLInterfaceGL33Type g3)
     throws R2Exception
   {
-    R2GeometryRenderer.LOG.debug("delete");
+    LOG.debug("delete");
     this.deleted = true;
   }
 

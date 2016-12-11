@@ -171,7 +171,7 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         !this.meshes.containsKey(name), "Mesh must not already exist");
 
       final R2MeshBasicType m = this.builder.build();
-      R2ObjMeshImporter.LOG.debug("loaded {}", name);
+      LOG.debug("loaded {}", name);
       this.meshes.put(name, m);
     }
 
@@ -208,7 +208,7 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
         this.finishCurrentMesh();
       }
 
-      R2ObjMeshImporter.LOG.trace("starting mesh {}", name);
+      LOG.trace("starting mesh {}", name);
       this.mesh = Optional.of(name);
       this.resetCurrentMesh();
     }
@@ -247,7 +247,7 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       final PVectorI4D<R2SpaceObjectType> k = PVectorI4D.scale(v, 1.0 / w);
       final long pv = this.builder.addPosition(new PVectorI3D<>(k));
       this.mesh_positions.put(index, pv);
-      R2ObjMeshImporter.LOG.trace(
+      LOG.trace(
         "v {} -> {}",
         Integer.valueOf(index), Long.valueOf(pv));
     }
@@ -266,7 +266,7 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
 
       final long n = this.builder.addNormal(new PVectorI3D<>(x, y, z));
       this.mesh_normals.put(index, n);
-      R2ObjMeshImporter.LOG.trace(
+      LOG.trace(
         "vn {} -> {}",
         Integer.valueOf(index), Long.valueOf(n));
     }
@@ -285,7 +285,7 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
 
       final long u = this.builder.addUV(new PVectorI2D<>(x, y));
       this.mesh_textures.put(index, u);
-      R2ObjMeshImporter.LOG.trace(
+      LOG.trace(
         "vt {} -> {}",
         Integer.valueOf(index), Long.valueOf(u));
     }
@@ -334,22 +334,22 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       final long n_actual = this.mesh_normals.get(vn);
       final long t_actual = this.mesh_textures.get(vt);
 
-      R2ObjMeshImporter.LOG.trace(
+      LOG.trace(
         "p {} -> {}",
         Integer.valueOf(v),
         Long.valueOf(p_actual));
-      R2ObjMeshImporter.LOG.trace(
+      LOG.trace(
         "n {} -> {}",
         Integer.valueOf(vn),
         Long.valueOf(n_actual));
-      R2ObjMeshImporter.LOG.trace(
+      LOG.trace(
         "t {} -> {}",
         Integer.valueOf(vt),
         Long.valueOf(t_actual));
 
       final long vk = this.builder.addVertex(p_actual, n_actual, t_actual);
 
-      R2ObjMeshImporter.LOG.trace(
+      LOG.trace(
         "{}/{}/{} -> {}",
         Integer.valueOf(v),
         Integer.valueOf(vn),
@@ -376,7 +376,7 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
 
     private void ignoreException(final Throwable ex)
     {
-      R2ObjMeshImporter.LOG.error(
+      LOG.error(
         "ignoring exception raised in error listener: ", ex);
     }
 
@@ -457,7 +457,7 @@ public final class R2ObjMeshImporter implements R2ObjMeshImporterType
       Preconditions.checkPrecondition(this.f_v1 != -1L, "V1 must != -1");
       Preconditions.checkPrecondition(this.f_v2 != -1L, "V2 must != -1");
 
-      R2ObjMeshImporter.LOG.trace(
+      LOG.trace(
         "triangle {}/{}/{}",
         Long.valueOf(this.f_v0),
         Long.valueOf(this.f_v1),

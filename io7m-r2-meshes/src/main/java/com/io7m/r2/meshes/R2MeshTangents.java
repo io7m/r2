@@ -77,21 +77,21 @@ public final class R2MeshTangents implements R2MeshTangentsType
     this.vertices = NullCheck.notNull(in_vertices);
     this.triangles = NullCheck.notNull(in_triangles);
 
-    if (R2MeshTangents.LOG.isTraceEnabled()) {
-      R2MeshTangents.LOG.trace("allocated mesh");
-      R2MeshTangents.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("allocated mesh");
+      LOG.trace(
         "mesh positions:  {}", Long.valueOf(this.positions.size64()));
-      R2MeshTangents.LOG.trace(
+      LOG.trace(
         "mesh normals:    {}", Long.valueOf(this.normals.size64()));
-      R2MeshTangents.LOG.trace(
+      LOG.trace(
         "mesh tangents:   {}", Long.valueOf(this.tangents.size64()));
-      R2MeshTangents.LOG.trace(
+      LOG.trace(
         "mesh bitangents: {}", Long.valueOf(this.bitangents.size64()));
-      R2MeshTangents.LOG.trace(
+      LOG.trace(
         "mesh uvs:        {}", Long.valueOf(this.uvs.size64()));
-      R2MeshTangents.LOG.trace(
+      LOG.trace(
         "mesh vertices:   {}", Long.valueOf(this.vertices.size64()));
-      R2MeshTangents.LOG.trace(
+      LOG.trace(
         "mesh triangles:  {}", Long.valueOf(this.triangles.size64()));
     }
   }
@@ -131,7 +131,7 @@ public final class R2MeshTangents implements R2MeshTangentsType
   {
     final R2MeshBasicType m = NullCheck.notNull(in_m);
 
-    R2MeshTangents.LOG.debug("generating tangents");
+    LOG.debug("generating tangents");
 
     final BigList<PVectorI3D<R2SpaceObjectType>> positions = m.getPositions();
     final BigList<PVectorI3D<R2SpaceObjectType>> normals = m.getNormals();
@@ -164,7 +164,7 @@ public final class R2MeshTangents implements R2MeshTangentsType
 
     for (long tri_index = 0L; tri_index < triangles.size64(); ++tri_index) {
       final R2MeshTriangleType triangle = triangles.get(tri_index);
-      R2MeshTangents.checkTriangleVertices(
+      checkTriangleVertices(
         triangle.v0(),
         triangle.v1(),
         triangle.v2(),
@@ -182,9 +182,9 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final PVectorI3D<R2SpaceObjectType> v2p =
         positions.get(v2.positionIndex());
 
-      R2MeshTangents.checkVector3D(v0p, "Position", v0.positionIndex());
-      R2MeshTangents.checkVector3D(v1p, "Position", v1.positionIndex());
-      R2MeshTangents.checkVector3D(v2p, "Position", v2.positionIndex());
+      checkVector3D(v0p, "Position", v0.positionIndex());
+      checkVector3D(v1p, "Position", v1.positionIndex());
+      checkVector3D(v2p, "Position", v2.positionIndex());
 
       /**
        * Fetch whatever tangent and bitangent vectors are currently
@@ -198,9 +198,9 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final PVectorI4D<R2SpaceObjectType> v2t =
         tangents.get(v2.normalIndex());
 
-      R2MeshTangents.checkVector4D(v0t, "Tangent", v0.normalIndex());
-      R2MeshTangents.checkVector4D(v1t, "Tangent", v1.normalIndex());
-      R2MeshTangents.checkVector4D(v2t, "Tangent", v2.normalIndex());
+      checkVector4D(v0t, "Tangent", v0.normalIndex());
+      checkVector4D(v1t, "Tangent", v1.normalIndex());
+      checkVector4D(v2t, "Tangent", v2.normalIndex());
 
       final PVectorI3D<R2SpaceObjectType> v0b =
         bitangents.get(v0.normalIndex());
@@ -209,17 +209,17 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final PVectorI3D<R2SpaceObjectType> v2b =
         bitangents.get(v2.normalIndex());
 
-      R2MeshTangents.checkVector3D(v0b, "Bitangent", v0.normalIndex());
-      R2MeshTangents.checkVector3D(v1b, "Bitangent", v1.normalIndex());
-      R2MeshTangents.checkVector3D(v2b, "Bitangent", v2.normalIndex());
+      checkVector3D(v0b, "Bitangent", v0.normalIndex());
+      checkVector3D(v1b, "Bitangent", v1.normalIndex());
+      checkVector3D(v2b, "Bitangent", v2.normalIndex());
 
       final PVectorI2D<R2SpaceTextureType> v0u = uvs.get(v0.uvIndex());
       final PVectorI2D<R2SpaceTextureType> v1u = uvs.get(v1.uvIndex());
       final PVectorI2D<R2SpaceTextureType> v2u = uvs.get(v2.uvIndex());
 
-      R2MeshTangents.checkVector2D(v0u, "UV", v0.uvIndex());
-      R2MeshTangents.checkVector2D(v1u, "UV", v1.uvIndex());
-      R2MeshTangents.checkVector2D(v2u, "UV", v2.uvIndex());
+      checkVector2D(v0u, "UV", v0.uvIndex());
+      checkVector2D(v1u, "UV", v1.uvIndex());
+      checkVector2D(v2u, "UV", v2.uvIndex());
 
       /**
        * In the case where, for example, two vertices in a triangle share the
@@ -227,7 +227,7 @@ public final class R2MeshTangents implements R2MeshTangentsType
        * tangent vector.
        */
 
-      R2MeshTangents.checkTriangleUVs(
+      checkTriangleUVs(
         tri_index, triangle, v0, v1, v2, v0u, v1u, v2u);
 
       final double x1 = v1p.getXD() - v0p.getXD();
@@ -286,11 +286,11 @@ public final class R2MeshTangents implements R2MeshTangentsType
           v2t.getZD() + tz,
           1.0);
 
-      R2MeshTangents.checkVector4D(
+      checkVector4D(
         v0t_acc, "Generated Tangent", v0.normalIndex());
-      R2MeshTangents.checkVector4D(
+      checkVector4D(
         v1t_acc, "Generated Tangent", v1.normalIndex());
-      R2MeshTangents.checkVector4D(
+      checkVector4D(
         v2t_acc, "Generated Tangent", v2.normalIndex());
 
       tangents.set(v0.normalIndex(), v0t_acc);
@@ -304,11 +304,11 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final PVectorI3D<R2SpaceObjectType> v2b_acc =
         new PVectorI3D<>(v2b.getXD() + bx, v2b.getYD() + by, v2b.getZD() + bz);
 
-      R2MeshTangents.checkVector3D(
+      checkVector3D(
         v0b_acc, "Generated Bitangent", v0.normalIndex());
-      R2MeshTangents.checkVector3D(
+      checkVector3D(
         v1b_acc, "Generated Bitangent", v1.normalIndex());
-      R2MeshTangents.checkVector3D(
+      checkVector3D(
         v2b_acc, "Generated Bitangent", v2.normalIndex());
 
       bitangents.set(v0.normalIndex(), v0b_acc);
@@ -339,8 +339,8 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final VectorI3D ot = o.getV1();
       final VectorI3D ob = o.getV2();
 
-      R2MeshTangents.checkVector3D(ot, "Orthonormalized Tangent", index);
-      R2MeshTangents.checkVector3D(ob, "Orthonormalized Bitangent", index);
+      checkVector3D(ot, "Orthonormalized Tangent", index);
+      checkVector3D(ob, "Orthonormalized Bitangent", index);
 
       /**
        * Invert the bitangent if the resulting coordinate system is not
@@ -358,8 +358,8 @@ public final class R2MeshTangents implements R2MeshTangentsType
         rb = new PVectorI3D<>(ob.getXD(), ob.getYD(), ob.getZD());
       }
 
-      R2MeshTangents.checkVector4D(rt, "Final Tangent", index);
-      R2MeshTangents.checkVector3D(rb, "Final Bitangent", index);
+      checkVector4D(rt, "Final Tangent", index);
+      checkVector3D(rb, "Final Bitangent", index);
 
       tangents.set(index, rt);
       bitangents.set(index, rb);
@@ -564,8 +564,8 @@ public final class R2MeshTangents implements R2MeshTangentsType
     final long vertices_max,
     final BigList<R2MeshTriangleType> triangles)
   {
-    if (R2MeshTangents.LOG.isTraceEnabled()) {
-      R2MeshTangents.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "check triangle: {} {} {}",
         Long.valueOf(v0),
         Long.valueOf(v1),
@@ -787,7 +787,7 @@ public final class R2MeshTangents implements R2MeshTangentsType
       final long v2)
       throws NoSuchElementException
     {
-      R2MeshTangents.checkTriangleVertices(
+      checkTriangleVertices(
         v0, v1, v2, this.vertices.size64(), this.triangles);
       this.triangles.add(R2MeshTriangle.of(v0, v1, v2));
       return this.triangles.size64() - 1L;

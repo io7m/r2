@@ -143,7 +143,7 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
           g_t,
           range_x.getInterval(),
           range_y.getInterval(),
-          R2DepthVarianceBuffer.formatDepthForPrecision(
+          formatDepthForPrecision(
             desc.depthPrecision()),
           JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
@@ -155,7 +155,7 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
           g_t,
           range_x.getInterval(),
           range_y.getInterval(),
-          R2DepthVarianceBuffer.formatVarianceForPrecision(
+          formatVarianceForPrecision(
             desc.depthVariancePrecision()),
           JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
