@@ -1,0 +1,57 @@
+[section [title Stippling] [id di.stippling]]
+[subsection [title Overview] [id di.stippling.overview]]
+[paragraph]
+One major issue with [link [target di.deferred] deferred rendering] is that
+it does not allow for [term [type term] translucency]; the scene is placed into
+a single flat image and there is no way to express the fact that an object is
+to be overlaid on top of another object. This can be a problem when implementing
+systems such as [term [type term] level-of-detail]
+"(or" [term [type term] LOD]")" switching. A basic requirement for an LOD system
+is that when the viewer moves a certain distance away from an object, that
+object should be replaced with a lower-polygon version in order to reduce
+rendering costs. Switching from a high polygon version to a low polygon version
+in one frame can be visually jarring, however, so it is usually desirable to
+fade out one version of the object whilst fading in another version over the
+course of a few frames. This presents an immediate problem: It is not possible
+to implement traditional alpha translucency fading in a deferred rendering
+system, as described above.
+
+[paragraph]
+The [term [type term] stippling] technique attempts to provide an alternative
+to alpha translucency. The technique is simple: Simply discard some pixels
+of an object when the object is rendered into the
+[link [target di.deferred.geom] geometry buffer]. By progressively discarding
+more pixels over the course of a few frames, the object can be made to "fade".
+If the pattern of discarded pixels is randomized and the fading time is short,
+the result is visually acceptable for implementing [term [type term] LOD]
+systems.
+
+[formal-item [title Stippling]]
+[image [target "images/stipple.png"] Progressive stippling]
+
+[subsection [title Algorithm] [id di.stippling.algorithm]]
+[paragraph]
+The stippling algorithm is very simple:
+
+[formal-item [title Algorithm]]
+[list-ordered
+  [item Tile a pattern texture [term [type variable] t] over the entire screen.]
+  [item For each pixel with screen coordinates [term [type variable] p]
+        in the object currently being rendered, sample a value
+        [term [type variable] x] from [term [type variable] t] at
+        [term [type variable] p].]
+  [item If [term [type variable] x] is less than the defined
+        stippling threshold [term [type variable] s], discard the pixel.]]
+
+[paragraph]
+In practice, for good visual results when fading between two objects, the
+programmer should use two complementary stippling patterns for the objects.
+For example, using a checkerboard stippling pattern for the first object and
+an inverted copy of the pattern for the other. This guarantees that at no point
+are the same pixels from both objects discarded.
+
+[subsection [title Types] [id di.stippling.types]]
+[paragraph]
+In the [term [type package] r2] package, the stippling effect is provided by
+shaders such as
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2SurfaceShaderBasicStippledSingle.html"] R2SurfaceShaderBasicStippledSingle].

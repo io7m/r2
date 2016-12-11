@@ -6,6 +6,7 @@
 #include "R2SurfaceTypes.h"
 #include "R2SurfaceVertex.h"
 #include "R2View.h"
+#include "R2Viewport.h"
 
 out     R2_vertex_data_t               R2_vertex_data;
 uniform R2_view_t                      R2_view;

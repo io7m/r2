@@ -24,6 +24,7 @@
   [import "di-normal-mapping.sdi"]
   [import "di-log-depth.sdi"]
   [import "di-envmap.sdi"]
+  [import "di-stippling.sdi"]
   [import "di-gen-refraction.sdi"]
   [import "di-filter-ssao.sdi"]
   [import "di-filter-emission.sdi"]
