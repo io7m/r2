@@ -48,7 +48,7 @@ public interface R2MeshArrayObjectSynchronousAdapterType extends
    * @throws IllegalStateException Iff parsing has failed
    */
 
-  JCGLArrayBufferType getArrayBuffer()
+  JCGLArrayBufferType arrayBuffer()
     throws IllegalStateException;
 
   /**
@@ -57,7 +57,7 @@ public interface R2MeshArrayObjectSynchronousAdapterType extends
    * @throws IllegalStateException Iff parsing has failed
    */
 
-  JCGLIndexBufferType getIndexBuffer()
+  JCGLIndexBufferType indexBuffer()
     throws IllegalStateException;
 
   /**
@@ -66,7 +66,7 @@ public interface R2MeshArrayObjectSynchronousAdapterType extends
    * @throws IllegalStateException Iff parsing has failed
    */
 
-  JCGLArrayObjectType getArrayObject()
+  JCGLArrayObjectType arrayObject()
     throws IllegalStateException;
 
   /**
@@ -76,7 +76,7 @@ public interface R2MeshArrayObjectSynchronousAdapterType extends
    * @see #hasFailed()
    */
 
-  Optional<Throwable> getErrorException()
+  Optional<Throwable> errorException()
     throws IllegalStateException;
 
   /**
@@ -86,6 +86,6 @@ public interface R2MeshArrayObjectSynchronousAdapterType extends
    * @see #hasFailed()
    */
 
-  String getErrorMessage()
+  String errorMessage()
     throws IllegalStateException;
 }

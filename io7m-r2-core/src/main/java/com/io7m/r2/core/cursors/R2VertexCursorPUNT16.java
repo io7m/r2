@@ -52,55 +52,55 @@ public final class R2VertexCursorPUNT16 implements
   }
 
   @Override
-  public JCGLScalarType getPositionElementType()
+  public JCGLScalarType positionElementType()
   {
     return JCGLScalarType.TYPE_HALF_FLOAT;
   }
 
   @Override
-  public long getPositionOffset()
+  public long positionOffset()
   {
     return (long) R2VertexPUNT16ByteBuffered.metaPositionStaticOffsetFromType();
   }
 
   @Override
-  public JCGLScalarType getNormalElementType()
+  public JCGLScalarType normalElementType()
   {
     return JCGLScalarType.TYPE_HALF_FLOAT;
   }
 
   @Override
-  public long getNormalOffset()
+  public long normalOffset()
   {
     return (long) R2VertexPUNT16ByteBuffered.metaNormalStaticOffsetFromType();
   }
 
   @Override
-  public JCGLScalarType getUVElementType()
+  public JCGLScalarType uvElementType()
   {
     return JCGLScalarType.TYPE_HALF_FLOAT;
   }
 
   @Override
-  public long getUVOffset()
+  public long uvOffset()
   {
     return (long) R2VertexPUNT16ByteBuffered.metaUvStaticOffsetFromType();
   }
 
   @Override
-  public JCGLScalarType getTangent4ElementType()
+  public JCGLScalarType tangent4ElementType()
   {
     return JCGLScalarType.TYPE_HALF_FLOAT;
   }
 
   @Override
-  public long getTangent4Offset()
+  public long tangent4Offset()
   {
     return (long) R2VertexPUNT16ByteBuffered.metaTangentStaticOffsetFromType();
   }
 
   @Override
-  public long getVertexSize()
+  public long vertexSize()
   {
     return (long) R2VertexPUNT16ByteBuffered.sizeInOctets();
   }

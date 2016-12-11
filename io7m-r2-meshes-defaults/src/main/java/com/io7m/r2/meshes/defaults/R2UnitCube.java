@@ -125,9 +125,9 @@ public final class R2UnitCube implements R2UnitCubeType
 
         if (adapter.hasFailed()) {
           final Optional<Throwable> ex_opt =
-            adapter.getErrorException();
+            adapter.errorException();
           final String ex_msg =
-            adapter.getErrorMessage();
+            adapter.errorMessage();
 
           if (ex_opt.isPresent()) {
             throw new R2ExceptionIO(ex_msg, ex_opt.get());
@@ -136,9 +136,9 @@ public final class R2UnitCube implements R2UnitCubeType
         }
 
         return new R2UnitCube(
-          adapter.getArrayBuffer(),
-          adapter.getArrayObject(),
-          adapter.getIndexBuffer());
+          adapter.arrayBuffer(),
+          adapter.arrayObject(),
+          adapter.indexBuffer());
       }
     } catch (final IOException e) {
       throw new R2ExceptionIO(e.getMessage(), e);
