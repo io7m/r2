@@ -75,8 +75,8 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
       ShaderPreprocessing.preprocessor();
 
     final R2InstanceSingleType i =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());

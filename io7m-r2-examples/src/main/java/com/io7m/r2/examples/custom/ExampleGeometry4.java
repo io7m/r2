@@ -140,8 +140,8 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
     this.quad = R2UnitQuad.newUnitQuad(g);
 
     final R2TransformReadableType tr = R2TransformSOT.newTransform();
-    this.instance = R2InstanceSingle.newInstance(
-      id_pool,
+    this.instance = R2InstanceSingle.of(
+      id_pool.freshID(),
       this.sphere.arrayObject(),
       tr,
       PMatrixI3x3F.identity());

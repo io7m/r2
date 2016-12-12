@@ -120,8 +120,8 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
 
     final R2TransformSiOT transform = R2TransformSiOT.newTransform();
 
-    this.instance = R2InstanceSingle.newInstance(
-      m.getIDPool(),
+    this.instance = R2InstanceSingle.of(
+      m.getIDPool().freshID(),
       m.getUnitQuad().arrayObject(),
       transform,
       PMatrixI3x3F.identity());

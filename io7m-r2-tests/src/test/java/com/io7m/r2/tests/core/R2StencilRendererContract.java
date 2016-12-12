@@ -91,8 +91,8 @@ public abstract class R2StencilRendererContract extends R2JCGLContract
       R2TextureDefaults.newDefaults(g.getTextures(), tc);
 
     final R2InstanceSingleType i =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());

@@ -239,8 +239,8 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       JCGLProjectionMatrices.newMatrices();
 
     final R2InstanceSingleType i =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
@@ -358,8 +358,8 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       JCGLProjectionMatrices.newMatrices();
 
     final R2InstanceSingleType i =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());

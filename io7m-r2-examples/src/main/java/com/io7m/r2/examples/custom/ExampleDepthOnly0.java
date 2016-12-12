@@ -141,8 +141,8 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
     this.sphere = R2UnitSphere.newUnitSphere8(g);
 
     final R2TransformReadableType tr = R2TransformSOT.newTransform();
-    this.instance = R2InstanceSingle.newInstance(
-      id_pool,
+    this.instance = R2InstanceSingle.of(
+      id_pool.freshID(),
       this.sphere.arrayObject(),
       tr,
       PMatrixI3x3F.identity());

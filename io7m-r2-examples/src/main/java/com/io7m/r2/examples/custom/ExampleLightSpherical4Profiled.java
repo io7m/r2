@@ -579,8 +579,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     transform.getTranslation().set3F(0.0f, -1.0f, 0.0f);
 
     this.instance =
-      R2InstanceSingle.newInstance(
-        id_pool, mesh, transform, PMatrixI3x3F.identity());
+      R2InstanceSingle.of(
+        id_pool.freshID(), mesh, transform, PMatrixI3x3F.identity());
 
     final int width = 8;
     final int height = 8;
@@ -654,8 +654,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
     {
       this.golden =
-        R2InstanceSingle.newInstance(
-          id_pool,
+        R2InstanceSingle.of(
+          id_pool.freshID(),
           m.getUnitQuad().arrayObject(),
           transform,
           PMatrixI3x3F.identity());
@@ -687,8 +687,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       glow_transform.getTranslation().set3F(-2.0f, 1.0f, 0.0f);
 
       this.glow =
-        R2InstanceSingle.newInstance(
-          id_pool,
+        R2InstanceSingle.of(
+          id_pool.freshID(),
           m.getUnitQuad().arrayObject(),
           glow_transform,
           PMatrixI3x3F.identity());
@@ -796,8 +796,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
     this.sphere_light_bounds =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         R2UnitCube.newUnitCube(gx).arrayObject(),
         this.sphere_light_bounded_transform,
         PMatrixI3x3F.identity());

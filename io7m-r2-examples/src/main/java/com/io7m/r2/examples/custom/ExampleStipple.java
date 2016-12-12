@@ -415,8 +415,8 @@ public final class ExampleStipple implements R2ExampleCustomType
     transform.getTranslation().set3F(0.0f, -1.0f, 0.0f);
 
     this.instance =
-      R2InstanceSingle.newInstance(
-        id_pool, mesh, transform, PMatrixI3x3F.identity());
+      R2InstanceSingle.of(
+        id_pool.freshID(), mesh, transform, PMatrixI3x3F.identity());
 
     final SoShaderPreprocessorConfig.Builder b =
       SoShaderPreprocessorConfig.builder();
@@ -482,8 +482,8 @@ public final class ExampleStipple implements R2ExampleCustomType
     this.stipple_sphere_transform.getTranslation().set3F(-2.0f, 0.5f, -2.0f);
     this.stipple_sphere_transform.setScale(0.5f);
 
-    this.stipple_sphere = R2InstanceSingle.newInstance(
-      id_pool,
+    this.stipple_sphere = R2InstanceSingle.of(
+      id_pool.freshID(),
       this.sphere.arrayObject(),
       this.stipple_sphere_transform,
       PMatrixI3x3F.identity());
@@ -575,8 +575,8 @@ public final class ExampleStipple implements R2ExampleCustomType
     this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
     this.sphere_light_bounds =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         R2UnitCube.newUnitCube(gx).arrayObject(),
         this.sphere_light_bounded_transform,
         PMatrixI3x3F.identity());
