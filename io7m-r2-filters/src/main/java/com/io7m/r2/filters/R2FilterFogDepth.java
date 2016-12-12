@@ -24,7 +24,13 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableTy
 import org.valid4j.Assertive;
 
 /**
- * A depth-based fog filter.
+ * <p>A depth-based fog filter.</p>
+ *
+ * <p>The filter takes a texture and a depth texture as input and writes
+ * a filtered image to the currently bound framebuffer.</p>
+ *
+ * @see R2FilterFogParametersType#imageTexture()
+ * @see R2FilterFogParametersType#imageDepthTexture()
  */
 
 public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParametersType>
