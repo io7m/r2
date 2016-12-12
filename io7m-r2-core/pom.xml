@@ -12,7 +12,7 @@
   </parent>
   <artifactId>io7m-r2-core</artifactId>
 
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>io7m-r2-core</name>
   <description>3D renderer (Core)</description>
   <url>http://io7m.github.io/r2/</url>
@@ -154,7 +154,11 @@
           <instructions>
             <Export-Package>
               com.io7m.r2.core,
-              com.io7m.r2.core.*
+              com.io7m.r2.core.cursors,
+              com.io7m.r2.core.debug,
+              com.io7m.r2.core.shaders,
+              com.io7m.r2.core.shaders.provided,
+              com.io7m.r2.core.shaders.types
             </Export-Package>
           </instructions>
         </configuration>

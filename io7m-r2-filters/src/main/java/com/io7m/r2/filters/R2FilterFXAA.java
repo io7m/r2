@@ -42,7 +42,12 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * An FXAA filter.
+ * <p>An FXAA filter.</p>
+ *
+ * <p>The filter takes a texture as input and writes a filtered image to
+ * the currently bound framebuffer.</p>
+ *
+ * @see R2FilterFXAAParametersType#texture()
  */
 
 public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersType>

@@ -21,8 +21,8 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
 /**
- * The type of parameters for filters that calculate ambient occlusion in
- * screen-space.
+ * The type of parameters for filters that apply anti-aliasing using the FXAA
+ * algorithm.
  */
 
 @Value.Immutable

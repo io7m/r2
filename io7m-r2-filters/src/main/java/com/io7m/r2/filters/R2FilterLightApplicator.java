@@ -45,8 +45,12 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * A trivial filter that combines a geometry buffer and a light buffer into a
- * lit image.
+ * <p>A trivial filter that combines a geometry buffer and a light buffer into a
+ * lit image.</p>
+ *
+ * <p>The filter takes various buffers as input and writes a lit image to the
+ * currently bound framebuffer. It can optionally copy the geometry buffer's
+ * depth buffer to the current depth buffer.</p>
  *
  * @see com.io7m.r2.core.R2GeometryBufferUsableType
  * @see com.io7m.r2.core.R2LightBufferUsableType
