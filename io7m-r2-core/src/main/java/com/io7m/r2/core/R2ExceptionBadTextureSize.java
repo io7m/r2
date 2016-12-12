@@ -16,32 +16,23 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import org.immutables.value.Value;
-
-import java.util.Optional;
-
 /**
- * The type of image buffer descriptions.
+ * The type of exceptions that indicate an attempt to specify a bad
+ * texture size.
  */
 
-@Value.Immutable
-@R2ImmutableStyleType
-public interface R2ImageBufferDescriptionType extends
-  R2RenderTargetDescriptionType
+public final class R2ExceptionBadTextureSize extends R2Exception
 {
-  @Override
-  @Value.Parameter
-  AreaInclusiveUnsignedLType area();
+  private static final long serialVersionUID = 1L;
 
   /**
-   * A specification of whether a new depth attachment should be created,
-   * a depth attachment should be shared with an existing framebuffer, or
-   * no depth attachment should exist at all.
+   * Construct an exception.
    *
-   * @return The specification of the attachment, if one is to be provided
+   * @param message The message
    */
 
-  @Value.Parameter
-  Optional<R2DepthAttachmentSpecificationType> depthAttachment();
+  public R2ExceptionBadTextureSize(final String message)
+  {
+    super(message);
+  }
 }

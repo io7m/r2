@@ -16,32 +16,29 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import org.immutables.value.Value;
-
-import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
- * The type of image buffer descriptions.
+ * A specification of a whether a depth attachment should be created or
+ * shared with an existing framebuffer.
  */
 
-@Value.Immutable
-@R2ImmutableStyleType
-public interface R2ImageBufferDescriptionType extends
-  R2RenderTargetDescriptionType
+public interface R2DepthAttachmentSpecificationType
 {
-  @Override
-  @Value.Parameter
-  AreaInclusiveUnsignedLType area();
-
   /**
-   * A specification of whether a new depth attachment should be created,
-   * a depth attachment should be shared with an existing framebuffer, or
-   * no depth attachment should exist at all.
+   * Match on the type of depth attachment specification.
    *
-   * @return The specification of the attachment, if one is to be provided
+   * @param context   A user-defined context value
+   * @param on_share  Evaluated on values of type {@link R2DepthAttachmentShareType}
+   * @param on_create Evaluated on values of type {@link R2DepthAttachmentCreateType}
+   * @param <A>       The type of context values
+   * @param <B>       The type of returned values
+   *
+   * @return The value returned by one of the given functions
    */
 
-  @Value.Parameter
-  Optional<R2DepthAttachmentSpecificationType> depthAttachment();
+  <A, B> B matchDepthAttachment(
+    A context,
+    BiFunction<A, R2DepthAttachmentShareType, B> on_share,
+    BiFunction<A, R2DepthAttachmentCreateType, B> on_create);
 }

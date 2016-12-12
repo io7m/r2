@@ -48,6 +48,7 @@ import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2CopyDepth;
+import com.io7m.r2.core.R2DepthAttachmentShare;
 import com.io7m.r2.core.R2DepthInstances;
 import com.io7m.r2.core.R2DepthInstancesType;
 import com.io7m.r2.core.R2DepthPrecision;
@@ -277,7 +278,8 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       final R2ImageBufferDescription.Builder b =
         R2ImageBufferDescription.builder();
       b.setArea(area);
-      b.setDepthPrecision(R2DepthPrecision.R2_DEPTH_PRECISION_24);
+      b.setDepthAttachment(
+        R2DepthAttachmentShare.of(this.gbuffer.depthTexture()));
 
       this.ibuffer = R2ImageBuffer.newImageBuffer(
         gx.getFramebuffers(),
@@ -446,12 +448,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
     this.proj_proj =
       R2ProjectionFrustum.newFrustumWith(
         JCGLProjectionMatrices.newMatrices(),
-        -0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        1.0f,
-        10.0f);
+        -0.5f, 0.5f, -0.5f, 0.5f, 1.0f, 10.0f);
     this.proj_mesh =
       R2ProjectionMesh.newMesh(
         gx,

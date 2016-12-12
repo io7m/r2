@@ -31,6 +31,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2CopyDepth;
+import com.io7m.r2.core.R2DepthAttachmentCreate;
 import com.io7m.r2.core.R2DepthPrecision;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBuffer;
@@ -270,7 +271,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
       R2ImageBuffer.newImageBuffer(
         g_fb, g_t, tc,
         R2ImageBufferDescription.of(area, Optional.of(
-          R2DepthPrecision.R2_DEPTH_PRECISION_24)));
+          R2DepthAttachmentCreate.of(R2DepthPrecision.R2_DEPTH_PRECISION_24))));
 
     final R2GeometryBufferDescriptionType desc =
       R2GeometryBufferDescription.of(
@@ -342,7 +343,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
       R2ImageBuffer.newImageBuffer(
         g_fb, g_t, tc,
         R2ImageBufferDescription.of(area, Optional.of(
-          R2DepthPrecision.R2_DEPTH_PRECISION_24)));
+          R2DepthAttachmentCreate.of(R2DepthPrecision.R2_DEPTH_PRECISION_24))));
 
     final R2GeometryBufferDescriptionType desc =
       R2GeometryBufferDescription.of(

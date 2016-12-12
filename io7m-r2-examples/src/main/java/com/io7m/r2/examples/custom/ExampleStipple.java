@@ -50,6 +50,7 @@ import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2CopyDepth;
+import com.io7m.r2.core.R2DepthAttachmentShare;
 import com.io7m.r2.core.R2DepthInstances;
 import com.io7m.r2.core.R2DepthInstancesType;
 import com.io7m.r2.core.R2DepthPrecision;
@@ -299,7 +300,8 @@ public final class ExampleStipple implements R2ExampleCustomType
       final R2ImageBufferDescription.Builder b =
         R2ImageBufferDescription.builder();
       b.setArea(area);
-      b.setDepthPrecision(R2DepthPrecision.R2_DEPTH_PRECISION_24);
+      b.setDepthAttachment(
+        R2DepthAttachmentShare.of(this.gbuffer.depthTexture()));
 
       this.ibuffer = R2ImageBuffer.newImageBuffer(
         gx.getFramebuffers(),
@@ -780,7 +782,7 @@ public final class ExampleStipple implements R2ExampleCustomType
         t.filter_light_params.clear();
         t.filter_light_params.setGeometryBuffer(t.gbuffer);
         t.filter_light_params.setOutputViewport(t.ibuffer.area());
-        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
+        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED);
         t.lbuffer.matchLightBuffer(
           this,
           (tt, lbdo) -> {

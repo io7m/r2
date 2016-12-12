@@ -41,6 +41,7 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVector3FType;
+import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
@@ -369,7 +370,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     this.geom_shader_params =
       R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
-    this.geom_shader_params.specularColor().set3F(1.0f, 1.0f, 1.0f);
+    this.geom_shader_params.setSpecularColor(
+      new PVectorM3F<>(1.0f, 1.0f, 1.0f));
     this.geom_shader_params.setSpecularExponent(64.0f);
     this.geom_material = R2MaterialOpaqueSingle.newMaterial(
       id_pool, this.geom_shader, this.geom_shader_params);

@@ -49,6 +49,8 @@ import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.jtensors.parameterized.PVectorI4F;
+import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.jtensors.parameterized.PVectorM4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
@@ -57,6 +59,7 @@ import com.io7m.r2.core.R2AmbientOcclusionBufferPool;
 import com.io7m.r2.core.R2AmbientOcclusionBufferType;
 import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
 import com.io7m.r2.core.R2CopyDepth;
+import com.io7m.r2.core.R2DepthAttachmentShare;
 import com.io7m.r2.core.R2DepthInstances;
 import com.io7m.r2.core.R2DepthInstancesType;
 import com.io7m.r2.core.R2DepthPrecision;
@@ -376,7 +379,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       final R2ImageBufferDescription.Builder b =
         R2ImageBufferDescription.builder();
       b.setArea(area);
-      b.setDepthPrecision(R2DepthPrecision.R2_DEPTH_PRECISION_24);
+      b.setDepthAttachment(
+        R2DepthAttachmentShare.of(this.gbuffer.depthTexture()));
 
       this.ibuffer = R2ImageBuffer.newImageBuffer(
         gx.getFramebuffers(),
@@ -636,7 +640,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         id_pool);
     this.geom_shader_params =
       R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
-    this.geom_shader_params.specularColor().set3F(1.0f, 1.0f, 1.0f);
+    this.geom_shader_params.setSpecularColor(
+      new PVectorM3F<>(1.0f, 1.0f, 1.0f));
     this.geom_shader_params.setSpecularExponent(64.0f);
     this.geom_shader_params.setAlbedoTexture(
       serv.getTexture2D("halls_complex_albedo.png"));
@@ -657,7 +662,9 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
       this.golden_shader_params =
         R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
-      this.golden_shader_params.albedoColor().set4F(0.0f, 0.0f, 0.0f, 0.0f);
+
+      this.golden_shader_params.setAlbedoColor(
+        new PVectorM4F<>(0.0f, 0.0f, 0.0f, 0.0f));
       this.golden_shader_params.setAlbedoTexture(
         serv.getTexture2D("golden_albedo.png"));
       this.golden_shader_params.setAlbedoMix(1.0f);
@@ -688,7 +695,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
       this.glow_shader_params =
         R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
-      this.glow_shader_params.albedoColor().set4F(1.0f, 1.0f, 1.0f, 1.0f);
+      this.glow_shader_params.setAlbedoColor(
+        new PVectorM4F<>(1.0f, 1.0f, 1.0f, 1.0f));
       this.glow_shader_params.setAlbedoMix(0.0f);
       this.glow_shader_params.setAlphaDiscardThreshold(0.0f);
       this.glow_shader_params.setEmission(1.0f);
@@ -1077,7 +1085,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         t.filter_light_params.clear();
         t.filter_light_params.setGeometryBuffer(t.gbuffer);
         t.filter_light_params.setOutputViewport(t.ibuffer.area());
-        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
+        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED);
         t.lbuffer.matchLightBuffer(
           this,
           (tt, lbdo) -> {

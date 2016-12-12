@@ -16,32 +16,33 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import org.immutables.value.Value;
 
-import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
- * The type of image buffer descriptions.
+ * A preexisting depth texture that will be used as an attachment on a created
+ * framebuffer.
  */
 
-@Value.Immutable
 @R2ImmutableStyleType
-public interface R2ImageBufferDescriptionType extends
-  R2RenderTargetDescriptionType
+@Value.Immutable
+public interface R2DepthAttachmentCreateType extends
+  R2DepthAttachmentSpecificationType
 {
   @Override
-  @Value.Parameter
-  AreaInclusiveUnsignedLType area();
+  default <A, B> B matchDepthAttachment(
+    final A context,
+    final BiFunction<A, R2DepthAttachmentShareType, B> on_share,
+    final BiFunction<A, R2DepthAttachmentCreateType, B> on_create)
+  {
+    return on_create.apply(context, this);
+  }
 
   /**
-   * A specification of whether a new depth attachment should be created,
-   * a depth attachment should be shared with an existing framebuffer, or
-   * no depth attachment should exist at all.
-   *
-   * @return The specification of the attachment, if one is to be provided
+   * @return The precision of the depth buffer to be created
    */
 
   @Value.Parameter
-  Optional<R2DepthAttachmentSpecificationType> depthAttachment();
+  R2DepthPrecision precision();
 }

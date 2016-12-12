@@ -43,7 +43,7 @@ import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.r2.core.R2CopyDepth;
-import com.io7m.r2.core.R2DepthPrecision;
+import com.io7m.r2.core.R2DepthAttachmentShare;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferComponents;
@@ -264,13 +264,16 @@ public final class ExampleFog implements R2ExampleCustomType
       final R2ImageBufferDescription.Builder b =
         R2ImageBufferDescription.builder();
       b.setArea(area);
-      b.setDepthPrecision(R2DepthPrecision.R2_DEPTH_PRECISION_24);
+      b.setDepthAttachment(
+        R2DepthAttachmentShare.of(this.gbuffer.depthTexture()));
 
       this.ibuffer0 = R2ImageBuffer.newImageBuffer(
         gx.getFramebuffers(),
         gx.getTextures(),
         m.getTextureUnitAllocator().getRootContext(),
         b.build());
+
+      b.setDepthAttachment(Optional.empty());
 
       this.ibuffer1 = R2ImageBuffer.newImageBuffer(
         gx.getFramebuffers(),
@@ -597,7 +600,7 @@ public final class ExampleFog implements R2ExampleCustomType
         t.filter_light_params.clear();
         t.filter_light_params.setGeometryBuffer(t.gbuffer);
         t.filter_light_params.setOutputViewport(t.ibuffer0.area());
-        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
+        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED);
         t.lbuffer.matchLightBuffer(
           this,
           (tt, lbdo) -> {
