@@ -107,6 +107,11 @@
         <version>[1.0.0, 2.0.0)</version>
       </dependency>
       <dependency>
+        <groupId>com.io7m.jproperties</groupId>
+        <artifactId>io7m-jproperties-core</artifactId>
+        <version>[1.0.2, 2.0.0)</version>
+      </dependency>
+      <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-core</artifactId>
         <version>0.52.0</version>

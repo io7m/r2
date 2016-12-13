@@ -35,6 +35,9 @@ import com.io7m.jcanephora.profiler.JCGLProfilingType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jproperties.JProperties;
+import com.io7m.jproperties.JPropertyIncorrectType;
+import com.io7m.jproperties.JPropertyNonexistent;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.VectorI4F;
@@ -124,29 +127,38 @@ import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;
 import com.io7m.sombrero.core.SoShaderResolver;
 import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.valid4j.Assertive;
 
 import javax.swing.SwingUtilities;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 // CHECKSTYLE:OFF
 
 public final class ExampleMinimal implements R2ExampleCustomType
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(ExampleMinimal.class);
+  }
+
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
   private JCGLClearSpecification screen_clear_spec;
   private R2SceneStencilsType stencils;
   private R2ProjectionFOV projection;
   private R2InstanceSingleType instance;
-  private R2SceneOpaquesType opaques;
   private R2SceneLightsType lights;
 
   private R2GeometryBufferType gbuffer;
   private R2LightBufferType lbuffer;
   private R2ImageBufferType ibuffer;
+  private R2SceneOpaquesType opaques;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType> geom_shader;
   private R2SurfaceShaderBasicReflectiveParametersType geom_shader_params;
@@ -400,11 +412,23 @@ public final class ExampleMinimal implements R2ExampleCustomType
     }
 
     this.profiling_window = new AtomicReference<>();
-    SwingUtilities.invokeLater(() -> {
-      final ExampleProfilingWindow frame = new ExampleProfilingWindow();
-      frame.setVisible(true);
-      this.profiling_window.set(frame);
-    });
+
+    try {
+      final Properties props = System.getProperties();
+      final boolean profiling = JProperties.getBooleanOptional(
+        props, "com.io7m.r2.profiling", false);
+      if (profiling) {
+        SwingUtilities.invokeLater(() -> {
+          final ExampleProfilingWindow frame = new ExampleProfilingWindow();
+          frame.setVisible(true);
+          this.profiling_window.set(frame);
+        });
+      }
+    } catch (final JPropertyNonexistent e) {
+      LOG.error("missing system property: ", e);
+    } catch (final JPropertyIncorrectType e) {
+      LOG.error("incorrect system property type: ", e);
+    }
 
     this.text_buffer = new StringBuilder(256);
     this.text = "";
@@ -425,11 +449,9 @@ public final class ExampleMinimal implements R2ExampleCustomType
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
 
     this.opaques.opaquesReset();
-    this.opaques.opaquesAddSingleInstance(
-      this.instance, this.geom_material);
+    this.opaques.opaquesAddSingleInstance(this.instance, this.geom_material);
 
     this.lights.lightsReset();
-
     final R2SceneLightsGroupType lg = this.lights.lightsGetGroup(1);
     lg.lightGroupAddSingle(
       this.light_ambient, this.light_ambient_shader);
@@ -598,26 +620,28 @@ public final class ExampleMinimal implements R2ExampleCustomType
         pro.getMostRecentlyMeasuredFrame();
 
       if (frame % 60 == 0) {
-        this.text_buffer.setLength(0);
-        pro_measure.iterate(this, (tt, depth, fm) -> {
-          final double nanos = fm.getElapsedTimeTotal();
-          final double millis = nanos / 1_000_000.0;
+        if (this.profiling_window.get() != null) {
+          this.text_buffer.setLength(0);
+          pro_measure.iterate(this, (tt, depth, fm) -> {
+            for (int index = 0; index < depth; ++index) {
+              tt.text_buffer.append("    ");
+            }
+            tt.text_buffer.append(fm.getName());
+            tt.text_buffer.append(" ");
 
-          for (int index = 0; index < depth; ++index) {
-            tt.text_buffer.append("    ");
-          }
-          tt.text_buffer.append(fm.getName());
-          tt.text_buffer.append(" ");
-          tt.text_buffer.append(String.format("%.6f", Double.valueOf(millis)));
-          tt.text_buffer.append("ms");
-          tt.text_buffer.append(System.lineSeparator());
-          return JCGLProfilingIteration.CONTINUE;
-        });
-        this.text = this.text_buffer.toString();
-        this.text_buffer.setLength(0);
+            final double nanos = (double) fm.getElapsedTimeTotal();
+            final double millis = nanos / 1_000_000.0;
+            tt.text_buffer.append(String.format("%.6f", Double.valueOf(millis)));
+            tt.text_buffer.append("ms");
+            tt.text_buffer.append(System.lineSeparator());
+            return JCGLProfilingIteration.CONTINUE;
+          });
+          this.text = this.text_buffer.toString();
+          this.text_buffer.setLength(0);
 
-        SwingUtilities.invokeLater(
-          () -> this.profiling_window.get().sendText(this.text));
+          SwingUtilities.invokeLater(
+            () -> this.profiling_window.get().sendText(this.text));
+        }
       }
     }
   }
