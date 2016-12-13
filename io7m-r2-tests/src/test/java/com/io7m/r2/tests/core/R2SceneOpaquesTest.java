@@ -28,6 +28,7 @@ import com.io7m.r2.core.R2MaterialType;
 import com.io7m.r2.core.R2RendererExceptionInstanceAlreadyVisible;
 import com.io7m.r2.core.R2SceneOpaques;
 import com.io7m.r2.core.R2SceneOpaquesConsumerType;
+import com.io7m.r2.core.R2SceneOpaquesReadableType;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
@@ -60,7 +61,7 @@ public final class R2SceneOpaquesTest
   {
     final AtomicBoolean finished = new AtomicBoolean(false);
     final AtomicBoolean started = new AtomicBoolean(false);
-    final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
+    final R2SceneOpaquesReadableType o = R2SceneOpaques.newOpaques();
 
     o.opaquesExecute(new UnreachableConsumer()
     {

@@ -23,8 +23,6 @@ import com.io7m.r2.core.R2TextureCubeUsableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
-import java.util.Properties;
-
 /**
  * Services provided to examples.
  */

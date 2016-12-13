@@ -63,7 +63,7 @@ import com.io7m.r2.core.R2SceneLightsConsumerType;
 import com.io7m.r2.core.R2SceneLightsGroupConsumerType;
 import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaquesConsumerType;
-import com.io7m.r2.core.R2SceneOpaquesType;
+import com.io7m.r2.core.R2SceneOpaquesReadableType;
 import com.io7m.r2.core.R2TransformST;
 import com.io7m.r2.core.R2UnitSphereUsableType;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugColorVerticesWorldPosition;
@@ -450,7 +450,7 @@ public final class R2DebugVisualizerRenderer implements
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
-    final R2SceneOpaquesType so = s.opaqueInstances();
+    final R2SceneOpaquesReadableType so = s.opaqueInstances();
     final JCGLViewportsType g_v = this.g.getViewports();
 
     final long instance_count = so.opaquesCount();

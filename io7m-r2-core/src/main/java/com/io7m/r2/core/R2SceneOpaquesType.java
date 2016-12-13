@@ -20,7 +20,7 @@ package com.io7m.r2.core;
  * The set of opaque instances in a scene.
  */
 
-public interface R2SceneOpaquesType
+public interface R2SceneOpaquesType extends R2SceneOpaquesReadableType
 {
   /**
    * Remove all instances from the scene.
@@ -91,19 +91,4 @@ public interface R2SceneOpaquesType
     R2InstanceBatchedType i,
     R2MaterialOpaqueBatchedType<M> m,
     int group);
-
-  /**
-   * Batch the instances and pass them to the given consumer for rendering.
-   *
-   * @param c The consumer
-   */
-
-  void opaquesExecute(
-    R2SceneOpaquesConsumerType c);
-
-  /**
-   * @return The number of instances in the scene
-   */
-
-  long opaquesCount();
 }

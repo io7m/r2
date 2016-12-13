@@ -47,6 +47,7 @@ import com.io7m.r2.core.R2Matrices;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2SceneOpaques;
+import com.io7m.r2.core.R2SceneOpaquesReadableType;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
@@ -65,7 +66,7 @@ import java.util.Optional;
 
 public abstract class R2GeometryRendererContract extends R2JCGLContract
 {
-  private static R2SceneOpaquesType newScene(
+  private static R2SceneOpaquesReadableType newScene(
     final JCGLInterfaceGL33Type g,
     final R2TextureDefaultsType td,
     final R2UnitQuadType quad,
@@ -152,7 +153,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
     final JCGLProfilingContextType pro_root =
       pro_frame.getChildContext("main");
 
-    final R2SceneOpaquesType s =
+    final R2SceneOpaquesReadableType s =
       R2GeometryRendererContract.newScene(g, td, quad, id_pool);
 
     final R2ProjectionOrthographic proj =
@@ -208,7 +209,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
     final JCGLProfilingContextType pro_root =
       pro_frame.getChildContext("main");
 
-    final R2SceneOpaquesType s =
+    final R2SceneOpaquesReadableType s =
       R2GeometryRendererContract.newScene(g, td, quad, id_pool);
 
     final R2ProjectionOrthographic proj =
@@ -273,7 +274,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
     final JCGLProfilingContextType pro_root =
       pro_frame.getChildContext("main");
 
-    final R2SceneOpaquesType s =
+    final R2SceneOpaquesReadableType s =
       R2GeometryRendererContract.newScene(g, td, quad, id_pool);
 
     final R2ProjectionOrthographic proj =
