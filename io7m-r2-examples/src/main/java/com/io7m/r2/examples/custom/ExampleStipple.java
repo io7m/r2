@@ -435,8 +435,8 @@ public final class ExampleStipple implements R2ExampleCustomType
       this.depth_params.setAlphaDiscardThreshold(0.1f);
       this.depth_params.setAlbedoTexture(
         this.main.getTextureDefaults().texture2DWhite());
-      this.depth_material = R2MaterialDepthSingle.newMaterial(
-        m.getIDPool(), this.depth_shader, this.depth_params);
+      this.depth_material = R2MaterialDepthSingle.of(
+        id_pool.freshID(), this.depth_shader, this.depth_params);
     }
 
     this.stipple_texture =
@@ -454,8 +454,10 @@ public final class ExampleStipple implements R2ExampleCustomType
         this.main.getTextureDefaults().texture2DWhite());
       this.depth_stippled_params.setStippleNoiseTexture(
         this.stipple_texture);
-      this.depth_stippled_material = R2MaterialDepthSingle.newMaterial(
-        m.getIDPool(), this.depth_stippled_shader, this.depth_stippled_params);
+      this.depth_stippled_material = R2MaterialDepthSingle.of(
+        id_pool.freshID(),
+        this.depth_stippled_shader,
+        this.depth_stippled_params);
     }
 
     {
@@ -474,8 +476,10 @@ public final class ExampleStipple implements R2ExampleCustomType
         this.geom_stipple_shader_params = spb;
       }
 
-      this.geom_stipple_material = R2MaterialOpaqueSingle.newMaterial(
-        id_pool, this.geom_stipple_shader, this.geom_stipple_shader_params);
+      this.geom_stipple_material = R2MaterialOpaqueSingle.of(
+        id_pool.freshID(),
+        this.geom_stipple_shader,
+        this.geom_stipple_shader_params);
     }
 
     this.stipple_sphere_transform = R2TransformST.newTransform();
@@ -501,8 +505,8 @@ public final class ExampleStipple implements R2ExampleCustomType
         this.geom_shader_params = spb;
       }
 
-      this.geom_material = R2MaterialOpaqueSingle.newMaterial(
-        id_pool, this.geom_shader, this.geom_shader_params);
+      this.geom_material = R2MaterialOpaqueSingle.of(
+        id_pool.freshID(), this.geom_shader, this.geom_shader_params);
     }
 
     this.light_ambient_shader =

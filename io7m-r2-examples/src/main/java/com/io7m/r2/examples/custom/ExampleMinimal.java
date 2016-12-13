@@ -306,8 +306,8 @@ public final class ExampleMinimal implements R2ExampleCustomType
     this.depth_params.setAlphaDiscardThreshold(0.1f);
     this.depth_params.setAlbedoTexture(
       this.main.getTextureDefaults().texture2DWhite());
-    this.depth_material = R2MaterialDepthSingle.newMaterial(
-      m.getIDPool(), this.depth_shader, this.depth_params);
+    this.depth_material = R2MaterialDepthSingle.of(
+      id_pool.freshID(), this.depth_shader, this.depth_params);
 
     this.geom_shader =
       R2SurfaceShaderBasicReflectiveSingle.newShader(
@@ -325,8 +325,8 @@ public final class ExampleMinimal implements R2ExampleCustomType
       this.geom_shader_params = spb.build();
     }
 
-    this.geom_material = R2MaterialOpaqueSingle.newMaterial(
-      id_pool, this.geom_shader, this.geom_shader_params);
+    this.geom_material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.geom_shader, this.geom_shader_params);
 
     this.light_ambient_shader =
       R2LightShaderAmbientSingle.newShader(gx.getShaders(), sources, id_pool);
@@ -631,7 +631,9 @@ public final class ExampleMinimal implements R2ExampleCustomType
 
             final double nanos = (double) fm.getElapsedTimeTotal();
             final double millis = nanos / 1_000_000.0;
-            tt.text_buffer.append(String.format("%.6f", Double.valueOf(millis)));
+            tt.text_buffer.append(String.format(
+              "%.6f",
+              Double.valueOf(millis)));
             tt.text_buffer.append("ms");
             tt.text_buffer.append(System.lineSeparator());
             return JCGLProfilingIteration.CONTINUE;

@@ -120,7 +120,7 @@ public abstract class R2DepthRendererContract extends R2JCGLContract
     ds_param.setAlbedoTexture(td.texture2DWhite());
 
     final R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> mat =
-      R2MaterialDepthSingle.newMaterial(id_pool, ds, ds_param);
+      R2MaterialDepthSingle.of(id_pool.freshID(), ds, ds_param);
 
     final R2ProjectionOrthographic proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());

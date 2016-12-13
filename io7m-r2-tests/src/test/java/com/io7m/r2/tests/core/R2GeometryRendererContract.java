@@ -92,7 +92,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
       R2SurfaceShaderBasicParameters.of(td);
 
     final R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> mat =
-      R2MaterialOpaqueSingle.newMaterial(id_pool, ds, ds_param);
+      R2MaterialOpaqueSingle.of(id_pool.freshID(), ds, ds_param);
 
     final R2SceneOpaquesType s = R2SceneOpaques.newOpaques();
     s.opaquesAddSingleInstance(i, mat);

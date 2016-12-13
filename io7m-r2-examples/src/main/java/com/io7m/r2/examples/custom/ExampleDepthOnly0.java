@@ -164,10 +164,8 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
     this.shader_params =
       R2SurfaceShaderBasicParameters.of(m.getTextureDefaults());
 
-    this.material = R2MaterialOpaqueSingle.newMaterial(
-      id_pool,
-      this.shader,
-      this.shader_params);
+    this.material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.shader, this.shader_params);
 
     this.depth_shader_params =
       R2DepthShaderBasicParametersMutable.create();
@@ -177,8 +175,8 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
     this.depth_shader =
       R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     this.depth_material =
-      R2MaterialDepthSingle.newMaterial(
-        id_pool, this.depth_shader, this.depth_shader_params);
+      R2MaterialDepthSingle.of(
+        id_pool.freshID(), this.depth_shader, this.depth_shader_params);
   }
 
   @Override

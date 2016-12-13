@@ -399,16 +399,13 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     this.geom_shader_params.setSpecularColor(
       new PVectorM3F<>(1.0f, 1.0f, 1.0f));
     this.geom_shader_params.setSpecularExponent(64.0f);
-    this.geom_material = R2MaterialOpaqueSingle.newMaterial(
-      id_pool, this.geom_shader, this.geom_shader_params);
+    this.geom_material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.geom_shader, this.geom_shader_params);
 
     this.batched_geom_shader =
-      R2SurfaceShaderBasicBatched.newShader(
-        g.getShaders(),
-        sources,
-        id_pool);
-    this.batched_geom_material = R2MaterialOpaqueBatched.newMaterial(
-      id_pool, this.batched_geom_shader, this.geom_shader_params);
+      R2SurfaceShaderBasicBatched.newShader(g.getShaders(), sources, id_pool);
+    this.batched_geom_material = R2MaterialOpaqueBatched.of(
+      id_pool.freshID(), this.batched_geom_shader, this.geom_shader_params);
 
     {
       final JCGLClearSpecification.Builder csb =

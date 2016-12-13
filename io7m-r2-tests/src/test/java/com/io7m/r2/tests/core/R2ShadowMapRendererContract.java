@@ -233,7 +233,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> ds =
       R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     final R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> mat =
-      R2MaterialDepthSingle.newMaterial(id_pool, ds, ds_param);
+      R2MaterialDepthSingle.of(id_pool.freshID(), ds, ds_param);
 
     final JCGLProjectionMatricesType pm =
       JCGLProjectionMatrices.newMatrices();
@@ -352,7 +352,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> ds =
       R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     final R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> mat =
-      R2MaterialDepthSingle.newMaterial(id_pool, ds, ds_param);
+      R2MaterialDepthSingle.of(id_pool.freshID(), ds, ds_param);
 
     final JCGLProjectionMatricesType pm =
       JCGLProjectionMatrices.newMatrices();

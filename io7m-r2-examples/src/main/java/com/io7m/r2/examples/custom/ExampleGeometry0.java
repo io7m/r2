@@ -31,6 +31,7 @@ import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
+import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueSingle;
@@ -119,9 +120,10 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
     final R2TransformSiOT transform = R2TransformSiOT.newTransform();
+    final R2IDPoolType id_pool = m.getIDPool();
 
     this.instance = R2InstanceSingle.of(
-      m.getIDPool().freshID(),
+      id_pool.freshID(),
       m.getUnitQuad().arrayObject(),
       transform,
       PMatrixI3x3F.identity());
@@ -137,14 +139,12 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
 
     this.shader =
       R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(), sources, m.getIDPool());
+        g.getShaders(), sources, id_pool);
     this.shader_params =
       R2SurfaceShaderBasicParameters.of(m.getTextureDefaults());
 
-    this.material = R2MaterialOpaqueSingle.newMaterial(
-      m.getIDPool(),
-      this.shader,
-      this.shader_params);
+    this.material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.shader, this.shader_params);
   }
 
   @Override

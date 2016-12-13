@@ -69,6 +69,7 @@ public final class R2SurfaceShaderBasicStippledSingle extends
   private final JCGLProgramUniformType u_stipple_threshold;
   private final JCGLProgramUniformType u_viewport_inverse_width;
   private final JCGLProgramUniformType u_viewport_inverse_height;
+  private final VectorM2F noise_uv_scale;
   private JCGLTextureUnitType unit_albedo;
   private JCGLTextureUnitType unit_emission;
   private JCGLTextureUnitType unit_normal;
@@ -76,7 +77,6 @@ public final class R2SurfaceShaderBasicStippledSingle extends
   private JCGLTextureUnitType unit_stipple;
   private long viewport_w;
   private long viewport_h;
-  private final VectorM2F noise_uv_scale;
 
   private R2SurfaceShaderBasicStippledSingle(
     final JCGLShadersType in_shaders,

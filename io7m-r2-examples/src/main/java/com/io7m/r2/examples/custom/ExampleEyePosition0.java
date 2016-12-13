@@ -193,10 +193,8 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
     this.shader_params =
       R2SurfaceShaderBasicParameters.of(m.getTextureDefaults());
 
-    this.material = R2MaterialOpaqueSingle.newMaterial(
-      id_pool,
-      this.shader,
-      this.shader_params);
+    this.material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.shader, this.shader_params);
 
     {
       final JCGLClearSpecification.Builder csb =
