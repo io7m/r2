@@ -16,76 +16,55 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.jcanephora.core.JCGLTexture2DType;
-import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
+import com.io7m.jcanephora.core.JCGLTextureCubeType;
+import com.io7m.jcanephora.core.JCGLTextureCubeUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jnull.NullCheck;
+import org.immutables.value.Value;
 
 import java.util.function.BiFunction;
 
 /**
- * A simple static texture.
+ * A simple static cube texture.
  */
 
-public final class R2Texture2DStatic implements R2Texture2DType
+@R2ImmutableStyleType
+@Value.Immutable
+public interface R2TextureCubeStaticType extends R2TextureCubeType
 {
-  private final JCGLTexture2DType texture;
+  @Override
+  @Value.Parameter
+  JCGLTextureCubeType textureWritable();
 
-  private R2Texture2DStatic(
-    final JCGLTexture2DType in_texture)
+  @Override
+  default JCGLTextureCubeUsableType texture()
   {
-    this.texture = NullCheck.notNull(in_texture);
-  }
-
-  /**
-   * Wrap an existing texture.
-   *
-   * @param t The existing texture
-   *
-   * @return A texture
-   */
-
-  public static R2Texture2DType of(final JCGLTexture2DType t)
-  {
-    return new R2Texture2DStatic(t);
+    return this.textureWritable();
   }
 
   @Override
-  public void delete(
+  default boolean isDeleted()
+  {
+    return this.textureWritable().isDeleted();
+  }
+
+  @Override
+  default void delete(
     final JCGLInterfaceGL33Type g)
     throws R2Exception
   {
-    if (!this.texture.isDeleted()) {
+    if (!this.textureWritable().isDeleted()) {
       final JCGLTexturesType g_tx = g.getTextures();
-      g_tx.texture2DDelete(this.texture);
+      g_tx.textureCubeDelete(this.textureWritable());
     }
   }
 
   @Override
-  public JCGLTexture2DUsableType texture()
-  {
-    return this.texture;
-  }
-
-  @Override
-  public boolean isDeleted()
-  {
-    return this.texture.isDeleted();
-  }
-
-  @Override
-  public JCGLTexture2DType textureWritable()
-  {
-    return this.texture;
-  }
-
-  @Override
-  public <A, B> B matchTexture(
+  default <A, B> B matchTexture(
     final A context,
     final BiFunction<A, R2Texture2DUsableType, B> on_2d,
     final BiFunction<A, R2TextureCubeUsableType, B> on_cube)
   {
-    return on_2d.apply(context, this);
+    return on_cube.apply(context, this);
   }
 }
