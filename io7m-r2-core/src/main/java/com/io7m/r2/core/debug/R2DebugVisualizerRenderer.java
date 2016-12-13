@@ -197,7 +197,7 @@ public final class R2DebugVisualizerRenderer implements
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
-    final R2DebugVisualizerRendererParametersType s)
+    final R2DebugVisualizerRendererParameters s)
   {
     NullCheck.notNull(area);
     NullCheck.notNull(pc);
