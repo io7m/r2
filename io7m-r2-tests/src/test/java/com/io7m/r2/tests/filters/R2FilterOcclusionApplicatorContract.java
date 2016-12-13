@@ -43,8 +43,7 @@ import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterOcclusionApplicator;
-import com.io7m.r2.filters.R2FilterOcclusionApplicatorParametersMutable;
-import com.io7m.r2.filters.R2FilterOcclusionApplicatorParametersType;
+import com.io7m.r2.filters.R2FilterOcclusionApplicatorParameters;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
@@ -75,7 +74,7 @@ public abstract class R2FilterOcclusionApplicatorContract extends R2JCGLContract
     final R2UnitQuadType quad =
       R2UnitQuad.newUnitQuad(g);
 
-    final R2FilterType<R2FilterOcclusionApplicatorParametersType> f =
+    final R2FilterType<R2FilterOcclusionApplicatorParameters> f =
       R2FilterOcclusionApplicator.newFilter(sources, td, g, id, quad);
 
     Assert.assertFalse(f.isDeleted());
@@ -127,7 +126,7 @@ public abstract class R2FilterOcclusionApplicatorContract extends R2JCGLContract
         area,
         R2LightBufferComponents.R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR));
 
-    final R2FilterType<R2FilterOcclusionApplicatorParametersType> f =
+    final R2FilterType<R2FilterOcclusionApplicatorParameters> f =
       R2FilterOcclusionApplicator.newFilter(sources, td, g, id, quad);
 
     g_fb.framebufferDrawUnbind();
@@ -136,11 +135,12 @@ public abstract class R2FilterOcclusionApplicatorContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterOcclusionApplicatorParametersMutable params =
-      R2FilterOcclusionApplicatorParametersMutable.create();
-    params.setIntensity(1.0f);
-    params.setOcclusionTexture(td.texture2DBlack());
-    params.setOutputLightBuffer(lbuffer);
+    final R2FilterOcclusionApplicatorParameters params =
+      R2FilterOcclusionApplicatorParameters.builder()
+        .setIntensity(1.0f)
+        .setOcclusionTexture(td.texture2DBlack())
+        .setOutputLightBuffer(lbuffer)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 

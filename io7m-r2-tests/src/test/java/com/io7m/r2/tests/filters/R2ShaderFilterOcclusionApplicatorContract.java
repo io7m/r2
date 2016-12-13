@@ -37,24 +37,20 @@ import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterOcclusionApplicator;
-import com.io7m.r2.filters.R2ShaderFilterOcclusionApplicatorParametersMutable;
-import com.io7m.r2.filters.R2ShaderFilterOcclusionApplicatorParametersType;
+import com.io7m.r2.filters.R2ShaderFilterOcclusionApplicatorParameters;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderFilterOcclusionApplicatorContract extends
-  R2ShaderFilterContract<R2ShaderFilterOcclusionApplicatorParametersType,
-    R2ShaderFilterOcclusionApplicatorParametersMutable>
+  R2ShaderFilterContract<R2ShaderFilterOcclusionApplicatorParameters,
+    R2ShaderFilterOcclusionApplicatorParameters>
 {
   @Override
-  protected final R2ShaderFilterOcclusionApplicatorParametersMutable
+  protected final R2ShaderFilterOcclusionApplicatorParameters
   newParameters(
     final JCGLInterfaceGL33Type g)
   {
-    final R2ShaderFilterOcclusionApplicatorParametersMutable p =
-      R2ShaderFilterOcclusionApplicatorParametersMutable.create();
-
     final JCGLTexturesType g_tex = g.getTextures();
 
     final JCGLTextureUnitAllocatorType tp =
@@ -78,13 +74,13 @@ public abstract class R2ShaderFilterOcclusionApplicatorContract extends
           JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
 
-      p.setTexture(R2Texture2DStatic.of(ip.getRight()));
-      p.setIntensity(1.0f);
+      return R2ShaderFilterOcclusionApplicatorParameters.builder()
+        .setTexture(R2Texture2DStatic.of(ip.getRight()))
+        .setIntensity(1.0f)
+        .build();
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
-
-    return p;
   }
 
   @Test
@@ -97,7 +93,7 @@ public abstract class R2ShaderFilterOcclusionApplicatorContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderFilterType<
-      R2ShaderFilterOcclusionApplicatorParametersType> s =
+      R2ShaderFilterOcclusionApplicatorParameters> s =
       R2ShaderFilterOcclusionApplicator.newShader(
         g.getShaders(),
         sources,

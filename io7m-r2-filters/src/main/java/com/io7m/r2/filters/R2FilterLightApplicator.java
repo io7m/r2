@@ -66,26 +66,19 @@ public final class R2FilterLightApplicator implements
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_DEPTH);
   }
 
-  private final
-  R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType> shader;
-
+  private final R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters> shader;
   private final JCGLInterfaceGL33Type g;
   private final R2UnitQuadUsableType quad;
-  private final R2ShaderFilterLightApplicatorParametersMutable shader_params;
   private final JCGLRenderStateMutable render_state;
 
   private R2FilterLightApplicator(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType>
-      in_shader,
+    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters> in_shader,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
-
-    this.shader_params =
-      R2ShaderFilterLightApplicatorParametersMutable.create();
     this.render_state = JCGLRenderStateMutable.create();
   }
 
@@ -112,11 +105,9 @@ public final class R2FilterLightApplicator implements
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_quad);
 
-    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType> s =
+    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters> s =
       R2ShaderFilterLightApplicator.newShader(
-        in_g.getShaders(),
-        in_shader_env,
-        in_pool);
+        in_g.getShaders(), in_shader_env, in_pool);
 
     return new R2FilterLightApplicator(in_g, s, in_quad);
   }
@@ -195,13 +186,17 @@ public final class R2FilterLightApplicator implements
 
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
-      this.shader_params.setAlbedoTexture(gb.albedoEmissiveTexture());
-      this.shader_params.setDiffuseTexture(ldiff);
-      this.shader_params.setSpecularTexture(lspec);
+      final R2ShaderFilterLightApplicatorParameters sp =
+        R2ShaderFilterLightApplicatorParameters
+          .builder()
+          .setAlbedoTexture(gb.albedoEmissiveTexture())
+          .setDiffuseTexture(ldiff)
+          .setSpecularTexture(lspec)
+          .build();
 
       try {
         this.shader.onActivate(g_sh);
-        this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
+        this.shader.onReceiveFilterValues(g_tx, g_sh, c, sp);
         this.shader.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());

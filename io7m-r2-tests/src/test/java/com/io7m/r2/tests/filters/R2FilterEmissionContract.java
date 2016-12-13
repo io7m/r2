@@ -46,12 +46,10 @@ import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2BlurParameters;
-import com.io7m.r2.filters.R2BlurParametersMutable;
 import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
+import com.io7m.r2.filters.R2FilterBoxBlurParameters;
 import com.io7m.r2.filters.R2FilterEmission;
-import com.io7m.r2.filters.R2FilterEmissionParametersMutable;
-import com.io7m.r2.filters.R2FilterEmissionParametersType;
+import com.io7m.r2.filters.R2FilterEmissionParameters;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
@@ -88,14 +86,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       R2ImageBufferPool.newPool(g, Long.MAX_VALUE, Long.MAX_VALUE);
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> fblur =
       R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
-    final R2FilterType<R2FilterEmissionParametersType> f =
+    final R2FilterType<R2FilterEmissionParameters> f =
       R2FilterEmission.newFilter(g, sources, id, fblur, rtp, quad);
 
     Assert.assertFalse(fblur.isDeleted());
@@ -140,14 +138,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> fblur =
       R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
-    final R2FilterType<R2FilterEmissionParametersType> f =
+    final R2FilterType<R2FilterEmissionParameters> f =
       R2FilterEmission.newFilter(g, sources, id, fblur, rtp, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
@@ -157,14 +155,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterEmissionParametersMutable params =
-      R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.texture2DWhite());
-    params.setBlurParameters(Optional.empty());
-    params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.empty());
-    params.setScale(1.0f);
-    Assert.assertTrue(params.isInitialized());
+    final R2FilterEmissionParameters params =
+      R2FilterEmissionParameters.builder()
+        .setAlbedoEmissionMap(td.texture2DWhite())
+        .setBlurParameters(Optional.empty())
+        .setOutputViewport(area)
+        .setOutputFramebuffer(Optional.empty())
+        .setScale(1.0f)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 
@@ -207,14 +205,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> fblur =
       R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
-    final R2FilterType<R2FilterEmissionParametersType> f =
+    final R2FilterType<R2FilterEmissionParameters> f =
       R2FilterEmission.newFilter(g, sources, id, fblur, rtp, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
@@ -231,14 +229,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterEmissionParametersMutable params =
-      R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.texture2DWhite());
-    params.setBlurParameters(Optional.empty());
-    params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()));
-    params.setScale(1.0f);
-    Assert.assertTrue(params.isInitialized());
+    final R2FilterEmissionParameters params =
+      R2FilterEmissionParameters.builder()
+        .setAlbedoEmissionMap(td.texture2DWhite())
+        .setBlurParameters(Optional.empty())
+        .setOutputViewport(area)
+        .setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()))
+        .setScale(1.0f)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 
@@ -281,14 +279,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> fblur =
       R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
-    final R2FilterType<R2FilterEmissionParametersType> f =
+    final R2FilterType<R2FilterEmissionParameters> f =
       R2FilterEmission.newFilter(g, sources, id, fblur, rtp, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
@@ -305,14 +303,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterEmissionParametersMutable params =
-      R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.texture2DWhite());
-    params.setBlurParameters(Optional.of(R2BlurParametersMutable.create()));
-    params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()));
-    params.setScale(1.0f);
-    Assert.assertTrue(params.isInitialized());
+    final R2FilterEmissionParameters params =
+      R2FilterEmissionParameters.builder()
+        .setAlbedoEmissionMap(td.texture2DWhite())
+        .setBlurParameters(Optional.of(R2BlurParameters.builder().build()))
+        .setOutputViewport(area)
+        .setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()))
+        .setScale(1.0f)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 
@@ -355,14 +353,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> fblur =
       R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
-    final R2FilterType<R2FilterEmissionParametersType> f =
+    final R2FilterType<R2FilterEmissionParameters> f =
       R2FilterEmission.newFilter(g, sources, id, fblur, rtp, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
@@ -379,18 +377,17 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterEmissionParametersMutable params =
-      R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.texture2DWhite());
-
     final R2BlurParameters.Builder bpb = R2BlurParameters.builder();
     bpb.setBlurScale(0.5f);
 
-    params.setBlurParameters(Optional.of(bpb.build()));
-    params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()));
-    params.setScale(0.5f);
-    Assert.assertTrue(params.isInitialized());
+    final R2FilterEmissionParameters params =
+      R2FilterEmissionParameters.builder()
+        .setAlbedoEmissionMap(td.texture2DWhite())
+        .setBlurParameters(Optional.of(bpb.build()))
+        .setOutputViewport(area)
+        .setOutputFramebuffer(Optional.of(ib.primaryFramebuffer()))
+        .setScale(0.5f)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 
@@ -433,14 +430,14 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> fblur =
       R2FilterBoxBlur.newFilter(sources, g, td, rtp, id, quad);
 
-    final R2FilterType<R2FilterEmissionParametersType> f =
+    final R2FilterType<R2FilterEmissionParameters> f =
       R2FilterEmission.newFilter(g, sources, id, fblur, rtp, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
@@ -457,18 +454,17 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterEmissionParametersMutable params =
-      R2FilterEmissionParametersMutable.create();
-    params.setAlbedoEmissionMap(td.texture2DWhite());
-
     final R2BlurParameters.Builder bpb = R2BlurParameters.builder();
     bpb.setBlurScale(0.5f);
 
-    params.setBlurParameters(Optional.of(bpb.build()));
-    params.setOutputViewport(area);
-    params.setOutputFramebuffer(Optional.empty());
-    params.setScale(0.5f);
-    Assert.assertTrue(params.isInitialized());
+    final R2FilterEmissionParameters params =
+      R2FilterEmissionParameters.builder()
+        .setAlbedoEmissionMap(td.texture2DWhite())
+        .setBlurParameters(Optional.of(bpb.build()))
+        .setOutputViewport(area)
+        .setOutputFramebuffer(Optional.empty())
+        .setScale(0.5f)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 

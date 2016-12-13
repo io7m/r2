@@ -40,16 +40,15 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2SSAOKernel;
 import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.filters.R2ShaderSSAO;
-import com.io7m.r2.filters.R2ShaderSSAOParametersMutable;
-import com.io7m.r2.filters.R2ShaderSSAOParametersType;
+import com.io7m.r2.filters.R2ShaderSSAOParameters;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderSSAOContract extends
-  R2ShaderFilterContract<R2ShaderSSAOParametersType,
-    R2ShaderSSAOParametersMutable>
+  R2ShaderFilterContract<R2ShaderSSAOParameters,
+    R2ShaderSSAOParameters>
 {
   @Test
   public final void testNew()
@@ -62,7 +61,7 @@ public abstract class R2ShaderSSAOContract extends
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
-    final R2ShaderFilterType<R2ShaderSSAOParametersType> s =
+    final R2ShaderFilterType<R2ShaderSSAOParameters> s =
       R2ShaderSSAO.newShader(
         g.getShaders(),
         sources,
@@ -74,12 +73,9 @@ public abstract class R2ShaderSSAOContract extends
   }
 
   @Override
-  protected final R2ShaderSSAOParametersMutable newParameters(
+  protected final R2ShaderSSAOParameters newParameters(
     final JCGLInterfaceGL33Type g)
   {
-    final R2ShaderSSAOParametersMutable p =
-      R2ShaderSSAOParametersMutable.create();
-
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLFramebuffersType g_fb = g.getFramebuffers();
 
@@ -111,18 +107,16 @@ public abstract class R2ShaderSSAOContract extends
             area, R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL));
       g_fb.framebufferDrawUnbind();
 
-      p.setGeometryBuffer(gb);
-      p.setKernel(R2SSAOKernel.newKernel(32));
-      p.setNoiseTexture(
-        R2SSAONoiseTexture.newNoiseTexture(g_tex, tc_alloc));
-
-      p.setViewport(area);
-      p.setViewMatrices(new R2EmptyObserverValues(proj));
+      return R2ShaderSSAOParameters.builder()
+        .setGeometryBuffer(gb)
+        .setKernel(R2SSAOKernel.newKernel(32))
+        .setNoiseTexture(R2SSAONoiseTexture.newNoiseTexture(g_tex, tc_alloc))
+        .setViewport(area)
+        .setViewMatrices(new R2EmptyObserverValues(proj))
+        .build();
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
-
-    return p;
   }
 
 }

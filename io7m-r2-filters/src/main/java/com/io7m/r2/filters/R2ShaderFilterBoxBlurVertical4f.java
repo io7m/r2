@@ -39,8 +39,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterBoxBlurVertical4f extends
-  R2AbstractShader<R2ShaderFilterBoxBlurParametersType>
-  implements R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType>
+  R2AbstractShader<R2ShaderFilterBoxBlurParameters>
+  implements R2ShaderFilterType<R2ShaderFilterBoxBlurParameters>
 {
   private final JCGLProgramUniformType u_texture;
   private final JCGLProgramUniformType u_blur_size;
@@ -85,7 +85,7 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterBoxBlurParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -96,10 +96,10 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
   }
 
   @Override
-  public Class<R2ShaderFilterBoxBlurParametersType>
+  public Class<R2ShaderFilterBoxBlurParameters>
   getShaderParametersType()
   {
-    return R2ShaderFilterBoxBlurParametersType.class;
+    return R2ShaderFilterBoxBlurParameters.class;
   }
 
   @Override
@@ -114,7 +114,7 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterBoxBlurParametersType values)
+    final R2ShaderFilterBoxBlurParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);

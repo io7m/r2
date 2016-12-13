@@ -54,7 +54,7 @@ import java.util.Set;
  */
 
 public final class R2FilterDebugEyePosition implements
-  R2FilterType<R2FilterDebugEyePositionParametersType>
+  R2FilterType<R2FilterDebugEyePositionParameters>
 {
   private static final Set<JCGLFramebufferBlitBuffer> DEPTH_STENCIL;
 
@@ -76,11 +76,11 @@ public final class R2FilterDebugEyePosition implements
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
+    this.quad = NullCheck.notNull(in_quad);
+
     this.shader = R2ShaderFilterDebugEyePosition.newShader(
       this.g.getShaders(), in_shader_env, in_pool);
-    this.render_state =
-      JCGLRenderStateMutable.create();
-    this.quad = NullCheck.notNull(in_quad);
+    this.render_state = JCGLRenderStateMutable.create();
   }
 
   /**
@@ -92,7 +92,7 @@ public final class R2FilterDebugEyePosition implements
    * @return A new renderer
    */
 
-  public static R2FilterType<R2FilterDebugEyePositionParametersType>
+  public static R2FilterType<R2FilterDebugEyePositionParameters>
   newRenderer(
     final JCGLInterfaceGL33Type in_g,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -121,7 +121,7 @@ public final class R2FilterDebugEyePosition implements
   public void runFilter(
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterDebugEyePositionParametersType parameters)
+    final R2FilterDebugEyePositionParameters parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
@@ -140,7 +140,7 @@ public final class R2FilterDebugEyePosition implements
 
   private void run(
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterDebugEyePositionParametersType parameters)
+    final R2FilterDebugEyePositionParameters parameters)
   {
     final R2GeometryBufferUsableType gbuffer =
       parameters.geometryBuffer();
@@ -160,7 +160,7 @@ public final class R2FilterDebugEyePosition implements
     try {
       g_fb.framebufferDrawBind(ebuffer.framebuffer());
 
-      /**
+      /*
        * Copy the contents of the depth/stencil attachment of the G-Buffer to
        * the current depth/stencil buffer.
        */

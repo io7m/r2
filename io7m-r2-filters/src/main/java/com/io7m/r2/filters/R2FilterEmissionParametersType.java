@@ -29,7 +29,6 @@ import java.util.Optional;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2FilterEmissionParametersType
 {
@@ -77,5 +76,5 @@ public interface R2FilterEmissionParametersType
    */
 
   @Value.Parameter
-  Optional<R2BlurParametersType> blurParameters();
+  Optional<R2BlurParameters> blurParameters();
 }

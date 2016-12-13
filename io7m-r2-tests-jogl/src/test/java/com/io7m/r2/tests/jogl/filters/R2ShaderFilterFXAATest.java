@@ -23,7 +23,7 @@ import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterFXAAQuality;
 import com.io7m.r2.filters.R2ShaderFilterFXAAA;
-import com.io7m.r2.filters.R2ShaderFilterFXAAParametersType;
+import com.io7m.r2.filters.R2ShaderFilterFXAAParameters;
 import com.io7m.r2.tests.filters.R2ShaderFilterFXAAContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
@@ -40,7 +40,7 @@ public final class R2ShaderFilterFXAATest extends
   }
 
   @Override
-  protected R2ShaderFilterType<R2ShaderFilterFXAAParametersType>
+  protected R2ShaderFilterType<R2ShaderFilterFXAAParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,

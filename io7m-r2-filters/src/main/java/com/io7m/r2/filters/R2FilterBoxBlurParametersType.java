@@ -39,7 +39,6 @@ import java.util.function.Function;
 
 @R2ImmutableStyleType
 @Value.Immutable
-@Value.Modifiable
 public interface R2FilterBoxBlurParametersType<
   SD extends R2RenderTargetDescriptionType,
   S extends R2RenderTargetUsableType<SD>,
@@ -89,7 +88,7 @@ public interface R2FilterBoxBlurParametersType<
 
   @Value.Parameter
   @Value.Default
-  default R2BlurParametersType blurParameters()
+  default R2BlurParameters blurParameters()
   {
     return R2BlurParameters.builder().build();
   }

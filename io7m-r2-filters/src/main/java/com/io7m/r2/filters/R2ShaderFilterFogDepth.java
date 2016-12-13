@@ -39,8 +39,8 @@ import java.util.Optional;
  */
 
 public abstract class R2ShaderFilterFogDepth extends
-  R2AbstractShader<R2ShaderFilterFogParametersType>
-  implements R2ShaderFilterType<R2ShaderFilterFogParametersType>
+  R2AbstractShader<R2ShaderFilterFogParameters>
+  implements R2ShaderFilterType<R2ShaderFilterFogParameters>
 {
   private final JCGLProgramUniformType u_image_texture;
   private final JCGLProgramUniformType u_image_depth_texture;
@@ -93,10 +93,10 @@ public abstract class R2ShaderFilterFogDepth extends
   }
 
   @Override
-  public final Class<R2ShaderFilterFogParametersType>
+  public final Class<R2ShaderFilterFogParameters>
   getShaderParametersType()
   {
-    return R2ShaderFilterFogParametersType.class;
+    return R2ShaderFilterFogParameters.class;
   }
 
   @Override
@@ -111,7 +111,7 @@ public abstract class R2ShaderFilterFogDepth extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterFogParametersType values)
+    final R2ShaderFilterFogParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);

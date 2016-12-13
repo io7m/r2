@@ -24,6 +24,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
@@ -32,21 +33,19 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
-import com.io7m.r2.filters.R2ShaderFilterFogDepthQuadratic;
 import com.io7m.r2.filters.R2ShaderFilterFogDepthQuadraticInverse;
-import com.io7m.r2.filters.R2ShaderFilterFogParametersMutable;
-import com.io7m.r2.filters.R2ShaderFilterFogParametersType;
+import com.io7m.r2.filters.R2ShaderFilterFogParameters;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderFilterFogDepthQuadraticInverseContract extends
-  R2ShaderFilterContract<R2ShaderFilterFogParametersType,
-    R2ShaderFilterFogParametersType>
+  R2ShaderFilterContract<R2ShaderFilterFogParameters,
+    R2ShaderFilterFogParameters>
 {
   @Override
-  protected final R2ShaderFilterFogParametersType
+  protected final R2ShaderFilterFogParameters
   newParameters(final JCGLInterfaceGL33Type g)
   {
     final JCGLTexturesType g_tex = g.getTextures();
@@ -59,19 +58,16 @@ public abstract class R2ShaderFilterFogDepthQuadraticInverseContract extends
       tc_root.unitContextNew();
     final R2TextureDefaultsType td =
       R2TextureDefaults.newDefaults(g_tex, tc_alloc);
-    final R2ShaderFilterFogParametersMutable p =
-      R2ShaderFilterFogParametersMutable.create();
 
-    p.setFogColor(new PVectorM3F<>(0.0f, 0.0f, 0.0f));
-    p.setImageDepthTexture(td.texture2DWhite());
-    p.setImageTexture(td.texture2DWhite());
-    p.setObserverValues(new R2EmptyObserverValues(R2ProjectionFOV.newFrustumWith(
-      JCGLProjectionMatrices.newMatrices(),
-      (float) Math.toRadians(90.0f),
-      1.0f,
-      0.0f,
-      100.0f)));
-    return p;
+    return R2ShaderFilterFogParameters.builder()
+      .setFogColor(new PVectorI3F<>(0.0f, 0.0f, 0.0f))
+      .setImageDepthTexture(td.texture2DWhite())
+      .setImageTexture(td.texture2DWhite())
+      .setObserverValues(new R2EmptyObserverValues(
+        R2ProjectionFOV.newFrustumWith(
+          JCGLProjectionMatrices.newMatrices(),
+          (float) Math.toRadians(90.0f), 1.0f, 0.0f, 100.0f)))
+      .build();
   }
 
   @Test
@@ -83,8 +79,11 @@ public abstract class R2ShaderFilterFogDepthQuadraticInverseContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderFilterType<R2ShaderFilterFogParametersType> s =
-      R2ShaderFilterFogDepthQuadraticInverse.newShader(g.getShaders(), sources, pool);
+    final R2ShaderFilterType<R2ShaderFilterFogParameters> s =
+      R2ShaderFilterFogDepthQuadraticInverse.newShader(
+        g.getShaders(),
+        sources,
+        pool);
     Assert.assertFalse(s.isDeleted());
     s.delete(g);
     Assert.assertTrue(s.isDeleted());

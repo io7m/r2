@@ -40,11 +40,11 @@ import java.util.function.Function;
 
 public final class R2TestContexts
 {
-  private static final JCGLImplementationJOGLType           IMPLEMENTATION;
+  private static final JCGLImplementationJOGLType IMPLEMENTATION;
   private static final Map<String, GLOffscreenAutoDrawable> CACHED_CONTEXTS;
-  private static final Logger                               LOG;
+  private static final Logger LOG;
   private static final Function<GLContext, GL3>
-                                                            GL_CONTEXT_GL3_SUPPLIER;
+    GL_CONTEXT_GL3_SUPPLIER;
 
   static {
     IMPLEMENTATION = JCGLImplementationJOGL.getInstance();

@@ -41,7 +41,6 @@ import java.util.function.Function;
 
 @R2ImmutableStyleType
 @Value.Immutable
-@Value.Modifiable
 public interface R2FilterBilateralBlurDepthAwareParametersType<
   SD extends R2RenderTargetDescriptionType,
   S extends R2RenderTargetUsableType<SD>,
@@ -115,7 +114,7 @@ public interface R2FilterBilateralBlurDepthAwareParametersType<
 
   @Value.Parameter
   @Value.Default
-  default R2BilateralBlurParametersType blurParameters()
+  default R2BilateralBlurParameters blurParameters()
   {
     return R2BilateralBlurParameters.builder().build();
   }

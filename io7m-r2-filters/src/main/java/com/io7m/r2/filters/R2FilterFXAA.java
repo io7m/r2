@@ -36,7 +36,6 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import org.valid4j.Assertive;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -50,24 +49,22 @@ import java.util.Map;
  * @see R2FilterFXAAParametersType#texture()
  */
 
-public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersType>
+public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParameters>
 {
   private final JCGLInterfaceGL33Type g;
-  private final Map<R2FilterFXAAQuality, R2ShaderFilterType<R2ShaderFilterFXAAParametersType>> shaders;
+  private final Map<R2FilterFXAAQuality, R2ShaderFilterType<R2ShaderFilterFXAAParameters>> shaders;
   private final R2UnitQuadUsableType quad;
-  private final R2ShaderFilterFXAAParametersMutable shader_params;
   private final JCGLRenderStateMutable render_state;
   private boolean deleted;
 
   private R2FilterFXAA(
     final JCGLInterfaceGL33Type in_g,
-    final EnumMap<R2FilterFXAAQuality, R2ShaderFilterType<R2ShaderFilterFXAAParametersType>> in_shaders,
+    final EnumMap<R2FilterFXAAQuality, R2ShaderFilterType<R2ShaderFilterFXAAParameters>> in_shaders,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
     this.shaders = NullCheck.notNull(in_shaders);
     this.quad = NullCheck.notNull(in_quad);
-    this.shader_params = R2ShaderFilterFXAAParametersMutable.create();
     this.render_state = JCGLRenderStateMutable.create();
   }
 
@@ -82,14 +79,14 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
    * @return A new filter
    */
 
-  public static R2FilterType<R2FilterFXAAParametersType> newFilter(
+  public static R2FilterType<R2FilterFXAAParameters> newFilter(
     final JCGLInterfaceGL33Type in_g,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_id_pool,
     final R2UnitQuadUsableType in_quad)
   {
     final EnumMap<R2FilterFXAAQuality,
-      R2ShaderFilterType<R2ShaderFilterFXAAParametersType>> sh =
+      R2ShaderFilterType<R2ShaderFilterFXAAParameters>> sh =
       new EnumMap<>(R2FilterFXAAQuality.class);
 
     final JCGLShadersType g_sh = in_g.getShaders();
@@ -109,7 +106,7 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
 
     if (!this.deleted) {
       for (final R2FilterFXAAQuality c : R2FilterFXAAQuality.values()) {
-        final R2ShaderFilterType<R2ShaderFilterFXAAParametersType> sh =
+        final R2ShaderFilterType<R2ShaderFilterFXAAParameters> sh =
           this.shaders.get(c);
         sh.delete(gx);
       }
@@ -127,7 +124,7 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
   public void runFilter(
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterFXAAParametersType parameters)
+    final R2FilterFXAAParameters parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
@@ -143,7 +140,7 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
 
   private void run(
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterFXAAParametersType parameters)
+    final R2FilterFXAAParameters parameters)
   {
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();
@@ -153,18 +150,17 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
 
     final R2Texture2DUsableType t = parameters.texture();
     final JCGLTextureUnitContextType c = uc.unitContextNew();
-    try {
-      this.shader_params.clear();
-      this.shader_params.setTexture(t);
-      this.shader_params.setEdgeThreshold(
-        parameters.edgeThreshold());
-      this.shader_params.setEdgeThresholdMinimum(
-        parameters.edgeThresholdMinimum());
-      this.shader_params.setSubPixelAliasingRemoval(
-        parameters.subPixelAliasingRemoval());
-      Assertive.ensure(this.shader_params.isInitialized());
 
-      final R2ShaderFilterType<R2ShaderFilterFXAAParametersType> sh =
+    try {
+      final R2ShaderFilterFXAAParameters sp =
+        R2ShaderFilterFXAAParameters.builder()
+          .setEdgeThreshold(parameters.edgeThreshold())
+          .setEdgeThresholdMinimum(parameters.edgeThresholdMinimum())
+          .setSubPixelAliasingRemoval(parameters.subPixelAliasingRemoval())
+          .setTexture(parameters.texture())
+          .build();
+
+      final R2ShaderFilterType<R2ShaderFilterFXAAParameters> sh =
         this.shaders.get(parameters.quality());
 
       g_v.viewportSet(t.texture().textureGetArea());
@@ -172,7 +168,7 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParametersTy
 
       try {
         sh.onActivate(g_sh);
-        sh.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
+        sh.onReceiveFilterValues(g_tx, g_sh, c, sp);
         sh.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());

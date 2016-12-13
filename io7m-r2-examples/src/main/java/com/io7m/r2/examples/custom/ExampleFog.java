@@ -41,7 +41,7 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
-import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.r2.core.R2CopyDepth;
 import com.io7m.r2.core.R2DepthAttachmentShare;
 import com.io7m.r2.core.R2FilterType;
@@ -101,27 +101,25 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
-import com.io7m.r2.filters.R2BlurParametersMutable;
+import com.io7m.r2.filters.R2BlurParameters;
 import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
+import com.io7m.r2.filters.R2FilterBoxBlurParameters;
 import com.io7m.r2.filters.R2FilterEmission;
-import com.io7m.r2.filters.R2FilterEmissionParametersMutable;
-import com.io7m.r2.filters.R2FilterEmissionParametersType;
+import com.io7m.r2.filters.R2FilterEmissionParameters;
 import com.io7m.r2.filters.R2FilterFXAA;
-import com.io7m.r2.filters.R2FilterFXAAParametersMutable;
-import com.io7m.r2.filters.R2FilterFXAAParametersType;
+import com.io7m.r2.filters.R2FilterFXAAParameters;
 import com.io7m.r2.filters.R2FilterFXAAQuality;
 import com.io7m.r2.filters.R2FilterFogDepth;
-import com.io7m.r2.filters.R2FilterFogParametersMutable;
-import com.io7m.r2.filters.R2FilterFogParametersType;
+import com.io7m.r2.filters.R2FilterFogParameters;
 import com.io7m.r2.filters.R2FilterFogProgression;
 import com.io7m.r2.filters.R2FilterLightApplicator;
-import com.io7m.r2.filters.R2FilterLightApplicatorParametersMutable;
+import com.io7m.r2.filters.R2FilterLightApplicatorParameters;
 import com.io7m.r2.filters.R2FilterLightApplicatorParametersType;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitCube;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.spaces.R2SpaceEyeType;
+import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;
@@ -129,7 +127,6 @@ import com.io7m.sombrero.core.SoShaderResolver;
 import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import javax.swing.SwingUtilities;
 import java.util.Optional;
@@ -176,13 +173,13 @@ public final class ExampleFog implements R2ExampleCustomType
   private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> depth_material;
 
   private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
-  private R2FilterLightApplicatorParametersMutable filter_light_params;
+  private R2FilterLightApplicatorParameters filter_light_params;
 
-  private R2FilterType<R2FilterFogParametersType> filter_fog;
-  private R2FilterFogParametersMutable filter_fog_params;
+  private R2FilterType<R2FilterFogParameters> filter_fog;
+  private R2FilterFogParameters.Builder filter_fog_params_builder;
 
-  private R2FilterType<R2FilterFXAAParametersType> filter_fxaa;
-  private R2FilterFXAAParametersMutable filter_fxaa_params;
+  private R2FilterType<R2FilterFXAAParameters> filter_fxaa;
+  private R2FilterFXAAParameters filter_fxaa_params;
 
   private R2MainType main;
 
@@ -201,14 +198,13 @@ public final class ExampleFog implements R2ExampleCustomType
   private R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool;
 
   private R2FilterType<
-    R2FilterBoxBlurParametersType<
+    R2FilterBoxBlurParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType>> filter_blur;
-  private R2FilterType<R2FilterEmissionParametersType> filter_emission;
-  private R2FilterEmissionParametersMutable filter_emission_params;
-  private R2BlurParametersMutable filter_emission_blur_params;
+  private R2FilterType<R2FilterEmissionParameters> filter_emission;
+  private R2FilterEmissionParameters filter_emission_params;
   private Random random;
 
   public ExampleFog()
@@ -286,8 +282,8 @@ public final class ExampleFog implements R2ExampleCustomType
         m.getIDPool(),
         m.getUnitQuad());
 
-    this.filter_fog_params =
-      R2FilterFogParametersMutable.create();
+    this.filter_fog_params_builder =
+      R2FilterFogParameters.builder();
 
     this.filter_fxaa =
       R2FilterFXAA.newFilter(
@@ -297,7 +293,13 @@ public final class ExampleFog implements R2ExampleCustomType
         m.getUnitQuad());
 
     this.filter_fxaa_params =
-      R2FilterFXAAParametersMutable.create();
+      R2FilterFXAAParameters.builder()
+        .setSubPixelAliasingRemoval(0.0f)
+        .setEdgeThreshold(0.333f)
+        .setEdgeThresholdMinimum(0.0833f)
+        .setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10)
+        .setTexture(this.ibuffer1.imageTexture())
+        .build();
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -391,8 +393,29 @@ public final class ExampleFog implements R2ExampleCustomType
       R2FilterLightApplicator.newFilter(sources, gx, id_pool, m.getUnitQuad());
 
     {
-      this.filter_light_params =
-        R2FilterLightApplicatorParametersMutable.create();
+      final R2FilterLightApplicatorParameters.Builder pb =
+        R2FilterLightApplicatorParameters.builder();
+      pb.setGeometryBuffer(this.gbuffer);
+      pb.setOutputViewport(this.ibuffer0.area());
+      pb.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
+      this.lbuffer.matchLightBuffer(
+        this,
+        (tt, lbdo) -> {
+          final R2TextureDefaultsType td = tt.main.getTextureDefaults();
+          pb.setLightDiffuseTexture(lbdo.diffuseTexture());
+          pb.setLightSpecularTexture(td.texture2DBlack());
+          return Unit.unit();
+        }, (tt, lbso) -> {
+          final R2TextureDefaultsType td = tt.main.getTextureDefaults();
+          pb.setLightDiffuseTexture(td.texture2DBlack());
+          pb.setLightSpecularTexture(lbso.specularTexture());
+          return Unit.unit();
+        }, (tt, lb) -> {
+          pb.setLightDiffuseTexture(lb.diffuseTexture());
+          pb.setLightSpecularTexture(lb.specularTexture());
+          return Unit.unit();
+        });
+      this.filter_light_params = pb.build();
     }
 
     {
@@ -408,9 +431,13 @@ public final class ExampleFog implements R2ExampleCustomType
         m.getUnitQuad());
 
       this.filter_emission_params =
-        R2FilterEmissionParametersMutable.create();
-      this.filter_emission_blur_params =
-        R2BlurParametersMutable.create();
+        R2FilterEmissionParameters.builder()
+          .setAlbedoEmissionMap(this.gbuffer.albedoEmissiveTexture())
+          .setBlurParameters(R2BlurParameters.builder().build())
+          .setOutputFramebuffer(this.ibuffer0.primaryFramebuffer())
+          .setOutputViewport(this.ibuffer0.area())
+          .setScale(0.25f)
+          .build();
 
       this.filter_emission = R2FilterEmission.newFilter(
         gx,
@@ -483,43 +510,27 @@ public final class ExampleFog implements R2ExampleCustomType
     }
 
     if (frame % 60 == 0) {
-      this.filter_fog_params.setFogColor(
-        new PVectorM3F<>(
-          this.random.nextFloat(),
-          this.random.nextFloat(),
-          this.random.nextFloat()));
-
-      final double near = this.random.nextDouble() * 10.0;
-      final double far = near + (this.random.nextDouble() * 40.0);
-      this.filter_fog_params.setFogNearPositiveZ((float) near);
-      this.filter_fog_params.setFogFarPositiveZ((float) far);
-
       final R2FilterFogProgression[] constants =
         R2FilterFogProgression.class.getEnumConstants();
       final int bound =
         constants.length;
       final R2FilterFogProgression p =
         constants[this.random.nextInt(bound)];
-      this.filter_fog_params.setProgression(p);
 
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(
-          "{} near {} far {} color {}",
-          this.filter_fog_params.progression(),
-          Float.valueOf(this.filter_fog_params.fogNearPositiveZ()),
-          Float.valueOf(this.filter_fog_params.fogFarPositiveZ()),
-          this.filter_fog_params.fogColor());
-      }
+      final double near = this.random.nextDouble() * 10.0;
+      final double far = near + (this.random.nextDouble() * 40.0);
+      final PVectorI3F<R2SpaceRGBType> color =
+        new PVectorI3F<>(
+          this.random.nextFloat(),
+          this.random.nextFloat(),
+          this.random.nextFloat());
+
+      this.filter_fog_params_builder
+        .setFogColor(color)
+        .setFogFarPositiveZ((float) far)
+        .setFogNearPositiveZ((float) near)
+        .setProgression(p);
     }
-
-    this.filter_fog_params.setFogColor(
-      new PVectorM3F<>(0.8f, 0.8f, 0.8f));
-    final double near = 2.0;
-    final double far = 30.0;
-    this.filter_fog_params.setFogNearPositiveZ((float) near);
-    this.filter_fog_params.setFogFarPositiveZ((float) far);
-    this.filter_fog_params.setProgression(
-      R2FilterFogProgression.FOG_QUADRATIC_INVERSE);
 
     {
       final R2MatricesType matrices = mx.getMatrices();
@@ -590,51 +601,11 @@ public final class ExampleFog implements R2ExampleCustomType
 
         g_fb.framebufferDrawBind(t.ibuffer0.primaryFramebuffer());
         t.ibuffer0.clearBoundPrimaryFramebuffer(t.g);
-        t.filter_light_params.clear();
-        t.filter_light_params.setGeometryBuffer(t.gbuffer);
-        t.filter_light_params.setOutputViewport(t.ibuffer0.area());
-        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED);
-        t.lbuffer.matchLightBuffer(
-          this,
-          (tt, lbdo) -> {
-            final R2TextureDefaultsType td = tt.main.getTextureDefaults();
-            tt.filter_light_params.setLightDiffuseTexture(
-              lbdo.diffuseTexture());
-            tt.filter_light_params.setLightSpecularTexture(
-              td.texture2DBlack());
-            return Unit.unit();
-          }, (tt, lbso) -> {
-            final R2TextureDefaultsType td = tt.main.getTextureDefaults();
-            tt.filter_light_params.setLightDiffuseTexture(
-              td.texture2DBlack());
-            tt.filter_light_params.setLightSpecularTexture(
-              lbso.specularTexture());
-            return Unit.unit();
-          }, (tt, lb) -> {
-            tt.filter_light_params.setLightDiffuseTexture(
-              lb.diffuseTexture());
-            tt.filter_light_params.setLightSpecularTexture(
-              lb.specularTexture());
-            return Unit.unit();
-          });
-        Assertive.require(t.filter_light_params.isInitialized());
         t.filter_light.runFilter(t.profiling_root, uc, t.filter_light_params);
 
         /*
          * Apply emission.
          */
-
-        t.filter_emission_params.clear();
-        t.filter_emission_params.setAlbedoEmissionMap(
-          t.gbuffer.albedoEmissiveTexture());
-        t.filter_emission_params.setBlurParameters(
-          t.filter_emission_blur_params);
-        t.filter_emission_params.setOutputFramebuffer(
-          Optional.of(t.ibuffer0.primaryFramebuffer()));
-        t.filter_emission_params.setOutputViewport(
-          t.ibuffer0.area());
-        t.filter_emission_params.setScale(0.25f);
-        Assertive.ensure(t.filter_emission_params.isInitialized());
 
         t.filter_emission.runFilter(
           t.profiling_root, uc, t.filter_emission_params);
@@ -645,13 +616,15 @@ public final class ExampleFog implements R2ExampleCustomType
 
         g_fb.framebufferDrawBind(t.ibuffer1.primaryFramebuffer());
         t.ibuffer1.clearBoundPrimaryFramebuffer(t.g);
-
-        t.filter_fog_params.setImageTexture(t.ibuffer0.imageTexture());
-        t.filter_fog_params.setImageDepthTexture(t.gbuffer.depthTexture());
-        t.filter_fog_params.setViewport(t.ibuffer1.area());
-        t.filter_fog_params.setObserverValues(mo);
-        Assertive.require(t.filter_fog_params.isInitialized());
-        t.filter_fog.runFilter(t.profiling_root, uc, t.filter_fog_params);
+        t.filter_fog.runFilter(
+          t.profiling_root,
+          uc,
+          t.filter_fog_params_builder
+            .setObserverValues(mo)
+            .setImageDepthTexture(t.gbuffer.depthTexture())
+            .setImageTexture(t.ibuffer0.imageTexture())
+            .setViewport(t.ibuffer1.area())
+            .build());
 
         /*
          * Filter the lit image with FXAA, writing it to the screen.
@@ -664,15 +637,7 @@ public final class ExampleFog implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-        t.filter_fxaa_params.clear();
-        t.filter_fxaa_params.setSubPixelAliasingRemoval(0.0f);
-        t.filter_fxaa_params.setEdgeThreshold(0.333f);
-        t.filter_fxaa_params.setEdgeThresholdMinimum(0.0833f);
-        t.filter_fxaa_params.setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10);
-        t.filter_fxaa_params.setTexture(t.ibuffer1.imageTexture());
-        Assertive.require(t.filter_fxaa_params.isInitialized());
         t.filter_fxaa.runFilter(t.profiling_root, uc, t.filter_fxaa_params);
-
         return Unit.unit();
       });
 

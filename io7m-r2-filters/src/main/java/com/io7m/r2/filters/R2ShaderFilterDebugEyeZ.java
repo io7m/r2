@@ -44,8 +44,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterDebugEyeZ extends
-  R2AbstractShader<R2FilterDebugEyeZParametersType>
-  implements R2ShaderFilterType<R2FilterDebugEyeZParametersType>
+  R2AbstractShader<R2FilterDebugEyeZParameters>
+  implements R2ShaderFilterType<R2FilterDebugEyeZParameters>
 {
   private final JCGLProgramUniformType u_gbuffer_albedo;
   private final JCGLProgramUniformType u_gbuffer_normal;
@@ -107,7 +107,7 @@ public final class R2ShaderFilterDebugEyeZ extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2FilterDebugEyeZParametersType> newShader(
+  public static R2ShaderFilterType<R2FilterDebugEyeZParameters> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
@@ -117,10 +117,10 @@ public final class R2ShaderFilterDebugEyeZ extends
   }
 
   @Override
-  public Class<R2FilterDebugEyeZParametersType>
+  public Class<R2FilterDebugEyeZParameters>
   getShaderParametersType()
   {
-    return R2FilterDebugEyeZParametersType.class;
+    return R2FilterDebugEyeZParameters.class;
   }
 
   @Override
@@ -135,14 +135,14 @@ public final class R2ShaderFilterDebugEyeZ extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2FilterDebugEyeZParametersType values)
+    final R2FilterDebugEyeZParameters values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);
     NullCheck.notNull(values);
 
-    /**
+    /*
      * Set each of the required G-Buffer textures.
      */
 
@@ -165,7 +165,7 @@ public final class R2ShaderFilterDebugEyeZ extends
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_specular, unit_specular);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_depth, unit_depth);
 
-    /**
+    /*
      * Upload the viewport.
      */
 
@@ -179,7 +179,7 @@ public final class R2ShaderFilterDebugEyeZ extends
       this.u_viewport_inverse_height,
       (float) (1.0 / (double) range_y.getInterval()));
 
-    /**
+    /*
      * Upload the scene's depth coefficient.
      */
 

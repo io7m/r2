@@ -18,7 +18,6 @@ package com.io7m.r2.tests.jogl.filters;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.r2.tests.filters.R2FilterFogDepthContract;
-import com.io7m.r2.tests.filters.R2FilterSSAOContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
 public final class R2FilterFogDepthTest extends

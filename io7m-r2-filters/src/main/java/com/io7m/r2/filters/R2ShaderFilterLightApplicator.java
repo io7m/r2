@@ -39,8 +39,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterLightApplicator extends
-  R2AbstractShader<R2ShaderFilterLightApplicatorParametersType>
-  implements R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType>
+  R2AbstractShader<R2ShaderFilterLightApplicatorParameters>
+  implements R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters>
 {
   private final JCGLProgramUniformType u_texture_albedo;
   private final JCGLProgramUniformType u_texture_specular;
@@ -64,23 +64,16 @@ public final class R2ShaderFilterLightApplicator extends
       "com.io7m.r2.shaders.core/R2FilterLightApplicator.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 3);
-
     this.u_texture_albedo =
       R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_textures_albedo",
-        JCGLType.TYPE_SAMPLER_2D);
+        p, "R2_textures_albedo", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_specular =
       R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_textures_specular",
-        JCGLType.TYPE_SAMPLER_2D);
+        p, "R2_textures_specular", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_diffuse =
       R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_textures_diffuse",
-        JCGLType.TYPE_SAMPLER_2D);
+        p, "R2_textures_diffuse", JCGLType.TYPE_SAMPLER_2D);
+    R2ShaderParameters.checkUniformParameterCount(p, 3);
   }
 
   /**
@@ -93,7 +86,7 @@ public final class R2ShaderFilterLightApplicator extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -104,10 +97,10 @@ public final class R2ShaderFilterLightApplicator extends
   }
 
   @Override
-  public Class<R2ShaderFilterLightApplicatorParametersType>
+  public Class<R2ShaderFilterLightApplicatorParameters>
   getShaderParametersType()
   {
-    return R2ShaderFilterLightApplicatorParametersType.class;
+    return R2ShaderFilterLightApplicatorParameters.class;
   }
 
   @Override
@@ -122,7 +115,7 @@ public final class R2ShaderFilterLightApplicator extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterLightApplicatorParametersType values)
+    final R2ShaderFilterLightApplicatorParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);

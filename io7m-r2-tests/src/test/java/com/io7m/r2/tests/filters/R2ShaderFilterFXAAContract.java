@@ -40,33 +40,26 @@ import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterFXAAQuality;
 import com.io7m.r2.filters.R2ShaderFilterFXAAA;
-import com.io7m.r2.filters.R2ShaderFilterFXAAParametersMutable;
-import com.io7m.r2.filters.R2ShaderFilterFXAAParametersType;
+import com.io7m.r2.filters.R2ShaderFilterFXAAParameters;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderFilterFXAAContract extends
-  R2ShaderFilterContract<R2ShaderFilterFXAAParametersType,
-    R2ShaderFilterFXAAParametersMutable>
+  R2ShaderFilterContract<R2ShaderFilterFXAAParameters,
+    R2ShaderFilterFXAAParameters>
 {
   @Override
-  protected final R2ShaderFilterFXAAParametersMutable
+  protected final R2ShaderFilterFXAAParameters
   newParameters(final JCGLInterfaceGL33Type g)
   {
-    final R2ShaderFilterFXAAParametersMutable p =
-      R2ShaderFilterFXAAParametersMutable.create();
-
     final JCGLTexturesType g_tex = g.getTextures();
 
     final JCGLTextureUnitAllocatorType tp =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        8,
-        g_tex.textureGetUnits());
-    final JCGLTextureUnitContextParentType tc_root =
-      tp.getRootContext();
-    final JCGLTextureUnitContextType tc_alloc =
-      tc_root.unitContextNew();
+        8, g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tc_root = tp.getRootContext();
+    final JCGLTextureUnitContextType tc_alloc = tc_root.unitContextNew();
 
     try {
       final AreaInclusiveUnsignedL area =
@@ -85,13 +78,12 @@ public abstract class R2ShaderFilterFXAAContract extends
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      p.setTexture(R2Texture2DStatic.of(pq.getRight()));
-
+      return R2ShaderFilterFXAAParameters.builder()
+        .setTexture(R2Texture2DStatic.of(pq.getRight()))
+        .build();
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
-
-    return p;
   }
 
   @Test
@@ -104,7 +96,7 @@ public abstract class R2ShaderFilterFXAAContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     for (final R2FilterFXAAQuality q : R2FilterFXAAQuality.values()) {
-      final R2ShaderFilterType<R2ShaderFilterFXAAParametersType> s =
+      final R2ShaderFilterType<R2ShaderFilterFXAAParameters> s =
         R2ShaderFilterFXAAA.newShader(g.getShaders(), sources, pool, q);
       Assert.assertFalse(s.isDeleted());
       s.delete(g);

@@ -44,8 +44,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterFXAAA extends
-  R2AbstractShader<R2ShaderFilterFXAAParametersType>
-  implements R2ShaderFilterType<R2ShaderFilterFXAAParametersType>
+  R2AbstractShader<R2ShaderFilterFXAAParameters>
+  implements R2ShaderFilterType<R2ShaderFilterFXAAParameters>
 {
   private final JCGLProgramUniformType u_image;
   private final JCGLProgramUniformType u_screen_inverse;
@@ -103,7 +103,7 @@ public final class R2ShaderFilterFXAAA extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterFXAAParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterFXAAParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -145,9 +145,9 @@ public final class R2ShaderFilterFXAAA extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterFXAAParametersType values)
+    final R2ShaderFilterFXAAParameters values)
   {
-    /**
+    /*
      * Upload the texture to be filtered.
      */
 
@@ -155,7 +155,7 @@ public final class R2ShaderFilterFXAAA extends
       tc.unitContextBindTexture2D(g_tex, values.texture().texture());
     g_sh.shaderUniformPutTexture2DUnit(this.u_image, u);
 
-    /**
+    /*
      * Upload the viewport.
      */
 
@@ -170,7 +170,7 @@ public final class R2ShaderFilterFXAAA extends
 
     g_sh.shaderUniformPutVector2f(this.u_screen_inverse, this.screen_inverse);
 
-    /**
+    /*
      * Upload the various algorithm parameters.
      */
 
@@ -183,9 +183,9 @@ public final class R2ShaderFilterFXAAA extends
   }
 
   @Override
-  public Class<R2ShaderFilterFXAAParametersType> getShaderParametersType()
+  public Class<R2ShaderFilterFXAAParameters> getShaderParametersType()
   {
-    return R2ShaderFilterFXAAParametersType.class;
+    return R2ShaderFilterFXAAParameters.class;
   }
 
   @Override

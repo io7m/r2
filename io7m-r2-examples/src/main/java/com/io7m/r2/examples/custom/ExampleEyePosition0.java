@@ -66,8 +66,7 @@ import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.filters.R2EyePositionBuffer;
 import com.io7m.r2.filters.R2EyePositionBufferType;
 import com.io7m.r2.filters.R2FilterDebugEyePosition;
-import com.io7m.r2.filters.R2FilterDebugEyePositionParametersMutable;
-import com.io7m.r2.filters.R2FilterDebugEyePositionParametersType;
+import com.io7m.r2.filters.R2FilterDebugEyePositionParameters;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -99,8 +98,7 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
   private R2UnitSphereType sphere;
   private R2InstanceSingleType instance;
 
-  private R2FilterType<R2FilterDebugEyePositionParametersType> eye_filter;
-  private R2FilterDebugEyePositionParametersMutable eye_filter_params;
+  private R2FilterType<R2FilterDebugEyePositionParameters> eye_filter;
   private R2EyePositionBufferType eye_buffer;
 
   private JCGLClearSpecification geom_clear_spec;
@@ -130,8 +128,7 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
         m.getShaderPreprocessingEnvironment(),
         m.getIDPool(),
         m.getUnitQuad());
-    this.eye_filter_params =
-      R2FilterDebugEyePositionParametersMutable.create();
+
     this.eye_buffer =
       R2EyePositionBuffer.newEyePositionBuffer(
         g.getFramebuffers(),
@@ -290,14 +287,18 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.eye_clear_spec);
 
-        t.eye_filter_params.setGeometryBuffer(t.gbuffer);
-        t.eye_filter_params.setEyePositionBuffer(t.eye_buffer);
-        t.eye_filter_params.setObserverValues(mo);
+        final R2FilterDebugEyePositionParameters eye_filter_params =
+          R2FilterDebugEyePositionParameters
+            .builder()
+            .setEyePositionBuffer(t.eye_buffer)
+            .setGeometryBuffer(t.gbuffer)
+            .setObserverValues(mo)
+            .build();
 
         t.eye_filter.runFilter(
           pro_root,
           t.main.getTextureUnitAllocator().getRootContext(),
-          t.eye_filter_params);
+          eye_filter_params);
 
         g_fb.framebufferDrawUnbind();
         return Unit.unit();

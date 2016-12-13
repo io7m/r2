@@ -42,8 +42,7 @@ import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterFXAA;
-import com.io7m.r2.filters.R2FilterFXAAParametersMutable;
-import com.io7m.r2.filters.R2FilterFXAAParametersType;
+import com.io7m.r2.filters.R2FilterFXAAParameters;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
@@ -67,7 +66,7 @@ public abstract class R2FilterFXAAContract extends R2JCGLContract
     final R2UnitQuadType quad =
       R2UnitQuad.newUnitQuad(g);
 
-    final R2FilterType<R2FilterFXAAParametersType> f =
+    final R2FilterType<R2FilterFXAAParameters> f =
       R2FilterFXAA.newFilter(g, sources, id, quad);
 
     Assert.assertFalse(f.isDeleted());
@@ -111,7 +110,7 @@ public abstract class R2FilterFXAAContract extends R2JCGLContract
       new UnsignedRangeInclusiveL(0L, 127L),
       new UnsignedRangeInclusiveL(0L, 127L));
 
-    final R2FilterType<R2FilterFXAAParametersType> f =
+    final R2FilterType<R2FilterFXAAParameters> f =
       R2FilterFXAA.newFilter(g, sources, id, quad);
 
     g_fb.framebufferDrawUnbind();
@@ -120,10 +119,10 @@ public abstract class R2FilterFXAAContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterFXAAParametersMutable params =
-      R2FilterFXAAParametersMutable.create();
-    params.setTexture(td.texture2DBlack());
-    Assert.assertTrue(params.isInitialized());
+    final R2FilterFXAAParameters params =
+      R2FilterFXAAParameters.builder()
+        .setTexture(td.texture2DBlack())
+        .build();
 
     f.runFilter(pro_root, tc, params);
 
@@ -169,7 +168,7 @@ public abstract class R2FilterFXAAContract extends R2JCGLContract
     final R2ImageBufferType ib = R2ImageBuffer.newImageBuffer(
       g_fb, g_t, tc, R2ImageBufferDescription.of(area, Optional.empty()));
 
-    final R2FilterType<R2FilterFXAAParametersType> f =
+    final R2FilterType<R2FilterFXAAParameters> f =
       R2FilterFXAA.newFilter(g, sources, id, quad);
 
     g_fb.framebufferDrawUnbind();
@@ -178,10 +177,10 @@ public abstract class R2FilterFXAAContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterFXAAParametersMutable params =
-      R2FilterFXAAParametersMutable.create();
-    params.setTexture(td.texture2DBlack());
-    Assert.assertTrue(params.isInitialized());
+    final R2FilterFXAAParameters params =
+      R2FilterFXAAParameters.builder()
+        .setTexture(td.texture2DBlack())
+        .build();
 
     g_fb.framebufferDrawBind(ib.primaryFramebuffer());
     f.runFilter(pro_root, tc, params);

@@ -28,7 +28,6 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2FilterLightApplicatorParametersType
 {
