@@ -20,6 +20,7 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
@@ -42,7 +43,7 @@ public final class R2ShaderSurfaceBasicReflectiveSingleTest extends
   }
 
   @Override
-  protected R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType>
+  protected R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,

@@ -41,7 +41,7 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.jtensors.parameterized.PVectorM3F;
+import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
@@ -73,8 +73,7 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -115,7 +114,6 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
 
   private JCGLInterfaceGL33Type g33;
 
-
   private R2MainType main;
   private R2SceneStencilsType stencils;
   private R2SceneOpaquesType opaques;
@@ -126,15 +124,15 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private JCGLClearSpecification screen_clear_spec;
 
   private R2GeometryBufferType geom_buffer;
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> geom_shader;
-  private R2SurfaceShaderBasicParametersMutable geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> geom_shader;
+  private R2SurfaceShaderBasicParameters geom_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
 
   private R2UnitSphereType sphere;
   private R2InstanceBatchedDynamicType batched_instance;
   private R2TransformSOT[] batched_transforms;
-  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParametersType> batched_geom_shader;
-  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParametersType> batched_geom_material;
+  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
+  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
 
   // Compositor
 
@@ -366,15 +364,17 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     final R2ShaderPreprocessingEnvironmentType sources =
       R2ShaderPreprocessingEnvironment.create(p);
 
-    this.geom_shader =
-      R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
-    this.geom_shader_params =
-      R2SurfaceShaderBasicParametersMutable.create(m.getTextureDefaults());
-    this.geom_shader_params.setSpecularColor(
-      new PVectorM3F<>(1.0f, 1.0f, 1.0f));
-    this.geom_shader_params.setSpecularExponent(64.0f);
-    this.geom_material = R2MaterialOpaqueSingle.of(
-      id_pool.freshID(), this.geom_shader, this.geom_shader_params);
+    {
+      this.geom_shader =
+        R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
+      final R2SurfaceShaderBasicParameters gsp =
+        R2SurfaceShaderBasicParameters.builder()
+          .setSpecularColor(new PVectorI3F<>(1.0f, 1.0f, 1.0f))
+          .setSpecularExponent(64.0f)
+          .build();
+      this.geom_material = R2MaterialOpaqueSingle.of(
+        id_pool.freshID(), this.geom_shader, gsp);
+    }
 
     this.batched_geom_shader =
       R2SurfaceShaderBasicBatched.newShader(
@@ -382,7 +382,9 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         sources,
         id_pool);
     this.batched_geom_material = R2MaterialOpaqueBatched.of(
-      id_pool.freshID(), this.batched_geom_shader, this.geom_shader_params);
+      id_pool.freshID(),
+      this.batched_geom_shader,
+      this.geom_material.shaderParameters());
 
     {
       final JCGLClearSpecification.Builder csb =

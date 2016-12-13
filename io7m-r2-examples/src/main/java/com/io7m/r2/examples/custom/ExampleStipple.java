@@ -49,8 +49,8 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
-import com.io7m.jtensors.parameterized.PVectorM3F;
-import com.io7m.jtensors.parameterized.PVectorM4F;
+import com.io7m.jtensors.parameterized.PVectorI3F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2CopyDepth;
 import com.io7m.r2.core.R2DepthAttachmentShare;
@@ -119,11 +119,9 @@ import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicStippledParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicStippledParametersType;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicStippledParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicStippledSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -193,16 +191,14 @@ public final class ExampleStipple implements R2ExampleCustomType
   private R2LightBufferType lbuffer;
   private R2ImageBufferType ibuffer;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParametersType> geom_stipple_shader;
-  private R2SurfaceShaderBasicStippledParametersMutable geom_stipple_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicStippledParametersType> geom_stipple_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParameters> geom_stipple_shader;
+  private R2MaterialOpaqueSingle<R2SurfaceShaderBasicStippledParameters> geom_stipple_material;
   private R2Texture2DType stipple_texture;
   private R2InstanceSingleType stipple_sphere;
   private R2TransformST stipple_sphere_transform;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> geom_shader;
-  private R2SurfaceShaderBasicParametersMutable geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> geom_shader;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
 
   private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
@@ -468,21 +464,17 @@ public final class ExampleStipple implements R2ExampleCustomType
         R2SurfaceShaderBasicStippledSingle.newShader(
           gx.getShaders(), sources, id_pool);
 
-      {
-        final R2SurfaceShaderBasicStippledParametersMutable spb =
-          R2SurfaceShaderBasicStippledParametersMutable.create();
-        spb.setTextureDefaults(defaults);
-        spb.setAlbedoColor(new PVectorM4F<>(1.0f, 0.0f, 0.0f, 1.0f));
-        spb.setSpecularColor(new PVectorM3F<>(1.0f, 1.0f, 1.0f));
-        spb.setStippleNoiseTexture(this.stipple_texture);
-        spb.setStippleThreshold(0.5f);
-        this.geom_stipple_shader_params = spb;
-      }
+      final R2SurfaceShaderBasicStippledParameters gsp =
+        R2SurfaceShaderBasicStippledParameters.builder()
+          .setTextureDefaults(defaults)
+          .setAlbedoColor(new PVectorI4F<>(1.0f, 0.0f, 0.0f, 1.0f))
+          .setSpecularColor(new PVectorI3F<>(1.0f, 1.0f, 1.0f))
+          .setStippleNoiseTexture(this.stipple_texture)
+          .setStippleThreshold(0.5f)
+          .build();
 
       this.geom_stipple_material = R2MaterialOpaqueSingle.of(
-        id_pool.freshID(),
-        this.geom_stipple_shader,
-        this.geom_stipple_shader_params);
+        id_pool.freshID(), this.geom_stipple_shader, gsp);
     }
 
     this.stipple_sphere_transform = R2TransformST.newTransform();
@@ -497,19 +489,16 @@ public final class ExampleStipple implements R2ExampleCustomType
 
     {
       this.geom_shader =
-        R2SurfaceShaderBasicSingle.newShader(
-          gx.getShaders(), sources, id_pool);
+        R2SurfaceShaderBasicSingle.newShader(gx.getShaders(), sources, id_pool);
 
-      {
-        final R2SurfaceShaderBasicParametersMutable spb =
-          R2SurfaceShaderBasicParametersMutable.create();
-        spb.setTextureDefaults(defaults);
-        spb.setNormalTexture(serv.getTexture2D("halls_complex_normal.png"));
-        this.geom_shader_params = spb;
-      }
+      final R2SurfaceShaderBasicParameters gsp =
+        R2SurfaceShaderBasicParameters.builder()
+          .setTextureDefaults(defaults)
+          .setNormalTexture(serv.getTexture2D("halls_complex_normal.png"))
+          .build();
 
-      this.geom_material = R2MaterialOpaqueSingle.of(
-        id_pool.freshID(), this.geom_shader, this.geom_shader_params);
+      this.geom_material =
+        R2MaterialOpaqueSingle.of(id_pool.freshID(), this.geom_shader, gsp);
     }
 
     this.light_ambient_shader =
@@ -671,8 +660,11 @@ public final class ExampleStipple implements R2ExampleCustomType
     this.g = gx;
 
     final double frame_fract = frame * 0.01;
-    this.geom_stipple_shader_params.setStippleThreshold(
-      (float) Math.sin(frame_fract));
+
+    this.geom_stipple_material =
+      this.geom_stipple_material.withShaderParameters(
+        this.geom_stipple_material.shaderParameters()
+          .withStippleThreshold((float) Math.sin(frame_fract)));
 
     this.depth_stippled_material =
       this.depth_stippled_material.withShaderParameters(

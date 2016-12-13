@@ -92,7 +92,6 @@ import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -162,9 +161,8 @@ public final class ExampleFog implements R2ExampleCustomType
   private R2ImageBufferType ibuffer0;
   private R2ImageBufferType ibuffer1;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType> geom_shader;
-  private R2SurfaceShaderBasicReflectiveParametersType geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParametersType> geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
 
   private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
@@ -333,22 +331,21 @@ public final class ExampleFog implements R2ExampleCustomType
 
     this.geom_shader =
       R2SurfaceShaderBasicReflectiveSingle.newShader(
-        gx.getShaders(),
-        sources,
-        id_pool);
+        gx.getShaders(), sources, id_pool);
 
     {
-      final R2SurfaceShaderBasicReflectiveParameters.Builder spb =
-        R2SurfaceShaderBasicReflectiveParameters.builder();
-      spb.setTextureDefaults(m.getTextureDefaults());
-      spb.setNormalTexture(serv.getTexture2D("halls_complex_normal.png"));
-      spb.setEnvironmentTexture(serv.getTextureCube("toronto"));
-      spb.setEnvironmentMix(0.5f);
-      this.geom_shader_params = spb.build();
+      final R2SurfaceShaderBasicReflectiveParameters spb =
+        R2SurfaceShaderBasicReflectiveParameters.builder()
+          .setTextureDefaults(m.getTextureDefaults())
+          .setNormalTexture(serv.getTexture2D("halls_complex_normal.png"))
+          .setEnvironmentTexture(serv.getTextureCube("toronto"))
+          .setEnvironmentMix(0.5f)
+          .build();
+
+      this.geom_material = R2MaterialOpaqueSingle.of(
+        id_pool.freshID(), this.geom_shader, spb);
     }
 
-    this.geom_material = R2MaterialOpaqueSingle.of(
-      id_pool.freshID(), this.geom_shader, this.geom_shader_params);
 
     this.light_ambient_shader =
       R2LightShaderAmbientSingle.newShader(gx.getShaders(), sources, id_pool);

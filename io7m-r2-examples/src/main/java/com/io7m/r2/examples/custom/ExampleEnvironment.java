@@ -110,7 +110,6 @@ import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -171,9 +170,9 @@ public final class ExampleEnvironment implements R2ExampleCustomType
   private R2LightBufferType lbuffer;
   private R2ImageBufferType ibuffer;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType> geom_shader;
-  private R2SurfaceShaderBasicReflectiveParametersType geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParametersType> geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
+  private R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
 
   private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
@@ -413,9 +412,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
 
     this.geom_shader =
       R2SurfaceShaderBasicReflectiveSingle.newShader(
-        gx.getShaders(),
-        sources,
-        id_pool);
+        gx.getShaders(), sources, id_pool);
 
     {
       final R2SurfaceShaderBasicReflectiveParameters.Builder spb =

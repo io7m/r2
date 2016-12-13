@@ -82,16 +82,13 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
-    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> ds =
-      R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(),
-        sources,
-        id_pool);
+    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> ds =
+      R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
 
     final R2SurfaceShaderBasicParameters ds_param =
-      R2SurfaceShaderBasicParameters.of(td);
+      R2SurfaceShaderBasicParameters.builder().setTextureDefaults(td).build();
 
-    final R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> mat =
+    final R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> mat =
       R2MaterialOpaqueSingle.of(id_pool.freshID(), ds, ds_param);
 
     final R2SceneOpaquesType s = R2SceneOpaques.newOpaques();

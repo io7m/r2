@@ -40,7 +40,7 @@ public final class R2ShaderSurfaceBasicBatchedTest extends
   }
 
   @Override
-  protected R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParametersType>
+  protected R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,

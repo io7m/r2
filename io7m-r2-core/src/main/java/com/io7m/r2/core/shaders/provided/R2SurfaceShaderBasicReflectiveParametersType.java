@@ -16,8 +16,14 @@
 
 package com.io7m.r2.core.shaders.provided;
 
+import com.io7m.jtensors.parameterized.PVectorI3F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureCubeUsableType;
+import com.io7m.r2.core.R2TextureDefaultsType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
+import com.io7m.r2.spaces.R2SpaceRGBType;
 import org.immutables.value.Value;
 
 /**
@@ -26,10 +32,93 @@ import org.immutables.value.Value;
 
 @R2ImmutableStyleType
 @Value.Immutable
-@Value.Modifiable
 public interface R2SurfaceShaderBasicReflectiveParametersType
   extends R2SurfaceShaderBasicParametersValuesType
 {
+  @Override
+  @Value.Parameter
+  R2TextureDefaultsType textureDefaults();
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default PVectorI4F<R2SpaceRGBAType> albedoColor()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.albedoColor();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default PVectorI3F<R2SpaceRGBType> specularColor()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.specularColor();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default float emission()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.emission();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default R2Texture2DUsableType emissionTexture()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.emissionTexture();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default R2Texture2DUsableType albedoTexture()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.albedoTexture();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default float albedoMix()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.albedoMix();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default R2Texture2DUsableType specularTexture()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.specularTexture();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default float specularExponent()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.specularExponent();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default R2Texture2DUsableType normalTexture()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.normalTexture();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default float alphaDiscardThreshold()
+  {
+    return R2SurfaceShaderBasicParametersValuesType.super.alphaDiscardThreshold();
+  }
+
   /**
    * <p>An environment map used to simulate reflections on the rendered surface.
    * The resulting surface appearance is a linear mix between the <i>albedo</i>

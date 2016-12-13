@@ -40,7 +40,7 @@ public final class R2ShaderSurfaceBasicSingleTest extends
   }
 
   @Override
-  protected R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType>
+  protected R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,

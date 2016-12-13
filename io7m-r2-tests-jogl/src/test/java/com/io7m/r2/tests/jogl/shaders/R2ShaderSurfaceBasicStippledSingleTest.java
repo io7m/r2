@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicStippledParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicStippledParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicStippledSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -42,7 +43,7 @@ public final class R2ShaderSurfaceBasicStippledSingleTest extends
   }
 
   @Override
-  protected R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParametersType>
+  protected R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,

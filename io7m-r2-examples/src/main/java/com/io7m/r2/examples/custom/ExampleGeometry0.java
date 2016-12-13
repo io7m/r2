@@ -45,7 +45,6 @@ import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
@@ -75,9 +74,9 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private R2SceneOpaquesType opaques;
   private R2GeometryBufferType gbuffer;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> shader;
-  private R2SurfaceShaderBasicParametersType shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
+  private R2SurfaceShaderBasicParameters shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
   private R2MainType main;
 
@@ -138,11 +137,11 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       R2ShaderPreprocessingEnvironment.create(p);
 
     this.shader =
-      R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(), sources, id_pool);
+      R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     this.shader_params =
-      R2SurfaceShaderBasicParameters.of(m.getTextureDefaults());
-
+      R2SurfaceShaderBasicParameters.builder()
+        .setTextureDefaults(m.getTextureDefaults())
+        .build();
     this.material = R2MaterialOpaqueSingle.of(
       id_pool.freshID(), this.shader, this.shader_params);
   }
