@@ -30,7 +30,7 @@ import org.immutables.value.Value;
  * Parameters for basic surfaces.
  */
 
-public interface R2SurfaceShaderBasicParametersBaseType
+public interface R2SurfaceShaderBasicParametersValuesType
 {
   /**
    * @return A reference to the default textures

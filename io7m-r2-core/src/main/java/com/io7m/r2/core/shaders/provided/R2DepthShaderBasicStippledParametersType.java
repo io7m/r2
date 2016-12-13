@@ -28,7 +28,7 @@ import org.immutables.value.Value;
 @Value.Modifiable
 @R2ImmutableStyleType
 public interface R2DepthShaderBasicStippledParametersType extends
-  R2DepthShaderBasicParametersBaseType
+  R2DepthShaderBasicParametersValuesType
 {
   /**
    * The noise texture used to implement stippling. This is a random noise

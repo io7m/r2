@@ -27,7 +27,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 public interface R2SurfaceShaderBasicParametersType extends
-  R2SurfaceShaderBasicParametersBaseType
+  R2SurfaceShaderBasicParametersValuesType
 {
   // No extra values
 }

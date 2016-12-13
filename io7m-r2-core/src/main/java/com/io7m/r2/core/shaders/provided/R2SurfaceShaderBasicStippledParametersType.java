@@ -28,7 +28,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 public interface R2SurfaceShaderBasicStippledParametersType
-  extends R2SurfaceShaderBasicParametersBaseType
+  extends R2SurfaceShaderBasicParametersValuesType
 {
   /**
    * The noise texture used to implement stippling. This is a random noise

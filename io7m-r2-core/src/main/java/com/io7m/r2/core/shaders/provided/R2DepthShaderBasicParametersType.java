@@ -27,7 +27,7 @@ import org.immutables.value.Value;
 @Value.Modifiable
 @R2ImmutableStyleType
 public interface R2DepthShaderBasicParametersType extends
-  R2DepthShaderBasicParametersBaseType
+  R2DepthShaderBasicParametersValuesType
 {
   // No extra values
 }

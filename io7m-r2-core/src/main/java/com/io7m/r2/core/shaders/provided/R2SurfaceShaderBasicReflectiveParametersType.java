@@ -28,7 +28,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 public interface R2SurfaceShaderBasicReflectiveParametersType
-  extends R2SurfaceShaderBasicParametersBaseType
+  extends R2SurfaceShaderBasicParametersValuesType
 {
   /**
    * <p>An environment map used to simulate reflections on the rendered surface.

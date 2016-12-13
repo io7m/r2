@@ -24,7 +24,7 @@ import org.immutables.value.Value;
  * The type of parameters for basic depth shaders.
  */
 
-public interface R2DepthShaderBasicParametersBaseType
+public interface R2DepthShaderBasicParametersValuesType
 {
   /**
    * @return A reference to the default textures
