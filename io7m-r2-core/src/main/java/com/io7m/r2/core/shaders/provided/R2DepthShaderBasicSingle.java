@@ -43,8 +43,8 @@ import java.util.Optional;
  */
 
 public final class R2DepthShaderBasicSingle extends
-  R2AbstractShader<R2DepthShaderBasicParametersType>
-  implements R2ShaderDepthSingleType<R2DepthShaderBasicParametersType>
+  R2AbstractShader<R2DepthShaderBasicParameters>
+  implements R2ShaderDepthSingleType<R2DepthShaderBasicParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_normal;
@@ -109,21 +109,20 @@ public final class R2DepthShaderBasicSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderDepthSingleType<R2DepthShaderBasicParametersType>
+  public static R2ShaderDepthSingleType<R2DepthShaderBasicParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    final R2DepthShaderBasicSingle s =
-      new R2DepthShaderBasicSingle(in_shaders, in_shader_env, in_pool);
-    return R2ShaderDepthSingleVerifier.newVerifier(s);
+    return R2ShaderDepthSingleVerifier.newVerifier(
+      new R2DepthShaderBasicSingle(in_shaders, in_shader_env, in_pool));
   }
 
   @Override
-  public Class<R2DepthShaderBasicParametersType> getShaderParametersType()
+  public Class<R2DepthShaderBasicParameters> getShaderParametersType()
   {
-    return R2DepthShaderBasicParametersType.class;
+    return R2DepthShaderBasicParameters.class;
   }
 
   @Override
@@ -173,7 +172,7 @@ public final class R2DepthShaderBasicSingle extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2DepthShaderBasicParametersType values)
+    final R2DepthShaderBasicParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(g_sh);

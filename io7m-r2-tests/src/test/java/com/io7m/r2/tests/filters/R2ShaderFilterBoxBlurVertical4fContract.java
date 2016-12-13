@@ -38,14 +38,13 @@ import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterBoxBlurParameters;
-import com.io7m.r2.filters.R2ShaderFilterBoxBlurParametersType;
 import com.io7m.r2.filters.R2ShaderFilterBoxBlurVertical4f;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderFilterBoxBlurVertical4fContract extends
-  R2ShaderFilterContract<R2ShaderFilterBoxBlurParametersType, R2ShaderFilterBoxBlurParameters>
+  R2ShaderFilterContract<R2ShaderFilterBoxBlurParameters, R2ShaderFilterBoxBlurParameters>
 {
   @Override
   protected final R2ShaderFilterBoxBlurParameters newParameters(
@@ -95,11 +94,8 @@ public abstract class R2ShaderFilterBoxBlurVertical4fContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType> s =
-      R2ShaderFilterBoxBlurVertical4f.newShader(
-        g.getShaders(),
-        sources,
-        pool);
+    final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> s =
+      R2ShaderFilterBoxBlurVertical4f.newShader(g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

@@ -104,14 +104,12 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -122,22 +120,19 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
-import com.io7m.r2.filters.R2BlurParametersMutable;
+import com.io7m.r2.filters.R2BlurParameters;
 import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
+import com.io7m.r2.filters.R2FilterBoxBlurParameters;
 import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
 import com.io7m.r2.filters.R2FilterCompositorParameters;
-import com.io7m.r2.filters.R2FilterCompositorParametersType;
 import com.io7m.r2.filters.R2FilterEmission;
-import com.io7m.r2.filters.R2FilterEmissionParametersMutable;
-import com.io7m.r2.filters.R2FilterEmissionParametersType;
+import com.io7m.r2.filters.R2FilterEmissionParameters;
 import com.io7m.r2.filters.R2FilterFXAA;
-import com.io7m.r2.filters.R2FilterFXAAParametersMutable;
-import com.io7m.r2.filters.R2FilterFXAAParametersType;
+import com.io7m.r2.filters.R2FilterFXAAParameters;
 import com.io7m.r2.filters.R2FilterFXAAQuality;
 import com.io7m.r2.filters.R2FilterLightApplicator;
-import com.io7m.r2.filters.R2FilterLightApplicatorParametersMutable;
+import com.io7m.r2.filters.R2FilterLightApplicatorParameters;
 import com.io7m.r2.filters.R2FilterLightApplicatorParametersType;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitCube;
@@ -148,7 +143,6 @@ import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;
 import com.io7m.sombrero.core.SoShaderResolver;
 import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
-import org.valid4j.Assertive;
 
 import javax.swing.SwingUtilities;
 import java.util.Optional;
@@ -172,9 +166,9 @@ public final class ExampleEnvironment implements R2ExampleCustomType
   private R2LightBufferType lbuffer;
   private R2ImageBufferType ibuffer;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType> geom_shader;
-  private R2SurfaceShaderBasicReflectiveParametersType geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParametersType> geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
+  private R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
 
   private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
@@ -190,17 +184,17 @@ public final class ExampleEnvironment implements R2ExampleCustomType
   private R2DepthInstancesType proj_shadow_instances;
   private R2ShadowDepthVariance proj_shadow;
 
-  private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> depth_shader;
-  private R2DepthShaderBasicParametersMutable depth_params;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
+  private R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader;
+  private R2DepthShaderBasicParameters depth_params;
+  private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> depth_material;
 
   private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
-  private R2FilterLightApplicatorParametersMutable filter_light_params;
+  private R2FilterLightApplicatorParameters filter_light_params;
 
-  private R2FilterType<R2FilterFXAAParametersType> filter_fxaa;
-  private R2FilterFXAAParametersMutable filter_fxaa_params;
+  private R2FilterType<R2FilterFXAAParameters> filter_fxaa;
+  private R2FilterFXAAParameters filter_fxaa_params;
 
-  private R2FilterType<R2FilterCompositorParametersType> filter_compositor;
+  private R2FilterType<R2FilterCompositorParameters> filter_compositor;
   private R2FilterCompositorParameters filter_comp_parameters;
 
   private R2MainType main;
@@ -220,14 +214,14 @@ public final class ExampleEnvironment implements R2ExampleCustomType
   private R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool;
 
   private R2FilterType<
-    R2FilterBoxBlurParametersType<
+    R2FilterBoxBlurParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType>> filter_blur;
-  private R2FilterType<R2FilterEmissionParametersType> filter_emission;
-  private R2FilterEmissionParametersMutable filter_emission_params;
-  private R2BlurParametersMutable filter_emission_blur_params;
+  private R2FilterType<R2FilterEmissionParameters> filter_emission;
+  private R2FilterEmissionParameters filter_emission_params;
+  private R2BlurParameters filter_emission_blur_params;
 
   public ExampleEnvironment()
   {
@@ -380,7 +374,13 @@ public final class ExampleEnvironment implements R2ExampleCustomType
         m.getUnitQuad());
 
     this.filter_fxaa_params =
-      R2FilterFXAAParametersMutable.create();
+      R2FilterFXAAParameters.builder()
+        .setSubPixelAliasingRemoval(0.0f)
+        .setEdgeThreshold(0.333f)
+        .setEdgeThresholdMinimum(0.0833f)
+        .setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10)
+        .setTexture(this.ibuffer.imageTexture())
+        .build();
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -393,8 +393,8 @@ public final class ExampleEnvironment implements R2ExampleCustomType
     transform.getTranslation().set3F(0.0f, -1.0f, 0.0f);
 
     this.instance =
-      R2InstanceSingle.newInstance(
-        id_pool, mesh, transform, PMatrixI3x3F.identity());
+      R2InstanceSingle.of(
+        id_pool.freshID(), mesh, transform, PMatrixI3x3F.identity());
 
     final SoShaderPreprocessorConfig.Builder b =
       SoShaderPreprocessorConfig.builder();
@@ -407,19 +407,14 @@ public final class ExampleEnvironment implements R2ExampleCustomType
 
     this.depth_shader = R2DepthShaderBasicSingle.newShader(
       gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
-    this.depth_params =
-      R2DepthShaderBasicParametersMutable.create();
-    this.depth_params.setAlphaDiscardThreshold(0.1f);
-    this.depth_params.setAlbedoTexture(
-      this.main.getTextureDefaults().texture2DWhite());
-    this.depth_material = R2MaterialDepthSingle.newMaterial(
-      m.getIDPool(), this.depth_shader, this.depth_params);
+    this.depth_params = R2DepthShaderBasicParameters.of(
+      m.getTextureDefaults(), m.getTextureDefaults().texture2DWhite(), 0.1f);
+    this.depth_material = R2MaterialDepthSingle.of(
+      id_pool.freshID(), this.depth_shader, this.depth_params);
 
     this.geom_shader =
       R2SurfaceShaderBasicReflectiveSingle.newShader(
-        gx.getShaders(),
-        sources,
-        id_pool);
+        gx.getShaders(), sources, id_pool);
 
     {
       final R2SurfaceShaderBasicReflectiveParameters.Builder spb =
@@ -431,8 +426,8 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       this.geom_shader_params = spb.build();
     }
 
-    this.geom_material = R2MaterialOpaqueSingle.newMaterial(
-      id_pool, this.geom_shader, this.geom_shader_params);
+    this.geom_material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.geom_shader, this.geom_shader_params);
 
     this.light_ambient_shader =
       R2LightShaderAmbientSingle.newShader(gx.getShaders(), sources, id_pool);
@@ -504,8 +499,8 @@ public final class ExampleEnvironment implements R2ExampleCustomType
     this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
     this.sphere_light_bounds =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         R2UnitCube.newUnitCube(gx).arrayObject(),
         this.sphere_light_bounded_transform,
         PMatrixI3x3F.identity());
@@ -521,8 +516,29 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       R2FilterLightApplicator.newFilter(sources, gx, id_pool, m.getUnitQuad());
 
     {
-      this.filter_light_params =
-        R2FilterLightApplicatorParametersMutable.create();
+      final R2FilterLightApplicatorParameters.Builder pb =
+        R2FilterLightApplicatorParameters.builder();
+      pb.setGeometryBuffer(this.gbuffer);
+      pb.setOutputViewport(this.ibuffer.area());
+      pb.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
+      this.lbuffer.matchLightBuffer(
+        this,
+        (tt, lbdo) -> {
+          final R2TextureDefaultsType td = tt.main.getTextureDefaults();
+          pb.setLightDiffuseTexture(lbdo.diffuseTexture());
+          pb.setLightSpecularTexture(td.texture2DBlack());
+          return Unit.unit();
+        }, (tt, lbso) -> {
+          final R2TextureDefaultsType td = tt.main.getTextureDefaults();
+          pb.setLightDiffuseTexture(td.texture2DBlack());
+          pb.setLightSpecularTexture(lbso.specularTexture());
+          return Unit.unit();
+        }, (tt, lb) -> {
+          pb.setLightDiffuseTexture(lb.diffuseTexture());
+          pb.setLightSpecularTexture(lb.specularTexture());
+          return Unit.unit();
+        });
+      this.filter_light_params = pb.build();
     }
 
     {
@@ -538,9 +554,13 @@ public final class ExampleEnvironment implements R2ExampleCustomType
         m.getUnitQuad());
 
       this.filter_emission_params =
-        R2FilterEmissionParametersMutable.create();
-      this.filter_emission_blur_params =
-        R2BlurParametersMutable.create();
+        R2FilterEmissionParameters.builder()
+          .setAlbedoEmissionMap(this.gbuffer.albedoEmissiveTexture())
+          .setBlurParameters(R2BlurParameters.builder().build())
+          .setOutputFramebuffer(this.ibuffer.primaryFramebuffer())
+          .setOutputViewport(this.ibuffer.area())
+          .setScale(0.25f)
+          .build();
 
       this.filter_emission = R2FilterEmission.newFilter(
         gx,
@@ -700,51 +720,11 @@ public final class ExampleEnvironment implements R2ExampleCustomType
 
         g_fb.framebufferDrawBind(t.ibuffer.primaryFramebuffer());
         t.ibuffer.clearBoundPrimaryFramebuffer(t.g);
-        t.filter_light_params.clear();
-        t.filter_light_params.setGeometryBuffer(t.gbuffer);
-        t.filter_light_params.setOutputViewport(t.ibuffer.area());
-        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
-        t.lbuffer.matchLightBuffer(
-          this,
-          (tt, lbdo) -> {
-            final R2TextureDefaultsType td = tt.main.getTextureDefaults();
-            tt.filter_light_params.setLightDiffuseTexture(
-              lbdo.diffuseTexture());
-            tt.filter_light_params.setLightSpecularTexture(
-              td.texture2DBlack());
-            return Unit.unit();
-          }, (tt, lbso) -> {
-            final R2TextureDefaultsType td = tt.main.getTextureDefaults();
-            tt.filter_light_params.setLightDiffuseTexture(
-              td.texture2DBlack());
-            tt.filter_light_params.setLightSpecularTexture(
-              lbso.specularTexture());
-            return Unit.unit();
-          }, (tt, lb) -> {
-            tt.filter_light_params.setLightDiffuseTexture(
-              lb.diffuseTexture());
-            tt.filter_light_params.setLightSpecularTexture(
-              lb.specularTexture());
-            return Unit.unit();
-          });
-        Assertive.require(t.filter_light_params.isInitialized());
         t.filter_light.runFilter(t.profiling_root, uc, t.filter_light_params);
 
         /*
          * Apply emission.
          */
-
-        t.filter_emission_params.clear();
-        t.filter_emission_params.setAlbedoEmissionMap(
-          t.gbuffer.albedoEmissiveTexture());
-        t.filter_emission_params.setBlurParameters(
-          t.filter_emission_blur_params);
-        t.filter_emission_params.setOutputFramebuffer(
-          Optional.of(t.ibuffer.primaryFramebuffer()));
-        t.filter_emission_params.setOutputViewport(
-          t.ibuffer.area());
-        t.filter_emission_params.setScale(0.25f);
-        Assertive.ensure(t.filter_emission_params.isInitialized());
 
         t.filter_emission.runFilter(
           t.profiling_root, uc, t.filter_emission_params);
@@ -759,14 +739,6 @@ public final class ExampleEnvironment implements R2ExampleCustomType
         g_sb.stencilBufferMask(
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
-
-        t.filter_fxaa_params.clear();
-        t.filter_fxaa_params.setSubPixelAliasingRemoval(0.0f);
-        t.filter_fxaa_params.setEdgeThreshold(0.333f);
-        t.filter_fxaa_params.setEdgeThresholdMinimum(0.0833f);
-        t.filter_fxaa_params.setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10);
-        t.filter_fxaa_params.setTexture(t.ibuffer.imageTexture());
-        Assertive.require(t.filter_fxaa_params.isInitialized());
         t.filter_fxaa.runFilter(t.profiling_root, uc, t.filter_fxaa_params);
 
         t.filter_compositor.runFilter(

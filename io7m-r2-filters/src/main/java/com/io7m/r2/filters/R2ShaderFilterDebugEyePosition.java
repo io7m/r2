@@ -44,8 +44,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterDebugEyePosition extends
-  R2AbstractShader<R2FilterDebugEyePositionParametersType>
-  implements R2ShaderFilterType<R2FilterDebugEyePositionParametersType>
+  R2AbstractShader<R2FilterDebugEyePositionParameters>
+  implements R2ShaderFilterType<R2FilterDebugEyePositionParameters>
 {
   private final JCGLProgramUniformType u_gbuffer_albedo;
   private final JCGLProgramUniformType u_gbuffer_normal;
@@ -153,10 +153,10 @@ public final class R2ShaderFilterDebugEyePosition extends
   }
 
   @Override
-  public Class<R2FilterDebugEyePositionParametersType>
+  public Class<R2FilterDebugEyePositionParameters>
   getShaderParametersType()
   {
-    return R2FilterDebugEyePositionParametersType.class;
+    return R2FilterDebugEyePositionParameters.class;
   }
 
   @Override
@@ -171,14 +171,14 @@ public final class R2ShaderFilterDebugEyePosition extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2FilterDebugEyePositionParametersType values)
+    final R2FilterDebugEyePositionParameters values)
   {
     NullCheck.notNull(g_sh);
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);
     NullCheck.notNull(values);
 
-    /**
+    /*
      * Set each of the required G-Buffer textures.
      */
 
@@ -202,7 +202,7 @@ public final class R2ShaderFilterDebugEyePosition extends
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_specular, unit_specular);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_depth, unit_depth);
 
-    /**
+    /*
      * Upload the viewport.
      */
 
@@ -216,7 +216,7 @@ public final class R2ShaderFilterDebugEyePosition extends
       this.u_viewport_inverse_height,
       (float) (1.0 / (double) range_y.getInterval()));
 
-    /**
+    /*
      * Upload the scene's depth coefficient.
      */
 
@@ -225,7 +225,7 @@ public final class R2ShaderFilterDebugEyePosition extends
       this.u_depth_coefficient,
       (float) R2Projections.getDepthCoefficient(m.projection()));
 
-    /**
+    /*
      * Upload the current view rays.
      */
 

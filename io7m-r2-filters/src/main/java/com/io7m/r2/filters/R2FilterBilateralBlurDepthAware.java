@@ -48,7 +48,6 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import org.valid4j.Assertive;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -70,7 +69,7 @@ public final class R2FilterBilateralBlurDepthAware<
   S extends R2RenderTargetUsableType<SD>,
   DD extends R2RenderTargetDescriptionType,
   D extends R2RenderTargetUsableType<DD>>
-  implements R2FilterType<R2FilterBilateralBlurDepthAwareParametersType<SD, S, DD, D>>
+  implements R2FilterType<R2FilterBilateralBlurDepthAwareParameters<SD, S, DD, D>>
 {
   private static final Set<JCGLFramebufferBlitBuffer> BLIT_BUFFERS;
 
@@ -79,38 +78,28 @@ public final class R2FilterBilateralBlurDepthAware<
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_COLOR);
   }
 
-  private final R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParametersType> shader_blur_h;
-  private final R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParametersType> shader_blur_v;
+  private final R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParameters> shader_blur_h;
+  private final R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParameters> shader_blur_v;
 
   private final JCGLInterfaceGL33Type g;
   private final R2RenderTargetPoolUsableType<DD, D> render_target_pool;
 
   private final R2UnitQuadUsableType quad;
-  private final R2ShaderFilterBilateralBlurDepthAwareParametersMutable shader_params;
   private final JCGLRenderStateMutable render_state;
 
   private R2FilterBilateralBlurDepthAware(
     final JCGLInterfaceGL33Type in_g,
     final R2RenderTargetPoolUsableType<DD, D> in_rtp_pool,
     final R2UnitQuadUsableType in_quad,
-    final R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParametersType> in_shader_blur_h,
-    final R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParametersType> in_shader_blur_v,
-    final R2ShaderFilterBilateralBlurDepthAwareParametersMutable in_params)
+    final R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParameters> in_shader_blur_h,
+    final R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParameters> in_shader_blur_v)
   {
-    this.g =
-      NullCheck.notNull(in_g);
-    this.shader_blur_h =
-      NullCheck.notNull(in_shader_blur_h);
-    this.shader_blur_v =
-      NullCheck.notNull(in_shader_blur_v);
-    this.render_target_pool =
-      NullCheck.notNull(in_rtp_pool);
-    this.quad =
-      NullCheck.notNull(in_quad);
-    this.shader_params =
-      NullCheck.notNull(in_params);
-    this.render_state =
-      JCGLRenderStateMutable.create();
+    this.g = NullCheck.notNull(in_g);
+    this.shader_blur_h = NullCheck.notNull(in_shader_blur_h);
+    this.shader_blur_v = NullCheck.notNull(in_shader_blur_v);
+    this.render_target_pool = NullCheck.notNull(in_rtp_pool);
+    this.quad = NullCheck.notNull(in_quad);
+    this.render_state = JCGLRenderStateMutable.create();
   }
 
   /**
@@ -135,7 +124,7 @@ public final class R2FilterBilateralBlurDepthAware<
     S extends R2RenderTargetUsableType<SD>,
     DD extends R2RenderTargetDescriptionType,
     D extends R2RenderTargetUsableType<DD>>
-  R2FilterType<R2FilterBilateralBlurDepthAwareParametersType<SD, S, DD, D>>
+  R2FilterType<R2FilterBilateralBlurDepthAwareParameters<SD, S, DD, D>>
   newFilter(
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final JCGLInterfaceGL33Type in_g,
@@ -153,24 +142,64 @@ public final class R2FilterBilateralBlurDepthAware<
 
     final JCGLShadersType g_sh = in_g.getShaders();
     final R2ShaderFilterType<
-      R2ShaderFilterBilateralBlurDepthAwareParametersType> s_blur_h =
+      R2ShaderFilterBilateralBlurDepthAwareParameters> s_blur_h =
       R2ShaderFilterBilateralBlurDepthAwareHorizontal4f.newShader(
         g_sh, in_shader_env, in_id_pool);
     final R2ShaderFilterType<
-      R2ShaderFilterBilateralBlurDepthAwareParametersType> s_blur_v =
+      R2ShaderFilterBilateralBlurDepthAwareParameters> s_blur_v =
       R2ShaderFilterBilateralBlurDepthAwareVertical4f.newShader(
         g_sh, in_shader_env, in_id_pool);
-
-    final R2ShaderFilterBilateralBlurDepthAwareParametersMutable pb =
-      R2ShaderFilterBilateralBlurDepthAwareParametersMutable.create();
 
     return new R2FilterBilateralBlurDepthAware<>(
       in_g,
       in_rtp_pool,
       in_quad,
       s_blur_h,
-      s_blur_v,
-      pb);
+      s_blur_v);
+  }
+
+  private static <
+    SD extends R2RenderTargetDescriptionType,
+    S extends R2RenderTargetUsableType<SD>,
+    DD extends R2RenderTargetDescriptionType,
+    D extends R2RenderTargetUsableType<DD>>
+  R2ShaderFilterBilateralBlurDepthAwareParameters createShaderParams(
+    final R2FilterBilateralBlurDepthAwareParameters<SD, S, DD, D> parameters,
+    final R2Texture2DUsableType source_value_texture,
+    final R2Texture2DUsableType source_depth_texture)
+  {
+    final AreaInclusiveUnsignedLType source_area =
+      source_value_texture.texture().textureGetArea();
+    final UnsignedRangeInclusiveL range_x =
+      source_area.getRangeX();
+    final UnsignedRangeInclusiveL range_y =
+      source_area.getRangeX();
+
+    final R2MatricesObserverValuesType m_observer =
+      parameters.sceneObserverValues();
+    final R2BilateralBlurParameters blur_params =
+      parameters.blurParameters();
+
+    final R2ShaderFilterBilateralBlurDepthAwareParameters.Builder pb =
+      R2ShaderFilterBilateralBlurDepthAwareParameters.builder();
+
+    {
+      final float radius = blur_params.blurSize();
+      final float sigma = (radius + 1.0f) / 2.0f;
+      final float inv_sigma2 = 1.0f / (2.0f * sigma * sigma);
+      pb.setBlurFalloff(inv_sigma2);
+    }
+
+    pb.setBlurOutputInverseWidth(1.0f / (float) range_x.getInterval());
+    pb.setBlurOutputInverseHeight(1.0f / (float) range_y.getInterval());
+    pb.setBlurRadius(blur_params.blurSize());
+    pb.setBlurSharpness(blur_params.blurSharpness());
+    pb.setDepthCoefficient(
+      (float) R2Projections.getDepthCoefficient(m_observer.projection()));
+    pb.setDepthTexture(source_depth_texture);
+    pb.setImageTexture(source_value_texture);
+    pb.setViewMatrices(m_observer);
+    return pb.build();
   }
 
   @Override
@@ -193,7 +222,7 @@ public final class R2FilterBilateralBlurDepthAware<
   public void runFilter(
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterBilateralBlurDepthAwareParametersType<SD, S, DD, D> parameters)
+    final R2FilterBilateralBlurDepthAwareParameters<SD, S, DD, D> parameters)
   {
     NullCheck.notNull(pc);
     NullCheck.notNull(uc);
@@ -213,7 +242,7 @@ public final class R2FilterBilateralBlurDepthAware<
     final D destination =
       parameters.outputRenderTarget();
 
-    final R2BilateralBlurParametersType blur_params =
+    final R2BilateralBlurParameters blur_params =
       parameters.blurParameters();
 
     final DD desc_scaled = R2RenderTargetDescriptions.scale(
@@ -305,7 +334,7 @@ public final class R2FilterBilateralBlurDepthAware<
 
   private void evaluateBlurH(
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterBilateralBlurDepthAwareParametersType<SD, S, DD, D> parameters,
+    final R2FilterBilateralBlurDepthAwareParameters<SD, S, DD, D> parameters,
     final R2Texture2DUsableType source_value_texture,
     final R2Texture2DUsableType source_depth_texture,
     final AreaInclusiveUnsignedLType target_area,
@@ -327,14 +356,12 @@ public final class R2FilterBilateralBlurDepthAware<
 
       try {
         this.shader_blur_h.onActivate(g_sh);
-
-        this.setShaderParams(
-          parameters,
-          source_value_texture,
-          source_depth_texture);
-
         this.shader_blur_h.onReceiveFilterValues(
-          g_tex, g_sh, tc, this.shader_params);
+          g_tex,
+          g_sh,
+          tc,
+          createShaderParams(
+            parameters, source_value_texture, source_depth_texture));
         this.shader_blur_h.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());
@@ -350,7 +377,7 @@ public final class R2FilterBilateralBlurDepthAware<
 
   private void evaluateBlurV(
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterBilateralBlurDepthAwareParametersType<SD, S, DD, D> parameters,
+    final R2FilterBilateralBlurDepthAwareParameters<SD, S, DD, D> parameters,
     final R2Texture2DUsableType source_value_texture,
     final R2Texture2DUsableType source_depth_texture,
     final AreaInclusiveUnsignedLType target_area,
@@ -372,14 +399,12 @@ public final class R2FilterBilateralBlurDepthAware<
 
       try {
         this.shader_blur_v.onActivate(g_sh);
-
-        this.setShaderParams(
-          parameters,
-          source_value_texture,
-          source_depth_texture);
-
         this.shader_blur_v.onReceiveFilterValues(
-          g_tex, g_sh, tc, this.shader_params);
+          g_tex,
+          g_sh,
+          tc,
+          createShaderParams(
+            parameters, source_value_texture, source_depth_texture));
         this.shader_blur_v.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());
@@ -391,48 +416,6 @@ public final class R2FilterBilateralBlurDepthAware<
     } finally {
       tc.unitContextFinish(g_tex);
     }
-  }
-
-  private void setShaderParams(
-    final R2FilterBilateralBlurDepthAwareParametersType<SD, S, DD, D> parameters,
-    final R2Texture2DUsableType source_value_texture,
-    final R2Texture2DUsableType source_depth_texture)
-  {
-    final AreaInclusiveUnsignedLType source_area =
-      source_value_texture.texture().textureGetArea();
-    final UnsignedRangeInclusiveL range_x =
-      source_area.getRangeX();
-    final UnsignedRangeInclusiveL range_y =
-      source_area.getRangeX();
-
-    final R2MatricesObserverValuesType m_observer =
-      parameters.sceneObserverValues();
-
-    this.shader_params.clear();
-
-    final R2BilateralBlurParametersType blur_params =
-      parameters.blurParameters();
-
-    {
-      final float radius = blur_params.blurSize();
-      final float sigma = (radius + 1.0f) / 2.0f;
-      final float inv_sigma2 = 1.0f / (2.0f * sigma * sigma);
-      this.shader_params.setBlurFalloff(inv_sigma2);
-    }
-
-    this.shader_params.setBlurOutputInverseWidth(
-      1.0f / (float) range_x.getInterval());
-    this.shader_params.setBlurOutputInverseHeight(
-      1.0f / (float) range_y.getInterval());
-    this.shader_params.setBlurRadius(blur_params.blurSize());
-    this.shader_params.setBlurSharpness(blur_params.blurSharpness());
-    this.shader_params.setDepthCoefficient(
-      (float) R2Projections.getDepthCoefficient(m_observer.projection()));
-    this.shader_params.setDepthTexture(source_depth_texture);
-    this.shader_params.setImageTexture(source_value_texture);
-    this.shader_params.setViewMatrices(m_observer);
-
-    Assertive.ensure(this.shader_params.isInitialized());
   }
 
 }

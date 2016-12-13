@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import org.immutables.value.Value;
 
 /**
  * The type of opaque materials that can be applied to batched instances.
@@ -24,12 +25,24 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
  * @param <M> The type of shader parameters
  */
 
+@R2ImmutableStyleType
+@Value.Immutable
 public interface R2MaterialOpaqueBatchedType<M> extends R2MaterialType<M>
 {
+  @Override
+  @Value.Parameter
+  long materialID();
+
   /**
    * @return The material shader
    */
 
   @Override
+  @Value.Parameter
   R2ShaderInstanceBatchedUsableType<M> shader();
+
+  @Override
+  @Value.Auxiliary
+  @Value.Parameter
+  M shaderParameters();
 }

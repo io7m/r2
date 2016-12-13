@@ -48,6 +48,10 @@
       <groupId>com.io7m.junreachable</groupId>
       <artifactId>io7m-junreachable-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.jproperties</groupId>
+      <artifactId>io7m-jproperties-core</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.io7m.jcanephora</groupId>

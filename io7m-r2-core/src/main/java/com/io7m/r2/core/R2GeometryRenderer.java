@@ -122,7 +122,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
-    final R2SceneOpaquesType s)
+    final R2SceneOpaquesReadableType s)
   {
     NullCheck.notNull(area);
     NullCheck.notNull(gbuffer);

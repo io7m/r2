@@ -16,10 +16,8 @@
 
 package com.io7m.r2.core.shaders.provided;
 
-import com.io7m.jtensors.parameterized.PVector3FType;
-import com.io7m.jtensors.parameterized.PVector4FType;
-import com.io7m.jtensors.parameterized.PVectorM3F;
-import com.io7m.jtensors.parameterized.PVectorM4F;
+import com.io7m.jtensors.parameterized.PVectorI3F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.spaces.R2SpaceRGBAType;
@@ -30,7 +28,7 @@ import org.immutables.value.Value;
  * Parameters for basic surfaces.
  */
 
-public interface R2SurfaceShaderBasicParametersBaseType
+public interface R2SurfaceShaderBasicParametersValuesType
 {
   /**
    * @return A reference to the default textures
@@ -50,9 +48,9 @@ public interface R2SurfaceShaderBasicParametersBaseType
    */
 
   @Value.Default
-  default PVector4FType<R2SpaceRGBAType> albedoColor()
+  default PVectorI4F<R2SpaceRGBAType> albedoColor()
   {
-    return new PVectorM4F<>(1.0f, 1.0f, 1.0f, 1.0f);
+    return new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
   /**
@@ -63,9 +61,9 @@ public interface R2SurfaceShaderBasicParametersBaseType
    */
 
   @Value.Default
-  default PVector3FType<R2SpaceRGBType> specularColor()
+  default PVectorI3F<R2SpaceRGBType> specularColor()
   {
-    return new PVectorM3F<>(0.0f, 0.0f, 0.0f);
+    return new PVectorI3F<>(0.0f, 0.0f, 0.0f);
   }
 
   /**

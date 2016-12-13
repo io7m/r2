@@ -42,9 +42,9 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
-  R2AbstractShader<R2ShaderFilterBilateralBlurDepthAwareParametersType>
+  R2AbstractShader<R2ShaderFilterBilateralBlurDepthAwareParameters>
   implements
-  R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParametersType>
+  R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParameters>
 {
   private final JCGLProgramUniformType u_texture_image;
   private final JCGLProgramUniformType u_texture_depth;
@@ -114,7 +114,7 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterBilateralBlurDepthAwareParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -126,10 +126,10 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
   }
 
   @Override
-  public Class<R2ShaderFilterBilateralBlurDepthAwareParametersType>
+  public Class<R2ShaderFilterBilateralBlurDepthAwareParameters>
   getShaderParametersType()
   {
-    return R2ShaderFilterBilateralBlurDepthAwareParametersType.class;
+    return R2ShaderFilterBilateralBlurDepthAwareParameters.class;
   }
 
   @Override
@@ -144,7 +144,7 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterBilateralBlurDepthAwareParametersType values)
+    final R2ShaderFilterBilateralBlurDepthAwareParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);

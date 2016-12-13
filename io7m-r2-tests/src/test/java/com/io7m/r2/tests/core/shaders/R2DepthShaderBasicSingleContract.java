@@ -27,8 +27,7 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
@@ -37,11 +36,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2DepthShaderBasicSingleContract extends
-  R2ShaderDepthSingleContract<R2DepthShaderBasicParametersType,
-    R2DepthShaderBasicParametersMutable>
+  R2ShaderDepthSingleContract<R2DepthShaderBasicParameters, R2DepthShaderBasicParameters>
 {
   @Override
-  protected final R2DepthShaderBasicParametersMutable newParameters(
+  protected final R2DepthShaderBasicParameters newParameters(
     final JCGLInterfaceGL33Type g)
   {
     final JCGLTexturesType g_tex = g.getTextures();
@@ -58,10 +56,7 @@ public abstract class R2DepthShaderBasicSingleContract extends
     try {
       final R2TextureDefaultsType t =
         R2TextureDefaults.newDefaults(g.getTextures(), tc_alloc);
-      final R2DepthShaderBasicParametersMutable p =
-        R2DepthShaderBasicParametersMutable.create();
-      p.setAlbedoTexture(t.texture2DWhite());
-      return p;
+      return R2DepthShaderBasicParameters.of(t, t.texture2DWhite(), 0.0f);
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
@@ -76,11 +71,8 @@ public abstract class R2DepthShaderBasicSingleContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> s =
-      R2DepthShaderBasicSingle.newShader(
-        g.getShaders(),
-        sources,
-        pool);
+    final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> s =
+      R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

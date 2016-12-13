@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterTextureShow;
-import com.io7m.r2.filters.R2ShaderFilterTextureShowParametersType;
+import com.io7m.r2.filters.R2ShaderFilterTextureShowParameters;
 import com.io7m.r2.tests.filters.R2ShaderTextureShowContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
@@ -39,7 +39,7 @@ public final class R2ShaderFilterTextureShowTest extends
   }
 
   @Override
-  protected R2ShaderFilterType<R2ShaderFilterTextureShowParametersType>
+  protected R2ShaderFilterType<R2ShaderFilterTextureShowParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,

@@ -47,7 +47,7 @@ public final class R2ShaderFilterFogDepthQuadraticInverse extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterFogParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterFogParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -55,8 +55,6 @@ public final class R2ShaderFilterFogDepthQuadraticInverse extends
   {
     return R2ShaderFilterVerifier.newVerifier(
       new R2ShaderFilterFogDepthQuadraticInverse(
-        in_shaders,
-        in_shader_env,
-        in_pool));
+        in_shaders, in_shader_env, in_pool));
   }
 }

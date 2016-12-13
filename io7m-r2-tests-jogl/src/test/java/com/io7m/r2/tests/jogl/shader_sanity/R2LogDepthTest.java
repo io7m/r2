@@ -46,7 +46,8 @@ public final class R2LogDepthTest extends R2ShaderTest
     return (float) (Math.log(x) / Math.log(2.0));
   }
 
-  @Test public void testLogDepthIdentity()
+  @Test
+  public void testLogDepthIdentity()
     throws Exception
   {
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();
@@ -69,7 +70,8 @@ public final class R2LogDepthTest extends R2ShaderTest
     }
   }
 
-  @Test public void testLogDepthComposedIdentity()
+  @Test
+  public void testLogDepthComposedIdentity()
     throws Exception
   {
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();

@@ -24,7 +24,6 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2ShadowDepthVarianceType extends R2ShadowType
 {

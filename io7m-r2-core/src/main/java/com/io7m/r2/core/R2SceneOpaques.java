@@ -20,7 +20,6 @@ import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
-import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -45,11 +44,9 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
   private final Singles singles;
   private final Batches batches;
-  private final StringBuilder text;
 
   private R2SceneOpaques()
   {
-    this.text = new StringBuilder(128);
     this.singles = new Singles();
     this.batches = new Batches();
   }
@@ -61,6 +58,17 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
   public static R2SceneOpaquesType newOpaques()
   {
     return new R2SceneOpaques();
+  }
+
+  private static R2RendererExceptionInstanceAlreadyVisible
+  errorInstanceAlreadyVisible(
+    final R2InstanceType i)
+  {
+    final StringBuilder text = new StringBuilder(128);
+    text.append("Instance is already visible.\n");
+    text.append("Instance:         ");
+    text.append(i.instanceID());
+    return new R2RendererExceptionInstanceAlreadyVisible(text.toString());
   }
 
   @Override
@@ -86,17 +94,17 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     final R2ShaderInstanceSingleUsableType<?> shader = m.shader();
     final long s_id = shader.getShaderID();
 
-    /**
+    /*
      * Insert the instance into the set of all single instances. Instances
      * that are already visible are rejected.
      */
 
     if (this.singles.instances.containsKey(i_id)) {
-      throw this.errorInstanceAlreadyVisible(i);
+      throw R2SceneOpaques.errorInstanceAlreadyVisible(i);
     }
     this.singles.instances.put(i_id, i);
 
-    /**
+    /*
      * Insert the instance, material, and shader into the group. Add a
      * mapping from the instance to the material.
      */
@@ -107,9 +115,8 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     g.instances.put(i_id, i);
     g.instance_materials.put(m_id, m);
     g.instance_shaders.put(s_id, shader);
-    g.instance_to_material.put(i_id, m_id);
 
-    /**
+    /*
      * Update the set of mappings from materials to instances for the group.
      */
 
@@ -122,7 +129,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     m_instances.add(i_id);
     g.material_to_instances.put(m_id, m_instances);
 
-    /**
+    /*
      * Update the set of mappings from shaders to materials for the group.
      */
 
@@ -160,17 +167,17 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     final R2ShaderInstanceBatchedUsableType<?> shader = m.shader();
     final long s_id = shader.getShaderID();
 
-    /**
+    /*
      * Insert the instance into the set of all batched instances. Instances
      * that are already visible are rejected.
      */
 
     if (this.batches.instances.containsKey(i_id)) {
-      throw this.errorInstanceAlreadyVisible(i);
+      throw errorInstanceAlreadyVisible(i);
     }
     this.batches.instances.put(i_id, i);
 
-    /**
+    /*
      * Insert the instance, material, and shader into the group. Add a
      * mapping from the instance to the material.
      */
@@ -181,9 +188,8 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     g.instances.put(i_id, i);
     g.instance_materials.put(m_id, m);
     g.instance_shaders.put(s_id, shader);
-    g.instance_to_material.put(i_id, m_id);
 
-    /**
+    /*
      * Update the set of mappings from materials to instances for the group.
      */
 
@@ -196,7 +202,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     m_instances.add(i_id);
     g.material_to_instances.put(m_id, m_instances);
 
-    /**
+    /*
      * Update the set of mappings from shaders to materials for the group.
      */
 
@@ -225,13 +231,13 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
   {
     c.onStart();
 
-    /**
+    /*
      * Update all the batched instances.
      */
 
     this.opaquesExecuteBatchedInstancesUpdate(c);
 
-    /**
+    /*
      * Then for each group, execute the batched instances followed by the
      * single instances.
      */
@@ -278,7 +284,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     final R2SceneOpaquesConsumerType c,
     final Singles.Group g)
   {
-    /**
+    /*
      * For each single instance shader {@code s}...
      */
 
@@ -291,7 +297,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
       c.onInstanceSingleShaderStart(s);
 
-      /**
+      /*
        * For each material {@code m} using the shader {@code s}...
        */
 
@@ -303,7 +309,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
           (R2MaterialOpaqueSingleType<Object>) g.instance_materials.get(m_id);
         c.onInstanceSingleMaterialStart(material);
 
-        /**
+        /*
          * Sort the instances by their array object instances, to allow
          * for rendering with the fewest number of array object binds.
          */
@@ -323,7 +329,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
           return Integer.compare(ao.getGLName(), bo.getGLName());
         });
 
-        /**
+        /*
          * Render all instances with the minimum number of array object
          * bindings.
          */
@@ -354,7 +360,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     final R2SceneOpaquesConsumerType c,
     final Batches.Group g)
   {
-    /**
+    /*
      * For each shader {@code s}...
      */
 
@@ -367,7 +373,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
       c.onInstanceBatchedShaderStart(s);
 
-      /**
+      /*
        * For each material {@code m} using the shader {@code s}...
        */
 
@@ -380,7 +386,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
             g.instance_materials.get(m_id);
         c.onInstanceBatchedMaterialStart(material);
 
-        /**
+        /*
          * Render all instances.
          *
          * Batched instances can be rendered in any order, because each
@@ -412,22 +418,11 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     return sc + bc;
   }
 
-  private R2RendererExceptionInstanceAlreadyVisible errorInstanceAlreadyVisible(
-    final R2InstanceType i)
-  {
-    this.text.setLength(0);
-    this.text.append("Instance is already visible.\n");
-    this.text.append("Instance:         ");
-    this.text.append(i.instanceID());
-    return new R2RendererExceptionInstanceAlreadyVisible(this.text.toString());
-  }
-
   private static final class Singles
   {
     private final Group[] groups;
     private final Long2ReferenceOpenHashMap<R2InstanceSingleType> instances;
-    private final ObjectArrayList<R2InstanceSingleType>
-      instances_sorted;
+    private final ObjectArrayList<R2InstanceSingleType> instances_sorted;
     private int group_max;
 
     Singles()
@@ -454,8 +449,6 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
     private static final class Group
     {
-      private final Long2LongOpenHashMap
-        instance_to_material;
       private final Long2ReferenceOpenHashMap<LongSet>
         material_to_instances;
       private final Long2ReferenceOpenHashMap<LongSet>
@@ -469,7 +462,6 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
       Group()
       {
-        this.instance_to_material = new Long2LongOpenHashMap(1024);
         this.material_to_instances = new Long2ReferenceOpenHashMap<>(1024);
         this.shader_to_materials = new Long2ReferenceOpenHashMap<>(1024);
         this.instance_materials = new Long2ReferenceOpenHashMap<>(1024);
@@ -479,7 +471,6 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
       void clear()
       {
-        this.instance_to_material.clear();
         this.material_to_instances.clear();
         this.shader_to_materials.clear();
         this.instance_materials.clear();
@@ -517,7 +508,6 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
     private static final class Group
     {
-      private final Long2LongOpenHashMap instance_to_material;
       private final Long2ReferenceOpenHashMap<LongSet>
         material_to_instances;
       private final Long2ReferenceOpenHashMap<LongSet>
@@ -531,7 +521,6 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
       Group()
       {
-        this.instance_to_material = new Long2LongOpenHashMap(1024);
         this.material_to_instances = new Long2ReferenceOpenHashMap<>(1024);
         this.shader_to_materials = new Long2ReferenceOpenHashMap<>(1024);
         this.instance_materials = new Long2ReferenceOpenHashMap<>(1024);
@@ -541,7 +530,6 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
 
       void clear()
       {
-        this.instance_to_material.clear();
         this.shader_to_materials.clear();
         this.instance_materials.clear();
         this.instance_shaders.clear();

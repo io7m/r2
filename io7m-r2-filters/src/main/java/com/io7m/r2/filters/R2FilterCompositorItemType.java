@@ -29,7 +29,6 @@ import java.util.Optional;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2FilterCompositorItemType
 {

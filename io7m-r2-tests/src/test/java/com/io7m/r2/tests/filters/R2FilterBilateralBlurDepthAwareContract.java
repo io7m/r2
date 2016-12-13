@@ -47,10 +47,9 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
-import com.io7m.r2.filters.R2BilateralBlurParametersMutable;
+import com.io7m.r2.filters.R2BilateralBlurParameters;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAware;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParameters;
-import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParametersType;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.R2TestUtilities;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
@@ -89,7 +88,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       R2ImageBufferPool.newPool(g, Long.MAX_VALUE, Long.MAX_VALUE);
 
     final R2FilterType<
-      R2FilterBilateralBlurDepthAwareParametersType<
+      R2FilterBilateralBlurDepthAwareParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -136,7 +135,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBilateralBlurDepthAwareParametersType<
+      R2FilterBilateralBlurDepthAwareParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -157,13 +156,14 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2BilateralBlurParametersMutable blur_params =
-      R2BilateralBlurParametersMutable.create();
-    blur_params.setBlurPasses(0);
-    blur_params.setBlurSize(0.0f);
-    blur_params.setBlurScale(1.0f);
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(0)
+        .setBlurSize(0.0f)
+        .setBlurScale(1.0f)
+        .build();
 
-    final R2FilterBilateralBlurDepthAwareParametersType<
+    final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
@@ -220,7 +220,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBilateralBlurDepthAwareParametersType<
+      R2FilterBilateralBlurDepthAwareParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -243,14 +243,14 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(0)
+        .setBlurSize(0.0f)
+        .setBlurScale(1.0f)
+        .build();
 
-    final R2BilateralBlurParametersMutable blur_params =
-      R2BilateralBlurParametersMutable.create();
-    blur_params.setBlurPasses(0);
-    blur_params.setBlurSize(0.0f);
-    blur_params.setBlurScale(1.0f);
-
-    final R2FilterBilateralBlurDepthAwareParametersType<
+    final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
@@ -307,7 +307,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBilateralBlurDepthAwareParametersType<
+      R2FilterBilateralBlurDepthAwareParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -328,13 +328,14 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2BilateralBlurParametersMutable blur_params =
-      R2BilateralBlurParametersMutable.create();
-    blur_params.setBlurPasses(1);
-    blur_params.setBlurSize(0.0f);
-    blur_params.setBlurScale(1.0f);
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(1)
+        .setBlurSize(0.0f)
+        .setBlurScale(1.0f)
+        .build();
 
-    final R2FilterBilateralBlurDepthAwareParametersType<
+    final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
@@ -391,7 +392,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBilateralBlurDepthAwareParametersType<
+      R2FilterBilateralBlurDepthAwareParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -412,13 +413,14 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2BilateralBlurParametersMutable blur_params =
-      R2BilateralBlurParametersMutable.create();
-    blur_params.setBlurPasses(1);
-    blur_params.setBlurSize(1.0f);
-    blur_params.setBlurScale(1.0f);
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(1)
+        .setBlurSize(1.0f)
+        .setBlurScale(1.0f)
+        .build();
 
-    final R2FilterBilateralBlurDepthAwareParametersType<
+    final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
@@ -475,7 +477,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBilateralBlurDepthAwareParametersType<
+      R2FilterBilateralBlurDepthAwareParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -496,13 +498,14 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2BilateralBlurParametersMutable blur_params =
-      R2BilateralBlurParametersMutable.create();
-    blur_params.setBlurPasses(1);
-    blur_params.setBlurSize(1.0f);
-    blur_params.setBlurScale(0.5f);
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(1)
+        .setBlurSize(1.0f)
+        .setBlurScale(0.5f)
+        .build();
 
-    final R2FilterBilateralBlurDepthAwareParametersType<
+    final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,

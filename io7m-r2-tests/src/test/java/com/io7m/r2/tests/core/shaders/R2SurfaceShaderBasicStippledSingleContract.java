@@ -41,8 +41,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2SurfaceShaderBasicStippledSingleContract extends
-  R2ShaderInstanceSingleContract<R2SurfaceShaderBasicStippledParametersType,
-    R2SurfaceShaderBasicStippledParametersType>
+  R2ShaderInstanceSingleContract<R2SurfaceShaderBasicStippledParameters,
+    R2SurfaceShaderBasicStippledParameters>
 {
   @Override
   protected final R2SurfaceShaderBasicStippledParameters newParameters(
@@ -62,7 +62,12 @@ public abstract class R2SurfaceShaderBasicStippledSingleContract extends
     try {
       final R2TextureDefaultsType t =
         R2TextureDefaults.newDefaults(g.getTextures(), tc_alloc);
-      return R2SurfaceShaderBasicStippledParameters.of(t.texture2DBlack(), 0.0f, t);
+
+      final R2SurfaceShaderBasicStippledParameters.Builder pb =
+        R2SurfaceShaderBasicStippledParameters.builder();
+      pb.setStippleNoiseTexture(t.texture2DWhite());
+      pb.setTextureDefaults(t);
+      return pb.build();
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
@@ -77,11 +82,9 @@ public abstract class R2SurfaceShaderBasicStippledSingleContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParametersType> s =
+    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParameters> s =
       R2SurfaceShaderBasicStippledSingle.newShader(
-        g.getShaders(),
-        sources,
-        pool);
+        g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

@@ -27,12 +27,7 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledParameters;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledParametersType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
@@ -41,19 +36,18 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2DepthShaderBasicStippledSingleContract extends
-  R2ShaderDepthSingleContract<R2DepthShaderBasicStippledParametersType,
-    R2DepthShaderBasicStippledParametersType>
+  R2ShaderDepthSingleContract<
+    R2DepthShaderBasicStippledParameters, R2DepthShaderBasicStippledParameters>
 {
   @Override
-  protected final R2DepthShaderBasicStippledParametersMutable newParameters(
+  protected final R2DepthShaderBasicStippledParameters newParameters(
     final JCGLInterfaceGL33Type g)
   {
     final JCGLTexturesType g_tex = g.getTextures();
 
     final JCGLTextureUnitAllocatorType tp =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        8,
-        g_tex.textureGetUnits());
+        8, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tc_root =
       tp.getRootContext();
     final JCGLTextureUnitContextType tc_alloc =
@@ -62,11 +56,8 @@ public abstract class R2DepthShaderBasicStippledSingleContract extends
     try {
       final R2TextureDefaultsType t =
         R2TextureDefaults.newDefaults(g.getTextures(), tc_alloc);
-      final R2DepthShaderBasicStippledParametersMutable p =
-        R2DepthShaderBasicStippledParametersMutable.create();
-      p.setAlbedoTexture(t.texture2DWhite());
-      p.setStippleNoiseTexture(t.texture2DBlack());
-      return p;
+      return R2DepthShaderBasicStippledParameters.of(
+        t, t.texture2DWhite(), 0.0f, t.texture2DBlack(), 0.0f);
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
@@ -81,11 +72,8 @@ public abstract class R2DepthShaderBasicStippledSingleContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderDepthSingleType<R2DepthShaderBasicStippledParametersType> s =
-      R2DepthShaderBasicStippledSingle.newShader(
-        g.getShaders(),
-        sources,
-        pool);
+    final R2ShaderDepthSingleType<R2DepthShaderBasicStippledParameters> s =
+      R2DepthShaderBasicStippledSingle.newShader(g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

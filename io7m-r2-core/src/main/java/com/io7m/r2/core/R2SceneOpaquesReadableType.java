@@ -16,34 +16,24 @@
 
 package com.io7m.r2.core;
 
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
-import org.immutables.value.Value;
-
 /**
- * The type of opaque materials that can be applied to single instances.
- *
- * @param <M> The type of shader parameters
+ * The readable set of opaque instances in a scene.
  */
 
-@R2ImmutableStyleType
-@Value.Immutable
-public interface R2MaterialOpaqueSingleType<M> extends R2MaterialType<M>
+public interface R2SceneOpaquesReadableType
 {
-  @Override
-  @Value.Parameter
-  long materialID();
-
   /**
-   * @return The material shader
+   * Batch the instances and pass them to the given consumer for rendering.
+   *
+   * @param c The consumer
    */
 
-  @Override
-  @Value.Auxiliary
-  @Value.Parameter
-  R2ShaderInstanceSingleUsableType<M> shader();
+  void opaquesExecute(
+    R2SceneOpaquesConsumerType c);
 
-  @Override
-  @Value.Auxiliary
-  @Value.Parameter
-  M shaderParameters();
+  /**
+   * @return The number of instances in the scene
+   */
+
+  long opaquesCount();
 }

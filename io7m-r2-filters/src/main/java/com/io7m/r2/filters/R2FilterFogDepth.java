@@ -29,19 +29,18 @@ import org.valid4j.Assertive;
  * <p>The filter takes a texture and a depth texture as input and writes
  * a filtered image to the currently bound framebuffer.</p>
  *
- * @see R2FilterFogParametersType#imageTexture()
- * @see R2FilterFogParametersType#imageDepthTexture()
+ * @see R2FilterFogParameters#imageTexture()
+ * @see R2FilterFogParameters#imageDepthTexture()
  */
 
-public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParametersType>
+public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameters>
 {
-  private final R2ShaderFilterType<R2ShaderFilterFogParametersType> shader_linear;
-  private final R2ShaderFilterType<R2ShaderFilterFogParametersType> shader_quad;
-  private final R2ShaderFilterType<R2ShaderFilterFogParametersType> shader_quad_inv;
+  private final R2ShaderFilterType<R2ShaderFilterFogParameters> shader_linear;
+  private final R2ShaderFilterType<R2ShaderFilterFogParameters> shader_quad;
+  private final R2ShaderFilterType<R2ShaderFilterFogParameters> shader_quad_inv;
   private final JCGLInterfaceGL33Type g;
   private final JCGLRenderStateMutable render_state;
   private final R2UnitQuadUsableType quad;
-  private final R2ShaderFilterFogParametersMutable shader_params;
 
   private R2FilterFogDepth(
     final JCGLInterfaceGL33Type in_g,
@@ -50,6 +49,8 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
+    this.quad = NullCheck.notNull(in_quad);
+
     this.shader_linear = R2ShaderFilterFogDepthLinear.newShader(
       this.g.getShaders(), in_shader_env, in_pool);
     this.shader_quad = R2ShaderFilterFogDepthQuadratic.newShader(
@@ -57,12 +58,7 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
     this.shader_quad_inv = R2ShaderFilterFogDepthQuadraticInverse.newShader(
       this.g.getShaders(), in_shader_env, in_pool);
 
-    this.render_state =
-      JCGLRenderStateMutable.create();
-    this.quad =
-      NullCheck.notNull(in_quad);
-    this.shader_params =
-      R2ShaderFilterFogParametersMutable.create();
+    this.render_state = JCGLRenderStateMutable.create();
   }
 
   /**
@@ -74,7 +70,7 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
    * @return A new filter
    */
 
-  public static R2FilterType<R2FilterFogParametersType> newFilter(
+  public static R2FilterType<R2FilterFogParameters> newFilter(
     final JCGLInterfaceGL33Type in_g,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
@@ -105,7 +101,7 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
   public void runFilter(
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterFogParametersType parameters)
+    final R2FilterFogParameters parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
@@ -123,7 +119,7 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
 
   private void run(
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterFogParametersType parameters)
+    final R2FilterFogParameters parameters)
   {
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
@@ -132,7 +128,7 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
     final JCGLDrawType g_dr = this.g.getDraw();
     final JCGLViewportsType g_v = this.g.getViewports();
 
-    R2ShaderFilterType<R2ShaderFilterFogParametersType> s = null;
+    R2ShaderFilterType<R2ShaderFilterFogParameters> s = null;
     switch (parameters.progression()) {
       case FOG_LINEAR: {
         s = this.shader_linear;
@@ -161,30 +157,27 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
 
           final R2MatricesObserverValuesType m = parameters.observerValues();
 
-          this.shader_params.clear();
-          this.shader_params.setImageTexture(
-            parameters.imageTexture());
-          this.shader_params.setImageDepthTexture(
-            parameters.imageDepthTexture());
-          this.shader_params.setObserverValues(
-            m);
-          this.shader_params.setFogColor(
-            parameters.fogColor());
-          this.shader_params.setFogFarPositiveZ(
-            parameters.fogFarPositiveZ());
-          this.shader_params.setFogNearPositiveZ(
-            parameters.fogNearPositiveZ());
+          final R2ShaderFilterFogParameters sp =
+            R2ShaderFilterFogParameters.builder()
+              .setFogColor(parameters.fogColor())
+              .setFogFarPositiveZ(parameters.fogFarPositiveZ())
+              .setFogNearPositiveZ(parameters.fogNearPositiveZ())
+              .setImageDepthTexture(parameters.imageDepthTexture())
+              .setImageTexture(parameters.imageTexture())
+              .setObserverValues(parameters.observerValues())
+              .build();
 
           s.onActivate(g_sh);
-          s.onReceiveFilterValues(g_tex, g_sh, tc, this.shader_params);
-          s.onValidate();
-
-          g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+          try {
+            s.onReceiveFilterValues(g_tex, g_sh, tc, sp);
+            s.onValidate();
+            g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
+          } finally {
+            s.onDeactivate(g_sh);
+          }
         } finally {
           g_ao.arrayObjectUnbind();
-          s.onDeactivate(g_sh);
         }
-
       } finally {
         tc.unitContextFinish(g_tex);
       }

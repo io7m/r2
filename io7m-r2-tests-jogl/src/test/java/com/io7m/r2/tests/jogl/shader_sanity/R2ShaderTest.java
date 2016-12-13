@@ -20,7 +20,8 @@ import org.junit.After;
 
 public abstract class R2ShaderTest
 {
-  @After public final void onTestCompleted()
+  @After
+  public final void onTestCompleted()
   {
     R2TestContexts.closeAllContexts();
   }

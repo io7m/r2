@@ -26,7 +26,6 @@ import org.immutables.value.Value;
 
 @R2ImmutableStyleType
 @Value.Immutable
-@Value.Modifiable
 public interface R2BilateralBlurParametersType
 {
   /**

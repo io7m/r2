@@ -46,10 +46,9 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
-import com.io7m.r2.filters.R2BlurParametersMutable;
+import com.io7m.r2.filters.R2BlurParameters;
 import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParametersMutable;
-import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
+import com.io7m.r2.filters.R2FilterBoxBlurParameters;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
@@ -86,7 +85,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       R2ImageBufferPool.newPool(g, Long.MAX_VALUE, Long.MAX_VALUE);
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -133,7 +132,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -154,15 +153,19 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2BlurParametersMutable blur_params =
-      R2BlurParametersMutable.create();
+    final R2BlurParameters blur_params =
+      R2BlurParameters.builder()
+        .setBlurPasses(0)
+        .setBlurSize(0.0f)
+        .setBlurScale(1.0f)
+        .build();
 
-    final R2FilterBoxBlurParametersMutable<
+    final R2FilterBoxBlurParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBoxBlurParametersMutable.create(
+      R2FilterBoxBlurParameters.of(
         ib,
         R2ImageBufferUsableType::imageTexture,
         ib,
@@ -170,12 +173,6 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         rtp,
         blur_params,
         R2ImageBufferDescriptionScaler.get());
-
-    params.setSourceRenderTarget(ib);
-    params.setOutputRenderTarget(ib);
-    blur_params.setBlurPasses(0);
-    blur_params.setBlurSize(0.0f);
-    blur_params.setBlurScale(1.0f);
 
     f.runFilter(pro_root, tc, params);
 
@@ -218,7 +215,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -241,15 +238,19 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2BlurParametersMutable blur_params =
-      R2BlurParametersMutable.create();
+    final R2BlurParameters blur_params =
+      R2BlurParameters.builder()
+        .setBlurPasses(0)
+        .setBlurSize(0.0f)
+        .setBlurScale(1.0f)
+        .build();
 
-    final R2FilterBoxBlurParametersMutable<
+    final R2FilterBoxBlurParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBoxBlurParametersMutable.create(
+      R2FilterBoxBlurParameters.of(
         ib0,
         R2ImageBufferUsableType::imageTexture,
         ib1,
@@ -257,12 +258,6 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         rtp,
         blur_params,
         R2ImageBufferDescriptionScaler.get());
-
-    params.setSourceRenderTarget(ib0);
-    params.setOutputRenderTarget(ib1);
-    blur_params.setBlurPasses(0);
-    blur_params.setBlurSize(0.0f);
-    blur_params.setBlurScale(1.0f);
 
     f.runFilter(pro_root, tc, params);
 
@@ -305,7 +300,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -326,15 +321,19 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2BlurParametersMutable blur_params =
-      R2BlurParametersMutable.create();
+    final R2BlurParameters blur_params =
+      R2BlurParameters.builder()
+        .setBlurPasses(1)
+        .setBlurSize(0.0f)
+        .setBlurScale(1.0f)
+        .build();
 
-    final R2FilterBoxBlurParametersMutable<
+    final R2FilterBoxBlurParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBoxBlurParametersMutable.create(
+      R2FilterBoxBlurParameters.of(
         ib,
         R2ImageBufferUsableType::imageTexture,
         ib,
@@ -342,12 +341,6 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         rtp,
         blur_params,
         R2ImageBufferDescriptionScaler.get());
-
-    params.setSourceRenderTarget(ib);
-    params.setOutputRenderTarget(ib);
-    blur_params.setBlurPasses(1);
-    blur_params.setBlurSize(0.0f);
-    blur_params.setBlurScale(1.0f);
 
     f.runFilter(pro_root, tc, params);
 
@@ -390,7 +383,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -411,15 +404,19 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2BlurParametersMutable blur_params =
-      R2BlurParametersMutable.create();
+    final R2BlurParameters blur_params =
+      R2BlurParameters.builder()
+        .setBlurPasses(1)
+        .setBlurSize(1.0f)
+        .setBlurScale(1.0f)
+        .build();
 
-    final R2FilterBoxBlurParametersMutable<
+    final R2FilterBoxBlurParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBoxBlurParametersMutable.create(
+      R2FilterBoxBlurParameters.of(
         ib,
         R2ImageBufferUsableType::imageTexture,
         ib,
@@ -427,12 +424,6 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         rtp,
         blur_params,
         R2ImageBufferDescriptionScaler.get());
-
-    params.setSourceRenderTarget(ib);
-    params.setOutputRenderTarget(ib);
-    blur_params.setBlurPasses(1);
-    blur_params.setBlurSize(1.0f);
-    blur_params.setBlurScale(1.0f);
 
     f.runFilter(pro_root, tc, params);
 
@@ -475,7 +466,7 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
       pro_frame.getChildContext("main");
 
     final R2FilterType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -496,15 +487,19 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2BlurParametersMutable blur_params =
-      R2BlurParametersMutable.create();
+    final R2BlurParameters blur_params =
+      R2BlurParameters.builder()
+        .setBlurPasses(1)
+        .setBlurSize(1.0f)
+        .setBlurScale(0.5f)
+        .build();
 
-    final R2FilterBoxBlurParametersMutable<
+    final R2FilterBoxBlurParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBoxBlurParametersMutable.create(
+      R2FilterBoxBlurParameters.of(
         ib,
         R2ImageBufferUsableType::imageTexture,
         ib,
@@ -512,12 +507,6 @@ public abstract class R2FilterBoxBlurContract extends R2JCGLContract
         rtp,
         blur_params,
         R2ImageBufferDescriptionScaler.get());
-
-    params.setSourceRenderTarget(ib);
-    params.setOutputRenderTarget(ib);
-    blur_params.setBlurPasses(1);
-    blur_params.setBlurSize(1.0f);
-    blur_params.setBlurScale(0.5f);
 
     f.runFilter(pro_root, tc, params);
 

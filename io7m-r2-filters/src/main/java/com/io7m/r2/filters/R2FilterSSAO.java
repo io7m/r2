@@ -37,11 +37,9 @@ import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import org.valid4j.Assertive;
 
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -52,26 +50,22 @@ import java.util.OptionalInt;
  */
 
 public final class R2FilterSSAO implements
-  R2FilterType<R2FilterSSAOParametersType>
+  R2FilterType<R2FilterSSAOParameters>
 {
-  private final R2ShaderFilterType<R2ShaderSSAOParametersType> shader;
+  private final R2ShaderFilterType<R2ShaderSSAOParameters> shader;
   private final R2UnitQuadUsableType quad;
   private final JCGLInterfaceGL33Type g;
   private final JCGLClearSpecification clear;
-  private final R2ShaderSSAOParametersMutable shader_params;
   private final JCGLRenderStateMutable render_state;
-  private final R2TextureDefaultsType texture_defaults;
 
   private R2FilterSSAO(
     final JCGLInterfaceGL33Type in_g,
-    final R2TextureDefaultsType in_texture_defaults,
-    final R2ShaderFilterType<R2ShaderSSAOParametersType> in_shader,
+    final R2ShaderFilterType<R2ShaderSSAOParameters> in_shader,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
-    this.texture_defaults = NullCheck.notNull(in_texture_defaults);
 
     final JCGLClearSpecification.Builder cb = JCGLClearSpecification.builder();
     cb.setColorBufferClear(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f));
@@ -79,42 +73,38 @@ public final class R2FilterSSAO implements
     cb.setStencilBufferClear(OptionalInt.empty());
     this.clear = cb.build();
 
-    this.shader_params = R2ShaderSSAOParametersMutable.create();
     this.render_state = JCGLRenderStateMutable.create();
   }
 
   /**
    * Construct a new filter.
    *
-   * @param in_shader_env       Shader sources
-   * @param in_g                A GL interface
-   * @param in_texture_defaults A set of default textures
-   * @param in_tc               A texture unit allocator
-   * @param in_pool             An ID pool
-   * @param in_quad             A unit quad
+   * @param in_shader_env Shader sources
+   * @param in_g          A GL interface
+   * @param in_tc         A texture unit allocator
+   * @param in_pool       An ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new filter
    */
 
-  public static R2FilterType<R2FilterSSAOParametersType> newFilter(
+  public static R2FilterType<R2FilterSSAOParameters> newFilter(
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final JCGLInterfaceGL33Type in_g,
-    final R2TextureDefaultsType in_texture_defaults,
     final JCGLTextureUnitContextParentType in_tc,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
     NullCheck.notNull(in_shader_env);
     NullCheck.notNull(in_g);
-    NullCheck.notNull(in_texture_defaults);
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_quad);
     NullCheck.notNull(in_tc);
 
-    final R2ShaderFilterType<R2ShaderSSAOParametersType> s =
+    final R2ShaderFilterType<R2ShaderSSAOParameters> s =
       R2ShaderSSAO.newShader(in_g.getShaders(), in_shader_env, in_pool);
 
-    return new R2FilterSSAO(in_g, in_texture_defaults, s, in_quad);
+    return new R2FilterSSAO(in_g, s, in_quad);
   }
 
   @Override
@@ -138,7 +128,7 @@ public final class R2FilterSSAO implements
   public void runFilter(
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterSSAOParametersType parameters)
+    final R2FilterSSAOParameters parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
@@ -154,7 +144,7 @@ public final class R2FilterSSAO implements
 
   private void run(
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterSSAOParametersType parameters)
+    final R2FilterSSAOParameters parameters)
   {
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
     final JCGLShadersType g_sh = this.g.getShaders();
@@ -175,21 +165,22 @@ public final class R2FilterSSAO implements
 
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
-      this.shader_params.clear();
-      this.shader_params.setExponent(parameters.exponent());
-      this.shader_params.setGeometryBuffer(parameters.geometryBuffer());
-      this.shader_params.setKernel(parameters.kernel());
-      this.shader_params.setNoiseTexture(parameters.noiseTexture());
-      this.shader_params.setSampleRadius(parameters.sampleRadius());
-      this.shader_params.setViewport(destination.area());
-      this.shader_params.setViewMatrices(parameters.sceneObserverValues());
-      Assertive.ensure(this.shader_params.isInitialized());
+      final R2ShaderSSAOParameters sp =
+        R2ShaderSSAOParameters.builder()
+          .setExponent(parameters.exponent())
+          .setGeometryBuffer(parameters.geometryBuffer())
+          .setKernel(parameters.kernel())
+          .setNoiseTexture(parameters.noiseTexture())
+          .setSampleRadius(parameters.sampleRadius())
+          .setViewport(destination.area())
+          .setViewMatrices(parameters.sceneObserverValues())
+          .build();
 
       try {
         g_sh.shaderActivateProgram(this.shader.getShaderProgram());
 
         this.shader.onActivate(g_sh);
-        this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
+        this.shader.onReceiveFilterValues(g_tx, g_sh, c, sp);
         this.shader.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());

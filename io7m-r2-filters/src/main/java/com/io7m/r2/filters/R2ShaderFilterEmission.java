@@ -39,8 +39,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterEmission extends
-  R2AbstractShader<R2ShaderFilterEmissionParametersType>
-  implements R2ShaderFilterType<R2ShaderFilterEmissionParametersType>
+  R2AbstractShader<R2ShaderFilterEmissionParameters>
+  implements R2ShaderFilterType<R2ShaderFilterEmissionParameters>
 {
   private final JCGLProgramUniformType u_texture;
   private JCGLTextureUnitType unit_texture;
@@ -79,7 +79,7 @@ public final class R2ShaderFilterEmission extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterEmissionParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterEmissionParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -90,10 +90,10 @@ public final class R2ShaderFilterEmission extends
   }
 
   @Override
-  public Class<R2ShaderFilterEmissionParametersType>
+  public Class<R2ShaderFilterEmissionParameters>
   getShaderParametersType()
   {
-    return R2ShaderFilterEmissionParametersType.class;
+    return R2ShaderFilterEmissionParameters.class;
   }
 
   @Override
@@ -108,7 +108,7 @@ public final class R2ShaderFilterEmission extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterEmissionParametersType values)
+    final R2ShaderFilterEmissionParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);

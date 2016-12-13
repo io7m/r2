@@ -48,7 +48,7 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
@@ -100,8 +100,8 @@ public abstract class R2DepthRendererContract extends R2JCGLContract
       R2IDPool.newPool();
 
     final R2InstanceSingleType i =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
@@ -109,18 +109,14 @@ public abstract class R2DepthRendererContract extends R2JCGLContract
     final R2ShaderPreprocessingEnvironmentType sources =
       ShaderPreprocessing.preprocessor();
 
-    final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> ds =
-      R2DepthShaderBasicSingle.newShader(
-        g.getShaders(),
-        sources,
-        id_pool);
+    final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> ds =
+      R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
 
-    final R2DepthShaderBasicParametersMutable ds_param =
-      R2DepthShaderBasicParametersMutable.create();
-    ds_param.setAlbedoTexture(td.texture2DWhite());
+    final R2DepthShaderBasicParameters ds_param =
+      R2DepthShaderBasicParameters.of(td, td.texture2DWhite(), 0.0f);
 
-    final R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> mat =
-      R2MaterialDepthSingle.newMaterial(id_pool, ds, ds_param);
+    final R2MaterialDepthSingleType<R2DepthShaderBasicParameters> mat =
+      R2MaterialDepthSingle.of(id_pool.freshID(), ds, ds_param);
 
     final R2ProjectionOrthographic proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());

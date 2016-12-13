@@ -31,6 +31,7 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
@@ -38,8 +39,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2SurfaceShaderBasicBatchedContract extends
-  R2ShaderInstanceBatchedContract<R2SurfaceShaderBasicParametersType,
-    R2SurfaceShaderBasicParametersType>
+  R2ShaderInstanceBatchedContract<R2SurfaceShaderBasicParameters,
+    R2SurfaceShaderBasicParameters>
 {
   @Override
   protected final R2SurfaceShaderBasicParameters newParameters(
@@ -60,7 +61,10 @@ public abstract class R2SurfaceShaderBasicBatchedContract extends
     try {
       final R2TextureDefaultsType t =
         R2TextureDefaults.newDefaults(g.getTextures(), tc_alloc);
-      return R2SurfaceShaderBasicParameters.of(t);
+      final R2SurfaceShaderBasicParameters.Builder pb =
+        R2SurfaceShaderBasicParameters.builder();
+      pb.setTextureDefaults(t);
+      return pb.build();
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
@@ -75,11 +79,8 @@ public abstract class R2SurfaceShaderBasicBatchedContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParametersType> s =
-      R2SurfaceShaderBasicBatched.newShader(
-        g.getShaders(),
-        sources,
-        pool);
+    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> s =
+      R2SurfaceShaderBasicBatched.newShader(g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

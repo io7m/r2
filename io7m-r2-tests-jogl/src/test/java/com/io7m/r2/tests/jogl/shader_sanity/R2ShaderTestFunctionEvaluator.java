@@ -90,7 +90,8 @@ public final class R2ShaderTestFunctionEvaluator
     this.gl = NullCheck.notNull(gg);
   }
 
-  @Override public VectorI4F evaluate4f(final VectorI4F x)
+  @Override
+  public VectorI4F evaluate4f(final VectorI4F x)
   {
     final JCGLShadersType gs = this.gl.getShaders();
     final JCGLTexturesType gt = this.gl.getTextures();

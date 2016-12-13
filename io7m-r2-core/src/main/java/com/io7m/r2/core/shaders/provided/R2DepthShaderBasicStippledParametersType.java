@@ -18,6 +18,7 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import org.immutables.value.Value;
 
 /**
@@ -25,11 +26,30 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2DepthShaderBasicStippledParametersType extends
-  R2DepthShaderBasicParametersBaseType
+  R2DepthShaderBasicParametersValuesType
 {
+  @Override
+  @Value.Parameter
+  R2TextureDefaultsType textureDefaults();
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default R2Texture2DUsableType albedoTexture()
+  {
+    return R2DepthShaderBasicParametersValuesType.super.albedoTexture();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default float alphaDiscardThreshold()
+  {
+    return R2DepthShaderBasicParametersValuesType.super.alphaDiscardThreshold();
+  }
+
   /**
    * The noise texture used to implement stippling. This is a random noise
    * texture that is tiled across the screen, and values in the red channel are

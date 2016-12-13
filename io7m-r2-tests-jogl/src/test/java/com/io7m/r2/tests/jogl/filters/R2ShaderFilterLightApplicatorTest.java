@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterLightApplicator;
-import com.io7m.r2.filters.R2ShaderFilterLightApplicatorParametersType;
+import com.io7m.r2.filters.R2ShaderFilterLightApplicatorParameters;
 import com.io7m.r2.tests.filters.R2ShaderFilterLightApplicatorContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
@@ -39,7 +39,7 @@ public final class R2ShaderFilterLightApplicatorTest extends
   }
 
   @Override
-  protected R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType>
+  protected R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,

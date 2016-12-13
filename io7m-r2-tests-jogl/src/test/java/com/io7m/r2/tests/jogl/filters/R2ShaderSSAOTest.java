@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderSSAO;
-import com.io7m.r2.filters.R2ShaderSSAOParametersType;
+import com.io7m.r2.filters.R2ShaderSSAOParameters;
 import com.io7m.r2.tests.filters.R2ShaderSSAOContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
@@ -39,7 +39,7 @@ public final class R2ShaderSSAOTest extends
   }
 
   @Override
-  protected R2ShaderFilterType<R2ShaderSSAOParametersType> newShaderWithVerifier(
+  protected R2ShaderFilterType<R2ShaderSSAOParameters> newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
