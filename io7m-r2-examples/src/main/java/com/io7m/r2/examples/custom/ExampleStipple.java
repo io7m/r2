@@ -40,6 +40,9 @@ import com.io7m.jcanephora.profiler.JCGLProfilingType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jproperties.JProperties;
+import com.io7m.jproperties.JPropertyIncorrectType;
+import com.io7m.jproperties.JPropertyNonexistent;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.VectorI4F;
@@ -109,11 +112,9 @@ import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformST;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
@@ -159,17 +160,26 @@ import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;
 import com.io7m.sombrero.core.SoShaderResolver;
 import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.valid4j.Assertive;
 
 import javax.swing.SwingUtilities;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 // CHECKSTYLE:OFF
 
 public final class ExampleStipple implements R2ExampleCustomType
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(ExampleStipple.class);
+  }
+
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
   private JCGLClearSpecification screen_clear_spec;
@@ -208,13 +218,12 @@ public final class ExampleStipple implements R2ExampleCustomType
   private R2DepthInstancesType proj_shadow_instances;
   private R2ShadowDepthVariance proj_shadow;
 
-  private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> depth_shader;
-  private R2DepthShaderBasicParametersMutable depth_params;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
+  private R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader;
+  private R2DepthShaderBasicParameters depth_params;
+  private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> depth_material;
 
-  private R2ShaderDepthSingleType<R2DepthShaderBasicStippledParametersType> depth_stippled_shader;
-  private R2DepthShaderBasicStippledParametersMutable depth_stippled_params;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicStippledParametersType> depth_stippled_material;
+  private R2ShaderDepthSingleType<R2DepthShaderBasicStippledParameters> depth_stippled_shader;
+  private R2MaterialDepthSingle<R2DepthShaderBasicStippledParameters> depth_stippled_material;
 
   private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
   private R2FilterLightApplicatorParametersMutable filter_light_params;
@@ -274,8 +283,7 @@ public final class ExampleStipple implements R2ExampleCustomType
       final R2GeometryBufferDescription.Builder b =
         R2GeometryBufferDescription.builder();
       b.setArea(area);
-      b.setComponents(
-        R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL);
+      b.setComponents(R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL);
 
       this.gbuffer = R2GeometryBuffer.newGeometryBuffer(
         gx.getFramebuffers(),
@@ -310,6 +318,7 @@ public final class ExampleStipple implements R2ExampleCustomType
         b.build());
     }
 
+    final R2TextureDefaultsType defaults = m.getTextureDefaults();
     {
       final R2FilterCompositorParameters.Builder b =
         R2FilterCompositorParameters.builder();
@@ -338,7 +347,7 @@ public final class ExampleStipple implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.gbuffer.getSpecularTextureOrDefault(m.getTextureDefaults()),
+        this.gbuffer.getSpecularTextureOrDefault(defaults),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -389,7 +398,7 @@ public final class ExampleStipple implements R2ExampleCustomType
     this.filter_compositor =
       R2FilterCompositor.newFilter(
         m.getShaderPreprocessingEnvironment(),
-        m.getTextureDefaults(),
+        defaults,
         gx,
         m.getIDPool(),
         m.getUnitQuad());
@@ -427,17 +436,12 @@ public final class ExampleStipple implements R2ExampleCustomType
     final R2ShaderPreprocessingEnvironmentType sources =
       R2ShaderPreprocessingEnvironment.create(p);
 
-    {
-      this.depth_shader = R2DepthShaderBasicSingle.newShader(
-        gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
-      this.depth_params =
-        R2DepthShaderBasicParametersMutable.create();
-      this.depth_params.setAlphaDiscardThreshold(0.1f);
-      this.depth_params.setAlbedoTexture(
-        this.main.getTextureDefaults().texture2DWhite());
-      this.depth_material = R2MaterialDepthSingle.of(
-        id_pool.freshID(), this.depth_shader, this.depth_params);
-    }
+    this.depth_shader = R2DepthShaderBasicSingle.newShader(
+      gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
+    this.depth_params = R2DepthShaderBasicParameters.of(
+      defaults, defaults.texture2DWhite(), 0.1f);
+    this.depth_material = R2MaterialDepthSingle.of(
+      id_pool.freshID(), this.depth_shader, this.depth_params);
 
     this.stipple_texture =
       R2NoiseTexture.newR8(
@@ -447,17 +451,16 @@ public final class ExampleStipple implements R2ExampleCustomType
     {
       this.depth_stippled_shader = R2DepthShaderBasicStippledSingle.newShader(
         gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
-      this.depth_stippled_params =
-        R2DepthShaderBasicStippledParametersMutable.create();
-      this.depth_stippled_params.setAlphaDiscardThreshold(0.1f);
-      this.depth_stippled_params.setAlbedoTexture(
-        this.main.getTextureDefaults().texture2DWhite());
-      this.depth_stippled_params.setStippleNoiseTexture(
-        this.stipple_texture);
-      this.depth_stippled_material = R2MaterialDepthSingle.of(
-        id_pool.freshID(),
-        this.depth_stippled_shader,
-        this.depth_stippled_params);
+      this.depth_stippled_material =
+        R2MaterialDepthSingle.of(
+          id_pool.freshID(),
+          this.depth_stippled_shader,
+          R2DepthShaderBasicStippledParameters.of(
+            defaults,
+            defaults.texture2DWhite(),
+            0.1f,
+            this.stipple_texture,
+            0.0f));
     }
 
     {
@@ -468,7 +471,7 @@ public final class ExampleStipple implements R2ExampleCustomType
       {
         final R2SurfaceShaderBasicStippledParametersMutable spb =
           R2SurfaceShaderBasicStippledParametersMutable.create();
-        spb.setTextureDefaults(m.getTextureDefaults());
+        spb.setTextureDefaults(defaults);
         spb.setAlbedoColor(new PVectorM4F<>(1.0f, 0.0f, 0.0f, 1.0f));
         spb.setSpecularColor(new PVectorM3F<>(1.0f, 1.0f, 1.0f));
         spb.setStippleNoiseTexture(this.stipple_texture);
@@ -500,7 +503,7 @@ public final class ExampleStipple implements R2ExampleCustomType
       {
         final R2SurfaceShaderBasicParametersMutable spb =
           R2SurfaceShaderBasicParametersMutable.create();
-        spb.setTextureDefaults(m.getTextureDefaults());
+        spb.setTextureDefaults(defaults);
         spb.setNormalTexture(serv.getTexture2D("halls_complex_normal.png"));
         this.geom_shader_params = spb;
       }
@@ -513,7 +516,7 @@ public final class ExampleStipple implements R2ExampleCustomType
       R2LightShaderAmbientSingle.newShader(gx.getShaders(), sources, id_pool);
     this.light_ambient =
       R2LightAmbientScreenSingle.newLight(
-        m.getUnitQuad(), id_pool, m.getTextureDefaults());
+        m.getUnitQuad(), id_pool, defaults);
     this.light_ambient.setIntensity(0.15f);
     this.light_ambient.colorWritable().set3F(0.0f, 1.0f, 1.0f);
 
@@ -550,7 +553,7 @@ public final class ExampleStipple implements R2ExampleCustomType
     this.proj_light =
       R2LightProjectiveWithShadowVariance.newLight(
         this.proj_mesh,
-        m.getTextureDefaults().texture2DProjectiveWhite(),
+        defaults.texture2DProjectiveWhite(),
         this.proj_shadow,
         m.getIDPool());
     this.proj_light.setRadius(10.0f);
@@ -607,7 +610,7 @@ public final class ExampleStipple implements R2ExampleCustomType
       this.filter_blur = R2FilterBoxBlur.newFilter(
         m.getShaderPreprocessingEnvironment(),
         gx,
-        m.getTextureDefaults(),
+        defaults,
         this.image_pool,
         m.getIDPool(),
         m.getUnitQuad());
@@ -636,14 +639,25 @@ public final class ExampleStipple implements R2ExampleCustomType
     }
 
     this.profiling_window = new AtomicReference<>();
-    SwingUtilities.invokeLater(() -> {
-      final ExampleProfilingWindow frame = new ExampleProfilingWindow();
-      frame.setVisible(true);
-      this.profiling_window.set(frame);
-    });
 
-    this.text_buffer = new StringBuilder(256);
-    this.text = "";
+    try {
+      final Properties props = System.getProperties();
+      final boolean profiling = JProperties.getBooleanOptional(
+        props, "com.io7m.r2.profiling", false);
+      if (profiling) {
+        SwingUtilities.invokeLater(() -> {
+          final ExampleProfilingWindow frame = new ExampleProfilingWindow();
+          frame.setVisible(true);
+          this.profiling_window.set(frame);
+        });
+        this.text_buffer = new StringBuilder(256);
+        this.text = "";
+      }
+    } catch (final JPropertyNonexistent e) {
+      LOG.error("missing system property: ", e);
+    } catch (final JPropertyIncorrectType e) {
+      LOG.error("incorrect system property type: ", e);
+    }
   }
 
   @Override
@@ -659,8 +673,11 @@ public final class ExampleStipple implements R2ExampleCustomType
     final double frame_fract = frame * 0.01;
     this.geom_stipple_shader_params.setStippleThreshold(
       (float) Math.sin(frame_fract));
-    this.depth_stippled_params.setStippleThreshold(
-      (float) Math.sin(frame_fract));
+
+    this.depth_stippled_material =
+      this.depth_stippled_material.withShaderParameters(
+        this.depth_stippled_material.shaderParameters().
+          withStippleThreshold((float) Math.sin(frame_fract)));
 
     this.proj_proj.projectionSetXMaximum(2.0f);
     this.proj_proj.projectionSetXMinimum(-2.0f);
@@ -863,26 +880,30 @@ public final class ExampleStipple implements R2ExampleCustomType
         pro.getMostRecentlyMeasuredFrame();
 
       if (frame % 60 == 0) {
-        this.text_buffer.setLength(0);
-        pro_measure.iterate(this, (tt, depth, fm) -> {
-          final double nanos = fm.getElapsedTimeTotal();
-          final double millis = nanos / 1_000_000.0;
+        if (this.profiling_window.get() != null) {
+          this.text_buffer.setLength(0);
+          pro_measure.iterate(this, (tt, depth, fm) -> {
+            for (int index = 0; index < depth; ++index) {
+              tt.text_buffer.append("    ");
+            }
+            tt.text_buffer.append(fm.getName());
+            tt.text_buffer.append(" ");
 
-          for (int index = 0; index < depth; ++index) {
-            tt.text_buffer.append("    ");
-          }
-          tt.text_buffer.append(fm.getName());
-          tt.text_buffer.append(" ");
-          tt.text_buffer.append(String.format("%.6f", Double.valueOf(millis)));
-          tt.text_buffer.append("ms");
-          tt.text_buffer.append(System.lineSeparator());
-          return JCGLProfilingIteration.CONTINUE;
-        });
-        this.text = this.text_buffer.toString();
-        this.text_buffer.setLength(0);
+            final double nanos = (double) fm.getElapsedTimeTotal();
+            final double millis = nanos / 1_000_000.0;
+            tt.text_buffer.append(String.format(
+              "%.6f",
+              Double.valueOf(millis)));
+            tt.text_buffer.append("ms");
+            tt.text_buffer.append(System.lineSeparator());
+            return JCGLProfilingIteration.CONTINUE;
+          });
+          this.text = this.text_buffer.toString();
+          this.text_buffer.setLength(0);
 
-        SwingUtilities.invokeLater(
-          () -> this.profiling_window.get().sendText(this.text));
+          SwingUtilities.invokeLater(
+            () -> this.profiling_window.get().sendText(this.text));
+        }
       }
     }
   }

@@ -104,8 +104,7 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
@@ -190,9 +189,9 @@ public final class ExampleEnvironment implements R2ExampleCustomType
   private R2DepthInstancesType proj_shadow_instances;
   private R2ShadowDepthVariance proj_shadow;
 
-  private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> depth_shader;
-  private R2DepthShaderBasicParametersMutable depth_params;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
+  private R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader;
+  private R2DepthShaderBasicParameters depth_params;
+  private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> depth_material;
 
   private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
   private R2FilterLightApplicatorParametersMutable filter_light_params;
@@ -407,11 +406,8 @@ public final class ExampleEnvironment implements R2ExampleCustomType
 
     this.depth_shader = R2DepthShaderBasicSingle.newShader(
       gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
-    this.depth_params =
-      R2DepthShaderBasicParametersMutable.create();
-    this.depth_params.setAlphaDiscardThreshold(0.1f);
-    this.depth_params.setAlbedoTexture(
-      this.main.getTextureDefaults().texture2DWhite());
+    this.depth_params = R2DepthShaderBasicParameters.of(
+      m.getTextureDefaults(), m.getTextureDefaults().texture2DWhite(), 0.1f);
     this.depth_material = R2MaterialDepthSingle.of(
       id_pool.freshID(), this.depth_shader, this.depth_params);
 

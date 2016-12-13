@@ -18,7 +18,6 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import org.immutables.value.Value;
 
 /**
  * The type of parameters for basic depth shaders.
@@ -30,7 +29,6 @@ public interface R2DepthShaderBasicParametersValuesType
    * @return A reference to the default textures
    */
 
-  @Value.Parameter
   R2TextureDefaultsType textureDefaults();
 
   /**
@@ -40,8 +38,6 @@ public interface R2DepthShaderBasicParametersValuesType
    * @return The albedo texture for the surface
    */
 
-  @Value.Parameter
-  @Value.Default
   default R2Texture2DUsableType albedoTexture()
   {
     return this.textureDefaults().texture2DWhite();
@@ -56,8 +52,6 @@ public interface R2DepthShaderBasicParametersValuesType
    * @return The threshold value
    */
 
-  @Value.Parameter
-  @Value.Default
   default float alphaDiscardThreshold()
   {
     return 0.0f;

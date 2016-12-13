@@ -49,8 +49,7 @@ import com.io7m.r2.core.R2ProjectionFOV;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
@@ -90,9 +89,9 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
   private R2DepthVarianceBufferType depth_buffer;
   private R2DepthVarianceRendererType depth_variance_renderer;
   private R2DepthInstancesType depth_instances;
-  private R2DepthShaderBasicParametersMutable depth_shader_params;
-  private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> depth_shader;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
+  private R2DepthShaderBasicParameters depth_shader_params;
+  private R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader;
+  private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> depth_material;
 
   private R2MainType main;
   private JCGLInterfaceGL33Type g33;
@@ -173,16 +172,12 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
     this.material = R2MaterialOpaqueSingle.of(
       id_pool.freshID(), this.shader, this.shader_params);
 
-    this.depth_shader_params =
-      R2DepthShaderBasicParametersMutable.create();
-    this.depth_shader_params.setAlbedoTexture(
-      m.getTextureDefaults().texture2DWhite());
-
-    this.depth_shader =
-      R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
-    this.depth_material =
-      R2MaterialDepthSingle.of(
-        id_pool.freshID(), this.depth_shader, this.depth_shader_params);
+    this.depth_shader = R2DepthShaderBasicSingle.newShader(
+      g.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
+    this.depth_shader_params = R2DepthShaderBasicParameters.of(
+      m.getTextureDefaults(), m.getTextureDefaults().texture2DWhite(), 0.1f);
+    this.depth_material = R2MaterialDepthSingle.of(
+      id_pool.freshID(), this.depth_shader, this.depth_shader_params);
   }
 
   @Override

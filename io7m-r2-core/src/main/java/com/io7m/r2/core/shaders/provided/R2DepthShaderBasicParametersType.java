@@ -17,6 +17,8 @@
 package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import org.immutables.value.Value;
 
 /**
@@ -24,10 +26,27 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2DepthShaderBasicParametersType extends
   R2DepthShaderBasicParametersValuesType
 {
-  // No extra values
+  @Override
+  @Value.Parameter
+  R2TextureDefaultsType textureDefaults();
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default R2Texture2DUsableType albedoTexture()
+  {
+    return R2DepthShaderBasicParametersValuesType.super.albedoTexture();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default float alphaDiscardThreshold()
+  {
+    return R2DepthShaderBasicParametersValuesType.super.alphaDiscardThreshold();
+  }
 }

@@ -129,8 +129,7 @@ import com.io7m.r2.core.debug.R2DebugInstanceSingle;
 import com.io7m.r2.core.debug.R2DebugInstances;
 import com.io7m.r2.core.debug.R2DebugLineSegment;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
@@ -231,21 +230,21 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
   private R2DepthInstancesType proj_shadow_instances;
   private R2ShadowDepthVariance proj_shadow;
 
-  private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> depth_shader;
-  private R2DepthShaderBasicParametersMutable depth_params;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
+  private R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader;
+  private R2DepthShaderBasicParameters depth_params;
+  private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> depth_material;
 
   private R2InstanceSingleType golden;
   private R2SurfaceShaderBasicParametersMutable golden_shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> golden_material;
-  private R2DepthShaderBasicParametersMutable golden_depth_params;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> golden_depth_material;
+  private R2DepthShaderBasicParameters golden_depth_params;
+  private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> golden_depth_material;
 
   private R2InstanceSingleType glow;
   private R2SurfaceShaderBasicParametersMutable glow_shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> glow_material;
-  private R2DepthShaderBasicParametersMutable glow_depth_params;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> glow_depth_material;
+  private R2DepthShaderBasicParameters glow_depth_params;
+  private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> glow_depth_material;
 
   private R2InstanceBatchedDynamicType batched_instance;
   private R2TransformSOT[] batched_transforms;
@@ -625,11 +624,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
     this.depth_shader = R2DepthShaderBasicSingle.newShader(
       gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
-    this.depth_params =
-      R2DepthShaderBasicParametersMutable.create();
-    this.depth_params.setAlphaDiscardThreshold(0.1f);
-    this.depth_params.setAlbedoTexture(
-      this.main.getTextureDefaults().texture2DWhite());
+    this.depth_params = R2DepthShaderBasicParameters.of(
+      m.getTextureDefaults(), m.getTextureDefaults().texture2DWhite(), 0.1f);
     this.depth_material = R2MaterialDepthSingle.of(
       id_pool.freshID(), this.depth_shader, this.depth_params);
 
@@ -674,10 +670,10 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         id_pool.freshID(), this.geom_shader, this.golden_shader_params);
 
       this.golden_depth_params =
-        R2DepthShaderBasicParametersMutable.create();
-      this.golden_depth_params.setAlphaDiscardThreshold(0.1f);
-      this.golden_depth_params.setAlbedoTexture(
-        this.golden_shader_params.albedoTexture());
+        R2DepthShaderBasicParameters.of(
+          m.getTextureDefaults(),
+          this.golden_shader_params.albedoTexture(),
+          0.1f);
       this.golden_depth_material = R2MaterialDepthSingle.of(
         id_pool.freshID(), this.depth_shader, this.golden_depth_params);
     }
@@ -705,10 +701,10 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         id_pool.freshID(), this.geom_shader, this.glow_shader_params);
 
       this.glow_depth_params =
-        R2DepthShaderBasicParametersMutable.create();
-      this.glow_depth_params.setAlphaDiscardThreshold(0.0f);
-      this.glow_depth_params.setAlbedoTexture(
-        this.glow_shader_params.albedoTexture());
+        R2DepthShaderBasicParameters.of(
+          m.getTextureDefaults(),
+          this.glow_shader_params.albedoTexture(),
+          0.0f);
       this.glow_depth_material = R2MaterialDepthSingle.of(
         id_pool.freshID(), this.depth_shader, this.glow_depth_params);
     }
@@ -735,12 +731,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     this.proj_proj =
       R2ProjectionFrustum.newFrustumWith(
         JCGLProjectionMatrices.newMatrices(),
-        -0.5f,
-        0.5f,
-        -0.5f,
-        0.5f,
-        1.0f,
-        10.0f);
+        -0.5f, 0.5f, -0.5f, 0.5f, 1.0f, 10.0f);
     this.proj_mesh =
       R2ProjectionMesh.newMesh(
         gx,

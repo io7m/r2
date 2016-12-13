@@ -47,7 +47,7 @@ public interface R2SurfaceShaderBasicStippledParametersType
    * The stipple threshold value. For each pixel in the surface, the stipple
    * threshold determine whether or not that pixel will be discarded.
    * Essentially, the {@link #stippleNoiseTexture()} is sampled at each pixel,
-   * and if the sampled value is less than {@link #stippleThreshold()}, the
+   * and if the sampled value is less than the threshold value, the
    * pixel is discarded. Consequently, a stipple threshold of {@code 0.0} never
    * discards pixels.
    *
