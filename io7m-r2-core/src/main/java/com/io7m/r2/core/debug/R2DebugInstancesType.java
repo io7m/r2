@@ -26,7 +26,6 @@ import java.util.List;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2DebugInstancesType
 {

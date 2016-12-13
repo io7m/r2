@@ -126,7 +126,7 @@ import com.io7m.r2.core.debug.R2DebugCubeType;
 import com.io7m.r2.core.debug.R2DebugInstanceSingle;
 import com.io7m.r2.core.debug.R2DebugInstances;
 import com.io7m.r2.core.debug.R2DebugLineSegment;
-import com.io7m.r2.core.debug.R2DebugVisualizerRendererParametersMutable;
+import com.io7m.r2.core.debug.R2DebugVisualizerRendererParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
@@ -285,7 +285,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
   private JCGLInterfaceGL33Type g;
 
   private R2DebugCubeType debug_cube;
-  private R2DebugVisualizerRendererParametersMutable debug_params;
+  private R2DebugVisualizerRendererParameters debug_params;
   private R2ShadowMapContextType shadow_context;
 
   private AtomicReference<ExampleProfilingWindow> profiling_window;
@@ -784,14 +784,6 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     {
       this.debug_cube = R2DebugCube.newDebugCube(gx);
 
-      this.debug_params = R2DebugVisualizerRendererParametersMutable.create();
-      this.debug_params.setOpaqueInstances(this.opaques);
-      this.debug_params.setShowOpaqueInstances(false);
-      this.debug_params.setShowLights(true);
-      this.debug_params.setLights(this.lights);
-      this.debug_params.setUnitSphere(this.sphere);
-      this.debug_params.setDebugCube(this.debug_cube);
-
       final R2DebugInstances.Builder ib = R2DebugInstances.builder();
 
       for (int y = 0; y < 100; ++y) {
@@ -813,8 +805,15 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         this.instance,
         new PVectorI4F<>(1.0f, 0.0f, 1.0f, 1.0f)));
 
-      this.debug_params.setDebugInstances(ib.build());
-      Assertive.ensure(this.debug_params.isInitialized());
+      this.debug_params = R2DebugVisualizerRendererParameters.builder()
+        .setOpaqueInstances(this.opaques)
+        .setShowOpaqueInstances(false)
+        .setShowLights(true)
+        .setLights(this.lights)
+        .setUnitSphere(this.sphere)
+        .setDebugCube(this.debug_cube)
+        .setDebugInstances(ib.build())
+        .build();
     }
 
     {
