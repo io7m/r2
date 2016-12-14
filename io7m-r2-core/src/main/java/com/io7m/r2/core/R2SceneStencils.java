@@ -103,9 +103,9 @@ public final class R2SceneStencils implements R2SceneStencilsType
   {
     c.onStart();
 
-    /**
-     * Sort the instances by their array object instances, to allow
-     * for rendering with the fewest number of array object binds.
+    /*
+      Sort the instances by their array object instances, to allow
+      for rendering with the fewest number of array object binds.
      */
 
     this.instances_sorted.clear();

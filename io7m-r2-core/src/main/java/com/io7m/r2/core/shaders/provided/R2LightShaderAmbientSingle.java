@@ -178,8 +178,8 @@ public final class R2LightShaderAmbientSingle extends
     NullCheck.notNull(m);
     NullCheck.notNull(values);
 
-    /**
-     * Upload the projections for the light volume.
+    /*
+      Upload the projections for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
@@ -187,8 +187,8 @@ public final class R2LightShaderAmbientSingle extends
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
-    /**
-     * Upload the viewport.
+    /*
+      Upload the viewport.
      */
 
     final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
@@ -200,16 +200,16 @@ public final class R2LightShaderAmbientSingle extends
       this.u_viewport_inverse_height,
       (float) (1.0 / (double) range_y.getInterval()));
 
-    /**
-     * Upload the scene's depth coefficient.
+    /*
+      Upload the scene's depth coefficient.
      */
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
       (float) R2Projections.getDepthCoefficient(m.projection()));
 
-    /**
-     * Upload the occlusion texture and light values.
+    /*
+      Upload the occlusion texture and light values.
      */
 
     final JCGLTextureUnitType unit_ao = tc.unitContextBindTexture2D(

@@ -183,8 +183,8 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
     NullCheck.notNull(m);
     NullCheck.notNull(values);
 
-    /**
-     * Upload the projections for the light volume.
+    /*
+      Upload the projections for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
@@ -192,16 +192,16 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
-    /**
-     * Upload the scene's depth coefficient.
+    /*
+      Upload the scene's depth coefficient.
      */
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
       (float) R2Projections.getDepthCoefficient(m.projection()));
 
-    /**
-     * Transform the light's direction to eye-space and upload it.
+    /*
+      Transform the light's direction to eye-space and upload it.
      */
 
     final PVector3FType<R2SpaceWorldType> direction = values.getDirection();
@@ -220,8 +220,8 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
     g_sh.shaderUniformPutVector3f(
       this.u_light_directional_direction, this.direction_eye3);
 
-    /**
-     * Upload the light values.
+    /*
+      Upload the light values.
      */
 
     g_sh.shaderUniformPutVector3f(

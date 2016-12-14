@@ -162,8 +162,8 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
     final long v_count = this.mesh.vertices().size64();
     final long t_count = this.mesh.triangles().size64();
 
-    /**
-     * Write header.
+    /*
+      Write header.
      */
 
     {
@@ -183,8 +183,8 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
       bc += writeAll(this.buffer_header, this.channel);
     }
 
-    /**
-     * Write vertices.
+    /*
+      Write vertices.
      */
 
     if (v_count > 0L) {
@@ -368,8 +368,8 @@ public final class R2MBUnmappedWriter implements R2MBWriterType
       }
     }
 
-    /**
-     * Write triangles.
+    /*
+      Write triangles.
      */
 
     if (t_count > 0L) {

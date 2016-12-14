@@ -151,11 +151,10 @@ public final class R2TransformST implements
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public R2WatchableType<R2TransformOrthogonalReadableType>
   transformOrthogonalGetWatchable()
   {
-    return (R2WatchableType<R2TransformOrthogonalReadableType>) this.watchable;
+    return this.watchable;
   }
 
   @Override

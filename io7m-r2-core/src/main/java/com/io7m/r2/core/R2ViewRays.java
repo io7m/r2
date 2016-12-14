@@ -124,36 +124,36 @@ public final class R2ViewRays implements R2ViewRaysType
     final Vector4FType out_ray,
     final Vector4FType out_origin)
   {
-    /**
-     * Transform NDC → Clip.
+    /*
+      Transform NDC → Clip.
      */
 
     PMatrixM4x4F.multiplyVector4F(c, m, near, temp_near);
     PMatrixM4x4F.multiplyVector4F(c, m, far, temp_far);
 
-    /**
-     * Normalize in terms of w: NDC coordinates would usually be lacking a w
-     * component, but the w component included in the original frustum corners
-     * is necessary in order to multiply by a 4x4 matrix.
+    /*
+      Normalize in terms of w: NDC coordinates would usually be lacking a w
+      component, but the w component included in the original frustum corners
+      is necessary in order to multiply by a 4x4 matrix.
      */
 
     PVectorM4F.scaleInPlace(temp_near, 1.0 / temp_near.getWF());
     PVectorM4F.scaleInPlace(temp_far, 1.0 / temp_far.getWF());
 
-    /**
-     * Subtract the near corner from the far corner to produce a ray.
+    /*
+      Subtract the near corner from the far corner to produce a ray.
      */
 
     VectorM4F.subtract(temp_far, temp_near, out_ray);
 
-    /**
-     * Normalize the ray in terms of z.
+    /*
+      Normalize the ray in terms of z.
      */
 
     VectorM4F.scaleInPlace(out_ray, 1.0 / out_ray.getZF());
 
-    /**
-     * Subtract the scaled ray from the near corner to produce an origin.
+    /*
+      Subtract the scaled ray from the near corner to produce an origin.
      */
 
     VectorM4F.scale(out_ray, temp_near.getZF(), out_origin);

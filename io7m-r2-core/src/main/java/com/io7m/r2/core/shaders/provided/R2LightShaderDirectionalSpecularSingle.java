@@ -230,8 +230,8 @@ public final class R2LightShaderDirectionalSpecularSingle extends
     NullCheck.notNull(unit_normals);
     NullCheck.notNull(unit_specular);
 
-    /**
-     * Set each of the required G-Buffer textures.
+    /*
+      Set each of the required G-Buffer textures.
      */
 
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
@@ -255,8 +255,8 @@ public final class R2LightShaderDirectionalSpecularSingle extends
     NullCheck.notNull(values);
     NullCheck.notNull(m);
 
-    /**
-     * Upload the current view rays.
+    /*
+      Upload the current view rays.
      */
 
     final R2ViewRaysReadableType view_rays = m.viewRays();
@@ -278,8 +278,8 @@ public final class R2LightShaderDirectionalSpecularSingle extends
     g_sh.shaderUniformPutVector3f(
       this.u_view_rays_ray_x1y1, view_rays.rayX1Y1());
 
-    /**
-     * Upload the viewport.
+    /*
+      Upload the viewport.
      */
 
     final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
@@ -291,8 +291,8 @@ public final class R2LightShaderDirectionalSpecularSingle extends
       this.u_viewport_inverse_height,
       (float) (1.0 / (double) range_y.getInterval()));
 
-    /**
-     * Upload the projections for the light volume.
+    /*
+      Upload the projections for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
@@ -300,16 +300,16 @@ public final class R2LightShaderDirectionalSpecularSingle extends
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
-    /**
-     * Upload the scene's depth coefficient.
+    /*
+      Upload the scene's depth coefficient.
      */
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
       (float) R2Projections.getDepthCoefficient(m.projection()));
 
-    /**
-     * Transform the light's direction to eye-space and upload it.
+    /*
+      Transform the light's direction to eye-space and upload it.
      */
 
     final PVector3FType<R2SpaceWorldType> direction = values.getDirection();
@@ -328,8 +328,8 @@ public final class R2LightShaderDirectionalSpecularSingle extends
     g_sh.shaderUniformPutVector3f(
       this.u_light_directional_direction, this.direction_eye3);
 
-    /**
-     * Upload light values.
+    /*
+      Upload light values.
      */
 
     g_sh.shaderUniformPutVector3f(
