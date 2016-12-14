@@ -10,6 +10,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
@@ -39,7 +40,7 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
   private final R2ShaderFilterType<R2ShaderFilterFogParameters> shader_quad;
   private final R2ShaderFilterType<R2ShaderFilterFogParameters> shader_quad_inv;
   private final JCGLInterfaceGL33Type g;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderState render_state;
   private final R2UnitQuadUsableType quad;
 
   private R2FilterFogDepth(
@@ -58,7 +59,7 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
     this.shader_quad_inv = R2ShaderFilterFogDepthQuadraticInverse.newShader(
       this.g.getShaders(), in_shader_env, in_pool);
 
-    this.render_state = JCGLRenderStateMutable.create();
+    this.render_state = JCGLRenderState.builder().build();
   }
 
   /**

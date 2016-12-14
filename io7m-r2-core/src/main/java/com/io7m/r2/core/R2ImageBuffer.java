@@ -36,7 +36,6 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.renderstate.JCGLColorBufferMaskingState;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
@@ -65,11 +64,11 @@ public final class R2ImageBuffer implements R2ImageBufferType
   private static final JCGLClearSpecification CLEAR_SPEC;
 
   static {
-    final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
-
-    k.setColorBufferMaskingState(
-      JCGLColorBufferMaskingState.of(true, true, true, true));
-    CLEAR_STATE = JCGLRenderState.builder().from(k).build();
+    CLEAR_STATE =
+      JCGLRenderState.builder()
+        .setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, true))
+        .build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
       Optional.of(new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f)),

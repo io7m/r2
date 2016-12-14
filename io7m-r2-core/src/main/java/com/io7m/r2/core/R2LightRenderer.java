@@ -342,6 +342,13 @@ public final class R2LightRenderer implements R2LightRendererType
         this.render_state_screen = JCGLRenderStateMutable.create();
 
         /*
+         * Write RGB, ignore alpha.
+         */
+
+        this.render_state_screen.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, false));
+
+        /*
           The light contributions are summed with pure additive blending.
          */
 
@@ -379,6 +386,13 @@ public final class R2LightRenderer implements R2LightRendererType
 
       {
         this.render_state_volume = JCGLRenderStateMutable.create();
+
+        /*
+         * Write RGB, ignore alpha.
+         */
+
+        this.render_state_volume.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, false));
 
         /*
           The light contributions are summed with pure additive blending.
@@ -866,6 +880,13 @@ public final class R2LightRenderer implements R2LightRendererType
 
       {
         this.render_state_screen = JCGLRenderStateMutable.create();
+        
+        /*
+         * Write RGB, ignore alpha.
+         */
+
+        this.render_state_screen.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, false));
 
         /*
          * The light contributions are summed with pure additive blending.
@@ -942,6 +963,22 @@ public final class R2LightRenderer implements R2LightRendererType
         this.render_state_volume = JCGLRenderStateMutable.create();
 
         /*
+         * Work around an issue with @Default on Immutables @Modifiable values;
+         * the call to getDepthState will return a freshly allocated value
+         * every time unless setDepthState has been called at least once.
+         */
+
+        this.render_state_volume.setDepthState(
+          this.render_state_volume.getDepthState());
+
+        /*
+         * Write RGB, ignore alpha.
+         */
+
+        this.render_state_volume.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, false));
+
+        /*
          * The light contributions are summed with pure additive blending.
          */
 
@@ -968,7 +1005,7 @@ public final class R2LightRenderer implements R2LightRendererType
          * No depth testing and no depth writing is required.
          */
 
-        this.render_state_screen.setDepthState(JCGLDepthState.of(
+        this.render_state_volume.setDepthState(JCGLDepthState.of(
           JCGLDepthStrict.DEPTH_STRICT_ENABLED,
           Optional.empty(),
           JCGLDepthWriting.DEPTH_WRITE_DISABLED,

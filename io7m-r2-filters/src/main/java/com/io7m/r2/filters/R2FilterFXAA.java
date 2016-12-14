@@ -24,7 +24,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -54,7 +54,7 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParameters>
   private final JCGLInterfaceGL33Type g;
   private final Map<R2FilterFXAAQuality, R2ShaderFilterType<R2ShaderFilterFXAAParameters>> shaders;
   private final R2UnitQuadUsableType quad;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderState render_state;
   private boolean deleted;
 
   private R2FilterFXAA(
@@ -65,7 +65,7 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParameters>
     this.g = NullCheck.notNull(in_g);
     this.shaders = NullCheck.notNull(in_shaders);
     this.quad = NullCheck.notNull(in_quad);
-    this.render_state = JCGLRenderStateMutable.create();
+    this.render_state = JCGLRenderState.builder().build();
   }
 
   /**
