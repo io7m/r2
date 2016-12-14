@@ -80,14 +80,6 @@
                   </manifestEntries>
                 </transformer>
               </transformers>
-              <filters>
-                <filter>
-                  <artifact>org.valid4j:valid4j</artifact>
-                  <includes>
-                    <include>**</include>
-                  </includes>
-                </filter>
-              </filters>
             </configuration>
           </execution>
         </executions>

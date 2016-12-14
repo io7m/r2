@@ -16,6 +16,7 @@
 
 package com.io7m.r2.meshes.arrayobject;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLArrayBufferType;
 import com.io7m.jcanephora.core.JCGLArrayObjectBuilderType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
@@ -35,7 +36,6 @@ import com.io7m.r2.core.cursors.R2VertexCursorProducerType;
 import com.io7m.r2.core.cursors.R2VertexCursorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.nio.ByteBuffer;
 import java.util.Optional;
@@ -147,9 +147,12 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventVertexCount(final long count)
   {
-    Assertive.require(this.array_buffer == null);
-    Assertive.require(this.array_object == null);
-    Assertive.require(this.index_buffer == null);
+    Preconditions.checkPrecondition(
+      this.array_buffer == null, "Array buffer must be null");
+    Preconditions.checkPrecondition(
+      this.array_object == null, "Array object must be null");
+    Preconditions.checkPrecondition(
+      this.index_buffer == null, "Index buffer must be null");
 
     this.vertex_count = OptionalLong.of(count);
 
@@ -168,10 +171,14 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventTriangleCount(final long count)
   {
-    Assertive.require(this.array_buffer != null);
-    Assertive.require(this.array_object == null);
-    Assertive.require(this.index_buffer == null);
-    Assertive.require(this.vertex_count.isPresent());
+    NullCheck.notNull(
+      this.array_buffer, "Array buffer");
+    Preconditions.checkPrecondition(
+      this.array_object == null, "Array object must be null");
+    Preconditions.checkPrecondition(
+      this.index_buffer == null, "Index buffer must be null");
+    Preconditions.checkPrecondition(
+      this.vertex_count.isPresent(), "Vertex count must have been received");
 
     this.index_type_actual =
       R2IndexBuffers.getTypeForCount(
@@ -314,9 +321,9 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventVerticesFinished()
   {
-    Assertive.require(this.array_buffer != null);
-    Assertive.require(this.index_buffer != null);
-    Assertive.require(this.array_object != null);
+    NullCheck.notNull(this.array_buffer, "Array buffer");
+    NullCheck.notNull(this.index_buffer, "Index buffer");
+    NullCheck.notNull(this.array_object, "Array object");
 
     this.g_ab.arrayBufferBind(this.array_buffer);
     this.g_ab.arrayBufferUpdate(this.array_update);
@@ -377,9 +384,9 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventTrianglesFinished()
   {
-    Assertive.require(this.array_buffer != null);
-    Assertive.require(this.index_buffer != null);
-    Assertive.require(this.array_object != null);
+    NullCheck.notNull(this.array_buffer, "Array buffer");
+    NullCheck.notNull(this.index_buffer, "Index buffer");
+    NullCheck.notNull(this.array_object, "Array object");
 
     this.g_ao.arrayObjectBind(this.array_object);
     this.g_ib.indexBufferUpdate(this.index_update);

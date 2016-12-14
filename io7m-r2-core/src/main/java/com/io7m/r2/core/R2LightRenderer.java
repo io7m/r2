@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLBlendEquation;
 import com.io7m.jcanephora.core.JCGLBlendFunction;
@@ -66,7 +67,6 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.util.EnumSet;
 import java.util.Optional;
@@ -185,7 +185,8 @@ public final class R2LightRenderer implements R2LightRendererType
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
-    Assertive.require(!this.isDeleted(), "Renderer not deleted");
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Renderer must not be deleted");
 
     final JCGLProfilingContextType pc_base =
       pc.getChildContext("lights");
@@ -504,13 +505,17 @@ public final class R2LightRenderer implements R2LightRendererType
       final R2LightVolumeSingleReadableType light)
     {
       light.matchLightVolumeSingleReadable(this, (t, pl) -> {
-        Assertive.require(
-          t.light_shader instanceof R2ShaderLightProjectiveUsableType);
+        Preconditions.checkPrecondition(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+          "Shader must be a projective light shader");
+
         t.onLightSingleProjective(pl);
         return Unit.unit();
       }, (t, sl) -> {
-        Assertive.require(
-          t.light_shader instanceof R2ShaderLightVolumeSingleUsableType);
+        Preconditions.checkPrecondition(
+          t.light_shader instanceof R2ShaderLightVolumeSingleUsableType,
+          "Shader must be a volume light shader");
+
         t.onLightSingleSpherical(sl);
         return Unit.unit();
       });
@@ -536,13 +541,17 @@ public final class R2LightRenderer implements R2LightRendererType
       final R2LightProjectiveReadableType light)
     {
       light.matchProjectiveReadable(this, (t, pw) -> {
-        Assertive.require(
-          t.light_shader instanceof R2ShaderLightProjectiveUsableType);
+        Preconditions.checkPrecondition(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+          "Shader must be a projective light shader");
+
         t.onLightSingleProjectiveWithoutShadow(pw);
         return Unit.unit();
       }, (t, pw) -> {
-        Assertive.require(
-          t.light_shader instanceof R2ShaderLightProjectiveWithShadowUsableType);
+        Preconditions.checkPrecondition(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+          "Shader must be a projective light with shadow shader");
+
         t.onLightSingleProjectiveWithShadow(pw);
         return Unit.unit();
       });
@@ -614,7 +623,10 @@ public final class R2LightRenderer implements R2LightRendererType
           this.light_shader.getShaderParametersType();
         final Class<? extends R2LightSingleReadableType> l_class =
           light.getClass();
-        Assertive.require(s_class.isAssignableFrom(l_class));
+
+        Preconditions.checkPrecondition(
+          s_class.isAssignableFrom(l_class),
+          "Shader parameter type must be compatible with light type");
 
         s.onReceiveValues(
           this.textures,
@@ -627,16 +639,18 @@ public final class R2LightRenderer implements R2LightRendererType
         light.matchLightSingle(
           this,
           (t, lv) -> {
-            Assertive.require(
-              t.light_shader instanceof R2ShaderLightVolumeSingleUsableType);
+            Preconditions.checkPrecondition(
+              t.light_shader instanceof R2ShaderLightVolumeSingleUsableType,
+              "Shader must be a volume light shader");
 
             JCGLRenderStates.activate(t.g33, t.render_state_volume);
             t.onLightSingleVolume(lv);
             return Unit.unit();
           },
           (t, ls) -> {
-            Assertive.require(
-              t.light_shader instanceof R2ShaderLightScreenSingleUsableType);
+            Preconditions.checkPrecondition(
+              t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+              "Shader must be a screen light shader");
 
             JCGLRenderStates.activate(t.g33, t.render_state_screen);
             t.onLightSingleScreen(ls);
@@ -853,7 +867,7 @@ public final class R2LightRenderer implements R2LightRendererType
       {
         this.render_state_screen = JCGLRenderStateMutable.create();
 
-        /**
+        /*
          * The light contributions are summed with pure additive blending.
          */
 
@@ -866,7 +880,7 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLBlendEquation.BLEND_EQUATION_ADD,
             JCGLBlendEquation.BLEND_EQUATION_ADD)));
 
-        /**
+        /*
          * For full-screen quads, the front faces should be rendered.
          */
 
@@ -875,7 +889,7 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLFaceSelection.FACE_BACK,
             JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
-        /**
+        /*
          * No depth testing and no depth writing is required.
          */
 
@@ -885,7 +899,7 @@ public final class R2LightRenderer implements R2LightRendererType
           JCGLDepthWriting.DEPTH_WRITE_DISABLED,
           JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
 
-        /**
+        /*
          * Configure the stencil test such that only those pixels that
          * belong to the current group AND have the {@link R2Stencils#LIGHT_MASK_BIT}
          * set are touched. Stencil writing is disabled.
@@ -927,7 +941,7 @@ public final class R2LightRenderer implements R2LightRendererType
       {
         this.render_state_volume = JCGLRenderStateMutable.create();
 
-        /**
+        /*
          * The light contributions are summed with pure additive blending.
          */
 
@@ -940,7 +954,7 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLBlendEquation.BLEND_EQUATION_ADD,
             JCGLBlendEquation.BLEND_EQUATION_ADD)));
 
-        /**
+        /*
          * For typical volume lights, only the back faces should be
          * rendered.
          */
@@ -950,7 +964,7 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLFaceSelection.FACE_FRONT,
             JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
-        /**
+        /*
          * No depth testing and no depth writing is required.
          */
 
@@ -960,7 +974,7 @@ public final class R2LightRenderer implements R2LightRendererType
           JCGLDepthWriting.DEPTH_WRITE_DISABLED,
           JCGLDepthClamping.DEPTH_CLAMP_ENABLED));
 
-        /**
+        /*
          * See above for the stencil test.
          */
 
@@ -989,7 +1003,7 @@ public final class R2LightRenderer implements R2LightRendererType
       this.profiling_instances.startMeasuringIfEnabled();
     }
 
-    /**
+    /*
      * Configure the stencil reference value such that the stencil test checks
      * for the current group number and the {@link R2Stencils#LIGHT_MASK_BIT}.
      */
@@ -1007,7 +1021,7 @@ public final class R2LightRenderer implements R2LightRendererType
       this.render_state_screen.setStencilState(this.render_stencil_state);
     }
 
-    /**
+    /*
      * Render a volume that will set the {@link R2Stencils#LIGHT_MASK_BIT} for
      * all pixels that the light should affect.
      */
@@ -1061,7 +1075,7 @@ public final class R2LightRenderer implements R2LightRendererType
       }
     }
 
-    /**
+    /*
      * Clear the {@link R2Stencils#LIGHT_MASK_BIT} for all pixels in the stencil
      * buffer.
      */
@@ -1143,13 +1157,17 @@ public final class R2LightRenderer implements R2LightRendererType
       final R2LightProjectiveReadableType light)
     {
       light.matchProjectiveReadable(this, (t, pw) -> {
-        Assertive.require(
-          t.light_shader instanceof R2ShaderLightProjectiveUsableType);
+        Preconditions.checkPrecondition(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+          "Shader must be a projective light shader");
+
         t.onLightSingleProjectiveWithoutShadow(pw);
         return Unit.unit();
       }, (t, pw) -> {
-        Assertive.require(
-          t.light_shader instanceof R2ShaderLightProjectiveWithShadowUsableType);
+        Preconditions.checkPrecondition(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+          "Shader must be a projective with shadow light shader");
+
         t.onLightSingleProjectiveWithShadow(pw);
         return Unit.unit();
       });
@@ -1191,13 +1209,17 @@ public final class R2LightRenderer implements R2LightRendererType
       final R2LightVolumeSingleReadableType light)
     {
       light.matchLightVolumeSingleReadable(this, (t, pl) -> {
-        Assertive.require(
-          t.light_shader instanceof R2ShaderLightProjectiveUsableType);
+        Preconditions.checkPrecondition(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+          "Shader must be a projective light shader");
+
         t.onLightSingleProjective(pl);
         return Unit.unit();
       }, (t, sl) -> {
-        Assertive.require(
-          t.light_shader instanceof R2ShaderLightVolumeSingleUsableType);
+        Preconditions.checkPrecondition(
+          t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+          "Shader must be a volume light shader");
+
         t.onLightSingleSpherical(sl);
         return Unit.unit();
       });
@@ -1242,7 +1264,10 @@ public final class R2LightRenderer implements R2LightRendererType
           this.light_shader.getShaderParametersType();
         final Class<? extends R2LightSingleReadableType> l_class =
           light.getClass();
-        Assertive.require(s_class.isAssignableFrom(l_class));
+
+        Preconditions.checkPrecondition(
+          s_class.isAssignableFrom(l_class),
+          "Shader parameter type must be compatible with light type");
 
         s.onReceiveValues(
           this.textures,
@@ -1255,16 +1280,18 @@ public final class R2LightRenderer implements R2LightRendererType
         light.matchLightSingle(
           this,
           (t, lv) -> {
-            Assertive.require(
-              t.light_shader instanceof R2ShaderLightVolumeSingleUsableType);
+            Preconditions.checkPrecondition(
+              t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+              "Shader must be a volume light shader");
 
             JCGLRenderStates.activate(t.g33, t.render_state_volume);
             t.onLightSingleVolume(lv);
             return Unit.unit();
           },
           (t, ls) -> {
-            Assertive.require(
-              t.light_shader instanceof R2ShaderLightScreenSingleUsableType);
+            Preconditions.checkPrecondition(
+              t.light_shader instanceof R2ShaderLightScreenSingleUsableType,
+              "Shader must be a screen light shader");
 
             JCGLRenderStates.activate(t.g33, t.render_state_screen);
             t.onLightSingleScreen(ls);
@@ -1391,9 +1418,9 @@ public final class R2LightRenderer implements R2LightRendererType
     @Override
     public void onStart()
     {
-      Assertive.require(this.g33 != null);
+      NullCheck.notNull(this.g33, "g33");
 
-      /**
+      /*
        * Create a new texture context and bind the geometry buffer textures
        * to it.
        */

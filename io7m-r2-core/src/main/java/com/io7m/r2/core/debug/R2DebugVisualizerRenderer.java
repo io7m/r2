@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core.debug;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
@@ -81,7 +82,6 @@ import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.util.List;
 import java.util.Optional;
@@ -205,7 +205,8 @@ public final class R2DebugVisualizerRenderer implements
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
-    Assertive.require(!this.isDeleted(), "Renderer not deleted");
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Renderer must not be deleted");
 
     final JCGLProfilingContextType pc_base =
       pc.getChildContext("debug-visualizer");
@@ -530,7 +531,7 @@ public final class R2DebugVisualizerRenderer implements
     @Override
     public void onStart()
     {
-      Assertive.require(this.g33 != null);
+      NullCheck.notNull(this.g33, "g33");
     }
 
     @Override
@@ -744,7 +745,7 @@ public final class R2DebugVisualizerRenderer implements
     @Override
     public void onStart()
     {
-      Assertive.require(this.g33 != null);
+      NullCheck.notNull(this.g33, "g33");
     }
 
     @Override

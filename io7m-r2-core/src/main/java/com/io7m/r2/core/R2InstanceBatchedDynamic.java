@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLArrayBufferType;
 import com.io7m.jcanephora.core.JCGLArrayObjectBuilderType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
@@ -35,7 +36,6 @@ import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
-import org.valid4j.Assertive;
 
 /**
  * <p>The default implementation of the {@link R2InstanceBatchedDynamicType}
@@ -72,7 +72,11 @@ public final class R2InstanceBatchedDynamic implements
     NullCheck.notNull(g_ab);
     NullCheck.notNull(g_ao);
     NullCheck.notNull(o);
-    Assertive.require(count > 0, "Count must be positive");
+
+    Preconditions.checkPreconditionI(
+      count,
+      count > 0,
+      c -> "Count " + c + " must be positive");
 
     this.instance_id = in_id;
     this.max_size = count;
@@ -235,7 +239,9 @@ public final class R2InstanceBatchedDynamic implements
       throw new R2ExceptionBatchIsFull(sb.toString());
     }
 
-    Assertive.require(!this.free.isEmpty());
+    Preconditions.checkPrecondition(
+      !this.free.isEmpty(), "Free set must not be empty");
+
     final int next = this.free.firstInt();
     this.members[next] = t;
     this.free.remove(next);

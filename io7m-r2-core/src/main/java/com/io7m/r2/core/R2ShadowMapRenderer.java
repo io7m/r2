@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
@@ -38,7 +39,6 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -142,7 +142,8 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
     void start()
     {
-      Assertive.require(!this.active);
+      Preconditions.checkPrecondition(
+        !this.active, "Renderer context must not be active");
       this.variance.clear();
       this.active = true;
     }
@@ -151,7 +152,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
       final R2LightProjectiveWithShadowType lp,
       final R2ShadowDepthVarianceType sv)
     {
-      /**
+      /*
        * Fetch a variance shadow map.
        */
 
@@ -160,7 +161,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
       this.variance.used.put(
         sv.shadowID(), this.variance.current);
 
-      /**
+      /*
        * Transform the light volume.
        */
 
@@ -182,7 +183,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
           final JCGLFramebuffersType gfb = t.g33.getFramebuffers();
           final JCGLTexturesType gt = t.g33.getTextures();
 
-          /**
+          /*
            * Render all instances into the framebuffer, clearing
            * it first.
            */
@@ -197,7 +198,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
             t.instances);
           gfb.framebufferDrawUnbind();
 
-          /**
+          /*
            * If the shadow map uses mipmaps, regenerate them.
            */
 
@@ -391,7 +392,8 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
       @Override
       public void shadowMapContextFinish()
       {
-        Assertive.require(this.active);
+        Preconditions.checkPrecondition(
+          this.active, "Renderer context must be active");
 
         try {
           this.light = null;
@@ -403,8 +405,11 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
       void start()
       {
-        Assertive.require(!this.active);
-        Assertive.require(RendererContext.this.active);
+        Preconditions.checkPrecondition(
+          !this.active, "Map context must not be active");
+        Preconditions.checkPrecondition(
+          RendererContext.this.active, "Renderer context must be active");
+
         this.active = true;
       }
     }

@@ -1,5 +1,6 @@
 package com.io7m.r2.filters;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLPrimitives;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
@@ -21,7 +22,6 @@ import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import org.valid4j.Assertive;
 
 /**
  * <p>A depth-based fog filter.</p>
@@ -106,7 +106,8 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    Assertive.require(!this.isDeleted(), "Filter not deleted");
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Filter must not be deleted");
 
     final JCGLProfilingContextType pc_base = pc.getChildContext("fog-depth");
     pc_base.startMeasuringIfEnabled();

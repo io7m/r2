@@ -16,6 +16,7 @@
 
 package com.io7m.r2.filters;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferBlitBuffer;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
@@ -46,7 +47,6 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import org.valid4j.Assertive;
 
 import java.util.EnumSet;
 import java.util.Objects;
@@ -281,6 +281,9 @@ public final class R2FilterBoxBlur<
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Filter must not be deleted");
+
     final JCGLProfilingContextType pc_base = pc.getChildContext("box-blur");
 
     final R2BlurParameters blur_params = parameters.blurParameters();
@@ -290,7 +293,10 @@ public final class R2FilterBoxBlur<
       return;
     }
 
-    Assertive.ensure(blur_passes > 0);
+    Preconditions.checkPreconditionI(
+      blur_passes,
+      blur_passes > 0,
+      p -> "Blur passes must be positive");
 
     final float blur_size = blur_params.blurSize();
     if (blur_size == 0.0f) {
@@ -298,8 +304,15 @@ public final class R2FilterBoxBlur<
       return;
     }
 
-    Assertive.ensure(blur_passes > 0);
-    Assertive.ensure(blur_size > 0.0f);
+    Preconditions.checkPreconditionI(
+      blur_passes,
+      blur_passes > 0,
+      p -> "Blur passes must be positive");
+
+    Preconditions.checkPreconditionD(
+      blur_size,
+      blur_size > 0.0f,
+      p -> "Blur size must be positive");
 
     this.runBlur(pc_base, uc, parameters);
   }

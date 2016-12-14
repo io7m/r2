@@ -16,6 +16,7 @@
 
 package com.io7m.r2.filters;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLFramebufferBlitBuffer;
 import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
@@ -44,7 +45,6 @@ import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import org.valid4j.Assertive;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -126,7 +126,8 @@ public final class R2FilterDebugEyeZ implements
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    Assertive.require(!this.isDeleted(), "Filter not deleted");
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Filter must not be deleted");
 
     final JCGLProfilingContextType pc_base = pc.getChildContext("debug-eye-z");
     pc_base.startMeasuringIfEnabled();

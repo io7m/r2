@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
@@ -28,7 +29,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 /**
  * Default implementation of the {@link R2SceneOpaquesType} interface.
@@ -110,7 +110,11 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
      */
 
     final Singles.Group g = this.singles.groups[group];
-    Assertive.require(!g.instances.containsKey(i_id));
+
+    Preconditions.checkPrecondition(
+      !g.instances.containsKey(i_id),
+      "Group must not contain instance");
+
     this.singles.group_max = Math.max(this.singles.group_max, group + 1);
     g.instances.put(i_id, i);
     g.instance_materials.put(m_id, m);
@@ -183,7 +187,11 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
      */
 
     final Batches.Group g = this.batches.groups[group];
-    Assertive.require(!g.instances.containsKey(i_id));
+
+    Preconditions.checkPrecondition(
+      !g.instances.containsKey(i_id),
+      "Group must not contain instance");
+
     this.batches.group_max = Math.max(this.batches.group_max, group + 1);
     g.instances.put(i_id, i);
     g.instance_materials.put(m_id, m);

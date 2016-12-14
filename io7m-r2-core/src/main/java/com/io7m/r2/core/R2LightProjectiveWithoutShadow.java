@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureWrapS;
@@ -26,7 +27,6 @@ import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
-import org.valid4j.Assertive;
 
 /**
  * Parameters for simple projective lights that operate by rendering frustum
@@ -83,12 +83,15 @@ public final class R2LightProjectiveWithoutShadow implements
     final JCGLTexture2DUsableType t = in_image.texture();
     final JCGLTextureWrapS wrap_s = t.textureGetWrapS();
     final JCGLTextureWrapT wrap_t = t.textureGetWrapT();
-    Assertive.ensure(
+
+    Preconditions.checkPrecondition(
+      wrap_s,
       wrap_s.equals(JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE),
-      "Wrapping mode should be CLAMP_TO_EDGE (is %s)", wrap_s);
-    Assertive.ensure(
+      m -> "Wrapping mode should be CLAMP_TO_EDGE (is " + m + ")");
+    Preconditions.checkPrecondition(
+      wrap_t,
       wrap_t.equals(JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE),
-      "Wrapping mode should be CLAMP_TO_EDGE (is %s)", wrap_t);
+      m -> "Wrapping mode should be CLAMP_TO_EDGE (is " + m + ")");
 
     return new R2LightProjectiveWithoutShadow(
       in_mesh,
