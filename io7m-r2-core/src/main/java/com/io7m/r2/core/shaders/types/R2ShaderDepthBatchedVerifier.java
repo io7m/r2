@@ -21,11 +21,12 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
+import com.io7m.jfsm.core.FSMEnumMutable;
+import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import unquietcode.tools.esm.EnumStateMachine;
 
 /**
  * A verifier for batched instance shaders; a type that verifies that a renderer
@@ -38,43 +39,40 @@ public final class R2ShaderDepthBatchedVerifier<M> implements
   R2ShaderDepthBatchedType<M>
 {
   private final R2ShaderDepthBatchedType<M> shader;
-  private final EnumStateMachine<State> state;
+  private final FSMEnumMutable<State> state;
 
   private R2ShaderDepthBatchedVerifier(
     final R2ShaderDepthBatchedType<M> in_shader)
   {
-    this.state = new EnumStateMachine<>(State.STATE_DEACTIVATED);
+    this.shader = NullCheck.notNull(in_shader);
 
-    this.state.addTransition(
-      State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
+    final FSMEnumMutableBuilderType<State> sb =
+      FSMEnumMutable.builder(State.STATE_DEACTIVATED);
 
-    this.state.addTransition(
-      State.STATE_ACTIVATED, State.STATE_VIEW_RECEIVED);
-    this.state.addTransition(
-      State.STATE_ACTIVATED, State.STATE_DEACTIVATED);
+    sb.addTransition(State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
 
-    this.state.addTransition(
-      State.STATE_VIEW_RECEIVED, State.STATE_MATERIAL_RECEIVED);
-    this.state.addTransition(
-      State.STATE_VIEW_RECEIVED, State.STATE_DEACTIVATED);
+    sb.addTransition(State.STATE_ACTIVATED, State.STATE_VIEW_RECEIVED);
+    sb.addTransition(State.STATE_ACTIVATED, State.STATE_DEACTIVATED);
 
-    this.state.addTransition(
+    sb.addTransition(State.STATE_VIEW_RECEIVED, State.STATE_MATERIAL_RECEIVED);
+    sb.addTransition(State.STATE_VIEW_RECEIVED, State.STATE_DEACTIVATED);
+
+    sb.addTransition(
       State.STATE_MATERIAL_RECEIVED, State.STATE_MATERIAL_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_MATERIAL_RECEIVED, State.STATE_DEACTIVATED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_MATERIAL_RECEIVED, State.STATE_VALIDATED);
 
-    this.state.addTransition(
-      State.STATE_VALIDATED, State.STATE_MATERIAL_RECEIVED);
+    sb.addTransition(State.STATE_VALIDATED, State.STATE_MATERIAL_RECEIVED);
 
     for (final State target : State.values()) {
       if (target != State.STATE_DEACTIVATED) {
-        this.state.addTransition(target, State.STATE_DEACTIVATED);
+        sb.addTransition(target, State.STATE_DEACTIVATED);
       }
     }
 
-    this.shader = NullCheck.notNull(in_shader);
+    this.state = sb.build();
   }
 
   /**

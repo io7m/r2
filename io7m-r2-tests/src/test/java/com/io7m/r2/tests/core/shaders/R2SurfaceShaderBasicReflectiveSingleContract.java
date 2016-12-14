@@ -29,7 +29,6 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
@@ -38,11 +37,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2SurfaceShaderBasicReflectiveSingleContract extends
-  R2ShaderInstanceSingleContract<R2SurfaceShaderBasicReflectiveParametersType,
-    R2SurfaceShaderBasicReflectiveParametersType>
+  R2ShaderInstanceSingleContract<R2SurfaceShaderBasicReflectiveParameters,
+    R2SurfaceShaderBasicReflectiveParameters>
 {
   @Override
-  protected final R2SurfaceShaderBasicReflectiveParametersType newParameters(
+  protected final R2SurfaceShaderBasicReflectiveParameters newParameters(
     final JCGLInterfaceGL33Type g)
   {
     final JCGLTexturesType g_tex = g.getTextures();
@@ -60,7 +59,10 @@ public abstract class R2SurfaceShaderBasicReflectiveSingleContract extends
     try {
       final R2TextureDefaultsType t =
         R2TextureDefaults.newDefaults(g.getTextures(), tc_alloc);
-      return R2SurfaceShaderBasicReflectiveParameters.of(t);
+      final R2SurfaceShaderBasicReflectiveParameters.Builder pb =
+        R2SurfaceShaderBasicReflectiveParameters.builder();
+      pb.setTextureDefaults(t);
+      return pb.build();
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
@@ -75,7 +77,7 @@ public abstract class R2SurfaceShaderBasicReflectiveSingleContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType> s =
+    final R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> s =
       R2SurfaceShaderBasicReflectiveSingle.newShader(
         g.getShaders(),
         sources,

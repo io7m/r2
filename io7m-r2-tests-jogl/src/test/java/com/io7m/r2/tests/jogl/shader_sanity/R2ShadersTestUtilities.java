@@ -55,7 +55,6 @@ import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.r2.core.cursors.R2VertexPU32ByteBuffered;
 import com.io7m.r2.core.cursors.R2VertexPU32Type;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.sombrero.core.SoShaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

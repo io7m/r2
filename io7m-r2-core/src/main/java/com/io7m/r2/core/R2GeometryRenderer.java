@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
@@ -49,7 +50,6 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.util.Optional;
 
@@ -122,7 +122,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
-    final R2SceneOpaquesType s)
+    final R2SceneOpaquesReadableType s)
   {
     NullCheck.notNull(area);
     NullCheck.notNull(gbuffer);
@@ -131,7 +131,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
-    Assertive.require(!this.isDeleted(), "Renderer not deleted");
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Renderer must not be deleted");
 
     final JCGLProfilingContextType p_geom = pc.getChildContext("geometry");
     p_geom.startMeasuringIfEnabled();
@@ -210,7 +211,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     @Override
     public void onStart()
     {
-      Assertive.require(this.g33 != null);
+      NullCheck.notNull(this.g33, "g33");
     }
 
     @Override

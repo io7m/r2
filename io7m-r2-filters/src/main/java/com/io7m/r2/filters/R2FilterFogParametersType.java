@@ -17,7 +17,7 @@
 package com.io7m.r2.filters;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
-import com.io7m.jtensors.parameterized.PVector3FType;
+import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Texture2DUsableType;
@@ -29,7 +29,6 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2FilterFogParametersType
 {
@@ -101,7 +100,7 @@ public interface R2FilterFogParametersType
    */
 
   @Value.Parameter
-  PVector3FType<R2SpaceRGBType> fogColor();
+  PVectorI3F<R2SpaceRGBType> fogColor();
 
   /**
    * @return The observer matrix values that were used to produce the scene

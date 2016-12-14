@@ -43,8 +43,7 @@ import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
-import com.io7m.r2.filters.R2FilterCompositorParametersMutable;
-import com.io7m.r2.filters.R2FilterCompositorParametersType;
+import com.io7m.r2.filters.R2FilterCompositorParameters;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
@@ -77,7 +76,7 @@ public abstract class R2FilterCompositorContract extends R2JCGLContract
     final R2UnitQuadType quad =
       R2UnitQuad.newUnitQuad(g);
 
-    final R2FilterType<R2FilterCompositorParametersType> f =
+    final R2FilterType<R2FilterCompositorParameters> f =
       R2FilterCompositor.newFilter(sources, td, g, id, quad);
 
     Assert.assertFalse(f.isDeleted());
@@ -127,7 +126,7 @@ public abstract class R2FilterCompositorContract extends R2JCGLContract
       tc,
       R2ImageBufferDescription.of(area, Optional.empty()));
 
-    final R2FilterType<R2FilterCompositorParametersType> f =
+    final R2FilterType<R2FilterCompositorParameters> f =
       R2FilterCompositor.newFilter(sources, td, g, id, quad);
 
     g_fb.framebufferDrawUnbind();
@@ -136,13 +135,11 @@ public abstract class R2FilterCompositorContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterCompositorParametersMutable params =
-      R2FilterCompositorParametersMutable.create();
-    params.addItems(R2FilterCompositorItem.of(
-      td.texture2DBlack(),
-      area,
-      1.0f,
-      Optional.empty()));
+    final R2FilterCompositorParameters params =
+      R2FilterCompositorParameters.builder()
+        .addItems(R2FilterCompositorItem.of(
+          td.texture2DBlack(), area, 1.0f, Optional.empty()))
+        .build();
 
     g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 

@@ -31,6 +31,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2CopyDepth;
+import com.io7m.r2.core.R2DepthAttachmentCreate;
 import com.io7m.r2.core.R2DepthPrecision;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBuffer;
@@ -53,7 +54,7 @@ import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterLightApplicator;
-import com.io7m.r2.filters.R2FilterLightApplicatorParametersMutable;
+import com.io7m.r2.filters.R2FilterLightApplicatorParameters;
 import com.io7m.r2.filters.R2FilterLightApplicatorParametersType;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
@@ -146,13 +147,14 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
 
     g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 
-    final R2FilterLightApplicatorParametersMutable params =
-      R2FilterLightApplicatorParametersMutable.create();
-    params.setLightDiffuseTexture(td.texture2DBlack());
-    params.setLightSpecularTexture(td.texture2DBlack());
-    params.setGeometryBuffer(gbuffer);
-    params.setOutputViewport(area);
-    params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
+    final R2FilterLightApplicatorParameters params =
+      R2FilterLightApplicatorParameters.builder()
+        .setLightDiffuseTexture(td.texture2DBlack())
+        .setLightSpecularTexture(td.texture2DBlack())
+        .setGeometryBuffer(gbuffer)
+        .setOutputViewport(area)
+        .setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 
@@ -216,13 +218,14 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
 
     g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 
-    final R2FilterLightApplicatorParametersMutable params =
-      R2FilterLightApplicatorParametersMutable.create();
-    params.setLightDiffuseTexture(td.texture2DBlack());
-    params.setLightSpecularTexture(td.texture2DBlack());
-    params.setGeometryBuffer(gbuffer);
-    params.setOutputViewport(area);
-    params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED);
+    final R2FilterLightApplicatorParameters params =
+      R2FilterLightApplicatorParameters.builder()
+        .setLightDiffuseTexture(td.texture2DBlack())
+        .setLightSpecularTexture(td.texture2DBlack())
+        .setGeometryBuffer(gbuffer)
+        .setOutputViewport(area)
+        .setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 
@@ -270,7 +273,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
       R2ImageBuffer.newImageBuffer(
         g_fb, g_t, tc,
         R2ImageBufferDescription.of(area, Optional.of(
-          R2DepthPrecision.R2_DEPTH_PRECISION_24)));
+          R2DepthAttachmentCreate.of(R2DepthPrecision.R2_DEPTH_PRECISION_24))));
 
     final R2GeometryBufferDescriptionType desc =
       R2GeometryBufferDescription.of(
@@ -289,13 +292,14 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
 
     g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 
-    final R2FilterLightApplicatorParametersMutable params =
-      R2FilterLightApplicatorParametersMutable.create();
-    params.setLightDiffuseTexture(td.texture2DBlack());
-    params.setLightSpecularTexture(td.texture2DBlack());
-    params.setGeometryBuffer(gbuffer);
-    params.setOutputViewport(area);
-    params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
+    final R2FilterLightApplicatorParameters params =
+      R2FilterLightApplicatorParameters.builder()
+        .setLightDiffuseTexture(td.texture2DBlack())
+        .setLightSpecularTexture(td.texture2DBlack())
+        .setGeometryBuffer(gbuffer)
+        .setOutputViewport(area)
+        .setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 
@@ -342,7 +346,7 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
       R2ImageBuffer.newImageBuffer(
         g_fb, g_t, tc,
         R2ImageBufferDescription.of(area, Optional.of(
-          R2DepthPrecision.R2_DEPTH_PRECISION_24)));
+          R2DepthAttachmentCreate.of(R2DepthPrecision.R2_DEPTH_PRECISION_24))));
 
     final R2GeometryBufferDescriptionType desc =
       R2GeometryBufferDescription.of(
@@ -361,13 +365,14 @@ public abstract class R2FilterLightApplicatorContract extends R2JCGLContract
 
     g_fb.framebufferDrawBind(ib.primaryFramebuffer());
 
-    final R2FilterLightApplicatorParametersMutable params =
-      R2FilterLightApplicatorParametersMutable.create();
-    params.setLightDiffuseTexture(td.texture2DBlack());
-    params.setLightSpecularTexture(td.texture2DBlack());
-    params.setGeometryBuffer(gbuffer);
-    params.setOutputViewport(area);
-    params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED);
+    final R2FilterLightApplicatorParameters params =
+      R2FilterLightApplicatorParameters.builder()
+        .setLightDiffuseTexture(td.texture2DBlack())
+        .setLightSpecularTexture(td.texture2DBlack())
+        .setGeometryBuffer(gbuffer)
+        .setOutputViewport(area)
+        .setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_DISABLED)
+        .build();
 
     f.runFilter(pro_root, tc, params);
 

@@ -31,6 +31,7 @@ import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
+import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueSingle;
@@ -44,7 +45,6 @@ import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
@@ -74,9 +74,9 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private R2SceneOpaquesType opaques;
   private R2GeometryBufferType gbuffer;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParametersType> shader;
-  private R2SurfaceShaderBasicParametersType shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParametersType> material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
+  private R2SurfaceShaderBasicParameters shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
   private R2MainType main;
 
@@ -119,9 +119,10 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
     final R2TransformSiOT transform = R2TransformSiOT.newTransform();
+    final R2IDPoolType id_pool = m.getIDPool();
 
-    this.instance = R2InstanceSingle.newInstance(
-      m.getIDPool(),
+    this.instance = R2InstanceSingle.of(
+      id_pool.freshID(),
       m.getUnitQuad().arrayObject(),
       transform,
       PMatrixI3x3F.identity());
@@ -136,15 +137,13 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       R2ShaderPreprocessingEnvironment.create(p);
 
     this.shader =
-      R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(), sources, m.getIDPool());
+      R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
     this.shader_params =
-      R2SurfaceShaderBasicParameters.of(m.getTextureDefaults());
-
-    this.material = R2MaterialOpaqueSingle.newMaterial(
-      m.getIDPool(),
-      this.shader,
-      this.shader_params);
+      R2SurfaceShaderBasicParameters.builder()
+        .setTextureDefaults(m.getTextureDefaults())
+        .build();
+    this.material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.shader, this.shader_params);
   }
 
   @Override

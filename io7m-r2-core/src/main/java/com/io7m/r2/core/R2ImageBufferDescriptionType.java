@@ -35,9 +35,13 @@ public interface R2ImageBufferDescriptionType extends
   AreaInclusiveUnsignedLType area();
 
   /**
-   * @return The precision of the depth buffer, if one is to be provided
+   * A specification of whether a new depth attachment should be created,
+   * a depth attachment should be shared with an existing framebuffer, or
+   * no depth attachment should exist at all.
+   *
+   * @return The specification of the attachment, if one is to be provided
    */
 
   @Value.Parameter
-  Optional<R2DepthPrecision> depthPrecision();
+  Optional<R2DepthAttachmentSpecificationType> depthAttachment();
 }

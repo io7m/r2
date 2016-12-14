@@ -19,7 +19,7 @@ package com.io7m.r2.core.debug;
 import com.io7m.jtensors.VectorReadable4FType;
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.core.R2SceneLightsType;
-import com.io7m.r2.core.R2SceneOpaquesType;
+import com.io7m.r2.core.R2SceneOpaquesReadableType;
 import com.io7m.r2.core.R2UnitSphereUsableType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
@@ -30,7 +30,6 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2DebugVisualizerRendererParametersType
 {
@@ -53,7 +52,7 @@ public interface R2DebugVisualizerRendererParametersType
    */
 
   @Value.Parameter
-  R2SceneOpaquesType opaqueInstances();
+  R2SceneOpaquesReadableType opaqueInstances();
 
   /**
    * @return The lights in the scene.

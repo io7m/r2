@@ -43,5 +43,5 @@ public interface R2DebugVisualizerRendererType extends R2DeletableType
     JCGLProfilingContextType pc,
     JCGLTextureUnitContextParentType uc,
     R2MatricesObserverType m,
-    R2DebugVisualizerRendererParametersType s);
+    R2DebugVisualizerRendererParameters s);
 }

@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterFogDepthQuadratic;
-import com.io7m.r2.filters.R2ShaderFilterFogParametersType;
+import com.io7m.r2.filters.R2ShaderFilterFogParameters;
 import com.io7m.r2.tests.filters.R2ShaderFilterFogDepthQuadraticContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
@@ -39,12 +39,15 @@ public final class R2ShaderFilterFogDepthQuadraticTest extends
   }
 
   @Override
-  protected R2ShaderFilterType<R2ShaderFilterFogParametersType>
+  protected R2ShaderFilterType<R2ShaderFilterFogParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderFilterFogDepthQuadratic.newShader(g.getShaders(), sources, pool);
+    return R2ShaderFilterFogDepthQuadratic.newShader(
+      g.getShaders(),
+      sources,
+      pool);
   }
 }

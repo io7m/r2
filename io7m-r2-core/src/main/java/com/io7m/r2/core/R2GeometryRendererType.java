@@ -48,5 +48,5 @@ public interface R2GeometryRendererType extends R2DeletableType
     JCGLProfilingContextType pc,
     JCGLTextureUnitContextParentType uc,
     R2MatricesObserverType m,
-    R2SceneOpaquesType s);
+    R2SceneOpaquesReadableType s);
 }

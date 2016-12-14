@@ -44,7 +44,6 @@ import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterBilateralBlurDepthAwareHorizontal4f;
 import com.io7m.r2.filters.R2ShaderFilterBilateralBlurDepthAwareParameters;
-import com.io7m.r2.filters.R2ShaderFilterBilateralBlurDepthAwareParametersType;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
@@ -52,7 +51,7 @@ import org.junit.Test;
 
 public abstract class
 R2ShaderFilterBilateralBlurDepthAwareHorizontal4fContract extends
-  R2ShaderFilterContract<R2ShaderFilterBilateralBlurDepthAwareParametersType,
+  R2ShaderFilterContract<R2ShaderFilterBilateralBlurDepthAwareParameters,
     R2ShaderFilterBilateralBlurDepthAwareParameters>
 {
   @Override
@@ -130,7 +129,7 @@ R2ShaderFilterBilateralBlurDepthAwareHorizontal4fContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderFilterType<
-      R2ShaderFilterBilateralBlurDepthAwareParametersType> s =
+      R2ShaderFilterBilateralBlurDepthAwareParameters> s =
       R2ShaderFilterBilateralBlurDepthAwareHorizontal4f.newShader(
         g.getShaders(),
         sources,

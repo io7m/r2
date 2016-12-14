@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
@@ -47,7 +48,6 @@ import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.VectorI4F;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
-import org.valid4j.Assertive;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -65,7 +65,8 @@ public final class R2DepthVarianceRenderer implements
   private final JCGLClearSpecification clear;
   private boolean deleted;
 
-  private R2DepthVarianceRenderer(final JCGLInterfaceGL33Type in_g)
+  private R2DepthVarianceRenderer(
+    final JCGLInterfaceGL33Type in_g)
   {
     this.g = NullCheck.notNull(in_g);
     this.depth_consumer = new DepthConsumer(this.g);
@@ -115,7 +116,8 @@ public final class R2DepthVarianceRenderer implements
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
-    Assertive.require(!this.isDeleted(), "Renderer not deleted");
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Renderer must not be deleted");
 
     final JCGLFramebufferUsableType gb_fb = dbuffer.primaryFramebuffer();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
@@ -139,10 +141,15 @@ public final class R2DepthVarianceRenderer implements
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
-    Assertive.require(!this.isDeleted(), "Renderer not deleted");
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Renderer must not be deleted");
 
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-    Assertive.require(g_fb.framebufferDrawAnyIsBound());
+
+    Preconditions.checkPrecondition(
+      g_fb.framebufferDrawAnyIsBound(),
+      "Framebuffer must be bound");
+
     final JCGLViewportsType g_v = this.g.getViewports();
 
     if (s.depthsCount() > 0L) {
@@ -235,7 +242,7 @@ public final class R2DepthVarianceRenderer implements
     @Override
     public void onStart()
     {
-      Assertive.require(this.g33 != null);
+      NullCheck.notNull(this.g33, "g33");
 
       switch (this.culling) {
         case FACE_BACK:

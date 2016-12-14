@@ -36,7 +36,6 @@ import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jnull.NullCheck;
-import com.io7m.jnull.Nullable;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2FilterUsableType;
@@ -50,7 +49,6 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import org.valid4j.Assertive;
 
 import java.util.Optional;
 
@@ -58,33 +56,26 @@ import java.util.Optional;
  * The default implementation of the emission/glow filter.
  */
 
-public final class R2FilterEmission implements R2FilterType<R2FilterEmissionParametersType>
+public final class R2FilterEmission implements R2FilterType<R2FilterEmissionParameters>
 {
-  private final R2FilterUsableType<R2FilterBoxBlurParametersType<
+  private final R2FilterUsableType<R2FilterBoxBlurParameters<
     R2ImageBufferDescriptionType,
     R2ImageBufferUsableType,
     R2ImageBufferDescriptionType,
     R2ImageBufferUsableType>> filter_blur;
-  private final R2ShaderFilterType<R2ShaderFilterEmissionParametersType> shader_emission;
+  private final R2ShaderFilterType<R2ShaderFilterEmissionParameters> shader_emission;
   private final JCGLInterfaceGL33Type g;
   private final R2RenderTargetPoolUsableType<
     R2ImageBufferDescriptionType, R2ImageBufferUsableType> render_target_pool;
   private final R2UnitQuadUsableType quad;
   private final JCGLRenderStateMutable render_state_additive;
   private final JCGLRenderStateMutable render_state;
-  private final R2ShaderFilterEmissionParametersMutable shader_emission_params;
-  private final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType> shader_copy;
-  private final R2ShaderFilterTextureShowParametersMutable shader_copy_params;
-  private @Nullable R2FilterBoxBlurParametersMutable<
-    R2ImageBufferDescriptionType,
-    R2ImageBufferUsableType,
-    R2ImageBufferDescriptionType,
-    R2ImageBufferUsableType> filter_blur_params;
+  private final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> shader_copy;
 
   private R2FilterEmission(
-    final R2FilterUsableType<R2FilterBoxBlurParametersType<R2ImageBufferDescriptionType, R2ImageBufferUsableType, R2ImageBufferDescriptionType, R2ImageBufferUsableType>> in_blur,
-    final R2ShaderFilterType<R2ShaderFilterEmissionParametersType> in_shader_emission,
-    final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType> in_shader_copy,
+    final R2FilterUsableType<R2FilterBoxBlurParameters<R2ImageBufferDescriptionType, R2ImageBufferUsableType, R2ImageBufferDescriptionType, R2ImageBufferUsableType>> in_blur,
+    final R2ShaderFilterType<R2ShaderFilterEmissionParameters> in_shader_emission,
+    final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> in_shader_copy,
     final JCGLInterfaceGL33Type in_g,
     final R2RenderTargetPoolUsableType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> in_render_target_pool,
     final R2UnitQuadUsableType in_quad)
@@ -114,11 +105,6 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
 
     this.render_state =
       JCGLRenderStateMutable.create();
-
-    this.shader_emission_params =
-      R2ShaderFilterEmissionParametersMutable.create();
-    this.shader_copy_params =
-      R2ShaderFilterTextureShowParametersMutable.create();
   }
 
   /**
@@ -134,12 +120,12 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
    * @return A new filter
    */
 
-  public static R2FilterType<R2FilterEmissionParametersType> newFilter(
+  public static R2FilterType<R2FilterEmissionParameters> newFilter(
     final JCGLInterfaceGL33Type in_g,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_id_pool,
     final R2FilterUsableType<
-      R2FilterBoxBlurParametersType<
+      R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
@@ -152,10 +138,10 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     final JCGLShadersType g_sh = in_g.getShaders();
 
     final R2ShaderFilterType<
-      R2ShaderFilterEmissionParametersType> in_shader_emission =
+      R2ShaderFilterEmissionParameters> in_shader_emission =
       R2ShaderFilterEmission.newShader(g_sh, in_shader_env, in_id_pool);
     final R2ShaderFilterType<
-      R2ShaderFilterTextureShowParametersType> in_shader_copy =
+      R2ShaderFilterTextureShowParameters> in_shader_copy =
       R2ShaderFilterTextureShow.newShader(g_sh, in_shader_env, in_id_pool);
 
     return new R2FilterEmission(
@@ -188,7 +174,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   public void runFilter(
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterEmissionParametersType parameters)
+    final R2FilterEmissionParameters parameters)
   {
     NullCheck.notNull(pc);
     NullCheck.notNull(uc);
@@ -197,7 +183,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     final JCGLProfilingContextType pc_base =
       pc.getChildContext("emission");
 
-    final Optional<R2BlurParametersType> blur_opt =
+    final Optional<R2BlurParameters> blur_opt =
       parameters.blurParameters();
 
     if (blur_opt.isPresent()) {
@@ -211,7 +197,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   private void runFilterUnblurred(
     final JCGLProfilingContextType pc_base,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterEmissionParametersType parameters)
+    final R2FilterEmissionParameters parameters)
   {
     final JCGLProfilingContextType pc_unblurred =
       pc_base.getChildContext("unblurred");
@@ -235,8 +221,8 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   private void runFilterBlurred(
     final JCGLProfilingContextType pc_base,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterEmissionParametersType parameters,
-    final R2BlurParametersType blur_parameters)
+    final R2FilterEmissionParameters parameters,
+    final R2BlurParameters blur_parameters)
   {
     final JCGLProfilingContextType pc_blurred =
       pc_base.getChildContext("blurred");
@@ -276,16 +262,12 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
        * Blur the image.
        */
 
-      final R2FilterBoxBlurParametersMutable<
+      final R2FilterBoxBlurParameters<
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
-        R2ImageBufferUsableType> bp;
-
-      if (this.filter_blur_params != null) {
-        bp = this.filter_blur_params;
-      } else {
-        bp = R2FilterBoxBlurParametersMutable.create(
+        R2ImageBufferUsableType> fbp =
+        R2FilterBoxBlurParameters.of(
           temp,
           R2ImageBufferUsableType::imageTexture,
           temp,
@@ -293,14 +275,8 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
           this.render_target_pool,
           blur_parameters,
           (i, a) -> R2ImageBufferDescription.of(a, Optional.empty()));
-      }
 
-      bp.setOutputRenderTarget(temp);
-      bp.setSourceRenderTarget(temp);
-      bp.setBlurParameters(blur_parameters);
-
-      this.filter_blur_params = bp;
-      this.filter_blur.runFilter(pc_blurred, uc, bp);
+      this.filter_blur.runFilter(pc_blurred, uc, fbp);
 
       /*
        * Blend the blurred emissive image into the output framebuffer.
@@ -345,15 +321,16 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       try {
         g_v.viewportSet(output_viewport);
         JCGLRenderStates.activate(this.g, r_state);
+
         try {
-          this.shader_copy_params.clear();
-          this.shader_copy_params.setIntensity(1.0f);
-          this.shader_copy_params.setTexture(in_texture);
-          Assertive.ensure(this.shader_copy_params.isInitialized());
+          final R2ShaderFilterTextureShowParameters cp =
+            R2ShaderFilterTextureShowParameters.builder()
+              .setTexture(in_texture)
+              .setIntensity(1.0f)
+              .build();
 
           this.shader_copy.onActivate(g_sh);
-          this.shader_copy.onReceiveFilterValues(
-            g_tex, g_sh, tc, this.shader_copy_params);
+          this.shader_copy.onReceiveFilterValues(g_tex, g_sh, tc, cp);
           this.shader_copy.onValidate();
           g_ao.arrayObjectBind(this.quad.arrayObject());
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -389,13 +366,11 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
         g_v.viewportSet(output_viewport);
         JCGLRenderStates.activate(this.g, r_state);
         try {
-          this.shader_emission_params.clear();
-          this.shader_emission_params.setAlbedoEmissionTexture(in_texture);
-          Assertive.ensure(this.shader_emission_params.isInitialized());
+          final R2ShaderFilterEmissionParameters sp =
+            R2ShaderFilterEmissionParameters.of(in_texture);
 
           this.shader_emission.onActivate(g_sh);
-          this.shader_emission.onReceiveFilterValues(
-            g_tex, g_sh, tc, this.shader_emission_params);
+          this.shader_emission.onReceiveFilterValues(g_tex, g_sh, tc, sp);
           this.shader_emission.onValidate();
           g_ao.arrayObjectBind(this.quad.arrayObject());
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);

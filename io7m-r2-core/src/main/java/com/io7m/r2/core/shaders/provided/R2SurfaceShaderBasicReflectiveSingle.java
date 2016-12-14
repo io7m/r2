@@ -44,8 +44,8 @@ import java.util.Optional;
  */
 
 public final class R2SurfaceShaderBasicReflectiveSingle extends
-  R2AbstractShader<R2SurfaceShaderBasicReflectiveParametersType>
-  implements R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType>
+  R2AbstractShader<R2SurfaceShaderBasicReflectiveParameters>
+  implements R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_normal;
@@ -160,7 +160,7 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType>
+  public static R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -168,15 +168,13 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
   {
     return R2ShaderInstanceSingleVerifier.newVerifier(
       new R2SurfaceShaderBasicReflectiveSingle(
-        in_shaders,
-        in_shader_env,
-        in_pool));
+        in_shaders, in_shader_env, in_pool));
   }
 
   @Override
-  public Class<R2SurfaceShaderBasicReflectiveParametersType> getShaderParametersType()
+  public Class<R2SurfaceShaderBasicReflectiveParameters> getShaderParametersType()
   {
-    return R2SurfaceShaderBasicReflectiveParametersType.class;
+    return R2SurfaceShaderBasicReflectiveParameters.class;
   }
 
   @Override
@@ -228,7 +226,7 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2SurfaceShaderBasicReflectiveParametersType values)
+    final R2SurfaceShaderBasicReflectiveParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(g_sh);

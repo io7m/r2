@@ -37,13 +37,10 @@ import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TextureDefaults;
-import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import org.junit.Test;
 
@@ -87,19 +84,12 @@ public abstract class R2StencilRendererContract extends R2JCGLContract
     final JCGLTextureUnitContextParentType tc =
       ta.getRootContext();
 
-    final R2TextureDefaultsType td =
-      R2TextureDefaults.newDefaults(g.getTextures(), tc);
-
     final R2InstanceSingleType i =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
-
-    final R2DepthShaderBasicParametersMutable ds_param =
-      R2DepthShaderBasicParametersMutable.create();
-    ds_param.setAlbedoTexture(td.texture2DWhite());
 
     final R2ProjectionOrthographic proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());

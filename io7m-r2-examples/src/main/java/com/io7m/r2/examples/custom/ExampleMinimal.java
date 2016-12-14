@@ -35,6 +35,9 @@ import com.io7m.jcanephora.profiler.JCGLProfilingType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jproperties.JProperties;
+import com.io7m.jproperties.JPropertyIncorrectType;
+import com.io7m.jproperties.JPropertyNonexistent;
 import com.io7m.jtensors.MatrixM4x4F;
 import com.io7m.jtensors.VectorI3F;
 import com.io7m.jtensors.VectorI4F;
@@ -42,7 +45,7 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.r2.core.R2CopyDepth;
-import com.io7m.r2.core.R2DepthPrecision;
+import com.io7m.r2.core.R2DepthAttachmentShare;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferComponents;
@@ -86,13 +89,11 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
@@ -102,18 +103,16 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
-import com.io7m.r2.filters.R2BlurParametersMutable;
+import com.io7m.r2.filters.R2BlurParameters;
 import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParametersType;
+import com.io7m.r2.filters.R2FilterBoxBlurParameters;
 import com.io7m.r2.filters.R2FilterEmission;
-import com.io7m.r2.filters.R2FilterEmissionParametersMutable;
-import com.io7m.r2.filters.R2FilterEmissionParametersType;
+import com.io7m.r2.filters.R2FilterEmissionParameters;
 import com.io7m.r2.filters.R2FilterFXAA;
-import com.io7m.r2.filters.R2FilterFXAAParametersMutable;
-import com.io7m.r2.filters.R2FilterFXAAParametersType;
+import com.io7m.r2.filters.R2FilterFXAAParameters;
 import com.io7m.r2.filters.R2FilterFXAAQuality;
 import com.io7m.r2.filters.R2FilterLightApplicator;
-import com.io7m.r2.filters.R2FilterLightApplicatorParametersMutable;
+import com.io7m.r2.filters.R2FilterLightApplicatorParameters;
 import com.io7m.r2.filters.R2FilterLightApplicatorParametersType;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitCube;
@@ -124,33 +123,41 @@ import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;
 import com.io7m.sombrero.core.SoShaderResolver;
 import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
-import org.valid4j.Assertive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.SwingUtilities;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 // CHECKSTYLE:OFF
 
 public final class ExampleMinimal implements R2ExampleCustomType
 {
+  private static final Logger LOG;
+
+  static {
+    LOG = LoggerFactory.getLogger(ExampleMinimal.class);
+  }
+
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
 
   private JCGLClearSpecification screen_clear_spec;
   private R2SceneStencilsType stencils;
   private R2ProjectionFOV projection;
   private R2InstanceSingleType instance;
-  private R2SceneOpaquesType opaques;
   private R2SceneLightsType lights;
 
   private R2GeometryBufferType gbuffer;
   private R2LightBufferType lbuffer;
   private R2ImageBufferType ibuffer;
+  private R2SceneOpaquesType opaques;
 
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType> geom_shader;
-  private R2SurfaceShaderBasicReflectiveParametersType geom_shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParametersType> geom_material;
+  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
+  private R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
+  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
 
   private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
@@ -159,15 +166,15 @@ public final class ExampleMinimal implements R2ExampleCustomType
   private R2TransformSiOT sphere_light_bounded_transform;
   private R2InstanceSingleType sphere_light_bounds;
 
-  private R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> depth_shader;
-  private R2DepthShaderBasicParametersMutable depth_params;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> depth_material;
+  private R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader;
+  private R2DepthShaderBasicParameters depth_params;
+  private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> depth_material;
 
   private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
-  private R2FilterLightApplicatorParametersMutable filter_light_params;
+  private R2FilterLightApplicatorParameters filter_light_params;
 
-  private R2FilterType<R2FilterFXAAParametersType> filter_fxaa;
-  private R2FilterFXAAParametersMutable filter_fxaa_params;
+  private R2FilterType<R2FilterFXAAParameters> filter_fxaa;
+  private R2FilterFXAAParameters filter_fxaa_params;
 
   private R2MainType main;
 
@@ -186,14 +193,13 @@ public final class ExampleMinimal implements R2ExampleCustomType
   private R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool;
 
   private R2FilterType<
-    R2FilterBoxBlurParametersType<
+    R2FilterBoxBlurParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType>> filter_blur;
-  private R2FilterType<R2FilterEmissionParametersType> filter_emission;
-  private R2FilterEmissionParametersMutable filter_emission_params;
-  private R2BlurParametersMutable filter_emission_blur_params;
+  private R2FilterType<R2FilterEmissionParameters> filter_emission;
+  private R2FilterEmissionParameters filter_emission_params;
 
   public ExampleMinimal()
   {
@@ -244,7 +250,8 @@ public final class ExampleMinimal implements R2ExampleCustomType
       final R2ImageBufferDescription.Builder b =
         R2ImageBufferDescription.builder();
       b.setArea(area);
-      b.setDepthPrecision(R2DepthPrecision.R2_DEPTH_PRECISION_24);
+      b.setDepthAttachment(
+        R2DepthAttachmentShare.of(this.gbuffer.depthTexture()));
 
       this.ibuffer = R2ImageBuffer.newImageBuffer(
         gx.getFramebuffers(),
@@ -261,7 +268,13 @@ public final class ExampleMinimal implements R2ExampleCustomType
         m.getUnitQuad());
 
     this.filter_fxaa_params =
-      R2FilterFXAAParametersMutable.create();
+      R2FilterFXAAParameters.builder()
+        .setSubPixelAliasingRemoval(0.0f)
+        .setEdgeThreshold(0.333f)
+        .setEdgeThresholdMinimum(0.0833f)
+        .setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10)
+        .setTexture(this.ibuffer.imageTexture())
+        .build();
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -274,8 +287,8 @@ public final class ExampleMinimal implements R2ExampleCustomType
     transform.getTranslation().set3F(0.0f, -1.0f, 0.0f);
 
     this.instance =
-      R2InstanceSingle.newInstance(
-        id_pool, mesh, transform, PMatrixI3x3F.identity());
+      R2InstanceSingle.of(
+        id_pool.freshID(), mesh, transform, PMatrixI3x3F.identity());
 
     final SoShaderPreprocessorConfig.Builder b =
       SoShaderPreprocessorConfig.builder();
@@ -288,19 +301,14 @@ public final class ExampleMinimal implements R2ExampleCustomType
 
     this.depth_shader = R2DepthShaderBasicSingle.newShader(
       gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
-    this.depth_params =
-      R2DepthShaderBasicParametersMutable.create();
-    this.depth_params.setAlphaDiscardThreshold(0.1f);
-    this.depth_params.setAlbedoTexture(
-      this.main.getTextureDefaults().texture2DWhite());
-    this.depth_material = R2MaterialDepthSingle.newMaterial(
-      m.getIDPool(), this.depth_shader, this.depth_params);
+    this.depth_params = R2DepthShaderBasicParameters.of(
+      m.getTextureDefaults(), m.getTextureDefaults().texture2DWhite(), 0.1f);
+    this.depth_material = R2MaterialDepthSingle.of(
+      id_pool.freshID(), this.depth_shader, this.depth_params);
 
     this.geom_shader =
       R2SurfaceShaderBasicReflectiveSingle.newShader(
-        gx.getShaders(),
-        sources,
-        id_pool);
+        gx.getShaders(), sources, id_pool);
 
     {
       final R2SurfaceShaderBasicReflectiveParameters.Builder spb =
@@ -312,8 +320,8 @@ public final class ExampleMinimal implements R2ExampleCustomType
       this.geom_shader_params = spb.build();
     }
 
-    this.geom_material = R2MaterialOpaqueSingle.newMaterial(
-      id_pool, this.geom_shader, this.geom_shader_params);
+    this.geom_material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.geom_shader, this.geom_shader_params);
 
     this.light_ambient_shader =
       R2LightShaderAmbientSingle.newShader(gx.getShaders(), sources, id_pool);
@@ -342,8 +350,8 @@ public final class ExampleMinimal implements R2ExampleCustomType
     this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
     this.sphere_light_bounds =
-      R2InstanceSingle.newInstance(
-        id_pool,
+      R2InstanceSingle.of(
+        id_pool.freshID(),
         R2UnitCube.newUnitCube(gx).arrayObject(),
         this.sphere_light_bounded_transform,
         PMatrixI3x3F.identity());
@@ -359,8 +367,29 @@ public final class ExampleMinimal implements R2ExampleCustomType
       R2FilterLightApplicator.newFilter(sources, gx, id_pool, m.getUnitQuad());
 
     {
-      this.filter_light_params =
-        R2FilterLightApplicatorParametersMutable.create();
+      final R2FilterLightApplicatorParameters.Builder pb =
+        R2FilterLightApplicatorParameters.builder();
+      pb.setGeometryBuffer(this.gbuffer);
+      pb.setOutputViewport(this.ibuffer.area());
+      pb.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
+      this.lbuffer.matchLightBuffer(
+        this,
+        (tt, lbdo) -> {
+          final R2TextureDefaultsType td = tt.main.getTextureDefaults();
+          pb.setLightDiffuseTexture(lbdo.diffuseTexture());
+          pb.setLightSpecularTexture(td.texture2DBlack());
+          return Unit.unit();
+        }, (tt, lbso) -> {
+          final R2TextureDefaultsType td = tt.main.getTextureDefaults();
+          pb.setLightDiffuseTexture(td.texture2DBlack());
+          pb.setLightSpecularTexture(lbso.specularTexture());
+          return Unit.unit();
+        }, (tt, lb) -> {
+          pb.setLightDiffuseTexture(lb.diffuseTexture());
+          pb.setLightSpecularTexture(lb.specularTexture());
+          return Unit.unit();
+        });
+      this.filter_light_params = pb.build();
     }
 
     {
@@ -376,9 +405,13 @@ public final class ExampleMinimal implements R2ExampleCustomType
         m.getUnitQuad());
 
       this.filter_emission_params =
-        R2FilterEmissionParametersMutable.create();
-      this.filter_emission_blur_params =
-        R2BlurParametersMutable.create();
+        R2FilterEmissionParameters.builder()
+          .setAlbedoEmissionMap(this.gbuffer.albedoEmissiveTexture())
+          .setBlurParameters(R2BlurParameters.builder().build())
+          .setOutputFramebuffer(this.ibuffer.primaryFramebuffer())
+          .setOutputViewport(this.ibuffer.area())
+          .setScale(0.25f)
+          .build();
 
       this.filter_emission = R2FilterEmission.newFilter(
         gx,
@@ -399,14 +432,25 @@ public final class ExampleMinimal implements R2ExampleCustomType
     }
 
     this.profiling_window = new AtomicReference<>();
-    SwingUtilities.invokeLater(() -> {
-      final ExampleProfilingWindow frame = new ExampleProfilingWindow();
-      frame.setVisible(true);
-      this.profiling_window.set(frame);
-    });
 
-    this.text_buffer = new StringBuilder(256);
-    this.text = "";
+    try {
+      final Properties props = System.getProperties();
+      final boolean profiling = JProperties.getBooleanOptional(
+        props, "com.io7m.r2.profiling", false);
+      if (profiling) {
+        SwingUtilities.invokeLater(() -> {
+          final ExampleProfilingWindow frame = new ExampleProfilingWindow();
+          frame.setVisible(true);
+          this.profiling_window.set(frame);
+        });
+        this.text_buffer = new StringBuilder(256);
+        this.text = "";
+      }
+    } catch (final JPropertyNonexistent e) {
+      LOG.error("missing system property: ", e);
+    } catch (final JPropertyIncorrectType e) {
+      LOG.error("incorrect system property type: ", e);
+    }
   }
 
   @Override
@@ -424,11 +468,9 @@ public final class ExampleMinimal implements R2ExampleCustomType
       R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
 
     this.opaques.opaquesReset();
-    this.opaques.opaquesAddSingleInstance(
-      this.instance, this.geom_material);
+    this.opaques.opaquesAddSingleInstance(this.instance, this.geom_material);
 
     this.lights.lightsReset();
-
     final R2SceneLightsGroupType lg = this.lights.lightsGetGroup(1);
     lg.lightGroupAddSingle(
       this.light_ambient, this.light_ambient_shader);
@@ -519,51 +561,11 @@ public final class ExampleMinimal implements R2ExampleCustomType
 
         g_fb.framebufferDrawBind(t.ibuffer.primaryFramebuffer());
         t.ibuffer.clearBoundPrimaryFramebuffer(t.g);
-        t.filter_light_params.clear();
-        t.filter_light_params.setGeometryBuffer(t.gbuffer);
-        t.filter_light_params.setOutputViewport(t.ibuffer.area());
-        t.filter_light_params.setCopyDepth(R2CopyDepth.R2_COPY_DEPTH_ENABLED);
-        t.lbuffer.matchLightBuffer(
-          this,
-          (tt, lbdo) -> {
-            final R2TextureDefaultsType td = tt.main.getTextureDefaults();
-            tt.filter_light_params.setLightDiffuseTexture(
-              lbdo.diffuseTexture());
-            tt.filter_light_params.setLightSpecularTexture(
-              td.texture2DBlack());
-            return Unit.unit();
-          }, (tt, lbso) -> {
-            final R2TextureDefaultsType td = tt.main.getTextureDefaults();
-            tt.filter_light_params.setLightDiffuseTexture(
-              td.texture2DBlack());
-            tt.filter_light_params.setLightSpecularTexture(
-              lbso.specularTexture());
-            return Unit.unit();
-          }, (tt, lb) -> {
-            tt.filter_light_params.setLightDiffuseTexture(
-              lb.diffuseTexture());
-            tt.filter_light_params.setLightSpecularTexture(
-              lb.specularTexture());
-            return Unit.unit();
-          });
-        Assertive.require(t.filter_light_params.isInitialized());
         t.filter_light.runFilter(t.profiling_root, uc, t.filter_light_params);
 
         /*
          * Apply emission.
          */
-
-        t.filter_emission_params.clear();
-        t.filter_emission_params.setAlbedoEmissionMap(
-          t.gbuffer.albedoEmissiveTexture());
-        t.filter_emission_params.setBlurParameters(
-          t.filter_emission_blur_params);
-        t.filter_emission_params.setOutputFramebuffer(
-          Optional.of(t.ibuffer.primaryFramebuffer()));
-        t.filter_emission_params.setOutputViewport(
-          t.ibuffer.area());
-        t.filter_emission_params.setScale(0.25f);
-        Assertive.ensure(t.filter_emission_params.isInitialized());
 
         t.filter_emission.runFilter(
           t.profiling_root, uc, t.filter_emission_params);
@@ -579,15 +581,7 @@ public final class ExampleMinimal implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.screen_clear_spec);
 
-        t.filter_fxaa_params.clear();
-        t.filter_fxaa_params.setSubPixelAliasingRemoval(0.0f);
-        t.filter_fxaa_params.setEdgeThreshold(0.333f);
-        t.filter_fxaa_params.setEdgeThresholdMinimum(0.0833f);
-        t.filter_fxaa_params.setQuality(R2FilterFXAAQuality.R2_FXAA_QUALITY_10);
-        t.filter_fxaa_params.setTexture(t.ibuffer.imageTexture());
-        Assertive.require(t.filter_fxaa_params.isInitialized());
         t.filter_fxaa.runFilter(t.profiling_root, uc, t.filter_fxaa_params);
-
         return Unit.unit();
       });
 
@@ -597,26 +591,30 @@ public final class ExampleMinimal implements R2ExampleCustomType
         pro.getMostRecentlyMeasuredFrame();
 
       if (frame % 60 == 0) {
-        this.text_buffer.setLength(0);
-        pro_measure.iterate(this, (tt, depth, fm) -> {
-          final double nanos = fm.getElapsedTimeTotal();
-          final double millis = nanos / 1_000_000.0;
+        if (this.profiling_window.get() != null) {
+          this.text_buffer.setLength(0);
+          pro_measure.iterate(this, (tt, depth, fm) -> {
+            for (int index = 0; index < depth; ++index) {
+              tt.text_buffer.append("    ");
+            }
+            tt.text_buffer.append(fm.getName());
+            tt.text_buffer.append(" ");
 
-          for (int index = 0; index < depth; ++index) {
-            tt.text_buffer.append("    ");
-          }
-          tt.text_buffer.append(fm.getName());
-          tt.text_buffer.append(" ");
-          tt.text_buffer.append(String.format("%.6f", Double.valueOf(millis)));
-          tt.text_buffer.append("ms");
-          tt.text_buffer.append(System.lineSeparator());
-          return JCGLProfilingIteration.CONTINUE;
-        });
-        this.text = this.text_buffer.toString();
-        this.text_buffer.setLength(0);
+            final double nanos = (double) fm.getElapsedTimeTotal();
+            final double millis = nanos / 1_000_000.0;
+            tt.text_buffer.append(String.format(
+              "%.6f",
+              Double.valueOf(millis)));
+            tt.text_buffer.append("ms");
+            tt.text_buffer.append(System.lineSeparator());
+            return JCGLProfilingIteration.CONTINUE;
+          });
+          this.text = this.text_buffer.toString();
+          this.text_buffer.setLength(0);
 
-        SwingUtilities.invokeLater(
-          () -> this.profiling_window.get().sendText(this.text));
+          SwingUtilities.invokeLater(
+            () -> this.profiling_window.get().sendText(this.text));
+        }
       }
     }
   }

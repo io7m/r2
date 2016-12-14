@@ -43,23 +43,19 @@ import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterLightApplicator;
-import com.io7m.r2.filters.R2ShaderFilterLightApplicatorParametersMutable;
-import com.io7m.r2.filters.R2ShaderFilterLightApplicatorParametersType;
+import com.io7m.r2.filters.R2ShaderFilterLightApplicatorParameters;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderFilterLightApplicatorContract extends
-  R2ShaderFilterContract<R2ShaderFilterLightApplicatorParametersType,
-    R2ShaderFilterLightApplicatorParametersMutable>
+  R2ShaderFilterContract<R2ShaderFilterLightApplicatorParameters,
+    R2ShaderFilterLightApplicatorParameters>
 {
   @Override
-  protected final R2ShaderFilterLightApplicatorParametersMutable
+  protected final R2ShaderFilterLightApplicatorParameters
   newParameters(final JCGLInterfaceGL33Type g)
   {
-    final R2ShaderFilterLightApplicatorParametersMutable p =
-      R2ShaderFilterLightApplicatorParametersMutable.create();
-
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLFramebuffersType g_fb = g.getFramebuffers();
 
@@ -108,15 +104,15 @@ public abstract class R2ShaderFilterLightApplicatorContract extends
 
       g_fb.framebufferDrawUnbind();
 
-      p.setAlbedoTexture(gb.albedoEmissiveTexture());
-      p.setDiffuseTexture(diff_spec.diffuseTexture());
-      p.setSpecularTexture(diff_spec.specularTexture());
+      return R2ShaderFilterLightApplicatorParameters.builder()
+        .setAlbedoTexture(gb.albedoEmissiveTexture())
+        .setDiffuseTexture(diff_spec.diffuseTexture())
+        .setSpecularTexture(diff_spec.specularTexture())
+        .build();
 
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
-
-    return p;
   }
 
   @Test
@@ -128,7 +124,7 @@ public abstract class R2ShaderFilterLightApplicatorContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType> s =
+    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters> s =
       R2ShaderFilterLightApplicator.newShader(
         g.getShaders(),
         sources,

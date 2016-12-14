@@ -31,7 +31,8 @@ public final class R2SanityTest extends R2ShaderTest
     LOG = LoggerFactory.getLogger(R2SanityTest.class);
   }
 
-  @Test public void testIdentity()
+  @Test
+  public void testIdentity()
     throws Exception
   {
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();

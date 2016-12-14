@@ -47,7 +47,7 @@ public final class R2ShaderFilterFogDepthLinear extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterFogParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterFogParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,

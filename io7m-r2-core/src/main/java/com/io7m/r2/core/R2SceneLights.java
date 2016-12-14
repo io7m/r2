@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
@@ -27,7 +28,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 /**
  * The default implementation of the {@link R2SceneLightsType} interface.
@@ -106,7 +106,7 @@ public final class R2SceneLights implements R2SceneLightsType
   private void lightsExecuteGroups(
     final R2SceneLightsConsumerType c)
   {
-    /**
+    /*
      * For each non-empty group...
      */
 
@@ -130,7 +130,7 @@ public final class R2SceneLights implements R2SceneLightsType
     try {
       gv.onStart();
 
-      /**
+      /*
        * For each single instance shader {@code s}...
        */
 
@@ -142,7 +142,7 @@ public final class R2SceneLights implements R2SceneLightsType
           (R2ShaderLightSingleUsableType<R2LightSingleReadableType>)
             bs_iter.next();
 
-        /**
+        /*
          * If any lights are present that do not belong to a clip group, then
          * render them.
          */
@@ -151,19 +151,20 @@ public final class R2SceneLights implements R2SceneLightsType
         if (g.shader_to_lights.containsKey(s_id)) {
           gv.onLightSingleShaderStart(s);
 
-          /**
+          /*
            * Sort the lights by their array object lights, to allow
            * for rendering with the fewest number of array object binds.
            */
 
-          Assertive.require(g.shader_to_lights.containsKey(s_id));
+          Preconditions.checkPrecondition(
+            g.shader_to_lights.containsKey(s_id), "Shader ID must exist");
+
           final LongSet s_lights =
-            g.shader_to_lights.get(s_id);
-          Assertive.require(s_lights != null);
+            NullCheck.notNull(g.shader_to_lights.get(s_id));
 
           this.sortLights(g, s_lights, this.lights_sorted);
 
-          /**
+          /*
            * Render all lights with the minimum number of array object
            * bindings.
            */
@@ -195,7 +196,7 @@ public final class R2SceneLights implements R2SceneLightsType
   private void lightsExecuteClipGroups(
     final R2SceneLightsConsumerType c)
   {
-    /**
+    /*
      * For each group that contains a non-empty clip group...
      */
 
@@ -205,7 +206,7 @@ public final class R2SceneLights implements R2SceneLightsType
         continue;
       }
 
-      /**
+      /*
        * Execute each non-empty clip group...
        */
 
@@ -235,7 +236,7 @@ public final class R2SceneLights implements R2SceneLightsType
     try {
       cgc.onStart();
 
-      /**
+      /*
        * For each shader...
        */
 
@@ -250,7 +251,7 @@ public final class R2SceneLights implements R2SceneLightsType
 
         cgc.onLightSingleShaderStart(shader);
 
-        /**
+        /*
          * Sort the lights by their array object instances, to allow
          * for rendering with the fewest number of array object binds.
          */
@@ -260,7 +261,7 @@ public final class R2SceneLights implements R2SceneLightsType
 
         this.sortLights(g, s_lights, this.lights_sorted);
 
-        /**
+        /*
          * Render all lights with the minimum number of array object
          * bindings.
          */
@@ -298,7 +299,7 @@ public final class R2SceneLights implements R2SceneLightsType
       ls.add(i);
     }
 
-    /**
+    /*
      * Sort lights first by their array objects, and then by their light
      * identifiers.
      */
@@ -365,7 +366,7 @@ public final class R2SceneLights implements R2SceneLightsType
       final long l_id = light.lightID();
       final long s_id = shader.getShaderID();
 
-      /**
+      /*
        * Insert the light and shader into the group. Add a mapping from the
        * light to the shader.
        */
@@ -383,14 +384,15 @@ public final class R2SceneLights implements R2SceneLightsType
         throw new R2RendererExceptionLightAlreadyVisible(sb.toString());
       }
 
-      Assertive.require(!this.lights.containsKey(l_id));
+      Preconditions.checkPrecondition(
+        !this.lights.containsKey(l_id), "Light ID must not exist");
 
       ls.group_max = Math.max(ls.group_max, this.id + 1);
       this.lights.put(l_id, light);
       this.light_shaders.put(s_id, shader);
       this.lights_unclipped.add(l_id);
 
-      /**
+      /*
        * Update the set of mappings from shaders to lights for the group.
        */
 
@@ -419,7 +421,10 @@ public final class R2SceneLights implements R2SceneLightsType
       NullCheck.notNull(i);
 
       final long iid = i.instanceID();
-      Assertive.require(!this.clip_groups.containsKey(iid));
+
+      Preconditions.checkPrecondition(
+        !this.clip_groups.containsKey(iid),
+        "Clip group must not contain instance");
 
       final R2SceneLights ls = R2SceneLights.this;
       ls.group_max = Math.max(ls.group_max, this.id + 1);
@@ -481,7 +486,7 @@ public final class R2SceneLights implements R2SceneLightsType
         final long l_id = light.lightID();
         final long s_id = shader.getShaderID();
 
-        /**
+        /*
          * Insert the light and shader into the group. Add a mapping from the light
          * to the shader.
          */
@@ -499,11 +504,14 @@ public final class R2SceneLights implements R2SceneLightsType
           throw new R2RendererExceptionLightAlreadyVisible(sb.toString());
         }
 
-        Assertive.require(!Group.this.lights.containsKey(l_id));
+        Preconditions.checkPrecondition(
+          !Group.this.lights.containsKey(l_id),
+          "Light group must not contain light");
+
         Group.this.lights.put(l_id, light);
         Group.this.light_shaders.put(s_id, shader);
 
-        /**
+        /*
          * Update the set of mappings from shaders to lights for the clip group.
          */
 

@@ -47,8 +47,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderSSAO extends
-  R2AbstractShader<R2ShaderSSAOParametersType>
-  implements R2ShaderFilterType<R2ShaderSSAOParametersType>
+  R2AbstractShader<R2ShaderSSAOParameters>
+  implements R2ShaderFilterType<R2ShaderSSAOParameters>
 {
   private final VectorM2F noise_uv_scale;
   private final JCGLProgramUniformType u_ssao_noise_uv_scale;
@@ -174,7 +174,7 @@ public final class R2ShaderSSAO extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderSSAOParametersType>
+  public static R2ShaderFilterType<R2ShaderSSAOParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -185,10 +185,10 @@ public final class R2ShaderSSAO extends
   }
 
   @Override
-  public Class<R2ShaderSSAOParametersType>
+  public Class<R2ShaderSSAOParameters>
   getShaderParametersType()
   {
-    return R2ShaderSSAOParametersType.class;
+    return R2ShaderSSAOParameters.class;
   }
 
   @Override
@@ -209,7 +209,7 @@ public final class R2ShaderSSAO extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderSSAOParametersType values)
+    final R2ShaderSSAOParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);

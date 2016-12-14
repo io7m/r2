@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFaceWindingOrder;
@@ -48,7 +49,6 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableTy
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 /**
  * The default implementation of the {@link R2StencilRendererType} interface.
@@ -125,7 +125,8 @@ public final class R2StencilRenderer implements R2StencilRendererType
     NullCheck.notNull(area);
     NullCheck.notNull(s);
 
-    Assertive.require(!this.deleted);
+    Preconditions.checkPrecondition(
+      !this.deleted, "Renderer must be deleted");
 
     final JCGLProfilingContextType pc_base =
       pc.getChildContext("stencil");

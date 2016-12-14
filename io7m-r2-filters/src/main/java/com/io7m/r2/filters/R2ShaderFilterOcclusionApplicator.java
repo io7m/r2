@@ -39,8 +39,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterOcclusionApplicator extends
-  R2AbstractShader<R2ShaderFilterOcclusionApplicatorParametersType>
-  implements R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParametersType>
+  R2AbstractShader<R2ShaderFilterOcclusionApplicatorParameters>
+  implements R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParameters>
 {
   private final JCGLProgramUniformType u_texture;
   private final JCGLProgramUniformType u_intensity;
@@ -61,18 +61,13 @@ public final class R2ShaderFilterOcclusionApplicator extends
       "com.io7m.r2.shaders.core/R2FilterOcclusionApplicator.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 2);
-
     this.u_texture =
       R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_texture",
-        JCGLType.TYPE_SAMPLER_2D);
+        p, "R2_texture", JCGLType.TYPE_SAMPLER_2D);
     this.u_intensity =
       R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_intensity",
-        JCGLType.TYPE_FLOAT);
+        p, "R2_intensity", JCGLType.TYPE_FLOAT);
+    R2ShaderParameters.checkUniformParameterCount(p, 2);
   }
 
   /**
@@ -85,7 +80,7 @@ public final class R2ShaderFilterOcclusionApplicator extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -93,16 +88,14 @@ public final class R2ShaderFilterOcclusionApplicator extends
   {
     return R2ShaderFilterVerifier.newVerifier(
       new R2ShaderFilterOcclusionApplicator(
-        in_shaders,
-        in_shader_env,
-        in_pool));
+        in_shaders, in_shader_env, in_pool));
   }
 
   @Override
-  public Class<R2ShaderFilterOcclusionApplicatorParametersType>
+  public Class<R2ShaderFilterOcclusionApplicatorParameters>
   getShaderParametersType()
   {
-    return R2ShaderFilterOcclusionApplicatorParametersType.class;
+    return R2ShaderFilterOcclusionApplicatorParameters.class;
   }
 
   @Override
@@ -117,7 +110,7 @@ public final class R2ShaderFilterOcclusionApplicator extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterOcclusionApplicatorParametersType values)
+    final R2ShaderFilterOcclusionApplicatorParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);

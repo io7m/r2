@@ -19,14 +19,11 @@ package com.io7m.r2.tests.jogl.shaders;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParametersType;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.shaders.R2SurfaceShaderBasicReflectiveSingleContract;
-import com.io7m.r2.tests.core.shaders.R2SurfaceShaderBasicSingleContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
 public final class R2ShaderSurfaceBasicReflectiveSingleTest extends
@@ -42,12 +39,15 @@ public final class R2ShaderSurfaceBasicReflectiveSingleTest extends
   }
 
   @Override
-  protected R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParametersType>
+  protected R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2SurfaceShaderBasicReflectiveSingle.newShader(g.getShaders(), sources, pool);
+    return R2SurfaceShaderBasicReflectiveSingle.newShader(
+      g.getShaders(),
+      sources,
+      pool);
   }
 }

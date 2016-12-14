@@ -45,8 +45,8 @@ import java.util.Optional;
  */
 
 public final class R2SurfaceShaderBasicStippledSingle extends
-  R2AbstractShader<R2SurfaceShaderBasicStippledParametersType>
-  implements R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParametersType>
+  R2AbstractShader<R2SurfaceShaderBasicStippledParameters>
+  implements R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_normal;
@@ -69,6 +69,7 @@ public final class R2SurfaceShaderBasicStippledSingle extends
   private final JCGLProgramUniformType u_stipple_threshold;
   private final JCGLProgramUniformType u_viewport_inverse_width;
   private final JCGLProgramUniformType u_viewport_inverse_height;
+  private final VectorM2F noise_uv_scale;
   private JCGLTextureUnitType unit_albedo;
   private JCGLTextureUnitType unit_emission;
   private JCGLTextureUnitType unit_normal;
@@ -76,7 +77,6 @@ public final class R2SurfaceShaderBasicStippledSingle extends
   private JCGLTextureUnitType unit_stipple;
   private long viewport_w;
   private long viewport_h;
-  private final VectorM2F noise_uv_scale;
 
   private R2SurfaceShaderBasicStippledSingle(
     final JCGLShadersType in_shaders,
@@ -171,7 +171,7 @@ public final class R2SurfaceShaderBasicStippledSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParametersType>
+  public static R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -185,9 +185,9 @@ public final class R2SurfaceShaderBasicStippledSingle extends
   }
 
   @Override
-  public Class<R2SurfaceShaderBasicStippledParametersType> getShaderParametersType()
+  public Class<R2SurfaceShaderBasicStippledParameters> getShaderParametersType()
   {
-    return R2SurfaceShaderBasicStippledParametersType.class;
+    return R2SurfaceShaderBasicStippledParameters.class;
   }
 
   @Override
@@ -251,7 +251,7 @@ public final class R2SurfaceShaderBasicStippledSingle extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2SurfaceShaderBasicStippledParametersType values)
+    final R2SurfaceShaderBasicStippledParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(g_sh);
