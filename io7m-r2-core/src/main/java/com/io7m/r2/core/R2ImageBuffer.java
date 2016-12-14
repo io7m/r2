@@ -83,7 +83,6 @@ public final class R2ImageBuffer implements R2ImageBufferType
   private final UnsignedRangeInclusiveL range;
   private final R2ImageBufferDescriptionType desc;
   private final @Nullable R2Texture2DType t_depth;
-  private final @Nullable R2Texture2DUsableType t_depth_shared;
 
   private R2ImageBuffer(
     final JCGLFramebufferType in_framebuffer,
@@ -97,7 +96,6 @@ public final class R2ImageBuffer implements R2ImageBufferType
     this.t_rgba = NullCheck.notNull(in_t_rgba);
 
     this.t_depth = in_t_depth;
-    this.t_depth_shared = in_t_depth_shared;
 
     long size = 0L;
     size += this.t_rgba.texture().getRange().getInterval();
@@ -105,8 +103,8 @@ public final class R2ImageBuffer implements R2ImageBufferType
     if (this.t_depth != null) {
       size += this.t_depth.texture().getRange().getInterval();
     }
-    if (this.t_depth_shared != null) {
-      size += this.t_depth_shared.texture().getRange().getInterval();
+    if (in_t_depth_shared != null) {
+      size += in_t_depth_shared.texture().getRange().getInterval();
     }
 
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);

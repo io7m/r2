@@ -44,7 +44,6 @@ public final class R2ShaderFilterTextureShow extends
 {
   private final JCGLProgramUniformType u_texture;
   private final JCGLProgramUniformType u_intensity;
-  private JCGLTextureUnitType unit_texture;
 
   private R2ShaderFilterTextureShow(
     final JCGLShadersType in_shaders,
@@ -116,11 +115,12 @@ public final class R2ShaderFilterTextureShow extends
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);
 
-    this.unit_texture =
-      tc.unitContextBindTexture2D(g_tex, values.texture().texture());
+    final JCGLTextureUnitType unit_texture = tc.unitContextBindTexture2D(
+      g_tex,
+      values.texture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture, this.unit_texture);
+      this.u_texture, unit_texture);
     g_sh.shaderUniformPutFloat(
       this.u_intensity, values.intensity());
   }

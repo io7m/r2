@@ -70,11 +70,6 @@ public final class R2SurfaceShaderBasicStippledSingle extends
   private final JCGLProgramUniformType u_viewport_inverse_width;
   private final JCGLProgramUniformType u_viewport_inverse_height;
   private final VectorM2F noise_uv_scale;
-  private JCGLTextureUnitType unit_albedo;
-  private JCGLTextureUnitType unit_emission;
-  private JCGLTextureUnitType unit_normal;
-  private JCGLTextureUnitType unit_specular;
-  private JCGLTextureUnitType unit_stipple;
   private long viewport_w;
   private long viewport_h;
 
@@ -268,29 +263,32 @@ public final class R2SurfaceShaderBasicStippledSingle extends
     g_sh.shaderUniformPutVector2f(
       this.u_stipple_noise_uv_scale, this.noise_uv_scale);
 
-    this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
-    this.unit_emission =
-      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().texture());
-    this.unit_normal =
-      tc.unitContextBindTexture2D(g_tex, values.normalTexture().texture());
-    this.unit_specular =
-      tc.unitContextBindTexture2D(g_tex, values.specularTexture().texture());
-    this.unit_stipple =
-      tc.unitContextBindTexture2D(
-        g_tex,
-        values.stippleNoiseTexture().texture());
+    final JCGLTextureUnitType unit_albedo = tc.unitContextBindTexture2D(
+      g_tex,
+      values.albedoTexture().texture());
+    final JCGLTextureUnitType unit_emission = tc.unitContextBindTexture2D(
+      g_tex,
+      values.emissionTexture().texture());
+    final JCGLTextureUnitType unit_normal = tc.unitContextBindTexture2D(
+      g_tex,
+      values.normalTexture().texture());
+    final JCGLTextureUnitType unit_specular = tc.unitContextBindTexture2D(
+      g_tex,
+      values.specularTexture().texture());
+    final JCGLTextureUnitType unit_stipple = tc.unitContextBindTexture2D(
+      g_tex,
+      values.stippleNoiseTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_albedo, this.unit_albedo);
+      this.u_texture_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_emission, this.unit_emission);
+      this.u_texture_emission, unit_emission);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_normal, this.unit_normal);
+      this.u_texture_normal, unit_normal);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_specular, this.unit_specular);
+      this.u_texture_specular, unit_specular);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_stipple, this.unit_stipple);
+      this.u_texture_stipple, unit_stipple);
 
     g_sh.shaderUniformPutVector4f(
       this.u_albedo_color, values.albedoColor());

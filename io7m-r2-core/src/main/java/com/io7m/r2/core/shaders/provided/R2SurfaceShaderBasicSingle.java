@@ -62,10 +62,6 @@ public final class R2SurfaceShaderBasicSingle extends
   private final JCGLProgramUniformType u_texture_specular;
   private final JCGLProgramUniformType u_texture_emission;
   private final JCGLProgramUniformType u_alpha_discard_threshold;
-  private JCGLTextureUnitType unit_albedo;
-  private JCGLTextureUnitType unit_emission;
-  private JCGLTextureUnitType unit_normal;
-  private JCGLTextureUnitType unit_specular;
 
   private R2SurfaceShaderBasicSingle(
     final JCGLShadersType in_shaders,
@@ -213,23 +209,27 @@ public final class R2SurfaceShaderBasicSingle extends
     NullCheck.notNull(tc);
     NullCheck.notNull(values);
 
-    this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
-    this.unit_emission =
-      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().texture());
-    this.unit_normal =
-      tc.unitContextBindTexture2D(g_tex, values.normalTexture().texture());
-    this.unit_specular =
-      tc.unitContextBindTexture2D(g_tex, values.specularTexture().texture());
+    final JCGLTextureUnitType unit_albedo = tc.unitContextBindTexture2D(
+      g_tex,
+      values.albedoTexture().texture());
+    final JCGLTextureUnitType unit_emission = tc.unitContextBindTexture2D(
+      g_tex,
+      values.emissionTexture().texture());
+    final JCGLTextureUnitType unit_normal = tc.unitContextBindTexture2D(
+      g_tex,
+      values.normalTexture().texture());
+    final JCGLTextureUnitType unit_specular = tc.unitContextBindTexture2D(
+      g_tex,
+      values.specularTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_albedo, this.unit_albedo);
+      this.u_texture_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_emission, this.unit_emission);
+      this.u_texture_emission, unit_emission);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_normal, this.unit_normal);
+      this.u_texture_normal, unit_normal);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_specular, this.unit_specular);
+      this.u_texture_specular, unit_specular);
 
     g_sh.shaderUniformPutVector4f(
       this.u_albedo_color, values.albedoColor());

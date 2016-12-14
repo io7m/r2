@@ -65,8 +65,6 @@ import com.io7m.r2.core.R2LightBuffers;
 import com.io7m.r2.core.R2LightSphericalSingle;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
-import com.io7m.r2.core.R2MaterialDepthSingle;
-import com.io7m.r2.core.R2MaterialDepthSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
@@ -87,13 +85,10 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
-import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
@@ -163,14 +158,8 @@ public final class ExampleFog implements R2ExampleCustomType
 
   private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
-  private R2UnitSphereType sphere;
   private R2LightSphericalSingleType sphere_light_bounded;
-  private R2TransformSiOT sphere_light_bounded_transform;
   private R2InstanceSingleType sphere_light_bounds;
-
-  private R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader;
-  private R2DepthShaderBasicParameters depth_params;
-  private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> depth_material;
 
   private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
   private R2FilterLightApplicatorParameters filter_light_params;
@@ -193,16 +182,8 @@ public final class ExampleFog implements R2ExampleCustomType
   private AtomicReference<ExampleProfilingWindow> profiling_window;
   private StringBuilder text_buffer;
   private String text;
-  private JCGLProfilingFrameType profiling_frame;
   private JCGLProfilingContextType profiling_root;
-  private R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool;
 
-  private R2FilterType<
-    R2FilterBoxBlurParameters<
-      R2ImageBufferDescriptionType,
-      R2ImageBufferUsableType,
-      R2ImageBufferDescriptionType,
-      R2ImageBufferUsableType>> filter_blur;
   private R2FilterType<R2FilterEmissionParameters> filter_emission;
   private R2FilterEmissionParameters filter_emission_params;
   private Random random;
@@ -221,7 +202,7 @@ public final class ExampleFog implements R2ExampleCustomType
   {
     this.main = NullCheck.notNull(m);
 
-    this.sphere = R2UnitSphere.newUnitSphere8(gx);
+    final R2UnitSphereType sphere = R2UnitSphere.newUnitSphere8(gx);
     this.opaques = R2SceneOpaques.newOpaques();
     this.lights = R2SceneLights.newLights();
     this.stencils = R2SceneStencils.newMasks();
@@ -324,13 +305,6 @@ public final class ExampleFog implements R2ExampleCustomType
     final R2ShaderPreprocessingEnvironmentType sources =
       R2ShaderPreprocessingEnvironment.create(p);
 
-    this.depth_shader = R2DepthShaderBasicSingle.newShader(
-      gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
-    this.depth_params = R2DepthShaderBasicParameters.of(
-      m.getTextureDefaults(), m.getTextureDefaults().texture2DWhite(), 0.1f);
-    this.depth_material = R2MaterialDepthSingle.of(
-      id_pool.freshID(), this.depth_shader, this.depth_params);
-
     this.geom_shader =
       R2SurfaceShaderBasicReflectiveSingle.newShader(
         gx.getShaders(), sources, id_pool);
@@ -362,7 +336,7 @@ public final class ExampleFog implements R2ExampleCustomType
         gx.getShaders(), sources, id_pool);
 
     this.sphere_light =
-      R2LightSphericalSingle.newLight(this.sphere, id_pool);
+      R2LightSphericalSingle.newLight(sphere, id_pool);
     this.sphere_light.colorWritable().set3F(1.0f, 1.0f, 1.0f);
     this.sphere_light.setIntensity(1.0f);
     this.sphere_light.originPositionWritable().set3F(0.0f, 1.0f, 1.0f);
@@ -370,19 +344,19 @@ public final class ExampleFog implements R2ExampleCustomType
     this.sphere_light.setGeometryScaleFactor(
       (float) R2UnitSphere.getUVSphereApproximationScaleFactor(30.0f, 8));
 
-    this.sphere_light_bounded_transform = R2TransformSiOT.newTransform();
-    this.sphere_light_bounded_transform.getTranslation()
+    final R2TransformSiOT sphere_light_bounded_transform = R2TransformSiOT.newTransform();
+    sphere_light_bounded_transform.getTranslation()
       .set3F(-10.0f, 1.0f, 0.0f);
-    this.sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
+    sphere_light_bounded_transform.getScale().set3F(9.0f, 9.0f, 9.0f);
 
     this.sphere_light_bounds =
       R2InstanceSingle.of(
         id_pool.freshID(),
         R2UnitCube.newUnitCube(gx).arrayObject(),
-        this.sphere_light_bounded_transform,
+        sphere_light_bounded_transform,
         PMatrixI3x3F.identity());
     this.sphere_light_bounded =
-      R2LightSphericalSingle.newLight(this.sphere, id_pool);
+      R2LightSphericalSingle.newLight(sphere, id_pool);
     this.sphere_light_bounded.colorWritable().set3F(1.0f, 0.0f, 0.0f);
     this.sphere_light_bounded.setIntensity(1.0f);
     this.sphere_light_bounded.originPositionWritable()
@@ -419,14 +393,14 @@ public final class ExampleFog implements R2ExampleCustomType
     }
 
     {
-      this.image_pool = R2ImageBufferPool.newPool(
+      final R2RenderTargetPoolType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> image_pool = R2ImageBufferPool.newPool(
         gx, 1024L * 768L * 4L, Long.MAX_VALUE);
 
-      this.filter_blur = R2FilterBoxBlur.newFilter(
+      final R2FilterType<R2FilterBoxBlurParameters<R2ImageBufferDescriptionType, R2ImageBufferUsableType, R2ImageBufferDescriptionType, R2ImageBufferUsableType>> filter_blur = R2FilterBoxBlur.newFilter(
         m.getShaderPreprocessingEnvironment(),
         gx,
         m.getTextureDefaults(),
-        this.image_pool,
+        image_pool,
         m.getIDPool(),
         m.getUnitQuad());
 
@@ -443,8 +417,8 @@ public final class ExampleFog implements R2ExampleCustomType
         gx,
         m.getShaderPreprocessingEnvironment(),
         m.getIDPool(),
-        this.filter_blur,
-        this.image_pool,
+        filter_blur,
+        image_pool,
         m.getUnitQuad());
     }
 
@@ -537,8 +511,8 @@ public final class ExampleFog implements R2ExampleCustomType
 
       final JCGLProfilingType pro = this.main.getProfiling();
       pro.setEnabled(true);
-      this.profiling_frame = pro.startFrame();
-      this.profiling_root = this.profiling_frame.getChildContext("main");
+      final JCGLProfilingFrameType profiling_frame = pro.startFrame();
+      this.profiling_root = profiling_frame.getChildContext("main");
 
       final R2ShadowMapRendererExecutionType sme =
         this.main.getShadowMapRenderer().shadowBegin();

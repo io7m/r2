@@ -49,7 +49,6 @@ public final class R2DepthShaderBasicBatched extends
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_texture_albedo;
   private final JCGLProgramUniformType u_alpha_discard_threshold;
-  private JCGLTextureUnitType unit_albedo;
 
   private R2DepthShaderBasicBatched(
     final JCGLShadersType in_shaders,
@@ -143,11 +142,12 @@ public final class R2DepthShaderBasicBatched extends
     NullCheck.notNull(tc);
     NullCheck.notNull(values);
 
-    this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
+    final JCGLTextureUnitType unit_albedo = tc.unitContextBindTexture2D(
+      g_tex,
+      values.albedoTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_albedo, this.unit_albedo);
+      this.u_texture_albedo, unit_albedo);
     g_sh.shaderUniformPutFloat(
       this.u_alpha_discard_threshold, values.alphaDiscardThreshold());
   }

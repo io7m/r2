@@ -92,10 +92,8 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
   private R2EyePositionBufferType pbuffer;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
-  private R2SurfaceShaderBasicParameters shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
-  private R2UnitSphereType sphere;
   private R2InstanceSingleType instance;
 
   private R2FilterType<R2FilterDebugEyePositionParameters> eye_filter;
@@ -166,12 +164,12 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
 
     final R2IDPoolType id_pool = m.getIDPool();
 
-    this.sphere = R2UnitSphere.newUnitSphere8(g);
+    final R2UnitSphereType sphere = R2UnitSphere.newUnitSphere8(g);
 
     final R2TransformReadableType tr = R2TransformSOT.newTransform();
     this.instance = R2InstanceSingle.of(
       id_pool.freshID(),
-      this.sphere.arrayObject(),
+      sphere.arrayObject(),
       tr,
       PMatrixI3x3F.identity());
 
@@ -186,13 +184,12 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
 
     this.shader =
       R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
-    this.shader_params =
-      R2SurfaceShaderBasicParameters
-        .builder()
-        .setTextureDefaults(m.getTextureDefaults())
-        .build();
+    final R2SurfaceShaderBasicParameters shader_params = R2SurfaceShaderBasicParameters
+      .builder()
+      .setTextureDefaults(m.getTextureDefaults())
+      .build();
     this.material = R2MaterialOpaqueSingle.of(
-      id_pool.freshID(), this.shader, this.shader_params);
+      id_pool.freshID(), this.shader, shader_params);
 
     {
       final JCGLClearSpecification.Builder csb =

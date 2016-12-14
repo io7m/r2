@@ -70,9 +70,8 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
     this.array_update = NullCheck.notNull(in_array_update);
     this.array_cursor = NullCheck.notNull(in_array_cursor);
 
-    this.projection.projectionGetWatchable().watchableAdd(p -> {
-      this.mesh_needs_update = true;
-    });
+    this.projection.projectionGetWatchable().watchableAdd(
+      p -> this.mesh_needs_update = true);
   }
 
   /**

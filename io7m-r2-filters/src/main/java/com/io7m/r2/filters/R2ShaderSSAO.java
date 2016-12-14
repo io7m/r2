@@ -67,14 +67,8 @@ public final class R2ShaderSSAO extends
   private final JCGLProgramUniformType u_view_rays_ray_x1y0;
   private final JCGLProgramUniformType u_view_rays_ray_x0y1;
   private final JCGLProgramUniformType u_view_rays_ray_x1y1;
-  private final JCGLProgramUniformType u_gbuffer_albedo;
   private final JCGLProgramUniformType u_gbuffer_normal;
-  private final JCGLProgramUniformType u_gbuffer_specular;
   private final JCGLProgramUniformType u_gbuffer_depth;
-
-  private JCGLTextureUnitType unit_depth;
-  private JCGLTextureUnitType unit_normals;
-  private JCGLTextureUnitType unit_noise;
 
   private long kernel_version;
   private R2SSAOKernelReadableType kernel_last;
@@ -98,15 +92,13 @@ public final class R2ShaderSSAO extends
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 20);
 
-    this.u_gbuffer_albedo =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.albedo", JCGLType.TYPE_SAMPLER_2D);
+    final JCGLProgramUniformType u_gbuffer_albedo = R2ShaderParameters.getUniformChecked(
+      p, "R2_gbuffer.albedo", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_normal =
       R2ShaderParameters.getUniformChecked(
         p, "R2_gbuffer.normal", JCGLType.TYPE_SAMPLER_2D);
-    this.u_gbuffer_specular =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.specular", JCGLType.TYPE_SAMPLER_2D);
+    final JCGLProgramUniformType u_gbuffer_specular = R2ShaderParameters.getUniformChecked(
+      p, "R2_gbuffer.specular", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_depth =
       R2ShaderParameters.getUniformChecked(
         p, "R2_gbuffer.depth", JCGLType.TYPE_SAMPLER_2D);
@@ -255,22 +247,25 @@ public final class R2ShaderSSAO extends
       this.u_depth_coefficient,
       (float) R2Projections.getDepthCoefficient(view.projection()));
 
-    this.unit_noise =
-      tc.unitContextBindTexture2D(g_tex, values.noiseTexture().texture());
+    final JCGLTextureUnitType unit_noise = tc.unitContextBindTexture2D(
+      g_tex,
+      values.noiseTexture().texture());
 
     /*
      * Upload the geometry buffer.
      */
 
     final R2GeometryBufferUsableType gbuffer = values.geometryBuffer();
-    this.unit_depth =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.depthTexture().texture());
-    this.unit_normals =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.normalTexture().texture());
+    final JCGLTextureUnitType unit_depth = tc.unitContextBindTexture2D(
+      g_tex,
+      gbuffer.depthTexture().texture());
+    final JCGLTextureUnitType unit_normals = tc.unitContextBindTexture2D(
+      g_tex,
+      gbuffer.normalTexture().texture());
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_gbuffer_normal, this.unit_normals);
+      this.u_gbuffer_normal, unit_normals);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_gbuffer_depth, this.unit_depth);
+      this.u_gbuffer_depth, unit_depth);
 
     /*
      * Upload the SSAO-specific parameters.
@@ -289,7 +284,7 @@ public final class R2ShaderSSAO extends
     g_sh.shaderUniformPutVector2f(
       this.u_ssao_noise_uv_scale, this.noise_uv_scale);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_ssao_texture_noise, this.unit_noise);
+      this.u_ssao_texture_noise, unit_noise);
     g_sh.shaderUniformPutFloat(
       this.u_ssao_sample_radius, values.sampleRadius());
     g_sh.shaderUniformPutFloat(

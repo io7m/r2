@@ -57,7 +57,6 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
   R2AbstractShader<R2LightDirectionalScreenSingle>
   implements R2ShaderLightScreenSingleType<R2LightDirectionalScreenSingle>
 {
-  private final JCGLProgramUniformType u_transform_volume_modelview;
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_projection_inverse;
   private final JCGLProgramUniformType u_depth_coefficient;
@@ -99,11 +98,10 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_directional.intensity", JCGLType.TYPE_FLOAT);
 
-    this.u_transform_volume_modelview =
-      R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_light_matrices.transform_volume_modelview",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+    final JCGLProgramUniformType u_transform_volume_modelview = R2ShaderParameters.getUniformChecked(
+      p,
+      "R2_light_matrices.transform_volume_modelview",
+      JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
         p,

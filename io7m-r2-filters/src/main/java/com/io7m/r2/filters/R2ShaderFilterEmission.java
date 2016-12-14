@@ -43,7 +43,6 @@ public final class R2ShaderFilterEmission extends
   implements R2ShaderFilterType<R2ShaderFilterEmissionParameters>
 {
   private final JCGLProgramUniformType u_texture;
-  private JCGLTextureUnitType unit_texture;
 
   private R2ShaderFilterEmission(
     final JCGLShadersType in_shaders,
@@ -115,10 +114,9 @@ public final class R2ShaderFilterEmission extends
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);
 
-    this.unit_texture =
-      tc.unitContextBindTexture2D(
-        g_tex, values.albedoEmissionTexture().texture());
+    final JCGLTextureUnitType unit_texture = tc.unitContextBindTexture2D(
+      g_tex, values.albedoEmissionTexture().texture());
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture, this.unit_texture);
+      this.u_texture, unit_texture);
   }
 }

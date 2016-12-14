@@ -100,7 +100,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
      */
 
     if (this.singles.instances.containsKey(i_id)) {
-      throw R2SceneOpaques.errorInstanceAlreadyVisible(i);
+      throw errorInstanceAlreadyVisible(i);
     }
     this.singles.instances.put(i_id, i);
 

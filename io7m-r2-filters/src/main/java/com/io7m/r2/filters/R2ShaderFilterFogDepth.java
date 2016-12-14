@@ -48,8 +48,6 @@ public abstract class R2ShaderFilterFogDepth extends
   private final JCGLProgramUniformType u_fog_far_z;
   private final JCGLProgramUniformType u_fog_color;
   private final JCGLProgramUniformType u_depth_coefficient;
-  private JCGLTextureUnitType unit_image_texture;
-  private JCGLTextureUnitType unit_depth_texture;
 
   protected R2ShaderFilterFogDepth(
     final JCGLShadersType in_shaders,
@@ -118,15 +116,17 @@ public abstract class R2ShaderFilterFogDepth extends
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);
 
-    this.unit_image_texture =
-      tc.unitContextBindTexture2D(g_tex, values.imageTexture().texture());
-    this.unit_depth_texture =
-      tc.unitContextBindTexture2D(g_tex, values.imageDepthTexture().texture());
+    final JCGLTextureUnitType unit_image_texture = tc.unitContextBindTexture2D(
+      g_tex,
+      values.imageTexture().texture());
+    final JCGLTextureUnitType unit_depth_texture = tc.unitContextBindTexture2D(
+      g_tex,
+      values.imageDepthTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_image_texture, this.unit_image_texture);
+      this.u_image_texture, unit_image_texture);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_image_depth_texture, this.unit_depth_texture);
+      this.u_image_depth_texture, unit_depth_texture);
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,

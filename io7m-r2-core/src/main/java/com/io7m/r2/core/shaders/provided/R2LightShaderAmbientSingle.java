@@ -49,7 +49,6 @@ public final class R2LightShaderAmbientSingle extends
   R2AbstractShader<R2LightAmbientScreenSingle>
   implements R2ShaderLightScreenSingleType<R2LightAmbientScreenSingle>
 {
-  private final JCGLProgramUniformType u_transform_volume_modelview;
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_projection_inverse;
   private final JCGLProgramUniformType u_depth_coefficient;
@@ -58,7 +57,6 @@ public final class R2LightShaderAmbientSingle extends
   private final JCGLProgramUniformType u_light_color;
   private final JCGLProgramUniformType u_light_intensity;
   private final JCGLProgramUniformType u_light_occlusion;
-  private JCGLTextureUnitType unit_ao;
 
   private R2LightShaderAmbientSingle(
     final JCGLShadersType in_shaders,
@@ -87,11 +85,10 @@ public final class R2LightShaderAmbientSingle extends
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_ambient.occlusion", JCGLType.TYPE_SAMPLER_2D);
 
-    this.u_transform_volume_modelview =
-      R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_light_matrices.transform_volume_modelview",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+    final JCGLProgramUniformType u_transform_volume_modelview = R2ShaderParameters.getUniformChecked(
+      p,
+      "R2_light_matrices.transform_volume_modelview",
+      JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
         p,
@@ -215,10 +212,11 @@ public final class R2LightShaderAmbientSingle extends
      * Upload the occlusion texture and light values.
      */
 
-    this.unit_ao =
-      tc.unitContextBindTexture2D(g_tex, values.getOcclusionMap().texture());
+    final JCGLTextureUnitType unit_ao = tc.unitContextBindTexture2D(
+      g_tex,
+      values.getOcclusionMap().texture());
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_light_occlusion, this.unit_ao);
+      this.u_light_occlusion, unit_ao);
 
     g_sh.shaderUniformPutVector3f(
       this.u_light_color, values.color());

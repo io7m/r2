@@ -90,7 +90,6 @@ public final class R2LightShaderProjectiveLambertSingle extends
   private final PVector4FType<R2SpaceEyeType> position_eye;
   private final PVector3FType<R2SpaceEyeType> position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
-  private JCGLTextureUnitType unit_image;
 
   private R2LightShaderProjectiveLambertSingle(
     final JCGLShadersType in_shaders,
@@ -375,11 +374,12 @@ public final class R2LightShaderProjectiveLambertSingle extends
      * Upload the projected image.
      */
 
-    this.unit_image =
-      tc.unitContextBindTexture2D(g_tex, values.image().texture());
+    final JCGLTextureUnitType unit_image = tc.unitContextBindTexture2D(
+      g_tex,
+      values.image().texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_projective_image,
-      this.unit_image);
+      unit_image);
 
     /**
      * Upload the light values.
@@ -394,7 +394,7 @@ public final class R2LightShaderProjectiveLambertSingle extends
     g_sh.shaderUniformPutFloat(
       this.u_light_projective_inverse_range, 1.0f / values.radius());
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_light_projective_image, this.unit_image);
+      this.u_light_projective_image, unit_image);
   }
 
   @Override
