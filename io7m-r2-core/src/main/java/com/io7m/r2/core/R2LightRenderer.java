@@ -649,7 +649,7 @@ public final class R2LightRenderer implements R2LightRendererType
           },
           (t, ls) -> {
             Preconditions.checkPrecondition(
-              t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+              t.light_shader instanceof R2ShaderLightScreenSingleUsableType,
               "Shader must be a screen light shader");
 
             JCGLRenderStates.activate(t.g33, t.render_state_screen);
@@ -1217,7 +1217,7 @@ public final class R2LightRenderer implements R2LightRendererType
         return Unit.unit();
       }, (t, sl) -> {
         Preconditions.checkPrecondition(
-          t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+          t.light_shader instanceof R2ShaderLightVolumeSingleUsableType,
           "Shader must be a volume light shader");
 
         t.onLightSingleSpherical(sl);
@@ -1281,7 +1281,7 @@ public final class R2LightRenderer implements R2LightRendererType
           this,
           (t, lv) -> {
             Preconditions.checkPrecondition(
-              t.light_shader instanceof R2ShaderLightProjectiveUsableType,
+              t.light_shader instanceof R2ShaderLightVolumeSingleUsableType,
               "Shader must be a volume light shader");
 
             JCGLRenderStates.activate(t.g33, t.render_state_volume);
