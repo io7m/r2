@@ -25,7 +25,6 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jtensors.parameterized.PVectorI3F;
-import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ProjectionFOV;

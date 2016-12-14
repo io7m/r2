@@ -237,6 +237,11 @@
         <artifactId>io7m-sombrero-jcpp</artifactId>
         <version>0.2.0</version>
       </dependency>
+      <dependency>
+        <groupId>com.io7m.jfsm</groupId>
+        <artifactId>io7m-jfsm-core</artifactId>
+        <version>0.1.0</version>
+      </dependency>
 
       <dependency>
         <groupId>it.unimi.dsi</groupId>
@@ -283,11 +288,6 @@
         <groupId>com.beust</groupId>
         <artifactId>jcommander</artifactId>
         <version>1.48</version>
-      </dependency>
-      <dependency>
-        <groupId>com.unquietcode.tools.jstate</groupId>
-        <artifactId>jstate</artifactId>
-        <version>2.1</version>
       </dependency>
       <dependency>
         <groupId>org.jogamp.jogl</groupId>

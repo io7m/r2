@@ -22,12 +22,13 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
+import com.io7m.jfsm.core.FSMEnumMutable;
+import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import unquietcode.tools.esm.EnumStateMachine;
 
 /**
  * A delegating verifier for single-instance shaders; a type that verifies that
@@ -40,35 +41,39 @@ public final class R2ShaderInstanceSingleVerifier<M> implements
   R2ShaderInstanceSingleType<M>
 {
   private final R2ShaderInstanceSingleType<M> shader;
-  private final EnumStateMachine<State> state;
+  private final FSMEnumMutable<State> state;
 
   private R2ShaderInstanceSingleVerifier(
     final R2ShaderInstanceSingleType<M> in_shader)
   {
-    this.state = new EnumStateMachine<>(State.STATE_DEACTIVATED);
-    this.state.addTransition(
+    this.shader = NullCheck.notNull(in_shader);
+
+    final FSMEnumMutableBuilderType<State> sb =
+      FSMEnumMutable.builder(State.STATE_DEACTIVATED);
+
+    sb.addTransition(
       State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_ACTIVATED, State.STATE_VIEW_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_VIEW_RECEIVED, State.STATE_MATERIAL_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_MATERIAL_RECEIVED, State.STATE_INSTANCE_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_INSTANCE_RECEIVED, State.STATE_VALIDATED);
 
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_VALIDATED, State.STATE_MATERIAL_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_VALIDATED, State.STATE_INSTANCE_RECEIVED);
 
     for (final State target : State.values()) {
       if (target != State.STATE_DEACTIVATED) {
-        this.state.addTransition(target, State.STATE_DEACTIVATED);
+        sb.addTransition(target, State.STATE_DEACTIVATED);
       }
     }
 
-    this.shader = NullCheck.notNull(in_shader);
+    this.state = sb.build();
   }
 
   /**

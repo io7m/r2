@@ -29,7 +29,6 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParametersType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
