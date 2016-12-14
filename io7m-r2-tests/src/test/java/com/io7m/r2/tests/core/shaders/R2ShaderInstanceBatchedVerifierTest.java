@@ -26,6 +26,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jfsm.core.FSMTransitionException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
@@ -36,7 +37,6 @@ import com.io7m.r2.tests.core.R2TestUtilities;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import unquietcode.tools.esm.TransitionException;
 
 public final class R2ShaderInstanceBatchedVerifierTest
 {
@@ -149,7 +149,7 @@ public final class R2ShaderInstanceBatchedVerifierTest
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
 
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
   }
 
@@ -173,7 +173,7 @@ public final class R2ShaderInstanceBatchedVerifierTest
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
   }
 
@@ -199,7 +199,7 @@ public final class R2ShaderInstanceBatchedVerifierTest
 
     v.onActivate(g_sh);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     v.onValidate();
   }
 
@@ -224,7 +224,7 @@ public final class R2ShaderInstanceBatchedVerifierTest
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
     v.onActivate(g_sh);
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
   }
 
@@ -244,7 +244,7 @@ public final class R2ShaderInstanceBatchedVerifierTest
     v.onActivate(g_sh);
     v.onDeactivate(g_sh);
 
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     v.onValidate();
   }
 }

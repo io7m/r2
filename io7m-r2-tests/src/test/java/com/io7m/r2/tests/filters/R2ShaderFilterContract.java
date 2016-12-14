@@ -24,6 +24,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jfsm.core.FSMTransitionException;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
@@ -33,7 +34,6 @@ import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import unquietcode.tools.esm.TransitionException;
 
 public abstract class R2ShaderFilterContract<T, TM extends T> extends
   R2JCGLContract
@@ -111,7 +111,7 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     f.onReceiveFilterValues(g_tex, g_sh, tc, t);
   }
 
@@ -136,7 +136,7 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     final JCGLShadersType g_sh = g.getShaders();
 
     f.onActivate(g_sh);
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     f.onValidate();
   }
 
@@ -163,7 +163,7 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     f.onActivate(g_sh);
     f.onDeactivate(g_sh);
 
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     f.onValidate();
   }
 }

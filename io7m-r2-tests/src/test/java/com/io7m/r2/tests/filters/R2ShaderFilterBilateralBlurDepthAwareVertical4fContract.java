@@ -43,7 +43,6 @@ import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterBilateralBlurDepthAwareParameters;
-import com.io7m.r2.filters.R2ShaderFilterBilateralBlurDepthAwareParametersType;
 import com.io7m.r2.filters.R2ShaderFilterBilateralBlurDepthAwareVertical4f;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.ShaderPreprocessing;

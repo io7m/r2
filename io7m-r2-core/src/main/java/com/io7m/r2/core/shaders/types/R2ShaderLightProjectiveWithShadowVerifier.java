@@ -23,6 +23,8 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
+import com.io7m.jfsm.core.FSMEnumMutable;
+import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
@@ -32,7 +34,6 @@ import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2Texture2DUsableType;
-import unquietcode.tools.esm.EnumStateMachine;
 
 /**
  * A verifier for projective light shaders; a type that verifies that a renderer
@@ -46,35 +47,38 @@ public final class R2ShaderLightProjectiveWithShadowVerifier<
   R2ShaderLightProjectiveWithShadowType<M>
 {
   private final R2ShaderLightProjectiveWithShadowType<M> shader;
-  private final EnumStateMachine<State> state;
+  private final FSMEnumMutable<State> state;
 
   private R2ShaderLightProjectiveWithShadowVerifier(
     final R2ShaderLightProjectiveWithShadowType<M> in_shader)
   {
     this.shader = NullCheck.notNull(in_shader);
 
-    this.state = new EnumStateMachine<State>(State.STATE_DEACTIVATED);
+    final FSMEnumMutableBuilderType<State> sb =
+      FSMEnumMutable.builder(State.STATE_DEACTIVATED);
 
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_ACTIVATED, State.STATE_GEOMETRY_BUFFER_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_GEOMETRY_BUFFER_RECEIVED, State.STATE_VALUES_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_VALUES_RECEIVED, State.STATE_VOLUME_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_VOLUME_RECEIVED, State.STATE_PROJECTIVE_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_PROJECTIVE_RECEIVED, State.STATE_SHADOW_RECEIVED);
-    this.state.addTransition(
+    sb.addTransition(
       State.STATE_SHADOW_RECEIVED, State.STATE_VALIDATED);
 
     for (final State target : State.values()) {
       if (target != State.STATE_DEACTIVATED) {
-        this.state.addTransition(target, State.STATE_DEACTIVATED);
+        sb.addTransition(target, State.STATE_DEACTIVATED);
       }
     }
+
+    this.state = sb.build();
   }
 
   /**

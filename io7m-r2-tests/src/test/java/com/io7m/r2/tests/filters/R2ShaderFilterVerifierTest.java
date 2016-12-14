@@ -23,13 +23,13 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jfsm.core.FSMTransitionException;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.tests.core.R2TestUtilities;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import unquietcode.tools.esm.TransitionException;
 
 public final class R2ShaderFilterVerifierTest
 {
@@ -81,7 +81,7 @@ public final class R2ShaderFilterVerifierTest
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     v.onReceiveFilterValues(g_tex, g_sh, tc, new Object());
   }
 
@@ -99,7 +99,7 @@ public final class R2ShaderFilterVerifierTest
     final JCGLShadersType g_sh = g.getShaders();
 
     v.onActivate(g_sh);
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     v.onValidate();
   }
 
@@ -119,7 +119,7 @@ public final class R2ShaderFilterVerifierTest
     v.onActivate(g_sh);
     v.onDeactivate(g_sh);
 
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     v.onValidate();
   }
 }

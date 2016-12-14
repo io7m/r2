@@ -96,6 +96,10 @@
       <groupId>com.io7m.sombrero</groupId>
       <artifactId>io7m-sombrero-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.jfsm</groupId>
+      <artifactId>io7m-jfsm-core</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>it.unimi.dsi</groupId>
@@ -104,10 +108,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.unquietcode.tools.jstate</groupId>
-      <artifactId>jstate</artifactId>
     </dependency>
 
     <dependency>

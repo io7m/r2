@@ -28,6 +28,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jfsm.core.FSMTransitionException;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
@@ -56,7 +57,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import unquietcode.tools.esm.TransitionException;
 
 public abstract class R2ShaderLightProjectiveWithShadowContract<
   T extends R2LightProjectiveWithShadowReadableType>
@@ -224,7 +224,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
 
     f.onActivate(g.getShaders());
 
-    this.expected.expect(TransitionException.class);
+    this.expected.expect(FSMTransitionException.class);
     mat.withObserver(view, proj, this, (mo, x) -> {
       f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
       return Unit.unit();

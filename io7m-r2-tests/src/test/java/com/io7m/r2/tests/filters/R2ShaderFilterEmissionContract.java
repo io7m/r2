@@ -31,7 +31,6 @@ import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterEmission;
 import com.io7m.r2.filters.R2ShaderFilterEmissionParameters;
-import com.io7m.r2.filters.R2ShaderFilterEmissionParametersType;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
