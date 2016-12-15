@@ -17,10 +17,10 @@ struct R2_refraction_t {
 };
 
 ///
-/// Calculate masked refraction using a surface normal.
+/// Calculate masked refraction using a given delta vector.
 ///
 /// @param refraction         Basic refraction parameters
-/// @param position_here_clip The clip-space coordinates
+/// @param position_here_clip The clip-space coordinates of the surface
 /// @param delta              The delta vector
 ///
 /// @return A refracted sample
