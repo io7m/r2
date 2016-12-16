@@ -91,4 +91,36 @@ public interface R2SceneOpaquesType extends R2SceneOpaquesReadableType
     R2InstanceBatchedType i,
     R2MaterialOpaqueBatchedType<M> m,
     int group);
+
+  /**
+   * Add a billboarded instance to the scene using the given material, in group
+   * {@code 1}.
+   *
+   * @param i   The instance
+   * @param m   The material
+   * @param <M> The type of shader parameters
+   */
+
+  default <M> void opaquesAddBillboardedInstance(
+    final R2InstanceBillboardedType i,
+    final R2MaterialOpaqueBillboardedType<M> m)
+  {
+    this.opaquesAddBillboardedInstanceInGroup(i, m, 1);
+  }
+
+  /**
+   * Add a billboarded instance to the scene using the given material. The instance
+   * is placed into the specified {@code group}, which must be a value in the
+   * range {@code [1, 127]}.
+   *
+   * @param i     The instance
+   * @param m     The material
+   * @param group The group
+   * @param <M>   The type of shader parameters
+   */
+
+  <M> void opaquesAddBillboardedInstanceInGroup(
+    R2InstanceBillboardedType i,
+    R2MaterialOpaqueBillboardedType<M> m,
+    int group);
 }

@@ -14,30 +14,35 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.debug;
+package com.io7m.r2.core;
 
-import com.io7m.jtensors.parameterized.PVectorI4F;
-import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.spaces.R2SpaceRGBAType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
+import org.immutables.value.Value;
 
 /**
- * Default values for debug visualizer implementations.
+ * The type of opaque materials that can be applied to billboarded instances.
+ *
+ * @param <M> The type of shader parameters
  */
 
-public final class R2DebugVisualizerDefaults
+@R2ImmutableStyleType
+@Value.Immutable
+public interface R2MaterialOpaqueBillboardedType<M> extends R2MaterialType<M>
 {
+  @Override
+  @Value.Parameter
+  long materialID();
+
   /**
-   * The default color for rendering opaque instances.
+   * @return The material shader
    */
 
-  public static final PVectorI4F<R2SpaceRGBAType> DEFAULT_GROUP_COLOR;
+  @Override
+  @Value.Parameter
+  R2ShaderInstanceBillboardedUsableType<M> shader();
 
-  static {
-    DEFAULT_GROUP_COLOR = new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
-  }
-
-  private R2DebugVisualizerDefaults()
-  {
-    throw new UnreachableCodeException();
-  }
+  @Override
+  @Value.Auxiliary
+  @Value.Parameter
+  M shaderParameters();
 }

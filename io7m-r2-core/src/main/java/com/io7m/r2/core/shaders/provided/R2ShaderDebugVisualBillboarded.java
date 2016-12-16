@@ -28,11 +28,10 @@ import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceRGBAType;
@@ -40,22 +39,19 @@ import com.io7m.r2.spaces.R2SpaceRGBAType;
 import java.util.Optional;
 
 /**
- * Debug visualization shader for single instances.
+ * Debug visualization shader for billboarded instances.
  */
 
-public final class R2ShaderDebugVisualSingle extends
+public final class R2ShaderDebugVisualBillboarded extends
   R2AbstractShader<PVectorI4F<R2SpaceRGBAType>>
-  implements R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>>
+  implements R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
-  private final JCGLProgramUniformType u_transform_normal;
-  private final JCGLProgramUniformType u_transform_modelview;
   private final JCGLProgramUniformType u_transform_view;
   private final JCGLProgramUniformType u_transform_projection;
-  private final JCGLProgramUniformType u_transform_uv;
   private final JCGLProgramUniformType u_color;
 
-  private R2ShaderDebugVisualSingle(
+  private R2ShaderDebugVisualBillboarded(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
@@ -64,13 +60,13 @@ public final class R2ShaderDebugVisualSingle extends
       in_shaders,
       in_shader_env,
       in_pool,
-      "com.io7m.r2.shaders.core.R2ShaderDebugVisualSingle",
-      "com.io7m.r2.shaders.core/R2SurfaceSingle.vert",
-      Optional.empty(),
+      "com.io7m.r2.shaders.core.R2ShaderDebugVisualBillboarded",
+      "com.io7m.r2.shaders.core/R2Billboarded.vert",
+      Optional.of("com.io7m.r2.shaders.core/R2Billboarded.geom"),
       "com.io7m.r2.shaders.core/R2DebugVisualConstant.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 7);
+    R2ShaderParameters.checkUniformParameterCount(p, 4);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
       p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
@@ -78,19 +74,6 @@ public final class R2ShaderDebugVisualSingle extends
       p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
       p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
-
-    this.u_transform_normal = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_surface_matrices_instance.transform_normal",
-      JCGLType.TYPE_FLOAT_MATRIX_3);
-    this.u_transform_modelview = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_surface_matrices_instance.transform_modelview",
-      JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_uv = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_surface_matrices_instance.transform_uv",
-      JCGLType.TYPE_FLOAT_MATRIX_3);
 
     this.u_color = R2ShaderParameters.getUniformChecked(
       p, "R2_color", JCGLType.TYPE_FLOAT_VECTOR_4);
@@ -106,13 +89,13 @@ public final class R2ShaderDebugVisualSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> newShader(
+  public static R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>> newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderInstanceSingleVerifier.newVerifier(
-      new R2ShaderDebugVisualSingle(in_shaders, in_shader_env, in_pool));
+    return R2ShaderInstanceBillboardedVerifier.newVerifier(
+      new R2ShaderDebugVisualBillboarded(in_shaders, in_shader_env, in_pool));
   }
 
   @SuppressWarnings("unchecked")
@@ -162,21 +145,5 @@ public final class R2ShaderDebugVisualSingle extends
     NullCheck.notNull(values);
 
     g_sh.shaderUniformPutVector4f(this.u_color, values);
-  }
-
-  @Override
-  public void onReceiveInstanceTransformValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesInstanceSingleValuesType m)
-  {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-
-    g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_modelview, m.matrixModelView());
-    g_sh.shaderUniformPutMatrix3x3f(
-      this.u_transform_normal, m.matrixNormal());
-    g_sh.shaderUniformPutMatrix3x3f(
-      this.u_transform_uv, m.matrixUV());
   }
 }

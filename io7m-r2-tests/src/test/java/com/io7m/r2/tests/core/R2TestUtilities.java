@@ -65,6 +65,7 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2InstanceBatchedType;
+import com.io7m.r2.core.R2InstanceBillboardedType;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightScreenSingleType;
 import com.io7m.r2.core.R2LightSingleType;
@@ -72,6 +73,7 @@ import com.io7m.r2.core.R2LightVolumeSingleType;
 import com.io7m.r2.core.R2MaterialDepthBatchedType;
 import com.io7m.r2.core.R2MaterialDepthSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
+import com.io7m.r2.core.R2MaterialOpaqueBillboardedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
@@ -92,6 +94,8 @@ import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
@@ -286,7 +290,7 @@ public final class R2TestUtilities
       public void onReceiveViewValues(
         final JCGLShadersType g_sh,
         final R2MatricesObserverValuesType m,
-        AreaInclusiveUnsignedLType viewport)
+        final AreaInclusiveUnsignedLType viewport)
       {
 
       }
@@ -398,7 +402,7 @@ public final class R2TestUtilities
       public void onReceiveViewValues(
         final JCGLShadersType g_sh,
         final R2MatricesObserverValuesType m,
-        AreaInclusiveUnsignedLType viewport)
+        final AreaInclusiveUnsignedLType viewport)
       {
 
       }
@@ -601,7 +605,111 @@ public final class R2TestUtilities
       public void onReceiveViewValues(
         final JCGLShadersType g_sh,
         final R2MatricesObserverValuesType m,
-        AreaInclusiveUnsignedLType viewport)
+        final AreaInclusiveUnsignedLType viewport)
+      {
+
+      }
+
+      @Override
+      public void onReceiveMaterialValues(
+        final JCGLTexturesType g_tex,
+        final JCGLShadersType g_sh,
+        final JCGLTextureUnitContextMutableType tc,
+        final Object values)
+      {
+
+      }
+
+      @Override
+      public boolean isDeleted()
+      {
+        return false;
+      }
+
+      @Override
+      public long getShaderID()
+      {
+        return s_id;
+      }
+
+      @Override
+      public String toString()
+      {
+        return String.format("[shader %d]", Long.valueOf(s_id));
+      }
+
+      @Override
+      public Class<Object> getShaderParametersType()
+      {
+        return Object.class;
+      }
+
+      @Override
+      public JCGLProgramShaderUsableType getShaderProgram()
+      {
+        return pr;
+      }
+
+      @Override
+      public void onActivate(final JCGLShadersType g_sh)
+      {
+
+      }
+
+      @Override
+      public void onValidate()
+        throws R2ExceptionShaderValidationFailed
+      {
+
+      }
+
+      @Override
+      public void onDeactivate(final JCGLShadersType g_sh)
+      {
+
+      }
+    };
+  }
+
+  public static R2ShaderInstanceBillboardedType<Object>
+  getShaderInstanceBillboarded(
+    final JCGLInterfaceGL33Type g,
+    final long s_id)
+  {
+    final JCGLShadersType g_sh = g.getShaders();
+
+    final List<String> v_lines = new ArrayList<>(3);
+    v_lines.add("void main() {\n");
+    v_lines.add("  gl_Position = vec4 (1.0, 1.0, 1.0, 1.0);\n");
+    v_lines.add("}\n");
+    final JCGLVertexShaderType v =
+      g_sh.shaderCompileVertex("v_main", v_lines);
+
+    final List<String> f_lines = new ArrayList<>(4);
+    f_lines.add("out vec4 color_0;\n");
+    f_lines.add("void main() {\n");
+    f_lines.add("  color_0 = vec4 (1.0, 1.0, 1.0, 1.0);\n");
+    f_lines.add("}\n");
+    final JCGLFragmentShaderType f =
+      g_sh.shaderCompileFragment("f_main", f_lines);
+
+    final JCGLProgramShaderType pr =
+      g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
+
+    return new R2ShaderInstanceBillboardedType<Object>()
+    {
+      @Override
+      public void delete(final JCGLInterfaceGL33Type g)
+        throws R2Exception
+      {
+
+      }
+
+      @Override
+      public void onReceiveViewValues(
+        final JCGLShadersType g_sh,
+        final R2MatricesObserverValuesType m,
+        final AreaInclusiveUnsignedLType viewport)
       {
 
       }
@@ -1143,6 +1251,75 @@ public final class R2TestUtilities
       public R2TransformContextType transformContext()
       {
         return tc;
+      }
+    };
+  }
+
+  public static R2InstanceBillboardedType getInstanceBillboarded(
+    final JCGLInterfaceGL33Type g,
+    final JCGLArrayObjectType a0,
+    final long l)
+  {
+    return new R2InstanceBillboardedType()
+    {
+      @Override
+      public JCGLArrayObjectType arrayObject()
+      {
+        return a0;
+      }
+
+      @Override
+      public void update(
+        final JCGLInterfaceGL33Type g,
+        final R2TransformContextType context)
+      {
+
+      }
+
+      @Override
+      public int enabledCount()
+      {
+        return 100;
+      }
+
+      @Override
+      public long instanceID()
+      {
+        return l;
+      }
+    };
+  }
+
+  public static R2MaterialOpaqueBillboardedType<Object> getMaterialBillboarded(
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderInstanceBillboardedUsableType<Object> sh,
+    final Object p,
+    final long id)
+  {
+    return new R2MaterialOpaqueBillboardedType<Object>()
+    {
+      @Override
+      public R2ShaderInstanceBillboardedUsableType<Object> shader()
+      {
+        return sh;
+      }
+
+      @Override
+      public long materialID()
+      {
+        return id;
+      }
+
+      @Override
+      public String toString()
+      {
+        return String.format("[material %d %s]", Long.valueOf(id), sh);
+      }
+
+      @Override
+      public Object shaderParameters()
+      {
+        return p;
       }
     };
   }

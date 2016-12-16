@@ -14,30 +14,17 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.debug;
-
-import com.io7m.jtensors.parameterized.PVectorI4F;
-import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.spaces.R2SpaceRGBAType;
+package com.io7m.r2.core.shaders.types;
 
 /**
- * Default values for debug visualizer implementations.
+ * The type of shaders for rendering the surfaces of billboarded instances into
+ * a geometry buffer.
+ *
+ * @param <M> The type of parameter data
  */
 
-public final class R2DebugVisualizerDefaults
+public interface R2ShaderInstanceBillboardedType<M> extends
+  R2ShaderInstanceBillboardedUsableType<M>, R2ShaderType<M>
 {
-  /**
-   * The default color for rendering opaque instances.
-   */
-
-  public static final PVectorI4F<R2SpaceRGBAType> DEFAULT_GROUP_COLOR;
-
-  static {
-    DEFAULT_GROUP_COLOR = new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
-  }
-
-  private R2DebugVisualizerDefaults()
-  {
-    throw new UnreachableCodeException();
-  }
+  // No extra methods
 }

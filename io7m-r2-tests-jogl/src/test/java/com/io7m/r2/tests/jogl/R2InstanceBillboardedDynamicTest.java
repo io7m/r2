@@ -14,30 +14,21 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.debug;
+package com.io7m.r2.tests.jogl;
 
-import com.io7m.jtensors.parameterized.PVectorI4F;
-import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.spaces.R2SpaceRGBAType;
+import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.tests.core.R2InstanceBatchedDynamicContract;
+import com.io7m.r2.tests.core.R2InstanceBillboardedDynamicContract;
 
-/**
- * Default values for debug visualizer implementations.
- */
-
-public final class R2DebugVisualizerDefaults
+public final class R2InstanceBillboardedDynamicTest extends
+  R2InstanceBillboardedDynamicContract
 {
-  /**
-   * The default color for rendering opaque instances.
-   */
-
-  public static final PVectorI4F<R2SpaceRGBAType> DEFAULT_GROUP_COLOR;
-
-  static {
-    DEFAULT_GROUP_COLOR = new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
-  }
-
-  private R2DebugVisualizerDefaults()
+  @Override
+  protected JCGLContextType newGL33Context(
+    final String name,
+    final int depth_bits,
+    final int stencil_bits)
   {
-    throw new UnreachableCodeException();
+    return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
   }
 }

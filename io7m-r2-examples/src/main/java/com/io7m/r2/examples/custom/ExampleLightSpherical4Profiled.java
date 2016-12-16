@@ -77,6 +77,8 @@ import com.io7m.r2.core.R2ImageBufferType;
 import com.io7m.r2.core.R2ImageBufferUsableType;
 import com.io7m.r2.core.R2InstanceBatchedDynamic;
 import com.io7m.r2.core.R2InstanceBatchedDynamicType;
+import com.io7m.r2.core.R2InstanceBillboardedDynamic;
+import com.io7m.r2.core.R2InstanceBillboardedDynamicType;
 import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightAmbientScreenSingle;
@@ -93,6 +95,7 @@ import com.io7m.r2.core.R2MaterialDepthSingle;
 import com.io7m.r2.core.R2MaterialDepthSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueBatched;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
+import com.io7m.r2.core.R2MaterialOpaqueBillboarded;
 import com.io7m.r2.core.R2MaterialOpaqueSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
@@ -133,15 +136,16 @@ import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
+import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBillboarded;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
@@ -174,14 +178,9 @@ import com.io7m.r2.meshes.defaults.R2UnitCube;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
-import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
-import com.io7m.sombrero.core.SoShaderPreprocessorType;
-import com.io7m.sombrero.core.SoShaderResolver;
-import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 
 import javax.swing.SwingUtilities;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.concurrent.atomic.AtomicReference;
 
 // CHECKSTYLE:OFF
@@ -275,6 +274,10 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
   private R2FilterType<R2FilterEmissionParameters> filter_emission;
   private R2FilterEmissionParameters filter_emission_params;
+
+  private R2ShaderInstanceBillboardedType<R2SurfaceShaderBasicParameters> billboarded_shader;
+  private R2MaterialOpaqueBillboarded<R2SurfaceShaderBasicParameters> billboarded_material;
+  private R2InstanceBillboardedDynamicType billboarded_instance;
 
   public ExampleLightSpherical4Profiled()
   {
@@ -562,14 +565,41 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       }
     }
 
-    final SoShaderPreprocessorConfig.Builder b =
-      SoShaderPreprocessorConfig.builder();
-    b.setResolver(SoShaderResolver.create());
-    b.setVersion(OptionalInt.of(330));
-    final SoShaderPreprocessorType p =
-      SoShaderPreprocessorJCPP.create(b.build());
     final R2ShaderPreprocessingEnvironmentType sources =
-      R2ShaderPreprocessingEnvironment.create(p);
+      this.main.getShaderPreprocessingEnvironment();
+
+    this.billboarded_shader =
+      R2SurfaceShaderBasicBillboarded.newShader(
+        gx.getShaders(), sources, id_pool);
+
+    final R2SurfaceShaderBasicParameters billboarded_shader_params =
+      R2SurfaceShaderBasicParameters.builder()
+        .setTextureDefaults(this.main.getTextureDefaults())
+        .setSpecularColor(new PVectorI3F<>(1.0f, 1.0f, 1.0f))
+        .setEmission(1.0f)
+        .setAlbedoColor(new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f))
+        .build();
+
+    this.billboarded_material =
+      R2MaterialOpaqueBillboarded.of(
+        id_pool.freshID(), this.billboarded_shader, billboarded_shader_params);
+
+    this.billboarded_instance =
+      R2InstanceBillboardedDynamic.newBillboarded(
+        id_pool,
+        gx.getArrayBuffers(),
+        gx.getArrayObjects(),
+        100);
+
+    {
+      for (int particle = 0; particle < 100; ++particle) {
+        final float x = (float) ((Math.random() * 8.0f) - 4.0f);
+        final float y = (float) (Math.random() * 5.0f);
+        final float z = (float) ((Math.random() * 8.0f) - 4.0f);
+        this.billboarded_instance.addInstance(
+          new PVectorI3F<>(x, y, z), 0.25f, 0.0f);
+      }
+    }
 
     final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader = R2DepthShaderBasicSingle.newShader(
       gx.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
@@ -646,10 +676,11 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         id_pool.freshID(), this.geom_shader, gs);
     }
 
-    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader = R2SurfaceShaderBasicBatched.newShader(
-      gx.getShaders(),
-      sources,
-      id_pool);
+    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader =
+      R2SurfaceShaderBasicBatched.newShader(
+        gx.getShaders(),
+        sources,
+        id_pool);
     this.batched_geom_material = R2MaterialOpaqueBatched.of(
       id_pool.freshID(),
       batched_geom_shader,
@@ -768,7 +799,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
       this.debug_params = R2DebugVisualizerRendererParameters.builder()
         .setOpaqueInstances(this.opaques)
-        .setShowOpaqueInstances(false)
+        .setShowOpaqueInstances(true)
         .setShowLights(true)
         .setLights(this.lights)
         .setUnitSphere(sphere)
@@ -889,6 +920,8 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       this.glow, this.glow_material);
     this.opaques.opaquesAddBatchedInstance(
       this.batched_instance, this.batched_geom_material);
+    this.opaques.opaquesAddBillboardedInstance(
+      this.billboarded_instance, this.billboarded_material);
 
     this.lights.lightsReset();
 

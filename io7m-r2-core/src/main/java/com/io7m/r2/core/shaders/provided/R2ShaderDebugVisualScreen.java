@@ -23,7 +23,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
-import com.io7m.jtensors.VectorReadable4FType;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
@@ -32,6 +32,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
 
 import java.util.Optional;
 
@@ -40,8 +41,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderDebugVisualScreen extends
-  R2AbstractShader<VectorReadable4FType>
-  implements R2ShaderInstanceSingleScreenType<VectorReadable4FType>
+  R2AbstractShader<PVectorI4F<R2SpaceRGBAType>>
+  implements R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_view;
@@ -89,7 +90,7 @@ public final class R2ShaderDebugVisualScreen extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleScreenType<VectorReadable4FType>
+  public static R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -98,10 +99,12 @@ public final class R2ShaderDebugVisualScreen extends
     return new R2ShaderDebugVisualScreen(in_shaders, in_shader_env, in_pool);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Class<VectorReadable4FType> getShaderParametersType()
+  public Class<PVectorI4F<R2SpaceRGBAType>> getShaderParametersType()
   {
-    return VectorReadable4FType.class;
+    final Class<?> c = PVectorI4F.class;
+    return (Class<PVectorI4F<R2SpaceRGBAType>>) c;
   }
 
   @Override
@@ -135,7 +138,7 @@ public final class R2ShaderDebugVisualScreen extends
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final VectorReadable4FType values)
+    final PVectorI4F<R2SpaceRGBAType> values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(tc);

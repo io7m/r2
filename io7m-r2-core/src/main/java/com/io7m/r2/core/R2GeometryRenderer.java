@@ -47,6 +47,7 @@ import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -298,6 +299,60 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     @Override
     public <M> void onInstanceBatchedShaderFinish(
       final R2ShaderInstanceBatchedUsableType<M> s)
+    {
+      s.onDeactivate(this.shaders);
+    }
+
+    @Override
+    public void onInstanceBillboardedUpdate(
+      final R2InstanceBillboardedType i)
+    {
+      i.update(this.g33, this.matrices.transformContext());
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderStart(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
+    {
+      s.onActivate(this.shaders);
+      s.onReceiveViewValues(this.shaders, this.matrices, this.gbuffer_area);
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialStart(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      this.material_texture_context = this.texture_context.unitContextNew();
+
+      final R2ShaderInstanceBillboardedUsableType<M> s = material.shader();
+      final M p = material.shaderParameters();
+      s.onReceiveMaterialValues(
+        this.textures, this.shaders, this.material_texture_context, p);
+    }
+
+    @Override
+    public <M> void onInstanceBillboarded(
+      final R2MaterialOpaqueBillboardedType<M> material,
+      final R2InstanceBillboardedType i)
+    {
+      final R2ShaderInstanceBillboardedUsableType<M> s = material.shader();
+      s.onValidate();
+
+      this.array_objects.arrayObjectBind(i.arrayObject());
+      this.draw.draw(JCGLPrimitives.PRIMITIVE_POINTS, 0, i.enabledCount());
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialFinish(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      this.material_texture_context.unitContextFinish(this.textures);
+      this.material_texture_context = null;
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderFinish(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
     {
       s.onDeactivate(this.shaders);
     }

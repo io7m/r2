@@ -18,24 +18,39 @@ package com.io7m.r2.tests.core.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jfunctional.Unit;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.provided.R2MaskShaderBatched;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
+import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualBillboarded;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
-public abstract class R2MaskShaderBatchedContract extends
-  R2ShaderInstanceBatchedContract<Unit, Unit>
+public abstract class R2ShaderDebugVisualBillboardedContract extends
+  R2ShaderInstanceBillboardedContract<PVectorI4F<R2SpaceRGBAType>,
+    PVectorI4F<R2SpaceRGBAType>>
 {
   @Override
-  protected final Unit newParameters(
+  protected final PVectorI4F<R2SpaceRGBAType> newParameters(
     final JCGLInterfaceGL33Type g)
   {
-    return Unit.unit();
+    return new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
+  }
+
+  @Override
+  protected R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>>
+  newShaderWithVerifier(
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderPreprocessingEnvironmentType sources,
+    final R2IDPoolType pool)
+  {
+    return R2ShaderDebugVisualBillboarded.newShader(
+      g.getShaders(),
+      sources,
+      pool);
   }
 
   @Test
@@ -47,8 +62,11 @@ public abstract class R2MaskShaderBatchedContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceBatchedType<Unit> s =
-      R2MaskShaderBatched.newShader(g.getShaders(), sources, pool);
+    final R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>> s =
+      R2ShaderDebugVisualBillboarded.newShader(
+        g.getShaders(),
+        sources,
+        pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

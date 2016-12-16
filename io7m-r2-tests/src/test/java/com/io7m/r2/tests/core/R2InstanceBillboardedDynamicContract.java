@@ -14,44 +14,44 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.tests.core.shaders;
+package com.io7m.r2.tests.core;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jfunctional.Unit;
+import com.io7m.jtensors.parameterized.PVectorI3F;
+import com.io7m.r2.core.R2ExceptionBatchIsFull;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.provided.R2MaskShaderBatched;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
-import com.io7m.r2.tests.core.ShaderPreprocessing;
-import org.junit.Assert;
+import com.io7m.r2.core.R2InstanceBillboardedDynamic;
+import com.io7m.r2.core.R2InstanceBillboardedDynamicType;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-public abstract class R2MaskShaderBatchedContract extends
-  R2ShaderInstanceBatchedContract<Unit, Unit>
+public abstract class R2InstanceBillboardedDynamicContract extends
+  R2JCGLContract
 {
-  @Override
-  protected final Unit newParameters(
-    final JCGLInterfaceGL33Type g)
-  {
-    return Unit.unit();
-  }
+  @Rule public ExpectedException expected = ExpectedException.none();
 
   @Test
-  public final void testNew()
+  public void testTooMany()
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
-    final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderPreprocessingEnvironmentType sources =
-      ShaderPreprocessing.preprocessor();
-    final R2IDPoolType pool = R2IDPool.newPool();
+    final JCGLInterfaceGL33Type g33 = c.contextGetGL33();
+    final R2IDPoolType id_pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceBatchedType<Unit> s =
-      R2MaskShaderBatched.newShader(g.getShaders(), sources, pool);
+    final R2InstanceBillboardedDynamicType i =
+      R2InstanceBillboardedDynamic.newBillboarded(
+        id_pool,
+        g33.getArrayBuffers(),
+        g33.getArrayObjects(),
+        8);
 
-    Assert.assertFalse(s.isDeleted());
-    s.delete(g);
-    Assert.assertTrue(s.isDeleted());
+    for (int index = 0; index < 8; ++index) {
+      i.addInstance(new PVectorI3F<>(0.0f, 0.0f, 0.0f), 1.0f, 0.0f);
+    }
+
+    this.expected.expect(R2ExceptionBatchIsFull.class);
+    i.addInstance(new PVectorI3F<>(0.0f, 0.0f, 0.0f), 1.0f, 0.0f);
   }
 }
