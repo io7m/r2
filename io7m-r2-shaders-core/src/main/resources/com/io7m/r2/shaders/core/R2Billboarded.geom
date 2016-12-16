@@ -28,15 +28,16 @@ main (void)
   float positive_eye_z = R2_logDepthPrepareEyeZ (p_eye.z);
   vec2 size            = R2_billboard_scale_eye[0].xy;
 
+  vec3 vp_normal    = vec3 (0.0, 0.0, 1.0);
+  vec3 vp_tangent   = vec3 (1.0, 0.0, 0.0);
+  vec3 vp_bitangent = vec3 (0.0, 1.0, 0.0);
+
   {
     // Bottom left
     vec4 vp_eye       = vec4 (p_eye.xy + (vec2(-0.5, -0.5) * size), p_eye.zw);
     vec4 vp_clip      = R2_view.transform_projection * vp_eye;
     vec4 vp_clip_log  = vec4 (vp_clip.xy, R2_logDepthEncodeFull (vp_clip.w, R2_view.depth_coefficient), vp_clip.w);
     vec2 vp_uv        = vec2 (0.0, 0.0);
-    vec3 vp_normal    = vec3 (0.0, 0.0, 1.0);
-    vec3 vp_tangent   = vec3 (1.0, 0.0, 0.0);
-    vec3 vp_bitangent = vec3 (0.0, 1.0, 0.0);
 
     R2_vertex_data = R2_vertex_data_t(
       vp_eye,
@@ -62,9 +63,6 @@ main (void)
     vec4 vp_clip      = R2_view.transform_projection * vp_eye;
     vec4 vp_clip_log  = vec4 (vp_clip.xy, R2_logDepthEncodeFull (vp_clip.w, R2_view.depth_coefficient), vp_clip.w);
     vec2 vp_uv        = vec2 (1.0, 0.0);
-    vec3 vp_normal    = vec3 (0.0, 0.0, 1.0);
-    vec3 vp_tangent   = vec3 (1.0, 0.0, 0.0);
-    vec3 vp_bitangent = vec3 (0.0, 1.0, 0.0);
 
     R2_vertex_data = R2_vertex_data_t(
       vp_eye,
@@ -90,9 +88,6 @@ main (void)
     vec4 vp_clip      = R2_view.transform_projection * vp_eye;
     vec4 vp_clip_log  = vec4 (vp_clip.xy, R2_logDepthEncodeFull (vp_clip.w, R2_view.depth_coefficient), vp_clip.w);
     vec2 vp_uv        = vec2 (0.0, 1.0);
-    vec3 vp_normal    = vec3 (0.0, 0.0, 1.0);
-    vec3 vp_tangent   = vec3 (1.0, 0.0, 0.0);
-    vec3 vp_bitangent = vec3 (0.0, 1.0, 0.0);
 
     R2_vertex_data = R2_vertex_data_t(
       vp_eye,
@@ -118,9 +113,6 @@ main (void)
     vec4 vp_clip      = R2_view.transform_projection * vp_eye;
     vec4 vp_clip_log  = vec4 (vp_clip.xy, R2_logDepthEncodeFull (vp_clip.w, R2_view.depth_coefficient), vp_clip.w);
     vec2 vp_uv        = vec2 (1.0, 1.0);
-    vec3 vp_normal    = vec3 (0.0, 0.0, 1.0);
-    vec3 vp_tangent   = vec3 (1.0, 0.0, 0.0);
-    vec3 vp_bitangent = vec3 (0.0, 1.0, 0.0);
 
     R2_vertex_data = R2_vertex_data_t(
       vp_eye,
