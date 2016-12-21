@@ -31,12 +31,13 @@ import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaParameters;
 import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderBatched;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2RefractionMaskedDeltaShaderBatchedContract extends
-  R2ShaderInstanceBatchedContract<
+  R2ShaderTranslucentInstanceBatchedContract<
     R2RefractionMaskedDeltaParameters, R2RefractionMaskedDeltaParameters>
 {
   @Override
@@ -75,7 +76,7 @@ public abstract class R2RefractionMaskedDeltaShaderBatchedContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceBatchedType<R2RefractionMaskedDeltaParameters> s =
+    final R2ShaderTranslucentInstanceBatchedType<R2RefractionMaskedDeltaParameters> s =
       R2RefractionMaskedDeltaShaderBatched.newShader(
         g.getShaders(), sources, pool);
 

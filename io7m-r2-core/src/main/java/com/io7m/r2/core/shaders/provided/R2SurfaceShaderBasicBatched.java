@@ -191,18 +191,14 @@ public final class R2SurfaceShaderBasicBatched extends
     NullCheck.notNull(tc);
     NullCheck.notNull(values);
 
-    final JCGLTextureUnitType unit_albedo = tc.unitContextBindTexture2D(
-      g_tex,
-      values.albedoTexture().texture());
-    final JCGLTextureUnitType unit_emission = tc.unitContextBindTexture2D(
-      g_tex,
-      values.emissionTexture().texture());
-    final JCGLTextureUnitType unit_normal = tc.unitContextBindTexture2D(
-      g_tex,
-      values.normalTexture().texture());
-    final JCGLTextureUnitType unit_specular = tc.unitContextBindTexture2D(
-      g_tex,
-      values.specularTexture().texture());
+    final JCGLTextureUnitType unit_albedo =
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
+    final JCGLTextureUnitType unit_emission =
+      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().texture());
+    final JCGLTextureUnitType unit_normal =
+      tc.unitContextBindTexture2D(g_tex, values.normalTexture().texture());
+    final JCGLTextureUnitType unit_specular =
+      tc.unitContextBindTexture2D(g_tex, values.specularTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, unit_albedo);

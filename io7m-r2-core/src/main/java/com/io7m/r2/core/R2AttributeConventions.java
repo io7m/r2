@@ -76,6 +76,20 @@ public final class R2AttributeConventions
 
   public static final int BATCHED_MODEL_MATRIX_COLUMN_3_ATTRIBUTE_INDEX = 7;
 
+  /**
+   * The attribute index used to deliver a scalar scale value to billboarded
+   * instances.
+   */
+
+  public static final int BILLBOARDED_ATTRIBUTE_SCALE_INDEX = 1;
+
+  /**
+   * The attribute index used to deliver a scalar rotation value to billboarded
+   * instances.
+   */
+
+  public static final int BILLBOARDED_ATTRIBUTE_ROTATION_INDEX = 2;
+
   private R2AttributeConventions()
   {
     throw new UnreachableCodeException();

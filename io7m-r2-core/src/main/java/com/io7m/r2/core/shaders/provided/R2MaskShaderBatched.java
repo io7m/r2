@@ -52,6 +52,34 @@ public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_frag_color;
 
+  private R2MaskShaderBatched(
+    final JCGLShadersType in_shaders,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
+    final R2IDPoolType in_pool)
+  {
+    super(
+      in_shaders,
+      in_shader_env,
+      in_pool,
+      "com.io7m.r2.shaders.core.R2MaskBatched",
+      "com.io7m.r2.shaders.core/R2MaskBatched.vert",
+      Optional.empty(),
+      "com.io7m.r2.shaders.core/R2Mask.frag");
+
+    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+
+    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
+      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
+    this.u_transform_view = R2ShaderParameters.getUniformChecked(
+      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
+    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
+      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
+    this.u_frag_color = R2ShaderParameters.getUniformChecked(
+      p, "R2_frag_color", JCGLType.TYPE_FLOAT_VECTOR_4);
+
+    R2ShaderParameters.checkUniformParameterCount(p, 4);
+  }
+
   /**
    * Construct a new shader.
    *
@@ -117,33 +145,5 @@ public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
     NullCheck.notNull(values);
 
     g_sh.shaderUniformPutVector4f(this.u_frag_color, WHITE);
-  }
-
-  private R2MaskShaderBatched(
-    final JCGLShadersType in_shaders,
-    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
-  {
-    super(
-      in_shaders,
-      in_shader_env,
-      in_pool,
-      "com.io7m.r2.shaders.core.R2MaskBatched",
-      "com.io7m.r2.shaders.core/R2MaskBatched.vert",
-      Optional.empty(),
-      "com.io7m.r2.shaders.core/R2Mask.frag");
-
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
-
-    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
-    this.u_frag_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_frag_color", JCGLType.TYPE_FLOAT_VECTOR_4);
-
-    R2ShaderParameters.checkUniformParameterCount(p, 4);
   }
 }

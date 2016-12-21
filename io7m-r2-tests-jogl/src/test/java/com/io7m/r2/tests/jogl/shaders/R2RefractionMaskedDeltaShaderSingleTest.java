@@ -25,6 +25,7 @@ import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaParameters;
 import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
 import com.io7m.r2.tests.core.shaders.R2MaskShaderSingleContract;
 import com.io7m.r2.tests.core.shaders.R2RefractionMaskedDeltaShaderSingleContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
@@ -42,7 +43,7 @@ public final class R2RefractionMaskedDeltaShaderSingleTest extends
   }
 
   @Override
-  protected R2ShaderInstanceSingleType<R2RefractionMaskedDeltaParameters>
+  protected R2ShaderTranslucentInstanceSingleType<R2RefractionMaskedDeltaParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,

@@ -19,6 +19,7 @@ package com.io7m.r2.core;
 // @formatter:off
 
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 
 /**
@@ -121,6 +122,70 @@ public interface R2SceneOpaquesConsumerType
 
   <M> void onInstanceBatchedShaderFinish(
     R2ShaderInstanceBatchedUsableType<M> s);
+
+  /**
+   * Called when a batched instance should upload batch data to the GPU.
+   *
+   * @param i The batched instance
+   */
+
+  void onInstanceBillboardedUpdate(
+    R2InstanceBillboardedType i);
+
+  /**
+   * Called when a new shader should be activated in order to start rendering
+   * batched instances.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
+
+  <M> void onInstanceBillboardedShaderStart(
+    R2ShaderInstanceBillboardedUsableType<M> s);
+
+  /**
+   * Called when new material settings should be assigned, for batched
+   * instances.
+   *
+   * @param material The current material
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstanceBillboardedMaterialStart(
+    R2MaterialOpaqueBillboardedType<M> material);
+
+  /**
+   * Called when a batched instance should be rendered.
+   *
+   * @param material The current material
+   * @param i        The current instance
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstanceBillboarded(
+    R2MaterialOpaqueBillboardedType<M> material,
+    R2InstanceBillboardedType i);
+
+  /**
+   * Called after the current set of batched instances have finished rendering
+   * with the current material.
+   *
+   * @param material The current material
+   * @param <M>      The type of shader parameters
+   */
+
+  <M> void onInstanceBillboardedMaterialFinish(
+    R2MaterialOpaqueBillboardedType<M> material);
+
+  /**
+   * Called when the current shader should be deactivated.
+   *
+   * @param s   The shader
+   * @param <M> The type of shader parameters
+   */
+
+  <M> void onInstanceBillboardedShaderFinish(
+    R2ShaderInstanceBillboardedUsableType<M> s);
 
   /**
    * Called when a new shader should be activated in order to start rendering

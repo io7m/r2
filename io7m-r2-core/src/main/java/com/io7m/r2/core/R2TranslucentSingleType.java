@@ -19,7 +19,7 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
 import com.io7m.jcanephora.renderstate.JCGLCullingState;
 import com.io7m.jfunctional.PartialBiFunctionType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
 import org.immutables.value.Value;
 
 import java.util.Optional;
@@ -38,7 +38,8 @@ public interface R2TranslucentSingleType<M> extends R2TranslucentType<M>
   default <A, B, E extends Throwable> B matchTranslucent(
     final A context,
     final PartialBiFunctionType<A, R2TranslucentSingleType<M>, B, E> on_single,
-    final PartialBiFunctionType<A, R2TranslucentBatchedType<M>, B, E> on_batched)
+    final PartialBiFunctionType<A, R2TranslucentBatchedType<M>, B, E> on_batched,
+    final PartialBiFunctionType<A, R2TranslucentBillboardedType<M>, B, E> on_billboarded)
     throws E
   {
     return on_single.call(context, this);
@@ -56,7 +57,7 @@ public interface R2TranslucentSingleType<M> extends R2TranslucentType<M>
    */
 
   @Value.Parameter
-  R2ShaderInstanceSingleUsableType<M> shader();
+  R2ShaderTranslucentInstanceSingleType<M> shader();
 
   @Override
   @Value.Parameter

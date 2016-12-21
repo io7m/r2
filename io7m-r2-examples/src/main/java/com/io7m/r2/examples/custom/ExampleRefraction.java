@@ -116,10 +116,11 @@ import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderBatched;
 import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.filters.R2BlurParameters;
@@ -177,10 +178,10 @@ public final class ExampleRefraction implements R2ExampleCustomType
   private R2InstanceSingle refract_thing_single;
   private R2InstanceBatchedDynamicType refract_thing_batched;
   private R2TranslucentRendererType refract_translucent_renderer;
-  private R2ShaderInstanceSingleType<R2RefractionMaskedDeltaParameters> refract_shader_delta_single;
+  private R2ShaderTranslucentInstanceSingleType<R2RefractionMaskedDeltaParameters> refract_shader_delta_single;
   private R2Texture2DUsableType refract_texture_delta;
   private R2InstanceSingle refract_occluder;
-  private R2ShaderInstanceBatchedType<R2RefractionMaskedDeltaParameters> refract_shader_delta_batched;
+  private R2ShaderTranslucentInstanceBatchedType<R2RefractionMaskedDeltaParameters> refract_shader_delta_batched;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
