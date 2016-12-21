@@ -54,8 +54,6 @@ public final class R2ShaderFilterBilateralBlurDepthAwareHorizontal4f extends
   private final JCGLProgramUniformType u_blur_falloff;
   private final JCGLProgramUniformType u_blur_output_image_size_inverse;
   private final VectorM2F inverse_size;
-  private JCGLTextureUnitType unit_texture_image;
-  private JCGLTextureUnitType unit_texture_depth;
 
   private R2ShaderFilterBilateralBlurDepthAwareHorizontal4f(
     final JCGLShadersType in_shaders,
@@ -166,15 +164,17 @@ public final class R2ShaderFilterBilateralBlurDepthAwareHorizontal4f extends
      * Upload textures and parameters.
      */
 
-    this.unit_texture_image =
-      tc.unitContextBindTexture2D(g_tex, values.imageTexture().texture());
-    this.unit_texture_depth =
-      tc.unitContextBindTexture2D(g_tex, values.depthTexture().texture());
+    final JCGLTextureUnitType unit_texture_image = tc.unitContextBindTexture2D(
+      g_tex,
+      values.imageTexture().texture());
+    final JCGLTextureUnitType unit_texture_depth = tc.unitContextBindTexture2D(
+      g_tex,
+      values.depthTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_image, this.unit_texture_image);
+      this.u_texture_image, unit_texture_image);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_depth, this.unit_texture_depth);
+      this.u_texture_depth, unit_texture_depth);
 
     g_sh.shaderUniformPutFloat(
       this.u_blur_falloff, values.blurFalloff());

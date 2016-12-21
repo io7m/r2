@@ -341,8 +341,15 @@ public final class R2LightRenderer implements R2LightRendererType
       {
         this.render_state_screen = JCGLRenderStateMutable.create();
 
-        /**
-         * The light contributions are summed with pure additive blending.
+        /*
+         * Write RGB, ignore alpha.
+         */
+
+        this.render_state_screen.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, false));
+
+        /*
+          The light contributions are summed with pure additive blending.
          */
 
         this.render_state_screen.setBlendState(
@@ -354,8 +361,8 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLBlendEquation.BLEND_EQUATION_ADD,
             JCGLBlendEquation.BLEND_EQUATION_ADD)));
 
-        /**
-         * For full-screen quads, the front faces should be rendered.
+        /*
+          For full-screen quads, the front faces should be rendered.
          */
 
         this.render_state_screen.setCullingState(
@@ -363,8 +370,8 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLFaceSelection.FACE_BACK,
             JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
-        /**
-         * No depth testing and no depth writing is required.
+        /*
+          No depth testing and no depth writing is required.
          */
 
         this.render_state_screen.setDepthState(JCGLDepthState.of(
@@ -380,8 +387,15 @@ public final class R2LightRenderer implements R2LightRendererType
       {
         this.render_state_volume = JCGLRenderStateMutable.create();
 
-        /**
-         * The light contributions are summed with pure additive blending.
+        /*
+         * Write RGB, ignore alpha.
+         */
+
+        this.render_state_volume.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, false));
+
+        /*
+          The light contributions are summed with pure additive blending.
          */
 
         this.render_state_volume.setBlendState(
@@ -393,9 +407,9 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLBlendEquation.BLEND_EQUATION_ADD,
             JCGLBlendEquation.BLEND_EQUATION_ADD)));
 
-        /**
-         * For typical volume lights, only the back faces should be
-         * rendered.
+        /*
+          For typical volume lights, only the back faces should be
+          rendered.
          */
 
         this.render_state_volume.setCullingState(
@@ -403,10 +417,10 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLFaceSelection.FACE_FRONT,
             JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
-        /**
-         * The fragments of the back faces of the light volume will have a
-         * depth greater than or equal to the geometry fragments that
-         * should be affected. No depth writing is required.
+        /*
+          The fragments of the back faces of the light volume will have a
+          depth greater than or equal to the geometry fragments that
+          should be affected. No depth writing is required.
          */
 
         this.render_state_volume.setDepthState(
@@ -773,12 +787,12 @@ public final class R2LightRenderer implements R2LightRendererType
         NullCheck.notNull(in_clip_screen_stencil);
 
       {
-        /**
-         * Configure rendering state for the full-screen stencil clearing pass.
-         *
-         * Configure stencil settings that will unconditionally clear the
-         * {@link R2Stencils#LIGHT_MASK_BIT}, but leave the rest of the
-         * contents of the stencil buffer intact.
+        /*
+          Configure rendering state for the full-screen stencil clearing pass.
+
+          Configure stencil settings that will unconditionally clear the
+          {@link R2Stencils#LIGHT_MASK_BIT}, but leave the rest of the
+          contents of the stencil buffer intact.
          */
 
         this.clip_screen_stencil_state =
@@ -812,15 +826,15 @@ public final class R2LightRenderer implements R2LightRendererType
       }
 
       {
-        /**
-         * Configure rendering state for clipping volumes.
+        /*
+          Configure rendering state for clipping volumes.
          */
 
         this.clip_volume_stencil_state =
           JCGLRenderStateMutable.create();
 
-        /**
-         * Use a standard less-than-or-equal depth test for the clip volume.
+        /*
+          Use a standard less-than-or-equal depth test for the clip volume.
          */
 
         this.clip_volume_stencil_state.setDepthState(JCGLDepthState.of(
@@ -833,10 +847,10 @@ public final class R2LightRenderer implements R2LightRendererType
         this.clip_volume_stencil_state.setColorBufferMaskingState(
           JCGLColorBufferMaskingState.of(false, false, false, false));
 
-        /**
-         * Configure stencil settings that will, in effect, set the
-         * {@link R2Stencils#LIGHT_MASK_BIT} for any fragment the light volume
-         * touches.
+        /*
+          Configure stencil settings that will, in effect, set the
+          {@link R2Stencils#LIGHT_MASK_BIT} for any fragment the light volume
+          touches.
          */
 
         final JCGLStencilStateMutable ss = JCGLStencilStateMutable.create();
@@ -866,6 +880,13 @@ public final class R2LightRenderer implements R2LightRendererType
 
       {
         this.render_state_screen = JCGLRenderStateMutable.create();
+        
+        /*
+         * Write RGB, ignore alpha.
+         */
+
+        this.render_state_screen.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, false));
 
         /*
          * The light contributions are summed with pure additive blending.
@@ -942,6 +963,22 @@ public final class R2LightRenderer implements R2LightRendererType
         this.render_state_volume = JCGLRenderStateMutable.create();
 
         /*
+         * Work around an issue with @Default on Immutables @Modifiable values;
+         * the call to getDepthState will return a freshly allocated value
+         * every time unless setDepthState has been called at least once.
+         */
+
+        this.render_state_volume.setDepthState(
+          this.render_state_volume.getDepthState());
+
+        /*
+         * Write RGB, ignore alpha.
+         */
+
+        this.render_state_volume.setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, false));
+
+        /*
          * The light contributions are summed with pure additive blending.
          */
 
@@ -968,7 +1005,7 @@ public final class R2LightRenderer implements R2LightRendererType
          * No depth testing and no depth writing is required.
          */
 
-        this.render_state_screen.setDepthState(JCGLDepthState.of(
+        this.render_state_volume.setDepthState(JCGLDepthState.of(
           JCGLDepthStrict.DEPTH_STRICT_ENABLED,
           Optional.empty(),
           JCGLDepthWriting.DEPTH_WRITE_DISABLED,

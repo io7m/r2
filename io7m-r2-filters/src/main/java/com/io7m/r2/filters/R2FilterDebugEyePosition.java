@@ -29,7 +29,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -66,7 +66,7 @@ public final class R2FilterDebugEyePosition implements
 
   private final R2ShaderFilterDebugEyePosition shader;
   private final JCGLInterfaceGL33Type g;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderState render_state;
   private final R2UnitQuadUsableType quad;
 
   private R2FilterDebugEyePosition(
@@ -80,7 +80,7 @@ public final class R2FilterDebugEyePosition implements
 
     this.shader = R2ShaderFilterDebugEyePosition.newShader(
       this.g.getShaders(), in_shader_env, in_pool);
-    this.render_state = JCGLRenderStateMutable.create();
+    this.render_state = JCGLRenderState.builder().build();
   }
 
   /**

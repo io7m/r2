@@ -75,7 +75,6 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private R2GeometryBufferType gbuffer;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
-  private R2SurfaceShaderBasicParameters shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
   private R2MainType main;
@@ -138,12 +137,11 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
 
     this.shader =
       R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
-    this.shader_params =
-      R2SurfaceShaderBasicParameters.builder()
-        .setTextureDefaults(m.getTextureDefaults())
-        .build();
+    final R2SurfaceShaderBasicParameters shader_params = R2SurfaceShaderBasicParameters.builder()
+      .setTextureDefaults(m.getTextureDefaults())
+      .build();
     this.material = R2MaterialOpaqueSingle.of(
-      id_pool.freshID(), this.shader, this.shader_params);
+      id_pool.freshID(), this.shader, shader_params);
   }
 
   @Override

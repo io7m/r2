@@ -44,12 +44,13 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
-import com.io7m.jtensors.VectorM4F;
-import com.io7m.jtensors.VectorReadable4FType;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
+import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceBatchedType;
+import com.io7m.r2.core.R2InstanceBillboardedType;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2LightScreenSingleType;
@@ -57,6 +58,7 @@ import com.io7m.r2.core.R2LightSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightVolumeSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
+import com.io7m.r2.core.R2MaterialOpaqueBillboardedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2SceneLightsClipGroupConsumerType;
@@ -69,15 +71,20 @@ import com.io7m.r2.core.R2TransformST;
 import com.io7m.r2.core.R2UnitSphereUsableType;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugColorVerticesWorldPosition;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualBatched;
+import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualBillboarded;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualScreen;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
+import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import org.slf4j.Logger;
@@ -102,9 +109,10 @@ public final class R2DebugVisualizerRenderer implements
 
   private final JCGLInterfaceGL33Type g;
 
-  private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
-  private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
-  private final R2ShaderInstanceSingleScreenType<VectorReadable4FType> shader_screen;
+  private final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> shader_single;
+  private final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> shader_batched;
+  private final R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>> shader_billboarded;
+  private final R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>> shader_screen;
   private final R2ShaderInstanceSingleScreenType<Unit> shader_lines;
 
   private final JCGLRenderState render_geom_state_base;
@@ -121,6 +129,8 @@ public final class R2DebugVisualizerRenderer implements
     this.shader_single = R2ShaderDebugVisualSingle.newShader(
       this.g.getShaders(), in_shader_env, in_pool);
     this.shader_batched = R2ShaderDebugVisualBatched.newShader(
+      this.g.getShaders(), in_shader_env, in_pool);
+    this.shader_billboarded = R2ShaderDebugVisualBillboarded.newShader(
       this.g.getShaders(), in_shader_env, in_pool);
     this.shader_screen = R2ShaderDebugVisualScreen.newShader(
       this.g.getShaders(), in_shader_env, in_pool);
@@ -160,15 +170,18 @@ public final class R2DebugVisualizerRenderer implements
       this.render_geom_state_base = b.build();
     }
 
-    this.opaque_consumer = new OpaqueConsumer(
-      this.g,
-      this.shader_single,
-      this.shader_batched);
-    this.light_consumer = new LightConsumer(
-      this.g,
-      this.shader_single,
-      this.shader_batched,
-      this.shader_screen);
+    this.opaque_consumer =
+      new OpaqueConsumer(
+        this.g,
+        this.shader_single,
+        this.shader_batched,
+        this.shader_billboarded);
+    this.light_consumer =
+      new LightConsumer(
+        this.g,
+        this.shader_single,
+        this.shader_batched,
+        this.shader_screen);
 
     this.lines_batch = new R2DebugLineSegmentsBatch(this.g);
   }
@@ -503,23 +516,26 @@ public final class R2DebugVisualizerRenderer implements
     private final JCGLArrayObjectsType array_objects;
     private final JCGLDrawType draw;
     private final JCGLRenderStateMutable render_state;
-    private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
-    private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
+    private final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> shader_single;
+    private final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> shader_batched;
+    private final R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>> shader_billboarded;
     private @Nullable R2MatricesObserverType matrices;
     private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable JCGLTextureUnitContextType material_texture_context;
     private @Nullable R2DebugVisualizerRendererParametersType parameters;
     private @Nullable AreaInclusiveUnsignedLType screen_area;
-    private VectorReadable4FType color;
+    private PVectorI4F<R2SpaceRGBAType> color;
 
     OpaqueConsumer(
       final JCGLInterfaceGL33Type ig,
-      final R2ShaderInstanceSingleType<VectorReadable4FType> in_shader_single,
-      final R2ShaderInstanceBatchedType<VectorReadable4FType> in_shader_batched)
+      final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> in_shader_single,
+      final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> in_shader_batched,
+      final R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>> in_shader_billboarded)
     {
       this.g33 = NullCheck.notNull(ig);
       this.shader_single = NullCheck.notNull(in_shader_single);
       this.shader_batched = NullCheck.notNull(in_shader_batched);
+      this.shader_billboarded = NullCheck.notNull(in_shader_billboarded);
 
       this.shaders = this.g33.getShaders();
       this.textures = this.g33.getTextures();
@@ -539,7 +555,7 @@ public final class R2DebugVisualizerRenderer implements
     {
       JCGLRenderStates.activate(this.g33, this.render_state);
 
-      final Int2ReferenceMap<VectorReadable4FType> g_colors =
+      final Int2ReferenceMap<PVectorI4F<R2SpaceRGBAType>> g_colors =
         this.parameters.geometryGroupColors();
       if (g_colors.containsKey(group)) {
         this.color = g_colors.get(group);
@@ -602,6 +618,57 @@ public final class R2DebugVisualizerRenderer implements
     }
 
     @Override
+    public void onInstanceBillboardedUpdate(
+      final R2InstanceBillboardedType i)
+    {
+      i.update(this.g33, this.matrices.transformContext());
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderStart(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
+    {
+      this.shader_billboarded.onActivate(this.shaders);
+      this.shader_billboarded.onReceiveViewValues(
+        this.shaders, this.matrices, this.screen_area);
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialStart(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      this.material_texture_context = this.texture_context.unitContextNew();
+
+      this.shader_billboarded.onReceiveMaterialValues(
+        this.textures, this.shaders, this.material_texture_context, this.color);
+    }
+
+    @Override
+    public <M> void onInstanceBillboarded(
+      final R2MaterialOpaqueBillboardedType<M> material,
+      final R2InstanceBillboardedType i)
+    {
+      this.shader_billboarded.onValidate();
+      this.array_objects.arrayObjectBind(i.arrayObject());
+      this.draw.draw(JCGLPrimitives.PRIMITIVE_POINTS, 0, i.enabledCount());
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialFinish(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      this.material_texture_context.unitContextFinish(this.textures);
+      this.material_texture_context = null;
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderFinish(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
+    {
+      this.shader_billboarded.onDeactivate(this.shaders);
+    }
+
+    @Override
     public <M> void onInstanceSingleShaderStart(
       final R2ShaderInstanceSingleUsableType<M> s)
     {
@@ -657,7 +724,7 @@ public final class R2DebugVisualizerRenderer implements
     public <M> void onInstanceSingleShaderFinish(
       final R2ShaderInstanceSingleUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      this.shader_single.onDeactivate(this.shaders);
     }
 
     @Override
@@ -681,13 +748,12 @@ public final class R2DebugVisualizerRenderer implements
     private final JCGLTexturesType textures;
     private final JCGLArrayObjectsType array_objects;
     private final JCGLDrawType draw;
-    private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
-    private final R2ShaderInstanceSingleScreenType<VectorReadable4FType> shader_screen;
-    private final VectorM4F light_color;
+    private final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> shader_batched;
+    private final R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>> shader_screen;
+    private final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> shader_single;
     private final JCGLRenderStateMutable render_state_volume_fill;
     private final JCGLRenderStateMutable render_state_volume_lines;
     private final JCGLRenderStateMutable render_state_screen_lines;
-    private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
     private final ClipGroupConsumer clip_group_consumer;
     private final GroupConsumer group_consumer;
     private final R2TransformST sphere_transform;
@@ -695,12 +761,13 @@ public final class R2DebugVisualizerRenderer implements
     private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable R2UnitSphereUsableType sphere;
     private @Nullable AreaInclusiveUnsignedLType screen_area;
+    private PVectorI4F<R2SpaceRGBAType> light_color;
 
     private LightConsumer(
       final JCGLInterfaceGL33Type ig,
-      final R2ShaderInstanceSingleType<VectorReadable4FType> in_shader_single,
-      final R2ShaderInstanceBatchedType<VectorReadable4FType> in_shader_batched,
-      final R2ShaderInstanceSingleScreenType<VectorReadable4FType> in_shader_screen)
+      final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> in_shader_single,
+      final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> in_shader_batched,
+      final R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>> in_shader_screen)
     {
       this.g33 = NullCheck.notNull(ig);
       this.shader_single = NullCheck.notNull(in_shader_single);
@@ -737,7 +804,6 @@ public final class R2DebugVisualizerRenderer implements
         JCGLPolygonMode.POLYGON_LINES);
 
       this.sphere_transform = R2TransformST.newTransform();
-      this.light_color = new VectorM4F(1.0f, 1.0f, 1.0f, 1.0f);
       this.clip_group_consumer = new ClipGroupConsumer();
       this.group_consumer = new GroupConsumer();
     }
@@ -850,8 +916,14 @@ public final class R2DebugVisualizerRenderer implements
           c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(ls.color());
-            VectorM4F.scaleInPlace(c.light_color, (double) ls.intensity());
+            c.light_color =
+              PVectorI4F.scale(
+                new PVectorI4F<>(
+                  ls.color().getXF(),
+                  ls.color().getYF(),
+                  ls.color().getZF(),
+                  1.0f),
+                ls.intensity());
 
             /*
              * Render a tiny sphere at the light origin.
@@ -914,8 +986,15 @@ public final class R2DebugVisualizerRenderer implements
           c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(lp.color());
-            VectorM4F.scaleInPlace(c.light_color, (double) lp.intensity());
+            final PVectorReadable3FType<R2SpaceRGBType> lp_color = lp.color();
+            c.light_color =
+              PVectorI4F.scale(
+                new PVectorI4F<>(
+                  lp_color.getXF(),
+                  lp_color.getYF(),
+                  lp_color.getZF(),
+                  1.0f),
+                lp.intensity());
 
             /*
              * Render a tiny sphere at the light origin.
@@ -1010,7 +1089,7 @@ public final class R2DebugVisualizerRenderer implements
             c.array_objects.arrayObjectBind(this.volume.arrayObject());
 
             try {
-              c.light_color.set4F(1.0f, 1.0f, 1.0f, 1.0f);
+              c.light_color = new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
 
               /*
                * Render the clip volume.
@@ -1115,8 +1194,15 @@ public final class R2DebugVisualizerRenderer implements
           c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(ls.color());
-            VectorM4F.scaleInPlace(c.light_color, (double) ls.intensity());
+            final PVectorReadable3FType<R2SpaceRGBType> lp_color = ls.color();
+            c.light_color =
+              PVectorI4F.scale(
+                new PVectorI4F<>(
+                  lp_color.getXF(),
+                  lp_color.getYF(),
+                  lp_color.getZF(),
+                  1.0f),
+                ls.intensity());
 
             /*
              * Render a tiny sphere at the light origin.
@@ -1179,8 +1265,15 @@ public final class R2DebugVisualizerRenderer implements
           c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(lp.color());
-            VectorM4F.scaleInPlace(c.light_color, (double) lp.intensity());
+            final PVectorReadable3FType<R2SpaceRGBType> lp_color = lp.color();
+            c.light_color =
+              PVectorI4F.scale(
+                new PVectorI4F<>(
+                  lp_color.getXF(),
+                  lp_color.getYF(),
+                  lp_color.getZF(),
+                  1.0f),
+                lp.intensity());
 
             /*
              * Render a tiny sphere at the light origin.

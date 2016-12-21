@@ -62,7 +62,6 @@ public final class R2DepthVarianceRenderer implements
 {
   private final DepthConsumer depth_consumer;
   private final JCGLInterfaceGL33Type g;
-  private final JCGLClearSpecification clear;
   private boolean deleted;
 
   private R2DepthVarianceRenderer(
@@ -70,7 +69,7 @@ public final class R2DepthVarianceRenderer implements
   {
     this.g = NullCheck.notNull(in_g);
     this.depth_consumer = new DepthConsumer(this.g);
-    this.clear = JCGLClearSpecification.of(
+    final JCGLClearSpecification clear = JCGLClearSpecification.of(
       Optional.of(new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f)),
       OptionalDouble.of(1.0),
       OptionalInt.empty(),

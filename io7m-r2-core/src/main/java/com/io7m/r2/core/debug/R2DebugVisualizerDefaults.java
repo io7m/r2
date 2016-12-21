@@ -16,8 +16,9 @@
 
 package com.io7m.r2.core.debug;
 
-import com.io7m.jtensors.VectorI4F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
 
 /**
  * Default values for debug visualizer implementations.
@@ -29,10 +30,10 @@ public final class R2DebugVisualizerDefaults
    * The default color for rendering opaque instances.
    */
 
-  public static final VectorI4F DEFAULT_GROUP_COLOR;
+  public static final PVectorI4F<R2SpaceRGBAType> DEFAULT_GROUP_COLOR;
 
   static {
-    DEFAULT_GROUP_COLOR = new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f);
+    DEFAULT_GROUP_COLOR = new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
   private R2DebugVisualizerDefaults()

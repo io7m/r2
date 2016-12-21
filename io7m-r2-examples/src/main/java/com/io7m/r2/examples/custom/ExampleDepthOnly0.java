@@ -39,8 +39,6 @@ import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2MaterialDepthSingle;
 import com.io7m.r2.core.R2MaterialDepthSingleType;
-import com.io7m.r2.core.R2MaterialOpaqueSingle;
-import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
 import com.io7m.r2.core.R2ProjectionFOV;
 import com.io7m.r2.core.R2TransformReadableType;
@@ -76,18 +74,13 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
   private R2ProjectionFOV projection;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
-  private R2SurfaceShaderBasicParameters shader_params;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
-  private R2UnitSphereType sphere;
   private R2InstanceSingleType instance;
 
   private R2DepthOnlyBufferType dbuffer;
   private R2DepthRendererType depth_renderer;
   private R2DepthInstancesType depth_instances;
-  private R2DepthShaderBasicParameters depth_shader_params;
 
-  private R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader;
   private R2MaterialDepthSingleType<R2DepthShaderBasicParameters> depth_material;
 
   private R2MainType main;
@@ -137,12 +130,12 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
 
     final R2IDPoolType id_pool = m.getIDPool();
 
-    this.sphere = R2UnitSphere.newUnitSphere8(g);
+    final R2UnitSphereType sphere = R2UnitSphere.newUnitSphere8(g);
 
     final R2TransformReadableType tr = R2TransformSOT.newTransform();
     this.instance = R2InstanceSingle.of(
       id_pool.freshID(),
-      this.sphere.arrayObject(),
+      sphere.arrayObject(),
       tr,
       PMatrixI3x3F.identity());
 
@@ -155,21 +148,17 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
     final R2ShaderPreprocessingEnvironmentType sources =
       R2ShaderPreprocessingEnvironment.create(p);
 
-    this.depth_shader = R2DepthShaderBasicSingle.newShader(
-      g.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
-    this.depth_shader_params = R2DepthShaderBasicParameters.of(
-      m.getTextureDefaults(), m.getTextureDefaults().texture2DWhite(), 0.1f);
+    final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader =
+      R2DepthShaderBasicSingle.newShader(
+        g.getShaders(), m.getShaderPreprocessingEnvironment(), m.getIDPool());
+    final R2DepthShaderBasicParameters depth_shader_params =
+      R2DepthShaderBasicParameters.of(
+        m.getTextureDefaults(), m.getTextureDefaults().texture2DWhite(), 0.1f);
     this.depth_material = R2MaterialDepthSingle.of(
-      id_pool.freshID(), this.depth_shader, this.depth_shader_params);
+      id_pool.freshID(), depth_shader, depth_shader_params);
 
     this.shader =
       R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
-    this.shader_params =
-      R2SurfaceShaderBasicParameters.builder()
-        .setTextureDefaults(m.getTextureDefaults())
-        .build();
-    this.material = R2MaterialOpaqueSingle.of(
-      id_pool.freshID(), this.shader, this.shader_params);
   }
 
   @Override

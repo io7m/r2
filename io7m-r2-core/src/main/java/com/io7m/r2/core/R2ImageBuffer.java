@@ -36,7 +36,6 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.renderstate.JCGLColorBufferMaskingState;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
@@ -65,11 +64,11 @@ public final class R2ImageBuffer implements R2ImageBufferType
   private static final JCGLClearSpecification CLEAR_SPEC;
 
   static {
-    final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
-
-    k.setColorBufferMaskingState(
-      JCGLColorBufferMaskingState.of(true, true, true, true));
-    CLEAR_STATE = JCGLRenderState.builder().from(k).build();
+    CLEAR_STATE =
+      JCGLRenderState.builder()
+        .setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, true))
+        .build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
       Optional.of(new VectorI4F(1.0f, 1.0f, 1.0f, 1.0f)),
@@ -83,7 +82,6 @@ public final class R2ImageBuffer implements R2ImageBufferType
   private final UnsignedRangeInclusiveL range;
   private final R2ImageBufferDescriptionType desc;
   private final @Nullable R2Texture2DType t_depth;
-  private final @Nullable R2Texture2DUsableType t_depth_shared;
 
   private R2ImageBuffer(
     final JCGLFramebufferType in_framebuffer,
@@ -97,7 +95,6 @@ public final class R2ImageBuffer implements R2ImageBufferType
     this.t_rgba = NullCheck.notNull(in_t_rgba);
 
     this.t_depth = in_t_depth;
-    this.t_depth_shared = in_t_depth_shared;
 
     long size = 0L;
     size += this.t_rgba.texture().getRange().getInterval();
@@ -105,8 +102,8 @@ public final class R2ImageBuffer implements R2ImageBufferType
     if (this.t_depth != null) {
       size += this.t_depth.texture().getRange().getInterval();
     }
-    if (this.t_depth_shared != null) {
-      size += this.t_depth_shared.texture().getRange().getInterval();
+    if (in_t_depth_shared != null) {
+      size += in_t_depth_shared.texture().getRange().getInterval();
     }
 
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);

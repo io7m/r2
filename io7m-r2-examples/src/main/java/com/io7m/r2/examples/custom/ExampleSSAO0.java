@@ -127,10 +127,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private R2SurfaceShaderBasicParameters geom_shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
 
-  private R2UnitSphereType sphere;
   private R2InstanceBatchedDynamicType batched_instance;
-  private R2TransformSOT[] batched_transforms;
-  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
 
   // Compositor
@@ -142,7 +139,6 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
 
   private R2AmbientOcclusionBufferType ssao_buffer;
   private R2FilterType<R2FilterSSAOParameters> filter_ssao;
-  private R2RenderTargetPoolUsableType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> pool_ssao;
   private R2FilterType<R2FilterBoxBlurParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> ssao_filter_blur;
   private R2FilterBoxBlurParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> ssao_filter_blur_params;
   private R2Texture2DType ssao_noise_texture;
@@ -161,7 +157,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     final R2MainType m)
   {
     this.main = NullCheck.notNull(m);
-    this.sphere = R2UnitSphere.newUnitSphere8(g);
+    final R2UnitSphereType sphere = R2UnitSphere.newUnitSphere8(g);
     this.opaques = R2SceneOpaques.newOpaques();
     this.stencils = R2SceneStencils.newMasks();
 
@@ -200,13 +196,14 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       m.getIDPool(),
       m.getUnitQuad());
 
+    final R2RenderTargetPoolUsableType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> pool_ssao;
     {
       final UnsignedRangeInclusiveL screen_x = area.getRangeX();
       final UnsignedRangeInclusiveL screen_y = area.getRangeY();
       final long one = screen_x.getInterval() * screen_y.getInterval();
       final long soft = one * 2L;
       final long hard = one * 10L;
-      this.pool_ssao = R2AmbientOcclusionBufferPool.newPool(g, soft, hard);
+      pool_ssao = R2AmbientOcclusionBufferPool.newPool(g, soft, hard);
     }
 
     this.ssao_kernel =
@@ -222,7 +219,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
       this.ssao_buffer,
       R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
-      this.pool_ssao,
+      pool_ssao,
       R2BlurParameters.builder().build(),
       (d, a) -> {
         final R2AmbientOcclusionBufferDescription.Builder b =
@@ -236,7 +233,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       m.getShaderPreprocessingEnvironment(),
       g,
       m.getTextureDefaults(),
-      this.pool_ssao,
+      pool_ssao,
       m.getIDPool(),
       m.getUnitQuad());
 
@@ -325,10 +322,10 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         id_pool,
         g.getArrayBuffers(),
         g.getArrayObjects(),
-        this.sphere.arrayObject(),
+        sphere.arrayObject(),
         instance_count);
 
-    this.batched_transforms = new R2TransformSOT[instance_count];
+    final R2TransformSOT[] batched_transforms = new R2TransformSOT[instance_count];
 
     int index = 0;
     for (int x = 0; x < width; ++x) {
@@ -341,8 +338,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
           final float fy = (float) (y - (height / 2));
           final float fz = (float) -z * 1.5f;
           tr.set3F(fx, fy, fz);
-          this.batched_transforms[index] = t;
-          this.batched_instance.enableInstance(this.batched_transforms[index]);
+          batched_transforms[index] = t;
+          this.batched_instance.enableInstance(batched_transforms[index]);
           ++index;
         }
       }
@@ -369,14 +366,13 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         id_pool.freshID(), this.geom_shader, gsp);
     }
 
-    this.batched_geom_shader =
-      R2SurfaceShaderBasicBatched.newShader(
-        g.getShaders(),
-        sources,
-        id_pool);
+    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader = R2SurfaceShaderBasicBatched.newShader(
+      g.getShaders(),
+      sources,
+      id_pool);
     this.batched_geom_material = R2MaterialOpaqueBatched.of(
       id_pool.freshID(),
-      this.batched_geom_shader,
+      batched_geom_shader,
       this.geom_material.shaderParameters());
 
     {

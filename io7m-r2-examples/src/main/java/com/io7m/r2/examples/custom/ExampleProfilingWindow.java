@@ -26,7 +26,6 @@ import java.awt.Font;
 final class ExampleProfilingWindow extends JFrame
 {
   private final JTextArea text;
-  private final JScrollPane scroll;
 
   ExampleProfilingWindow()
   {
@@ -34,10 +33,10 @@ final class ExampleProfilingWindow extends JFrame
 
     this.text = new JTextArea();
     this.text.setFont(Font.decode("Monospace 10"));
-    this.scroll = new JScrollPane(this.text);
+    final JScrollPane scroll = new JScrollPane(this.text);
 
     final Container cp = this.getContentPane();
-    cp.add(this.scroll);
+    cp.add(scroll);
 
     this.setPreferredSize(new Dimension(640, 480));
     this.pack();

@@ -92,8 +92,8 @@ public final class R2InstanceBatchedDynamic implements
 
     try {
 
-      /**
-       * Allocate a buffer to store one model matrix per instance.
+      /*
+        Allocate a buffer to store one model matrix per instance.
        */
 
       vbo = g_ab.arrayBufferAllocate(
@@ -274,9 +274,9 @@ public final class R2InstanceBatchedDynamic implements
         trans.transformMakeMatrix4x4F(context, this.matrix_pointer);
       } else {
 
-        /**
-         * "Disable" the instance by specifying that it be drawn with
-         * a scale of zero.
+        /*
+          "Disable" the instance by specifying that it be drawn with
+          a scale of zero.
          */
 
         this.matrix_pointer.setR0C0F(0.0f);

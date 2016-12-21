@@ -62,10 +62,8 @@ public final class R2DepthShaderBasicStippledSingle extends
   private final JCGLProgramUniformType u_viewport_inverse_width;
   private final JCGLProgramUniformType u_viewport_inverse_height;
   private final VectorM2F noise_uv_scale;
-  private JCGLTextureUnitType unit_albedo;
   private long viewport_w;
   private long viewport_h;
-  private JCGLTextureUnitType unit_stipple;
 
   private R2DepthShaderBasicStippledSingle(
     final JCGLShadersType in_shaders,
@@ -230,17 +228,17 @@ public final class R2DepthShaderBasicStippledSingle extends
     g_sh.shaderUniformPutVector2f(
       this.u_stipple_noise_uv_scale, this.noise_uv_scale);
 
-    this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
-    this.unit_stipple =
-      tc.unitContextBindTexture2D(
-        g_tex,
-        values.stippleNoiseTexture().texture());
+    final JCGLTextureUnitType unit_albedo = tc.unitContextBindTexture2D(
+      g_tex,
+      values.albedoTexture().texture());
+    final JCGLTextureUnitType unit_stipple = tc.unitContextBindTexture2D(
+      g_tex,
+      values.stippleNoiseTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_albedo, this.unit_albedo);
+      this.u_texture_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_stipple, this.unit_stipple);
+      this.u_texture_stipple, unit_stipple);
 
     g_sh.shaderUniformPutFloat(
       this.u_alpha_discard_threshold, values.alphaDiscardThreshold());

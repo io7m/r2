@@ -172,8 +172,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
       final Animator anim = new Animator(win);
 
-      /**
-       * Close the program when the window closes.
+      /*
+        Close the program when the window closes.
        */
 
       win.addWindowListener(new WindowAdapter()
@@ -226,9 +226,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     {
       assert e != null;
 
-      /**
-       * If the camera is enabled, get the rotation coefficients for the mouse
-       * movement.
+      /*
+        If the camera is enabled, get the rotation coefficients for the mouse
+        movement.
        */
 
       if (this.services != null) {

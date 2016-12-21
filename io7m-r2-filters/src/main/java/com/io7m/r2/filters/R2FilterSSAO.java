@@ -27,7 +27,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -56,7 +56,7 @@ public final class R2FilterSSAO implements
   private final R2UnitQuadUsableType quad;
   private final JCGLInterfaceGL33Type g;
   private final JCGLClearSpecification clear;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderState render_state;
 
   private R2FilterSSAO(
     final JCGLInterfaceGL33Type in_g,
@@ -73,7 +73,7 @@ public final class R2FilterSSAO implements
     cb.setStencilBufferClear(OptionalInt.empty());
     this.clear = cb.build();
 
-    this.render_state = JCGLRenderStateMutable.create();
+    this.render_state = JCGLRenderState.builder().build();
   }
 
   /**

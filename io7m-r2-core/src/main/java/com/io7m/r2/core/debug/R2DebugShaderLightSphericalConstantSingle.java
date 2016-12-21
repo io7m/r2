@@ -197,16 +197,16 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
     NullCheck.notNull(values);
     NullCheck.notNull(m);
 
-    /**
-     * Upload the scene's depth coefficient.
+    /*
+      Upload the scene's depth coefficient.
      */
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
       (float) R2Projections.getDepthCoefficient(m.projection()));
 
-    /**
-     * Upload the projection for the light volume.
+    /*
+      Upload the projection for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
@@ -214,8 +214,8 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
-    /**
-     * Transform the light's position to eye-space and upload it.
+    /*
+      Transform the light's position to eye-space and upload it.
      */
 
     final PVectorReadable3FType<R2SpaceWorldType> position =
@@ -235,8 +235,8 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
     g_sh.shaderUniformPutVector3f(
       this.u_light_spherical_position, this.position_eye3);
 
-    /**
-     * Upload light values.
+    /*
+      Upload light values.
      */
 
     g_sh.shaderUniformPutVector3f(
@@ -257,8 +257,8 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
     NullCheck.notNull(g_sh);
     NullCheck.notNull(m);
 
-    /**
-     * Upload the light volume modelview matrix.
+    /*
+      Upload the light volume modelview matrix.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(

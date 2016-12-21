@@ -41,7 +41,6 @@ import com.io7m.jcanephora.renderstate.JCGLDepthState;
 import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
 import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.renderstate.JCGLStencilState;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
@@ -66,34 +65,34 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
   private static final JCGLClearSpecification CLEAR_SPEC;
 
   static {
-    final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
-    k.setDepthState(JCGLDepthState.of(
-      JCGLDepthStrict.DEPTH_STRICT_ENABLED,
-      Optional.empty(),
-      JCGLDepthWriting.DEPTH_WRITE_ENABLED,
-      JCGLDepthClamping.DEPTH_CLAMP_ENABLED
-    ));
-    k.setColorBufferMaskingState(
-      JCGLColorBufferMaskingState.of(true, true, true, true));
-    k.setStencilState(JCGLStencilState.of(
-      true,
-      true,
-      JCGLStencilFunction.STENCIL_ALWAYS,
-      JCGLStencilFunction.STENCIL_ALWAYS,
-      0,
-      0,
-      0,
-      0,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      0b11111111,
-      0b11111111
-    ));
-    CLEAR_STATE = JCGLRenderState.builder().from(k).build();
+    CLEAR_STATE =
+      JCGLRenderState.builder()
+        .setDepthState(JCGLDepthState.of(
+          JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+          Optional.empty(),
+          JCGLDepthWriting.DEPTH_WRITE_ENABLED,
+          JCGLDepthClamping.DEPTH_CLAMP_ENABLED
+        ))
+        .setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, true))
+        .setStencilState(JCGLStencilState.of(
+          true,
+          true,
+          JCGLStencilFunction.STENCIL_ALWAYS,
+          JCGLStencilFunction.STENCIL_ALWAYS,
+          0,
+          0,
+          0,
+          0,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          0b11111111,
+          0b11111111
+        )).build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
       Optional.of(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f)),

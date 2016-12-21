@@ -139,9 +139,9 @@ public final class R2MeshTangents implements R2MeshTangentsType
     final BigList<R2MeshTriangleType> triangles = m.getTriangles();
     final BigList<R2MeshBasicVertexType> vertices = m.getVertices();
 
-    /**
-     * Create a set of zero vectors for the initial tangent and bitangent
-     * vectors.
+    /*
+      Create a set of zero vectors for the initial tangent and bitangent
+      vectors.
      */
 
     final ObjectBigArrayBigList<PVectorI4D<R2SpaceObjectType>> tangents =
@@ -158,8 +158,8 @@ public final class R2MeshTangents implements R2MeshTangentsType
       bitangents.add(PVectorI3D.zero());
     }
 
-    /**
-     * Generate initial tangent and bitangent vectors.
+    /*
+      Generate initial tangent and bitangent vectors.
      */
 
     for (long tri_index = 0L; tri_index < triangles.size64(); ++tri_index) {
@@ -186,9 +186,9 @@ public final class R2MeshTangents implements R2MeshTangentsType
       checkVector3D(v1p, "Position", v1.positionIndex());
       checkVector3D(v2p, "Position", v2.positionIndex());
 
-      /**
-       * Fetch whatever tangent and bitangent vectors are currently
-       * at the same array index as the normal vectors.
+      /*
+        Fetch whatever tangent and bitangent vectors are currently
+        at the same array index as the normal vectors.
        */
 
       final PVectorI4D<R2SpaceObjectType> v0t =
@@ -221,10 +221,10 @@ public final class R2MeshTangents implements R2MeshTangentsType
       checkVector2D(v1u, "UV", v1.uvIndex());
       checkVector2D(v2u, "UV", v2.uvIndex());
 
-      /**
-       * In the case where, for example, two vertices in a triangle share the
-       * same UV coordinates, it's simply not possible to generate a reasonable
-       * tangent vector.
+      /*
+        In the case where, for example, two vertices in a triangle share the
+        same UV coordinates, it's simply not possible to generate a reasonable
+        tangent vector.
        */
 
       checkTriangleUVs(
@@ -247,9 +247,9 @@ public final class R2MeshTangents implements R2MeshTangentsType
 
       final double d = (s1 * t2) - (s2 * t1);
 
-      /**
-       * Typically caused by triangle vertices sharing the same UV
-       * coordinate. Should be prevented by earlier checks.
+      /*
+        Typically caused by triangle vertices sharing the same UV
+        coordinate. Should be prevented by earlier checks.
        */
 
       Invariants.checkInvariantD(
@@ -316,18 +316,18 @@ public final class R2MeshTangents implements R2MeshTangentsType
       bitangents.set(v2.normalIndex(), v2b_acc);
     }
 
-    /**
-     * Orthonormalize tangents and bitangents.
-     *
-     * The normal, tangent, and bitangent vectors must form an orthonormal
-     * right-handed basis.
-     *
-     * Because precomputed bitangents are optional, this code does two things:
-     * It calculates bitangents, inverting them if necessary to form a
-     * right-handed coordinate space, and it also saves a value in the w
-     * component of the tangent vector in order to allow shading language
-     * programs to perform this inversion themselves, if they are calculating
-     * the bitangents at runtime (with {@code cross (N, T.xyz) * T.w}).
+    /*
+      Orthonormalize tangents and bitangents.
+
+      The normal, tangent, and bitangent vectors must form an orthonormal
+      right-handed basis.
+
+      Because precomputed bitangents are optional, this code does two things:
+      It calculates bitangents, inverting them if necessary to form a
+      right-handed coordinate space, and it also saves a value in the w
+      component of the tangent vector in order to allow shading language
+      programs to perform this inversion themselves, if they are calculating
+      the bitangents at runtime (with {@code cross (N, T.xyz) * T.w}).
      */
 
     for (long index = 0L; index < tangents.size64(); ++index) {
@@ -342,10 +342,10 @@ public final class R2MeshTangents implements R2MeshTangentsType
       checkVector3D(ot, "Orthonormalized Tangent", index);
       checkVector3D(ob, "Orthonormalized Bitangent", index);
 
-      /**
-       * Invert the bitangent if the resulting coordinate system is not
-       * right-handed (and save the fact that the inversion occurred in the w
-       * component of the tangent vector).
+      /*
+        Invert the bitangent if the resulting coordinate system is not
+        right-handed (and save the fact that the inversion occurred in the w
+        component of the tangent vector).
        */
 
       final PVectorI4D<R2SpaceObjectType> rt;

@@ -57,7 +57,6 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
   R2AbstractShader<R2LightDirectionalScreenSingle>
   implements R2ShaderLightScreenSingleType<R2LightDirectionalScreenSingle>
 {
-  private final JCGLProgramUniformType u_transform_volume_modelview;
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_projection_inverse;
   private final JCGLProgramUniformType u_depth_coefficient;
@@ -99,11 +98,10 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
       R2ShaderParameters.getUniformChecked(
         p, "R2_light_directional.intensity", JCGLType.TYPE_FLOAT);
 
-    this.u_transform_volume_modelview =
-      R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_light_matrices.transform_volume_modelview",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+    final JCGLProgramUniformType u_transform_volume_modelview = R2ShaderParameters.getUniformChecked(
+      p,
+      "R2_light_matrices.transform_volume_modelview",
+      JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
         p,
@@ -185,8 +183,8 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
     NullCheck.notNull(m);
     NullCheck.notNull(values);
 
-    /**
-     * Upload the projections for the light volume.
+    /*
+      Upload the projections for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
@@ -194,16 +192,16 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
-    /**
-     * Upload the scene's depth coefficient.
+    /*
+      Upload the scene's depth coefficient.
      */
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
       (float) R2Projections.getDepthCoefficient(m.projection()));
 
-    /**
-     * Transform the light's direction to eye-space and upload it.
+    /*
+      Transform the light's direction to eye-space and upload it.
      */
 
     final PVector3FType<R2SpaceWorldType> direction = values.getDirection();
@@ -222,8 +220,8 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
     g_sh.shaderUniformPutVector3f(
       this.u_light_directional_direction, this.direction_eye3);
 
-    /**
-     * Upload the light values.
+    /*
+      Upload the light values.
      */
 
     g_sh.shaderUniformPutVector3f(

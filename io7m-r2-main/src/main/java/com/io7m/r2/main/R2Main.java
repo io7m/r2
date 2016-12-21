@@ -99,7 +99,6 @@ public final class R2Main implements R2MainType
   private final R2DepthRendererType depth_renderer;
   private final R2DepthVarianceRendererType depth_variance_renderer;
   private final R2ShadowMapRendererType shadow_map_renderer;
-  private final R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType, R2DepthVarianceBufferUsableType> depth_variance_pool;
   private final JCGLProfilingType profiling;
   private boolean deleted;
 
@@ -150,8 +149,8 @@ public final class R2Main implements R2MainType
       NullCheck.notNull(in_depth_renderer);
     this.depth_variance_renderer =
       NullCheck.notNull(in_depth_variance_renderer);
-    this.depth_variance_pool =
-      NullCheck.notNull(in_depth_variance_pool);
+    final R2RenderTargetPoolUsableType<R2DepthVarianceBufferDescriptionType, R2DepthVarianceBufferUsableType> depth_variance_pool = NullCheck.notNull(
+      in_depth_variance_pool);
     this.shadow_map_renderer =
       NullCheck.notNull(in_shadow_map_renderer);
     this.profiling =

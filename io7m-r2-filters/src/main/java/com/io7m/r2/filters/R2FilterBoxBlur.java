@@ -29,7 +29,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -83,7 +83,7 @@ public final class R2FilterBoxBlur<
   private final JCGLInterfaceGL33Type g;
   private final R2RenderTargetPoolUsableType<DD, D> render_target_pool;
   private final R2UnitQuadUsableType quad;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderState render_state;
 
   private R2FilterBoxBlur(
     final JCGLInterfaceGL33Type in_g,
@@ -97,7 +97,7 @@ public final class R2FilterBoxBlur<
     this.shader_blur_v = NullCheck.notNull(in_shader_blur_v);
     this.render_target_pool = NullCheck.notNull(in_rtp_pool);
     this.quad = NullCheck.notNull(in_quad);
-    this.render_state = JCGLRenderStateMutable.create();
+    this.render_state = JCGLRenderState.builder().build();
   }
 
   /**

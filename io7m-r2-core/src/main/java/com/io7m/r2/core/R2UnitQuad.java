@@ -100,8 +100,8 @@ public final class R2UnitQuad implements R2UnitQuadType
     final JCGLIndexBufferType i;
     final JCGLArrayObjectType ao;
 
-    /**
-     * Allocate and populate array buffer.
+    /*
+      Allocate and populate array buffer.
      */
 
     {
@@ -152,8 +152,8 @@ public final class R2UnitQuad implements R2UnitQuadType
       g_ab.arrayBufferUnbind();
     }
 
-    /**
-     * Allocate and populate index buffer.
+    /*
+      Allocate and populate index buffer.
      */
 
     {
@@ -177,8 +177,8 @@ public final class R2UnitQuad implements R2UnitQuadType
       g_ib.indexBufferUnbind();
     }
 
-    /**
-     * Allocate and configure array object.
+    /*
+      Allocate and configure array object.
      */
 
     {

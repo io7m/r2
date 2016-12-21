@@ -30,7 +30,7 @@ import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateType;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
@@ -68,8 +68,8 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   private final R2RenderTargetPoolUsableType<
     R2ImageBufferDescriptionType, R2ImageBufferUsableType> render_target_pool;
   private final R2UnitQuadUsableType quad;
-  private final JCGLRenderStateMutable render_state_additive;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderState render_state_additive;
+  private final JCGLRenderState render_state;
   private final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> shader_copy;
 
   private R2FilterEmission(
@@ -80,31 +80,27 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     final R2RenderTargetPoolUsableType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> in_render_target_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    this.filter_blur =
-      NullCheck.notNull(in_blur);
-    this.shader_emission =
-      NullCheck.notNull(in_shader_emission);
-    this.shader_copy =
-      NullCheck.notNull(in_shader_copy);
-    this.g =
-      NullCheck.notNull(in_g);
-    this.render_target_pool =
-      NullCheck.notNull(in_render_target_pool);
-    this.quad =
-      NullCheck.notNull(in_quad);
+    this.filter_blur = NullCheck.notNull(in_blur);
+    this.shader_emission = NullCheck.notNull(in_shader_emission);
+    this.shader_copy = NullCheck.notNull(in_shader_copy);
+    this.g = NullCheck.notNull(in_g);
+    this.render_target_pool = NullCheck.notNull(in_render_target_pool);
+    this.quad = NullCheck.notNull(in_quad);
 
     this.render_state_additive =
-      JCGLRenderStateMutable.create();
-    this.render_state_additive.setBlendState(Optional.of(JCGLBlendState.of(
-      JCGLBlendFunction.BLEND_ONE,
-      JCGLBlendFunction.BLEND_ONE,
-      JCGLBlendFunction.BLEND_ONE,
-      JCGLBlendFunction.BLEND_ONE,
-      JCGLBlendEquation.BLEND_EQUATION_ADD,
-      JCGLBlendEquation.BLEND_EQUATION_ADD)));
+      JCGLRenderState
+        .builder()
+        .setBlendState(Optional.of(JCGLBlendState.of(
+          JCGLBlendFunction.BLEND_ONE,
+          JCGLBlendFunction.BLEND_ONE,
+          JCGLBlendFunction.BLEND_ONE,
+          JCGLBlendFunction.BLEND_ONE,
+          JCGLBlendEquation.BLEND_EQUATION_ADD,
+          JCGLBlendEquation.BLEND_EQUATION_ADD)))
+        .build();
 
     this.render_state =
-      JCGLRenderStateMutable.create();
+      JCGLRenderState.builder().build();
   }
 
   /**

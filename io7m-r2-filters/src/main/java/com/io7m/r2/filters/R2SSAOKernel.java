@@ -92,8 +92,8 @@ public final class R2SSAOKernel implements R2SSAOKernelType
     RangeCheck.checkIncludedInInteger(
       new_size, "Size", VALID_SIZES, "Valid sizes");
 
-    /**
-     * Generate a hemisphere of random sample vectors.
+    /*
+      Generate a hemisphere of random sample vectors.
      */
 
     long offset = 0L;
@@ -106,9 +106,9 @@ public final class R2SSAOKernel implements R2SSAOKernelType
         (float) Math.random());
       VectorM3F.normalizeInPlace(this.data_cursor);
 
-      /**
-       * Scale the vectors such that lower index samples are closer
-       * to the origin.
+      /*
+        Scale the vectors such that lower index samples are closer
+        to the origin.
        */
 
       final float scale = (float) index / (float) new_size;
