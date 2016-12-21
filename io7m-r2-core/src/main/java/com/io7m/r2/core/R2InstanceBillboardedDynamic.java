@@ -51,10 +51,10 @@ public final class R2InstanceBillboardedDynamic implements
 {
   private final long instance_id;
   private final int max_size;
-  private int used;
   private final JCGLArrayBufferType data_vbo;
   private final JCGLArrayObjectType data_vao;
   private final JCGLBufferUpdateType<JCGLArrayBufferType> update_vbo;
+  private int used;
 
   private R2InstanceBillboardedDynamic(
     final JCGLArrayBuffersType g_ab,

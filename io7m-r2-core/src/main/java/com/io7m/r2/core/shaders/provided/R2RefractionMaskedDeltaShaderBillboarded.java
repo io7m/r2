@@ -33,18 +33,18 @@ import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedVerifier;
 
 import java.util.Optional;
 
 /**
- * Shader for refracting batched instances.
+ * Shader for refracting billboarded instances.
  */
 
-public final class R2RefractionMaskedDeltaShaderBatched
+public final class R2RefractionMaskedDeltaShaderBillboarded
   extends R2AbstractShader<R2RefractionMaskedDeltaParameters>
-  implements R2ShaderTranslucentInstanceBatchedType<R2RefractionMaskedDeltaParameters>
+  implements R2ShaderTranslucentInstanceBillboardedType<R2RefractionMaskedDeltaParameters>
 {
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_view;
@@ -55,7 +55,7 @@ public final class R2RefractionMaskedDeltaShaderBatched
   private final JCGLProgramUniformType u_refraction_mask;
   private final JCGLProgramUniformType u_refraction_delta;
 
-  private R2RefractionMaskedDeltaShaderBatched(
+  private R2RefractionMaskedDeltaShaderBillboarded(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
@@ -65,8 +65,8 @@ public final class R2RefractionMaskedDeltaShaderBatched
       in_shader_env,
       in_pool,
       "com.io7m.r2.shaders.core.R2RefractionMaskedDelta",
-      "com.io7m.r2.shaders.core/R2RefractionMaskedDeltaBatched.vert",
-      Optional.empty(),
+      "com.io7m.r2.shaders.core/R2Billboarded.vert",
+      Optional.of("com.io7m.r2.shaders.core/R2Billboarded.geom"),
       "com.io7m.r2.shaders.core/R2RefractionMaskedDelta.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
@@ -103,14 +103,14 @@ public final class R2RefractionMaskedDeltaShaderBatched
    * @return A new shader
    */
 
-  public static R2ShaderTranslucentInstanceBatchedType<R2RefractionMaskedDeltaParameters>
+  public static R2ShaderTranslucentInstanceBillboardedType<R2RefractionMaskedDeltaParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderTranslucentInstanceBatchedVerifier.newVerifier(
-      new R2RefractionMaskedDeltaShaderBatched(
+    return R2ShaderTranslucentInstanceBillboardedVerifier.newVerifier(
+      new R2RefractionMaskedDeltaShaderBillboarded(
         in_shaders, in_shader_env, in_pool));
   }
 

@@ -18,20 +18,16 @@ package com.io7m.r2.tests.jogl.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jfunctional.Unit;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.provided.R2MaskShaderSingle;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaParameters;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderSingle;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicPremultipliedBatched;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
-import com.io7m.r2.tests.core.shaders.R2MaskShaderSingleContract;
-import com.io7m.r2.tests.core.shaders.R2RefractionMaskedDeltaShaderSingleContract;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
+import com.io7m.r2.tests.core.shaders.R2TranslucentShaderBasicPremultipliedBatchedContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
-public final class R2RefractionMaskedDeltaShaderSingleTest extends
-  R2RefractionMaskedDeltaShaderSingleContract
+public final class R2TranslucentShaderBasicPremultipliedBatchedTest extends
+  R2TranslucentShaderBasicPremultipliedBatchedContract
 {
   @Override
   protected JCGLContextType newGL33Context(
@@ -43,12 +39,13 @@ public final class R2RefractionMaskedDeltaShaderSingleTest extends
   }
 
   @Override
-  protected R2ShaderTranslucentInstanceSingleType<R2RefractionMaskedDeltaParameters>
+  protected R2ShaderTranslucentInstanceBatchedType<R2TranslucentShaderBasicParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2RefractionMaskedDeltaShaderSingle.newShader(g.getShaders(), sources, pool);
+    return R2TranslucentShaderBasicPremultipliedBatched.newShader(
+      g.getShaders(), sources, pool);
   }
 }

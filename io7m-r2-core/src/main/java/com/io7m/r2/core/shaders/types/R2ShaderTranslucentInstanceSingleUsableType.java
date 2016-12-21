@@ -20,17 +20,18 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
+import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 
 /**
- * The type of usable shaders for rendering the surfaces of billboarded
+ * The type of usable shaders for rendering the surfaces of translucent single
  * instances.
  *
  * @param <M> The type of parameter data
  */
 
-public interface R2ShaderInstanceBillboardedUsableType<M> extends
-  R2ShaderUsableType<M>
+public interface R2ShaderTranslucentInstanceSingleUsableType<M>
+  extends R2ShaderTranslucentUsableType<M>
 {
   /**
    * <p>Set shader values that are derived from the current view.</p>
@@ -40,7 +41,7 @@ public interface R2ShaderInstanceBillboardedUsableType<M> extends
    *
    * @param g_sh     An OpenGL interface
    * @param m        The view matrices
-   * @param viewport The target viewport
+   * @param viewport The size of the target viewport
    */
 
   void onReceiveViewValues(
@@ -69,4 +70,23 @@ public interface R2ShaderInstanceBillboardedUsableType<M> extends
     JCGLShadersType g_sh,
     JCGLTextureUnitContextMutableType tc,
     M values);
+
+  /**
+   * <p>Set shader values that are derived from the current instance
+   * transform.</p>
+   *
+   * <p>This method will be called exactly once for each single instance that
+   * uses the shader.</p>
+   *
+   * <p>This method will be called after a call to {@link
+   * #onActivate(JCGLShadersType)} and before a call to {@link
+   * #onValidate()}.</p>
+   *
+   * @param g_sh An OpenGL interface
+   * @param m    The instance matrices
+   */
+
+  void onReceiveInstanceTransformValues(
+    JCGLShadersType g_sh,
+    R2MatricesInstanceSingleValuesType m);
 }

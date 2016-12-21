@@ -50,6 +50,7 @@ import com.io7m.jcanephora.fake.FakeContext;
 import com.io7m.jcanephora.fake.FakeShaderListenerType;
 import com.io7m.jcanephora.fake.JCGLImplementationFake;
 import com.io7m.jcanephora.fake.JCGLImplementationFakeType;
+import com.io7m.jcanephora.renderstate.JCGLBlendState;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jfunctional.PartialBiFunctionType;
 import com.io7m.jtensors.parameterized.PMatrixDirect4x4FType;
@@ -99,6 +100,9 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
@@ -1320,6 +1324,344 @@ public final class R2TestUtilities
       public Object shaderParameters()
       {
         return p;
+      }
+    };
+  }
+
+  public static R2ShaderTranslucentInstanceSingleType<Object>
+  getShaderTranslucentInstanceSingle(
+    final JCGLInterfaceGL33Type g,
+    final long s_id)
+  {
+    final JCGLShadersType g_sh = g.getShaders();
+
+    final List<String> v_lines = new ArrayList<>(3);
+    v_lines.add("void main() {\n");
+    v_lines.add("  gl_Position = vec4 (1.0, 1.0, 1.0, 1.0);\n");
+    v_lines.add("}\n");
+    final JCGLVertexShaderType v =
+      g_sh.shaderCompileVertex("v_main", v_lines);
+
+    final List<String> f_lines = new ArrayList<>(4);
+    f_lines.add("out vec4 color_0;\n");
+    f_lines.add("void main() {\n");
+    f_lines.add("  color_0 = vec4 (1.0, 1.0, 1.0, 1.0);\n");
+    f_lines.add("}\n");
+    final JCGLFragmentShaderType f =
+      g_sh.shaderCompileFragment("f_main", f_lines);
+
+    final JCGLProgramShaderType pr =
+      g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
+
+    return new R2ShaderTranslucentInstanceSingleType<Object>()
+    {
+      @Override
+      public Optional<JCGLBlendState> suggestedBlendState()
+      {
+        return Optional.empty();
+      }
+
+      @Override
+      public void delete(final JCGLInterfaceGL33Type g)
+        throws R2Exception
+      {
+
+      }
+
+      @Override
+      public void onReceiveViewValues(
+        final JCGLShadersType g_sh,
+        final R2MatricesObserverValuesType m,
+        final AreaInclusiveUnsignedLType viewport)
+      {
+
+      }
+
+      @Override
+      public void onReceiveMaterialValues(
+        final JCGLTexturesType g_tex,
+        final JCGLShadersType g_sh,
+        final JCGLTextureUnitContextMutableType tc,
+        final Object values)
+      {
+
+      }
+
+      @Override
+      public void onReceiveInstanceTransformValues(
+        final JCGLShadersType g_sh,
+        final R2MatricesInstanceSingleValuesType m)
+      {
+
+      }
+
+      @Override
+      public boolean isDeleted()
+      {
+        return false;
+      }
+
+      @Override
+      public long getShaderID()
+      {
+        return s_id;
+      }
+
+      @Override
+      public String toString()
+      {
+        return String.format("[shader %d]", Long.valueOf(s_id));
+      }
+
+      @Override
+      public Class<Object> getShaderParametersType()
+      {
+        return Object.class;
+      }
+
+      @Override
+      public JCGLProgramShaderUsableType getShaderProgram()
+      {
+        return pr;
+      }
+
+      @Override
+      public void onActivate(final JCGLShadersType g_sh)
+      {
+
+      }
+
+      @Override
+      public void onValidate()
+        throws R2ExceptionShaderValidationFailed
+      {
+
+      }
+
+      @Override
+      public void onDeactivate(final JCGLShadersType g_sh)
+      {
+
+      }
+    };
+  }
+
+  public static R2ShaderTranslucentInstanceBatchedType<Object>
+  getShaderTranslucentInstanceBatched(
+    final JCGLInterfaceGL33Type g,
+    final long s_id)
+  {
+    final JCGLShadersType g_sh = g.getShaders();
+
+    final List<String> v_lines = new ArrayList<>(3);
+    v_lines.add("void main() {\n");
+    v_lines.add("  gl_Position = vec4 (1.0, 1.0, 1.0, 1.0);\n");
+    v_lines.add("}\n");
+    final JCGLVertexShaderType v =
+      g_sh.shaderCompileVertex("v_main", v_lines);
+
+    final List<String> f_lines = new ArrayList<>(4);
+    f_lines.add("out vec4 color_0;\n");
+    f_lines.add("void main() {\n");
+    f_lines.add("  color_0 = vec4 (1.0, 1.0, 1.0, 1.0);\n");
+    f_lines.add("}\n");
+    final JCGLFragmentShaderType f =
+      g_sh.shaderCompileFragment("f_main", f_lines);
+
+    final JCGLProgramShaderType pr =
+      g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
+
+    return new R2ShaderTranslucentInstanceBatchedType<Object>()
+    {
+      @Override
+      public Optional<JCGLBlendState> suggestedBlendState()
+      {
+        return Optional.empty();
+      }
+
+      @Override
+      public void delete(final JCGLInterfaceGL33Type g)
+        throws R2Exception
+      {
+
+      }
+
+      @Override
+      public void onReceiveViewValues(
+        final JCGLShadersType g_sh,
+        final R2MatricesObserverValuesType m,
+        final AreaInclusiveUnsignedLType viewport)
+      {
+
+      }
+
+      @Override
+      public void onReceiveMaterialValues(
+        final JCGLTexturesType g_tex,
+        final JCGLShadersType g_sh,
+        final JCGLTextureUnitContextMutableType tc,
+        final Object values)
+      {
+
+      }
+
+      @Override
+      public boolean isDeleted()
+      {
+        return false;
+      }
+
+      @Override
+      public long getShaderID()
+      {
+        return s_id;
+      }
+
+      @Override
+      public String toString()
+      {
+        return String.format("[shader %d]", Long.valueOf(s_id));
+      }
+
+      @Override
+      public Class<Object> getShaderParametersType()
+      {
+        return Object.class;
+      }
+
+      @Override
+      public JCGLProgramShaderUsableType getShaderProgram()
+      {
+        return pr;
+      }
+
+      @Override
+      public void onActivate(final JCGLShadersType g_sh)
+      {
+
+      }
+
+      @Override
+      public void onValidate()
+        throws R2ExceptionShaderValidationFailed
+      {
+
+      }
+
+      @Override
+      public void onDeactivate(final JCGLShadersType g_sh)
+      {
+
+      }
+    };
+  }
+
+  public static R2ShaderTranslucentInstanceBillboardedType<Object>
+  getShaderTranslucentInstanceBillboarded(
+    final JCGLInterfaceGL33Type g,
+    final long s_id)
+  {
+    final JCGLShadersType g_sh = g.getShaders();
+
+    final List<String> v_lines = new ArrayList<>(3);
+    v_lines.add("void main() {\n");
+    v_lines.add("  gl_Position = vec4 (1.0, 1.0, 1.0, 1.0);\n");
+    v_lines.add("}\n");
+    final JCGLVertexShaderType v =
+      g_sh.shaderCompileVertex("v_main", v_lines);
+
+    final List<String> f_lines = new ArrayList<>(4);
+    f_lines.add("out vec4 color_0;\n");
+    f_lines.add("void main() {\n");
+    f_lines.add("  color_0 = vec4 (1.0, 1.0, 1.0, 1.0);\n");
+    f_lines.add("}\n");
+    final JCGLFragmentShaderType f =
+      g_sh.shaderCompileFragment("f_main", f_lines);
+
+    final JCGLProgramShaderType pr =
+      g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
+
+    return new R2ShaderTranslucentInstanceBillboardedType<Object>() {
+
+      @Override
+      public Optional<JCGLBlendState> suggestedBlendState()
+      {
+        return Optional.empty();
+      }
+
+      @Override
+      public void delete(final JCGLInterfaceGL33Type g)
+        throws R2Exception
+      {
+
+      }
+
+      @Override
+      public void onReceiveViewValues(
+        final JCGLShadersType g_sh,
+        final R2MatricesObserverValuesType m,
+        final AreaInclusiveUnsignedLType viewport)
+      {
+
+      }
+
+      @Override
+      public void onReceiveMaterialValues(
+        final JCGLTexturesType g_tex,
+        final JCGLShadersType g_sh,
+        final JCGLTextureUnitContextMutableType tc,
+        final Object values)
+      {
+
+      }
+
+      @Override
+      public boolean isDeleted()
+      {
+        return false;
+      }
+
+      @Override
+      public long getShaderID()
+      {
+        return s_id;
+      }
+
+      @Override
+      public String toString()
+      {
+        return String.format("[shader %d]", Long.valueOf(s_id));
+      }
+
+      @Override
+      public Class<Object> getShaderParametersType()
+      {
+        return Object.class;
+      }
+
+      @Override
+      public JCGLProgramShaderUsableType getShaderProgram()
+      {
+        return pr;
+      }
+
+      @Override
+      public void onActivate(final JCGLShadersType g_sh)
+      {
+
+      }
+
+      @Override
+      public void onValidate()
+        throws R2ExceptionShaderValidationFailed
+      {
+
+      }
+
+      @Override
+      public void onDeactivate(final JCGLShadersType g_sh)
+      {
+
       }
     };
   }

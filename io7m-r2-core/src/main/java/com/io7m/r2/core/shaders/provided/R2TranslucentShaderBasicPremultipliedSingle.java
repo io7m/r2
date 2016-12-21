@@ -17,6 +17,8 @@
 package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLBlendEquation;
+import com.io7m.jcanephora.core.JCGLBlendFunction;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
@@ -29,33 +31,36 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleVerifier;
 
 import java.util.Optional;
 
 /**
- * Shader for refracting batched instances.
+ * Simple translucent shader for single instances.
  */
 
-public final class R2RefractionMaskedDeltaShaderBatched
-  extends R2AbstractShader<R2RefractionMaskedDeltaParameters>
-  implements R2ShaderTranslucentInstanceBatchedType<R2RefractionMaskedDeltaParameters>
+public final class R2TranslucentShaderBasicPremultipliedSingle
+  extends R2AbstractShader<R2TranslucentShaderBasicParameters>
+  implements R2ShaderTranslucentInstanceSingleType<R2TranslucentShaderBasicParameters>
 {
+  private final JCGLProgramUniformType u_transform_uv;
+  private final JCGLProgramUniformType u_transform_normal;
+  private final JCGLProgramUniformType u_transform_modelview;
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_view;
   private final JCGLProgramUniformType u_depth_coefficient;
-  private final JCGLProgramUniformType u_refraction_scale;
-  private final JCGLProgramUniformType u_refraction_color;
-  private final JCGLProgramUniformType u_refraction_scene;
-  private final JCGLProgramUniformType u_refraction_mask;
-  private final JCGLProgramUniformType u_refraction_delta;
+  private final JCGLProgramUniformType u_texture_albedo;
+  private final JCGLProgramUniformType u_color;
+  private final JCGLProgramUniformType u_fade_positive_eye_z_near;
+  private final JCGLProgramUniformType u_fade_positive_eye_z_far;
 
-  private R2RefractionMaskedDeltaShaderBatched(
+  private R2TranslucentShaderBasicPremultipliedSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
@@ -64,10 +69,10 @@ public final class R2RefractionMaskedDeltaShaderBatched
       in_shaders,
       in_shader_env,
       in_pool,
-      "com.io7m.r2.shaders.core.R2RefractionMaskedDelta",
-      "com.io7m.r2.shaders.core/R2RefractionMaskedDeltaBatched.vert",
+      "com.io7m.r2.shaders.core.R2TranslucentBasicPremultiplied",
+      "com.io7m.r2.shaders.core/R2SurfaceSingle.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2RefractionMaskedDelta.frag");
+      "com.io7m.r2.shaders.core/R2TranslucentBasicPremultiplied.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
 
@@ -76,21 +81,32 @@ public final class R2RefractionMaskedDeltaShaderBatched
     this.u_transform_view = R2ShaderParameters.getUniformChecked(
       p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
 
+    this.u_transform_modelview =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_surface_matrices_instance.transform_modelview",
+        JCGLType.TYPE_FLOAT_MATRIX_4);
+    this.u_transform_normal =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_surface_matrices_instance.transform_normal",
+        JCGLType.TYPE_FLOAT_MATRIX_3);
+    this.u_transform_uv =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_surface_matrices_instance.transform_uv",
+        JCGLType.TYPE_FLOAT_MATRIX_3);
+
     this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
       p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
 
-    this.u_refraction_scale = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction.scale", JCGLType.TYPE_FLOAT);
-    this.u_refraction_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction.color", JCGLType.TYPE_FLOAT_VECTOR_3);
-    this.u_refraction_scene = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction.scene", JCGLType.TYPE_SAMPLER_2D);
-    this.u_refraction_mask = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction.mask", JCGLType.TYPE_SAMPLER_2D);
-    this.u_refraction_delta = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction_delta", JCGLType.TYPE_SAMPLER_2D);
+    this.u_texture_albedo = R2ShaderParameters.getUniformChecked(
+      p, "R2_texture_albedo", JCGLType.TYPE_SAMPLER_2D);
+    this.u_color = R2ShaderParameters.getUniformChecked(
+      p, "R2_color", JCGLType.TYPE_FLOAT_VECTOR_4);
+    this.u_fade_positive_eye_z_near = R2ShaderParameters.getUniformChecked(
+      p, "R2_fade_positive_eye_z_near", JCGLType.TYPE_FLOAT);
+    this.u_fade_positive_eye_z_far = R2ShaderParameters.getUniformChecked(
+      p, "R2_fade_positive_eye_z_far", JCGLType.TYPE_FLOAT);
 
-    R2ShaderParameters.checkUniformParameterCount(p, 8);
+    R2ShaderParameters.checkUniformParameterCount(p, 10);
   }
 
   /**
@@ -103,21 +119,21 @@ public final class R2RefractionMaskedDeltaShaderBatched
    * @return A new shader
    */
 
-  public static R2ShaderTranslucentInstanceBatchedType<R2RefractionMaskedDeltaParameters>
+  public static R2ShaderTranslucentInstanceSingleType<R2TranslucentShaderBasicParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderTranslucentInstanceBatchedVerifier.newVerifier(
-      new R2RefractionMaskedDeltaShaderBatched(
+    return R2ShaderTranslucentInstanceSingleVerifier.newVerifier(
+      new R2TranslucentShaderBasicPremultipliedSingle(
         in_shaders, in_shader_env, in_pool));
   }
 
   @Override
-  public Class<R2RefractionMaskedDeltaParameters> getShaderParametersType()
+  public Class<R2TranslucentShaderBasicParameters> getShaderParametersType()
   {
-    return R2RefractionMaskedDeltaParameters.class;
+    return R2TranslucentShaderBasicParameters.class;
   }
 
   @Override
@@ -151,30 +167,53 @@ public final class R2RefractionMaskedDeltaShaderBatched
     final JCGLTexturesType g_tex,
     final JCGLShadersType g_sh,
     final JCGLTextureUnitContextMutableType tc,
-    final R2RefractionMaskedDeltaParameters values)
+    final R2TranslucentShaderBasicParameters values)
   {
     NullCheck.notNull(g_tex);
     NullCheck.notNull(g_sh);
     NullCheck.notNull(tc);
     NullCheck.notNull(values);
 
-    final JCGLTextureUnitType unit_mask =
-      tc.unitContextBindTexture2D(g_tex, values.maskTexture().texture());
-    final JCGLTextureUnitType unit_scene =
-      tc.unitContextBindTexture2D(g_tex, values.sceneTexture().texture());
-    final JCGLTextureUnitType unit_delta =
-      tc.unitContextBindTexture2D(g_tex, values.deltaTexture().texture());
+    final JCGLTextureUnitType unit_albedo =
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
 
-    g_sh.shaderUniformPutFloat(this.u_refraction_scale, values.scale());
-    g_sh.shaderUniformPutVector3f(this.u_refraction_color, values.color());
-    g_sh.shaderUniformPutTexture2DUnit(this.u_refraction_mask, unit_mask);
-    g_sh.shaderUniformPutTexture2DUnit(this.u_refraction_scene, unit_scene);
-    g_sh.shaderUniformPutTexture2DUnit(this.u_refraction_delta, unit_delta);
+    g_sh.shaderUniformPutTexture2DUnit(
+      this.u_texture_albedo, unit_albedo);
+
+    g_sh.shaderUniformPutVector4f(
+      this.u_color, values.albedoColor());
+
+    g_sh.shaderUniformPutFloat(
+      this.u_fade_positive_eye_z_far, values.fadeZFar());
+    g_sh.shaderUniformPutFloat(
+      this.u_fade_positive_eye_z_near, values.fadeZNear());
+  }
+
+  @Override
+  public void onReceiveInstanceTransformValues(
+    final JCGLShadersType g_sh,
+    final R2MatricesInstanceSingleValuesType m)
+  {
+    NullCheck.notNull(g_sh);
+    NullCheck.notNull(m);
+
+    g_sh.shaderUniformPutMatrix4x4f(
+      this.u_transform_modelview, m.matrixModelView());
+    g_sh.shaderUniformPutMatrix3x3f(
+      this.u_transform_normal, m.matrixNormal());
+    g_sh.shaderUniformPutMatrix3x3f(
+      this.u_transform_uv, m.matrixUV());
   }
 
   @Override
   public Optional<JCGLBlendState> suggestedBlendState()
   {
-    return Optional.empty();
+    return Optional.of(JCGLBlendState.of(
+      JCGLBlendFunction.BLEND_ONE,
+      JCGLBlendFunction.BLEND_ONE,
+      JCGLBlendFunction.BLEND_ONE_MINUS_SOURCE_ALPHA,
+      JCGLBlendFunction.BLEND_ONE_MINUS_SOURCE_ALPHA,
+      JCGLBlendEquation.BLEND_EQUATION_ADD,
+      JCGLBlendEquation.BLEND_EQUATION_ADD));
   }
 }

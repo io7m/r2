@@ -36,8 +36,9 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentTy
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleUsableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +129,8 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
           translucent.matchTranslucent(
             this,
             (x, y) -> this.renderSingle(y),
-            (x, y) -> this.renderBatched(y));
+            (x, y) -> this.renderBatched(y),
+            (x, y) -> this.renderBillboarded(y));
         }
       } finally {
         pc_base.stopMeasuringIfEnabled();
@@ -150,7 +152,7 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     final JCGLArrayObjectsType g_ao = this.g33.getArrayObjects();
     final JCGLDrawType g_dr = this.g33.getDraw();
 
-    final R2ShaderInstanceBatchedUsableType<T> shader = b.shader();
+    final R2ShaderTranslucentInstanceBatchedUsableType<T> shader = b.shader();
     final T params = b.shaderParameters();
 
     final JCGLTextureUnitContextType tc =
@@ -163,6 +165,8 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
         .setBlendState(b.blending().map(x -> x))
         .setCullingState(b.culling())
         .build());
+
+    b.instance().update(this.g33, this.matrices.transformContext());
 
     try {
       shader.onActivate(g_sh);
@@ -185,6 +189,50 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
   }
 
   @SuppressWarnings("unchecked")
+  private <T> Unit renderBillboarded(
+    final R2TranslucentBillboardedType<T> b)
+  {
+    final JCGLShadersType g_sh = this.g33.getShaders();
+    final JCGLTexturesType g_tex = this.g33.getTextures();
+    final JCGLArrayObjectsType g_ao = this.g33.getArrayObjects();
+    final JCGLDrawType g_dr = this.g33.getDraw();
+
+    final R2ShaderTranslucentInstanceBillboardedUsableType<T> shader = b.shader();
+    final T params = b.shaderParameters();
+
+    final JCGLTextureUnitContextType tc =
+      this.texture_units.unitContextNew();
+
+    JCGLRenderStates.activate(
+      this.g33,
+      JCGLRenderState.builder()
+        .from(this.render_state)
+        .setBlendState(b.blending().map(x -> x))
+        .setCullingState(b.culling())
+        .build());
+
+    b.instance().update(this.g33, this.matrices.transformContext());
+
+    try {
+      shader.onActivate(g_sh);
+      try {
+        shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
+        shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
+        shader.onValidate();
+        g_ao.arrayObjectBind(b.instance().arrayObject());
+        g_dr.draw(
+          JCGLPrimitives.PRIMITIVE_POINTS, 0, b.instance().enabledCount());
+      } finally {
+        shader.onDeactivate(g_sh);
+      }
+    } finally {
+      tc.unitContextFinish(g_tex);
+    }
+
+    return Unit.unit();
+  }
+
+  @SuppressWarnings("unchecked")
   private <T> Unit renderSingleTransformed(
     final R2MatricesInstanceSingleValuesType mi)
   {
@@ -196,7 +244,7 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     final JCGLArrayObjectsType g_ao = this.g33.getArrayObjects();
     final JCGLDrawType g_dr = this.g33.getDraw();
 
-    final R2ShaderInstanceSingleUsableType<T> shader = s.shader();
+    final R2ShaderTranslucentInstanceSingleUsableType<T> shader = s.shader();
     final T params = s.shaderParameters();
 
     final JCGLTextureUnitContextType tc =

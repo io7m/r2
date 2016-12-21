@@ -23,14 +23,14 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableT
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 
 /**
- * The type of usable shaders for rendering the surfaces of billboarded
- * instances.
+ * The type of usable shaders for rendering the surfaces of translucent
+ * billboarded instances.
  *
  * @param <M> The type of parameter data
  */
 
-public interface R2ShaderInstanceBillboardedUsableType<M> extends
-  R2ShaderUsableType<M>
+public interface R2ShaderTranslucentInstanceBillboardedUsableType<M>
+  extends R2ShaderTranslucentUsableType<M>
 {
   /**
    * <p>Set shader values that are derived from the current view.</p>

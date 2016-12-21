@@ -33,12 +33,13 @@ public interface R2TranslucentType<M>
   /**
    * Match on the type of translucent.
    *
-   * @param context    A context value
-   * @param on_single  Evaluated for single instances
-   * @param on_batched Evaluated for batched instances
-   * @param <A>        The type of context values
-   * @param <B>        The type of returned values
-   * @param <E>        The type of raised exceptions
+   * @param context        A context value
+   * @param on_single      Evaluated for single instances
+   * @param on_batched     Evaluated for batched instances
+   * @param on_billboarded Evaluated for billboarded instances
+   * @param <A>            The type of context values
+   * @param <B>            The type of returned values
+   * @param <E>            The type of raised exceptions
    *
    * @return A value of type {@code B}
    *
@@ -49,7 +50,8 @@ public interface R2TranslucentType<M>
   B matchTranslucent(
     A context,
     PartialBiFunctionType<A, R2TranslucentSingleType<M>, B, E> on_single,
-    PartialBiFunctionType<A, R2TranslucentBatchedType<M>, B, E> on_batched)
+    PartialBiFunctionType<A, R2TranslucentBatchedType<M>, B, E> on_batched,
+    PartialBiFunctionType<A, R2TranslucentBillboardedType<M>, B, E> on_billboarded)
     throws E;
 
   /**

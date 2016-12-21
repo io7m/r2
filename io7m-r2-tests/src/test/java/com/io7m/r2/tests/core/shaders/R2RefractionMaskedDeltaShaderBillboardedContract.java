@@ -28,16 +28,15 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaParameters;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderSingle;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderBillboarded;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedType;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
-public abstract class R2RefractionMaskedDeltaShaderSingleContract extends
-  R2ShaderTranslucentInstanceSingleContract<
+public abstract class R2RefractionMaskedDeltaShaderBillboardedContract extends
+  R2ShaderTranslucentInstanceBillboardedContract<
     R2RefractionMaskedDeltaParameters, R2RefractionMaskedDeltaParameters>
 {
   @Override
@@ -76,8 +75,8 @@ public abstract class R2RefractionMaskedDeltaShaderSingleContract extends
       ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderTranslucentInstanceSingleType<R2RefractionMaskedDeltaParameters> s =
-      R2RefractionMaskedDeltaShaderSingle.newShader(
+    final R2ShaderTranslucentInstanceBillboardedType<R2RefractionMaskedDeltaParameters> s =
+      R2RefractionMaskedDeltaShaderBillboarded.newShader(
         g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

@@ -19,20 +19,20 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
 import com.io7m.jcanephora.renderstate.JCGLCullingState;
 import com.io7m.jfunctional.PartialBiFunctionType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedType;
 import org.immutables.value.Value;
 
 import java.util.Optional;
 
 /**
- * The type of single instance translucents.
+ * The type of batched instance translucents.
  *
  * @param <M> The type of shader parameters
  */
 
 @R2ImmutableStyleType
 @Value.Immutable
-public interface R2TranslucentSingleType<M> extends R2TranslucentType<M>
+public interface R2TranslucentBillboardedType<M> extends R2TranslucentType<M>
 {
   @Override
   default <A, B, E extends Throwable> B matchTranslucent(
@@ -42,7 +42,7 @@ public interface R2TranslucentSingleType<M> extends R2TranslucentType<M>
     final PartialBiFunctionType<A, R2TranslucentBillboardedType<M>, B, E> on_billboarded)
     throws E
   {
-    return on_single.call(context, this);
+    return on_billboarded.call(context, this);
   }
 
   /**
@@ -50,14 +50,14 @@ public interface R2TranslucentSingleType<M> extends R2TranslucentType<M>
    */
 
   @Value.Parameter
-  R2InstanceSingleType instance();
+  R2InstanceBillboardedType instance();
 
   /**
    * @return The shader
    */
 
   @Value.Parameter
-  R2ShaderTranslucentInstanceSingleType<M> shader();
+  R2ShaderTranslucentInstanceBillboardedType<M> shader();
 
   @Override
   @Value.Parameter

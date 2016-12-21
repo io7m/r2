@@ -16,14 +16,11 @@
 
 package com.io7m.r2.examples.custom;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFaceWindingOrder;
-import com.io7m.jcanephora.core.JCGLFramebufferBlitBuffer;
-import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.api.JCGLClearType;
 import com.io7m.jcanephora.core.api.JCGLColorBufferMaskingType;
@@ -49,8 +46,7 @@ import com.io7m.jtensors.VectorI4F;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
-import com.io7m.jtensors.parameterized.PVectorI3F;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2CopyDepth;
 import com.io7m.r2.core.R2DepthAttachmentShare;
 import com.io7m.r2.core.R2FilterType;
@@ -76,12 +72,6 @@ import com.io7m.r2.core.R2LightBuffers;
 import com.io7m.r2.core.R2LightSphericalSingle;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
-import com.io7m.r2.core.R2MaskBuffer;
-import com.io7m.r2.core.R2MaskBufferDescription;
-import com.io7m.r2.core.R2MaskBufferType;
-import com.io7m.r2.core.R2MaskInstances;
-import com.io7m.r2.core.R2MaskRenderer;
-import com.io7m.r2.core.R2MaskRendererType;
 import com.io7m.r2.core.R2MaterialOpaqueSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
@@ -98,7 +88,6 @@ import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShadowMapContextType;
 import com.io7m.r2.core.R2ShadowMapRendererExecutionType;
-import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2TransformST;
@@ -106,21 +95,20 @@ import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2TranslucentBatched;
 import com.io7m.r2.core.R2TranslucentRenderer;
 import com.io7m.r2.core.R2TranslucentRendererType;
-import com.io7m.r2.core.R2TranslucentSingle;
 import com.io7m.r2.core.R2TranslucentType;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaParameters;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderBatched;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
+import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicPremultipliedBatched;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.filters.R2BlurParameters;
@@ -139,24 +127,29 @@ import com.io7m.r2.meshes.defaults.R2UnitCube;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
+import com.io7m.sombrero.core.SoShaderPreprocessorType;
+import com.io7m.sombrero.core.SoShaderResolver;
+import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.SwingUtilities;
 import java.util.ArrayList;
-import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 // CHECKSTYLE:OFF
 
-public final class ExampleRefraction implements R2ExampleCustomType
+public final class ExampleTranslucent1 implements R2ExampleCustomType
 {
   private static final Logger LOG;
 
   static {
-    LOG = LoggerFactory.getLogger(ExampleRefraction.class);
+    LOG = LoggerFactory.getLogger(ExampleTranslucent1.class);
   }
 
   private final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view;
@@ -170,18 +163,7 @@ public final class ExampleRefraction implements R2ExampleCustomType
   private R2GeometryBufferType gbuffer;
   private R2LightBufferType lbuffer;
   private R2ImageBufferType ibuffer;
-  private R2ImageBufferType ibuffer_low_res;
   private R2SceneOpaquesType opaques;
-
-  private R2MaskBufferType refract_mask_buffer;
-  private R2MaskRendererType refract_mask_renderer;
-  private R2InstanceSingle refract_thing_single;
-  private R2InstanceBatchedDynamicType refract_thing_batched;
-  private R2TranslucentRendererType refract_translucent_renderer;
-  private R2ShaderTranslucentInstanceSingleType<R2RefractionMaskedDeltaParameters> refract_shader_delta_single;
-  private R2Texture2DUsableType refract_texture_delta;
-  private R2InstanceSingle refract_occluder;
-  private R2ShaderTranslucentInstanceBatchedType<R2RefractionMaskedDeltaParameters> refract_shader_delta_batched;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
@@ -190,6 +172,10 @@ public final class ExampleRefraction implements R2ExampleCustomType
   private R2LightSphericalSingleType sphere_light;
   private R2LightSphericalSingleType sphere_light_bounded;
   private R2InstanceSingleType sphere_light_bounds;
+
+  private R2TranslucentRendererType translucent_renderer;
+  private R2ShaderTranslucentInstanceBatchedType<R2TranslucentShaderBasicParameters> translucent_shader;
+  private R2InstanceBatchedDynamicType translucent;
 
   private R2FilterType<R2FilterLightApplicatorParametersType> filter_light;
   private R2FilterLightApplicatorParameters filter_light_params;
@@ -214,7 +200,7 @@ public final class ExampleRefraction implements R2ExampleCustomType
   private R2FilterType<R2FilterEmissionParameters> filter_emission;
   private R2FilterEmissionParameters filter_emission_params;
 
-  public ExampleRefraction()
+  public ExampleTranslucent1()
   {
     this.view = PMatrixHeapArrayM4x4F.newMatrix();
   }
@@ -271,33 +257,6 @@ public final class ExampleRefraction implements R2ExampleCustomType
         gx.getTextures(),
         m.getTextureUnitAllocator().getRootContext(),
         b.build());
-
-      b.setArea(AreaInclusiveUnsignedL.of(
-        new UnsignedRangeInclusiveL(0L, area.getRangeX().getUpper() / 2L),
-        new UnsignedRangeInclusiveL(0L, area.getRangeY().getUpper() / 2L)
-      ));
-      b.setDepthAttachment(Optional.empty());
-
-      this.ibuffer_low_res = R2ImageBuffer.newImageBuffer(
-        gx.getFramebuffers(),
-        gx.getTextures(),
-        m.getTextureUnitAllocator().getRootContext(),
-        b.build());
-    }
-
-    {
-      final R2MaskBufferDescription.Builder b =
-        R2MaskBufferDescription.builder();
-
-      b.setArea(area);
-      b.setDepthAttachment(
-        R2DepthAttachmentShare.of(this.gbuffer.depthTexture()));
-
-      this.refract_mask_buffer = R2MaskBuffer.newMaskBuffer(
-        gx.getFramebuffers(),
-        gx.getTextures(),
-        m.getTextureUnitAllocator().getRootContext(),
-        b.build());
     }
 
     this.filter_fxaa =
@@ -330,9 +289,18 @@ public final class ExampleRefraction implements R2ExampleCustomType
       R2InstanceSingle.of(
         id_pool.freshID(), mesh, transform, PMatrixI3x3F.identity());
 
+    final SoShaderPreprocessorConfig.Builder b =
+      SoShaderPreprocessorConfig.builder();
+    b.setResolver(SoShaderResolver.create());
+    b.setVersion(OptionalInt.of(330));
+    final SoShaderPreprocessorType p =
+      SoShaderPreprocessorJCPP.create(b.build());
+    final R2ShaderPreprocessingEnvironmentType sources =
+      R2ShaderPreprocessingEnvironment.create(p);
+
     this.geom_shader =
       R2SurfaceShaderBasicReflectiveSingle.newShader(
-        gx.getShaders(), m.getShaderPreprocessingEnvironment(), id_pool);
+        gx.getShaders(), sources, id_pool);
 
     final R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
     {
@@ -341,7 +309,7 @@ public final class ExampleRefraction implements R2ExampleCustomType
       spb.setTextureDefaults(m.getTextureDefaults());
       spb.setNormalTexture(serv.getTexture2D("halls_complex_normal.png"));
       spb.setEnvironmentTexture(serv.getTextureCube("toronto"));
-      spb.setEnvironmentMix(0.3f);
+      spb.setEnvironmentMix(0.5f);
       geom_shader_params = spb.build();
     }
 
@@ -349,8 +317,7 @@ public final class ExampleRefraction implements R2ExampleCustomType
       id_pool.freshID(), this.geom_shader, geom_shader_params);
 
     this.light_ambient_shader =
-      R2LightShaderAmbientSingle.newShader(
-        gx.getShaders(), m.getShaderPreprocessingEnvironment(), id_pool);
+      R2LightShaderAmbientSingle.newShader(gx.getShaders(), sources, id_pool);
     this.light_ambient =
       R2LightAmbientScreenSingle.newLight(
         m.getUnitQuad(), id_pool, m.getTextureDefaults());
@@ -359,7 +326,7 @@ public final class ExampleRefraction implements R2ExampleCustomType
 
     this.sphere_light_shader =
       R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
-        gx.getShaders(), m.getShaderPreprocessingEnvironment(), id_pool);
+        gx.getShaders(), sources, id_pool);
 
     this.sphere_light =
       R2LightSphericalSingle.newLight(sphere, id_pool);
@@ -390,8 +357,7 @@ public final class ExampleRefraction implements R2ExampleCustomType
     this.sphere_light_bounded.setRadius(9.0f);
 
     this.filter_light =
-      R2FilterLightApplicator.newFilter(
-        m.getShaderPreprocessingEnvironment(), gx, id_pool, m.getUnitQuad());
+      R2FilterLightApplicator.newFilter(sources, gx, id_pool, m.getUnitQuad());
 
     {
       final R2FilterLightApplicatorParameters.Builder pb =
@@ -459,65 +425,29 @@ public final class ExampleRefraction implements R2ExampleCustomType
     }
 
     {
-      this.refract_mask_renderer = R2MaskRenderer.newRenderer(
-        gx, m.getShaderPreprocessingEnvironment(), m.getIDPool());
+      this.translucent_renderer =
+        R2TranslucentRenderer.newRenderer(gx);
 
-      this.refract_shader_delta_single =
-        R2RefractionMaskedDeltaShaderSingle.newShader(
+      this.translucent_shader =
+        R2TranslucentShaderBasicPremultipliedBatched.newShader(
           gx.getShaders(),
-          m.getShaderPreprocessingEnvironment(),
+          this.main.getShaderPreprocessingEnvironment(),
           m.getIDPool());
 
-      this.refract_shader_delta_batched =
-        R2RefractionMaskedDeltaShaderBatched.newShader(
-          gx.getShaders(),
-          m.getShaderPreprocessingEnvironment(),
-          m.getIDPool());
-
-      final R2TransformST refract_thing_transform =
-        R2TransformST.newTransform();
-      refract_thing_transform.getTranslation().set3F(1.1f, 0.0f, 0.0f);
-      refract_thing_transform.setScale(0.5f);
-
-      this.refract_thing_single =
-        R2InstanceSingle.of(
-          m.getIDPool().freshID(),
-          sphere.arrayObject(),
-          refract_thing_transform,
-          PMatrixI3x3F.identity());
-
-      this.refract_thing_batched =
+      this.translucent =
         R2InstanceBatchedDynamic.newBatch(
           m.getIDPool(),
           gx.getArrayBuffers(),
           gx.getArrayObjects(),
           sphere.arrayObject(),
-          5);
+          3);
 
-      for (int index = 0; index < 5; ++index) {
-        final R2TransformST t = R2TransformST.newTransform();
-        t.getTranslation().set3F(index, 0.0f, 2.0f);
-        t.setScale(0.25f);
-        this.refract_thing_batched.enableInstance(t);
+      for (int x = -2; x <= 2; x += 2) {
+        final R2TransformST translucent_transform = R2TransformST.newTransform();
+        translucent_transform.getTranslation().set3F((float) x, 1.0f, 0.0f);
+        translucent_transform.setScale(0.1f);
+        this.translucent.enableInstance(translucent_transform);
       }
-
-      this.refract_translucent_renderer =
-        R2TranslucentRenderer.newRenderer(gx);
-
-      this.refract_texture_delta =
-        serv.getTexture2D("delta.png");
-
-      final R2TransformST refract_occluder_transform =
-        R2TransformST.newTransform();
-      refract_occluder_transform.getTranslation().set3F(0.0f, 0.0f, 1.0f);
-      refract_occluder_transform.setScale(0.5f);
-
-      this.refract_occluder =
-        R2InstanceSingle.of(
-          m.getIDPool().freshID(),
-          sphere.arrayObject(),
-          refract_occluder_transform,
-          PMatrixI3x3F.identity());
     }
 
     {
@@ -567,9 +497,6 @@ public final class ExampleRefraction implements R2ExampleCustomType
 
     this.opaques.opaquesReset();
     this.opaques.opaquesAddSingleInstance(this.instance, this.geom_material);
-    this.opaques.opaquesAddSingleInstance(
-      this.refract_occluder,
-      this.geom_material);
 
     this.lights.lightsReset();
     final R2SceneLightsGroupType lg = this.lights.lightsGetGroup(1);
@@ -671,69 +598,22 @@ public final class ExampleRefraction implements R2ExampleCustomType
         t.filter_emission.runFilter(
           t.profiling_root, uc, t.filter_emission_params);
 
-        /*
-         * Render refractive thing.
-         */
-
-        g_fb.framebufferDrawBind(t.refract_mask_buffer.primaryFramebuffer());
-        g_cb.colorBufferMask(true, true, true, true);
-        g_db.depthBufferWriteDisable();
-        g_cl.clear(t.screen_clear_spec);
-
-        final R2MaskInstances mask_instances =
-          R2MaskInstances.builder()
-            .addSingles(t.refract_thing_single)
-            .addBatched(t.refract_thing_batched)
-            .build();
-
-        t.refract_mask_renderer.renderMask(
-          t.refract_mask_buffer.area(),
-          Optional.empty(),
-          t.profiling_root,
-          uc,
-          mo,
-          mask_instances);
-
-        g_fb.framebufferDrawBind(t.ibuffer_low_res.primaryFramebuffer());
-        g_fb.framebufferReadBind(t.ibuffer.primaryFramebuffer());
-        g_fb.framebufferBlit(
-          t.ibuffer.area(),
-          t.ibuffer_low_res.area(),
-          EnumSet.allOf(JCGLFramebufferBlitBuffer.class),
-          JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
-        g_fb.framebufferReadUnbind();
-
-        final R2RefractionMaskedDeltaParameters refract_shader_delta_params =
-          R2RefractionMaskedDeltaParameters.builder()
-            .setSceneTexture(t.ibuffer_low_res.imageTexture())
-            .setMaskTexture(t.refract_mask_buffer.maskTexture())
-            .setDeltaTexture(t.refract_texture_delta)
-            .setColor(new PVectorI3F<>(0.6f, 1.0f, 0.6f))
-            .setScale(0.08f)
-            .build();
-
-        final ArrayList<R2TranslucentType<?>> translucents = new ArrayList<>(1);
-        translucents.add(R2TranslucentSingle.of(
-          t.refract_thing_single,
-          t.refract_shader_delta_single,
-          refract_shader_delta_params,
-          Optional.empty(),
-          JCGLCullingState.of(
-            JCGLFaceSelection.FACE_BACK,
-            JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
-
+        final List<R2TranslucentType<?>> translucents = new ArrayList<>();
         translucents.add(R2TranslucentBatched.of(
-          t.refract_thing_batched,
-          t.refract_shader_delta_batched,
-          refract_shader_delta_params.withColor(
-            new PVectorI3F<>(1.0f, 0.6f, 0.6f)),
-          Optional.empty(),
+          t.translucent,
+          t.translucent_shader,
+          R2TranslucentShaderBasicParameters.builder()
+            .setTextureDefaults(t.main.getTextureDefaults())
+            .setAlbedoColor(new PVectorI4F<>(0.2f, 0.2f, 0.2f, 1.0f))
+            .setFadeZFar(2.0f)
+            .setFadeZNear(1.0f)
+            .build(),
+          t.translucent_shader.suggestedBlendState(),
           JCGLCullingState.of(
             JCGLFaceSelection.FACE_BACK,
             JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
-        g_fb.framebufferDrawBind(t.ibuffer.primaryFramebuffer());
-        t.refract_translucent_renderer.renderTranslucents(
+        t.translucent_renderer.renderTranslucents(
           t.ibuffer.area(),
           Optional.empty(),
           t.profiling_root,

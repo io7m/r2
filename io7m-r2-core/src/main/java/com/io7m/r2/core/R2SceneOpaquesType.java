@@ -109,9 +109,9 @@ public interface R2SceneOpaquesType extends R2SceneOpaquesReadableType
   }
 
   /**
-   * Add a billboarded instance to the scene using the given material. The instance
-   * is placed into the specified {@code group}, which must be a value in the
-   * range {@code [1, 127]}.
+   * Add a billboarded instance to the scene using the given material. The
+   * instance is placed into the specified {@code group}, which must be a value
+   * in the range {@code [1, 127]}.
    *
    * @param i     The instance
    * @param m     The material

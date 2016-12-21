@@ -23,6 +23,7 @@ import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.renderstate.JCGLBlendState;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2AbstractShader;
@@ -31,10 +32,10 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleVerifier;
 
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ import java.util.Optional;
 
 public final class R2RefractionMaskedDeltaShaderSingle
   extends R2AbstractShader<R2RefractionMaskedDeltaParameters>
-  implements R2ShaderInstanceSingleType<R2RefractionMaskedDeltaParameters>
+  implements R2ShaderTranslucentInstanceSingleType<R2RefractionMaskedDeltaParameters>
 {
   private final JCGLProgramUniformType u_transform_uv;
   private final JCGLProgramUniformType u_transform_normal;
@@ -119,13 +120,13 @@ public final class R2RefractionMaskedDeltaShaderSingle
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleType<R2RefractionMaskedDeltaParameters>
+  public static R2ShaderTranslucentInstanceSingleType<R2RefractionMaskedDeltaParameters>
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderInstanceSingleVerifier.newVerifier(
+    return R2ShaderTranslucentInstanceSingleVerifier.newVerifier(
       new R2RefractionMaskedDeltaShaderSingle(
         in_shaders, in_shader_env, in_pool));
   }
@@ -202,5 +203,11 @@ public final class R2RefractionMaskedDeltaShaderSingle
       this.u_transform_normal, m.matrixNormal());
     g_sh.shaderUniformPutMatrix3x3f(
       this.u_transform_uv, m.matrixUV());
+  }
+
+  @Override
+  public Optional<JCGLBlendState> suggestedBlendState()
+  {
+    return Optional.empty();
   }
 }
