@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -36,6 +37,7 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
@@ -164,18 +166,23 @@ public final class R2LightShaderAmbientSingle extends
 
   @Override
   public void onReceiveValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightAmbientScreenSingle values,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersLightType<R2LightAmbientScreenSingle> light_parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(m);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(light_parameters);
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    final R2MatricesObserverValuesType m =
+      light_parameters.observerMatrices();
+    final AreaInclusiveUnsignedLType viewport =
+      light_parameters.viewport();
+    final R2LightAmbientScreenSingle light =
+      light_parameters.values();
+    final JCGLTextureUnitContextMutableType tc =
+      light_parameters.textureUnitContext();
 
     /*
       Upload the projections for the light volume.
@@ -211,15 +218,14 @@ public final class R2LightShaderAmbientSingle extends
       Upload the occlusion texture and light values.
      */
 
-    final JCGLTextureUnitType unit_ao = tc.unitContextBindTexture2D(
-      g_tex,
-      values.getOcclusionMap().texture());
+    final JCGLTextureUnitType unit_ao =
+      tc.unitContextBindTexture2D(g_tex, light.getOcclusionMap().texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_occlusion, unit_ao);
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_color, values.color());
+      this.u_light_color, light.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_intensity, values.intensity());
+      this.u_light_intensity, light.intensity());
   }
 }

@@ -46,6 +46,7 @@ import com.io7m.r2.core.shaders.provided.R2AbstractShader;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -257,18 +258,23 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
 
   @Override
   public void onReceiveValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightSphericalSingleReadableType values,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersLightType<R2LightSphericalSingleReadableType> light_parameters)
   {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(values);
-    NullCheck.notNull(m);
+    NullCheck.notNull(g);
+    NullCheck.notNull(light_parameters);
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    final R2MatricesObserverValuesType m =
+      light_parameters.observerMatrices();
+    final AreaInclusiveUnsignedLType viewport =
+      light_parameters.viewport();
+    final R2LightSphericalSingleReadableType light =
+      light_parameters.values();
+    final JCGLTextureUnitContextMutableType tc =
+      light_parameters.textureUnitContext();
 
     /*
       Upload the current view rays.
@@ -328,7 +334,7 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
      */
 
     final PVectorReadable3FType<R2SpaceWorldType> position =
-      values.originPosition();
+      light.originPosition();
     this.position_world.copyFrom3F(position);
     this.position_world.setWF(1.0f);
 
@@ -349,13 +355,13 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_spherical_color, values.color());
+      this.u_light_spherical_color, light.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_spherical_intensity, values.intensity());
+      this.u_light_spherical_intensity, light.intensity());
     g_sh.shaderUniformPutFloat(
-      this.u_light_spherical_inverse_falloff, 1.0f / values.falloff());
+      this.u_light_spherical_inverse_falloff, 1.0f / light.falloff());
     g_sh.shaderUniformPutFloat(
-      this.u_light_spherical_inverse_range, 1.0f / values.radius());
+      this.u_light_spherical_inverse_range, 1.0f / light.radius());
   }
 
   @Override

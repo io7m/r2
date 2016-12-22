@@ -16,14 +16,12 @@
 
 package com.io7m.r2.core.debug;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PVector3FType;
@@ -42,6 +40,7 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -172,16 +171,18 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
 
   @Override
   public void onReceiveValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightDirectionalScreenSingle values,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersLightType<R2LightDirectionalScreenSingle> light_parameters)
   {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(light_parameters);
+
+    final JCGLShadersType g_sh = g.getShaders();
+
+    final R2MatricesObserverValuesType m =
+      light_parameters.observerMatrices();
+    final R2LightDirectionalScreenSingle light =
+      light_parameters.values();
 
     /*
       Upload the projections for the light volume.
@@ -204,7 +205,7 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
       Transform the light's direction to eye-space and upload it.
      */
 
-    final PVector3FType<R2SpaceWorldType> direction = values.getDirection();
+    final PVector3FType<R2SpaceWorldType> direction = light.getDirection();
     this.direction_world.copyFrom3F(direction);
     this.direction_world.setWF(0.0f);
 
@@ -225,8 +226,8 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_directional_color, values.color());
+      this.u_light_directional_color, light.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_directional_intensity, values.intensity());
+      this.u_light_directional_intensity, light.intensity());
   }
 }

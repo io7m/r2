@@ -48,6 +48,7 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLight;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -121,15 +122,14 @@ public abstract class R2ShaderLightProjectiveContract<
 
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr =
       ta.getRootContext();
     final R2TextureDefaultsType td =
       R2TextureDefaults.newDefaults(g_tex, tr);
 
     final R2GeometryBufferType gbuffer =
-      R2ShaderLightProjectiveContract.newGeometryBuffer(g_fb, g_tex, tr);
+      newGeometryBuffer(g_fb, g_tex, tr);
 
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
     final JCGLTextureUnitType ua =
@@ -160,8 +160,9 @@ public abstract class R2ShaderLightProjectiveContract<
     mat.withObserver(view, proj, this, (mo, x) -> {
       f.onActivate(g);
       f.onReceiveBoundGeometryBufferTextures(g_sh, gbuffer, ua, us, ud, un);
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
-
+      f.onReceiveValues(
+        g,
+        R2ShaderParametersLight.of(tc, params, mo, gbuffer.area()));
       return mo.withProjectiveLight(params, this, (mp, y) -> {
         f.onReceiveVolumeLightTransform(g, mp);
         f.onReceiveProjectiveLight(g, mp);
@@ -201,7 +202,7 @@ public abstract class R2ShaderLightProjectiveContract<
       R2TextureDefaults.newDefaults(g_tex, tr);
 
     final R2GeometryBufferType gbuffer =
-      R2ShaderLightProjectiveContract.newGeometryBuffer(g_fb, g_tex, tr);
+      newGeometryBuffer(g_fb, g_tex, tr);
 
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -221,7 +222,9 @@ public abstract class R2ShaderLightProjectiveContract<
 
     this.expected.expect(FSMTransitionException.class);
     mat.withObserver(view, proj, this, (mo, x) -> {
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
+      f.onReceiveValues(
+        g,
+        R2ShaderParametersLight.of(tc, params, mo, gbuffer.area()));
       return Unit.unit();
     });
   }

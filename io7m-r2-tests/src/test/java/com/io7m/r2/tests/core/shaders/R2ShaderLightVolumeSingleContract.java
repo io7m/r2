@@ -47,6 +47,7 @@ import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLight;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -157,7 +158,8 @@ public abstract class R2ShaderLightVolumeSingleContract<
     mat.withObserver(view, proj, this, (mo, x) -> {
       f.onActivate(g);
       f.onReceiveBoundGeometryBufferTextures(g_sh, gbuffer, ua, us, ud, un);
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
+      f.onReceiveValues(
+        g, R2ShaderParametersLight.of(tc, params, mo, gbuffer.area()));
 
       return mo.withVolumeLight(params, this, (mv, y) -> {
         f.onReceiveVolumeLightTransform(g, mv);
@@ -215,7 +217,8 @@ public abstract class R2ShaderLightVolumeSingleContract<
 
     this.expected.expect(FSMTransitionException.class);
     mat.withObserver(view, proj, this, (mo, x) -> {
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
+      f.onReceiveValues(
+        g, R2ShaderParametersLight.of(tc, params, mo, gbuffer.area()));
       return Unit.unit();
     });
   }
