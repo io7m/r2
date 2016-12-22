@@ -160,7 +160,7 @@ public abstract class R2ShaderLightVolumeSingleContract<
       f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
 
       return mo.withVolumeLight(params, this, (mv, y) -> {
-        f.onReceiveVolumeLightTransform(g_sh, mv);
+        f.onReceiveVolumeLightTransform(g, mv);
         f.onValidate();
         f.onDeactivate(g);
         return Unit.unit();

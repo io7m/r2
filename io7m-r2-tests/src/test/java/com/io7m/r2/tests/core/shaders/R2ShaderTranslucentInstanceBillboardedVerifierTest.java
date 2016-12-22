@@ -30,6 +30,7 @@ import com.io7m.jfsm.core.FSMTransitionException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterial;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersView;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedVerifier;
@@ -55,11 +56,9 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
       R2ShaderTranslucentInstanceBillboardedVerifier.newVerifier(f);
 
     final JCGLTexturesType g_tex = g.getTextures();
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -72,10 +71,12 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
 
     v.onActivate(g);
     v.onReceiveViewValues(g, vp);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
     v.onValidate();
     v.onDeactivate(g);
   }
@@ -92,11 +93,9 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
       R2ShaderTranslucentInstanceBillboardedVerifier.newVerifier(f);
 
     final JCGLTexturesType g_tex = g.getTextures();
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -109,17 +108,19 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
 
     v.onActivate(g);
     v.onReceiveViewValues(g, vp);
 
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
     v.onValidate();
 
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
     v.onValidate();
 
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
     v.onValidate();
 
     v.onDeactivate(g);
@@ -137,11 +138,9 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
       R2ShaderTranslucentInstanceBillboardedVerifier.newVerifier(f);
 
     final JCGLTexturesType g_tex = g.getTextures();
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -154,10 +153,12 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
 
     v.onActivate(g);
     v.onReceiveViewValues(g, vp);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
 
     this.expected.expect(FSMTransitionException.class);
     v.onReceiveViewValues(g, vp);
@@ -226,18 +227,19 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
     final R2ShaderTranslucentInstanceBillboardedType<Object> v =
       R2ShaderTranslucentInstanceBillboardedVerifier.newVerifier(f);
 
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
+
     v.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
   }
 
   @Test

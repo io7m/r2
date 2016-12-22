@@ -409,7 +409,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
         try {
           t.program.onReceiveMaterialValues(
             t.g33, t.configureMaterialParameters(tc, Unit.unit()));
-          t.program.onReceiveInstanceTransformValues(t.shaders, mi);
+          t.program.onReceiveInstanceTransformValues(t.g33, mi);
           t.program.onValidate();
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         } finally {

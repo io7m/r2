@@ -65,8 +65,8 @@ public interface R2ShaderLightSingleUsableType<
   /**
    * <p>Set light values.</p>
    *
-   * <p>This method will be called once for each projective light that uses the
-   * current shader.</p>
+   * <p>This method will be called once for each light that uses the current
+   * shader.</p>
    *
    * <p>This method will be called after a call to {@link
    * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)}

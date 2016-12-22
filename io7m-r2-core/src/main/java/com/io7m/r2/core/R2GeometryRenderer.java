@@ -435,7 +435,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
         (mi, t) -> {
           final R2ShaderInstanceSingleUsableType<?> s =
             t.material_single.shader();
-          s.onReceiveInstanceTransformValues(t.shaders, mi);
+          s.onReceiveInstanceTransformValues(t.g33, mi);
           s.onValidate();
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
           return Unit.unit();

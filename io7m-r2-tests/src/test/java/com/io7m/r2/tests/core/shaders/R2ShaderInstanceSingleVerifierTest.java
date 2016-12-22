@@ -79,8 +79,7 @@ public final class R2ShaderInstanceSingleVerifierTest
     v.onActivate(g);
     v.onReceiveViewValues(g, vp);
     v.onReceiveMaterialValues(g, mp);
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     v.onValidate();
     v.onDeactivate(g);
   }
@@ -120,18 +119,15 @@ public final class R2ShaderInstanceSingleVerifierTest
     v.onReceiveViewValues(g, vp);
 
     v.onReceiveMaterialValues(g, mp);
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     v.onValidate();
 
     v.onReceiveMaterialValues(g, mp);
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     v.onValidate();
 
     v.onReceiveMaterialValues(g, mp);
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     v.onValidate();
 
     v.onDeactivate(g);
@@ -171,8 +167,7 @@ public final class R2ShaderInstanceSingleVerifierTest
     v.onActivate(g);
     v.onReceiveViewValues(g, vp);
     v.onReceiveMaterialValues(g, mp);
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
 
     this.expected.expect(FSMTransitionException.class);
     v.onReceiveViewValues(g, vp);
@@ -227,8 +222,7 @@ public final class R2ShaderInstanceSingleVerifierTest
     v.onActivate(g);
     v.onReceiveViewValues(g, vp);
     this.expected.expect(FSMTransitionException.class);
-    v.onReceiveInstanceTransformValues(
-      g.getShaders(), new R2EmptyInstanceTransformValues());
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
   }
 
   @Test

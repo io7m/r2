@@ -161,11 +161,13 @@ public final class R2DepthShaderBasicStippledSingle extends
 
   @Override
   public void onReceiveInstanceTransformValues(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesInstanceSingleValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
+
+    final JCGLShadersType g_sh = g.getShaders();
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_modelview, m.matrixModelView());

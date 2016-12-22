@@ -179,11 +179,11 @@ public final class R2ShaderLightVolumeSingleVerifier<
 
   @Override
   public void onReceiveVolumeLightTransform(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesVolumeLightValuesType m)
   {
     this.state.transition(State.STATE_VOLUME_RECEIVED);
-    this.shader.onReceiveVolumeLightTransform(g_sh, m);
+    this.shader.onReceiveVolumeLightTransform(g, m);
   }
 
   private enum State

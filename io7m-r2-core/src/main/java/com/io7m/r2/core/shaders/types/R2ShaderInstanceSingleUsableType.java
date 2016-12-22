@@ -17,7 +17,6 @@
 package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 
 /**
@@ -72,12 +71,11 @@ public interface R2ShaderInstanceSingleUsableType<M>
    * <p>This method will be called after a call to {@link
    * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)}
    * and before a call to {@link #onValidate()}.</p>
-   *
-   * @param g_sh An OpenGL interface
+   *  @param g An OpenGL interface
    * @param m    The instance matrices
    */
 
   void onReceiveInstanceTransformValues(
-    JCGLShadersType g_sh,
+    JCGLInterfaceGL33Type g,
     R2MatricesInstanceSingleValuesType m);
 }

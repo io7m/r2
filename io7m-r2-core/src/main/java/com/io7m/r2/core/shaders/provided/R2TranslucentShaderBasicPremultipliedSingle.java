@@ -34,6 +34,7 @@ import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
@@ -166,15 +167,19 @@ public final class R2TranslucentShaderBasicPremultipliedSingle
 
   @Override
   public void onReceiveMaterialValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final R2TranslucentShaderBasicParameters values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersMaterialType<R2TranslucentShaderBasicParameters> mat_parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(mat_parameters);
+
+    final JCGLTexturesType g_tex = g.getTextures();
+    final JCGLShadersType g_sh = g.getShaders();
+
+    final JCGLTextureUnitContextMutableType tc =
+      mat_parameters.textureUnitContext();
+    final R2TranslucentShaderBasicParameters values =
+      mat_parameters.values();
 
     final JCGLTextureUnitType unit_albedo =
       tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
@@ -193,11 +198,13 @@ public final class R2TranslucentShaderBasicPremultipliedSingle
 
   @Override
   public void onReceiveInstanceTransformValues(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesInstanceSingleValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
+
+    final JCGLShadersType g_sh = g.getShaders();
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_modelview, m.matrixModelView());

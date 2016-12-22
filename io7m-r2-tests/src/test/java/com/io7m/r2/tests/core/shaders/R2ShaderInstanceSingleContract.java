@@ -102,8 +102,7 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     f.onActivate(g);
     f.onReceiveViewValues(g, vp);
     f.onReceiveMaterialValues(g, mp);
-    f.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    f.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     f.onValidate();
     f.onDeactivate(g);
   }
@@ -151,18 +150,15 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     f.onReceiveViewValues(g, vp);
 
     f.onReceiveMaterialValues(g, mp);
-    f.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    f.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     f.onValidate();
 
     f.onReceiveMaterialValues(g, mp);
-    f.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    f.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     f.onValidate();
 
     f.onReceiveMaterialValues(g, mp);
-    f.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    f.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     f.onValidate();
 
     f.onDeactivate(g);
@@ -210,8 +206,7 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     f.onActivate(g);
     f.onReceiveViewValues(g, vp);
     f.onReceiveMaterialValues(g, mp);
-    f.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    f.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
 
     this.expected.expect(FSMTransitionException.class);
     f.onReceiveViewValues(g, vp);
@@ -280,8 +275,7 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     f.onActivate(g);
     f.onReceiveViewValues(g, vp);
     this.expected.expect(FSMTransitionException.class);
-    f.onReceiveInstanceTransformValues(
-      g.getShaders(), new R2EmptyInstanceTransformValues());
+    f.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
   }
 
   @Test
@@ -372,16 +366,13 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     f.onReceiveViewValues(g, vp);
     f.onReceiveMaterialValues(g, mp);
 
-    f.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    f.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     f.onValidate();
 
-    f.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    f.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     f.onValidate();
 
-    f.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    f.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     f.onValidate();
 
     f.onDeactivate(g);

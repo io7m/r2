@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -251,15 +252,17 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
 
   @Override
   public void onReceiveVolumeLightTransform(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesVolumeLightValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
 
     /*
       Upload the light volume modelview matrix.
      */
+
+    final JCGLShadersType g_sh = g.getShaders();
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_volume_modelview, m.matrixLightModelView());

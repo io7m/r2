@@ -277,8 +277,7 @@ public final class R2MaskRenderer implements R2MaskRendererType
             PMatrixI3x3F.identity(),
             this,
             (mi, tt) -> {
-              tt.shader_single.onReceiveInstanceTransformValues(
-                tt.g.getShaders(), mi);
+              tt.shader_single.onReceiveInstanceTransformValues(tt.g, mi);
               tt.shader_single.onValidate();
               tt.g.getDraw().drawElements(
                 JCGLPrimitives.PRIMITIVE_TRIANGLES);

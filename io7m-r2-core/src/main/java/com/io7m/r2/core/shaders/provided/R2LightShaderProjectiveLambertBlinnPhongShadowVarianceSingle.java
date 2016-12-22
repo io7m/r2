@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -292,11 +293,13 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
 
   @Override
   public void onReceiveProjectiveLight(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesProjectiveLightValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
+
+    final JCGLShadersType g_sh = g.getShaders();
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_eye_to_light_eye, m.matrixProjectiveEyeToLightEye());
@@ -438,30 +441,33 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
 
   @Override
   public void onReceiveShadowMap(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final JCGLTextureUnitContextMutableType tc,
     final R2Texture2DUsableType map)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(tc);
     NullCheck.notNull(map);
 
-    final JCGLTextureUnitType unit_shadow = tc.unitContextBindTexture2D(
-      g_tex,
-      map.texture());
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    final JCGLTextureUnitType unit_shadow =
+      tc.unitContextBindTexture2D(g_tex, map.texture());
+
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_shadow_map, unit_shadow);
   }
 
   @Override
   public void onReceiveVolumeLightTransform(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesVolumeLightValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
+
+    final JCGLShadersType g_sh = g.getShaders();
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_volume_modelview, m.matrixLightModelView());

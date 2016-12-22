@@ -163,8 +163,8 @@ public abstract class R2ShaderLightProjectiveContract<
       f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
 
       return mo.withProjectiveLight(params, this, (mp, y) -> {
-        f.onReceiveVolumeLightTransform(g_sh, mp);
-        f.onReceiveProjectiveLight(g_sh, mp);
+        f.onReceiveVolumeLightTransform(g, mp);
+        f.onReceiveProjectiveLight(g, mp);
         f.onValidate();
         f.onDeactivate(g);
         return Unit.unit();

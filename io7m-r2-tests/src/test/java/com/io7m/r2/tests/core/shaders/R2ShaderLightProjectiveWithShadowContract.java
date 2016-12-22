@@ -122,8 +122,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
 
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr =
       ta.getRootContext();
     final R2TextureDefaultsType td =
@@ -152,7 +151,6 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
     final T params =
       this.newLight(g, pool, tc, td);
 
-
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
     final R2MatricesType mat =
@@ -166,9 +164,9 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
       f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
 
       return mo.withProjectiveLight(params, this, (mp, y) -> {
-        f.onReceiveVolumeLightTransform(g_sh, mp);
-        f.onReceiveProjectiveLight(g_sh, mp);
-        f.onReceiveShadowMap(g_tex, g_sh, tc, td.texture2DWhite());
+        f.onReceiveVolumeLightTransform(g, mp);
+        f.onReceiveProjectiveLight(g, mp);
+        f.onReceiveShadowMap(g, tc, td.texture2DWhite());
         f.onValidate();
         f.onDeactivate(g);
         return Unit.unit();

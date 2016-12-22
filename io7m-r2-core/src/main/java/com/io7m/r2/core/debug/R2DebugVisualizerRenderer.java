@@ -348,8 +348,7 @@ public final class R2DebugVisualizerRenderer implements
                 this,
                 (m_instance, t) -> {
                   t.shader_single.onReceiveInstanceTransformValues(
-                    t.g.getShaders(),
-                    m_instance);
+                    t.g, m_instance);
                   t.shader_single.onValidate();
                   t.g.getDraw().drawElements(
                     JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -409,8 +408,7 @@ public final class R2DebugVisualizerRenderer implements
                 this,
                 (m_instance, t) -> {
                   t.shader_single.onReceiveInstanceTransformValues(
-                    t.g.getShaders(),
-                    m_instance);
+                    t.g, m_instance);
                   t.shader_single.onValidate();
                   t.g.getDraw().drawElements(JCGLPrimitives.PRIMITIVE_LINES);
                   return Unit.unit();
@@ -783,7 +781,7 @@ public final class R2DebugVisualizerRenderer implements
         this,
         (mi, t) -> {
           final R2ShaderInstanceSingleUsableType<?> s = t.shader_single;
-          s.onReceiveInstanceTransformValues(t.shaders, mi);
+          s.onReceiveInstanceTransformValues(t.g33, mi);
           s.onValidate();
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
           return Unit.unit();
@@ -1048,7 +1046,7 @@ public final class R2DebugVisualizerRenderer implements
                 c.g33,
                 c.configureMaterialParameters(
                   lc.group_texture_context, c.light_color));
-              c.shader_single.onReceiveInstanceTransformValues(c.shaders, mi);
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1067,7 +1065,7 @@ public final class R2DebugVisualizerRenderer implements
                 c.g33,
                 c.configureMaterialParameters(
                   lc.group_texture_context, c.light_color));
-              c.shader_single.onReceiveInstanceTransformValues(c.shaders, mi);
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1123,7 +1121,7 @@ public final class R2DebugVisualizerRenderer implements
                 c.g33,
                 c.configureMaterialParameters(
                   lc.group_texture_context, c.light_color));
-              c.shader_single.onReceiveInstanceTransformValues(c.shaders, mi);
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1142,8 +1140,7 @@ public final class R2DebugVisualizerRenderer implements
                 c.g33,
                 c.configureMaterialParameters(
                   lc.group_texture_context, c.light_color));
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1225,8 +1222,7 @@ public final class R2DebugVisualizerRenderer implements
                     c.g33,
                     c.configureMaterialParameters(
                       lc.texture_context, c.light_color));
-                  c.shader_single.onReceiveInstanceTransformValues(
-                    c.shaders, mi);
+                  c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
                   c.shader_single.onValidate();
 
                   c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1335,7 +1331,7 @@ public final class R2DebugVisualizerRenderer implements
                 c.g33,
                 c.configureMaterialParameters(
                   lc.texture_context, c.light_color));
-              c.shader_single.onReceiveInstanceTransformValues(c.shaders, mi);
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1354,8 +1350,7 @@ public final class R2DebugVisualizerRenderer implements
                 c.g33,
                 c.configureMaterialParameters(
                   lc.texture_context, c.light_color));
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1411,7 +1406,7 @@ public final class R2DebugVisualizerRenderer implements
                 c.g33,
                 c.configureMaterialParameters(
                   lc.texture_context, c.light_color));
-              c.shader_single.onReceiveInstanceTransformValues(c.shaders, mi);
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1430,8 +1425,7 @@ public final class R2DebugVisualizerRenderer implements
                 c.g33,
                 c.configureMaterialParameters(
                   lc.texture_context, c.light_color));
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);

@@ -182,20 +182,20 @@ public final class R2ShaderLightProjectiveVerifier<
 
   @Override
   public void onReceiveVolumeLightTransform(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesVolumeLightValuesType m)
   {
     this.state.transition(State.STATE_VOLUME_RECEIVED);
-    this.shader.onReceiveVolumeLightTransform(g_sh, m);
+    this.shader.onReceiveVolumeLightTransform(g, m);
   }
 
   @Override
   public void onReceiveProjectiveLight(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesProjectiveLightValuesType m)
   {
     this.state.transition(State.STATE_PROJECTIVE_RECEIVED);
-    this.shader.onReceiveProjectiveLight(g_sh, m);
+    this.shader.onReceiveProjectiveLight(g, m);
   }
 
   private enum State

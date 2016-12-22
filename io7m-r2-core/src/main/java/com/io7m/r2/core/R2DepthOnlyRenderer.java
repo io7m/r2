@@ -381,7 +381,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
         (mi, t) -> {
           final R2ShaderDepthSingleUsableType<?> s =
             t.material_single.shader();
-          s.onReceiveInstanceTransformValues(t.shaders, mi);
+          s.onReceiveInstanceTransformValues(t.g33, mi);
           s.onValidate();
 
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);

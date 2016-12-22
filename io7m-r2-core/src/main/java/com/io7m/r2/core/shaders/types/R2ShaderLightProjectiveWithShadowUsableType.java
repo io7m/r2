@@ -16,8 +16,7 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.r2.core.R2LightProjectiveWithShadowReadableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
@@ -42,15 +41,13 @@ public interface R2ShaderLightProjectiveWithShadowUsableType<
    * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)}
    * and before a call to {@link #onValidate()}.</p>
    *
-   * @param g_tex A texture interface
-   * @param g_sh  A shader interface
-   * @param tc    A texture unit context
-   * @param map   A rendered shadow map
+   * @param g   An OpenGL interface
+   * @param tc  A texture unit context
+   * @param map A rendered shadow map
    */
 
   void onReceiveShadowMap(
-    JCGLTexturesType g_tex,
-    JCGLShadersType g_sh,
+    JCGLInterfaceGL33Type g,
     JCGLTextureUnitContextMutableType tc,
     R2Texture2DUsableType map);
 }

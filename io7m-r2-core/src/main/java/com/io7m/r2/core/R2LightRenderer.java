@@ -549,7 +549,7 @@ public final class R2LightRenderer implements R2LightRendererType
           this.light_shader);
 
       this.input_state.parent.matrices.withVolumeLight(light, this, (mv, t) -> {
-        s.onReceiveVolumeLightTransform(t.shaders, mv);
+        s.onReceiveVolumeLightTransform(t.g33, mv);
         s.onValidate();
         return Unit.unit();
       });
@@ -588,15 +588,14 @@ public final class R2LightRenderer implements R2LightRendererType
       try {
         this.input_state.parent.matrices.withProjectiveLight(
           light, this, (mp, t) -> {
-            s.onReceiveVolumeLightTransform(t.shaders, mp);
-            s.onReceiveProjectiveLight(t.shaders, mp);
+            s.onReceiveVolumeLightTransform(t.g33, mp);
+            s.onReceiveProjectiveLight(t.g33, mp);
 
             final R2Texture2DUsableType map =
               t.input_state.parent.shadow_maps.shadowMapGet(t.light_shadow);
 
             s.onReceiveShadowMap(
-              t.textures,
-              t.shaders,
+              t.g33,
               t.light_each_context,
               map);
             s.onValidate();
@@ -618,8 +617,8 @@ public final class R2LightRenderer implements R2LightRendererType
 
       this.input_state.parent.matrices.withProjectiveLight(
         light, this, (mp, t) -> {
-          s.onReceiveVolumeLightTransform(t.shaders, mp);
-          s.onReceiveProjectiveLight(t.shaders, mp);
+          s.onReceiveVolumeLightTransform(t.g33, mp);
+          s.onReceiveProjectiveLight(t.g33, mp);
           s.onValidate();
           return Unit.unit();
         });
@@ -1095,8 +1094,7 @@ public final class R2LightRenderer implements R2LightRendererType
             this.input_state.volume.uvMatrix(),
             this,
             (mi, t) -> {
-              t.clip_volume_stencil.onReceiveInstanceTransformValues(
-                t.shaders, mi);
+              t.clip_volume_stencil.onReceiveInstanceTransformValues(t.g33, mi);
               t.clip_volume_stencil.onValidate();
               t.array_objects.arrayObjectBind(
                 t.input_state.volume.arrayObject());
@@ -1201,8 +1199,8 @@ public final class R2LightRenderer implements R2LightRendererType
 
       this.input_state.parent.matrices.withProjectiveLight(
         light, this, (mp, t) -> {
-          s.onReceiveVolumeLightTransform(t.shaders, mp);
-          s.onReceiveProjectiveLight(t.shaders, mp);
+          s.onReceiveVolumeLightTransform(t.g33, mp);
+          s.onReceiveProjectiveLight(t.g33, mp);
           s.onValidate();
           return Unit.unit();
         });
@@ -1218,7 +1216,7 @@ public final class R2LightRenderer implements R2LightRendererType
           this.light_shader);
 
       this.input_state.parent.matrices.withVolumeLight(light, this, (mv, t) -> {
-        s.onReceiveVolumeLightTransform(t.shaders, mv);
+        s.onReceiveVolumeLightTransform(t.g33, mv);
         s.onValidate();
         return Unit.unit();
       });
@@ -1257,15 +1255,14 @@ public final class R2LightRenderer implements R2LightRendererType
       try {
         this.input_state.parent.matrices.withProjectiveLight(
           light, this, (mp, t) -> {
-            s.onReceiveVolumeLightTransform(t.shaders, mp);
-            s.onReceiveProjectiveLight(t.shaders, mp);
+            s.onReceiveVolumeLightTransform(t.g33, mp);
+            s.onReceiveProjectiveLight(t.g33, mp);
 
             final R2Texture2DUsableType map =
               t.input_state.parent.shadow_maps.shadowMapGet(t.light_shadow);
 
             s.onReceiveShadowMap(
-              t.textures,
-              t.shaders,
+              t.g33,
               t.light_each_context,
               map);
             s.onValidate();

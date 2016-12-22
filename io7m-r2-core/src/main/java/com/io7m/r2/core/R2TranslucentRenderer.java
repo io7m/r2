@@ -282,8 +282,10 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     try {
       shader.onActivate(this.g33);
       try {
-        shader.onReceiveViewValues(this.g33, this.configureViewParameters());
-        shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
+        shader.onReceiveViewValues(
+          this.g33, this.configureViewParameters());
+        shader.onReceiveMaterialValues(
+          this.g33, this.configureMaterialParameters(tc, params));
         shader.onValidate();
         g_ao.arrayObjectBind(b.instance().arrayObject());
         g_dr.draw(
@@ -327,9 +329,11 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     try {
       shader.onActivate(this.g33);
       try {
-        shader.onReceiveViewValues(this.g33, this.configureViewParameters());
-        shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
-        shader.onReceiveInstanceTransformValues(g_sh, mi);
+        shader.onReceiveViewValues(
+          this.g33, this.configureViewParameters());
+        shader.onReceiveMaterialValues(
+          this.g33, this.configureMaterialParameters(tc, params));
+        shader.onReceiveInstanceTransformValues(this.g33, mi);
         shader.onValidate();
         g_ao.arrayObjectBind(s.instance().arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
