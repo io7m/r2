@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
@@ -49,6 +50,7 @@ import com.io7m.jnull.Nullable;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,6 +192,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     private final JCGLDrawType draw;
     private final JCGLRenderStateMutable render_state;
     private final JCGLStencilStateMutable stencil_state;
+    private final R2ShaderParametersViewMutable params_view;
 
     private @Nullable R2MatricesObserverType matrices;
     private @Nullable JCGLTextureUnitContextParentType texture_context;
@@ -207,6 +210,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.draw = this.g33.getDraw();
       this.render_state = JCGLRenderStateMutable.create();
       this.stencil_state = JCGLStencilStateMutable.create();
+      this.params_view = R2ShaderParametersViewMutable.create();
     }
 
     @Override
@@ -255,12 +259,23 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       i.update(this.g33, this.matrices.transformContext());
     }
 
+    private void configureViewParameters()
+    {
+      this.params_view.clear();
+      this.params_view.setViewport(this.gbuffer_area);
+      this.params_view.setObserverMatrices(this.matrices);
+      Invariants.checkInvariant(
+        this.params_view.isInitialized(),
+        "View parameters must be initialized");
+    }
+
     @Override
     public <M> void onInstanceBatchedShaderStart(
       final R2ShaderInstanceBatchedUsableType<M> s)
     {
       s.onActivate(this.g33);
-      s.onReceiveViewValues(this.shaders, this.matrices, this.gbuffer_area);
+      this.configureViewParameters();
+      s.onReceiveViewValues(this.g33, this.params_view);
     }
 
     @Override
@@ -315,7 +330,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderInstanceBillboardedUsableType<M> s)
     {
       s.onActivate(this.g33);
-      s.onReceiveViewValues(this.shaders, this.matrices, this.gbuffer_area);
+      this.configureViewParameters();
+      s.onReceiveViewValues(this.g33, this.params_view);
     }
 
     @Override
@@ -362,7 +378,8 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderInstanceSingleUsableType<M> s)
     {
       s.onActivate(this.g33);
-      s.onReceiveViewValues(this.shaders, this.matrices, this.gbuffer_area);
+      this.configureViewParameters();
+      s.onReceiveViewValues(this.g33, this.params_view);
     }
 
     @Override

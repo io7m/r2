@@ -47,6 +47,7 @@ import com.io7m.r2.core.shaders.provided.R2MaskShaderBatched;
 import com.io7m.r2.core.shaders.provided.R2MaskShaderSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,7 @@ public final class R2MaskRenderer implements R2MaskRendererType
   private final JCGLRenderState render_state;
   private final R2ShaderInstanceSingleType<Unit> shader_single;
   private final R2ShaderInstanceBatchedType<Unit> shader_batched;
+  private final R2ShaderParametersViewMutable params_view;
   private boolean deleted;
 
   private R2MaskRenderer(
@@ -107,6 +109,8 @@ public final class R2MaskRenderer implements R2MaskRendererType
 
       this.render_state = b.build();
     }
+
+    this.params_view = R2ShaderParametersViewMutable.create();
   }
 
   /**
@@ -192,10 +196,12 @@ public final class R2MaskRenderer implements R2MaskRendererType
 
     final List<R2InstanceBatchedType> batches = s.batched();
     if (!batches.isEmpty()) {
+      this.params_view.setViewport(area);
+      this.params_view.setObserverMatrices(m);
 
       this.shader_batched.onActivate(this.g);
       try {
-        this.shader_batched.onReceiveViewValues(g_sh, m, area);
+        this.shader_batched.onReceiveViewValues(this.g, this.params_view);
         this.shader_batched.onReceiveMaterialValues(
           g_tx, g_sh, up, Unit.unit());
 
@@ -227,10 +233,12 @@ public final class R2MaskRenderer implements R2MaskRendererType
 
     final List<R2InstanceSingleType> singles = s.singles();
     if (!singles.isEmpty()) {
+      this.params_view.setViewport(area);
+      this.params_view.setObserverMatrices(m);
 
       this.shader_single.onActivate(this.g);
       try {
-        this.shader_single.onReceiveViewValues(g_sh, m, area);
+        this.shader_single.onReceiveViewValues(this.g, this.params_view);
         this.shader_single.onReceiveMaterialValues(
           g_tx, g_sh, up, Unit.unit());
 

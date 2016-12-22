@@ -38,8 +38,8 @@ public interface R2ShaderLightVolumeSingleUsableType<
    * shader.</p>
    *
    * <p>This method will be called after a call to {@link
-   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)} and before a call to {@link
-   * #onValidate()}.</p>
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)}
+   * and before a call to {@link #onValidate()}.</p>
    *
    * @param g_sh An OpenGL interface
    * @param m    The instance matrices

@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
@@ -268,9 +269,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       final R2ShaderDepthBatchedUsableType<M> s)
     {
       this.shaders.shaderActivateProgram(s.shaderProgram());
-
-      this.params_view.setObserverMatrices(this.matrices);
-      this.params_view.setViewport(this.viewport_area);
+      this.configureViewParameters();
       s.onReceiveViewValues(this.g33, this.params_view);
     }
 
@@ -321,7 +320,18 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       final R2ShaderDepthSingleUsableType<M> s)
     {
       s.onActivate(this.g33);
-      s.onReceiveViewValues(this.shaders, this.matrices, this.viewport_area);
+      this.configureViewParameters();
+      s.onReceiveViewValues(this.g33, this.params_view);
+    }
+
+    private void configureViewParameters()
+    {
+      this.params_view.clear();
+      this.params_view.setViewport(this.viewport_area);
+      this.params_view.setObserverMatrices(this.matrices);
+      Invariants.checkInvariant(
+        this.params_view.isInitialized(),
+        "View parameters must be initialized");
     }
 
     @Override

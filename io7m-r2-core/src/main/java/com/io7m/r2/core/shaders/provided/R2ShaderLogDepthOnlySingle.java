@@ -16,9 +16,9 @@
 
 package com.io7m.r2.core.shaders.provided;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -32,6 +32,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Map;
@@ -112,22 +113,23 @@ public final class R2ShaderLogDepthOnlySingle extends R2AbstractShader<Unit>
 
   @Override
   public void onReceiveViewValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m,
-    final AreaInclusiveUnsignedLType viewport)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-    NullCheck.notNull(viewport);
+    NullCheck.notNull(g);
+    NullCheck.notNull(view_parameters);
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final R2MatricesObserverValuesType matrices =
+      view_parameters.observerMatrices();
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.projection()));
-
+      (float) R2Projections.getDepthCoefficient(matrices.projection()));
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_view, m.matrixView());
+      this.u_transform_view, matrices.matrixView());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.matrixProjection());
+      this.u_transform_projection, matrices.matrixProjection());
   }
 
   @Override

@@ -45,6 +45,7 @@ import com.io7m.r2.core.shaders.provided.R2StencilShaderScreen;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import org.slf4j.Logger;
@@ -326,6 +327,8 @@ public final class R2StencilRenderer implements R2StencilRendererType
     R2SceneStencilsConsumerType
   {
     private final R2ShaderInstanceSingleType<Unit> program;
+    private final R2ShaderParametersViewMutable params_view;
+
     private @Nullable JCGLInterfaceGL33Type g33;
     private @Nullable JCGLShadersType shaders;
     private @Nullable JCGLArrayObjectsType array_objects;
@@ -339,6 +342,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
       final R2ShaderInstanceSingleType<Unit> in_program)
     {
       this.program = NullCheck.notNull(in_program);
+      this.params_view = R2ShaderParametersViewMutable.create();
     }
 
     @Override
@@ -349,9 +353,11 @@ public final class R2StencilRenderer implements R2StencilRendererType
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
 
+      this.params_view.setObserverMatrices(this.matrices);
+      this.params_view.setViewport(this.viewport_area);
+
       this.program.onActivate(this.g33);
-      this.program.onReceiveViewValues(
-        this.shaders, this.matrices, this.viewport_area);
+      this.program.onReceiveViewValues(this.g33, this.params_view);
     }
 
     @Override

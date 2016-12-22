@@ -16,7 +16,6 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
@@ -28,7 +27,6 @@ import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
-import com.io7m.r2.core.R2MatricesObserverValuesType;
 
 import java.util.Optional;
 
@@ -145,12 +143,11 @@ public final class R2ShaderTranslucentInstanceBatchedVerifier<M> implements
 
   @Override
   public void onReceiveViewValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m,
-    final AreaInclusiveUnsignedLType viewport)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersViewType view_parameters)
   {
     this.state.transition(State.STATE_VIEW_RECEIVED);
-    this.shader.onReceiveViewValues(g_sh, m, viewport);
+    this.shader.onReceiveViewValues(g, view_parameters);
   }
 
   @Override

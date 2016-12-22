@@ -295,9 +295,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveViewValues(
-        final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m,
-        final AreaInclusiveUnsignedLType viewport)
+        final JCGLInterfaceGL33Type g,
+        final R2ShaderParametersViewType view_parameters)
       {
 
       }
@@ -407,9 +406,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveViewValues(
-        final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m,
-        final AreaInclusiveUnsignedLType viewport)
+        final JCGLInterfaceGL33Type g,
+        final R2ShaderParametersViewType view_parameters)
       {
 
       }
@@ -610,9 +608,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveViewValues(
-        final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m,
-        final AreaInclusiveUnsignedLType viewport)
+        final JCGLInterfaceGL33Type g,
+        final R2ShaderParametersViewType view_parameters)
       {
 
       }
@@ -714,9 +711,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveViewValues(
-        final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m,
-        final AreaInclusiveUnsignedLType viewport)
+        final JCGLInterfaceGL33Type g,
+        final R2ShaderParametersViewType view_parameters)
       {
 
       }
@@ -1369,9 +1365,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveViewValues(
-        final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m,
-        final AreaInclusiveUnsignedLType viewport)
+        final JCGLInterfaceGL33Type g,
+        final R2ShaderParametersViewType view_parameters)
       {
 
       }
@@ -1487,9 +1482,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveViewValues(
-        final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m,
-        final AreaInclusiveUnsignedLType viewport)
+        final JCGLInterfaceGL33Type g,
+        final R2ShaderParametersViewType view_parameters)
       {
 
       }
@@ -1598,9 +1592,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveViewValues(
-        final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m,
-        final AreaInclusiveUnsignedLType viewport)
+        final JCGLInterfaceGL33Type g,
+        final R2ShaderParametersViewType view_parameters)
       {
 
       }

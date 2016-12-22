@@ -29,13 +29,13 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableT
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorM2F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.shaders.provided.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2ViewRaysReadableType;
+import com.io7m.r2.core.shaders.provided.R2AbstractShader;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;

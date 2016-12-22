@@ -52,7 +52,7 @@ public interface R2ShaderDepthBatchedUsableType<M> extends
    * R2ShaderUsableType#onActivate(JCGLInterfaceGL33Type)} and before a
    * call to {@link #onValidate()}.</p>
    *
-   * @param g A texture interface
+   * @param g              A texture interface
    * @param mat_parameters The current material parameters
    */
 

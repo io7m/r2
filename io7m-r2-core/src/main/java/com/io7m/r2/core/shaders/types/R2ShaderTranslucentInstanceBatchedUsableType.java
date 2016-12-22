@@ -16,11 +16,10 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.r2.core.R2MatricesObserverValuesType;
 
 /**
  * The type of usable shaders for rendering the surfaces of translucent batched
@@ -36,17 +35,16 @@ public interface R2ShaderTranslucentInstanceBatchedUsableType<M>
    * <p>Set shader values that are derived from the current view.</p>
    *
    * <p>This method will be called exactly once between calls to {@link
-   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)} and {@link #onValidate()}.</p>
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)}
+   * and {@link #onValidate()}.</p>
    *
-   * @param g_sh     An OpenGL interface
-   * @param m        The view matrices
-   * @param viewport The target viewport
+   * @param g               An OpenGL interface
+   * @param view_parameters The view parameters
    */
 
   void onReceiveViewValues(
-    JCGLShadersType g_sh,
-    R2MatricesObserverValuesType m,
-    AreaInclusiveUnsignedLType viewport);
+    JCGLInterfaceGL33Type g,
+    R2ShaderParametersViewType view_parameters);
 
   /**
    * <p>Set material values.</p>
@@ -55,8 +53,8 @@ public interface R2ShaderTranslucentInstanceBatchedUsableType<M>
    * material {@code M}.</p>
    *
    * <p>This method will be called after a call to {@link
-   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)} and before a call to {@link
-   * #onValidate()}.</p>
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)}
+   * and before a call to {@link #onValidate()}.</p>
    *
    * @param g_tex  A texture interface
    * @param g_sh   A shader interface

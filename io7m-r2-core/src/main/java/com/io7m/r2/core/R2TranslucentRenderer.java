@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
@@ -39,6 +40,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentTy
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleUsableType;
@@ -63,6 +65,7 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
 
   private final JCGLInterfaceGL33Type g33;
   private final JCGLRenderState render_state;
+  private final R2ShaderParametersViewMutable params_view;
   private R2ShadowMapContextUsableType shadows;
   private R2MatricesObserverType matrices;
   private JCGLTextureUnitContextParentType texture_units;
@@ -108,6 +111,8 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
         .setDepthState(depth_state)
         .setStencilState(stencil_state)
         .build();
+
+    this.params_view = R2ShaderParametersViewMutable.create();
   }
 
   /**
@@ -120,6 +125,16 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     final JCGLInterfaceGL33Type g33)
   {
     return new R2TranslucentRenderer(g33);
+  }
+
+  private void configureViewParameters()
+  {
+    this.params_view.clear();
+    this.params_view.setViewport(this.viewport);
+    this.params_view.setObserverMatrices(this.matrices);
+    Invariants.checkInvariant(
+      this.params_view.isInitialized(),
+      "View parameters must be initialized");
   }
 
   @Override
@@ -200,7 +215,8 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     try {
       shader.onActivate(this.g33);
       try {
-        shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
+        this.configureViewParameters();
+        shader.onReceiveViewValues(this.g33, this.params_view);
         shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
         shader.onValidate();
         g_ao.arrayObjectBind(b.instance().arrayObject());
@@ -245,7 +261,8 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     try {
       shader.onActivate(this.g33);
       try {
-        shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
+        this.configureViewParameters();
+        shader.onReceiveViewValues(this.g33, this.params_view);
         shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
         shader.onValidate();
         g_ao.arrayObjectBind(b.instance().arrayObject());
@@ -290,7 +307,8 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     try {
       shader.onActivate(this.g33);
       try {
-        shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
+        this.configureViewParameters();
+        shader.onReceiveViewValues(this.g33, this.params_view);
         shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
         shader.onReceiveInstanceTransformValues(g_sh, mi);
         shader.onValidate();

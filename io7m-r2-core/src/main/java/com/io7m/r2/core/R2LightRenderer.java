@@ -64,6 +64,7 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowUsableTyp
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -753,6 +754,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private final JCGLRenderStateMutable render_state_screen;
     private final JCGLRenderStateMutable render_state_volume;
     private final JCGLStencilStateMutable render_stencil_state;
+    private final R2ShaderParametersViewMutable params_view;
 
     private @Nullable
     R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
@@ -785,6 +787,9 @@ public final class R2LightRenderer implements R2LightRendererType
         NullCheck.notNull(in_clip_volume_stencil);
       this.clip_screen_stencil =
         NullCheck.notNull(in_clip_screen_stencil);
+
+      this.params_view =
+        R2ShaderParametersViewMutable.create();
 
       {
         /*
@@ -1074,13 +1079,13 @@ public final class R2LightRenderer implements R2LightRendererType
         this.clip_volume_stencil.onActivate(this.g33);
 
         try {
-          this.clip_volume_stencil.onReceiveViewValues(
-            this.shaders,
-            this.input_state.parent.matrices,
-            this.input_state.viewport);
+          this.params_view.setObserverMatrices(this.parent.matrices);
+          this.params_view.setViewport(this.parent.viewport);
 
           this.clip_volume_stencil.onReceiveMaterialValues(
             this.textures, this.shaders, tc, Unit.unit());
+          this.clip_volume_stencil.onReceiveViewValues(
+            this.g33, this.params_view);
 
           this.input_state.parent.matrices.withTransform(
             this.input_state.volume.transform(),
@@ -1128,10 +1133,13 @@ public final class R2LightRenderer implements R2LightRendererType
         this.clip_screen_stencil.onActivate(this.g33);
 
         try {
+          this.params_view.setObserverMatrices(this.parent.matrices);
+          this.params_view.setViewport(this.parent.viewport);
+
           this.clip_screen_stencil.onReceiveMaterialValues(
             this.textures, this.shaders, tc, Unit.unit());
           this.clip_screen_stencil.onReceiveViewValues(
-            this.shaders, this.input_state.parent.matrices);
+            this.g33, this.params_view);
           this.clip_screen_stencil.onValidate();
 
           this.array_objects.arrayObjectBind(this.quad.arrayObject());

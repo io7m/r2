@@ -32,6 +32,7 @@ import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersView;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.R2TestUtilities;
 import org.junit.Rule;
@@ -69,8 +70,11 @@ public final class R2ShaderInstanceBatchedVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+
     v.onActivate(g);
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    v.onReceiveViewValues(g, vp);
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
     v.onValidate();
     v.onDeactivate(g);
@@ -103,8 +107,11 @@ public final class R2ShaderInstanceBatchedVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+
     v.onActivate(g);
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    v.onReceiveViewValues(g, vp);
 
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
     v.onValidate();
@@ -145,12 +152,15 @@ public final class R2ShaderInstanceBatchedVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+
     v.onActivate(g);
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    v.onReceiveViewValues(g, vp);
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
 
     this.expected.expect(FSMTransitionException.class);
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    v.onReceiveViewValues(g, vp);
   }
 
   @Test
@@ -166,15 +176,18 @@ public final class R2ShaderInstanceBatchedVerifierTest
 
     final JCGLShadersType g_sh = g.getShaders();
 
+    final R2ProjectionReadableType proj =
+      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final R2ProjectionReadableType proj =
-      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
 
     this.expected.expect(FSMTransitionException.class);
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    v.onReceiveViewValues(g, vp);
   }
 
   @Test
@@ -191,14 +204,15 @@ public final class R2ShaderInstanceBatchedVerifierTest
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    final JCGLShadersType g_sh = g.getShaders();
-
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+
     v.onActivate(g);
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    v.onReceiveViewValues(g, vp);
     this.expected.expect(FSMTransitionException.class);
     v.onValidate();
   }
