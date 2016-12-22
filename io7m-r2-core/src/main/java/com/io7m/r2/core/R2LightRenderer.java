@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLBlendEquation;
@@ -64,6 +65,8 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowUsableTyp
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.slf4j.Logger;
@@ -755,6 +758,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private final JCGLRenderStateMutable render_state_volume;
     private final JCGLStencilStateMutable render_stencil_state;
     private final R2ShaderParametersViewMutable params_view;
+    private final R2ShaderParametersMaterialMutable<Object> params_material;
 
     private @Nullable
     R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
@@ -790,6 +794,8 @@ public final class R2LightRenderer implements R2LightRendererType
 
       this.params_view =
         R2ShaderParametersViewMutable.create();
+      this.params_material =
+        R2ShaderParametersMaterialMutable.create();
 
       {
         /*
@@ -1079,13 +1085,10 @@ public final class R2LightRenderer implements R2LightRendererType
         this.clip_volume_stencil.onActivate(this.g33);
 
         try {
-          this.params_view.setObserverMatrices(this.parent.matrices);
-          this.params_view.setViewport(this.parent.viewport);
-
           this.clip_volume_stencil.onReceiveMaterialValues(
-            this.textures, this.shaders, tc, Unit.unit());
+            this.g33, this.configureMaterialParameters(tc, Unit.unit()));
           this.clip_volume_stencil.onReceiveViewValues(
-            this.g33, this.params_view);
+            this.g33, this.configureViewParameters());
 
           this.input_state.parent.matrices.withTransform(
             this.input_state.volume.transform(),
@@ -1117,6 +1120,31 @@ public final class R2LightRenderer implements R2LightRendererType
       }
     }
 
+    @SuppressWarnings("unchecked")
+    private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+      final JCGLTextureUnitContextType tc,
+      final M p)
+    {
+      this.params_material.clear();
+      this.params_material.setTextureUnitContext(tc);
+      this.params_material.setValues(p);
+      Invariants.checkInvariant(
+        this.params_material.isInitialized(),
+        "Material parameters must be initialized");
+      return (R2ShaderParametersMaterialType<M>) this.params_material;
+    }
+
+    private R2ShaderParametersViewMutable configureViewParameters()
+    {
+      this.params_view.clear();
+      this.params_view.setViewport(this.parent.viewport);
+      this.params_view.setObserverMatrices(this.parent.matrices);
+      Invariants.checkInvariant(
+        this.params_view.isInitialized(),
+        "View parameters must be initialized");
+      return this.params_view;
+    }
+
     /*
      * Clear the {@link R2Stencils#LIGHT_MASK_BIT} for all pixels in the stencil
      * buffer.
@@ -1133,13 +1161,11 @@ public final class R2LightRenderer implements R2LightRendererType
         this.clip_screen_stencil.onActivate(this.g33);
 
         try {
-          this.params_view.setObserverMatrices(this.parent.matrices);
-          this.params_view.setViewport(this.parent.viewport);
 
           this.clip_screen_stencil.onReceiveMaterialValues(
-            this.textures, this.shaders, tc, Unit.unit());
+            this.g33, this.configureMaterialParameters(tc, Unit.unit()));
           this.clip_screen_stencil.onReceiveViewValues(
-            this.g33, this.params_view);
+            this.g33, this.configureViewParameters());
           this.clip_screen_stencil.onValidate();
 
           this.array_objects.arrayObjectBind(this.quad.arrayObject());

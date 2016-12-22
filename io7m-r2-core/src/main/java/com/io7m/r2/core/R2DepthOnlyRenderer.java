@@ -269,8 +269,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       final R2ShaderDepthBatchedUsableType<M> s)
     {
       this.shaders.shaderActivateProgram(s.shaderProgram());
-      this.configureViewParameters();
-      s.onReceiveViewValues(this.g33, this.params_view);
+      s.onReceiveViewValues(this.g33, this.configureViewParameters());
     }
 
     @Override
@@ -320,11 +319,10 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       final R2ShaderDepthSingleUsableType<M> s)
     {
       s.onActivate(this.g33);
-      this.configureViewParameters();
-      s.onReceiveViewValues(this.g33, this.params_view);
+      s.onReceiveViewValues(this.g33, this.configureViewParameters());
     }
 
-    private void configureViewParameters()
+    private R2ShaderParametersViewMutable configureViewParameters()
     {
       this.params_view.clear();
       this.params_view.setViewport(this.viewport_area);
@@ -332,6 +330,21 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       Invariants.checkInvariant(
         this.params_view.isInitialized(),
         "View parameters must be initialized");
+      return this.params_view;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+      final JCGLTextureUnitContextType tc,
+      final M p)
+    {
+      this.params_material.clear();
+      this.params_material.setTextureUnitContext(tc);
+      this.params_material.setValues(p);
+      Invariants.checkInvariant(
+        this.params_material.isInitialized(),
+        "Material parameters must be initialized");
+      return (R2ShaderParametersMaterialType<M>) this.params_material;
     }
 
     @Override
@@ -345,7 +358,8 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       final M p = material.shaderParameters();
 
       s.onReceiveMaterialValues(
-        this.textures, this.shaders, this.material_texture_context, p);
+        this.g33,
+        this.configureMaterialParameters(this.material_texture_context, p));
     }
 
     @Override

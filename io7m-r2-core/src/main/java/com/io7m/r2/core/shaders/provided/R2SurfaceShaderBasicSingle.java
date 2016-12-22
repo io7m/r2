@@ -33,6 +33,7 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
@@ -201,28 +202,28 @@ public final class R2SurfaceShaderBasicSingle extends
 
   @Override
   public void onReceiveMaterialValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final R2SurfaceShaderBasicParameters values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersMaterialType<R2SurfaceShaderBasicParameters> mat_parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(mat_parameters);
 
-    final JCGLTextureUnitType unit_albedo = tc.unitContextBindTexture2D(
-      g_tex,
-      values.albedoTexture().texture());
-    final JCGLTextureUnitType unit_emission = tc.unitContextBindTexture2D(
-      g_tex,
-      values.emissionTexture().texture());
-    final JCGLTextureUnitType unit_normal = tc.unitContextBindTexture2D(
-      g_tex,
-      values.normalTexture().texture());
-    final JCGLTextureUnitType unit_specular = tc.unitContextBindTexture2D(
-      g_tex,
-      values.specularTexture().texture());
+    final JCGLTexturesType g_tex = g.getTextures();
+    final JCGLShadersType g_sh = g.getShaders();
+
+    final JCGLTextureUnitContextMutableType tc =
+      mat_parameters.textureUnitContext();
+    final R2SurfaceShaderBasicParameters values =
+      mat_parameters.values();
+
+    final JCGLTextureUnitType unit_albedo =
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
+    final JCGLTextureUnitType unit_emission =
+      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().texture());
+    final JCGLTextureUnitType unit_normal =
+      tc.unitContextBindTexture2D(g_tex, values.normalTexture().texture());
+    final JCGLTextureUnitType unit_specular =
+      tc.unitContextBindTexture2D(g_tex, values.specularTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, unit_albedo);

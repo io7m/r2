@@ -34,6 +34,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterial;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersView;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.R2EmptyInstanceTransformValues;
@@ -80,8 +81,7 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr =
       ta.getRootContext();
     final JCGLTextureUnitContextType tc =
@@ -96,10 +96,12 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
 
     f.onActivate(g);
     f.onReceiveViewValues(g, vp);
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
     f.onValidate();
@@ -142,21 +144,23 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
 
     f.onActivate(g);
     f.onReceiveViewValues(g, vp);
 
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
     f.onValidate();
 
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
     f.onValidate();
 
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
     f.onValidate();
@@ -200,10 +204,12 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
 
     f.onActivate(g);
     f.onReceiveViewValues(g, vp);
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
 
@@ -296,7 +302,6 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     final T t =
       this.newParameters(g);
 
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
@@ -314,10 +319,12 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
 
     f.onActivate(g);
     f.onReceiveViewValues(g, vp);
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
     this.expected.expect(FSMTransitionException.class);
     f.onValidate();
   }
@@ -358,10 +365,12 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
 
     f.onActivate(g);
     f.onReceiveViewValues(g, vp);
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
 
     f.onReceiveInstanceTransformValues(
       g_sh, new R2EmptyInstanceTransformValues());
@@ -396,18 +405,19 @@ public abstract class R2ShaderInstanceSingleContract<T, TM extends T> extends
     final T t =
       this.newParameters(g);
 
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
+
     f.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
   }
 
   @Test

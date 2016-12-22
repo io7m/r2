@@ -20,7 +20,6 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
@@ -32,6 +31,7 @@ import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterial;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersView;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.R2TestUtilities;
@@ -55,11 +55,9 @@ public final class R2ShaderInstanceBatchedVerifierTest
       R2ShaderInstanceBatchedVerifier.newVerifier(f);
 
     final JCGLTexturesType g_tex = g.getTextures();
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -72,10 +70,12 @@ public final class R2ShaderInstanceBatchedVerifierTest
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
 
     v.onActivate(g);
     v.onReceiveViewValues(g, vp);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
     v.onValidate();
     v.onDeactivate(g);
   }
@@ -92,11 +92,9 @@ public final class R2ShaderInstanceBatchedVerifierTest
       R2ShaderInstanceBatchedVerifier.newVerifier(f);
 
     final JCGLTexturesType g_tex = g.getTextures();
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -109,17 +107,19 @@ public final class R2ShaderInstanceBatchedVerifierTest
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
 
     v.onActivate(g);
     v.onReceiveViewValues(g, vp);
 
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
     v.onValidate();
 
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
     v.onValidate();
 
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
     v.onValidate();
 
     v.onDeactivate(g);
@@ -137,11 +137,9 @@ public final class R2ShaderInstanceBatchedVerifierTest
       R2ShaderInstanceBatchedVerifier.newVerifier(f);
 
     final JCGLTexturesType g_tex = g.getTextures();
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -154,10 +152,12 @@ public final class R2ShaderInstanceBatchedVerifierTest
 
     final R2ShaderParametersView vp =
       R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
 
     v.onActivate(g);
     v.onReceiveViewValues(g, vp);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
 
     this.expected.expect(FSMTransitionException.class);
     v.onReceiveViewValues(g, vp);
@@ -173,8 +173,6 @@ public final class R2ShaderInstanceBatchedVerifierTest
       R2TestUtilities.getShaderInstanceBatched(g, 1L);
     final R2ShaderInstanceBatchedType<Object> v =
       R2ShaderInstanceBatchedVerifier.newVerifier(f);
-
-    final JCGLShadersType g_sh = g.getShaders();
 
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
@@ -228,18 +226,19 @@ public final class R2ShaderInstanceBatchedVerifierTest
     final R2ShaderInstanceBatchedType<Object> v =
       R2ShaderInstanceBatchedVerifier.newVerifier(f);
 
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
+
     v.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
   }
 
   @Test
@@ -253,11 +252,8 @@ public final class R2ShaderInstanceBatchedVerifierTest
     final R2ShaderInstanceBatchedType<Object> v =
       R2ShaderInstanceBatchedVerifier.newVerifier(f);
 
-    final JCGLShadersType g_sh = g.getShaders();
-
     v.onActivate(g);
     v.onDeactivate(g);
-
     this.expected.expect(FSMTransitionException.class);
     v.onValidate();
   }

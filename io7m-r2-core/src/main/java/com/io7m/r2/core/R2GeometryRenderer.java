@@ -50,6 +50,8 @@ import com.io7m.jnull.Nullable;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,6 +195,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     private final JCGLRenderStateMutable render_state;
     private final JCGLStencilStateMutable stencil_state;
     private final R2ShaderParametersViewMutable params_view;
+    private final R2ShaderParametersMaterialMutable<Object> params_material;
 
     private @Nullable R2MatricesObserverType matrices;
     private @Nullable JCGLTextureUnitContextParentType texture_context;
@@ -211,6 +214,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.render_state = JCGLRenderStateMutable.create();
       this.stencil_state = JCGLStencilStateMutable.create();
       this.params_view = R2ShaderParametersViewMutable.create();
+      this.params_material = R2ShaderParametersMaterialMutable.create();
     }
 
     @Override
@@ -259,7 +263,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       i.update(this.g33, this.matrices.transformContext());
     }
 
-    private void configureViewParameters()
+    private R2ShaderParametersViewMutable configureViewParameters()
     {
       this.params_view.clear();
       this.params_view.setViewport(this.gbuffer_area);
@@ -267,6 +271,21 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       Invariants.checkInvariant(
         this.params_view.isInitialized(),
         "View parameters must be initialized");
+      return this.params_view;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+      final JCGLTextureUnitContextType tc,
+      final M p)
+    {
+      this.params_material.clear();
+      this.params_material.setTextureUnitContext(tc);
+      this.params_material.setValues(p);
+      Invariants.checkInvariant(
+        this.params_material.isInitialized(),
+        "Material parameters must be initialized");
+      return (R2ShaderParametersMaterialType<M>) this.params_material;
     }
 
     @Override
@@ -274,8 +293,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderInstanceBatchedUsableType<M> s)
     {
       s.onActivate(this.g33);
-      this.configureViewParameters();
-      s.onReceiveViewValues(this.g33, this.params_view);
+      s.onReceiveViewValues(this.g33, this.configureViewParameters());
     }
 
     @Override
@@ -285,9 +303,10 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       this.material_texture_context = this.texture_context.unitContextNew();
 
       final R2ShaderInstanceBatchedUsableType<M> s = material.shader();
-      final M p = material.shaderParameters();
       s.onReceiveMaterialValues(
-        this.textures, this.shaders, this.material_texture_context, p);
+        this.g33,
+        this.configureMaterialParameters(
+          this.material_texture_context, material.shaderParameters()));
     }
 
     @Override
@@ -330,8 +349,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderInstanceBillboardedUsableType<M> s)
     {
       s.onActivate(this.g33);
-      this.configureViewParameters();
-      s.onReceiveViewValues(this.g33, this.params_view);
+      s.onReceiveViewValues(this.g33, this.configureViewParameters());
     }
 
     @Override
@@ -343,7 +361,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderInstanceBillboardedUsableType<M> s = material.shader();
       final M p = material.shaderParameters();
       s.onReceiveMaterialValues(
-        this.textures, this.shaders, this.material_texture_context, p);
+        this.g33,
+        this.configureMaterialParameters(
+          this.material_texture_context, material.shaderParameters()));
     }
 
     @Override
@@ -378,8 +398,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderInstanceSingleUsableType<M> s)
     {
       s.onActivate(this.g33);
-      this.configureViewParameters();
-      s.onReceiveViewValues(this.g33, this.params_view);
+      s.onReceiveViewValues(this.g33, this.configureViewParameters());
     }
 
     @Override
@@ -392,7 +411,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final R2ShaderInstanceSingleUsableType<M> s = material.shader();
       final M p = material.shaderParameters();
       s.onReceiveMaterialValues(
-        this.textures, this.shaders, this.material_texture_context, p);
+        this.g33,
+        this.configureMaterialParameters(
+          this.material_texture_context, material.shaderParameters()));
     }
 
     @Override

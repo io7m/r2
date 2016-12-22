@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
@@ -26,7 +27,6 @@ import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
 import com.io7m.jcanephora.core.api.JCGLFramebuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
@@ -42,12 +42,16 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentTy
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.r2.core.shaders.provided.R2MaskShaderBatched;
 import com.io7m.r2.core.shaders.provided.R2MaskShaderSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +76,10 @@ public final class R2MaskRenderer implements R2MaskRendererType
   private final R2ShaderInstanceSingleType<Unit> shader_single;
   private final R2ShaderInstanceBatchedType<Unit> shader_batched;
   private final R2ShaderParametersViewMutable params_view;
+  private final R2ShaderParametersMaterialMutable<Object> params_material;
   private boolean deleted;
+  private @Nullable AreaInclusiveUnsignedLType viewport;
+  private @Nullable R2MatricesObserverType matrices;
 
   private R2MaskRenderer(
     final JCGLInterfaceGL33Type in_g,
@@ -111,6 +118,7 @@ public final class R2MaskRenderer implements R2MaskRendererType
     }
 
     this.params_view = R2ShaderParametersViewMutable.create();
+    this.params_material = R2ShaderParametersMaterialMutable.create();
   }
 
   /**
@@ -167,43 +175,67 @@ public final class R2MaskRenderer implements R2MaskRendererType
       }
 
       g_v.viewportSet(area);
+      this.viewport = area;
+      this.matrices = m;
 
       JCGLRenderStates.activate(this.g, this.render_state);
       final JCGLTexturesType g_tx = this.g.getTextures();
       final JCGLTextureUnitContextType up = tucp.unitContextNew();
       try {
-        this.renderSingles(area, m, s, up);
-        this.renderBatches(area, m, s, up);
+        this.renderSingles(m, s, up);
+        this.renderBatches(m, s, up);
       } finally {
         up.unitContextFinish(g_tx);
       }
 
     } finally {
       p_mask.stopMeasuringIfEnabled();
+      this.viewport = null;
+      this.matrices = null;
     }
   }
 
+  @SuppressWarnings("unchecked")
+  private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+    final JCGLTextureUnitContextMutableType tc,
+    final M p)
+  {
+    this.params_material.clear();
+    this.params_material.setTextureUnitContext(tc);
+    this.params_material.setValues(p);
+    Invariants.checkInvariant(
+      this.params_material.isInitialized(),
+      "Material parameters must be initialized");
+    return (R2ShaderParametersMaterialType<M>) this.params_material;
+  }
+
+  private R2ShaderParametersViewType configureViewParameters()
+  {
+    this.params_view.clear();
+    this.params_view.setViewport(this.viewport);
+    this.params_view.setObserverMatrices(this.matrices);
+    Invariants.checkInvariant(
+      this.params_view.isInitialized(),
+      "View parameters must be initialized");
+    return this.params_view;
+  }
+
   private void renderBatches(
-    final AreaInclusiveUnsignedLType area,
-    final R2MatricesObserverType m,
+    final R2MatricesValuesType m,
     final R2MaskInstancesType s,
     final JCGLTextureUnitContextType up)
   {
-    final JCGLTexturesType g_tx = this.g.getTextures();
-    final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLArrayObjectsType g_a = this.g.getArrayObjects();
     final JCGLDrawType g_d = this.g.getDraw();
 
     final List<R2InstanceBatchedType> batches = s.batched();
     if (!batches.isEmpty()) {
-      this.params_view.setViewport(area);
-      this.params_view.setObserverMatrices(m);
-
       this.shader_batched.onActivate(this.g);
       try {
-        this.shader_batched.onReceiveViewValues(this.g, this.params_view);
+        this.shader_batched.onReceiveViewValues(
+          this.g, this.configureViewParameters());
         this.shader_batched.onReceiveMaterialValues(
-          g_tx, g_sh, up, Unit.unit());
+          this.g, this.configureMaterialParameters(up, Unit.unit()));
 
         for (int index = 0; index < batches.size(); ++index) {
           final R2InstanceBatchedType instance = batches.get(index);
@@ -222,25 +254,20 @@ public final class R2MaskRenderer implements R2MaskRendererType
   }
 
   private void renderSingles(
-    final AreaInclusiveUnsignedLType area,
     final R2MatricesObserverType m,
     final R2MaskInstancesType s,
-    final JCGLTextureUnitContextMutableType up)
+    final JCGLTextureUnitContextType up)
   {
-    final JCGLTexturesType g_tx = this.g.getTextures();
-    final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLArrayObjectsType g_a = this.g.getArrayObjects();
 
     final List<R2InstanceSingleType> singles = s.singles();
     if (!singles.isEmpty()) {
-      this.params_view.setViewport(area);
-      this.params_view.setObserverMatrices(m);
-
       this.shader_single.onActivate(this.g);
       try {
-        this.shader_single.onReceiveViewValues(this.g, this.params_view);
+        this.shader_single.onReceiveViewValues(
+          this.g, this.configureViewParameters());
         this.shader_single.onReceiveMaterialValues(
-          g_tx, g_sh, up, Unit.unit());
+          this.g, this.configureMaterialParameters(up, Unit.unit()));
 
         for (int index = 0; index < singles.size(); ++index) {
           final R2InstanceSingleType instance = singles.get(index);

@@ -17,9 +17,6 @@
 package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 
 /**
  * The type of usable shaders for rendering the surfaces of billboarded
@@ -56,15 +53,11 @@ public interface R2ShaderInstanceBillboardedUsableType<M> extends
    * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)}
    * and before a call to {@link #onValidate()}.</p>
    *
-   * @param g_tex  A texture interface
-   * @param g_sh   A shader interface
-   * @param tc     A texture unit context
-   * @param values The material parameters
+   * @param g              A texture interface
+   * @param mat_parameters The material parameters
    */
 
   void onReceiveMaterialValues(
-    JCGLTexturesType g_tex,
-    JCGLShadersType g_sh,
-    JCGLTextureUnitContextMutableType tc,
-    M values);
+    JCGLInterfaceGL33Type g,
+    R2ShaderParametersMaterialType<M> mat_parameters);
 }

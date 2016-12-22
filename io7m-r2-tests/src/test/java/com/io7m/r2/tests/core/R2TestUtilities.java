@@ -303,10 +303,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveMaterialValues(
-        final JCGLTexturesType g_tex,
-        final JCGLShadersType g_sh,
-        final JCGLTextureUnitContextMutableType tc,
-        final Object values)
+        final JCGLInterfaceGL33Type g,
+        R2ShaderParametersMaterialType<Object> mat_parameters)
       {
 
       }
@@ -414,10 +412,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveMaterialValues(
-        final JCGLTexturesType g_tex,
-        final JCGLShadersType g_sh,
-        final JCGLTextureUnitContextMutableType tc,
-        final Object values)
+        final JCGLInterfaceGL33Type g,
+        R2ShaderParametersMaterialType<Object> mat_parameters)
       {
 
       }
@@ -616,10 +612,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveMaterialValues(
-        final JCGLTexturesType g_tex,
-        final JCGLShadersType g_sh,
-        final JCGLTextureUnitContextMutableType tc,
-        final Object values)
+        final JCGLInterfaceGL33Type g,
+        R2ShaderParametersMaterialType<Object> mat_parameters)
       {
 
       }
@@ -719,10 +713,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveMaterialValues(
-        final JCGLTexturesType g_tex,
-        final JCGLShadersType g_sh,
-        final JCGLTextureUnitContextMutableType tc,
-        final Object values)
+        final JCGLInterfaceGL33Type g,
+        R2ShaderParametersMaterialType<Object> mat_parameters)
       {
 
       }
@@ -1490,10 +1482,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveMaterialValues(
-        final JCGLTexturesType g_tex,
-        final JCGLShadersType g_sh,
-        final JCGLTextureUnitContextMutableType tc,
-        final Object values)
+        final JCGLInterfaceGL33Type g,
+        R2ShaderParametersMaterialType<Object> mat_parameters)
       {
 
       }
