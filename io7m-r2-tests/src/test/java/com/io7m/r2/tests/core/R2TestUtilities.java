@@ -100,6 +100,9 @@ import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
@@ -815,19 +818,16 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveViewValues(
-        final JCGLShadersType g_sh,
-        final R2MatricesObserverValuesType m,
-        AreaInclusiveUnsignedLType viewport)
+        final JCGLInterfaceGL33Type g,
+        R2ShaderParametersViewType view_parameters)
       {
 
       }
 
       @Override
       public void onReceiveMaterialValues(
-        final JCGLTexturesType g_tex,
-        final JCGLShadersType g_sh,
-        final JCGLTextureUnitContextMutableType tc,
-        final Object values)
+        final JCGLInterfaceGL33Type g,
+        R2ShaderParametersMaterialType<Object> mat_parameters)
       {
 
       }
@@ -987,10 +987,8 @@ public final class R2TestUtilities
 
       @Override
       public void onReceiveFilterValues(
-        final JCGLTexturesType g_tex,
-        final JCGLShadersType g_sh,
-        final JCGLTextureUnitContextMutableType tc,
-        final Object values)
+        final JCGLInterfaceGL33Type g,
+        R2ShaderParametersFilterType<Object> parameters)
       {
 
       }

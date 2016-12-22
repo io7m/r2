@@ -28,6 +28,7 @@ import com.io7m.jfsm.core.FSMTransitionException;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
@@ -78,8 +79,13 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     final JCGLTextureUnitContextType tc =
       tr.unitContextNew();
 
+    final R2ShaderParametersFilterMutable<T> values =
+      R2ShaderParametersFilterMutable.create();
+    values.setTextureUnitContext(tc);
+    values.setValues(t);
+
     f.onActivate(g.getShaders());
-    f.onReceiveFilterValues(g_tex, g_sh, tc, t);
+    f.onReceiveFilterValues(g, values);
     f.onValidate();
     f.onDeactivate(g_sh);
   }
@@ -106,13 +112,17 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     final JCGLShadersType g_sh = g.getShaders();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
+    final R2ShaderParametersFilterMutable<T> values =
+      R2ShaderParametersFilterMutable.create();
+    values.setTextureUnitContext(tc);
+    values.setValues(t);
+
     this.expected.expect(FSMTransitionException.class);
-    f.onReceiveFilterValues(g_tex, g_sh, tc, t);
+    f.onReceiveFilterValues(g, values);
   }
 
   @Test

@@ -47,6 +47,7 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.EnumSet;
@@ -86,6 +87,7 @@ public final class R2FilterBilateralBlurDepthAware<
 
   private final R2UnitQuadUsableType quad;
   private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterBilateralBlurDepthAwareParameters> blur_values;
 
   private R2FilterBilateralBlurDepthAware(
     final JCGLInterfaceGL33Type in_g,
@@ -100,6 +102,7 @@ public final class R2FilterBilateralBlurDepthAware<
     this.render_target_pool = NullCheck.notNull(in_rtp_pool);
     this.quad = NullCheck.notNull(in_quad);
     this.render_state = JCGLRenderState.builder().build();
+    this.blur_values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -355,13 +358,12 @@ public final class R2FilterBilateralBlurDepthAware<
       g_v.viewportSet(target_area);
 
       try {
+        this.blur_values.setValues(createShaderParams(
+          parameters, source_value_texture, source_depth_texture));
+        this.blur_values.setTextureUnitContext(tc);
+
         this.shader_blur_h.onActivate(g_sh);
-        this.shader_blur_h.onReceiveFilterValues(
-          g_tex,
-          g_sh,
-          tc,
-          createShaderParams(
-            parameters, source_value_texture, source_depth_texture));
+        this.shader_blur_h.onReceiveFilterValues(this.g, this.blur_values);
         this.shader_blur_h.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());
@@ -398,13 +400,12 @@ public final class R2FilterBilateralBlurDepthAware<
       g_v.viewportSet(target_area);
 
       try {
+        this.blur_values.setValues(createShaderParams(
+          parameters, source_value_texture, source_depth_texture));
+        this.blur_values.setTextureUnitContext(tc);
+
         this.shader_blur_v.onActivate(g_sh);
-        this.shader_blur_v.onReceiveFilterValues(
-          g_tex,
-          g_sh,
-          tc,
-          createShaderParams(
-            parameters, source_value_texture, source_depth_texture));
+        this.shader_blur_v.onReceiveFilterValues(this.g, this.blur_values);
         this.shader_blur_v.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());

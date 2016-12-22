@@ -39,6 +39,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.EnumSet;
@@ -70,6 +71,7 @@ public final class R2FilterLightApplicator implements
   private final JCGLInterfaceGL33Type g;
   private final R2UnitQuadUsableType quad;
   private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterLightApplicatorParameters> values;
 
   private R2FilterLightApplicator(
     final JCGLInterfaceGL33Type in_g,
@@ -80,6 +82,7 @@ public final class R2FilterLightApplicator implements
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
     this.render_state = JCGLRenderState.builder().build();
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -186,17 +189,17 @@ public final class R2FilterLightApplicator implements
 
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
-      final R2ShaderFilterLightApplicatorParameters sp =
-        R2ShaderFilterLightApplicatorParameters
-          .builder()
+      this.values.setTextureUnitContext(c);
+      this.values.setValues(
+        R2ShaderFilterLightApplicatorParameters.builder()
           .setAlbedoTexture(gb.albedoEmissiveTexture())
           .setDiffuseTexture(ldiff)
           .setSpecularTexture(lspec)
-          .build();
+          .build());
 
       try {
         this.shader.onActivate(g_sh);
-        this.shader.onReceiveFilterValues(g_tx, g_sh, c, sp);
+        this.shader.onReceiveFilterValues(this.g, this.values);
         this.shader.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());

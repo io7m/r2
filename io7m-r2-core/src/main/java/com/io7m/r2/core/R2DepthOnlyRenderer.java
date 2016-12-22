@@ -46,6 +46,9 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 
 import java.util.Optional;
 
@@ -187,6 +190,8 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
     private final JCGLArrayObjectsType array_objects;
     private final JCGLDrawType draw;
     private final JCGLRenderStateMutable render_state;
+    private final R2ShaderParametersViewMutable params_view;
+    private final R2ShaderParametersMaterialMutable<Object> params_material;
 
     private @Nullable R2MatricesObserverType matrices;
     private @Nullable JCGLTextureUnitContextParentType texture_context;
@@ -203,6 +208,8 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       this.textures = this.g33.getTextures();
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
+      this.params_view = R2ShaderParametersViewMutable.create();
+      this.params_material = R2ShaderParametersMaterialMutable.create();
 
       {
         this.render_state = JCGLRenderStateMutable.create();
@@ -261,7 +268,10 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       final R2ShaderDepthBatchedUsableType<M> s)
     {
       this.shaders.shaderActivateProgram(s.shaderProgram());
-      s.onReceiveViewValues(this.shaders, this.matrices, this.viewport_area);
+
+      this.params_view.setObserverMatrices(this.matrices);
+      this.params_view.setViewport(this.viewport_area);
+      s.onReceiveViewValues(this.g33, this.params_view);
     }
 
     @Override
@@ -269,11 +279,14 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       final R2MaterialDepthBatchedType<M> material)
     {
       this.material_texture_context = this.texture_context.unitContextNew();
-
       final R2ShaderDepthBatchedUsableType<M> s = material.shader();
-      final M p = material.shaderParameters();
-      s.onReceiveMaterialValues(
-        this.textures, this.shaders, this.material_texture_context, p);
+
+      this.params_material.setValues(material.shaderParameters());
+      this.params_material.setTextureUnitContext(this.material_texture_context);
+      @SuppressWarnings("unchecked")
+      final R2ShaderParametersMaterialType<M> pc =
+        (R2ShaderParametersMaterialType<M>) this.params_material;
+      s.onReceiveMaterialValues(this.g33, pc);
     }
 
     @Override

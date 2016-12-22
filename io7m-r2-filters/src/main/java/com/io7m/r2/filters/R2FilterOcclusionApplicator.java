@@ -42,6 +42,7 @@ import com.io7m.r2.core.R2LightBufferUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 /**
@@ -54,6 +55,7 @@ public final class R2FilterOcclusionApplicator implements
   private final JCGLInterfaceGL33Type g;
   private final R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParameters> shader;
   private final R2UnitQuadUsableType quad;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterOcclusionApplicatorParameters> values;
 
   private R2FilterOcclusionApplicator(
     final JCGLInterfaceGL33Type in_g,
@@ -63,6 +65,7 @@ public final class R2FilterOcclusionApplicator implements
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -178,16 +181,16 @@ public final class R2FilterOcclusionApplicator implements
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
       try {
-        final R2ShaderFilterOcclusionApplicatorParameters sp =
-          R2ShaderFilterOcclusionApplicatorParameters
-            .builder()
+        this.values.setTextureUnitContext(c);
+        this.values.setValues(
+          R2ShaderFilterOcclusionApplicatorParameters.builder()
             .setTexture(parameters.occlusionTexture())
             .setIntensity(parameters.intensity())
-            .build();
+            .build());
 
         g_sh.shaderActivateProgram(this.shader.shaderProgram());
         this.shader.onActivate(g_sh);
-        this.shader.onReceiveFilterValues(g_tx, g_sh, c, sp);
+        this.shader.onReceiveFilterValues(this.g, this.values);
         this.shader.onValidate();
         g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);

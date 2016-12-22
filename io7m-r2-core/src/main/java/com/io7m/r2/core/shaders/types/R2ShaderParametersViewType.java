@@ -16,28 +16,33 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.core.R2MatricesObserverValuesType;
+import org.immutables.value.Value;
 
 /**
- * The type of usable shaders for implementing full-screen filters.
- *
- * @param <M> The type of parameter data
+ * The type of view-related parameters available to shaders.
  */
 
-public interface R2ShaderFilterUsableType<M> extends R2ShaderScreenUsableType<M>
+@R2ImmutableStyleType
+@Value.Immutable
+@Value.Modifiable
+public interface R2ShaderParametersViewType
 {
   /**
-   * <p>Set filter values.</p>
-   *
-   * <p>This method will be called exactly once between calls to {@link
-   * #onActivate(com.io7m.jcanephora.core.api.JCGLShadersType)} and {@link
-   * #onValidate()}.</p>
-   *
-   * @param g          A texture interface
-   * @param parameters The current filter parameters
+   * @return The current observer matrices
    */
 
-  void onReceiveFilterValues(
-    JCGLInterfaceGL33Type g,
-    R2ShaderParametersFilterType<M> parameters);
+  @Value.Parameter
+  R2MatricesObserverValuesType observerMatrices();
+
+  /**
+   * A specification of the viewport to which rendering is occurring.
+   *
+   * @return The current viewport
+   */
+
+  @Value.Parameter
+  AreaInclusiveUnsignedLType viewport();
 }
