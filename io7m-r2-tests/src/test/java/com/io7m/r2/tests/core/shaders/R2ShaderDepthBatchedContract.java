@@ -16,6 +16,7 @@
 
 package com.io7m.r2.tests.core.shaders;
 
+import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
@@ -26,6 +27,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfsm.core.FSMTransitionException;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
@@ -43,6 +45,11 @@ import org.junit.rules.ExpectedException;
 public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
   R2JCGLContract
 {
+  private static final AreaInclusiveUnsignedL VIEWPORT =
+    AreaInclusiveUnsignedL.of(
+      new UnsignedRangeInclusiveL(0L, 10L),
+      new UnsignedRangeInclusiveL(0L, 10L));
+
   @Rule public ExpectedException expected = ExpectedException.none();
 
   protected abstract R2ShaderDepthBatchedType<T> newShaderWithVerifier(
@@ -89,7 +96,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
     f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), VIEWPORT);
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
     f.onValidate();
     f.onDeactivate(g_sh);
@@ -126,7 +133,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
     f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), VIEWPORT);
 
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
     f.onValidate();
@@ -171,11 +178,11 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
     f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), VIEWPORT);
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
 
     this.expected.expect(FSMTransitionException.class);
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), VIEWPORT);
   }
 
   @Test
@@ -202,7 +209,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
     this.expected.expect(FSMTransitionException.class);
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), VIEWPORT);
   }
 
   @Test
@@ -229,7 +236,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
     final JCGLShadersType g_sh = g.getShaders();
 
     f.onActivate(g_sh);
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj));
+    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), VIEWPORT);
     this.expected.expect(FSMTransitionException.class);
     f.onValidate();
   }

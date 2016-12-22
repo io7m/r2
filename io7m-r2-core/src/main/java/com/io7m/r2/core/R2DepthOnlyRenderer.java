@@ -261,7 +261,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
       final R2ShaderDepthBatchedUsableType<M> s)
     {
       this.shaders.shaderActivateProgram(s.shaderProgram());
-      s.onReceiveViewValues(this.shaders, this.matrices);
+      s.onReceiveViewValues(this.shaders, this.matrices, this.viewport_area);
     }
 
     @Override
