@@ -20,6 +20,8 @@ import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
 import com.io7m.jcanephora.core.JCGLPrimitives;
+import com.io7m.jcanephora.core.JCGLStencilFunction;
+import com.io7m.jcanephora.core.JCGLStencilOperation;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLDrawType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
@@ -32,6 +34,7 @@ import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
 import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.renderstate.JCGLStencilState;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
@@ -72,13 +75,39 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
   {
     this.g33 = NullCheck.notNull(g3, "g33");
 
-    this.render_state = JCGLRenderState.builder()
-      .setDepthState(JCGLDepthState.of(
-        JCGLDepthStrict.DEPTH_STRICT_ENABLED,
-        Optional.of(JCGLDepthFunction.DEPTH_LESS_THAN),
-        JCGLDepthWriting.DEPTH_WRITE_DISABLED,
-        JCGLDepthClamping.DEPTH_CLAMP_ENABLED))
-      .build();
+    final JCGLStencilState stencil_state =
+      JCGLStencilState.builder()
+        .setOperationDepthFailBack(JCGLStencilOperation.STENCIL_OP_KEEP)
+        .setOperationDepthFailFront(JCGLStencilOperation.STENCIL_OP_KEEP)
+        .setOperationPassBack(JCGLStencilOperation.STENCIL_OP_KEEP)
+        .setOperationPassFront(JCGLStencilOperation.STENCIL_OP_KEEP)
+        .setOperationStencilFailBack(JCGLStencilOperation.STENCIL_OP_KEEP)
+        .setOperationStencilFailFront(JCGLStencilOperation.STENCIL_OP_KEEP)
+        .setTestFunctionBack(JCGLStencilFunction.STENCIL_EQUAL)
+        .setTestFunctionFront(JCGLStencilFunction.STENCIL_EQUAL)
+        .setWriteMaskBackFaces(0)
+        .setWriteMaskFrontFaces(0)
+        .setTestReferenceBack(0b1111_1111)
+        .setTestReferenceFront(0b1111_1111)
+        .setTestMaskBack(R2Stencils.ALLOW_BIT)
+        .setTestMaskFront(R2Stencils.ALLOW_BIT)
+        .setStencilEnabled(true)
+        .setStencilStrict(true)
+        .build();
+
+    final JCGLDepthState depth_state =
+      JCGLDepthState.builder()
+        .setDepthClamp(JCGLDepthClamping.DEPTH_CLAMP_ENABLED)
+        .setDepthStrict(JCGLDepthStrict.DEPTH_STRICT_ENABLED)
+        .setDepthTest(JCGLDepthFunction.DEPTH_LESS_THAN)
+        .setDepthWrite(JCGLDepthWriting.DEPTH_WRITE_DISABLED)
+        .build();
+
+    this.render_state =
+      JCGLRenderState.builder()
+        .setDepthState(depth_state)
+        .setStencilState(stencil_state)
+        .build();
   }
 
   /**
