@@ -130,7 +130,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
       R2TextureDefaults.newDefaults(g_tex, tr);
 
     final R2GeometryBufferType gbuffer =
-      R2ShaderLightProjectiveWithShadowContract.newGeometryBuffer(
+      newGeometryBuffer(
         g_fb, g_tex, tr);
 
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
@@ -161,7 +161,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
       PMatrixHeapArrayM4x4F.newMatrix();
 
     mat.withObserver(view, proj, this, (mo, x) -> {
-      f.onActivate(g.getShaders());
+      f.onActivate(g);
       f.onReceiveBoundGeometryBufferTextures(g_sh, gbuffer, ua, us, ud, un);
       f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
 
@@ -170,7 +170,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
         f.onReceiveProjectiveLight(g_sh, mp);
         f.onReceiveShadowMap(g_tex, g_sh, tc, td.texture2DWhite());
         f.onValidate();
-        f.onDeactivate(g_sh);
+        f.onDeactivate(g);
         return Unit.unit();
       });
     });
@@ -205,8 +205,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
       R2TextureDefaults.newDefaults(g_tex, tr);
 
     final R2GeometryBufferType gbuffer =
-      R2ShaderLightProjectiveWithShadowContract.newGeometryBuffer(
-        g_fb, g_tex, tr);
+      newGeometryBuffer(g_fb, g_tex, tr);
 
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -222,7 +221,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
     final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view =
       PMatrixHeapArrayM4x4F.newMatrix();
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
 
     this.expected.expect(FSMTransitionException.class);
     mat.withObserver(view, proj, this, (mo, x) -> {
