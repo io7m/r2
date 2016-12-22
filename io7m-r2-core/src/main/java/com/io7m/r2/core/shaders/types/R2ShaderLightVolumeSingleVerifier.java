@@ -19,7 +19,6 @@ package com.io7m.r2.core.shaders.types;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jfsm.core.FSMEnumMutable;
 import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
@@ -143,8 +142,8 @@ public final class R2ShaderLightVolumeSingleVerifier<
 
   @Override
   public void onReceiveBoundGeometryBufferTextures(
-    final JCGLShadersType g_sh,
-    final R2GeometryBufferUsableType g,
+    final JCGLInterfaceGL33Type g,
+    final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
     final JCGLTextureUnitType unit_specular,
     final JCGLTextureUnitType unit_depth,
@@ -152,8 +151,8 @@ public final class R2ShaderLightVolumeSingleVerifier<
   {
     this.state.transition(State.STATE_GEOMETRY_BUFFER_RECEIVED);
     this.shader.onReceiveBoundGeometryBufferTextures(
-      g_sh,
       g,
+      gbuffer,
       unit_albedo,
       unit_specular,
       unit_depth,

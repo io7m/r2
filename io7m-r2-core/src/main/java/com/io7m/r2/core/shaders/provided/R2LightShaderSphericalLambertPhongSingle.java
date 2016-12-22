@@ -229,15 +229,15 @@ public final class R2LightShaderSphericalLambertPhongSingle extends
 
   @Override
   public void onReceiveBoundGeometryBufferTextures(
-    final JCGLShadersType g_sh,
-    final R2GeometryBufferUsableType g,
+    final JCGLInterfaceGL33Type g,
+    final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
     final JCGLTextureUnitType unit_specular,
     final JCGLTextureUnitType unit_depth,
     final JCGLTextureUnitType unit_normals)
   {
-    NullCheck.notNull(g_sh);
     NullCheck.notNull(g);
+    NullCheck.notNull(gbuffer);
     NullCheck.notNull(unit_albedo);
     NullCheck.notNull(unit_depth);
     NullCheck.notNull(unit_normals);
@@ -247,6 +247,7 @@ public final class R2LightShaderSphericalLambertPhongSingle extends
       Set each of the required G-Buffer textures.
      */
 
+    final JCGLShadersType g_sh = g.getShaders();
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_specular, unit_specular);

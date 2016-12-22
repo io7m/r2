@@ -502,7 +502,7 @@ public final class R2LightRenderer implements R2LightRendererType
     {
       s.onActivate(this.g33);
       s.onReceiveBoundGeometryBufferTextures(
-        this.shaders,
+        this.g33,
         this.input_state.parent.gbuffer,
         this.input_state.unit_albedo,
         this.input_state.unit_specular,
@@ -1340,7 +1340,7 @@ public final class R2LightRenderer implements R2LightRendererType
     {
       s.onActivate(this.g33);
       s.onReceiveBoundGeometryBufferTextures(
-        this.shaders,
+        this.g33,
         this.input_state.parent.gbuffer,
         this.input_state.unit_albedo,
         this.input_state.unit_specular,

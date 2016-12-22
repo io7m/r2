@@ -161,7 +161,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
 
     mat.withObserver(view, proj, this, (mo, x) -> {
       f.onActivate(g);
-      f.onReceiveBoundGeometryBufferTextures(g_sh, gbuffer, ua, us, ud, un);
+      f.onReceiveBoundGeometryBufferTextures(g, gbuffer, ua, us, ud, un);
       f.onReceiveValues(
         g, R2ShaderParametersLight.of(tc, params, mo, gbuffer.area()));
 

@@ -1053,8 +1053,8 @@ public final class R2TestUtilities
     {
       @Override
       public void onReceiveBoundGeometryBufferTextures(
-        final JCGLShadersType g_sh,
-        final R2GeometryBufferUsableType g,
+        final JCGLInterfaceGL33Type g,
+        final R2GeometryBufferUsableType gbuffer,
         final JCGLTextureUnitType unit_albedo,
         final JCGLTextureUnitType unit_specular,
         final JCGLTextureUnitType unit_depth,
