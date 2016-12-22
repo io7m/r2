@@ -85,7 +85,7 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
     this.direction_eye3 = new PVectorM3F<>();
     this.direction_world = new PVectorM4F<>();
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 7);
 
     this.u_light_directional_color =
@@ -141,7 +141,7 @@ public final class R2DebugShaderLightDirectionalConstantSingle extends
 
   @Override
   public Class<R2LightDirectionalScreenSingle>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2LightDirectionalScreenSingle.class;
   }

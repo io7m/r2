@@ -64,7 +64,7 @@ public final class R2ShaderDebugVisualScreen extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2DebugVisualConstant.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 5);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
@@ -101,7 +101,7 @@ public final class R2ShaderDebugVisualScreen extends
 
   @SuppressWarnings("unchecked")
   @Override
-  public Class<PVectorI4F<R2SpaceRGBAType>> getShaderParametersType()
+  public Class<PVectorI4F<R2SpaceRGBAType>> shaderParametersType()
   {
     final Class<?> c = PVectorI4F.class;
     return (Class<PVectorI4F<R2SpaceRGBAType>>) c;

@@ -1042,7 +1042,7 @@ public final class R2SceneOpaquesTest
       this.shader_current = s;
       this.ops.add(String.format(
         "onInstanceBatchedShaderStart %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -1054,7 +1054,7 @@ public final class R2SceneOpaquesTest
       this.material_current = material;
       this.ops.add(String.format(
         "onInstanceBatchedMaterialStart %d %d",
-        Long.valueOf(s.getShaderID()),
+        Long.valueOf(s.shaderID()),
         Long.valueOf(material.materialID())));
     }
 
@@ -1081,7 +1081,7 @@ public final class R2SceneOpaquesTest
       this.material_current = null;
       this.ops.add(String.format(
         "onInstanceBatchedMaterialFinish %d %d",
-        Long.valueOf(s.getShaderID()),
+        Long.valueOf(s.shaderID()),
         Long.valueOf(material.materialID())));
     }
 
@@ -1093,7 +1093,7 @@ public final class R2SceneOpaquesTest
       this.shader_current = null;
       this.ops.add(String.format(
         "onInstanceBatchedShaderFinish %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -1112,7 +1112,7 @@ public final class R2SceneOpaquesTest
       this.shader_current = s;
       this.ops.add(String.format(
         "onInstanceBillboardedShaderStart %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -1124,7 +1124,7 @@ public final class R2SceneOpaquesTest
       this.material_current = material;
       this.ops.add(String.format(
         "onInstanceBillboardedMaterialStart %d %d",
-        Long.valueOf(s.getShaderID()),
+        Long.valueOf(s.shaderID()),
         Long.valueOf(material.materialID())));
     }
 
@@ -1151,7 +1151,7 @@ public final class R2SceneOpaquesTest
       this.material_current = null;
       this.ops.add(String.format(
         "onInstanceBillboardedMaterialFinish %d %d",
-        Long.valueOf(s.getShaderID()),
+        Long.valueOf(s.shaderID()),
         Long.valueOf(material.materialID())));
     }
 
@@ -1163,7 +1163,7 @@ public final class R2SceneOpaquesTest
       this.shader_current = null;
       this.ops.add(String.format(
         "onInstanceBillboardedShaderFinish %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -1173,7 +1173,7 @@ public final class R2SceneOpaquesTest
       this.shader_current = s;
       this.ops.add(String.format(
         "onInstanceSingleShaderStart %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -1185,7 +1185,7 @@ public final class R2SceneOpaquesTest
       this.material_current = material;
       this.ops.add(String.format(
         "onInstanceSingleMaterialStart %d %d",
-        Long.valueOf(s.getShaderID()),
+        Long.valueOf(s.shaderID()),
         Long.valueOf(material.materialID())));
     }
 
@@ -1223,7 +1223,7 @@ public final class R2SceneOpaquesTest
       this.material_current = null;
       this.ops.add(String.format(
         "onInstanceSingleMaterialFinish %d %d",
-        Long.valueOf(s.getShaderID()),
+        Long.valueOf(s.shaderID()),
         Long.valueOf(material.materialID())));
     }
 
@@ -1235,7 +1235,7 @@ public final class R2SceneOpaquesTest
       this.shader_current = null;
       this.ops.add(String.format(
         "onInstanceSingleShaderFinish %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override

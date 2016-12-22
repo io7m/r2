@@ -294,7 +294,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
      * Render a screen-sized quad to provide the base stencil value.
      */
 
-    g_sh.shaderActivateProgram(this.program_screen.getShaderProgram());
+    g_sh.shaderActivateProgram(this.program_screen.shaderProgram());
     g_ao.arrayObjectBind(this.quad.arrayObject());
     g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
     g_ao.arrayObjectUnbind();

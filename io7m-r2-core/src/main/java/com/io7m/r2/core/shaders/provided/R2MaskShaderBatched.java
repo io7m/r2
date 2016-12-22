@@ -66,7 +66,7 @@ public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2Mask.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
       p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
@@ -101,7 +101,7 @@ public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
   }
 
   @Override
-  public Class<Unit> getShaderParametersType()
+  public Class<Unit> shaderParametersType()
   {
     return Unit.class;
   }

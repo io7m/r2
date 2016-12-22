@@ -73,7 +73,7 @@ public final class R2SurfaceShaderBasicBillboarded extends
       Optional.of("com.io7m.r2.shaders.core/R2Billboarded.geom"),
       "com.io7m.r2.shaders.core/R2SurfaceBasicBillboarded.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 13);
 
     this.u_transform_projection =
@@ -148,7 +148,7 @@ public final class R2SurfaceShaderBasicBillboarded extends
   }
 
   @Override
-  public Class<R2SurfaceShaderBasicParameters> getShaderParametersType()
+  public Class<R2SurfaceShaderBasicParameters> shaderParametersType()
   {
     return R2SurfaceShaderBasicParameters.class;
   }

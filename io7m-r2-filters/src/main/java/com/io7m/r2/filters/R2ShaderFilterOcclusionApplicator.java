@@ -59,7 +59,7 @@ public final class R2ShaderFilterOcclusionApplicator extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2FilterOcclusionApplicator.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     this.u_texture =
       R2ShaderParameters.getUniformChecked(
         p, "R2_texture", JCGLType.TYPE_SAMPLER_2D);
@@ -92,7 +92,7 @@ public final class R2ShaderFilterOcclusionApplicator extends
 
   @Override
   public Class<R2ShaderFilterOcclusionApplicatorParameters>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2ShaderFilterOcclusionApplicatorParameters.class;
   }

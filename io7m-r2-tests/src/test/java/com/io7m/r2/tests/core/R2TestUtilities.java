@@ -324,7 +324,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
@@ -336,13 +336,13 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Class<Object> getShaderParametersType()
+      public Class<Object> shaderParametersType()
       {
         return Object.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }
@@ -436,7 +436,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
@@ -448,13 +448,13 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Class<Object> getShaderParametersType()
+      public Class<Object> shaderParametersType()
       {
         return Object.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }
@@ -631,7 +631,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
@@ -643,13 +643,13 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Class<Object> getShaderParametersType()
+      public Class<Object> shaderParametersType()
       {
         return Object.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }
@@ -735,7 +735,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
@@ -747,13 +747,13 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Class<Object> getShaderParametersType()
+      public Class<Object> shaderParametersType()
       {
         return Object.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }
@@ -838,7 +838,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
@@ -850,13 +850,13 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Class<Object> getShaderParametersType()
+      public Class<Object> shaderParametersType()
       {
         return Object.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }
@@ -995,19 +995,19 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
 
       @Override
-      public Class<Object> getShaderParametersType()
+      public Class<Object> shaderParametersType()
       {
         return Object.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }
@@ -1091,19 +1091,19 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
 
       @Override
-      public Class<R2LightSingleType> getShaderParametersType()
+      public Class<R2LightSingleType> shaderParametersType()
       {
         return R2LightSingleType.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }
@@ -1402,7 +1402,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
@@ -1414,13 +1414,13 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Class<Object> getShaderParametersType()
+      public Class<Object> shaderParametersType()
       {
         return Object.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }
@@ -1512,7 +1512,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
@@ -1524,13 +1524,13 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Class<Object> getShaderParametersType()
+      public Class<Object> shaderParametersType()
       {
         return Object.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }
@@ -1622,7 +1622,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public long getShaderID()
+      public long shaderID()
       {
         return s_id;
       }
@@ -1634,13 +1634,13 @@ public final class R2TestUtilities
       }
 
       @Override
-      public Class<Object> getShaderParametersType()
+      public Class<Object> shaderParametersType()
       {
         return Object.class;
       }
 
       @Override
-      public JCGLProgramShaderUsableType getShaderProgram()
+      public JCGLProgramShaderUsableType shaderProgram()
       {
         return pr;
       }

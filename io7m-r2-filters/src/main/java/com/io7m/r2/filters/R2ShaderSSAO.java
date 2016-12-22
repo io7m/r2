@@ -89,7 +89,7 @@ public final class R2ShaderSSAO extends
 
     this.noise_uv_scale = new VectorM2F();
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 20);
 
     final JCGLProgramUniformType u_gbuffer_albedo = R2ShaderParameters.getUniformChecked(
@@ -178,7 +178,7 @@ public final class R2ShaderSSAO extends
 
   @Override
   public Class<R2ShaderSSAOParameters>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2ShaderSSAOParameters.class;
   }

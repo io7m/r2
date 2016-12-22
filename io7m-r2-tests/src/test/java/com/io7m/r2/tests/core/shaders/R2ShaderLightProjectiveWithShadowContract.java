@@ -260,7 +260,7 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
     final T light =
       this.newLight(g, pool, tc, td);
 
-    final Class<?> s_class = s.getShaderParametersType();
+    final Class<?> s_class = s.shaderParametersType();
     final Class<?> l_class = light.getClass();
     Assert.assertTrue(s_class.isAssignableFrom(l_class));
     Assert.assertTrue(light.lightID() >= 0L);

@@ -52,7 +52,7 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2Nothing.frag");
 
-    R2ShaderParameters.checkUniformParameterCount(this.getShaderProgram(), 0);
+    R2ShaderParameters.checkUniformParameterCount(this.shaderProgram(), 0);
   }
 
   /**
@@ -74,7 +74,7 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
   }
 
   @Override
-  public Class<Unit> getShaderParametersType()
+  public Class<Unit> shaderParametersType()
   {
     return Unit.class;
   }

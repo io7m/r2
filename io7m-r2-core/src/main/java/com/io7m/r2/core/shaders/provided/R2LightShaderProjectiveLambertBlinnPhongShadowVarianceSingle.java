@@ -112,7 +112,7 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2LightProjectiveLambertBlinnPhongShadowVarianceSingle.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 31);
 
     this.u_shadow_factor_minimum =
@@ -253,7 +253,7 @@ public final class R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle 
 
   @Override
   public Class<R2LightProjectiveWithShadowVarianceType>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2LightProjectiveWithShadowVarianceType.class;
   }

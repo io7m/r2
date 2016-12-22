@@ -65,7 +65,7 @@ public final class R2ShaderLogDepthOnlySingle extends R2AbstractShader<Unit>
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2LogDepthOnlySingle.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 4);
 
     final Map<String, JCGLProgramUniformType> us = p.getUniforms();
@@ -99,7 +99,7 @@ public final class R2ShaderLogDepthOnlySingle extends R2AbstractShader<Unit>
   }
 
   @Override
-  public Class<Unit> getShaderParametersType()
+  public Class<Unit> shaderParametersType()
   {
     return Unit.class;
   }

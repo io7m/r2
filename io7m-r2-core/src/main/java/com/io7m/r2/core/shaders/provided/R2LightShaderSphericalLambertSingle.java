@@ -102,7 +102,7 @@ public final class R2LightShaderSphericalLambertSingle extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2LightSphericalLambertSingle.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 23);
 
     this.u_light_spherical_color =
@@ -215,7 +215,7 @@ public final class R2LightShaderSphericalLambertSingle extends
 
   @Override
   public Class<R2LightSphericalSingleReadableType>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2LightSphericalSingleReadableType.class;
   }

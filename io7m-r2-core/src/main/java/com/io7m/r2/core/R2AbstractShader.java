@@ -182,13 +182,13 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
   }
 
   @Override
-  public final JCGLProgramShaderUsableType getShaderProgram()
+  public final JCGLProgramShaderUsableType shaderProgram()
   {
     return this.program;
   }
 
   @Override
-  public final long getShaderID()
+  public final long shaderID()
   {
     return this.id;
   }

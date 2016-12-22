@@ -59,7 +59,7 @@ public final class R2ShaderFilterTextureShow extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2FilterTextureShow.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     this.u_texture =
       R2ShaderParameters.getUniformChecked(
         p, "R2_texture", JCGLType.TYPE_SAMPLER_2D);
@@ -91,7 +91,7 @@ public final class R2ShaderFilterTextureShow extends
 
   @Override
   public Class<R2ShaderFilterTextureShowParameters>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2ShaderFilterTextureShowParameters.class;
   }

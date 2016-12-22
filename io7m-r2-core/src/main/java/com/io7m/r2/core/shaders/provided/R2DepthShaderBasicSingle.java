@@ -69,7 +69,7 @@ public final class R2DepthShaderBasicSingle extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2DepthBasicSingle.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 8);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
@@ -119,7 +119,7 @@ public final class R2DepthShaderBasicSingle extends
   }
 
   @Override
-  public Class<R2DepthShaderBasicParameters> getShaderParametersType()
+  public Class<R2DepthShaderBasicParameters> shaderParametersType()
   {
     return R2DepthShaderBasicParameters.class;
   }

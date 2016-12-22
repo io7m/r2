@@ -74,7 +74,7 @@ public final class R2TranslucentShaderBasicPremultipliedSingle
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2TranslucentBasicPremultiplied.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
       p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
@@ -131,7 +131,7 @@ public final class R2TranslucentShaderBasicPremultipliedSingle
   }
 
   @Override
-  public Class<R2TranslucentShaderBasicParameters> getShaderParametersType()
+  public Class<R2TranslucentShaderBasicParameters> shaderParametersType()
   {
     return R2TranslucentShaderBasicParameters.class;
   }

@@ -69,7 +69,7 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2FilterBilateralBlurDepthAwareVertical4f.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 7);
 
     this.u_texture_image =
@@ -125,7 +125,7 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4f extends
 
   @Override
   public Class<R2ShaderFilterBilateralBlurDepthAwareParameters>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2ShaderFilterBilateralBlurDepthAwareParameters.class;
   }

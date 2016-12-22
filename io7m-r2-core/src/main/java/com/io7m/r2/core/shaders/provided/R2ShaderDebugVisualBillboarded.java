@@ -65,7 +65,7 @@ public final class R2ShaderDebugVisualBillboarded extends
       Optional.of("com.io7m.r2.shaders.core/R2Billboarded.geom"),
       "com.io7m.r2.shaders.core/R2DebugVisualConstant.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 4);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
@@ -100,7 +100,7 @@ public final class R2ShaderDebugVisualBillboarded extends
 
   @SuppressWarnings("unchecked")
   @Override
-  public Class<PVectorI4F<R2SpaceRGBAType>> getShaderParametersType()
+  public Class<PVectorI4F<R2SpaceRGBAType>> shaderParametersType()
   {
     final Class<?> c = PVectorI4F.class;
     return (Class<PVectorI4F<R2SpaceRGBAType>>) c;

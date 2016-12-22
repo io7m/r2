@@ -59,7 +59,7 @@ public final class R2ShaderFilterBoxBlurHorizontal4f extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2FilterBoxBlurHorizontal4f.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 2);
 
     this.u_texture =
@@ -99,7 +99,7 @@ public final class R2ShaderFilterBoxBlurHorizontal4f extends
 
   @Override
   public Class<R2ShaderFilterBoxBlurParameters>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2ShaderFilterBoxBlurParameters.class;
   }

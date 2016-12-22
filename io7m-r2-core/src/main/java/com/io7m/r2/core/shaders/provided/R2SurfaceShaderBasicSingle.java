@@ -77,7 +77,7 @@ public final class R2SurfaceShaderBasicSingle extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2SurfaceBasicSingle.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 16);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
@@ -150,7 +150,7 @@ public final class R2SurfaceShaderBasicSingle extends
   }
 
   @Override
-  public Class<R2SurfaceShaderBasicParameters> getShaderParametersType()
+  public Class<R2SurfaceShaderBasicParameters> shaderParametersType()
   {
     return R2SurfaceShaderBasicParameters.class;
   }

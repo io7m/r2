@@ -61,7 +61,7 @@ public final class R2ShaderFilterEmission extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2FilterEmission.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
 
     this.u_albedo_emission_texture =
       R2ShaderParameters.getUniformChecked(
@@ -102,7 +102,7 @@ public final class R2ShaderFilterEmission extends
 
   @Override
   public Class<R2ShaderFilterEmissionParameters>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2ShaderFilterEmissionParameters.class;
   }

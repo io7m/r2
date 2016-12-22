@@ -62,7 +62,7 @@ public final class R2ShaderDebugColorVerticesWorldPosition extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2DebugColorVertices.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 3);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
@@ -96,7 +96,7 @@ public final class R2ShaderDebugColorVerticesWorldPosition extends
   }
 
   @Override
-  public Class<Unit> getShaderParametersType()
+  public Class<Unit> shaderParametersType()
   {
     return Unit.class;
   }

@@ -96,7 +96,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
     final long i_id = i.instanceID();
     final long m_id = m.materialID();
     final R2ShaderDepthSingleUsableType<?> shader = m.shader();
-    final long s_id = shader.getShaderID();
+    final long s_id = shader.shaderID();
 
     /*
       Insert the instance into the set of all single instances. Instances
@@ -168,7 +168,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
     final long i_id = i.instanceID();
     final long m_id = m.materialID();
     final R2ShaderDepthBatchedUsableType<?> shader = m.shader();
-    final long s_id = shader.getShaderID();
+    final long s_id = shader.shaderID();
 
     /*
       Insert the instance into the set of all batched instances. Instances
@@ -260,7 +260,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
        */
 
       final LongSet s_materials =
-        this.singles.shader_to_materials.get(s.getShaderID());
+        this.singles.shader_to_materials.get(s.shaderID());
 
       for (final long m_id : s_materials) {
         final R2MaterialDepthSingleType<Object> material =
@@ -348,7 +348,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
        */
 
       final LongSet s_materials =
-        this.batches.shader_to_materials.get(s.getShaderID());
+        this.batches.shader_to_materials.get(s.shaderID());
 
       for (final long m_id : s_materials) {
         final R2MaterialDepthBatchedType<Object> material =

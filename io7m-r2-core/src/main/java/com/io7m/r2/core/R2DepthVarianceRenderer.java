@@ -269,7 +269,7 @@ public final class R2DepthVarianceRenderer implements
     public <M> void onInstanceBatchedShaderStart(
       final R2ShaderDepthBatchedUsableType<M> s)
     {
-      this.shaders.shaderActivateProgram(s.getShaderProgram());
+      this.shaders.shaderActivateProgram(s.shaderProgram());
       s.onReceiveViewValues(this.shaders, this.matrices);
     }
 

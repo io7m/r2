@@ -33,19 +33,19 @@ public interface R2ShaderUsableType<M> extends JCGLResourceUsableType
    * @return The unique shader ID
    */
 
-  long getShaderID();
+  long shaderID();
 
   /**
    * @return The shader parameter type
    */
 
-  Class<M> getShaderParametersType();
+  Class<M> shaderParametersType();
 
   /**
    * @return The compiled shader program
    */
 
-  JCGLProgramShaderUsableType getShaderProgram();
+  JCGLProgramShaderUsableType shaderProgram();
 
   /**
    * Activate the shader for rendering.

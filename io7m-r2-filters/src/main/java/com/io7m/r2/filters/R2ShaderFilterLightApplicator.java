@@ -60,7 +60,7 @@ public final class R2ShaderFilterLightApplicator extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2FilterLightApplicator.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     this.u_texture_albedo =
       R2ShaderParameters.getUniformChecked(
         p, "R2_textures_albedo", JCGLType.TYPE_SAMPLER_2D);
@@ -95,7 +95,7 @@ public final class R2ShaderFilterLightApplicator extends
 
   @Override
   public Class<R2ShaderFilterLightApplicatorParameters>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2ShaderFilterLightApplicatorParameters.class;
   }

@@ -109,21 +109,21 @@ public final class R2ShaderTranslucentInstanceSingleVerifier<M> implements
   }
 
   @Override
-  public long getShaderID()
+  public long shaderID()
   {
-    return this.shader.getShaderID();
+    return this.shader.shaderID();
   }
 
   @Override
-  public Class<M> getShaderParametersType()
+  public Class<M> shaderParametersType()
   {
-    return this.shader.getShaderParametersType();
+    return this.shader.shaderParametersType();
   }
 
   @Override
-  public JCGLProgramShaderUsableType getShaderProgram()
+  public JCGLProgramShaderUsableType shaderProgram()
   {
-    return this.shader.getShaderProgram();
+    return this.shader.shaderProgram();
   }
 
   @Override

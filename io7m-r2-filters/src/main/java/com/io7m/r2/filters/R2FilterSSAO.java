@@ -177,7 +177,7 @@ public final class R2FilterSSAO implements
           .build();
 
       try {
-        g_sh.shaderActivateProgram(this.shader.getShaderProgram());
+        g_sh.shaderActivateProgram(this.shader.shaderProgram());
 
         this.shader.onActivate(g_sh);
         this.shader.onReceiveFilterValues(g_tx, g_sh, c, sp);

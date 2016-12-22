@@ -69,7 +69,7 @@ public final class R2RefractionMaskedDeltaShaderBatched
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2RefractionMaskedDelta.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
       p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
@@ -115,7 +115,7 @@ public final class R2RefractionMaskedDeltaShaderBatched
   }
 
   @Override
-  public Class<R2RefractionMaskedDeltaParameters> getShaderParametersType()
+  public Class<R2RefractionMaskedDeltaParameters> shaderParametersType()
   {
     return R2RefractionMaskedDeltaParameters.class;
   }

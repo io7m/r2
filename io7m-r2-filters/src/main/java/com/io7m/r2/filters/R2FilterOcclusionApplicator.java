@@ -185,7 +185,7 @@ public final class R2FilterOcclusionApplicator implements
             .setIntensity(parameters.intensity())
             .build();
 
-        g_sh.shaderActivateProgram(this.shader.getShaderProgram());
+        g_sh.shaderActivateProgram(this.shader.shaderProgram());
         this.shader.onActivate(g_sh);
         this.shader.onReceiveFilterValues(g_tx, g_sh, c, sp);
         this.shader.onValidate();

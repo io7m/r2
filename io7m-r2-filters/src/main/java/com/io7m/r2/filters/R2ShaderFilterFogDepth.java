@@ -64,7 +64,7 @@ public abstract class R2ShaderFilterFogDepth extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2FilterFogDepth" + type + ".frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
 
     this.u_image_texture =
       R2ShaderParameters.getUniformChecked(
@@ -92,7 +92,7 @@ public abstract class R2ShaderFilterFogDepth extends
 
   @Override
   public final Class<R2ShaderFilterFogParameters>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2ShaderFilterFogParameters.class;
   }

@@ -70,7 +70,7 @@ public final class R2ShaderFilterFXAAA extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/" + in_fragment);
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 5);
 
     this.u_image =
@@ -183,7 +183,7 @@ public final class R2ShaderFilterFXAAA extends
   }
 
   @Override
-  public Class<R2ShaderFilterFXAAParameters> getShaderParametersType()
+  public Class<R2ShaderFilterFXAAParameters> shaderParametersType()
   {
     return R2ShaderFilterFXAAParameters.class;
   }

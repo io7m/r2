@@ -825,7 +825,7 @@ public abstract class R2SceneLightsContract
     {
       this.log.add(String.format(
         "ClipGroup.onLightSingleShaderStart %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -845,7 +845,7 @@ public abstract class R2SceneLightsContract
     {
       this.log.add(String.format(
         "ClipGroup.onLightSingle %d %d",
-        Long.valueOf(s.getShaderID()),
+        Long.valueOf(s.shaderID()),
         Long.valueOf(i.lightID())));
     }
 
@@ -856,7 +856,7 @@ public abstract class R2SceneLightsContract
     {
       this.log.add(String.format(
         "ClipGroup.onLightSingleShaderFinish %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -896,7 +896,7 @@ public abstract class R2SceneLightsContract
     {
       this.log.add(String.format(
         "Group.onLightSingleShaderStart %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -916,7 +916,7 @@ public abstract class R2SceneLightsContract
     {
       this.log.add(String.format(
         "Group.onLightSingle %d %d",
-        Long.valueOf(s.getShaderID()),
+        Long.valueOf(s.shaderID()),
         Long.valueOf(i.lightID())));
     }
 
@@ -927,7 +927,7 @@ public abstract class R2SceneLightsContract
     {
       this.log.add(String.format(
         "Group.onLightSingleShaderFinish %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override

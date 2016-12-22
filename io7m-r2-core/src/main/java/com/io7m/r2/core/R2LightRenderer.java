@@ -634,7 +634,7 @@ public final class R2LightRenderer implements R2LightRendererType
           this.input_state.light_base_context.unitContextNew();
 
         final Class<R2LightSingleReadableType> s_class =
-          this.light_shader.getShaderParametersType();
+          this.light_shader.shaderParametersType();
         final Class<? extends R2LightSingleReadableType> l_class =
           light.getClass();
 
@@ -1298,7 +1298,7 @@ public final class R2LightRenderer implements R2LightRendererType
           this.input_state.light_base_context.unitContextNew();
 
         final Class<R2LightSingleReadableType> s_class =
-          this.light_shader.getShaderParametersType();
+          this.light_shader.shaderParametersType();
         final Class<? extends R2LightSingleReadableType> l_class =
           light.getClass();
 
