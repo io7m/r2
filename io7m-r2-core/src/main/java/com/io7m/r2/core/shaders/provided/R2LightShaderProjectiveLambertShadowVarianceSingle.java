@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -32,7 +33,6 @@ import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
 import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
@@ -48,6 +48,7 @@ import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -112,7 +113,7 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2LightProjectiveLambertShadowVarianceSingle.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 31);
 
     this.u_shadow_factor_minimum =
@@ -254,7 +255,7 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
 
   @Override
   public Class<R2LightProjectiveWithShadowVarianceType>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2LightProjectiveWithShadowVarianceType.class;
   }
@@ -268,15 +269,15 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
 
   @Override
   public void onReceiveBoundGeometryBufferTextures(
-    final JCGLShadersType g_sh,
-    final R2GeometryBufferUsableType g,
+    final JCGLInterfaceGL33Type g,
+    final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
     final JCGLTextureUnitType unit_specular,
     final JCGLTextureUnitType unit_depth,
     final JCGLTextureUnitType unit_normals)
   {
-    NullCheck.notNull(g_sh);
     NullCheck.notNull(g);
+    NullCheck.notNull(gbuffer);
     NullCheck.notNull(unit_albedo);
     NullCheck.notNull(unit_depth);
     NullCheck.notNull(unit_normals);
@@ -286,6 +287,7 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
       Set each of the required G-Buffer textures.
      */
 
+    final JCGLShadersType g_sh = g.getShaders();
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_specular, unit_specular);
@@ -294,11 +296,13 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
 
   @Override
   public void onReceiveProjectiveLight(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesProjectiveLightValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
+
+    final JCGLShadersType g_sh = g.getShaders();
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_eye_to_light_eye, m.matrixProjectiveEyeToLightEye());
@@ -308,18 +312,23 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
 
   @Override
   public void onReceiveValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightProjectiveWithShadowVarianceType values,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersLightType<R2LightProjectiveWithShadowVarianceType> light_parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(values);
-    NullCheck.notNull(m);
+    NullCheck.notNull(g);
+    NullCheck.notNull(light_parameters);
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    final R2MatricesObserverValuesType m =
+      light_parameters.observerMatrices();
+    final AreaInclusiveUnsignedLType viewport =
+      light_parameters.viewport();
+    final R2LightProjectiveWithShadowVarianceType light =
+      light_parameters.values();
+    final JCGLTextureUnitContextMutableType tc =
+      light_parameters.textureUnitContext();
 
     /*
       Upload the current view rays.
@@ -379,7 +388,7 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
      */
 
     final PVectorReadable3FType<R2SpaceWorldType> position =
-      values.position();
+      light.position();
 
     this.position_world.copyFrom3F(position);
     this.position_world.setWF(1.0f);
@@ -400,9 +409,8 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
       Upload the projected image.
      */
 
-    final JCGLTextureUnitType unit_image = tc.unitContextBindTexture2D(
-      g_tex,
-      values.image().texture());
+    final JCGLTextureUnitType unit_image =
+      tc.unitContextBindTexture2D(g_tex, light.image().texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_projective_image,
       unit_image);
@@ -412,13 +420,13 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_projective_color, values.color());
+      this.u_light_projective_color, light.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_projective_intensity, values.intensity());
+      this.u_light_projective_intensity, light.intensity());
     g_sh.shaderUniformPutFloat(
-      this.u_light_projective_inverse_falloff, 1.0f / values.falloff());
+      this.u_light_projective_inverse_falloff, 1.0f / light.falloff());
     g_sh.shaderUniformPutFloat(
-      this.u_light_projective_inverse_range, 1.0f / values.radius());
+      this.u_light_projective_inverse_range, 1.0f / light.radius());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_projective_image, unit_image);
 
@@ -426,12 +434,12 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
       Upload the shadow values.
      */
 
-    final R2ShadowDepthVarianceType shadow = values.shadow();
+    final R2ShadowDepthVarianceType shadow = light.shadow();
     g_sh.shaderUniformPutFloat(
       this.u_shadow_bleed_reduction, shadow.lightBleedReduction());
     g_sh.shaderUniformPutFloat(
       this.u_shadow_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(values.projection()));
+      (float) R2Projections.getDepthCoefficient(light.projection()));
     g_sh.shaderUniformPutFloat(
       this.u_shadow_factor_minimum, shadow.minimumFactor());
     g_sh.shaderUniformPutFloat(
@@ -440,30 +448,32 @@ public final class R2LightShaderProjectiveLambertShadowVarianceSingle extends
 
   @Override
   public void onReceiveShadowMap(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final JCGLTextureUnitContextMutableType tc,
     final R2Texture2DUsableType map)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(tc);
     NullCheck.notNull(map);
 
-    final JCGLTextureUnitType unit_shadow = tc.unitContextBindTexture2D(
-      g_tex,
-      map.texture());
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    final JCGLTextureUnitType unit_shadow =
+      tc.unitContextBindTexture2D(g_tex, map.texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_shadow_map, unit_shadow);
   }
 
   @Override
   public void onReceiveVolumeLightTransform(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesVolumeLightValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
+
+    final JCGLShadersType g_sh = g.getShaders();
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_volume_modelview, m.matrixLightModelView());

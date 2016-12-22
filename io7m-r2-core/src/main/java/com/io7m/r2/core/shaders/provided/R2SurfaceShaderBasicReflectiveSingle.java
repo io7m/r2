@@ -16,16 +16,15 @@
 
 package com.io7m.r2.core.shaders.provided;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
@@ -34,6 +33,8 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
@@ -81,7 +82,7 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2SurfaceBasicReflectiveSingle.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 19);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
@@ -167,7 +168,7 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
   }
 
   @Override
-  public Class<R2SurfaceShaderBasicReflectiveParameters> getShaderParametersType()
+  public Class<R2SurfaceShaderBasicReflectiveParameters> shaderParametersType()
   {
     return R2SurfaceShaderBasicReflectiveParameters.class;
   }
@@ -181,11 +182,13 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
 
   @Override
   public void onReceiveInstanceTransformValues(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesInstanceSingleValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
+
+    final JCGLShadersType g_sh = g.getShaders();
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_modelview, m.matrixModelView());
@@ -197,52 +200,55 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
 
   @Override
   public void onReceiveViewValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m,
-    final AreaInclusiveUnsignedLType viewport)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
-    NullCheck.notNull(viewport);
+    NullCheck.notNull(g);
+    NullCheck.notNull(view_parameters);
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final R2MatricesObserverValuesType matrices =
+      view_parameters.observerMatrices();
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.projection()));
+      (float) R2Projections.getDepthCoefficient(matrices.projection()));
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_view, m.matrixView());
+      this.u_transform_view, matrices.matrixView());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.matrixProjection());
+      this.u_transform_projection, matrices.matrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_view_inverse, m.matrixViewInverse());
+      this.u_transform_view_inverse, matrices.matrixViewInverse());
   }
 
   @Override
   public void onReceiveMaterialValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final R2SurfaceShaderBasicReflectiveParameters values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersMaterialType<R2SurfaceShaderBasicReflectiveParameters> mat_parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(mat_parameters);
 
-    final JCGLTextureUnitType unit_albedo = tc.unitContextBindTexture2D(
-      g_tex,
-      values.albedoTexture().texture());
-    final JCGLTextureUnitType unit_emission = tc.unitContextBindTexture2D(
-      g_tex,
-      values.emissionTexture().texture());
-    final JCGLTextureUnitType unit_normal = tc.unitContextBindTexture2D(
-      g_tex,
-      values.normalTexture().texture());
-    final JCGLTextureUnitType unit_specular = tc.unitContextBindTexture2D(
-      g_tex,
-      values.specularTexture().texture());
-    final JCGLTextureUnitType unit_environment = tc.unitContextBindTextureCube(
-      g_tex,
-      values.environmentTexture().texture());
+    final JCGLTexturesType g_tex = g.getTextures();
+    final JCGLShadersType g_sh = g.getShaders();
+
+    final JCGLTextureUnitContextMutableType tc =
+      mat_parameters.textureUnitContext();
+    final R2SurfaceShaderBasicReflectiveParameters values =
+      mat_parameters.values();
+
+    final JCGLTextureUnitType unit_albedo =
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
+    final JCGLTextureUnitType unit_emission =
+      tc.unitContextBindTexture2D(g_tex, values.emissionTexture().texture());
+    final JCGLTextureUnitType unit_normal =
+      tc.unitContextBindTexture2D(g_tex, values.normalTexture().texture());
+    final JCGLTextureUnitType unit_specular =
+      tc.unitContextBindTexture2D(g_tex, values.specularTexture().texture());
+    final JCGLTextureUnitType unit_environment =
+      tc.unitContextBindTextureCube(
+        g_tex,
+        values.environmentTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_texture_albedo, unit_albedo);

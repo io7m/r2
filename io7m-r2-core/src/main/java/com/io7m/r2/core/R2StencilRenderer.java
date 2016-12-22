@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
@@ -35,6 +36,7 @@ import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
@@ -45,6 +47,10 @@ import com.io7m.r2.core.shaders.provided.R2StencilShaderScreen;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import org.slf4j.Logger;
@@ -294,7 +300,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
      * Render a screen-sized quad to provide the base stencil value.
      */
 
-    g_sh.shaderActivateProgram(this.program_screen.getShaderProgram());
+    g_sh.shaderActivateProgram(this.program_screen.shaderProgram());
     g_ao.arrayObjectBind(this.quad.arrayObject());
     g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
     g_ao.arrayObjectUnbind();
@@ -326,6 +332,9 @@ public final class R2StencilRenderer implements R2StencilRendererType
     R2SceneStencilsConsumerType
   {
     private final R2ShaderInstanceSingleType<Unit> program;
+    private final R2ShaderParametersViewMutable params_view;
+    private final R2ShaderParametersMaterialMutable<Object> params_material;
+
     private @Nullable JCGLInterfaceGL33Type g33;
     private @Nullable JCGLShadersType shaders;
     private @Nullable JCGLArrayObjectsType array_objects;
@@ -339,6 +348,33 @@ public final class R2StencilRenderer implements R2StencilRendererType
       final R2ShaderInstanceSingleType<Unit> in_program)
     {
       this.program = NullCheck.notNull(in_program);
+      this.params_view = R2ShaderParametersViewMutable.create();
+      this.params_material = R2ShaderParametersMaterialMutable.create();
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+      final JCGLTextureUnitContextMutableType tc,
+      final M p)
+    {
+      this.params_material.clear();
+      this.params_material.setTextureUnitContext(tc);
+      this.params_material.setValues(p);
+      Invariants.checkInvariant(
+        this.params_material.isInitialized(),
+        "Material parameters must be initialized");
+      return (R2ShaderParametersMaterialType<M>) this.params_material;
+    }
+
+    private R2ShaderParametersViewType configureViewParameters()
+    {
+      this.params_view.clear();
+      this.params_view.setViewport(this.viewport_area);
+      this.params_view.setObserverMatrices(this.matrices);
+      Invariants.checkInvariant(
+        this.params_view.isInitialized(),
+        "View parameters must be initialized");
+      return this.params_view;
     }
 
     @Override
@@ -349,9 +385,9 @@ public final class R2StencilRenderer implements R2StencilRendererType
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
 
-      this.program.onActivate(this.shaders);
+      this.program.onActivate(this.g33);
       this.program.onReceiveViewValues(
-        this.shaders, this.matrices, this.viewport_area);
+        this.g33, this.configureViewParameters());
     }
 
     @Override
@@ -372,8 +408,8 @@ public final class R2StencilRenderer implements R2StencilRendererType
         final JCGLTextureUnitContextType tc = t.texture_context.unitContextNew();
         try {
           t.program.onReceiveMaterialValues(
-            t.textures, t.shaders, tc, Unit.unit());
-          t.program.onReceiveInstanceTransformValues(t.shaders, mi);
+            t.g33, t.configureMaterialParameters(tc, Unit.unit()));
+          t.program.onReceiveInstanceTransformValues(t.g33, mi);
           t.program.onValidate();
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         } finally {
@@ -386,7 +422,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     @Override
     public void onFinish()
     {
-      this.program.onDeactivate(this.shaders);
+      this.program.onDeactivate(this.g33);
       this.shaders = null;
       this.array_objects = null;
       this.draw = null;

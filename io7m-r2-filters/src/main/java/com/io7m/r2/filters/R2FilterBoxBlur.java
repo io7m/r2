@@ -46,6 +46,7 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.EnumSet;
@@ -84,6 +85,7 @@ public final class R2FilterBoxBlur<
   private final R2RenderTargetPoolUsableType<DD, D> render_target_pool;
   private final R2UnitQuadUsableType quad;
   private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterBoxBlurParameters> blur_values;
 
   private R2FilterBoxBlur(
     final JCGLInterfaceGL33Type in_g,
@@ -98,6 +100,7 @@ public final class R2FilterBoxBlur<
     this.render_target_pool = NullCheck.notNull(in_rtp_pool);
     this.quad = NullCheck.notNull(in_quad);
     this.render_state = JCGLRenderState.builder().build();
+    this.blur_values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -431,27 +434,28 @@ public final class R2FilterBoxBlur<
       g_v.viewportSet(target_area);
 
       try {
-        this.shader_blur_h.onActivate(g_sh);
+        this.shader_blur_h.onActivate(this.g);
 
         final AreaInclusiveUnsignedLType source_area =
           source_texture.texture().textureGetArea();
         final UnsignedRangeInclusiveL range_x =
           source_area.getRangeX();
 
-        final R2ShaderFilterBoxBlurParameters sp =
+        this.blur_values.setTextureUnitContext(tc);
+        this.blur_values.setValues(
           R2ShaderFilterBoxBlurParameters.builder()
             .setTexture(source_texture)
             .setBlurRadius((float) range_x.getInterval() / parameters.blurSize())
-            .build();
+            .build());
 
-        this.shader_blur_h.onReceiveFilterValues(g_tex, g_sh, tc, sp);
+        this.shader_blur_h.onReceiveFilterValues(this.g, this.blur_values);
         this.shader_blur_h.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader_blur_h.onDeactivate(g_sh);
+        this.shader_blur_h.onDeactivate(this.g);
       }
 
     } finally {
@@ -482,27 +486,28 @@ public final class R2FilterBoxBlur<
       g_v.viewportSet(target_area);
 
       try {
-        this.shader_blur_v.onActivate(g_sh);
+        this.shader_blur_v.onActivate(this.g);
 
         final AreaInclusiveUnsignedLType source_area =
           source_texture.texture().textureGetArea();
         final UnsignedRangeInclusiveL range_y =
           source_area.getRangeY();
 
-        final R2ShaderFilterBoxBlurParameters sp =
+        this.blur_values.setTextureUnitContext(tc);
+        this.blur_values.setValues(
           R2ShaderFilterBoxBlurParameters.builder()
             .setTexture(source_texture)
             .setBlurRadius((float) range_y.getInterval() / parameters.blurSize())
-            .build();
+            .build());
 
-        this.shader_blur_v.onReceiveFilterValues(g_tex, g_sh, tc, sp);
+        this.shader_blur_v.onReceiveFilterValues(this.g, this.blur_values);
         this.shader_blur_v.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader_blur_v.onDeactivate(g_sh);
+        this.shader_blur_v.onDeactivate(this.g);
       }
 
     } finally {

@@ -21,9 +21,8 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 import com.io7m.jtensors.parameterized.PVector3FType;
@@ -31,7 +30,6 @@ import com.io7m.jtensors.parameterized.PVector4FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
@@ -44,6 +42,7 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -100,7 +99,7 @@ public final class R2LightShaderDirectionalSpecularSingle extends
     this.direction_eye3 = new PVectorM3F<>();
     this.direction_world = new PVectorM4F<>();
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 21);
 
     this.u_light_directional_color =
@@ -202,7 +201,7 @@ public final class R2LightShaderDirectionalSpecularSingle extends
 
   @Override
   public Class<R2LightDirectionalScreenSingle>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2LightDirectionalScreenSingle.class;
   }
@@ -216,15 +215,15 @@ public final class R2LightShaderDirectionalSpecularSingle extends
 
   @Override
   public void onReceiveBoundGeometryBufferTextures(
-    final JCGLShadersType g_sh,
-    final R2GeometryBufferUsableType g,
+    final JCGLInterfaceGL33Type g,
+    final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
     final JCGLTextureUnitType unit_specular,
     final JCGLTextureUnitType unit_depth,
     final JCGLTextureUnitType unit_normals)
   {
-    NullCheck.notNull(g_sh);
     NullCheck.notNull(g);
+    NullCheck.notNull(gbuffer);
     NullCheck.notNull(unit_albedo);
     NullCheck.notNull(unit_depth);
     NullCheck.notNull(unit_normals);
@@ -234,6 +233,7 @@ public final class R2LightShaderDirectionalSpecularSingle extends
       Set each of the required G-Buffer textures.
      */
 
+    final JCGLShadersType g_sh = g.getShaders();
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_specular, unit_specular);
@@ -242,18 +242,20 @@ public final class R2LightShaderDirectionalSpecularSingle extends
 
   @Override
   public void onReceiveValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightDirectionalScreenSingle values,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersLightType<R2LightDirectionalScreenSingle> light_parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(values);
-    NullCheck.notNull(m);
+    NullCheck.notNull(g);
+    NullCheck.notNull(light_parameters);
+
+    final JCGLShadersType g_sh = g.getShaders();
+
+    final R2MatricesObserverValuesType m =
+      light_parameters.observerMatrices();
+    final AreaInclusiveUnsignedLType viewport =
+      light_parameters.viewport();
+    final R2LightDirectionalScreenSingle light =
+      light_parameters.values();
 
     /*
       Upload the current view rays.
@@ -312,7 +314,7 @@ public final class R2LightShaderDirectionalSpecularSingle extends
       Transform the light's direction to eye-space and upload it.
      */
 
-    final PVector3FType<R2SpaceWorldType> direction = values.getDirection();
+    final PVector3FType<R2SpaceWorldType> direction = light.getDirection();
     this.direction_world.copyFrom3F(direction);
     this.direction_world.setWF(0.0f);
 
@@ -333,8 +335,8 @@ public final class R2LightShaderDirectionalSpecularSingle extends
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_directional_color, values.color());
+      this.u_light_directional_color, light.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_directional_intensity, values.intensity());
+      this.u_light_directional_intensity, light.intensity());
   }
 }

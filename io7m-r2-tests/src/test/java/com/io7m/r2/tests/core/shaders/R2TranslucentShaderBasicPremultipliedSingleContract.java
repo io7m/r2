@@ -27,8 +27,6 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaParameters;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderSingle;
 import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicPremultipliedSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;

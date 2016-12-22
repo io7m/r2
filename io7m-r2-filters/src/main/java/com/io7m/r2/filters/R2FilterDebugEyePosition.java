@@ -43,6 +43,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuadUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.EnumSet;
@@ -68,6 +69,7 @@ public final class R2FilterDebugEyePosition implements
   private final JCGLInterfaceGL33Type g;
   private final JCGLRenderState render_state;
   private final R2UnitQuadUsableType quad;
+  private final R2ShaderParametersFilterMutable<R2FilterDebugEyePositionParameters> values;
 
   private R2FilterDebugEyePosition(
     final JCGLInterfaceGL33Type in_g,
@@ -81,6 +83,8 @@ public final class R2FilterDebugEyePosition implements
     this.shader = R2ShaderFilterDebugEyePosition.newShader(
       this.g.getShaders(), in_shader_env, in_pool);
     this.render_state = JCGLRenderState.builder().build();
+
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -183,8 +187,11 @@ public final class R2FilterDebugEyePosition implements
         try {
           g_ao.arrayObjectBind(this.quad.arrayObject());
 
-          this.shader.onActivate(g_sh);
-          this.shader.onReceiveFilterValues(g_tex, g_sh, tc, parameters);
+          this.values.setValues(parameters);
+          this.values.setTextureUnitContext(tc);
+
+          this.shader.onActivate(this.g);
+          this.shader.onReceiveFilterValues(this.g, this.values);
           this.shader.onValidate();
 
           final R2MatricesObserverType m = parameters.observerValues();

@@ -147,7 +147,7 @@ public final class R2SceneLights implements R2SceneLightsType
          * render them.
          */
 
-        final long s_id = s.getShaderID();
+        final long s_id = s.shaderID();
         if (g.shader_to_lights.containsKey(s_id)) {
           gv.onLightSingleShaderStart(s);
 
@@ -364,7 +364,7 @@ public final class R2SceneLights implements R2SceneLightsType
 
       final R2SceneLights ls = R2SceneLights.this;
       final long l_id = light.lightID();
-      final long s_id = shader.getShaderID();
+      final long s_id = shader.shaderID();
 
       /*
        * Insert the light and shader into the group. Add a mapping from the
@@ -484,7 +484,7 @@ public final class R2SceneLights implements R2SceneLightsType
         }
 
         final long l_id = light.lightID();
-        final long s_id = shader.getShaderID();
+        final long s_id = shader.shaderID();
 
         /*
          * Insert the light and shader into the group. Add a mapping from the light

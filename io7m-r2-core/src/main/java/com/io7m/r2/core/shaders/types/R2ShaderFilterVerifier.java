@@ -18,9 +18,6 @@ package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jfsm.core.FSMEnumMutable;
 import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
@@ -94,28 +91,28 @@ public final class R2ShaderFilterVerifier<M> implements R2ShaderFilterType<M>
   }
 
   @Override
-  public long getShaderID()
+  public long shaderID()
   {
-    return this.shader.getShaderID();
+    return this.shader.shaderID();
   }
 
   @Override
-  public Class<M> getShaderParametersType()
+  public Class<M> shaderParametersType()
   {
-    return this.shader.getShaderParametersType();
+    return this.shader.shaderParametersType();
   }
 
   @Override
-  public JCGLProgramShaderUsableType getShaderProgram()
+  public JCGLProgramShaderUsableType shaderProgram()
   {
-    return this.shader.getShaderProgram();
+    return this.shader.shaderProgram();
   }
 
   @Override
-  public void onActivate(final JCGLShadersType g_sh)
+  public void onActivate(final JCGLInterfaceGL33Type g)
   {
     this.state.transition(State.STATE_ACTIVATED);
-    this.shader.onActivate(g_sh);
+    this.shader.onActivate(g);
   }
 
   @Override
@@ -127,21 +124,19 @@ public final class R2ShaderFilterVerifier<M> implements R2ShaderFilterType<M>
   }
 
   @Override
-  public void onDeactivate(final JCGLShadersType g_sh)
+  public void onDeactivate(final JCGLInterfaceGL33Type g)
   {
     this.state.transition(State.STATE_DEACTIVATED);
-    this.shader.onDeactivate(g_sh);
+    this.shader.onDeactivate(g);
   }
 
   @Override
   public void onReceiveFilterValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final M values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersFilterType<M> parameters)
   {
     this.state.transition(State.STATE_VALUES_RECEIVED);
-    this.shader.onReceiveFilterValues(g_tex, g_sh, tc, values);
+    this.shader.onReceiveFilterValues(g, parameters);
   }
 
   private enum State

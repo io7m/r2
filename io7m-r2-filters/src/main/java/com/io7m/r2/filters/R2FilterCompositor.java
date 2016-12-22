@@ -36,6 +36,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
@@ -51,6 +52,7 @@ public final class R2FilterCompositor implements
   private final JCGLInterfaceGL33Type g;
   private final R2UnitQuadUsableType quad;
   private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterTextureShowParameters> values;
 
   private R2FilterCompositor(
     final JCGLInterfaceGL33Type in_g,
@@ -61,6 +63,7 @@ public final class R2FilterCompositor implements
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
     this.render_state = JCGLRenderState.builder().build();
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -145,7 +148,7 @@ public final class R2FilterCompositor implements
     JCGLRenderStates.activate(this.g, this.render_state);
 
     try {
-      this.shader.onActivate(g_sh);
+      this.shader.onActivate(this.g);
       g_ao.arrayObjectBind(this.quad.arrayObject());
 
       for (final R2FilterCompositorItemType i : parameters.items()) {
@@ -168,13 +171,14 @@ public final class R2FilterCompositor implements
         try {
           g_v.viewportSet(i.outputViewport());
 
-          final R2ShaderFilterTextureShowParameters sp =
+          this.values.setTextureUnitContext(c);
+          this.values.setValues(
             R2ShaderFilterTextureShowParameters.builder()
               .setIntensity(i.intensity())
               .setTexture(i.texture())
-              .build();
+              .build());
 
-          this.shader.onReceiveFilterValues(g_tx, g_sh, c, sp);
+          this.shader.onReceiveFilterValues(this.g, this.values);
           this.shader.onValidate();
 
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -185,7 +189,7 @@ public final class R2FilterCompositor implements
 
     } finally {
       g_ao.arrayObjectUnbind();
-      this.shader.onDeactivate(g_sh);
+      this.shader.onDeactivate(this.g);
     }
   }
 }

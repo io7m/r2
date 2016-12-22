@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
@@ -48,6 +49,9 @@ import com.io7m.jnull.Nullable;
 import com.io7m.jtensors.VectorI4F;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -198,6 +202,8 @@ public final class R2DepthVarianceRenderer implements
     private final JCGLArrayObjectsType array_objects;
     private final JCGLDrawType draw;
     private final JCGLRenderStateMutable render_state;
+    private final R2ShaderParametersViewMutable params_view;
+    private final R2ShaderParametersMaterialMutable<Object> params_material;
 
     private @Nullable R2MatricesObserverType matrices;
     private @Nullable JCGLTextureUnitContextParentType texture_context;
@@ -214,6 +220,8 @@ public final class R2DepthVarianceRenderer implements
       this.textures = this.g33.getTextures();
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
+      this.params_view = R2ShaderParametersViewMutable.create();
+      this.params_material = R2ShaderParametersMaterialMutable.create();
 
       {
         this.render_state = JCGLRenderStateMutable.create();
@@ -269,8 +277,8 @@ public final class R2DepthVarianceRenderer implements
     public <M> void onInstanceBatchedShaderStart(
       final R2ShaderDepthBatchedUsableType<M> s)
     {
-      this.shaders.shaderActivateProgram(s.getShaderProgram());
-      s.onReceiveViewValues(this.shaders, this.matrices);
+      this.shaders.shaderActivateProgram(s.shaderProgram());
+      s.onReceiveViewValues(this.g33, this.configureViewParameters());
     }
 
     @Override
@@ -278,11 +286,11 @@ public final class R2DepthVarianceRenderer implements
       final R2MaterialDepthBatchedType<M> material)
     {
       this.material_texture_context = this.texture_context.unitContextNew();
-
       final R2ShaderDepthBatchedUsableType<M> s = material.shader();
-      final M p = material.shaderParameters();
       s.onReceiveMaterialValues(
-        this.textures, this.shaders, this.material_texture_context, p);
+        this.g33,
+        this.configureMaterialParameters(
+          this.material_texture_context, material.shaderParameters()));
     }
 
     @Override
@@ -309,15 +317,40 @@ public final class R2DepthVarianceRenderer implements
     public <M> void onInstanceBatchedShaderFinish(
       final R2ShaderDepthBatchedUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
+    }
+
+    private R2ShaderParametersViewMutable configureViewParameters()
+    {
+      this.params_view.clear();
+      this.params_view.setViewport(this.viewport_area);
+      this.params_view.setObserverMatrices(this.matrices);
+      Invariants.checkInvariant(
+        this.params_view.isInitialized(),
+        "View parameters must be initialized");
+      return this.params_view;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+      final JCGLTextureUnitContextType tc,
+      final M p)
+    {
+      this.params_material.clear();
+      this.params_material.setTextureUnitContext(tc);
+      this.params_material.setValues(p);
+      Invariants.checkInvariant(
+        this.params_material.isInitialized(),
+        "Material parameters must be initialized");
+      return (R2ShaderParametersMaterialType<M>) this.params_material;
     }
 
     @Override
     public <M> void onInstanceSingleShaderStart(
       final R2ShaderDepthSingleUsableType<M> s)
     {
-      s.onActivate(this.shaders);
-      s.onReceiveViewValues(this.shaders, this.matrices, this.viewport_area);
+      s.onActivate(this.g33);
+      s.onReceiveViewValues(this.g33, this.configureViewParameters());
     }
 
     @Override
@@ -328,10 +361,10 @@ public final class R2DepthVarianceRenderer implements
       this.material_texture_context = this.texture_context.unitContextNew();
 
       final R2ShaderDepthSingleUsableType<M> s = material.shader();
-      final M p = material.shaderParameters();
-
       s.onReceiveMaterialValues(
-        this.textures, this.shaders, this.material_texture_context, p);
+        this.g33,
+        this.configureMaterialParameters(
+          this.material_texture_context, material.shaderParameters()));
     }
 
     @Override
@@ -353,7 +386,7 @@ public final class R2DepthVarianceRenderer implements
         (mi, t) -> {
           final R2ShaderDepthSingleUsableType<?> s =
             t.material_single.shader();
-          s.onReceiveInstanceTransformValues(t.shaders, mi);
+          s.onReceiveInstanceTransformValues(t.g33, mi);
           s.onValidate();
 
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -373,7 +406,7 @@ public final class R2DepthVarianceRenderer implements
     public <M> void onInstanceSingleShaderFinish(
       final R2ShaderDepthSingleUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
@@ -35,10 +36,15 @@ import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.renderstate.JCGLStencilState;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleUsableType;
@@ -63,6 +69,8 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
 
   private final JCGLInterfaceGL33Type g33;
   private final JCGLRenderState render_state;
+  private final R2ShaderParametersViewMutable params_view;
+  private final R2ShaderParametersMaterialMutable<Object> params_material;
   private R2ShadowMapContextUsableType shadows;
   private R2MatricesObserverType matrices;
   private JCGLTextureUnitContextParentType texture_units;
@@ -108,6 +116,9 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
         .setDepthState(depth_state)
         .setStencilState(stencil_state)
         .build();
+
+    this.params_view = R2ShaderParametersViewMutable.create();
+    this.params_material = R2ShaderParametersMaterialMutable.create();
   }
 
   /**
@@ -120,6 +131,31 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     final JCGLInterfaceGL33Type g33)
   {
     return new R2TranslucentRenderer(g33);
+  }
+
+  @SuppressWarnings("unchecked")
+  private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+    final JCGLTextureUnitContextMutableType tc,
+    final M p)
+  {
+    this.params_material.clear();
+    this.params_material.setTextureUnitContext(tc);
+    this.params_material.setValues(p);
+    Invariants.checkInvariant(
+      this.params_material.isInitialized(),
+      "Material parameters must be initialized");
+    return (R2ShaderParametersMaterialType<M>) this.params_material;
+  }
+
+  private R2ShaderParametersViewType configureViewParameters()
+  {
+    this.params_view.clear();
+    this.params_view.setViewport(this.viewport);
+    this.params_view.setObserverMatrices(this.matrices);
+    Invariants.checkInvariant(
+      this.params_view.isInitialized(),
+      "View parameters must be initialized");
+    return this.params_view;
   }
 
   @Override
@@ -176,7 +212,6 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
   private <T> Unit renderBatched(
     final R2TranslucentBatchedType<T> b)
   {
-    final JCGLShadersType g_sh = this.g33.getShaders();
     final JCGLTexturesType g_tex = this.g33.getTextures();
     final JCGLArrayObjectsType g_ao = this.g33.getArrayObjects();
     final JCGLDrawType g_dr = this.g33.getDraw();
@@ -198,17 +233,19 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     b.instance().update(this.g33, this.matrices.transformContext());
 
     try {
-      shader.onActivate(g_sh);
+      shader.onActivate(this.g33);
       try {
-        shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
-        shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
+        shader.onReceiveViewValues(
+          this.g33, this.configureViewParameters());
+        shader.onReceiveMaterialValues(
+          this.g33, this.configureMaterialParameters(tc, params));
         shader.onValidate();
         g_ao.arrayObjectBind(b.instance().arrayObject());
         g_dr.drawElementsInstanced(
           JCGLPrimitives.PRIMITIVE_TRIANGLES,
           b.instance().renderCount());
       } finally {
-        shader.onDeactivate(g_sh);
+        shader.onDeactivate(this.g33);
       }
     } finally {
       tc.unitContextFinish(g_tex);
@@ -243,16 +280,18 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     b.instance().update(this.g33, this.matrices.transformContext());
 
     try {
-      shader.onActivate(g_sh);
+      shader.onActivate(this.g33);
       try {
-        shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
-        shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
+        shader.onReceiveViewValues(
+          this.g33, this.configureViewParameters());
+        shader.onReceiveMaterialValues(
+          this.g33, this.configureMaterialParameters(tc, params));
         shader.onValidate();
         g_ao.arrayObjectBind(b.instance().arrayObject());
         g_dr.draw(
           JCGLPrimitives.PRIMITIVE_POINTS, 0, b.instance().enabledCount());
       } finally {
-        shader.onDeactivate(g_sh);
+        shader.onDeactivate(this.g33);
       }
     } finally {
       tc.unitContextFinish(g_tex);
@@ -288,16 +327,18 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
         .build());
 
     try {
-      shader.onActivate(g_sh);
+      shader.onActivate(this.g33);
       try {
-        shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
-        shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
-        shader.onReceiveInstanceTransformValues(g_sh, mi);
+        shader.onReceiveViewValues(
+          this.g33, this.configureViewParameters());
+        shader.onReceiveMaterialValues(
+          this.g33, this.configureMaterialParameters(tc, params));
+        shader.onReceiveInstanceTransformValues(this.g33, mi);
         shader.onValidate();
         g_ao.arrayObjectBind(s.instance().arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
-        shader.onDeactivate(g_sh);
+        shader.onDeactivate(this.g33);
       }
     } finally {
       tc.unitContextFinish(g_tex);

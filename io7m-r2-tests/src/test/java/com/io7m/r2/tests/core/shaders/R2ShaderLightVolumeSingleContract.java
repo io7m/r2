@@ -47,6 +47,7 @@ import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLight;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
@@ -126,7 +127,7 @@ public abstract class R2ShaderLightVolumeSingleContract<
       R2TextureDefaults.newDefaults(g_tex, tr);
 
     final R2GeometryBufferType gbuffer =
-      R2ShaderLightVolumeSingleContract.newGeometryBuffer(g_fb, g_tex, tr);
+      newGeometryBuffer(g_fb, g_tex, tr);
 
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
     final JCGLTextureUnitType ua =
@@ -155,14 +156,15 @@ public abstract class R2ShaderLightVolumeSingleContract<
       PMatrixHeapArrayM4x4F.newMatrix();
 
     mat.withObserver(view, proj, this, (mo, x) -> {
-      f.onActivate(g.getShaders());
-      f.onReceiveBoundGeometryBufferTextures(g_sh, gbuffer, ua, us, ud, un);
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
+      f.onActivate(g);
+      f.onReceiveBoundGeometryBufferTextures(g, gbuffer, ua, us, ud, un);
+      f.onReceiveValues(
+        g, R2ShaderParametersLight.of(tc, params, mo, gbuffer.area()));
 
       return mo.withVolumeLight(params, this, (mv, y) -> {
-        f.onReceiveVolumeLightTransform(g_sh, mv);
+        f.onReceiveVolumeLightTransform(g, mv);
         f.onValidate();
-        f.onDeactivate(g_sh);
+        f.onDeactivate(g);
         return Unit.unit();
       });
     });
@@ -195,7 +197,7 @@ public abstract class R2ShaderLightVolumeSingleContract<
       ta.getRootContext();
 
     final R2GeometryBufferType gbuffer =
-      R2ShaderLightVolumeSingleContract.newGeometryBuffer(g_fb, g_tex, tr);
+      newGeometryBuffer(g_fb, g_tex, tr);
 
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -211,11 +213,12 @@ public abstract class R2ShaderLightVolumeSingleContract<
     final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view =
       PMatrixHeapArrayM4x4F.newMatrix();
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
 
     this.expected.expect(FSMTransitionException.class);
     mat.withObserver(view, proj, this, (mo, x) -> {
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.area(), params, mo);
+      f.onReceiveValues(
+        g, R2ShaderParametersLight.of(tc, params, mo, gbuffer.area()));
       return Unit.unit();
     });
   }
@@ -234,7 +237,7 @@ public abstract class R2ShaderLightVolumeSingleContract<
     final T light =
       this.newLight(g, pool);
 
-    final Class<?> s_class = s.getShaderParametersType();
+    final Class<?> s_class = s.shaderParametersType();
     final Class<?> l_class = light.getClass();
     Assert.assertTrue(s_class.isAssignableFrom(l_class));
     Assert.assertTrue(light.lightID() >= 0L);

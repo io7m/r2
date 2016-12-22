@@ -34,6 +34,8 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterial;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersView;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.R2JCGLContract;
@@ -92,11 +94,16 @@ public abstract class R2ShaderInstanceBatchedContract<T, TM extends T> extends
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
+
+    f.onActivate(g);
+    f.onReceiveViewValues(g, vp);
+    f.onReceiveMaterialValues(g, mp);
     f.onValidate();
-    f.onDeactivate(g_sh);
+    f.onDeactivate(g);
   }
 
   @Test
@@ -126,26 +133,31 @@ public abstract class R2ShaderInstanceBatchedContract<T, TM extends T> extends
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
+    final R2ProjectionReadableType proj =
+      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final R2ProjectionReadableType proj =
-      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
 
-    f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    f.onActivate(g);
+    f.onReceiveViewValues(g, vp);
 
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
     f.onValidate();
 
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
     f.onValidate();
 
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
     f.onValidate();
 
-    f.onDeactivate(g_sh);
+    f.onDeactivate(g);
   }
 
   @Test
@@ -175,19 +187,24 @@ public abstract class R2ShaderInstanceBatchedContract<T, TM extends T> extends
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
+    final R2ProjectionReadableType proj =
+      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final R2ProjectionReadableType proj =
-      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
 
-    f.onActivate(g.getShaders());
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onActivate(g);
+    f.onReceiveViewValues(g, vp);
+    f.onReceiveMaterialValues(g, mp);
 
     this.expected.expect(FSMTransitionException.class);
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    f.onReceiveViewValues(g, vp);
   }
 
   @Test
@@ -210,15 +227,18 @@ public abstract class R2ShaderInstanceBatchedContract<T, TM extends T> extends
 
     final JCGLShadersType g_sh = g.getShaders();
 
+    final R2ProjectionReadableType proj =
+      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final R2ProjectionReadableType proj =
-      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
 
     this.expected.expect(FSMTransitionException.class);
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    f.onReceiveViewValues(g, vp);
   }
 
   @Test
@@ -246,10 +266,11 @@ public abstract class R2ShaderInstanceBatchedContract<T, TM extends T> extends
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final JCGLShadersType g_sh = g.getShaders();
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
 
-    f.onActivate(g_sh);
-    f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    f.onActivate(g);
+    f.onReceiveViewValues(g, vp);
     this.expected.expect(FSMTransitionException.class);
     f.onValidate();
   }
@@ -281,9 +302,12 @@ public abstract class R2ShaderInstanceBatchedContract<T, TM extends T> extends
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
-    f.onActivate(g_sh);
+    final R2ShaderParametersMaterial<T> mp =
+      R2ShaderParametersMaterial.of(tc, t);
+
+    f.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
-    f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
+    f.onReceiveMaterialValues(g, mp);
   }
 
   @Test
@@ -304,11 +328,8 @@ public abstract class R2ShaderInstanceBatchedContract<T, TM extends T> extends
     final T t =
       this.newParameters(g);
 
-    final JCGLShadersType g_sh = g.getShaders();
-
-    f.onActivate(g_sh);
-    f.onDeactivate(g_sh);
-
+    f.onActivate(g);
+    f.onDeactivate(g);
     this.expected.expect(FSMTransitionException.class);
     f.onValidate();
   }

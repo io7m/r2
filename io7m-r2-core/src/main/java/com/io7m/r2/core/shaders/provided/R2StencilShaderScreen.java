@@ -16,17 +16,16 @@
 
 package com.io7m.r2.core.shaders.provided;
 
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
@@ -52,7 +51,7 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2Nothing.frag");
 
-    R2ShaderParameters.checkUniformParameterCount(this.getShaderProgram(), 0);
+    R2ShaderParameters.checkUniformParameterCount(this.shaderProgram(), 0);
   }
 
   /**
@@ -74,7 +73,7 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
   }
 
   @Override
-  public Class<Unit> getShaderParametersType()
+  public Class<Unit> shaderParametersType()
   {
     return Unit.class;
   }
@@ -88,23 +87,19 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
 
   @Override
   public void onReceiveViewValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
+    NullCheck.notNull(g);
+    NullCheck.notNull(view_parameters);
   }
 
   @Override
   public void onReceiveMaterialValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final Unit values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersMaterialType<Unit> mat_parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(mat_parameters);
   }
 }

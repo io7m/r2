@@ -48,6 +48,7 @@ import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
@@ -70,6 +71,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   private final R2UnitQuadUsableType quad;
   private final JCGLRenderState render_state_additive;
   private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterEmissionParameters> values;
 
   private R2FilterEmission(
     final R2FilterUsableType<R2FilterBoxBlurParameters<R2ImageBufferDescriptionType, R2ImageBufferUsableType, R2ImageBufferDescriptionType, R2ImageBufferUsableType>> in_blur,
@@ -98,6 +100,8 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
 
     this.render_state =
       JCGLRenderState.builder().build();
+
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -323,22 +327,23 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
         g_v.viewportSet(output_viewport);
         JCGLRenderStates.activate(this.g, r_state);
         try {
-          final R2ShaderFilterEmissionParameters sp =
+          this.values.setTextureUnitContext(tc);
+          this.values.setValues(
             R2ShaderFilterEmissionParameters.builder()
               .setAlbedoEmissionTexture(in_albedo_emission)
               .setEmissionIntensity(in_emission_intensity)
               .setGlowTexture(in_glow_texture)
               .setGlowIntensity(in_glow_intensity)
-              .build();
+              .build());
 
-          this.shader_emission.onActivate(g_sh);
-          this.shader_emission.onReceiveFilterValues(g_tex, g_sh, tc, sp);
+          this.shader_emission.onActivate(this.g);
+          this.shader_emission.onReceiveFilterValues(this.g, this.values);
           this.shader_emission.onValidate();
           g_ao.arrayObjectBind(this.quad.arrayObject());
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         } finally {
           g_ao.arrayObjectUnbind();
-          this.shader_emission.onDeactivate(g_sh);
+          this.shader_emission.onDeactivate(this.g);
         }
       } finally {
         tc.unitContextFinish(g_tex);

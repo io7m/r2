@@ -39,6 +39,7 @@ import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.OptionalDouble;
@@ -57,6 +58,7 @@ public final class R2FilterSSAO implements
   private final JCGLInterfaceGL33Type g;
   private final JCGLClearSpecification clear;
   private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderSSAOParameters> values;
 
   private R2FilterSSAO(
     final JCGLInterfaceGL33Type in_g,
@@ -74,6 +76,7 @@ public final class R2FilterSSAO implements
     this.clear = cb.build();
 
     this.render_state = JCGLRenderState.builder().build();
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -165,7 +168,8 @@ public final class R2FilterSSAO implements
 
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
-      final R2ShaderSSAOParameters sp =
+      this.values.setTextureUnitContext(c);
+      this.values.setValues(
         R2ShaderSSAOParameters.builder()
           .setExponent(parameters.exponent())
           .setGeometryBuffer(parameters.geometryBuffer())
@@ -174,20 +178,20 @@ public final class R2FilterSSAO implements
           .setSampleRadius(parameters.sampleRadius())
           .setViewport(destination.area())
           .setViewMatrices(parameters.sceneObserverValues())
-          .build();
+          .build());
 
       try {
-        g_sh.shaderActivateProgram(this.shader.getShaderProgram());
+        g_sh.shaderActivateProgram(this.shader.shaderProgram());
 
-        this.shader.onActivate(g_sh);
-        this.shader.onReceiveFilterValues(g_tx, g_sh, c, sp);
+        this.shader.onActivate(this.g);
+        this.shader.onReceiveFilterValues(this.g, this.values);
         this.shader.onValidate();
 
         g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader.onDeactivate(g_sh);
+        this.shader.onDeactivate(this.g);
       }
 
     } finally {

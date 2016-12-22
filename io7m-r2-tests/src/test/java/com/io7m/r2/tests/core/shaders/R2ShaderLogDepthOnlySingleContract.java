@@ -49,7 +49,7 @@ public abstract class R2ShaderLogDepthOnlySingleContract extends
     final R2ShaderInstanceSingleType<Unit> s =
       this.newShaderWithVerifier(g, sources, pool);
 
-    final Class<?> s_class = s.getShaderParametersType();
+    final Class<?> s_class = s.shaderParametersType();
     final Class<?> l_class = Unit.class;
     Assert.assertTrue(s_class.isAssignableFrom(l_class));
 

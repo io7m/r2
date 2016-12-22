@@ -35,6 +35,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.EnumMap;
@@ -55,6 +56,7 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParameters>
   private final Map<R2FilterFXAAQuality, R2ShaderFilterType<R2ShaderFilterFXAAParameters>> shaders;
   private final R2UnitQuadUsableType quad;
   private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterFXAAParameters> values;
   private boolean deleted;
 
   private R2FilterFXAA(
@@ -66,6 +68,7 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParameters>
     this.shaders = NullCheck.notNull(in_shaders);
     this.quad = NullCheck.notNull(in_quad);
     this.render_state = JCGLRenderState.builder().build();
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -152,13 +155,14 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParameters>
     final JCGLTextureUnitContextType c = uc.unitContextNew();
 
     try {
-      final R2ShaderFilterFXAAParameters sp =
+      this.values.setTextureUnitContext(c);
+      this.values.setValues(
         R2ShaderFilterFXAAParameters.builder()
           .setEdgeThreshold(parameters.edgeThreshold())
           .setEdgeThresholdMinimum(parameters.edgeThresholdMinimum())
           .setSubPixelAliasingRemoval(parameters.subPixelAliasingRemoval())
           .setTexture(parameters.texture())
-          .build();
+          .build());
 
       final R2ShaderFilterType<R2ShaderFilterFXAAParameters> sh =
         this.shaders.get(parameters.quality());
@@ -167,15 +171,14 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParameters>
       JCGLRenderStates.activate(this.g, this.render_state);
 
       try {
-        sh.onActivate(g_sh);
-        sh.onReceiveFilterValues(g_tx, g_sh, c, sp);
+        sh.onActivate(this.g);
+        sh.onReceiveFilterValues(this.g, this.values);
         sh.onValidate();
-
         g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        sh.onDeactivate(g_sh);
+        sh.onDeactivate(this.g);
       }
 
     } finally {

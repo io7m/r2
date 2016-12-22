@@ -96,7 +96,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     final long i_id = i.instanceID();
     final long m_id = m.materialID();
     final R2ShaderInstanceSingleUsableType<?> shader = m.shader();
-    final long s_id = shader.getShaderID();
+    final long s_id = shader.shaderID();
 
     /*
      * Insert the instance into the set of all single instances. Instances
@@ -173,7 +173,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     final long i_id = i.instanceID();
     final long m_id = m.materialID();
     final R2ShaderInstanceBatchedUsableType<?> shader = m.shader();
-    final long s_id = shader.getShaderID();
+    final long s_id = shader.shaderID();
 
     /*
      * Insert the instance into the set of all batched instances. Instances
@@ -250,7 +250,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
     final long i_id = i.instanceID();
     final long m_id = m.materialID();
     final R2ShaderInstanceBillboardedUsableType<?> shader = m.shader();
-    final long s_id = shader.getShaderID();
+    final long s_id = shader.shaderID();
 
     /*
      * Insert the instance into the set of all billboarded instances. Instances
@@ -423,7 +423,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
        */
 
       final LongSet s_materials =
-        g.shader_to_materials.get(s.getShaderID());
+        g.shader_to_materials.get(s.shaderID());
 
       for (final long m_id : s_materials) {
         final R2MaterialOpaqueSingleType<Object> material =
@@ -499,7 +499,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
        */
 
       final LongSet s_materials =
-        g.shader_to_materials.get(s.getShaderID());
+        g.shader_to_materials.get(s.shaderID());
 
       for (final long m_id : s_materials) {
         final R2MaterialOpaqueBatchedType<Object> material =
@@ -554,7 +554,7 @@ public final class R2SceneOpaques implements R2SceneOpaquesType
        */
 
       final LongSet s_materials =
-        g.shader_to_materials.get(s.getShaderID());
+        g.shader_to_materials.get(s.shaderID());
 
       for (final long m_id : s_materials) {
         final R2MaterialOpaqueBillboardedType<Object> material =

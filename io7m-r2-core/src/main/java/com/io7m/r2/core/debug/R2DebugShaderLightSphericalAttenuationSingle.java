@@ -21,6 +21,7 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -32,7 +33,6 @@ import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
 import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
@@ -42,9 +42,11 @@ import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2TransformContextType;
 import com.io7m.r2.core.R2ViewRaysReadableType;
+import com.io7m.r2.core.shaders.provided.R2AbstractShader;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
@@ -102,7 +104,7 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2LightSphericalDebugAttenuationSingle.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 23);
 
     this.u_light_spherical_color =
@@ -216,7 +218,7 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
 
   @Override
   public Class<R2LightSphericalSingleReadableType>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2LightSphericalSingleReadableType.class;
   }
@@ -230,15 +232,15 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
 
   @Override
   public void onReceiveBoundGeometryBufferTextures(
-    final JCGLShadersType g_sh,
-    final R2GeometryBufferUsableType g,
+    final JCGLInterfaceGL33Type g,
+    final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
     final JCGLTextureUnitType unit_specular,
     final JCGLTextureUnitType unit_depth,
     final JCGLTextureUnitType unit_normals)
   {
-    NullCheck.notNull(g_sh);
     NullCheck.notNull(g);
+    NullCheck.notNull(gbuffer);
     NullCheck.notNull(unit_albedo);
     NullCheck.notNull(unit_depth);
     NullCheck.notNull(unit_normals);
@@ -248,6 +250,7 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
       Set each of the required G-Buffer textures.
      */
 
+    final JCGLShadersType g_sh = g.getShaders();
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_specular, unit_specular);
@@ -256,18 +259,23 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
 
   @Override
   public void onReceiveValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightSphericalSingleReadableType values,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersLightType<R2LightSphericalSingleReadableType> light_parameters)
   {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(values);
-    NullCheck.notNull(m);
+    NullCheck.notNull(g);
+    NullCheck.notNull(light_parameters);
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    final R2MatricesObserverValuesType m =
+      light_parameters.observerMatrices();
+    final AreaInclusiveUnsignedLType viewport =
+      light_parameters.viewport();
+    final R2LightSphericalSingleReadableType light =
+      light_parameters.values();
+    final JCGLTextureUnitContextMutableType tc =
+      light_parameters.textureUnitContext();
 
     /*
       Upload the current view rays.
@@ -327,7 +335,7 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
      */
 
     final PVectorReadable3FType<R2SpaceWorldType> position =
-      values.originPosition();
+      light.originPosition();
     this.position_world.copyFrom3F(position);
     this.position_world.setWF(1.0f);
 
@@ -348,26 +356,28 @@ public final class R2DebugShaderLightSphericalAttenuationSingle extends
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_spherical_color, values.color());
+      this.u_light_spherical_color, light.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_spherical_intensity, values.intensity());
+      this.u_light_spherical_intensity, light.intensity());
     g_sh.shaderUniformPutFloat(
-      this.u_light_spherical_inverse_falloff, 1.0f / values.falloff());
+      this.u_light_spherical_inverse_falloff, 1.0f / light.falloff());
     g_sh.shaderUniformPutFloat(
-      this.u_light_spherical_inverse_range, 1.0f / values.radius());
+      this.u_light_spherical_inverse_range, 1.0f / light.radius());
   }
 
   @Override
   public void onReceiveVolumeLightTransform(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesVolumeLightValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
 
     /*
       Upload the light volume modelview matrix.
      */
+
+    final JCGLShadersType g_sh = g.getShaders();
 
     g_sh.shaderUniformPutMatrix4x4f(
       this.u_transform_volume_modelview, m.matrixLightModelView());

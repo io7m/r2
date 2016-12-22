@@ -16,13 +16,9 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jfsm.core.FSMEnumMutable;
 import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
@@ -30,7 +26,6 @@ import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2LightVolumeSingleReadableType;
-import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 
 /**
@@ -106,28 +101,28 @@ public final class R2ShaderLightVolumeSingleVerifier<
   }
 
   @Override
-  public long getShaderID()
+  public long shaderID()
   {
-    return this.shader.getShaderID();
+    return this.shader.shaderID();
   }
 
   @Override
-  public Class<M> getShaderParametersType()
+  public Class<M> shaderParametersType()
   {
-    return this.shader.getShaderParametersType();
+    return this.shader.shaderParametersType();
   }
 
   @Override
-  public JCGLProgramShaderUsableType getShaderProgram()
+  public JCGLProgramShaderUsableType shaderProgram()
   {
-    return this.shader.getShaderProgram();
+    return this.shader.shaderProgram();
   }
 
   @Override
-  public void onActivate(final JCGLShadersType g_sh)
+  public void onActivate(final JCGLInterfaceGL33Type g)
   {
     this.state.transition(State.STATE_ACTIVATED);
-    this.shader.onActivate(g_sh);
+    this.shader.onActivate(g);
   }
 
   @Override
@@ -139,16 +134,16 @@ public final class R2ShaderLightVolumeSingleVerifier<
   }
 
   @Override
-  public void onDeactivate(final JCGLShadersType g_sh)
+  public void onDeactivate(final JCGLInterfaceGL33Type g)
   {
     this.state.transition(State.STATE_DEACTIVATED);
-    this.shader.onDeactivate(g_sh);
+    this.shader.onDeactivate(g);
   }
 
   @Override
   public void onReceiveBoundGeometryBufferTextures(
-    final JCGLShadersType g_sh,
-    final R2GeometryBufferUsableType g,
+    final JCGLInterfaceGL33Type g,
+    final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
     final JCGLTextureUnitType unit_specular,
     final JCGLTextureUnitType unit_depth,
@@ -156,8 +151,8 @@ public final class R2ShaderLightVolumeSingleVerifier<
   {
     this.state.transition(State.STATE_GEOMETRY_BUFFER_RECEIVED);
     this.shader.onReceiveBoundGeometryBufferTextures(
-      g_sh,
       g,
+      gbuffer,
       unit_albedo,
       unit_specular,
       unit_depth,
@@ -166,24 +161,20 @@ public final class R2ShaderLightVolumeSingleVerifier<
 
   @Override
   public void onReceiveValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final AreaInclusiveUnsignedLType area,
-    final M values,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersLightType<M> light_parameters)
   {
     this.state.transition(State.STATE_VALUES_RECEIVED);
-    this.shader.onReceiveValues(g_tex, g_sh, tc, area, values, m);
+    this.shader.onReceiveValues(g, light_parameters);
   }
 
   @Override
   public void onReceiveVolumeLightTransform(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesVolumeLightValuesType m)
   {
     this.state.transition(State.STATE_VOLUME_RECEIVED);
-    this.shader.onReceiveVolumeLightTransform(g_sh, m);
+    this.shader.onReceiveVolumeLightTransform(g, m);
   }
 
   private enum State

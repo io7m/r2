@@ -32,6 +32,8 @@ import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleVerifier;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterial;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersView;
 import com.io7m.r2.tests.core.R2EmptyInstanceTransformValues;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.R2TestUtilities;
@@ -70,13 +72,17 @@ public final class R2ShaderDepthSingleVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    v.onActivate(g.getShaders());
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
+
+    v.onActivate(g);
+    v.onReceiveViewValues(g, vp);
+    v.onReceiveMaterialValues(g, mp);
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     v.onValidate();
-    v.onDeactivate(g_sh);
+    v.onDeactivate(g);
   }
 
   @Test
@@ -106,25 +112,27 @@ public final class R2ShaderDepthSingleVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    v.onActivate(g.getShaders());
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
 
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onActivate(g);
+    v.onReceiveViewValues(g, vp);
+
+    v.onReceiveMaterialValues(g, mp);
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     v.onValidate();
 
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onReceiveMaterialValues(g, mp);
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     v.onValidate();
 
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onReceiveMaterialValues(g, mp);
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
     v.onValidate();
 
-    v.onDeactivate(g_sh);
+    v.onDeactivate(g);
   }
 
   @Test
@@ -147,21 +155,25 @@ public final class R2ShaderDepthSingleVerifierTest
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
+    final R2ProjectionReadableType proj =
+      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final R2ProjectionReadableType proj =
-      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
 
-    v.onActivate(g.getShaders());
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onActivate(g);
+    v.onReceiveViewValues(g, vp);
+    v.onReceiveMaterialValues(g, mp);
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
 
     this.expected.expect(FSMTransitionException.class);
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    v.onReceiveViewValues(g, vp);
   }
 
   @Test
@@ -175,8 +187,6 @@ public final class R2ShaderDepthSingleVerifierTest
     final R2ShaderDepthSingleType<Object> v =
       R2ShaderDepthSingleVerifier.newVerifier(f);
 
-    final JCGLShadersType g_sh = g.getShaders();
-
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
@@ -184,8 +194,11 @@ public final class R2ShaderDepthSingleVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+
     this.expected.expect(FSMTransitionException.class);
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    v.onReceiveViewValues(g, vp);
   }
 
   @Test
@@ -199,6 +212,8 @@ public final class R2ShaderDepthSingleVerifierTest
     final R2ShaderDepthSingleType<Object> v =
       R2ShaderDepthSingleVerifier.newVerifier(f);
 
+    final JCGLShadersType g_sh = g.getShaders();
+
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
@@ -206,13 +221,13 @@ public final class R2ShaderDepthSingleVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    final JCGLShadersType g_sh = g.getShaders();
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
 
-    v.onActivate(g_sh);
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
+    v.onActivate(g);
+    v.onReceiveViewValues(g, vp);
     this.expected.expect(FSMTransitionException.class);
-    v.onReceiveInstanceTransformValues(
-      g_sh, new R2EmptyInstanceTransformValues());
+    v.onReceiveInstanceTransformValues(g, new R2EmptyInstanceTransformValues());
   }
 
   @Test
@@ -226,10 +241,6 @@ public final class R2ShaderDepthSingleVerifierTest
     final R2ShaderDepthSingleType<Object> v =
       R2ShaderDepthSingleVerifier.newVerifier(f);
 
-    final R2ProjectionReadableType proj =
-      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
-
-    final JCGLShadersType g_sh = g.getShaders();
     final JCGLTexturesType g_tex = g.getTextures();
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
@@ -238,13 +249,21 @@ public final class R2ShaderDepthSingleVerifierTest
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
+    final R2ProjectionReadableType proj =
+      R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
+
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    v.onActivate(g.getShaders());
-    v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    final R2ShaderParametersView vp =
+      R2ShaderParametersView.of(new R2EmptyObserverValues(proj), area);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
+
+    v.onActivate(g);
+    v.onReceiveViewValues(g, vp);
+    v.onReceiveMaterialValues(g, mp);
     this.expected.expect(FSMTransitionException.class);
     v.onValidate();
   }
@@ -269,9 +288,12 @@ public final class R2ShaderDepthSingleVerifierTest
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
-    v.onActivate(g_sh);
+    final R2ShaderParametersMaterial<Object> mp =
+      R2ShaderParametersMaterial.of(tc, new Object());
+
+    v.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
-    v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
+    v.onReceiveMaterialValues(g, mp);
   }
 
   @Test
@@ -285,11 +307,8 @@ public final class R2ShaderDepthSingleVerifierTest
     final R2ShaderDepthSingleType<Object> v =
       R2ShaderDepthSingleVerifier.newVerifier(f);
 
-    final JCGLShadersType g_sh = g.getShaders();
-
-    v.onActivate(g_sh);
-    v.onDeactivate(g_sh);
-
+    v.onActivate(g);
+    v.onDeactivate(g);
     this.expected.expect(FSMTransitionException.class);
     v.onValidate();
   }

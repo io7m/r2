@@ -18,7 +18,7 @@ package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLResourceUsableType;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 
 /**
@@ -33,27 +33,27 @@ public interface R2ShaderUsableType<M> extends JCGLResourceUsableType
    * @return The unique shader ID
    */
 
-  long getShaderID();
+  long shaderID();
 
   /**
    * @return The shader parameter type
    */
 
-  Class<M> getShaderParametersType();
+  Class<M> shaderParametersType();
 
   /**
    * @return The compiled shader program
    */
 
-  JCGLProgramShaderUsableType getShaderProgram();
+  JCGLProgramShaderUsableType shaderProgram();
 
   /**
    * Activate the shader for rendering.
    *
-   * @param g_sh A shader interface
+   * @param g A GL interface
    */
 
-  void onActivate(JCGLShadersType g_sh);
+  void onActivate(JCGLInterfaceGL33Type g);
 
   /**
    * Validate the shader prior to executing a draw call. This method exists so
@@ -69,8 +69,8 @@ public interface R2ShaderUsableType<M> extends JCGLResourceUsableType
   /**
    * Deactivate the shader.
    *
-   * @param g_sh A shader interface
+   * @param g A GL interface
    */
 
-  void onDeactivate(JCGLShadersType g_sh);
+  void onDeactivate(JCGLInterfaceGL33Type g);
 }

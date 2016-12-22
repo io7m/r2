@@ -20,16 +20,18 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.shaders.provided.R2AbstractShader;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
@@ -61,7 +63,7 @@ public final class R2ShaderFilterEmission extends
       Optional.empty(),
       "com.io7m.r2.shaders.core/R2FilterEmission.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
 
     this.u_albedo_emission_texture =
       R2ShaderParameters.getUniformChecked(
@@ -102,7 +104,7 @@ public final class R2ShaderFilterEmission extends
 
   @Override
   public Class<R2ShaderFilterEmissionParameters>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2ShaderFilterEmissionParameters.class;
   }
@@ -116,15 +118,19 @@ public final class R2ShaderFilterEmission extends
 
   @Override
   public void onReceiveFilterValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterEmissionParameters values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersFilterType<R2ShaderFilterEmissionParameters> parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(parameters);
+
+    final R2ShaderFilterEmissionParameters values =
+      parameters.values();
+    final JCGLTextureUnitContextMutableType tc =
+      parameters.textureUnitContext();
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
 
     final JCGLTextureUnitType unit_emission_texture =
       tc.unitContextBindTexture2D(

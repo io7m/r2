@@ -18,9 +18,9 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 /**
@@ -41,6 +41,7 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
   private final JCGLInterfaceGL33Type g;
   private final JCGLRenderState render_state;
   private final R2UnitQuadUsableType quad;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterFogParameters> values;
 
   private R2FilterFogDepth(
     final JCGLInterfaceGL33Type in_g,
@@ -59,6 +60,7 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
       this.g.getShaders(), in_shader_env, in_pool);
 
     this.render_state = JCGLRenderState.builder().build();
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
@@ -156,9 +158,8 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
         try {
           g_ao.arrayObjectBind(this.quad.arrayObject());
 
-          final R2MatricesObserverValuesType m = parameters.observerValues();
-
-          final R2ShaderFilterFogParameters sp =
+          this.values.setTextureUnitContext(tc);
+          this.values.setValues(
             R2ShaderFilterFogParameters.builder()
               .setFogColor(parameters.fogColor())
               .setFogFarPositiveZ(parameters.fogFarPositiveZ())
@@ -166,15 +167,15 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
               .setImageDepthTexture(parameters.imageDepthTexture())
               .setImageTexture(parameters.imageTexture())
               .setObserverValues(parameters.observerValues())
-              .build();
+              .build());
 
-          s.onActivate(g_sh);
+          s.onActivate(this.g);
           try {
-            s.onReceiveFilterValues(g_tex, g_sh, tc, sp);
+            s.onReceiveFilterValues(this.g, this.values);
             s.onValidate();
             g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
           } finally {
-            s.onDeactivate(g_sh);
+            s.onDeactivate(this.g);
           }
         } finally {
           g_ao.arrayObjectUnbind();

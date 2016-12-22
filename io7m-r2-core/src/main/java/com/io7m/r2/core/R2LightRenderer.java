@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLBlendEquation;
@@ -64,6 +65,11 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowUsableTyp
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLightMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -319,6 +325,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private final JCGLStencilStateMutable stencil_state_screen;
     private final JCGLStencilStateMutable stencil_state_volume;
     private final LightGroupConsumerInputState input_state;
+    private final R2ShaderParametersLightMutable<R2LightSingleReadableType> params_light;
 
     private @Nullable
     R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
@@ -337,6 +344,7 @@ public final class R2LightRenderer implements R2LightRendererType
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
       this.input_state = new LightGroupConsumerInputState(in_input_state);
+      this.params_light = R2ShaderParametersLightMutable.create();
 
       {
         this.render_state_screen = JCGLRenderStateMutable.create();
@@ -492,9 +500,9 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      s.onActivate(this.shaders);
+      s.onActivate(this.g33);
       s.onReceiveBoundGeometryBufferTextures(
-        this.shaders,
+        this.g33,
         this.input_state.parent.gbuffer,
         this.input_state.unit_albedo,
         this.input_state.unit_specular,
@@ -545,7 +553,7 @@ public final class R2LightRenderer implements R2LightRendererType
           this.light_shader);
 
       this.input_state.parent.matrices.withVolumeLight(light, this, (mv, t) -> {
-        s.onReceiveVolumeLightTransform(t.shaders, mv);
+        s.onReceiveVolumeLightTransform(t.g33, mv);
         s.onValidate();
         return Unit.unit();
       });
@@ -584,15 +592,14 @@ public final class R2LightRenderer implements R2LightRendererType
       try {
         this.input_state.parent.matrices.withProjectiveLight(
           light, this, (mp, t) -> {
-            s.onReceiveVolumeLightTransform(t.shaders, mp);
-            s.onReceiveProjectiveLight(t.shaders, mp);
+            s.onReceiveVolumeLightTransform(t.g33, mp);
+            s.onReceiveProjectiveLight(t.g33, mp);
 
             final R2Texture2DUsableType map =
               t.input_state.parent.shadow_maps.shadowMapGet(t.light_shadow);
 
             s.onReceiveShadowMap(
-              t.textures,
-              t.shaders,
+              t.g33,
               t.light_each_context,
               map);
             s.onValidate();
@@ -614,11 +621,28 @@ public final class R2LightRenderer implements R2LightRendererType
 
       this.input_state.parent.matrices.withProjectiveLight(
         light, this, (mp, t) -> {
-          s.onReceiveVolumeLightTransform(t.shaders, mp);
-          s.onReceiveProjectiveLight(t.shaders, mp);
+          s.onReceiveVolumeLightTransform(t.g33, mp);
+          s.onReceiveProjectiveLight(t.g33, mp);
           s.onValidate();
           return Unit.unit();
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M extends R2LightSingleReadableType> R2ShaderParametersLightType<M>
+    configureLightParameters(
+      final JCGLTextureUnitContextType tc,
+      final M p)
+    {
+      this.params_light.clear();
+      this.params_light.setTextureUnitContext(tc);
+      this.params_light.setObserverMatrices(this.input_state.parent.matrices);
+      this.params_light.setViewport(this.input_state.viewport);
+      this.params_light.setValues(p);
+      Invariants.checkInvariant(
+        this.params_light.isInitialized(),
+        "Light parameters must be initialized");
+      return (R2ShaderParametersLightType<M>) this.params_light;
     }
 
     @Override
@@ -634,7 +658,7 @@ public final class R2LightRenderer implements R2LightRendererType
           this.input_state.light_base_context.unitContextNew();
 
         final Class<R2LightSingleReadableType> s_class =
-          this.light_shader.getShaderParametersType();
+          this.light_shader.shaderParametersType();
         final Class<? extends R2LightSingleReadableType> l_class =
           light.getClass();
 
@@ -643,12 +667,11 @@ public final class R2LightRenderer implements R2LightRendererType
           "Shader parameter type must be compatible with light type");
 
         s.onReceiveValues(
-          this.textures,
-          this.shaders,
-          this.light_each_context,
-          this.input_state.viewport,
-          light,
-          this.input_state.parent.matrices);
+          this.g33,
+          this.configureLightParameters(
+            this.light_each_context,
+            light
+          ));
 
         light.matchLightSingle(
           this,
@@ -683,7 +706,7 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderFinish(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override
@@ -753,6 +776,9 @@ public final class R2LightRenderer implements R2LightRendererType
     private final JCGLRenderStateMutable render_state_screen;
     private final JCGLRenderStateMutable render_state_volume;
     private final JCGLStencilStateMutable render_stencil_state;
+    private final R2ShaderParametersViewMutable params_view;
+    private final R2ShaderParametersMaterialMutable<Object> params_material;
+    private final R2ShaderParametersLightMutable<R2LightSingleReadableType> params_light;
 
     private @Nullable
     R2ShaderLightSingleUsableType<R2LightSingleReadableType> light_shader;
@@ -785,6 +811,13 @@ public final class R2LightRenderer implements R2LightRendererType
         NullCheck.notNull(in_clip_volume_stencil);
       this.clip_screen_stencil =
         NullCheck.notNull(in_clip_screen_stencil);
+
+      this.params_view =
+        R2ShaderParametersViewMutable.create();
+      this.params_material =
+        R2ShaderParametersMaterialMutable.create();
+      this.params_light =
+        R2ShaderParametersLightMutable.create();
 
       {
         /*
@@ -1071,24 +1104,20 @@ public final class R2LightRenderer implements R2LightRendererType
         this.input_state.light_base_context.unitContextNew();
 
       try {
-        this.clip_volume_stencil.onActivate(this.shaders);
+        this.clip_volume_stencil.onActivate(this.g33);
 
         try {
-          this.clip_volume_stencil.onReceiveViewValues(
-            this.shaders,
-            this.input_state.parent.matrices,
-            this.input_state.viewport);
-
           this.clip_volume_stencil.onReceiveMaterialValues(
-            this.textures, this.shaders, tc, Unit.unit());
+            this.g33, this.configureMaterialParameters(tc, Unit.unit()));
+          this.clip_volume_stencil.onReceiveViewValues(
+            this.g33, this.configureViewParameters());
 
           this.input_state.parent.matrices.withTransform(
             this.input_state.volume.transform(),
             this.input_state.volume.uvMatrix(),
             this,
             (mi, t) -> {
-              t.clip_volume_stencil.onReceiveInstanceTransformValues(
-                t.shaders, mi);
+              t.clip_volume_stencil.onReceiveInstanceTransformValues(t.g33, mi);
               t.clip_volume_stencil.onValidate();
               t.array_objects.arrayObjectBind(
                 t.input_state.volume.arrayObject());
@@ -1104,12 +1133,54 @@ public final class R2LightRenderer implements R2LightRendererType
           );
 
         } finally {
-          this.clip_volume_stencil.onDeactivate(this.shaders);
+          this.clip_volume_stencil.onDeactivate(this.g33);
         }
 
       } finally {
         tc.unitContextFinish(this.textures);
       }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+      final JCGLTextureUnitContextType tc,
+      final M p)
+    {
+      this.params_material.clear();
+      this.params_material.setTextureUnitContext(tc);
+      this.params_material.setValues(p);
+      Invariants.checkInvariant(
+        this.params_material.isInitialized(),
+        "Material parameters must be initialized");
+      return (R2ShaderParametersMaterialType<M>) this.params_material;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M extends R2LightSingleReadableType> R2ShaderParametersLightType<M>
+    configureLightParameters(
+      final JCGLTextureUnitContextType tc,
+      final M p)
+    {
+      this.params_light.clear();
+      this.params_light.setTextureUnitContext(tc);
+      this.params_light.setObserverMatrices(this.parent.matrices);
+      this.params_light.setViewport(this.parent.viewport);
+      this.params_light.setValues(p);
+      Invariants.checkInvariant(
+        this.params_light.isInitialized(),
+        "Light parameters must be initialized");
+      return (R2ShaderParametersLightType<M>) this.params_light;
+    }
+
+    private R2ShaderParametersViewMutable configureViewParameters()
+    {
+      this.params_view.clear();
+      this.params_view.setViewport(this.parent.viewport);
+      this.params_view.setObserverMatrices(this.parent.matrices);
+      Invariants.checkInvariant(
+        this.params_view.isInitialized(),
+        "View parameters must be initialized");
+      return this.params_view;
     }
 
     /*
@@ -1125,13 +1196,14 @@ public final class R2LightRenderer implements R2LightRendererType
         this.input_state.light_base_context.unitContextNew();
 
       try {
-        this.clip_screen_stencil.onActivate(this.shaders);
+        this.clip_screen_stencil.onActivate(this.g33);
 
         try {
+
           this.clip_screen_stencil.onReceiveMaterialValues(
-            this.textures, this.shaders, tc, Unit.unit());
+            this.g33, this.configureMaterialParameters(tc, Unit.unit()));
           this.clip_screen_stencil.onReceiveViewValues(
-            this.shaders, this.input_state.parent.matrices);
+            this.g33, this.configureViewParameters());
           this.clip_screen_stencil.onValidate();
 
           this.array_objects.arrayObjectBind(this.quad.arrayObject());
@@ -1142,7 +1214,7 @@ public final class R2LightRenderer implements R2LightRendererType
           }
 
         } finally {
-          this.clip_screen_stencil.onDeactivate(this.shaders);
+          this.clip_screen_stencil.onDeactivate(this.g33);
         }
 
       } finally {
@@ -1167,8 +1239,8 @@ public final class R2LightRenderer implements R2LightRendererType
 
       this.input_state.parent.matrices.withProjectiveLight(
         light, this, (mp, t) -> {
-          s.onReceiveVolumeLightTransform(t.shaders, mp);
-          s.onReceiveProjectiveLight(t.shaders, mp);
+          s.onReceiveVolumeLightTransform(t.g33, mp);
+          s.onReceiveProjectiveLight(t.g33, mp);
           s.onValidate();
           return Unit.unit();
         });
@@ -1184,7 +1256,7 @@ public final class R2LightRenderer implements R2LightRendererType
           this.light_shader);
 
       this.input_state.parent.matrices.withVolumeLight(light, this, (mv, t) -> {
-        s.onReceiveVolumeLightTransform(t.shaders, mv);
+        s.onReceiveVolumeLightTransform(t.g33, mv);
         s.onValidate();
         return Unit.unit();
       });
@@ -1223,15 +1295,14 @@ public final class R2LightRenderer implements R2LightRendererType
       try {
         this.input_state.parent.matrices.withProjectiveLight(
           light, this, (mp, t) -> {
-            s.onReceiveVolumeLightTransform(t.shaders, mp);
-            s.onReceiveProjectiveLight(t.shaders, mp);
+            s.onReceiveVolumeLightTransform(t.g33, mp);
+            s.onReceiveProjectiveLight(t.g33, mp);
 
             final R2Texture2DUsableType map =
               t.input_state.parent.shadow_maps.shadowMapGet(t.light_shadow);
 
             s.onReceiveShadowMap(
-              t.textures,
-              t.shaders,
+              t.g33,
               t.light_each_context,
               map);
             s.onValidate();
@@ -1267,9 +1338,9 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      s.onActivate(this.shaders);
+      s.onActivate(this.g33);
       s.onReceiveBoundGeometryBufferTextures(
-        this.shaders,
+        this.g33,
         this.input_state.parent.gbuffer,
         this.input_state.unit_albedo,
         this.input_state.unit_specular,
@@ -1298,7 +1369,7 @@ public final class R2LightRenderer implements R2LightRendererType
           this.input_state.light_base_context.unitContextNew();
 
         final Class<R2LightSingleReadableType> s_class =
-          this.light_shader.getShaderParametersType();
+          this.light_shader.shaderParametersType();
         final Class<? extends R2LightSingleReadableType> l_class =
           light.getClass();
 
@@ -1307,12 +1378,8 @@ public final class R2LightRenderer implements R2LightRendererType
           "Shader parameter type must be compatible with light type");
 
         s.onReceiveValues(
-          this.textures,
-          this.shaders,
-          this.light_each_context,
-          this.input_state.viewport,
-          light,
-          this.input_state.parent.matrices);
+          this.g33,
+          this.configureLightParameters(this.light_each_context, light));
 
         light.matchLightSingle(
           this,
@@ -1347,7 +1414,7 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderFinish(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override
