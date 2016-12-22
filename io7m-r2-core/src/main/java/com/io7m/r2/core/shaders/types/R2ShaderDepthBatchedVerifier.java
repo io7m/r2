@@ -18,7 +18,6 @@ package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jfsm.core.FSMEnumMutable;
 import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
@@ -119,9 +118,9 @@ public final class R2ShaderDepthBatchedVerifier<M> implements
   }
 
   @Override
-  public void onActivate(final JCGLShadersType g_sh)
+  public void onActivate(final JCGLInterfaceGL33Type g)
   {
-    this.shader.onActivate(g_sh);
+    this.shader.onActivate(g);
     this.state.transition(State.STATE_ACTIVATED);
   }
 
@@ -134,10 +133,10 @@ public final class R2ShaderDepthBatchedVerifier<M> implements
   }
 
   @Override
-  public void onDeactivate(final JCGLShadersType g_sh)
+  public void onDeactivate(final JCGLInterfaceGL33Type g)
   {
     this.state.transition(State.STATE_DEACTIVATED);
-    this.shader.onDeactivate(g_sh);
+    this.shader.onDeactivate(g);
   }
 
   @Override

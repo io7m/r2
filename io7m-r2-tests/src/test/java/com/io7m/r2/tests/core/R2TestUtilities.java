@@ -351,7 +351,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -364,7 +364,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -463,7 +463,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -476,7 +476,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -658,7 +658,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -671,7 +671,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -762,7 +762,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -775,7 +775,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -863,7 +863,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -876,7 +876,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1012,7 +1012,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1025,7 +1025,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1108,7 +1108,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1121,7 +1121,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1425,7 +1425,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1438,7 +1438,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1535,7 +1535,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1548,7 +1548,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1580,7 +1580,8 @@ public final class R2TestUtilities
     final JCGLProgramShaderType pr =
       g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
 
-    return new R2ShaderTranslucentInstanceBillboardedType<Object>() {
+    return new R2ShaderTranslucentInstanceBillboardedType<Object>()
+    {
 
       @Override
       public Optional<JCGLBlendState> suggestedBlendState()
@@ -1645,7 +1646,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onActivate(final JCGLShadersType g_sh)
+      public void onActivate(final JCGLInterfaceGL33Type g)
       {
 
       }
@@ -1658,7 +1659,7 @@ public final class R2TestUtilities
       }
 
       @Override
-      public void onDeactivate(final JCGLShadersType g_sh)
+      public void onDeactivate(final JCGLInterfaceGL33Type g)
       {
 
       }

@@ -31,7 +31,7 @@ public interface R2ShaderDepthBatchedUsableType<M> extends
    * <p>Set shader values that are derived from the current view.</p>
    *
    * <p>This method will be called exactly once between calls to {@link
-   * #onActivate(com.io7m.jcanephora.core.api.JCGLShadersType)} and {@link
+   * R2ShaderUsableType#onActivate(JCGLInterfaceGL33Type)} and {@link
    * #onValidate()}.</p>
    *
    * @param g               An OpenGL interface
@@ -49,7 +49,7 @@ public interface R2ShaderDepthBatchedUsableType<M> extends
    * material {@code M}.</p>
    *
    * <p>This method will be called after a call to {@link
-   * #onActivate(com.io7m.jcanephora.core.api.JCGLShadersType)} and before a
+   * R2ShaderUsableType#onActivate(JCGLInterfaceGL33Type)} and before a
    * call to {@link #onValidate()}.</p>
    *
    * @param g A texture interface

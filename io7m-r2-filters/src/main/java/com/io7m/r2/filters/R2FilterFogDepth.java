@@ -169,13 +169,13 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
               .setObserverValues(parameters.observerValues())
               .build());
 
-          s.onActivate(g_sh);
+          s.onActivate(this.g);
           try {
             s.onReceiveFilterValues(this.g, this.values);
             s.onValidate();
             g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
           } finally {
-            s.onDeactivate(g_sh);
+            s.onDeactivate(this.g);
           }
         } finally {
           g_ao.arrayObjectUnbind();

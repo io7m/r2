@@ -336,14 +336,14 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
               .setGlowIntensity(in_glow_intensity)
               .build());
 
-          this.shader_emission.onActivate(g_sh);
+          this.shader_emission.onActivate(this.g);
           this.shader_emission.onReceiveFilterValues(this.g, this.values);
           this.shader_emission.onValidate();
           g_ao.arrayObjectBind(this.quad.arrayObject());
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
         } finally {
           g_ao.arrayObjectUnbind();
-          this.shader_emission.onDeactivate(g_sh);
+          this.shader_emission.onDeactivate(this.g);
         }
       } finally {
         tc.unitContextFinish(g_tex);

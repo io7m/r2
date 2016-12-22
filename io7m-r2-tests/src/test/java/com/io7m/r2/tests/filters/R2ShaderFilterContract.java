@@ -84,10 +84,10 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
     values.setTextureUnitContext(tc);
     values.setValues(t);
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
     f.onReceiveFilterValues(g, values);
     f.onValidate();
-    f.onDeactivate(g_sh);
+    f.onDeactivate(g);
   }
 
   @Test
@@ -145,7 +145,7 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
 
     final JCGLShadersType g_sh = g.getShaders();
 
-    f.onActivate(g_sh);
+    f.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
     f.onValidate();
   }
@@ -170,8 +170,8 @@ public abstract class R2ShaderFilterContract<T, TM extends T> extends
 
     final JCGLShadersType g_sh = g.getShaders();
 
-    f.onActivate(g_sh);
-    f.onDeactivate(g_sh);
+    f.onActivate(g);
+    f.onDeactivate(g);
 
     this.expected.expect(FSMTransitionException.class);
     f.onValidate();

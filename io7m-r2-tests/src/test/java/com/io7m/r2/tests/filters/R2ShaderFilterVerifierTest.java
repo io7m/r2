@@ -60,10 +60,10 @@ public final class R2ShaderFilterVerifierTest
     values.setTextureUnitContext(tc);
     values.setValues(new Object());
 
-    v.onActivate(g.getShaders());
+    v.onActivate(g);
     v.onReceiveFilterValues(g, values);
     v.onValidate();
-    v.onDeactivate(g_sh);
+    v.onDeactivate(g);
   }
 
   @Test
@@ -106,7 +106,7 @@ public final class R2ShaderFilterVerifierTest
 
     final JCGLShadersType g_sh = g.getShaders();
 
-    v.onActivate(g_sh);
+    v.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
     v.onValidate();
   }
@@ -124,8 +124,8 @@ public final class R2ShaderFilterVerifierTest
 
     final JCGLShadersType g_sh = g.getShaders();
 
-    v.onActivate(g_sh);
-    v.onDeactivate(g_sh);
+    v.onActivate(g);
+    v.onDeactivate(g);
 
     this.expected.expect(FSMTransitionException.class);
     v.onValidate();

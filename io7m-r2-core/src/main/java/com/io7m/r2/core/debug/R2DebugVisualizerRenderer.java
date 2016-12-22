@@ -286,7 +286,7 @@ public final class R2DebugVisualizerRenderer implements
 
       final JCGLTextureUnitContextType tc = uc.unitContextNew();
       try {
-        this.shader_single.onActivate(this.g.getShaders());
+        this.shader_single.onActivate(this.g);
         try {
           this.shader_single.onReceiveViewValues(this.g.getShaders(), m, area);
 
@@ -321,7 +321,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          this.shader_single.onDeactivate(this.g.getShaders());
+          this.shader_single.onDeactivate(this.g);
         }
       } finally {
         tc.unitContextFinish(this.g.getTextures());
@@ -345,7 +345,7 @@ public final class R2DebugVisualizerRenderer implements
 
       final JCGLTextureUnitContextType tc = uc.unitContextNew();
       try {
-        this.shader_single.onActivate(this.g.getShaders());
+        this.shader_single.onActivate(this.g);
         try {
           this.shader_single.onReceiveViewValues(this.g.getShaders(), m, area);
 
@@ -379,7 +379,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          this.shader_single.onDeactivate(this.g.getShaders());
+          this.shader_single.onDeactivate(this.g);
         }
       } finally {
         tc.unitContextFinish(this.g.getTextures());
@@ -404,7 +404,7 @@ public final class R2DebugVisualizerRenderer implements
 
       final JCGLTextureUnitContextType tc = uc.unitContextNew();
       try {
-        this.shader_lines.onActivate(this.g.getShaders());
+        this.shader_lines.onActivate(this.g);
         try {
           this.shader_lines.onReceiveViewValues(this.g.getShaders(), m);
           this.shader_lines.onReceiveMaterialValues(
@@ -422,7 +422,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          this.shader_lines.onDeactivate(this.g.getShaders());
+          this.shader_lines.onDeactivate(this.g);
         }
       } finally {
         tc.unitContextFinish(this.g.getTextures());
@@ -575,7 +575,7 @@ public final class R2DebugVisualizerRenderer implements
     public <M> void onInstanceBatchedShaderStart(
       final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      this.shader_batched.onActivate(this.shaders);
+      this.shader_batched.onActivate(this.g33);
       this.shader_batched.onReceiveViewValues(
         this.shaders, this.matrices, this.screen_area);
     }
@@ -614,7 +614,7 @@ public final class R2DebugVisualizerRenderer implements
     public <M> void onInstanceBatchedShaderFinish(
       final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      this.shader_batched.onDeactivate(this.shaders);
+      this.shader_batched.onDeactivate(this.g33);
     }
 
     @Override
@@ -628,7 +628,7 @@ public final class R2DebugVisualizerRenderer implements
     public <M> void onInstanceBillboardedShaderStart(
       final R2ShaderInstanceBillboardedUsableType<M> s)
     {
-      this.shader_billboarded.onActivate(this.shaders);
+      this.shader_billboarded.onActivate(this.g33);
       this.shader_billboarded.onReceiveViewValues(
         this.shaders, this.matrices, this.screen_area);
     }
@@ -665,14 +665,14 @@ public final class R2DebugVisualizerRenderer implements
     public <M> void onInstanceBillboardedShaderFinish(
       final R2ShaderInstanceBillboardedUsableType<M> s)
     {
-      this.shader_billboarded.onDeactivate(this.shaders);
+      this.shader_billboarded.onDeactivate(this.g33);
     }
 
     @Override
     public <M> void onInstanceSingleShaderStart(
       final R2ShaderInstanceSingleUsableType<M> s)
     {
-      this.shader_single.onActivate(this.shaders);
+      this.shader_single.onActivate(this.g33);
       this.shader_single.onReceiveViewValues(
         this.shaders, this.matrices, this.screen_area);
     }
@@ -724,7 +724,7 @@ public final class R2DebugVisualizerRenderer implements
     public <M> void onInstanceSingleShaderFinish(
       final R2ShaderInstanceSingleUsableType<M> s)
     {
-      this.shader_single.onDeactivate(this.shaders);
+      this.shader_single.onDeactivate(this.g33);
     }
 
     @Override
@@ -912,7 +912,7 @@ public final class R2DebugVisualizerRenderer implements
           PMatrixI3x3F.identity();
 
         try {
-          c.shader_single.onActivate(c.shaders);
+          c.shader_single.onActivate(c.g33);
           c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
@@ -967,7 +967,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          c.shader_single.onDeactivate(c.shaders);
+          c.shader_single.onDeactivate(c.g33);
         }
 
         return Unit.unit();
@@ -982,7 +982,7 @@ public final class R2DebugVisualizerRenderer implements
           PMatrixI3x3F.identity();
 
         try {
-          c.shader_single.onActivate(c.shaders);
+          c.shader_single.onActivate(c.g33);
           c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
@@ -1038,7 +1038,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          c.shader_single.onDeactivate(c.shaders);
+          c.shader_single.onDeactivate(c.g33);
         }
 
         return Unit.unit();
@@ -1085,7 +1085,7 @@ public final class R2DebugVisualizerRenderer implements
             PMatrixI3x3F.identity();
 
           try {
-            c.shader_single.onActivate(c.shaders);
+            c.shader_single.onActivate(c.g33);
             c.array_objects.arrayObjectBind(this.volume.arrayObject());
 
             try {
@@ -1122,7 +1122,7 @@ public final class R2DebugVisualizerRenderer implements
             }
 
           } finally {
-            c.shader_single.onDeactivate(c.shaders);
+            c.shader_single.onDeactivate(c.g33);
           }
 
         } finally {
@@ -1190,7 +1190,7 @@ public final class R2DebugVisualizerRenderer implements
           PMatrixI3x3F.identity();
 
         try {
-          c.shader_single.onActivate(c.shaders);
+          c.shader_single.onActivate(c.g33);
           c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
@@ -1246,7 +1246,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          c.shader_single.onDeactivate(c.shaders);
+          c.shader_single.onDeactivate(c.g33);
         }
 
         return Unit.unit();
@@ -1261,7 +1261,7 @@ public final class R2DebugVisualizerRenderer implements
           PMatrixI3x3F.identity();
 
         try {
-          c.shader_single.onActivate(c.shaders);
+          c.shader_single.onActivate(c.g33);
           c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
@@ -1317,7 +1317,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          c.shader_single.onDeactivate(c.shaders);
+          c.shader_single.onDeactivate(c.g33);
         }
 
         return Unit.unit();

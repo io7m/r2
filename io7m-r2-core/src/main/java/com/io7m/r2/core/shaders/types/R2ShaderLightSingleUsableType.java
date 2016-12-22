@@ -39,7 +39,7 @@ public interface R2ShaderLightSingleUsableType<
    * <p>Set the bound geometry buffer textures for the current shader.</p>
    *
    * <p>This method will be called exactly once between calls to {@link
-   * #onActivate(JCGLShadersType)} and {@link #onValidate()}.</p>
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)} and {@link #onValidate()}.</p>
    *
    * @param g_sh          An OpenGL interface
    * @param g             The geometry buffer
@@ -68,7 +68,7 @@ public interface R2ShaderLightSingleUsableType<
    * current shader.</p>
    *
    * <p>This method will be called after a call to {@link
-   * #onActivate(JCGLShadersType)} and before a call to {@link
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)} and before a call to {@link
    * #onValidate()}.</p>
    *
    * @param g_tex    A texture interface

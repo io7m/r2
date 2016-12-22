@@ -198,7 +198,7 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     b.instance().update(this.g33, this.matrices.transformContext());
 
     try {
-      shader.onActivate(g_sh);
+      shader.onActivate(this.g33);
       try {
         shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
         shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
@@ -208,7 +208,7 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
           JCGLPrimitives.PRIMITIVE_TRIANGLES,
           b.instance().renderCount());
       } finally {
-        shader.onDeactivate(g_sh);
+        shader.onDeactivate(this.g33);
       }
     } finally {
       tc.unitContextFinish(g_tex);
@@ -243,7 +243,7 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
     b.instance().update(this.g33, this.matrices.transformContext());
 
     try {
-      shader.onActivate(g_sh);
+      shader.onActivate(this.g33);
       try {
         shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
         shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
@@ -252,7 +252,7 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
         g_dr.draw(
           JCGLPrimitives.PRIMITIVE_POINTS, 0, b.instance().enabledCount());
       } finally {
-        shader.onDeactivate(g_sh);
+        shader.onDeactivate(this.g33);
       }
     } finally {
       tc.unitContextFinish(g_tex);
@@ -288,7 +288,7 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
         .build());
 
     try {
-      shader.onActivate(g_sh);
+      shader.onActivate(this.g33);
       try {
         shader.onReceiveViewValues(g_sh, this.matrices, this.viewport);
         shader.onReceiveMaterialValues(g_tex, g_sh, tc, params);
@@ -297,7 +297,7 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
         g_ao.arrayObjectBind(s.instance().arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
-        shader.onDeactivate(g_sh);
+        shader.onDeactivate(this.g33);
       }
     } finally {
       tc.unitContextFinish(g_tex);

@@ -39,7 +39,7 @@ public interface R2ShaderLightProjectiveWithShadowUsableType<
    * current shader.</p>
    *
    * <p>This method will be called after a call to {@link
-   * #onActivate(JCGLShadersType)} and before a call to {@link
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)} and before a call to {@link
    * #onValidate()}.</p>
    *
    * @param g_tex A texture interface

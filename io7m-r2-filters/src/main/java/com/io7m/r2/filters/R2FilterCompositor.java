@@ -148,7 +148,7 @@ public final class R2FilterCompositor implements
     JCGLRenderStates.activate(this.g, this.render_state);
 
     try {
-      this.shader.onActivate(g_sh);
+      this.shader.onActivate(this.g);
       g_ao.arrayObjectBind(this.quad.arrayObject());
 
       for (final R2FilterCompositorItemType i : parameters.items()) {
@@ -189,7 +189,7 @@ public final class R2FilterCompositor implements
 
     } finally {
       g_ao.arrayObjectUnbind();
-      this.shader.onDeactivate(g_sh);
+      this.shader.onDeactivate(this.g);
     }
   }
 }

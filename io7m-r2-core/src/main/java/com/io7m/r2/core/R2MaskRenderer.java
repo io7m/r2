@@ -193,7 +193,7 @@ public final class R2MaskRenderer implements R2MaskRendererType
     final List<R2InstanceBatchedType> batches = s.batched();
     if (!batches.isEmpty()) {
 
-      this.shader_batched.onActivate(g_sh);
+      this.shader_batched.onActivate(this.g);
       try {
         this.shader_batched.onReceiveViewValues(g_sh, m, area);
         this.shader_batched.onReceiveMaterialValues(
@@ -209,7 +209,7 @@ public final class R2MaskRenderer implements R2MaskRendererType
             JCGLPrimitives.PRIMITIVE_TRIANGLES, instance.renderCount());
         }
       } finally {
-        this.shader_batched.onDeactivate(g_sh);
+        this.shader_batched.onDeactivate(this.g);
         g_a.arrayObjectUnbind();
       }
     }
@@ -228,7 +228,7 @@ public final class R2MaskRenderer implements R2MaskRendererType
     final List<R2InstanceSingleType> singles = s.singles();
     if (!singles.isEmpty()) {
 
-      this.shader_single.onActivate(g_sh);
+      this.shader_single.onActivate(this.g);
       try {
         this.shader_single.onReceiveViewValues(g_sh, m, area);
         this.shader_single.onReceiveMaterialValues(
@@ -251,7 +251,7 @@ public final class R2MaskRenderer implements R2MaskRendererType
             });
         }
       } finally {
-        this.shader_single.onDeactivate(g_sh);
+        this.shader_single.onDeactivate(this.g);
         g_a.arrayObjectUnbind();
       }
     }

@@ -26,7 +26,6 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableT
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorI4F;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;

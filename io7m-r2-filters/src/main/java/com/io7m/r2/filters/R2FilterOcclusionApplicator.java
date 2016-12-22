@@ -189,14 +189,14 @@ public final class R2FilterOcclusionApplicator implements
             .build());
 
         g_sh.shaderActivateProgram(this.shader.shaderProgram());
-        this.shader.onActivate(g_sh);
+        this.shader.onActivate(this.g);
         this.shader.onReceiveFilterValues(this.g, this.values);
         this.shader.onValidate();
         g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader.onDeactivate(g_sh);
+        this.shader.onDeactivate(this.g);
       }
     } finally {
       c.unitContextFinish(g_tx);

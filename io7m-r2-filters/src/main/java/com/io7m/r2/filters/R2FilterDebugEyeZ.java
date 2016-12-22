@@ -193,7 +193,7 @@ public final class R2FilterDebugEyeZ implements
           this.values.setTextureUnitContext(tc);
           this.values.setValues(parameters);
 
-          this.shader.onActivate(g_sh);
+          this.shader.onActivate(this.g);
           this.shader.onReceiveFilterValues(this.g, this.values);
           this.shader.onValidate();
 
@@ -208,7 +208,7 @@ public final class R2FilterDebugEyeZ implements
 
         } finally {
           g_ao.arrayObjectUnbind();
-          this.shader.onDeactivate(g_sh);
+          this.shader.onDeactivate(this.g);
         }
 
       } finally {

@@ -69,11 +69,11 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    v.onActivate(g.getShaders());
+    v.onActivate(g);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
     v.onValidate();
-    v.onDeactivate(g_sh);
+    v.onDeactivate(g);
   }
 
   @Test
@@ -103,7 +103,7 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    v.onActivate(g.getShaders());
+    v.onActivate(g);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
 
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
@@ -115,7 +115,7 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
     v.onValidate();
 
-    v.onDeactivate(g_sh);
+    v.onDeactivate(g);
   }
 
   @Test
@@ -145,7 +145,7 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    v.onActivate(g.getShaders());
+    v.onActivate(g);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
 
@@ -197,7 +197,7 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    v.onActivate(g_sh);
+    v.onActivate(g);
     v.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     this.expected.expect(FSMTransitionException.class);
     v.onValidate();
@@ -223,7 +223,7 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
-    v.onActivate(g_sh);
+    v.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
     v.onReceiveMaterialValues(g_tex, g_sh, tc, new Object());
   }
@@ -241,8 +241,8 @@ public final class R2ShaderTranslucentInstanceBillboardedVerifierTest
 
     final JCGLShadersType g_sh = g.getShaders();
 
-    v.onActivate(g_sh);
-    v.onDeactivate(g_sh);
+    v.onActivate(g);
+    v.onDeactivate(g);
 
     this.expected.expect(FSMTransitionException.class);
     v.onValidate();

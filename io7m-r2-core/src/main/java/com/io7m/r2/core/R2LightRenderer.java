@@ -492,7 +492,7 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      s.onActivate(this.shaders);
+      s.onActivate(this.g33);
       s.onReceiveBoundGeometryBufferTextures(
         this.shaders,
         this.input_state.parent.gbuffer,
@@ -683,7 +683,7 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderFinish(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override
@@ -1071,7 +1071,7 @@ public final class R2LightRenderer implements R2LightRendererType
         this.input_state.light_base_context.unitContextNew();
 
       try {
-        this.clip_volume_stencil.onActivate(this.shaders);
+        this.clip_volume_stencil.onActivate(this.g33);
 
         try {
           this.clip_volume_stencil.onReceiveViewValues(
@@ -1104,7 +1104,7 @@ public final class R2LightRenderer implements R2LightRendererType
           );
 
         } finally {
-          this.clip_volume_stencil.onDeactivate(this.shaders);
+          this.clip_volume_stencil.onDeactivate(this.g33);
         }
 
       } finally {
@@ -1125,7 +1125,7 @@ public final class R2LightRenderer implements R2LightRendererType
         this.input_state.light_base_context.unitContextNew();
 
       try {
-        this.clip_screen_stencil.onActivate(this.shaders);
+        this.clip_screen_stencil.onActivate(this.g33);
 
         try {
           this.clip_screen_stencil.onReceiveMaterialValues(
@@ -1142,7 +1142,7 @@ public final class R2LightRenderer implements R2LightRendererType
           }
 
         } finally {
-          this.clip_screen_stencil.onDeactivate(this.shaders);
+          this.clip_screen_stencil.onDeactivate(this.g33);
         }
 
       } finally {
@@ -1267,7 +1267,7 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      s.onActivate(this.shaders);
+      s.onActivate(this.g33);
       s.onReceiveBoundGeometryBufferTextures(
         this.shaders,
         this.input_state.parent.gbuffer,
@@ -1347,7 +1347,7 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderFinish(
       final R2ShaderLightSingleUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override

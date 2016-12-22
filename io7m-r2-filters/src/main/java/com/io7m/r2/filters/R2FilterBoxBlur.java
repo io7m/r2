@@ -434,7 +434,7 @@ public final class R2FilterBoxBlur<
       g_v.viewportSet(target_area);
 
       try {
-        this.shader_blur_h.onActivate(g_sh);
+        this.shader_blur_h.onActivate(this.g);
 
         final AreaInclusiveUnsignedLType source_area =
           source_texture.texture().textureGetArea();
@@ -455,7 +455,7 @@ public final class R2FilterBoxBlur<
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader_blur_h.onDeactivate(g_sh);
+        this.shader_blur_h.onDeactivate(this.g);
       }
 
     } finally {
@@ -486,7 +486,7 @@ public final class R2FilterBoxBlur<
       g_v.viewportSet(target_area);
 
       try {
-        this.shader_blur_v.onActivate(g_sh);
+        this.shader_blur_v.onActivate(this.g);
 
         final AreaInclusiveUnsignedLType source_area =
           source_texture.texture().textureGetArea();
@@ -507,7 +507,7 @@ public final class R2FilterBoxBlur<
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader_blur_v.onDeactivate(g_sh);
+        this.shader_blur_v.onDeactivate(this.g);
       }
 
     } finally {

@@ -171,14 +171,14 @@ public final class R2FilterFXAA implements R2FilterType<R2FilterFXAAParameters>
       JCGLRenderStates.activate(this.g, this.render_state);
 
       try {
-        sh.onActivate(g_sh);
+        sh.onActivate(this.g);
         sh.onReceiveFilterValues(this.g, this.values);
         sh.onValidate();
         g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        sh.onDeactivate(g_sh);
+        sh.onDeactivate(this.g);
       }
 
     } finally {

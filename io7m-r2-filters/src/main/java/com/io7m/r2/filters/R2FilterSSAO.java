@@ -183,7 +183,7 @@ public final class R2FilterSSAO implements
       try {
         g_sh.shaderActivateProgram(this.shader.shaderProgram());
 
-        this.shader.onActivate(g_sh);
+        this.shader.onActivate(this.g);
         this.shader.onReceiveFilterValues(this.g, this.values);
         this.shader.onValidate();
 
@@ -191,7 +191,7 @@ public final class R2FilterSSAO implements
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader.onDeactivate(g_sh);
+        this.shader.onDeactivate(this.g);
       }
 
     } finally {

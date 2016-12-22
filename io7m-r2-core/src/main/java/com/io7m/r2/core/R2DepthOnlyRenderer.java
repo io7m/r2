@@ -313,14 +313,14 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
     public <M> void onInstanceBatchedShaderFinish(
       final R2ShaderDepthBatchedUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override
     public <M> void onInstanceSingleShaderStart(
       final R2ShaderDepthSingleUsableType<M> s)
     {
-      s.onActivate(this.shaders);
+      s.onActivate(this.g33);
       s.onReceiveViewValues(this.shaders, this.matrices, this.viewport_area);
     }
 
@@ -377,7 +377,7 @@ public final class R2DepthOnlyRenderer implements R2DepthRendererType
     public <M> void onInstanceSingleShaderFinish(
       final R2ShaderDepthSingleUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override

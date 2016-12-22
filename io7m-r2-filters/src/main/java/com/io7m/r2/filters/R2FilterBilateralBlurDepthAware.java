@@ -362,7 +362,7 @@ public final class R2FilterBilateralBlurDepthAware<
           parameters, source_value_texture, source_depth_texture));
         this.blur_values.setTextureUnitContext(tc);
 
-        this.shader_blur_h.onActivate(g_sh);
+        this.shader_blur_h.onActivate(this.g);
         this.shader_blur_h.onReceiveFilterValues(this.g, this.blur_values);
         this.shader_blur_h.onValidate();
 
@@ -370,7 +370,7 @@ public final class R2FilterBilateralBlurDepthAware<
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader_blur_h.onDeactivate(g_sh);
+        this.shader_blur_h.onDeactivate(this.g);
       }
     } finally {
       tc.unitContextFinish(g_tex);
@@ -404,7 +404,7 @@ public final class R2FilterBilateralBlurDepthAware<
           parameters, source_value_texture, source_depth_texture));
         this.blur_values.setTextureUnitContext(tc);
 
-        this.shader_blur_v.onActivate(g_sh);
+        this.shader_blur_v.onActivate(this.g);
         this.shader_blur_v.onReceiveFilterValues(this.g, this.blur_values);
         this.shader_blur_v.onValidate();
 
@@ -412,7 +412,7 @@ public final class R2FilterBilateralBlurDepthAware<
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader_blur_v.onDeactivate(g_sh);
+        this.shader_blur_v.onDeactivate(this.g);
       }
     } finally {
       tc.unitContextFinish(g_tex);

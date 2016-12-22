@@ -30,7 +30,7 @@ import com.io7m.jtensors.parameterized.PVector3FType;
 import com.io7m.jtensors.parameterized.PVector4FType;
 import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
-import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.r2.core.shaders.provided.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;

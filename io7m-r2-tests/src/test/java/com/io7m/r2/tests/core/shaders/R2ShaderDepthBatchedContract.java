@@ -99,13 +99,13 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
     f.onReceiveViewValues(
       g, R2ShaderParametersView.of(new R2EmptyObserverValues(proj), VIEWPORT));
     f.onReceiveMaterialValues(
       g, R2ShaderParametersMaterial.of(tc, t));
     f.onValidate();
-    f.onDeactivate(g_sh);
+    f.onDeactivate(g);
   }
 
   @Test
@@ -140,7 +140,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
     f.onReceiveViewValues(
       g, R2ShaderParametersView.of(new R2EmptyObserverValues(proj), VIEWPORT));
 
@@ -153,7 +153,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
     f.onReceiveMaterialValues(g, R2ShaderParametersMaterial.of(tc, t));
     f.onValidate();
 
-    f.onDeactivate(g_sh);
+    f.onDeactivate(g);
   }
 
   @Test
@@ -188,7 +188,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
     f.onReceiveViewValues(
       g, R2ShaderParametersView.of(new R2EmptyObserverValues(proj), VIEWPORT));
     f.onReceiveMaterialValues(g, R2ShaderParametersMaterial.of(tc, t));
@@ -243,7 +243,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
 
     final JCGLShadersType g_sh = g.getShaders();
 
-    f.onActivate(g_sh);
+    f.onActivate(g);
     f.onReceiveViewValues(
       g, R2ShaderParametersView.of(new R2EmptyObserverValues(proj), VIEWPORT));
     this.expected.expect(FSMTransitionException.class);
@@ -279,7 +279,7 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
     final JCGLTextureUnitContextType tc =
       tr.unitContextNew();
 
-    f.onActivate(g_sh);
+    f.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
     f.onReceiveMaterialValues(g, R2ShaderParametersMaterial.of(tc, t));
   }
@@ -302,8 +302,8 @@ public abstract class R2ShaderDepthBatchedContract<T, TM extends T> extends
 
     final JCGLShadersType g_sh = g.getShaders();
 
-    f.onActivate(g_sh);
-    f.onDeactivate(g_sh);
+    f.onActivate(g);
+    f.onDeactivate(g);
 
     this.expected.expect(FSMTransitionException.class);
     f.onValidate();

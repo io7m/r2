@@ -36,7 +36,7 @@ public interface R2ShaderInstanceSingleUsableType<M>
    * <p>Set shader values that are derived from the current view.</p>
    *
    * <p>This method will be called exactly once between calls to {@link
-   * #onActivate(JCGLShadersType)} and {@link #onValidate()}.</p>
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)} and {@link #onValidate()}.</p>
    *
    * @param g_sh     An OpenGL interface
    * @param m        The view matrices
@@ -55,7 +55,7 @@ public interface R2ShaderInstanceSingleUsableType<M>
    * material {@code M}.</p>
    *
    * <p>This method will be called after a call to {@link
-   * #onActivate(JCGLShadersType)} and before a call to {@link
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)} and before a call to {@link
    * #onValidate()}.</p>
    *
    * @param g_tex  A texture interface
@@ -78,7 +78,7 @@ public interface R2ShaderInstanceSingleUsableType<M>
    * uses the shader.</p>
    *
    * <p>This method will be called after a call to {@link
-   * #onActivate(JCGLShadersType)} and before a call to {@link
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)} and before a call to {@link
    * #onValidate()}.</p>
    *
    * @param g_sh An OpenGL interface

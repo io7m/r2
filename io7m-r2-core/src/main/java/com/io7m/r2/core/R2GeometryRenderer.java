@@ -259,7 +259,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceBatchedShaderStart(
       final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      s.onActivate(this.shaders);
+      s.onActivate(this.g33);
       s.onReceiveViewValues(this.shaders, this.matrices, this.gbuffer_area);
     }
 
@@ -300,7 +300,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceBatchedShaderFinish(
       final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override
@@ -314,7 +314,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceBillboardedShaderStart(
       final R2ShaderInstanceBillboardedUsableType<M> s)
     {
-      s.onActivate(this.shaders);
+      s.onActivate(this.g33);
       s.onReceiveViewValues(this.shaders, this.matrices, this.gbuffer_area);
     }
 
@@ -354,14 +354,14 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceBillboardedShaderFinish(
       final R2ShaderInstanceBillboardedUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override
     public <M> void onInstanceSingleShaderStart(
       final R2ShaderInstanceSingleUsableType<M> s)
     {
-      s.onActivate(this.shaders);
+      s.onActivate(this.g33);
       s.onReceiveViewValues(this.shaders, this.matrices, this.gbuffer_area);
     }
 
@@ -416,7 +416,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public <M> void onInstanceSingleShaderFinish(
       final R2ShaderInstanceSingleUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      s.onDeactivate(this.g33);
     }
 
     @Override

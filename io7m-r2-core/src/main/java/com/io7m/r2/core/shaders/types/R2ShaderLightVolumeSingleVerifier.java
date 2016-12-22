@@ -124,10 +124,10 @@ public final class R2ShaderLightVolumeSingleVerifier<
   }
 
   @Override
-  public void onActivate(final JCGLShadersType g_sh)
+  public void onActivate(final JCGLInterfaceGL33Type g)
   {
     this.state.transition(State.STATE_ACTIVATED);
-    this.shader.onActivate(g_sh);
+    this.shader.onActivate(g);
   }
 
   @Override
@@ -139,10 +139,10 @@ public final class R2ShaderLightVolumeSingleVerifier<
   }
 
   @Override
-  public void onDeactivate(final JCGLShadersType g_sh)
+  public void onDeactivate(final JCGLInterfaceGL33Type g)
   {
     this.state.transition(State.STATE_DEACTIVATED);
-    this.shader.onDeactivate(g_sh);
+    this.shader.onDeactivate(g);
   }
 
   @Override

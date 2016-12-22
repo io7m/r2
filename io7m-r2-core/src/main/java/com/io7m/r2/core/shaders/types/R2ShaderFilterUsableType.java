@@ -30,7 +30,7 @@ public interface R2ShaderFilterUsableType<M> extends R2ShaderScreenUsableType<M>
    * <p>Set filter values.</p>
    *
    * <p>This method will be called exactly once between calls to {@link
-   * #onActivate(com.io7m.jcanephora.core.api.JCGLShadersType)} and {@link
+   * R2ShaderUsableType#onActivate(JCGLInterfaceGL33Type)} and {@link
    * #onValidate()}.</p>
    *
    * @param g          A texture interface

@@ -33,8 +33,8 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2ProjectionReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
 import com.io7m.r2.tests.core.R2EmptyObserverValues;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
@@ -92,11 +92,11 @@ public abstract class R2ShaderTranslucentInstanceBatchedContract<T, TM extends T
       new UnsignedRangeInclusiveL(0L, 639L),
       new UnsignedRangeInclusiveL(0L, 479L));
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
     f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
     f.onValidate();
-    f.onDeactivate(g_sh);
+    f.onDeactivate(g);
   }
 
   @Test
@@ -133,7 +133,7 @@ public abstract class R2ShaderTranslucentInstanceBatchedContract<T, TM extends T
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
     f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
 
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
@@ -145,7 +145,7 @@ public abstract class R2ShaderTranslucentInstanceBatchedContract<T, TM extends T
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
     f.onValidate();
 
-    f.onDeactivate(g_sh);
+    f.onDeactivate(g);
   }
 
   @Test
@@ -182,7 +182,7 @@ public abstract class R2ShaderTranslucentInstanceBatchedContract<T, TM extends T
     final R2ProjectionReadableType proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
     f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
 
@@ -248,7 +248,7 @@ public abstract class R2ShaderTranslucentInstanceBatchedContract<T, TM extends T
 
     final JCGLShadersType g_sh = g.getShaders();
 
-    f.onActivate(g_sh);
+    f.onActivate(g);
     f.onReceiveViewValues(g_sh, new R2EmptyObserverValues(proj), area);
     this.expected.expect(FSMTransitionException.class);
     f.onValidate();
@@ -281,7 +281,7 @@ public abstract class R2ShaderTranslucentInstanceBatchedContract<T, TM extends T
     final JCGLTextureUnitContextParentType tr = ta.getRootContext();
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
-    f.onActivate(g_sh);
+    f.onActivate(g);
     this.expected.expect(FSMTransitionException.class);
     f.onReceiveMaterialValues(g_tex, g_sh, tc, t);
   }
@@ -306,8 +306,8 @@ public abstract class R2ShaderTranslucentInstanceBatchedContract<T, TM extends T
 
     final JCGLShadersType g_sh = g.getShaders();
 
-    f.onActivate(g_sh);
-    f.onDeactivate(g_sh);
+    f.onActivate(g);
+    f.onDeactivate(g);
 
     this.expected.expect(FSMTransitionException.class);
     f.onValidate();

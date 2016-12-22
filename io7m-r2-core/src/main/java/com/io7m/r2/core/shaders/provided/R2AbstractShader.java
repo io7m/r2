@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jcanephora.core.JCGLFragmentShaderType;
 import com.io7m.jcanephora.core.JCGLGeometryShaderType;
@@ -24,6 +24,8 @@ import com.io7m.jcanephora.core.JCGLVertexShaderType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.core.R2ExceptionShaderPreprocessingFailed;
+import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderType;
 import com.io7m.sombrero.core.SoShaderException;
@@ -156,19 +158,22 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
   }
 
   @Override
-  public final void onActivate(final JCGLShadersType g_sh)
+  public final void onActivate(
+    final JCGLInterfaceGL33Type g)
   {
-    g_sh.shaderActivateProgram(this.program);
+    g.getShaders().shaderActivateProgram(this.program);
   }
 
   @Override
-  public final void onDeactivate(final JCGLShadersType g_sh)
+  public final void onDeactivate(
+    final JCGLInterfaceGL33Type g)
   {
-    g_sh.shaderDeactivateProgram();
+    g.getShaders().shaderDeactivateProgram();
   }
 
   @Override
-  public final void delete(final JCGLInterfaceGL33Type g)
+  public final void delete(
+    final JCGLInterfaceGL33Type g)
   {
     NullCheck.notNull(g);
     if (!this.isDeleted()) {

@@ -349,7 +349,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
 
-      this.program.onActivate(this.shaders);
+      this.program.onActivate(this.g33);
       this.program.onReceiveViewValues(
         this.shaders, this.matrices, this.viewport_area);
     }
@@ -386,7 +386,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
     @Override
     public void onFinish()
     {
-      this.program.onDeactivate(this.shaders);
+      this.program.onDeactivate(this.g33);
       this.shaders = null;
       this.array_objects = null;
       this.draw = null;
