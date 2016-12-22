@@ -419,10 +419,13 @@ public final class ExampleBillboarded0 implements R2ExampleCustomType
 
       this.filter_emission_params =
         R2FilterEmissionParameters.builder()
+          .setTextureDefaults(this.main.getTextureDefaults())
           .setAlbedoEmissionMap(this.gbuffer.albedoEmissiveTexture())
           .setBlurParameters(R2BlurParameters.builder().build())
           .setOutputFramebuffer(this.ibuffer.primaryFramebuffer())
           .setOutputViewport(this.ibuffer.area())
+          .setEmissionIntensity(1.0f)
+          .setGlowIntensity(2.0f)
           .setScale(0.25f)
           .build();
 

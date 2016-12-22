@@ -381,6 +381,7 @@ public final class ExampleMinimal implements R2ExampleCustomType
 
       this.filter_emission_params =
         R2FilterEmissionParameters.builder()
+          .setTextureDefaults(m.getTextureDefaults())
           .setAlbedoEmissionMap(this.gbuffer.albedoEmissiveTexture())
           .setBlurParameters(R2BlurParameters.builder().build())
           .setOutputFramebuffer(this.ibuffer.primaryFramebuffer())

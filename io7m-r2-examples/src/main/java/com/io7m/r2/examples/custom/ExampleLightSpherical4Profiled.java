@@ -849,8 +849,11 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
       this.filter_emission_params =
         R2FilterEmissionParameters.builder()
+          .setTextureDefaults(m.getTextureDefaults())
           .setAlbedoEmissionMap(this.gbuffer.albedoEmissiveTexture())
+          .setEmissionIntensity(1.0f)
           .setBlurParameters(R2BlurParameters.builder().build())
+          .setGlowIntensity(1.0f)
           .setOutputFramebuffer(this.ibuffer.primaryFramebuffer())
           .setOutputViewport(this.ibuffer.area())
           .setScale(0.25f)

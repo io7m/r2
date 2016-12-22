@@ -70,19 +70,16 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
   private final R2UnitQuadUsableType quad;
   private final JCGLRenderState render_state_additive;
   private final JCGLRenderState render_state;
-  private final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> shader_copy;
 
   private R2FilterEmission(
     final R2FilterUsableType<R2FilterBoxBlurParameters<R2ImageBufferDescriptionType, R2ImageBufferUsableType, R2ImageBufferDescriptionType, R2ImageBufferUsableType>> in_blur,
     final R2ShaderFilterType<R2ShaderFilterEmissionParameters> in_shader_emission,
-    final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> in_shader_copy,
     final JCGLInterfaceGL33Type in_g,
     final R2RenderTargetPoolUsableType<R2ImageBufferDescriptionType, R2ImageBufferUsableType> in_render_target_pool,
     final R2UnitQuadUsableType in_quad)
   {
     this.filter_blur = NullCheck.notNull(in_blur);
     this.shader_emission = NullCheck.notNull(in_shader_emission);
-    this.shader_copy = NullCheck.notNull(in_shader_copy);
     this.g = NullCheck.notNull(in_g);
     this.render_target_pool = NullCheck.notNull(in_render_target_pool);
     this.quad = NullCheck.notNull(in_quad);
@@ -136,14 +133,10 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     final R2ShaderFilterType<
       R2ShaderFilterEmissionParameters> in_shader_emission =
       R2ShaderFilterEmission.newShader(g_sh, in_shader_env, in_id_pool);
-    final R2ShaderFilterType<
-      R2ShaderFilterTextureShowParameters> in_shader_copy =
-      R2ShaderFilterTextureShow.newShader(g_sh, in_shader_env, in_id_pool);
 
     return new R2FilterEmission(
       in_blur,
       in_shader_emission,
-      in_shader_copy,
       in_g,
       in_render_target_pool,
       in_quad);
@@ -206,11 +199,14 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
       g_fb.framebufferDrawBind(fb_opt.get());
     }
 
-    this.copyEmissive(
+    this.renderEmission(
       uc,
-      pc_unblurred.getChildContext("draw"),
+      pc_unblurred.getChildContext("render"),
       parameters.outputViewport(),
       parameters.albedoEmissionMap(),
+      1.0f,
+      parameters.textureDefaults().texture2DBlack(),
+      0.0f,
       this.render_state_additive);
   }
 
@@ -220,12 +216,12 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     final R2FilterEmissionParameters parameters,
     final R2BlurParameters blur_parameters)
   {
-    final JCGLProfilingContextType pc_blurred =
+    final JCGLProfilingContextType pc_emission =
       pc_base.getChildContext("blurred");
-    final JCGLProfilingContextType pc_draw =
-      pc_blurred.getChildContext("draw");
-    final JCGLProfilingContextType pc_copy_out =
-      pc_blurred.getChildContext("copy-out");
+    final JCGLProfilingContextType pc_extract =
+      pc_emission.getChildContext("extract");
+    final JCGLProfilingContextType pc_merge =
+      pc_emission.getChildContext("render");
 
     final JCGLFramebuffersType g_fb =
       this.g.getFramebuffers();
@@ -247,11 +243,14 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
        */
 
       g_fb.framebufferDrawBind(temp.primaryFramebuffer());
-      this.copyEmissive(
+      this.renderEmission(
         uc,
-        pc_draw,
+        pc_extract,
         area_scaled,
         parameters.albedoEmissionMap(),
+        1.0f,
+        parameters.textureDefaults().texture2DBlack(),
+        0.0f,
         this.render_state);
 
       /*
@@ -272,7 +271,7 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
           blur_parameters,
           (i, a) -> R2ImageBufferDescription.of(a, Optional.empty()));
 
-      this.filter_blur.runFilter(pc_blurred, uc, fbp);
+      this.filter_blur.runFilter(pc_emission, uc, fbp);
 
       /*
        * Blend the blurred emissive image into the output framebuffer.
@@ -286,11 +285,14 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
         g_fb.framebufferDrawUnbind();
       }
 
-      this.copyOut(
+      this.renderEmission(
         uc,
-        pc_copy_out,
+        pc_merge,
         parameters.outputViewport(),
+        parameters.albedoEmissionMap(),
+        parameters.emissionIntensity(),
         temp.imageTexture(),
+        parameters.glowIntensity(),
         this.render_state_additive);
 
     } finally {
@@ -298,55 +300,14 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
     }
   }
 
-  private void copyOut(
-    final JCGLTextureUnitContextParentType uc,
-    final JCGLProfilingContextType pc_copy_out,
-    final AreaInclusiveUnsignedLType output_viewport,
-    final R2Texture2DUsableType in_texture,
-    final JCGLRenderStateType r_state)
-  {
-    pc_copy_out.startMeasuringIfEnabled();
-    try {
-      final JCGLTexturesType g_tex = this.g.getTextures();
-      final JCGLShadersType g_sh = this.g.getShaders();
-      final JCGLDrawType g_dr = this.g.getDraw();
-      final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
-      final JCGLViewportsType g_v = this.g.getViewports();
-
-      final JCGLTextureUnitContextType tc = uc.unitContextNew();
-      try {
-        g_v.viewportSet(output_viewport);
-        JCGLRenderStates.activate(this.g, r_state);
-
-        try {
-          final R2ShaderFilterTextureShowParameters cp =
-            R2ShaderFilterTextureShowParameters.builder()
-              .setTexture(in_texture)
-              .setIntensity(1.0f)
-              .build();
-
-          this.shader_copy.onActivate(g_sh);
-          this.shader_copy.onReceiveFilterValues(g_tex, g_sh, tc, cp);
-          this.shader_copy.onValidate();
-          g_ao.arrayObjectBind(this.quad.arrayObject());
-          g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
-        } finally {
-          g_ao.arrayObjectUnbind();
-          this.shader_copy.onDeactivate(g_sh);
-        }
-      } finally {
-        tc.unitContextFinish(g_tex);
-      }
-    } finally {
-      pc_copy_out.stopMeasuringIfEnabled();
-    }
-  }
-
-  private void copyEmissive(
+  private void renderEmission(
     final JCGLTextureUnitContextParentType uc,
     final JCGLProfilingContextType pc_draw,
     final AreaInclusiveUnsignedLType output_viewport,
-    final R2Texture2DUsableType in_texture,
+    final R2Texture2DUsableType in_albedo_emission,
+    final float in_emission_intensity,
+    final R2Texture2DUsableType in_glow_texture,
+    final float in_glow_intensity,
     final JCGLRenderStateType r_state)
   {
     pc_draw.startMeasuringIfEnabled();
@@ -363,7 +324,12 @@ public final class R2FilterEmission implements R2FilterType<R2FilterEmissionPara
         JCGLRenderStates.activate(this.g, r_state);
         try {
           final R2ShaderFilterEmissionParameters sp =
-            R2ShaderFilterEmissionParameters.of(in_texture);
+            R2ShaderFilterEmissionParameters.builder()
+              .setAlbedoEmissionTexture(in_albedo_emission)
+              .setEmissionIntensity(in_emission_intensity)
+              .setGlowTexture(in_glow_texture)
+              .setGlowIntensity(in_glow_intensity)
+              .build();
 
           this.shader_emission.onActivate(g_sh);
           this.shader_emission.onReceiveFilterValues(g_tex, g_sh, tc, sp);

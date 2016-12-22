@@ -157,6 +157,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParameters params =
       R2FilterEmissionParameters.builder()
+        .setTextureDefaults(td)
         .setAlbedoEmissionMap(td.texture2DWhite())
         .setBlurParameters(Optional.empty())
         .setOutputViewport(area)
@@ -231,6 +232,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParameters params =
       R2FilterEmissionParameters.builder()
+        .setTextureDefaults(td)
         .setAlbedoEmissionMap(td.texture2DWhite())
         .setBlurParameters(Optional.empty())
         .setOutputViewport(area)
@@ -305,6 +307,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParameters params =
       R2FilterEmissionParameters.builder()
+        .setTextureDefaults(td)
         .setAlbedoEmissionMap(td.texture2DWhite())
         .setBlurParameters(Optional.of(R2BlurParameters.builder().build()))
         .setOutputViewport(area)
@@ -382,6 +385,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParameters params =
       R2FilterEmissionParameters.builder()
+        .setTextureDefaults(td)
         .setAlbedoEmissionMap(td.texture2DWhite())
         .setBlurParameters(Optional.of(bpb.build()))
         .setOutputViewport(area)
@@ -459,6 +463,7 @@ public abstract class R2FilterEmissionContract extends R2JCGLContract
 
     final R2FilterEmissionParameters params =
       R2FilterEmissionParameters.builder()
+        .setTextureDefaults(td)
         .setAlbedoEmissionMap(td.texture2DWhite())
         .setBlurParameters(Optional.of(bpb.build()))
         .setOutputViewport(area)

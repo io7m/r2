@@ -20,6 +20,7 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import org.immutables.value.Value;
 
 import java.util.Optional;
@@ -33,10 +34,18 @@ import java.util.Optional;
 public interface R2FilterEmissionParametersType
 {
   /**
+   * @return A reference to the default textures
+   */
+
+  @Value.Parameter
+  R2TextureDefaultsType textureDefaults();
+
+  /**
    * @return The framebuffer to which the output will be written. If no
    * framebuffer is specified, the output will go to the default framebuffer.
    */
 
+  @Value.Parameter
   Optional<JCGLFramebufferUsableType> outputFramebuffer();
 
   /**
@@ -55,6 +64,43 @@ public interface R2FilterEmissionParametersType
   R2Texture2DUsableType albedoEmissionMap();
 
   /**
+   * A specification of an intensity value by which values sampled from the
+   * {@link #albedoEmissionMap()} are multiplied. This effectively allows
+   * control over the intensity of the emission effect in the final image.
+   *
+   * @return The intensity of the emissive sections of the image
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default float emissionIntensity()
+  {
+    return 1.0f;
+  }
+
+  /**
+   * A specification of an intensity value by which values sampled from
+   * any produced glow maps are multiplied. This effectively allows control over
+   * the intensity of the glow effect in the final image.
+   *
+   * @return The intensity of the glow sections of the image
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default float glowIntensity()
+  {
+    return 1.0f;
+  }
+
+  /**
+   * @return The blur parameters, if blurring is to be used
+   */
+
+  @Value.Parameter
+  Optional<R2BlurParameters> blurParameters();
+
+  /**
    * If blurring is to be used, the value returned here specifies the scale at
    * which the intermediate emissive step is rendered. If blurring is not going
    * to be used, the emission image is simply blended into the existing
@@ -70,11 +116,4 @@ public interface R2FilterEmissionParametersType
   {
     return 0.5f;
   }
-
-  /**
-   * @return The blur parameters, if blurring is to be used
-   */
-
-  @Value.Parameter
-  Optional<R2BlurParameters> blurParameters();
 }

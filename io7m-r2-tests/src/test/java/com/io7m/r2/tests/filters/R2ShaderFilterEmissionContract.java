@@ -57,6 +57,7 @@ public abstract class R2ShaderFilterEmissionContract extends
 
     return R2ShaderFilterEmissionParameters.builder()
       .setAlbedoEmissionTexture(td.texture2DWhite())
+      .setGlowTexture(td.texture2DBlack())
       .build();
   }
 

@@ -42,7 +42,10 @@ public final class R2ShaderFilterEmission extends
   R2AbstractShader<R2ShaderFilterEmissionParameters>
   implements R2ShaderFilterType<R2ShaderFilterEmissionParameters>
 {
-  private final JCGLProgramUniformType u_texture;
+  private final JCGLProgramUniformType u_albedo_emission_texture;
+  private final JCGLProgramUniformType u_albedo_emission_intensity;
+  private final JCGLProgramUniformType u_glow_texture;
+  private final JCGLProgramUniformType u_glow_intensity;
 
   private R2ShaderFilterEmission(
     final JCGLShadersType in_shaders,
@@ -59,13 +62,22 @@ public final class R2ShaderFilterEmission extends
       "com.io7m.r2.shaders.core/R2FilterEmission.frag");
 
     final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 1);
 
-    this.u_texture =
+    this.u_albedo_emission_texture =
       R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_albedo_emission",
-        JCGLType.TYPE_SAMPLER_2D);
+        p, "R2_albedo_emission", JCGLType.TYPE_SAMPLER_2D);
+    this.u_glow_texture =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_glow", JCGLType.TYPE_SAMPLER_2D);
+
+    this.u_albedo_emission_intensity =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_emission_intensity", JCGLType.TYPE_FLOAT);
+    this.u_glow_intensity =
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_glow_intensity", JCGLType.TYPE_FLOAT);
+
+    R2ShaderParameters.checkUniformParameterCount(p, 4);
   }
 
   /**
@@ -114,9 +126,21 @@ public final class R2ShaderFilterEmission extends
     NullCheck.notNull(g_sh);
     NullCheck.notNull(values);
 
-    final JCGLTextureUnitType unit_texture = tc.unitContextBindTexture2D(
-      g_tex, values.albedoEmissionTexture().texture());
+    final JCGLTextureUnitType unit_emission_texture =
+      tc.unitContextBindTexture2D(
+        g_tex, values.albedoEmissionTexture().texture());
+    final JCGLTextureUnitType unit_glow_texture =
+      tc.unitContextBindTexture2D(
+        g_tex, values.glowTexture().texture());
+
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture, unit_texture);
+      this.u_albedo_emission_texture, unit_emission_texture);
+    g_sh.shaderUniformPutTexture2DUnit(
+      this.u_glow_texture, unit_glow_texture);
+
+    g_sh.shaderUniformPutFloat(
+      this.u_albedo_emission_intensity, values.emissionIntensity());
+    g_sh.shaderUniformPutFloat(
+      this.u_glow_intensity, values.glowIntensity());
   }
 }

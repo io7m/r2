@@ -34,4 +34,41 @@ public interface R2ShaderFilterEmissionParametersType
 
   @Value.Parameter
   R2Texture2DUsableType albedoEmissionTexture();
+
+  /**
+   * A specification of an intensity value by which values sampled from the
+   * {@link #albedoEmissionTexture()} are multiplied. This effectively allows
+   * control over the intensity of the emission effect in the final image.
+   *
+   * @return The intensity of the emissive sections of the image
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default float emissionIntensity()
+  {
+    return 1.0f;
+  }
+
+  /**
+   * @return The texture that contains a blurred emission
+   */
+
+  @Value.Parameter
+  R2Texture2DUsableType glowTexture();
+
+  /**
+   * A specification of an intensity value by which values sampled from the
+   * {@link #glowTexture()} are multiplied. This effectively allows control over
+   * the intensity of the glow effect in the final image.
+   *
+   * @return The intensity of the glow sections of the image
+   */
+
+  @Value.Parameter
+  @Value.Default
+  default float glowIntensity()
+  {
+    return 1.0f;
+  }
 }
