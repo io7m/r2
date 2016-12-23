@@ -22,6 +22,7 @@
   [import "di-deferred-geom.sdi"]
   [import "di-deferred-light.sdi"]
   [import "di-deferred-pos-recon.sdi"]
+  [import "di-forward.sdi"]
   [import "di-normal-mapping.sdi"]
   [import "di-log-depth.sdi"]
   [import "di-envmap.sdi"]
