@@ -1,4 +1,129 @@
 [section [title Generic Refraction] [id di.generic-refraction]]
 [subsection [title Overview] [id di.generic-refraction.overview]]
 [paragraph]
-Generic refraction.
+The [term [type package] r2] package implements the generic refraction effect
+described in [link-ext [target http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter19.html] GPU Gems 2].
+The technique lends itself to a huge range of effects such as lenses, glass,
+heat haze, and water - simply by varying the meshes and textures used when
+performing refraction.
+
+
+
+[subsection [title Algorithm] [id di.generic-refraction.algorithm]]
+[paragraph]
+For a given instance, the process to render the instance is as follows:
+
+[formal-item [title Algorithm] [id di.generic-refraction.algorithm.formal]]
+[list-ordered
+  [item Produce a [link [target di.generic-refraction.masking] mask], if necessary.]
+  [item Render the instance using a given
+    [link [target di.generic-refraction.source] source image],
+    [link [target di.generic-refraction.vectors] vector texture],
+    [link [target di.generic-refraction.color] color], and
+    [link [target di.generic-refraction.masking] mask image].]]
+
+[paragraph]
+The actual rendering technique is very simple: Given a screen-space position
+[term [type expression] "(x, y)"], sample the color from a
+[link [target di.generic-refraction.source] source] image
+at [term [type expression] "(x + s, y + t)"], where
+[term [type expression] "(s, t)"] are signed per-pixel offset values that are
+sampled from textures or derived from an associated
+[link [target di.generic-refraction.vectors] vector] texture.
+
+
+
+[subsection [title Sources] [id di.generic-refraction.source]]
+[paragraph]
+The refraction effect typically uses a "(possibly downsized)" image of the
+scene as a source image. The [term [type package] r2] allows for use of an
+arbitrary image.
+
+
+
+[subsection [title Vectors] [id di.generic-refraction.vectors]]
+[paragraph]
+Refraction vectors are sampled from the red and green components of a delta
+texture. The sampled values are scaled by the material's scale factor and used
+directly to calculate [term [type expression] "(x + s, y + t)"]. For example,
+a simple noisy red/green delta texture applied to a quad results in the
+following effect:
+
+[formal-item [title Noise quad]]
+[image [target "images/refract_noise_quad.png"] Noise quad]
+
+[formal-item [title Noise quad "(texture)"]]
+[image [target "images/refract_noise_quad_texture.png"] Noise quad texture]
+
+
+
+[subsection [title Colors] [id di.generic-refraction.color]]
+[paragraph]
+The sampled scene colors used to perform the refraction effect are multiplied
+by a constant color, specified by each material. This allows for simple colored
+glass effects "(shown" here with a specular-only instance rendered over the top
+of the refractive instance to provide specular "highlights):"
+
+[formal-item [title Color 0]]
+[image [target "images/refract_color_0.png"] Color 0]
+
+[paragraph]
+Using pure RGBA white [term [type expression] "(1.0, 1.0, 1.0, 1.0)"] results
+in a clear glass material:
+
+[formal-item [title Color 1]]
+[image [target "images/refract_color_1.png"] Color 1]
+
+
+
+[subsection [title Masking] [id di.generic-refraction.masking]]
+[paragraph]
+Because refractive instances are translucent, they are normally rendered after
+having already rendered all of the opaque objects in the scene. Because
+rendering of translucent instances occurs with depth testing enabled, it is
+therefore possible for opaque instances to occlude refractive instances.
+This poses a problem for the implementation of refraction described above,
+because the pixels of an occluding object may be sampled when performing the
+refraction, as shown in the following image:
+
+[formal-item [title Refraction bleeding]]
+[image [target "images/refract_bleed.png"] Refraction bleeding]
+
+[paragraph]
+Note how the pixels of the opaque instances are bleeding into the refracting
+object, despite being conceptually "in front of" it. This is because the
+refraction effect is implemented in screen space and is just sampling pixels
+from the surrounding area to simulate the bending of light rays. Using a
+[term [type term] mask] prevents this:
+
+[formal-item [title Refraction without bleeding]]
+[image [target "images/refract_nobleed.png"] Refraction without bleeding]
+
+[paragraph]
+A mask is produced by rendering a monochrome silhouette of the refracting
+object, and then using the values of this mask to linearly interpolate between
+the colors [term [type expression] c] at [term [type expression] "(x, y)"] and
+the colors [term [type expression] r] at [term [type expression] "(x + s, y + t)"].
+That is, a value of [term [type expression] "m = 0"] sampled from the mask yields
+[term [type expression] "mix c r m = mix c r 0 = c"], and a value of
+[term [type expression] "m = 1"] sampled from the mask yields
+[term [type expression] "mix c r m = mix c r 1 = r"]. This has the effect of
+preventing the refraction simulation from using pixels that fall outside of the
+mask area.
+
+[formal-item [title Mask]]
+[image [target "images/refract_mask.png"] Mask]
+
+[paragraph]
+The mask image can also be softened with a simple box blur to reduce artifacts
+in the refracted image.
+
+[subsection [title Types] [id di.generic-refraction.types]]
+[paragraph]
+In the [term [type package] r2] package, the refraction effect is provided by
+rendering a translucent instance with a refraction shader such as
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2RefractionMaskedDeltaShaderSingle.html"] R2RefractionMaskedDeltaShaderSingle].
+
+[paragraph]
+Masks can be produced via implementations of the
+[link-ext [target "apidocs/com/io7m/r2/core/R2MaskRendererType.html"] R2MaskRendererType] interface.

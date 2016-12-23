@@ -1,4 +1,4 @@
-[section [title License]]
+[section [title License] [id pkg.license]]
 [paragraph]
 All files distributed with the [term [type package] ${project.parent.name}]
 package are placed under the following license:

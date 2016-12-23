@@ -1,4 +1,4 @@
-[section [title Installation]]
+[section [title Installation] [id pkg.install]]
 [subsection [title Source compilation]]
 [paragraph]
 The project can be compiled and installed with
