@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>io7m-r2 0.2.0 Documentation: 2.24. Logarithmic Depth</title><meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/><link rel="stylesheet" type="text/css" href="kstructural-layout.css"/><link rel="stylesheet" type="text/css" href="kstructural-colour.css"/><link rel="stylesheet" type="text/css" href="documentation.css"/></head><body><div class="st300_body"><div class="st300_navbar st300_navbar_top"><table class="st300_navbar_table" summary="st300_Navigation bar"><tr><td class="st300_navbar_prev_title_cell">2.23. Normal Mapping</td><td class="st300_navbar_up_title_cell">2. Design And Implementation</td><td class="st300_navbar_next_title_cell">2.25. Environment Mapping</td></tr><tr><td class="st300_navbar_prev_file_cell"><a rel="previous" href="p2s23.xhtml#st300_p2s23" title="Go to previous page">Previous</a></td><td class="st300_navbar_up_file_cell"><a rel="up" href="p2.xhtml#st300_p2" title="Go to parent page">Up</a></td><td class="st300_navbar_next_file_cell"><a rel="next" href="p2s25.xhtml#st300_p2s25" title="Go to next page">Next</a></td></tr></table><hr class="st300_hr"/></div><div class="st300_section_container"><a id="di.log_depth"/><div class="st300_section_title_number"><a id="st300_p2s24" href="#st300_p2s24" title="Section 2.24: Logarithmic Depth">2.24</a></div><div class="st300_section_title">Logarithmic Depth</div><ul class="st300_contents st300_section_contents_outer st300_section_contents"><li class="st300_contents_item st300_contents_item1 st300_contents_item_subsection"><a href="p2s24.xhtml#st300_p2s24ss1" title="Link to subsection 2.24.1: Overview">2.24.1. Overview</a></li><li class="st300_contents_item st300_contents_item1 st300_contents_item_subsection"><a href="p2s24.xhtml#st300_p2s24ss2" title="Link to subsection 2.24.2: OpenGL Depth Issues">2.24.2. OpenGL Depth Issues</a></li><li class="st300_contents_item st300_contents_item1 st300_contents_item_subsection"><a href="p2s24.xhtml#st300_p2s24ss3" title="Link to subsection 2.24.3: Logarithmic Encoding">2.24.3. Logarithmic Encoding</a></li></ul><div class="st300_subsection_container"><a id="di.log_depth.overview"/><div class="st300_subsection_title_number"><a id="st300_p2s24ss1" href="#st300_p2s24ss1" title="Subsection 2.24.1: Overview">2.24.1</a></div><div class="st300_subsection_title">Overview</div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss1c1" href="#st300_p2s24ss1c1" title="Paragraph 2.24.1.1">1</a></div><div class="st300_paragraph">The <span class="st300_term package">r2</span> package exclusively utilizes a so-called <span class="st300_term term">logarithmic depth buffer</span> for all rendering operations.</div></div></div><div class="st300_subsection_container"><a id="di.log_depth.issues_existing"/><div class="st300_subsection_title_number"><a id="st300_p2s24ss2" href="#st300_p2s24ss2" title="Subsection 2.24.2: OpenGL Depth Issues">2.24.2</a></div><div class="st300_subsection_title">OpenGL Depth Issues</div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss2c1" href="#st300_p2s24ss2c1" title="Paragraph 2.24.2.1">1</a></div><div class="st300_paragraph">By default, OpenGL (effectively) stores a depth value proportional to the reciprocal of the <span class="st300_term variable">z</span> component of the <a class="st300_link" href="p2s3.xhtml#di.coords.clip">clip space</a> coordinates of each vertex projected onto the screen <span class="st300_footnote_reference">[<a href="p2s24.xhtml#st300_f_19245_0" id="st300_fr_19051" title="Jump to footnote di.log_depth.love_depth (reference 0)">25</a>]</span>. Informally, the <span class="st300_term term">perspective projection</span> matrix used to transform <a class="st300_link" href="p2s3.xhtml#di.coords.eye">eye space</a> coordinates to clip space will place the negated <span class="st300_term variable">z</span> component of the original eye space coordinates into the <span class="st300_term variable">w</span> component of the resulting clip space coordinates. When the hardware performs the <a class="st300_link" href="p2s3.xhtml#di.coords.ndevice">division by w</a> to produce normalized-device space coordinates, the resulting <span class="st300_term variable">z</span> component falls within the range <span class="st300_term expression">[-1.0, 1.0]</span> (although any point with a <span class="st300_term variable">z</span> component less than <span class="st300_term constant">0</span> will be clipped away by the clipping hardware). This final value is linearly mapped to a configurable range (typically <span class="st300_term expression">[0.0, 1.0]</span>) to produce a <a class="st300_link" href="p2s3.xhtml#di.coords.screen">screen space</a> depth value.</div></div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss2c2" href="#st300_p2s24ss2c2" title="Paragraph 2.24.2.2">2</a></div><div class="st300_paragraph">Unfortunately, the encoding scheme above means that most of the depth buffer is essentially wasted. The above scheme will give excessive precision for objects close to the viewing plane, and almost none for objects further away. Fortunately, a better encoding scheme known as <span class="st300_term term">logarithmic depth</span> <span class="st300_footnote_reference">[<a href="p2s24.xhtml#st300_f_19262_0" id="st300_fr_19224" title="Jump to footnote di.log_depth.kemen (reference 0)">26</a>]</span> can be implemented that provides vastly greater precision and coexists happily with the standard projection matrices used in OpenGL-based renderers.</div></div></div><div class="st300_subsection_container"><a id="di.log_depth.encoding"/><div class="st300_subsection_title_number"><a id="st300_p2s24ss3" href="#st300_p2s24ss3" title="Subsection 2.24.3: Logarithmic Encoding">2.24.3</a></div><div class="st300_subsection_title">Logarithmic Encoding</div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss3c1" href="#st300_p2s24ss3c1" title="Paragraph 2.24.3.1">1</a></div><div class="st300_paragraph">A <span class="st300_term term">logarithmic depth value</span> is produced by encoding a negated (and therefore <span class="st300_term term">positive</span>) eye space <span class="st300_term variable">z</span> value in the manner specified by <span class="st300_term function">encode</span> <a class="st300_link_external" href="haskell/LogDepth.hs">LogDepth.hs</a>:</div></div><div class="st300_formal_item"><div class="st300_formal_item_title"><a id="st300_p2s24ss3c2" href="#st300_p2s24ss3c2" title="Formal item 2.24.3.2: Logarithmic Depth (Encoding)">2.24.3.2 Logarithmic Depth (Encoding)</a></div><div class="st300_formal_item_content"><pre class="st300_verbatim">module LogDepth where
+
+newtype LogDepth =
+  LogDepth Float
+    deriving (Eq, Ord, Show)
+
+type Depth = Float
+
+log2 :: Float -&gt; Float
+log2 = logBase 2.0
+
+depth_coefficient :: Float -&gt; Float
+depth_coefficient far = 2.0 / log2 (far + 1.0)
+
+encode :: Float -&gt; Depth -&gt; LogDepth
+encode depth_co depth =
+  let hco = depth_co * 0.5 in
+    LogDepth $ log2 (depth + 1.0) * hco
+
+decode :: Float -&gt; LogDepth -&gt; Depth
+decode depth_co (LogDepth depth) =
+  let hco = depth_co * 0.5 in
+    (2.0 ** (depth / hco)) - 1
+</pre></div></div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss3c3" href="#st300_p2s24ss3c3" title="Paragraph 2.24.3.3">3</a></div><div class="st300_paragraph">The function is parameterized by a so-called <span class="st300_term term">depth coefficient</span> that is derived from the <span class="st300_term term">far plane distance</span> as shown by <span class="st300_term expression">depth_coefficient</span>.</div></div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss3c4" href="#st300_p2s24ss3c4" title="Paragraph 2.24.3.4">4</a></div><div class="st300_paragraph">The inverse of <span class="st300_term function">encode</span> is <span class="st300_term function">decode</span>, such that for a given negated eye space <span class="st300_term variable">z</span>, <span class="st300_term expression">z = decode d (encode d z)</span>.</div></div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss3c5" href="#st300_p2s24ss3c5" title="Paragraph 2.24.3.5">5</a></div><div class="st300_paragraph">A graph of the functions is as follows:</div></div><div class="st300_formal_item"><div class="st300_formal_item_title"><a id="st300_p2s24ss3c6" href="#st300_p2s24ss3c6" title="Formal item 2.24.3.6: Logarithmic Depth (Graph)">2.24.3.6 Logarithmic Depth (Graph)</a></div><div class="st300_formal_item_content"><img class="st300_image" alt="Logarithmic Depth (Graph)" src="images/log_depth.png"/></div></div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss3c7" href="#st300_p2s24ss3c7" title="Paragraph 2.24.3.7">7</a></div><div class="st300_paragraph">An interactive <a class="st300_link_external" href="http://geogebra.org">GeoGebra</a> construction is provided in <a class="st300_link_external" href="log_depth.ggb">log_depth.ggb</a>.</div></div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss3c8" href="#st300_p2s24ss3c8" title="Paragraph 2.24.3.8">8</a></div><div class="st300_paragraph">The <span class="st300_term package">r2</span> package uses a slightly modified version of the encoding function that clamps the original <span class="st300_term variable">z</span> value to the range <span class="st300_term expression">[0.000001, ∞]</span>. The reason for this is that <span class="st300_term expression">log2 (0)</span> is undefined, and so attempting to derive a depth value in this manner tends to cause issues with triangle clipping. The encoding function is also separated into two parts as a simple optimization: The encoding function contains a term <span class="st300_term expression">z + 1.0</span>, and this term can be calculated by a <span class="st300_term term">vertex shader</span> and interpolated. The actual functions as implemented are given by <a class="st300_link_external" href="glsl/com/io7m/r2/shaders/core/R2LogDepth.h">R2LogDepth.h</a>:</div></div><div class="st300_formal_item"><div class="st300_formal_item_title"><a id="st300_p2s24ss3c9" href="#st300_p2s24ss3c9" title="Formal item 2.24.3.9: Logarithmic Depth (GLSL)">2.24.3.9 Logarithmic Depth (GLSL)</a></div><div class="st300_formal_item_content"><pre class="st300_verbatim">#ifndef R2_LOG_DEPTH_H
+#define R2_LOG_DEPTH_H
+
+/// \file R2LogDepth.h
+/// \brief Logarithmic depth functions.
+
+///
+/// Prepare an eye-space Z value for encoding. See R2_logDepthEncodePartial.
+///
+/// @param z An eye-space Z value
+/// @return The prepared value
+///
+
+float
+R2_logDepthPrepareEyeZ(
+  const float z)
+{
+  return 1.0 + (-z);
+}
+
+///
+/// Partially encode the given _positive_ eye-space Z value. This partial encoding
+/// can be used when performing part of the encoding in a vertex shader
+/// and the rest in a fragment shader (for efficiency reasons) - See R2_logDepthPrepareEyeZ.
+///
+/// @param z                 An eye-space Z value
+/// @param depth_coefficient The depth coefficient used to encode \a z
+///
+/// @return The encoded depth
+///
+
+float
+R2_logDepthEncodePartial(
+  const float z,
+  const float depth_coefficient)
+{
+  float half_co = depth_coefficient * 0.5;
+  float clamp_z = max (0.000001, z);
+  return log2 (clamp_z) * half_co;
+}
+
+///
+/// Fully encode the given eye-space Z value.
+///
+/// @param z                 An eye-space Z value
+/// @param depth_coefficient The depth coefficient used to encode \a z
+/// @return The fully encoded depth
+///
+
+float
+R2_logDepthEncodeFull(
+  const float z,
+  const float depth_coefficient)
+{
+  float half_co = depth_coefficient * 0.5;
+  float clamp_z = max (0.000001, z + 1.0);
+  return log2 (clamp_z) * half_co;
+}
+
+///
+/// Decode a depth value that was encoded with the given depth coefficient.
+/// Note that in most cases, this will yield a _positive_ eye-space Z value,
+/// and must be negated to yield a conventional negative eye-space Z value.
+///
+/// @param z                 The depth value
+/// @param depth_coefficient The coefficient used during encoding
+///
+/// @return The original (positive) eye-space Z value
+///
+
+float
+R2_logDepthDecode(
+  const float z,
+  const float depth_coefficient)
+{
+  float half_co  = depth_coefficient * 0.5;
+  float exponent = z / half_co;
+  return pow (2.0, exponent) - 1.0;
+}
+
+#endif // R2_LOG_DEPTH_H
+</pre></div></div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss3c10" href="#st300_p2s24ss3c10" title="Paragraph 2.24.3.10">10</a></div><div class="st300_paragraph">A fragment shader can use <span class="st300_term function">encode_full</span> to compute a logarithmic depth value from a given positive eye space <span class="st300_term variable">z</span> value. Alternatively, a vertex shader can compute the <span class="st300_term expression">z + 1.0</span> term <span class="st300_term variable">r</span> from a non-negated eye space <span class="st300_term variable">z</span> value, and pass <span class="st300_term variable">r</span> to a cooperating fragment shader which then finishes the computation by applying <span class="st300_term function">encode_partial</span> to <span class="st300_term variable">r</span>. When performing <a class="st300_link" href="p2s21.xhtml#di.deferred-position-recon">position reconstruction</a> during <span class="st300_term term">deferred rendering</span>, the original eye space <span class="st300_term variable">z</span> value of a fragment is retrieved by negating the result of <span class="st300_term function">decode</span> applied to a given logarithmic depth sample.</div></div><div class="st300_paragraph_container"><div class="st300_paragraph_number"><a id="st300_p2s24ss3c11" href="#st300_p2s24ss3c11" title="Paragraph 2.24.3.11">11</a></div><div class="st300_paragraph">The original derivation of the encoding and decoding functions as described by Brano Kemen used the <span class="st300_term variable">w</span> component of the resulting clip space coordinates. Unfortunately, this does not work correctly with orthographic projections, as the typical orthographic projection matrix will produce clip space coordinates with a <span class="st300_term variable">w</span> component always equal to <span class="st300_term constant">1</span>. Aside from the effects that this will have on depth testing (essentially mapping the depth of all fragments to the far plane), it also makes position reconstruction impossible as the original eye space <span class="st300_term variable">z</span> value cannot be recovered. Instead, the <span class="st300_term package">r2</span> package uses the negated eye space <span class="st300_term variable">z</span> value directly in all cases.</div></div></div><div class="st300_footnotes"><hr/><div class="st300_footnote_container"><div class="st300_footnote_id">[<a id="st300_f_19245_0" href="p2s24.xhtml#st300_fr_19051" title="Jump back to reference 0 of footnote di.log_depth.love_depth">25</a>]</div><div class="st300_footnote_body">See <a class="st300_link_external" href="http://www.sjbaker.org/steve/omniv/love_your_z_buffer.html">Learning To Love Your Depth Buffer</a>.</div></div><div class="st300_footnote_container"><div class="st300_footnote_id">[<a id="st300_f_19262_0" href="p2s24.xhtml#st300_fr_19224" title="Jump back to reference 0 of footnote di.log_depth.kemen">26</a>]</div><div class="st300_footnote_body">Apparently first discovered by <a class="st300_link_external" href="http://outerra.blogspot.co.uk/2012/11/maximizing-depth-buffer-range-and.html">Brano Kemen</a>.</div></div></div></div><div class="st300_navbar st300_navbar_bottom"><hr class="st300_hr"/><table class="st300_navbar_table" summary="st300_Navigation bar"><tr><td class="st300_navbar_prev_file_cell"><a rel="previous" href="p2s23.xhtml#st300_p2s23" title="Go to previous page">Previous</a></td><td class="st300_navbar_up_file_cell"><a rel="up" href="p2.xhtml#st300_p2" title="Go to parent page">Up</a></td><td class="st300_navbar_next_file_cell"><a rel="next" href="p2s25.xhtml#st300_p2s25" title="Go to next page">Next</a></td></tr><tr><td class="st300_navbar_prev_title_cell">2.23. Normal Mapping</td><td class="st300_navbar_up_title_cell">2. Design And Implementation</td><td class="st300_navbar_next_title_cell">2.25. Environment Mapping</td></tr></table></div></div></body></html>

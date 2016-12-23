@@ -1,0 +1,44 @@
+[section [title Filter: Fog] [id di.fog]]
+[subsection [title Overview] [id di.fog.overview]]
+[paragraph]
+The fog effect is a simple effect that is intended to simulate atmospheric
+fog within a scene.
+
+[formal-item [title Fog]]
+[image [target "images/fog_linear.png"] Fog]
+
+[subsection [title Algorithm] [id di.fog.algorithm]]
+[paragraph]
+The algorithm is trivial:
+
+[formal-item [title Algorithm]]
+[list-ordered
+  [item For each pixel [term [type variable] p] at [term [type variable] "(x, y)"]
+    [list-ordered
+      [item Sample the scene's depth [term [type variable] d] at [term [type variable] "(x, y)"]]
+      [item Determine the positive eye-space Z value [term [type variable] z] of [term [type variable] p]]
+      [item Mix between the global fog color [term [type variable] d] and [term [type variable] p]
+            using a mix function [term [type variable] "fog(z)"]]]]]
+
+[paragraph]
+The mix function [term [type variable] "fog(z)"] is selectable. The
+[term [type package] r2] package provides [term [type term] linear],
+[term [type term] quadratic], and [term [type term] inverse quadratic]
+fog. The definitions of the available mix functions are as follows:
+
+[formal-item [title Fog functions]]
+[verbatim [include "haskell/FogFactorZ.hs"]]
+
+[formal-item [title Linear Fog]]
+[image [target "images/fog_linear.png"] Linear Fog]
+
+[formal-item [title Quadratic Fog]]
+[image [target "images/fog_quadratic.png"] Quadratic Fog]
+
+[formal-item [title Inverse Quadratic Fog]]
+[image [target "images/fog_quadratic_inverse.png"] Inverse Quadratic Fog]
+
+[subsection [title Types] [id di.fog.types]]
+[paragraph]
+In the [term [type package] r2] package, the fog effect is provided by the
+[link-ext [target "apidocs/com/io7m/r2/filters/R2FilterFogDepth.html"] R2FilterFogDepth] type.

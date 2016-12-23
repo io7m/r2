@@ -1,0 +1,218 @@
+[section [title Filter: Screen Space Ambient Occlusion] [id di.ssao]]
+[subsection [title Overview] [id di.ssao.overview]]
+[paragraph]
+[term [type term] Screen space ambient occlusion] is, unsurprisingly, an
+approximate algorithm for calculating [term [type term] ambient occlusion]
+in [link [target di.coords.screen] screen space]. Informally, ambient occlusion
+is a measure of how exposed a given point is to the environment's ambient
+light. The [term [type package] r2] package does not directly support ambient
+lighting, so instead the [link [target di.lighting.diffuse] diffuse] light term
+is typically modulated by an ambient occlusion term
+[footnote-ref di.ssao.application] to produce the same overall effect.
+
+[formal-item [title SSAO]]
+[image [target "images/ssao.png"] SSAO]
+
+[subsection [title Ambient Occlusion Buffer] [id di.ssao.abuffer]]
+[paragraph]
+An [term [type term] ambient occlusion buffer] is a
+[link [target di.render-target] render target] in which an occlusion term
+is stored. In the [term [type package] r2] package, ambient occlusion buffers
+are simple single-channel 8-bit images, where [term [type constant] 0] means
+[term [type term] fully occluded] and [term [type constant] 1] means
+[term [type term] not occluded].
+
+[subsection [title Algorithm] [id di.ssao.algorithm]]
+[paragraph]
+The algorithm works by consuming the depth and normal values from populated
+[link [target di.deferred.geom.gbuffer] geometry buffer]. For the sake of
+simplicity, the algorithm will be described as if the
+[link [target di.ssao.abuffer] ambient occlusion buffer] that will contain
+the calculated occlusion terms will be the same size as the geometry buffer.
+This is not necessarily the case in practice, for performance reasons.
+For each pixel at [term [type expression] "(x, y)"] in the
+geometry buffer, the [link [target di.coords.eye] eye space Z] value
+[term [type expression] z] is
+[link [target di.deferred-position-recon.eye-space-z] reconstructed] for the
+pixel, and the eye space normal vector [term [type expression] n] is sampled
+at the same location.
+
+[paragraph]
+Then, a [term [type term] sampling hemisphere] is placed on the
+surface at [term [type expression] z], oriented along
+[term [type expression] n]. A list of points, known as the
+[link [target di.ssao.kernel] sample kernel], are used to sample from random
+positions that fall inside the hemisphere. If a sample point appears to be
+inside the scene geometry, then the scene geometry is
+[term [type term] occluding] that point.
+
+[formal-item [title Sampling Hemispheres]]
+[image [target "images/ssao_hemi.png"] Sampling hemispheres]
+
+[paragraph]
+Informally, the algorithm for a point at [term [type expression] "(x, y)"]:
+
+[formal-item [title Algorithm]]
+[list-ordered
+  [item
+    Reconstruct the eye space position [term [type expression] e] of
+    the screen space position [term [type expression] "(x, y)"].]
+  [item
+    Sample the normal vector [term [type expression] n] at
+    [term [type expression] "(x, y)"].]
+  [item
+    Peturb the normal vector [term [type expression] n] using values
+    sampled from a random [link [target di.ssao.noise_texture] noise texture]
+    that is tiled across the screen.]
+  [item
+    Produce a [link [target di.coords.eye.normal-matrix] normal matrix]
+    from [term [type expression] n]
+    that will transform the inherently
+    [link [target di.normal-mapping.tangent-space] tangent space] sampling
+    kernel vector to eye space. The peturbed normal vector has the effect
+    of rotating the sampling hemisphere.]
+  [item
+    For a sampling kernel [term [type expression] k] of
+    [term [type expression] m] points, of radius [term [type expression] r],
+    for each [term [type expression] "i | 0 <= i < m"]:
+
+    [list-ordered
+      [item
+        Calculate the eye space position [term [type expression] q] of
+        the sampling point [term [type expression] "k[i]"]. This
+        is calculated as [term [type expression] "q = e + (k[i] * r)"].]
+      [item
+        Project [term [type expression] q] to screen space, use it
+        to sample the depth buffer, and reconstruct the resulting
+        eye space Z value [term [type expression] sz]. The value
+        [term [type expression] sz] then represents the
+        eye space Z value of the closest position of the surface
+        in the geometry buffer to [term [type expression] q].]
+      [item
+        If [term [type expression] "abs (e.z - sz) > r"]
+        then the point is automatically assumed not to be occluded. See
+        [link [target di.ssao.halo_removal] halo removal] for details.]
+      [item
+        If [term [type expression] "sz >= e.z"], then it means that
+        the sampling point in the hemisphere has ended up underneath
+        the rendered surface and is therefore being occluded by it.]
+    ]]
+  [item
+    Calculate the final occlusion value [term [type expression] o]
+    by summing the occlusion values of each sample point, where
+    [term [type constant] 1.0] means the point was occluded, and
+    [term [type constant] 0.0] means that it was not.
+    Return [term [type expression] "1.0 - (o / m)"].]]
+
+[subsection [title Noise Texture] [id di.ssao.noise_texture]]
+[paragraph]
+The [term [type term] noise texture] used by the algorithm is a simple RGB
+texture with each texel being given by the expression
+[term [type expression] "normalize ((random() * 2.0) - 1.0, (random() * 2.0) - 1.0, 0.0)"].
+The [link [target di.ssao.kernel] sampling kernel] used by the algorithm is
+conceptually oriented along the
+[link [target di.normal-mapping.tangent-space] tangent space] " Z" axis, and
+therefore each texel in the noise texture effectively represents a rotation
+around the Z axis.
+
+[paragraph]
+In the implementation of the algorithm, the texture is simply tiled across the
+screen and sampled using the current screen space coordinates.
+
+[subsection [title Sample Kernel] [id di.ssao.kernel]]
+[paragraph]
+A [term [type term] sample kernel] is a fixed-size list of random sampling
+points, arranged in a hemispherical pattern. For better visual results, the
+random points are not evenly distributed within the hemisphere but are instead
+clustered more densely nearer the origin.
+
+[formal-item [title Point Distribution]]
+[image [target "images/ssao_hemi_points.png"] Distribution of sampling points]
+
+[paragraph]
+By using a distribution of sample points nearer the origin, samples closer to
+the origin have the effect of occluding more than points that are further
+away.
+
+[subsection [title Halo Removal] [id di.ssao.halo_removal]]
+[paragraph]
+A common problem with SSAO implementations is [term [type term] haloing]. In
+practical terms, this is an issue caused by two objects being very close when
+considered in screen space, but that were actually far apart when considered
+in eye space.
+
+[formal-item [title Halo Artifacts]]
+[image [target "images/ssao_halo.png"] Halo artifacts]
+
+[paragraph]
+The simple solution to this problem is to ignore any surface points that are
+at a distance greater than the sampling radius from the origin. In the actual
+implementation, a simple comparison of the eye-space Z values is used.
+
+[subsection [title Performance] [id di.ssao.performance]]
+[paragraph]
+The SSAO algorithm is extremely expensive; by far the most expensive algorithm
+implemented in the [term [type package] r2] package. The package provides
+numerous means to control the performance of the algorithm.
+
+[paragraph]
+For a kernel of size [term [type expression] n], an occlusion map of size
+[term [type expression] w * h] will incur at least [term [type expression] w * h * n]
+texture reads when sampling from the
+[link [target di.deferred.geom.gbuffer] geometry buffer] to calculate the
+occlusion term. Therefore, reducing the resolution of the
+[link [target di.ssao.abuffer] ambient occlusion buffer]
+is an effective way to improve the performance of the algorithm at a noticeable
+reduction in visual quality. The [term [type package] r2] package does not
+provide any specific support for this; the programmer simply needs to allocate
+a smaller ambient occlusion buffer. For the same reason, using a smaller
+kernel "(a" smaller value of [term [type expression] n]")" will also improve
+performance but reduce visual quality.
+
+[paragraph]
+To reduce high frequency noise introduced by the random sampling pattern used,
+a bilateral blur filter is often used. In the [term [type package] r2] package,
+the blur is separate from the SSAO effect and can therefore be omitted to
+improve performance at the cost of producing a noisier image:
+
+[formal-item [title "SSAO (Without blur)"]]
+[image [target "images/ssao_noise.png"] SSAO without blur]
+
+[paragraph]
+The image displayed at the start of this section uses an ambient occlusion
+buffer that is exactly half the size of the screen, a kernel of size
+[term [type constant] 64], and a maximum sampling distance of
+[term [type constant] 0.25] eye-space units. A single bilateral blur pass
+was used.
+
+[subsection [title Types] [id di.ssao.types]]
+[paragraph]
+In the [term [type package] r2] package, the SSAO effect is provided by the
+[link-ext [target "apidocs/com/io7m/r2/filters/R2FilterSSAO.html"] R2FilterSSAO]
+type.
+
+[paragraph]
+Occlusion maps can be conveniently applied to light maps with the
+[link-ext [target "apidocs/com/io7m/r2/filters/R2FilterOcclusionApplicator.html"] R2FilterOcclusionApplicator]
+filter.
+
+[paragraph]
+The provided implementation of the sampling kernel is given by the
+[link-ext [target "apidocs/com/io7m/r2/filters/R2SSAOKernel.html"] R2SSAOKernel]
+type.
+
+[paragraph]
+The provided implementation of the noise texture is given by the
+[link-ext [target "apidocs/com/io7m/r2/filters/R2SSAONoiseTexture.html"] R2SSAONoiseTexture]
+type.
+
+[subsection [title Shaders] [id di.ssao.shaders]]
+[paragraph]
+The shader implementation of the SSAO algorithm is the
+[link-ext [target "doxygen/io7m-r2-shaders-0.2.0/R2SSAO_8frag_source.html"] R2SSAO]
+shader.
+
+[footnote [id di.ssao.application]]
+The [term [type package] r2] package provides convenient methods to apply
+ambient occlusion to lighting, but does not require the programmer to use
+any particular method.

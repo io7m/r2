@@ -1,0 +1,17 @@
+com.io7m.r2.core
+com.io7m.r2.core.cursors
+com.io7m.r2.core.debug
+com.io7m.r2.core.shaders
+com.io7m.r2.core.shaders.provided
+com.io7m.r2.core.shaders.types
+com.io7m.r2.documentation
+com.io7m.r2.filters
+com.io7m.r2.meshes
+com.io7m.r2.meshes.arrayobject
+com.io7m.r2.meshes.binary
+com.io7m.r2.meshes.binary.r2mb
+com.io7m.r2.meshes.defaults
+com.io7m.r2.meshes.obj
+com.io7m.r2.meshes.tools
+com.io7m.r2.shaders.core
+com.io7m.r2.spaces

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<a:feed xmlns:a="http://www.w3.org/2005/Atom">
+  <a:author>
+    <a:name>io7m release robot</a:name>
+    <a:email>contact@io7m.com</a:email>
+  </a:author>
+  <a:id>http://github.com/io7m/r2/releases.atom</a:id>
+  <a:title>io7m-r2 Releases</a:title>
+  <a:updated>2016-05-06T00:00:00Z</a:updated>
+  <a:entry>
+    <a:id>0</a:id>
+    <a:updated>2016-05-06T00:00:00Z</a:updated>
+    <a:published>2016-05-06T00:00:00Z</a:published>
+    <a:title>io7m-r2 0.1.0 released</a:title>
+    <a:content type="text"> io7m-r2 0.1.0 released </a:content>
+  </a:entry>
+</a:feed>

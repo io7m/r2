@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Implementation-Title: io7m-r2-shaders-core
+Implementation-Version: 0.2.0
+Archiver-Version: Plexus Archiver
+Built-By: io7m
+Sealed: true
+Specification-Vendor: io7m.com
+Implementation-Vendor-Id: com.io7m.r2
+Specification-Title: io7m-r2-shaders-core
+Implementation-Vendor: io7m.com
+Created-By: Apache Maven 3.3.9
+Build-Jdk: 1.8.0_112
+Specification-Version: 0.2.0
+

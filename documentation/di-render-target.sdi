@@ -1,0 +1,10 @@
+[section [title Render Targets] [id di.render-target]]
+[subsection [title Overview] [id di.render-target.overview]]
+[paragraph]
+A [term [type term] render target] is a rectangular region of memory allocated
+on the GPU that can accept the results of a rendering operation.
+
+[subsection [title Types] [id di.render-target.types]]
+[paragraph]
+In the [term [type package] r2] package, render targets are instances of
+[link-ext [target "apidocs/com/io7m/r2/core/R2RenderTargetType.html"] R2RenderTargetType].

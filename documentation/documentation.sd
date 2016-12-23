@@ -1,0 +1,5 @@
+[document [title io7m-r2 0.2.0 Documentation]
+  [import "pkg.sdi"]
+  [import "di.sd"]
+  [import "api.sd"]]
+

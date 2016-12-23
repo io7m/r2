@@ -1,0 +1,118 @@
+[section [title Meshes] [id di.meshes]]
+[subsection [title Overview] [id di.meshes.overview]]
+[paragraph]
+A [term [type term] mesh] is a collection of vertices that make up the triangles
+that define a polyhedral object, allocated on the GPU upon which the renderer
+is executing. In practical terms, a mesh is a pair [term [type expression] "(a, i)"], where
+[term [type expression] a] is an OpenGL [term [type term] vertex buffer object]
+consisting of vertices, an
+[term [type expression] i] is an OpenGL [term [type term] element buffer object]
+consisting of indices that describe how to draw the mesh as a series of
+triangles.
+
+[paragraph]
+The contents of [term [type expression] a] are mutable, but mesh references are
+considered to be immutable.
+
+[subsection [title Attributes] [id di.meshes.attributes]]
+[paragraph]
+A [term [type term] mesh] consists of [term [type term] vertices]. A vertex can
+be considered to be a value of a [term [type term] record type], with the
+fields of the record referred to as the [term [type term] attributes] of the
+vertex. In the [term [type package] r2] package, an array buffer containing
+vertex data is specified using the array buffer types from
+(link-ext (target "http://io7m.github.io/jcanephora") jcanephora). The
+[term [type package] jcanephora] package allows programmers to specify the exact
+types of array buffers, allows for the full inspection of type information at
+runtime, including the ability to reference attributes by name, and allows for
+type-safe modification of the contents of array buffers using an efficient
+cursor interface.
+
+[paragraph]
+Each attribute within an array buffer is assigned a numeric
+[term [type term] attribute index]. A numeric index is an arbitrary number
+between "(including)" [term [type constant] 0] and some OpenGL
+implementation-defined upper limit. On modern graphics hardware, OpenGL allows
+for at least [term [type constant] 16] numeric attributes. The indices
+are used to create an association between fields in the array buffer and
+[term [type term] shader] inputs. For the sake of sanity and consistency,
+it is the responsibility of rendering systems using OpenGL to establish
+conventions for the assignment of numeric attribute indices in shaders
+and array buffers [footnote-ref di.meshes.failure]. For example, many systems
+state that attribute [term [type constant] 0] should be of type
+[term [type type] vec4] and should represent vertex [term [type term] positions].
+Shaders simply assume that data arriving on attribute input
+[term [type constant] 0] represents position data, and programmers are expected
+to create meshes where attribute [term [type constant] 0] points to the field
+within the array that contains position data.
+
+[paragraph]
+The
+[term [type package] r2] package uses the following conventions everywhere:
+
+[formal-item [title Mesh attribute conventions] [id di.meshes.attributes.single]]
+[table
+  [summary Mesh attribute conventions]
+  [type mesh_types]
+  [head
+    [name Index]
+    [name Type]
+    [name Description]]
+  [body
+  [row
+    [cell [term [type constant] 0]]
+    [cell [term [type type] vec3]]
+    [cell The object-space position of the vertex]]
+  [row
+    [cell [term [type constant] 1]]
+    [cell [term [type type] vec2]]
+    [cell The UV coordinates of the vertex]]
+  [row
+    [cell [term [type constant] 2]]
+    [cell [term [type type] vec3]]
+    [cell The object-space normal vector of the vertex]]
+  [row
+    [cell [term [type constant] 3]]
+    [cell [term [type type] vec4]]
+    [cell The tangent vector of the vertex]]]]
+
+[paragraph]
+[term [type term] Batched instances] are expected to use the following
+additional conventions:
+
+[formal-item [title Batched instance attribute conventions] [id di.meshes.attributes.batched]]
+[table
+  [summary Mesh attribute conventions]
+  [type mesh_types]
+  [head
+    [name Index]
+    [name Type]
+    [name Description]]
+  [body
+  [row
+    [cell [term [type constant] 4]]
+    [cell [term [type type] vec4]]
+    [cell Column 0 of the per-instance model matrix for batched instances.]]
+  [row
+    [cell [term [type constant] 5]]
+    [cell [term [type type] vec4]]
+    [cell Column 1 of the per-instance model matrix for batched instances.]]
+  [row
+    [cell [term [type constant] 6]]
+    [cell [term [type type] vec4]]
+    [cell Column 2 of the per-instance model matrix for batched instances.]]
+  [row
+    [cell [term [type constant] 7]]
+    [cell [term [type type] vec4]]
+    [cell Column 3 of the per-instance model matrix for batched instances.]]]]
+
+[footnote [id di.meshes.failure]]
+Naturally, as is standard with OpenGL, failing to associate the correct shader
+attributes with the correct vertex attributes results in silent failure and/or
+bizarre visual results.
+
+[subsection [title Types] [id di.meshes.types]]
+[paragraph]
+In the [term [type package] r2] package, the given attribute conventions are
+specified by the
+[link-ext [target "apidocs/com/io7m/r2/core/R2AttributeConventions.html"] R2AttributeConventions] type.

@@ -1,0 +1,89 @@
+[section [title Environment Mapping] [id di.environment-mapping]]
+[subsection [title Overview] [id di.environment-mapping.overview]]
+[paragraph]
+[term [type term] Environment mapping] is conceptually the process of
+constructing an artificial environment around an object in order to provide, for
+example, effects such as reflective surfaces or refractive objects. In the
+[term [type package] r2] package, the artificial environment is represented
+by (link (target di.environment-mapping.cube-maps) cube maps), and the only
+provided effect is a simulation of [term [type reflection] reflection].
+Effects such as refraction are instead provided via
+(link (target di.generic-refraction) generic refraction), which doesn't use
+environment mapping.
+
+[subsection [title Cube Maps] [id di.environment-mapping.cube-maps]]
+[paragraph]
+A [term [type term] cube map] is a [term [type term] texture] with six
+[term [type term] faces] . When used for environment mapping, each face
+represents a 90° image of the environment visible in the direction "(in"
+(link (target di.coords.world) world space) ")" of that face. Cube
+maps are normally constructed by placing an observer in a scene and then
+orienting the observer in the direction of each cube face in turn and rendering
+an image. As an example:
+
+[formal-item [title Cube map scene]]
+[image [target "images/envmap_cube_scene.png"] Cube map scene]
+
+[paragraph]
+Given the above scene, with the observer placed exactly in the center of the
+indicated magenta circle and assuming a 90° field of view, the six images
+visible from that location corresponding to the [term [type constant] -x],
+[term [type constant] +x], [term [type constant] -y],
+[term [type constant] -z], [term [type constant] -z],
+[term [type constant] +z] cube faces are:
+
+[formal-item [title Cube map example]]
+[image [target "images/envmap_cubemap.png"] Cube map example]
+
+[paragraph]
+While sampling from ordinary two-dimensional textures involves looking up texels
+by their two-dimensional coordinates, sampling from cube maps requires
+three-dimensional coordinates. The three-dimensional coordinates are interpreted
+as a direction vector or ray emanating from the center of the cube, and the
+point of intersection between the ray and the corresponding cube face is used to
+select a texel from that face. Note that in OpenGL there are issues with
+(link (target di.environment-mapping.handedness)
+coordinate system handedness) that the [term [type package] r2] package
+corrects.
+
+[subsection [title Reflections] [id di.environment-mapping.reflection]]
+[paragraph]
+So-called [term [type term] environment-mapped reflections] are trivially
+provided by cube maps. For a given surface with a normal vector
+[term [type variable] n], and given the view direction [term [type variable] v]
+"(from" the observer to the "surface)," a [term [type term] reflection vector]
+is given by [term [type expression] r = Reflection.reflection v n]:
+
+[formal-item [title Reflection vector]]
+[verbatim [include "haskell/Reflection.hs"]]
+
+[paragraph]
+The reflection vector [term [type variable] r] is then used to look up a texel
+in the current cube map directly. This gives a convincing illusion of reflection
+that will change as the observer moves relative to the surface. Combining normal
+mapping and environment mapped reflections gives a striking effect:
+
+[formal-item [title Normal/Environment mapping]]
+[image [target "images/envmap_tiles.png"] Normal/Environment mapping]
+
+[formal-item [title "Normal/Environment mapping (Cube map)"]]
+[image [target "images/envmap_toronto.png"]
+"Normal/Environment mapping (Cube map)"]
+
+[paragraph]
+Note that in the actual [term [type package] r2] implementation, the
+vectors [term [type variable] n] and [term [type variable] v] will be in
+eye-space and therefore so will [term [type variable] r]. The vector
+[term [type variable] r] is transformed back to
+(link (target di.coords.world) world space) by the inverse of the
+current view matrix for use with the cube map.
+
+[subsection [title Handedness] [id di.environment-mapping.handedness]]
+[paragraph]
+For reasons lost to time, cube maps in OpenGL use a left-handed coordinate
+system in contrast to the usual right-handed coordinate system. Because of this,
+calculated reflection vectors actually have to be inverted to prevent sampling
+from the wrong cube face. The [term [type package] r2] package enforces a
+consistent right-handed coordinate system everywhere. The direction of each cube
+face corresponds to the same direction in
+(link (target di.coords.world) world space), without exception.
