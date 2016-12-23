@@ -19,13 +19,13 @@ package com.io7m.r2.tests.core;
 import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jpuddle.core.JPPoolHardLimitExceededException;
-import com.io7m.jpuddle.core.JPPoolObjectReturnException;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jpuddle.core.JPPoolHardLimitExceededException;
+import com.io7m.jpuddle.core.JPPoolObjectReturnException;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescriptionType;
@@ -98,13 +98,13 @@ public abstract class R2AmbientOcclusionBufferPoolContract extends
 
     final R2AmbientOcclusionBufferUsableType b0 = p.get(tc_root, desc);
     Assert.assertFalse(b0.isDeleted());
-    Assert.assertEquals(area, b0.getArea());
+    Assert.assertEquals(area, b0.area());
 
     p.returnValue(tc_root, b0);
 
     final R2AmbientOcclusionBufferUsableType b1 = p.get(tc_root, desc);
     Assert.assertFalse(b1.isDeleted());
-    Assert.assertEquals(area, b1.getArea());
+    Assert.assertEquals(area, b1.area());
     Assert.assertEquals(b0, b1);
 
     p.returnValue(tc_root, b1);

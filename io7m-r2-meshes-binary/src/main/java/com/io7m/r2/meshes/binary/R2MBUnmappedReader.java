@@ -105,7 +105,7 @@ public final class R2MBUnmappedReader implements R2MBReaderType
       this.listener.onEventStart();
 
       final ByteBuffer bh = this.buffer_header;
-      R2MBUnmappedReader.readAll(bh, this.channel);
+      readAll(bh, this.channel);
 
       {
         if (!this.checkSize(
@@ -146,7 +146,7 @@ public final class R2MBUnmappedReader implements R2MBReaderType
 
         for (int index = 0; (long) index < v_count; ++index) {
           b.rewind();
-          R2MBUnmappedReader.readAll(b, this.channel);
+          readAll(b, this.channel);
           if (!this.checkSize(b, size, "vertex")) {
             return;
           }
@@ -166,7 +166,7 @@ public final class R2MBUnmappedReader implements R2MBReaderType
 
         for (int index = 0; (long) index < t_count; ++index) {
           b.rewind();
-          R2MBUnmappedReader.readAll(b, this.channel);
+          readAll(b, this.channel);
           this.listener.onEventTriangle(
             (long) index, (long) v.getV0(), (long) v.getV1(), (long) v.getV2());
         }

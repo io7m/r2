@@ -16,12 +16,12 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Postconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedL;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import org.valid4j.Assertive;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -64,10 +64,12 @@ public final class R2RenderTargetDescriptions
     }
 
     final AreaInclusiveUnsignedLType b =
-      R2RenderTargetDescriptions.scaleAreaInclusive(a.getArea(), scale);
+      scaleAreaInclusive(a.area(), scale);
     final T r = constructor.apply(a, b);
-    Assertive.ensure(Objects.equals(a.getClass(), r.getClass()));
 
+    Postconditions.checkPostcondition(
+      Objects.equals(a.getClass(), r.getClass()),
+      "Scaler must preserve class");
     return r;
   }
 

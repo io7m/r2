@@ -18,38 +18,53 @@ package com.io7m.r2.tests.core.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jtensors.VectorI4F;
-import com.io7m.jtensors.VectorReadable4FType;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderDebugVisualSingleContract extends
-  R2ShaderInstanceSingleContract<VectorReadable4FType, VectorReadable4FType>
+  R2ShaderInstanceSingleContract<
+    PVectorI4F<R2SpaceRGBAType>,
+    PVectorI4F<R2SpaceRGBAType>>
 {
   @Override
-  protected final VectorReadable4FType newParameters(
+  protected final PVectorI4F<R2SpaceRGBAType> newParameters(
     final JCGLInterfaceGL33Type g)
   {
-    return VectorI4F.ZERO;
+    return PVectorI4F.zero();
   }
+
+  @Override
+  protected R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>>
+  newShaderWithVerifier(
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderPreprocessingEnvironmentType sources,
+    final R2IDPoolType pool)
+  {
+    return R2ShaderDebugVisualSingle.newShader(
+      g.getShaders(),
+      sources,
+      pool);
+  }
+
 
   @Test
   public final void testNew()
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceSingleType<VectorReadable4FType> s =
+    final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> s =
       R2ShaderDebugVisualSingle.newShader(
         g.getShaders(),
         sources,

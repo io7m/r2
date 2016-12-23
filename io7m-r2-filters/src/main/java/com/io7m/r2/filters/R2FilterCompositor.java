@@ -25,7 +25,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -36,7 +36,8 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -45,57 +46,55 @@ import java.util.Optional;
  */
 
 public final class R2FilterCompositor implements
-  R2FilterType<R2FilterCompositorParametersType>
+  R2FilterType<R2FilterCompositorParameters>
 {
-  private final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType>
-    shader;
-
-  private final JCGLInterfaceGL33Type                      g;
-  private final R2UnitQuadUsableType                       quad;
-  private final R2ShaderFilterTextureShowParametersMutable shader_params;
-  private final JCGLRenderStateMutable                     render_state;
+  private final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> shader;
+  private final JCGLInterfaceGL33Type g;
+  private final R2UnitQuadUsableType quad;
+  private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterTextureShowParameters> values;
 
   private R2FilterCompositor(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType> in_shader,
+    final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> in_shader,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
-    this.shader_params = R2ShaderFilterTextureShowParametersMutable.create();
-    this.render_state = JCGLRenderStateMutable.create();
+    this.render_state = JCGLRenderState.builder().build();
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
    * Construct a new filter.
    *
-   * @param in_sources  Shader sources
-   * @param in_textures A texture interface
-   * @param in_g        A GL interface
-   * @param in_pool     An ID pool
-   * @param in_quad     A unit quad
+   * @param in_shader_env Shader sources
+   * @param in_textures   A texture interface
+   * @param in_g          A GL interface
+   * @param in_pool       An ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new filter
    */
 
-  public static R2FilterType<R2FilterCompositorParametersType>
+  public static R2FilterType<R2FilterCompositorParameters>
   newFilter(
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2TextureDefaultsType in_textures,
     final JCGLInterfaceGL33Type in_g,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_sources);
+    NullCheck.notNull(in_shader_env);
     NullCheck.notNull(in_textures);
     NullCheck.notNull(in_g);
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_quad);
 
-    final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType> s =
+    final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> s =
       R2ShaderFilterTextureShow.newShader(
-        in_g.getShaders(), in_sources, in_pool);
+        in_g.getShaders(), in_shader_env, in_pool);
 
     return new R2FilterCompositor(in_g, s, in_quad);
   }
@@ -120,7 +119,7 @@ public final class R2FilterCompositor implements
   public void runFilter(
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterCompositorParametersType parameters)
+    final R2FilterCompositorParameters parameters)
   {
     NullCheck.notNull(pc);
     NullCheck.notNull(uc);
@@ -137,7 +136,7 @@ public final class R2FilterCompositor implements
 
   private void run(
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterCompositorParametersType parameters)
+    final R2FilterCompositorParameters parameters)
   {
     final JCGLBlendingType g_b = this.g.getBlending();
     final JCGLShadersType g_sh = this.g.getShaders();
@@ -149,32 +148,37 @@ public final class R2FilterCompositor implements
     JCGLRenderStates.activate(this.g, this.render_state);
 
     try {
-      this.shader.onActivate(g_sh);
-      g_ao.arrayObjectBind(this.quad.getArrayObject());
+      this.shader.onActivate(this.g);
+      g_ao.arrayObjectBind(this.quad.arrayObject());
 
-      for (final R2FilterCompositorItemType i : parameters.getItems()) {
+      for (final R2FilterCompositorItemType i : parameters.items()) {
         final Optional<R2FilterCompositorBlendingType> blend_opt =
-          i.getBlending();
+          i.blending();
         if (blend_opt.isPresent()) {
           final R2FilterCompositorBlendingType blend = blend_opt.get();
           g_b.blendingEnableSeparateWithEquationSeparate(
-            blend.getBlendFunctionSourceRGB(),
-            blend.getBlendFunctionSourceAlpha(),
-            blend.getBlendFunctionTargetRGB(),
-            blend.getBlendFunctionTargetAlpha(),
-            blend.getBlendEquationRGB(),
-            blend.getBlendEquationAlpha());
+            blend.blendFunctionSourceRGB(),
+            blend.blendFunctionSourceAlpha(),
+            blend.blendFunctionTargetRGB(),
+            blend.blendFunctionTargetAlpha(),
+            blend.blendEquationRGB(),
+            blend.blendEquationAlpha());
         } else {
           g_b.blendingDisable();
         }
 
         final JCGLTextureUnitContextType c = uc.unitContextNew();
         try {
-          g_v.viewportSet(i.getOutputViewport());
+          g_v.viewportSet(i.outputViewport());
 
-          this.shader_params.setIntensity(i.getIntensity());
-          this.shader_params.setTexture(i.getTexture());
-          this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
+          this.values.setTextureUnitContext(c);
+          this.values.setValues(
+            R2ShaderFilterTextureShowParameters.builder()
+              .setIntensity(i.intensity())
+              .setTexture(i.texture())
+              .build());
+
+          this.shader.onReceiveFilterValues(this.g, this.values);
           this.shader.onValidate();
 
           g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -185,7 +189,7 @@ public final class R2FilterCompositor implements
 
     } finally {
       g_ao.arrayObjectUnbind();
-      this.shader.onDeactivate(g_sh);
+      this.shader.onDeactivate(this.g);
     }
   }
 }

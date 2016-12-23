@@ -39,7 +39,6 @@ import com.io7m.jcanephora.renderstate.JCGLDepthState;
 import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
 import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -64,16 +63,17 @@ public final class R2LightBuffers
   private static final JCGLClearSpecification CLEAR_SPEC;
 
   static {
-    final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
-    k.setDepthState(JCGLDepthState.of(
-      JCGLDepthStrict.DEPTH_STRICT_ENABLED,
-      Optional.empty(),
-      JCGLDepthWriting.DEPTH_WRITE_ENABLED,
-      JCGLDepthClamping.DEPTH_CLAMP_ENABLED
-    ));
-    k.setColorBufferMaskingState(
-      JCGLColorBufferMaskingState.of(true, true, true, true));
-    CLEAR_STATE = JCGLRenderState.builder().from(k).build();
+    CLEAR_STATE =
+      JCGLRenderState.builder()
+        .setDepthState(JCGLDepthState.of(
+          JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+          Optional.empty(),
+          JCGLDepthWriting.DEPTH_WRITE_ENABLED,
+          JCGLDepthClamping.DEPTH_CLAMP_ENABLED
+        ))
+        .setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, true))
+        .build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
       Optional.of(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f)),
@@ -114,7 +114,7 @@ public final class R2LightBuffers
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
-    final AreaInclusiveUnsignedLType area = desc.getArea();
+    final AreaInclusiveUnsignedLType area = desc.area();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -131,7 +131,7 @@ public final class R2LightBuffers
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      switch (desc.getComponents()) {
+      switch (desc.components()) {
         case R2_LIGHT_BUFFER_DIFFUSE_ONLY: {
           final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_diff =
             cc.unitContextAllocateTexture2D(
@@ -144,7 +144,7 @@ public final class R2LightBuffers
               JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-          return R2LightBuffers.newDiffuseOnly(
+          return newDiffuseOnly(
             g_fb,
             desc,
             points,
@@ -164,7 +164,7 @@ public final class R2LightBuffers
               JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-          return R2LightBuffers.newSpecularOnly(
+          return newSpecularOnly(
             g_fb,
             desc,
             points,
@@ -195,7 +195,7 @@ public final class R2LightBuffers
               JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-          return R2LightBuffers.newDiffuseSpecular(
+          return newDiffuseSpecular(
             g_fb,
             desc,
             points,
@@ -226,9 +226,15 @@ public final class R2LightBuffers
     final R2Texture2DType rt_spec = R2Texture2DStatic.of(p_spec.getRight());
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_diff.get());
-    fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_spec.get());
-    fbb.attachDepthStencilTexture2D(rt_depth.get());
+    fbb.attachColorTexture2DAt(
+      points.get(0),
+      buffers.get(0),
+      rt_diff.texture());
+    fbb.attachColorTexture2DAt(
+      points.get(1),
+      buffers.get(1),
+      rt_spec.texture());
+    fbb.attachDepthStencilTexture2D(rt_depth.texture());
 
     final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
     return new R2LightBuffers.LightBufferDiffuseSpecular(
@@ -247,8 +253,11 @@ public final class R2LightBuffers
     final R2Texture2DType rt_spec = R2Texture2DStatic.of(p_spec.getRight());
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-    fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_spec.get());
-    fbb.attachDepthStencilTexture2D(rt_depth.get());
+    fbb.attachColorTexture2DAt(
+      points.get(1),
+      buffers.get(1),
+      rt_spec.texture());
+    fbb.attachDepthStencilTexture2D(rt_depth.texture());
 
     final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
     return new R2LightBuffers.LightBufferSpecularOnly(
@@ -267,8 +276,11 @@ public final class R2LightBuffers
     final R2Texture2DType rt_diff = R2Texture2DStatic.of(p_diff.getRight());
 
     final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-    fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_diff.get());
-    fbb.attachDepthStencilTexture2D(rt_depth.get());
+    fbb.attachColorTexture2DAt(
+      points.get(0),
+      buffers.get(0),
+      rt_diff.texture());
+    fbb.attachDepthStencilTexture2D(rt_depth.texture());
 
     final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
     return new R2LightBuffers.LightBufferDiffuseOnly(
@@ -291,8 +303,8 @@ public final class R2LightBuffers
       throw new R2RendererExceptionFramebufferNotBound(sb.toString());
     }
 
-    JCGLRenderStates.activate(g, R2LightBuffers.CLEAR_STATE);
-    g.getClear().clear(R2LightBuffers.CLEAR_SPEC);
+    JCGLRenderStates.activate(g, CLEAR_STATE);
+    g.getClear().clear(CLEAR_SPEC);
   }
 
   private static final class LightBufferDiffuseSpecular
@@ -319,38 +331,38 @@ public final class R2LightBuffers
       this.description = NullCheck.notNull(in_desc);
 
       long size = 0L;
-      size += this.t_diffuse.get().getRange().getInterval();
-      size += this.t_specular.get().getRange().getInterval();
-      size += this.t_depth.get().getRange().getInterval();
+      size += this.t_diffuse.texture().getRange().getInterval();
+      size += this.t_specular.texture().getRange().getInterval();
+      size += this.t_depth.texture().getRange().getInterval();
       this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
     }
 
     @Override
-    public R2Texture2DUsableType getDiffuseTexture()
+    public R2Texture2DUsableType diffuseTexture()
     {
       return this.t_diffuse;
     }
 
     @Override
-    public R2Texture2DUsableType getSpecularTexture()
+    public R2Texture2DUsableType specularTexture()
     {
       return this.t_specular;
     }
 
     @Override
-    public JCGLFramebufferUsableType getPrimaryFramebuffer()
+    public JCGLFramebufferUsableType primaryFramebuffer()
     {
       return this.framebuffer;
     }
 
     @Override
-    public AreaInclusiveUnsignedLType getArea()
+    public AreaInclusiveUnsignedLType area()
     {
-      return this.description.getArea();
+      return this.description.area();
     }
 
     @Override
-    public R2LightBufferDescriptionType getDescription()
+    public R2LightBufferDescriptionType description()
     {
       return this.description;
     }
@@ -386,7 +398,7 @@ public final class R2LightBuffers
       final JCGLInterfaceGL33Type g)
       throws R2RendererExceptionFramebufferNotBound
     {
-      R2LightBuffers.clearFramebuffer(g, this.framebuffer);
+      clearFramebuffer(g, this.framebuffer);
     }
   }
 
@@ -412,31 +424,31 @@ public final class R2LightBuffers
       this.description = NullCheck.notNull(in_desc);
 
       long size = 0L;
-      size += this.t_specular.get().getRange().getInterval();
-      size += this.t_depth.get().getRange().getInterval();
+      size += this.t_specular.texture().getRange().getInterval();
+      size += this.t_depth.texture().getRange().getInterval();
       this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
     }
 
     @Override
-    public R2Texture2DUsableType getSpecularTexture()
+    public R2Texture2DUsableType specularTexture()
     {
       return this.t_specular;
     }
 
     @Override
-    public JCGLFramebufferUsableType getPrimaryFramebuffer()
+    public JCGLFramebufferUsableType primaryFramebuffer()
     {
       return this.framebuffer;
     }
 
     @Override
-    public AreaInclusiveUnsignedLType getArea()
+    public AreaInclusiveUnsignedLType area()
     {
-      return this.description.getArea();
+      return this.description.area();
     }
 
     @Override
-    public R2LightBufferDescriptionType getDescription()
+    public R2LightBufferDescriptionType description()
     {
       return this.description;
     }
@@ -471,7 +483,7 @@ public final class R2LightBuffers
       final JCGLInterfaceGL33Type g)
       throws R2RendererExceptionFramebufferNotBound
     {
-      R2LightBuffers.clearFramebuffer(g, this.framebuffer);
+      clearFramebuffer(g, this.framebuffer);
     }
   }
 
@@ -497,31 +509,31 @@ public final class R2LightBuffers
       this.description = NullCheck.notNull(in_desc);
 
       long size = 0L;
-      size += this.t_diffuse.get().getRange().getInterval();
-      size += this.t_depth.get().getRange().getInterval();
+      size += this.t_diffuse.texture().getRange().getInterval();
+      size += this.t_depth.texture().getRange().getInterval();
       this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
     }
 
     @Override
-    public R2Texture2DUsableType getDiffuseTexture()
+    public R2Texture2DUsableType diffuseTexture()
     {
       return this.t_diffuse;
     }
 
     @Override
-    public JCGLFramebufferUsableType getPrimaryFramebuffer()
+    public JCGLFramebufferUsableType primaryFramebuffer()
     {
       return this.framebuffer;
     }
 
     @Override
-    public AreaInclusiveUnsignedLType getArea()
+    public AreaInclusiveUnsignedLType area()
     {
-      return this.description.getArea();
+      return this.description.area();
     }
 
     @Override
-    public R2LightBufferDescriptionType getDescription()
+    public R2LightBufferDescriptionType description()
     {
       return this.description;
     }
@@ -556,7 +568,7 @@ public final class R2LightBuffers
       final JCGLInterfaceGL33Type g)
       throws R2RendererExceptionFramebufferNotBound
     {
-      R2LightBuffers.clearFramebuffer(g, this.framebuffer);
+      clearFramebuffer(g, this.framebuffer);
     }
   }
 }

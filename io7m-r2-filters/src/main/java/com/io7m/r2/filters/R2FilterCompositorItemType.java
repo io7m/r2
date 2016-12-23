@@ -29,7 +29,6 @@ import java.util.Optional;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2FilterCompositorItemType
 {
@@ -38,14 +37,14 @@ public interface R2FilterCompositorItemType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getTexture();
+  R2Texture2DUsableType texture();
 
   /**
    * @return The area of the viewport to which the texture will be rendered
    */
 
   @Value.Parameter
-  AreaInclusiveUnsignedLType getOutputViewport();
+  AreaInclusiveUnsignedLType outputViewport();
 
   /**
    * @return The value by which to scale each sample of the texture when
@@ -54,7 +53,7 @@ public interface R2FilterCompositorItemType
 
   @Value.Parameter
   @Value.Default
-  default float getIntensity()
+  default float intensity()
   {
     return 1.0f;
   }
@@ -64,5 +63,5 @@ public interface R2FilterCompositorItemType
    */
 
   @Value.Parameter
-  Optional<R2FilterCompositorBlendingType> getBlending();
+  Optional<R2FilterCompositorBlendingType> blending();
 }

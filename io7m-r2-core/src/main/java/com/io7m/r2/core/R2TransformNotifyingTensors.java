@@ -41,7 +41,7 @@ final class R2TransformNotifyingTensors
   static final class R2PVectorM3F<T> implements PVector3FType<T>
   {
     private final PVector3FType<T> v;
-    private final Runnable    changed;
+    private final Runnable changed;
 
     R2PVectorM3F(
       final Runnable in_changed,
@@ -158,7 +158,7 @@ final class R2TransformNotifyingTensors
 
   static final class R2VectorM3F implements Vector3FType
   {
-    private final Vector3FType  v;
+    private final Vector3FType v;
     private final Runnable changed;
 
     R2VectorM3F(
@@ -176,6 +176,13 @@ final class R2TransformNotifyingTensors
     }
 
     @Override
+    public void setZF(final float z)
+    {
+      this.v.setZF(z);
+      this.changed.run();
+    }
+
+    @Override
     public boolean equals(final Object obj)
     {
       return this.v.equals(obj);
@@ -185,13 +192,6 @@ final class R2TransformNotifyingTensors
     public int hashCode()
     {
       return this.v.hashCode();
-    }
-
-    @Override
-    public void setZF(final float z)
-    {
-      this.v.setZF(z);
-      this.changed.run();
     }
 
     @Override
@@ -263,7 +263,7 @@ final class R2TransformNotifyingTensors
   static final class R2QuaternionM4F implements Quaternion4FType
   {
     private final Quaternion4FType q;
-    private final Runnable    changed;
+    private final Runnable changed;
 
     R2QuaternionM4F(
       final Runnable in_changed,

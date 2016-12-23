@@ -117,13 +117,13 @@ public final class R2MBMappedReader implements R2MBReaderType
       && (int) m2 == (int) 'B'
       && (int) m3 == (int) '\n')) {
       final StringBuilder sb = new StringBuilder(128);
-      sb.append("Bad magic number.\n");
-      sb.append("Expected: 0x52 0x32 0x42 0x0A\n");
+      sb.append("Bad magic number.%n");
+      sb.append("Expected: 0x52 0x32 0x42 0x0A%n");
       sb.append("Got:      ");
       sb.append(String.format("0x%02X ", Byte.valueOf(m0)));
       sb.append(String.format("0x%02X ", Byte.valueOf(m1)));
       sb.append(String.format("0x%02X ", Byte.valueOf(m2)));
-      sb.append(String.format("0x%02X\n", Byte.valueOf(m3)));
+      sb.append(String.format("0x%02X%n", Byte.valueOf(m3)));
       pl.onError(Optional.empty(), sb.toString());
       return false;
     }
@@ -189,10 +189,10 @@ public final class R2MBMappedReader implements R2MBReaderType
       }
 
       final R2MBHeaderType v = c.getElementView();
-      if (!R2MBMappedReader.checkMagicNumber(v, this.listener)) {
+      if (!checkMagicNumber(v, this.listener)) {
         return;
       }
-      if (!R2MBMappedReader.checkVersion(v, this.listener)) {
+      if (!checkVersion(v, this.listener)) {
         return;
       }
 
@@ -203,7 +203,7 @@ public final class R2MBMappedReader implements R2MBReaderType
 
       {
         v_offset = (long) R2MBHeaderByteBuffered.sizeInOctets();
-        R2MBMappedReader.LOG.debug(
+        LOG.debug(
           "Vertices start at offset: {}",
           Long.toUnsignedString(v_offset));
       }
@@ -214,7 +214,7 @@ public final class R2MBMappedReader implements R2MBReaderType
         final long vertices =
           v_count * (long) R2MBVertexByteBuffered.sizeInOctets();
         t_offset = header + vertices;
-        R2MBMappedReader.LOG.debug(
+        LOG.debug(
           "Triangles start at offset: {}",
           Long.toUnsignedString(t_offset));
       }
@@ -236,7 +236,7 @@ public final class R2MBMappedReader implements R2MBReaderType
 
         for (int index = 0; index < v_count; ++index) {
           c.setElementIndex(index);
-          R2MBMappedReader.parseVertex(
+          parseVertex(
             this.listener,
             index,
             v_pos,

@@ -31,5 +31,5 @@ public interface R2UnitSphereUsableType extends JCGLResourceUsableType,
    * @return The array object for the sphere
    */
 
-  JCGLArrayObjectUsableType getArrayObject();
+  JCGLArrayObjectUsableType arrayObject();
 }

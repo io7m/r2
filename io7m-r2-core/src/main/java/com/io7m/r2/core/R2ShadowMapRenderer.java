@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLClearSpecification;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
@@ -38,7 +39,6 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -103,7 +103,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
   public void delete(final JCGLInterfaceGL33Type g)
     throws R2Exception
   {
-    R2ShadowMapRenderer.LOG.debug("delete");
+    LOG.debug("delete");
     this.deleted = true;
   }
 
@@ -142,7 +142,8 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
     void start()
     {
-      Assertive.require(!this.active);
+      Preconditions.checkPrecondition(
+        !this.active, "Renderer context must not be active");
       this.variance.clear();
       this.active = true;
     }
@@ -151,28 +152,28 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
       final R2LightProjectiveWithShadowType lp,
       final R2ShadowDepthVarianceType sv)
     {
-      /**
+      /*
        * Fetch a variance shadow map.
        */
 
       this.variance.current = this.variance.pool.get(
-        this.texture_context, sv.getMapDescription());
+        this.texture_context, sv.mapDescription());
       this.variance.used.put(
-        sv.getShadowID(), this.variance.current);
+        sv.shadowID(), this.variance.current);
 
-      /**
+      /*
        * Transform the light volume.
        */
 
       final R2TransformContextType trc =
-        this.matrices.getTransformContext();
+        this.matrices.transformContext();
       final R2TransformViewReadableType tr =
-        lp.getTransform();
+        lp.transform();
       tr.transformMakeViewMatrix4x4F(trc, this.view);
 
       this.matrices.withObserver(
         this.view,
-        lp.getProjection(),
+        lp.projection(),
         this,
         (z, t) -> {
 
@@ -182,29 +183,29 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
           final JCGLFramebuffersType gfb = t.g33.getFramebuffers();
           final JCGLTexturesType gt = t.g33.getTextures();
 
-          /**
+          /*
            * Render all instances into the framebuffer, clearing
            * it first.
            */
 
           gfb.framebufferDrawBind(
-            buffer.getPrimaryFramebuffer());
+            buffer.primaryFramebuffer());
           buffer.clearBoundPrimaryFramebuffer(t.g33);
           t.variance.renderer.renderDepthVarianceWithBoundBuffer(
-            buffer.getArea(),
+            buffer.area(),
             t.texture_context,
             z,
             t.instances);
           gfb.framebufferDrawUnbind();
 
-          /**
+          /*
            * If the shadow map uses mipmaps, regenerate them.
            */
 
           final R2Texture2DUsableType rt_texture =
-            buffer.getDepthVarianceTexture();
+            buffer.depthVarianceTexture();
           final JCGLTexture2DUsableType texture =
-            rt_texture.get();
+            rt_texture.texture();
 
           switch (texture.textureGetMinificationFilter()) {
             case TEXTURE_FILTER_LINEAR:
@@ -220,7 +221,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
               try {
                 final JCGLTextureUnitType u =
-                  tc.unitContextBindTexture2D(gt, rt_texture.get());
+                  tc.unitContextBindTexture2D(gt, rt_texture.texture());
                 gt.texture2DRegenerateMipmaps(u);
               } finally {
                 tc.unitContextFinish(gt);
@@ -273,7 +274,7 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
         });
       };
 
-      final R2ShadowType s = ls.getShadow();
+      final R2ShadowType s = ls.shadow();
       s.matchShadow(this, on_variance);
     }
 
@@ -364,12 +365,12 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
           RuntimeException>
           on_projective_with_shadow =
           (t, lp) ->
-            lp.getShadow().matchShadow(t, (t1, sv) -> {
-              final long shadow_id = sv.getShadowID();
+            lp.shadow().matchShadow(t, (t1, sv) -> {
+              final long shadow_id = sv.shadowID();
               if (t1.variance.used.containsKey(shadow_id)) {
                 final R2DepthVarianceBufferUsableType map =
                   t1.variance.used.get(shadow_id);
-                return map.getDepthVarianceTexture();
+                return map.depthVarianceTexture();
               }
 
               final StringBuilder sb = new StringBuilder(128);
@@ -391,7 +392,8 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
       @Override
       public void shadowMapContextFinish()
       {
-        Assertive.require(this.active);
+        Preconditions.checkPrecondition(
+          this.active, "Renderer context must be active");
 
         try {
           this.light = null;
@@ -403,8 +405,11 @@ public final class R2ShadowMapRenderer implements R2ShadowMapRendererType
 
       void start()
       {
-        Assertive.require(!this.active);
-        Assertive.require(RendererContext.this.active);
+        Preconditions.checkPrecondition(
+          !this.active, "Map context must not be active");
+        Preconditions.checkPrecondition(
+          RendererContext.this.active, "Renderer context must be active");
+
         this.active = true;
       }
     }

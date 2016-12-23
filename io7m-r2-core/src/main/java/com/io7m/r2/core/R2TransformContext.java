@@ -31,12 +31,12 @@ import com.io7m.jtensors.parameterized.PMatrixM4x4F;
 
 public final class R2TransformContext implements R2TransformContextType
 {
-  private final Matrix4x4FType           m4x4_0;
-  private final Matrix4x4FType           m4x4_1;
+  private final Matrix4x4FType m4x4_0;
+  private final Matrix4x4FType m4x4_1;
   private final PMatrixM4x4F.ContextPM4F context_pm4;
-  private final MatrixM4x4F.ContextMM4F  context_m4;
-  private final QuaternionM4F            q0;
-  private final Vector3FType             v3_0;
+  private final MatrixM4x4F.ContextMM4F context_m4;
+  private final QuaternionM4F q0;
+  private final Vector3FType v3_0;
 
   private R2TransformContext()
   {
@@ -58,37 +58,37 @@ public final class R2TransformContext implements R2TransformContextType
   }
 
   @Override
-  public Vector3FType getTemporaryVector3()
+  public Vector3FType temporaryVector3()
   {
     return this.v3_0;
   }
 
   @Override
-  public Quaternion4FType getTemporaryQuaternion()
+  public Quaternion4FType temporaryQuaternion()
   {
     return this.q0;
   }
 
   @Override
-  public PMatrixM4x4F.ContextPM4F getContextPM4F()
+  public PMatrixM4x4F.ContextPM4F contextPM4F()
   {
     return this.context_pm4;
   }
 
   @Override
-  public MatrixM4x4F.ContextMM4F getContextMM4F()
+  public MatrixM4x4F.ContextMM4F contextMM4F()
   {
     return this.context_m4;
   }
 
   @Override
-  public Matrix4x4FType getTemporaryMatrix4x4_0()
+  public Matrix4x4FType temporaryMatrix4x4_0()
   {
     return this.m4x4_0;
   }
 
   @Override
-  public Matrix4x4FType getTemporaryMatrix4x4_1()
+  public Matrix4x4FType temporaryMatrix4x4_1()
   {
     return this.m4x4_1;
   }

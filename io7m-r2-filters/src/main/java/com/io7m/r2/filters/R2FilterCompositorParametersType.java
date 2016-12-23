@@ -26,7 +26,6 @@ import java.util.List;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2FilterCompositorParametersType
 {
@@ -35,5 +34,5 @@ public interface R2FilterCompositorParametersType
    */
 
   @Value.Parameter
-  List<R2FilterCompositorItemType> getItems();
+  List<R2FilterCompositorItemType> items();
 }

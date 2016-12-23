@@ -16,6 +16,8 @@
 
 package com.io7m.r2.meshes;
 
+import com.io7m.jaffirm.core.Postconditions;
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.parameterized.PVectorI2D;
 import com.io7m.jtensors.parameterized.PVectorI3D;
@@ -25,14 +27,13 @@ import it.unimi.dsi.fastutil.longs.Long2LongMap;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.util.Optional;
 
 /**
- * An implementation of the {@link R2MeshParserInterleavedListenerType} interface that
- * produces a value of type {@link R2MeshTangentsType} after parsing has
- * completed.
+ * An implementation of the {@link R2MeshParserInterleavedListenerType}
+ * interface that produces a value of type {@link R2MeshTangentsType} after
+ * parsing has completed.
  */
 
 public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
@@ -43,17 +44,17 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
     LOG = LoggerFactory.getLogger(R2MeshTangentsAdapter.class);
   }
 
-  private final R2MeshTangentsBuilderType     builder;
-  private final R2ErrorConsumerType           error;
-  private final Long2LongMap                  vertices;
-  private       Optional<R2MeshTangentsType>  mesh;
-  private       State                         state;
-  private       long                          vertex_pos;
-  private       long                          vertex_nor;
-  private       long                          vertex_tan;
-  private       long                          vertex_uv;
-  private       long                          vertex_bit;
-  private       PVectorI3D<R2SpaceObjectType> normal;
+  private final R2MeshTangentsBuilderType builder;
+  private final R2ErrorConsumerType error;
+  private final Long2LongMap vertices;
+  private Optional<R2MeshTangentsType> mesh;
+  private State state;
+  private long vertex_pos;
+  private long vertex_nor;
+  private long vertex_tan;
+  private long vertex_uv;
+  private long vertex_bit;
+  private PVectorI3D<R2SpaceObjectType> normal;
 
   private R2MeshTangentsAdapter(
     final R2ErrorConsumerType in_error,
@@ -80,7 +81,8 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
       in_error, R2MeshTangents.newBuilder(8192L, 8192L));
   }
 
-  @Override public Optional<R2MeshTangentsType> getMesh()
+  @Override
+  public Optional<R2MeshTangentsType> mesh()
   {
     return this.mesh;
   }
@@ -91,21 +93,32 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
 
   }
 
-  @Override public void onEventVertexCount(final long count)
+  @Override
+  public void onEventVertexCount(final long count)
   {
-    Assertive.require(this.state == State.RUNNING);
-    R2MeshTangentsAdapter.LOG.trace(
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
+    LOG.trace(
       "expecting {} vertices", Long.valueOf(count));
   }
 
-  @Override public void onEventTriangleCount(final long count)
+  @Override
+  public void onEventTriangleCount(final long count)
   {
-    Assertive.require(this.state == State.RUNNING);
-    R2MeshTangentsAdapter.LOG.trace(
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
+    LOG.trace(
       "expecting {} triangles", Long.valueOf(count));
   }
 
-  @Override public void onError(
+  @Override
+  public void onError(
     final Optional<Throwable> e,
     final String message)
   {
@@ -113,9 +126,14 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
     this.error.onError(e, message);
   }
 
-  @Override public void onEventVertexStarted(final long index)
+  @Override
+  public void onEventVertexStarted(final long index)
   {
-    Assertive.require(this.state == State.RUNNING);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
     this.vertex_pos = -1L;
     this.vertex_nor = -1L;
     this.vertex_tan = -1L;
@@ -123,68 +141,118 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
     this.vertex_bit = -1L;
   }
 
-  @Override public void onEventVertexPosition(
+  @Override
+  public void onEventVertexPosition(
     final long index,
     final double x,
     final double y,
     final double z)
   {
-    Assertive.require(this.state == State.RUNNING);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
     this.vertex_pos = this.builder.addPosition(new PVectorI3D<>(x, y, z));
-    Assertive.ensure(this.vertex_pos == index);
+
+    Postconditions.checkPostconditionL(
+      this.vertex_pos,
+      this.vertex_pos == index,
+      i -> "Vertex position index must be correct");
   }
 
-  @Override public void onEventVertexNormal(
+  @Override
+  public void onEventVertexNormal(
     final long index,
     final double x,
     final double y,
     final double z)
   {
-    Assertive.require(this.state == State.RUNNING);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
     final PVectorI3D<R2SpaceObjectType> n = new PVectorI3D<>(x, y, z);
     this.normal = n;
     this.vertex_nor = this.builder.addNormal(n);
-    Assertive.ensure(this.vertex_nor == index);
+
+    Postconditions.checkPostconditionL(
+      this.vertex_nor,
+      this.vertex_nor == index,
+      i -> "Vertex normal index be correct");
   }
 
-  @Override public void onEventVertexTangent(
+  @Override
+  public void onEventVertexTangent(
     final long index,
     final double x,
     final double y,
     final double z,
     final double w)
   {
-    Assertive.require(this.state == State.RUNNING);
-    Assertive.ensure(this.normal != null);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
+    Preconditions.checkPrecondition(
+      this.normal,
+      this.normal != null,
+      n -> "Normal must not be NULL");
 
     final PVectorI4D<R2SpaceObjectType> t = new PVectorI4D<>(x, y, z, w);
     this.vertex_tan = this.builder.addTangent(t);
-    Assertive.ensure(this.vertex_tan == index);
+
+    Postconditions.checkPostconditionL(
+      this.vertex_tan,
+      this.vertex_tan == index,
+      i -> "Vertex tangent index be correct");
+
     final PVectorI3D<R2SpaceObjectType> n = this.normal;
     this.vertex_bit = this.builder.addBitangent(
       PVectorI3D.crossProduct(n, PVectorI3D.scale(t, t.getWD())));
     this.normal = null;
   }
 
-  @Override public void onEventVertexUV(
+  @Override
+  public void onEventVertexUV(
     final long index,
     final double x,
     final double y)
   {
-    Assertive.require(this.state == State.RUNNING);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
     this.vertex_uv = this.builder.addUV(new PVectorI2D<>(x, y));
-    Assertive.ensure(this.vertex_uv == index);
+
+    Postconditions.checkPostconditionL(
+      this.vertex_uv,
+      this.vertex_uv == index,
+      i -> "Vertex UV index be correct");
   }
 
-  @Override public void onEventVertexFinished(
+  @Override
+  public void onEventVertexFinished(
     final long index)
   {
-    Assertive.require(this.state == State.RUNNING);
-    Assertive.ensure(this.vertex_pos != -1L);
-    Assertive.ensure(this.vertex_nor != -1L);
-    Assertive.ensure(this.vertex_tan != -1L);
-    Assertive.ensure(this.vertex_uv != -1L);
-    Assertive.ensure(this.vertex_bit != -1L);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
+    Preconditions.checkPrecondition(
+      this.vertex_pos != -1L, "Vertex position must not equal -1");
+    Preconditions.checkPrecondition(
+      this.vertex_nor != -1L, "Vertex normal must not equal -1");
+    Preconditions.checkPrecondition(
+      this.vertex_tan != -1L, "Vertex tangent must not equal -1");
+    Preconditions.checkPrecondition(
+      this.vertex_uv != -1L, "Vertex UV must not equal -1");
+    Preconditions.checkPrecondition(
+      this.vertex_bit != -1L, "Vertex bitangent must not equal -1");
 
     final long v = this.builder.addVertex(
       this.vertex_pos,
@@ -195,34 +263,53 @@ public final class R2MeshTangentsAdapter implements R2MeshTangentsAdapterType
     this.vertices.put(index, v);
   }
 
-  @Override public void onEventVerticesFinished()
+  @Override
+  public void onEventVerticesFinished()
   {
-    Assertive.require(this.state == State.RUNNING);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
   }
 
-  @Override public void onEventTriangle(
+  @Override
+  public void onEventTriangle(
     final long index,
     final long v0,
     final long v1,
     final long v2)
   {
-    Assertive.require(this.state == State.RUNNING);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
     final long vr0 = this.vertices.get(v0);
     final long vr1 = this.vertices.get(v1);
     final long vr2 = this.vertices.get(v2);
     final long r = this.builder.addTriangle(vr0, vr1, vr2);
-    Assertive.ensure(index == r);
+
+    Postconditions.checkPostcondition(
+      index == r, "Index must match triangle index");
   }
 
-  @Override public void onEventTrianglesFinished()
+  @Override
+  public void onEventTrianglesFinished()
   {
-    Assertive.require(this.state == State.RUNNING);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
   }
 
   @Override
   public void onEventFinished()
   {
-    Assertive.require(this.state == State.RUNNING);
+    Preconditions.checkPrecondition(
+      this.state,
+      this.state == State.RUNNING,
+      s -> "State must be RUNNING");
+
     this.state = State.FINISHED;
     this.mesh = Optional.of(this.builder.build());
   }

@@ -18,19 +18,21 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
+import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
-import com.io7m.jtensors.VectorReadable4FType;
-import com.io7m.r2.core.R2AbstractShader;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
 
 import java.util.Optional;
 
@@ -39,8 +41,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderDebugVisualScreen extends
-  R2AbstractShader<VectorReadable4FType>
-  implements R2ShaderInstanceSingleScreenType<VectorReadable4FType>
+  R2AbstractShader<PVectorI4F<R2SpaceRGBAType>>
+  implements R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_view;
@@ -50,57 +52,59 @@ public final class R2ShaderDebugVisualScreen extends
 
   private R2ShaderDebugVisualScreen(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2DebugVisualConstantScreen",
-      "R2DebugVisualConstantScreen.vert",
+      "com.io7m.r2.shaders.core.R2ShaderDebugVisualScreen",
+      "com.io7m.r2.shaders.core/R2DebugVisualConstantScreen.vert",
       Optional.empty(),
-      "R2DebugVisualConstantScreen.frag");
+      "com.io7m.r2.shaders.core/R2DebugVisualConstant.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 5);
 
     this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_projection");
+      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_view");
+      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.depth_coefficient");
+      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
     this.u_transform_projection_inverse = R2ShaderParameters.getUniformChecked(
-      p, "R2_transform_projection_inverse");
+      p, "R2_transform_projection_inverse", JCGLType.TYPE_FLOAT_MATRIX_4);
 
     this.u_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_color");
+      p, "R2_color", JCGLType.TYPE_FLOAT_VECTOR_4);
   }
 
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env A shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleScreenType<VectorReadable4FType>
+  public static R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return new R2ShaderDebugVisualScreen(in_shaders, in_sources, in_pool);
+    return new R2ShaderDebugVisualScreen(in_shaders, in_shader_env, in_pool);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Class<VectorReadable4FType> getShaderParametersType()
+  public Class<PVectorI4F<R2SpaceRGBAType>> shaderParametersType()
   {
-    return VectorReadable4FType.class;
+    final Class<?> c = PVectorI4F.class;
+    return (Class<PVectorI4F<R2SpaceRGBAType>>) c;
   }
 
   @Override
@@ -112,35 +116,36 @@ public final class R2ShaderDebugVisualScreen extends
 
   @Override
   public void onReceiveViewValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(m);
+    NullCheck.notNull(g);
+    NullCheck.notNull(view_parameters);
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final R2MatricesObserverValuesType matrices =
+      view_parameters.observerMatrices();
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(matrices.projection()));
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_view, m.getMatrixView());
+      this.u_transform_view, matrices.matrixView());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, matrices.matrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+      this.u_transform_projection_inverse, matrices.matrixProjectionInverse());
   }
 
   @Override
   public void onReceiveMaterialValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final VectorReadable4FType values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersMaterialType<PVectorI4F<R2SpaceRGBAType>> mat_parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(mat_parameters);
 
-    g_sh.shaderUniformPutVector4f(this.u_color, values);
+    final JCGLShadersType g_sh = g.getShaders();
+    g_sh.shaderUniformPutVector4f(this.u_color, mat_parameters.values());
   }
 }

@@ -107,15 +107,15 @@ public abstract class R2DepthVarianceBufferContract extends R2JCGLContract
         Assert.assertFalse(gb.isDeleted());
 
         final R2Texture2DUsableType t_dept =
-          gb.getDepthVarianceTexture();
+          gb.depthVarianceTexture();
         final JCGLFramebufferUsableType fb =
-          gb.getPrimaryFramebuffer();
+          gb.primaryFramebuffer();
 
-        Assert.assertEquals(desc, gb.getDescription());
-        Assert.assertEquals(area, gb.getArea());
+        Assert.assertEquals(desc, gb.description());
+        Assert.assertEquals(area, gb.area());
         Assert.assertEquals(
           vf,
-          t_dept.get().textureGetFormat());
+          t_dept.texture().textureGetFormat());
 
         gb.delete(g);
         Assert.assertTrue(fb.isDeleted());

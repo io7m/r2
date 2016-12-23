@@ -44,16 +44,14 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterSSAO;
-import com.io7m.r2.filters.R2FilterSSAOParametersMutable;
-import com.io7m.r2.filters.R2FilterSSAOParametersType;
+import com.io7m.r2.filters.R2FilterSSAOParameters;
 import com.io7m.r2.filters.R2SSAOKernel;
 import com.io7m.r2.filters.R2SSAOKernelType;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.R2TestUtilities;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -66,8 +64,8 @@ public abstract class R2FilterSSAOContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLTexturesType g_t =
@@ -82,8 +80,8 @@ public abstract class R2FilterSSAOContract extends R2JCGLContract
     final R2UnitQuadType quad =
       R2UnitQuad.newUnitQuad(g);
 
-    final R2FilterType<R2FilterSSAOParametersType> f =
-      R2FilterSSAO.newFilter(ss, g, td, tc, id, quad);
+    final R2FilterType<R2FilterSSAOParameters> f =
+      R2FilterSSAO.newFilter(sources, g, tc, id, quad);
 
     Assert.assertFalse(f.isDeleted());
     Assert.assertFalse(f.isDeleted());
@@ -98,8 +96,8 @@ public abstract class R2FilterSSAOContract extends R2JCGLContract
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -143,8 +141,8 @@ public abstract class R2FilterSSAOContract extends R2JCGLContract
 
     final R2SSAOKernelType k = R2SSAOKernel.newKernel(64);
 
-    final R2FilterType<R2FilterSSAOParametersType> f =
-      R2FilterSSAO.newFilter(ss, g, td, tc, id, quad);
+    final R2FilterType<R2FilterSSAOParameters> f =
+      R2FilterSSAO.newFilter(sources, g, tc, id, quad);
 
     g_fb.framebufferDrawUnbind();
     g_fb.framebufferReadUnbind();
@@ -152,18 +150,19 @@ public abstract class R2FilterSSAOContract extends R2JCGLContract
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
-    final R2FilterSSAOParametersMutable params =
-      R2FilterSSAOParametersMutable.create();
-    params.setNoiseTexture(td.getNormalTexture());
-    params.setOutputBuffer(abuffer);
-    params.setKernel(k);
-    params.setGeometryBuffer(gbuffer);
-    params.setSampleRadius(1.0f);
-    params.setSceneObserverValues(R2TestUtilities.getMatricesObserverValues());
+    final R2FilterSSAOParameters params =
+      R2FilterSSAOParameters.builder()
+        .setNoiseTexture(td.texture2DNormal())
+        .setOutputBuffer(abuffer)
+        .setKernel(k)
+        .setGeometryBuffer(gbuffer)
+        .setSampleRadius(1.0f)
+        .setSceneObserverValues(R2TestUtilities.getMatricesObserverValues())
+        .build();
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(abuffer.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(abuffer.primaryFramebuffer()));
   }
 }

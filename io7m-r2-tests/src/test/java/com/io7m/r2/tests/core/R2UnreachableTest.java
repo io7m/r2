@@ -26,7 +26,6 @@ import com.io7m.r2.core.R2RenderTargetDescriptions;
 import com.io7m.r2.core.R2Stencils;
 import com.io7m.r2.core.debug.R2DebugVisualizerDefaults;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderVerifiers;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -77,13 +76,6 @@ public final class R2UnreachableTest
     throws Throwable
   {
     R2UnreachableTest.checkUnreachable(R2DebugVisualizerDefaults.class);
-  }
-
-  @Test(expected = UnreachableCodeException.class)
-  public void testShaderVerifiers()
-    throws Throwable
-  {
-    R2UnreachableTest.checkUnreachable(R2ShaderVerifiers.class);
   }
 
   @Test(expected = UnreachableCodeException.class)

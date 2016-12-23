@@ -71,12 +71,12 @@ public final class R2LightSphericalSingle implements
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_sphere);
     return new R2LightSphericalSingle(
-      in_sphere.getArrayObject(),
-      in_pool.getFreshID());
+      in_sphere.arrayObject(),
+      in_pool.freshID());
   }
 
   @Override
-  public float getRadius()
+  public float radius()
   {
     return this.radius;
   }
@@ -90,7 +90,7 @@ public final class R2LightSphericalSingle implements
   }
 
   @Override
-  public float getFalloff()
+  public float falloff()
   {
     return this.falloff;
   }
@@ -102,13 +102,13 @@ public final class R2LightSphericalSingle implements
   }
 
   @Override
-  public PVector3FType<R2SpaceRGBType> getColor()
+  public PVector3FType<R2SpaceRGBType> color()
   {
     return this.color;
   }
 
   @Override
-  public float getIntensity()
+  public float intensity()
   {
     return this.intensity;
   }
@@ -121,39 +121,45 @@ public final class R2LightSphericalSingle implements
   }
 
   @Override
-  public PVector3FType<R2SpaceRGBType> getColorWritable()
+  public PVector3FType<R2SpaceRGBType> colorWritable()
   {
     return this.color;
   }
 
   @Override
-  public PVectorReadable3FType<R2SpaceWorldType> getOriginPosition()
+  public PVectorReadable3FType<R2SpaceWorldType> originPosition()
   {
     return this.transform.getTranslation();
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.volume;
   }
 
   @Override
-  public long getLightID()
+  public long lightID()
   {
     return this.id;
   }
 
   @Override
-  public R2TransformReadableType getTransform()
+  public R2TransformReadableType transform()
   {
     return this.transform;
   }
 
   @Override
-  public PVector3FType<R2SpaceWorldType> getOriginPositionWritable()
+  public PVector3FType<R2SpaceWorldType> originPositionWritable()
   {
     return this.transform.getTranslation();
+  }
+
+  @Override
+  public float geometryScaleFactor()
+  {
+    return this.scale_factor;
   }
 
   @Override
@@ -161,11 +167,5 @@ public final class R2LightSphericalSingle implements
   {
     this.scale_factor = Math.max(0.001f, f);
     this.transform.setScale(this.radius * this.scale_factor);
-  }
-
-  @Override
-  public float getGeometryScaleFactor()
-  {
-    return this.scale_factor;
   }
 }

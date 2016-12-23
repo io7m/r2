@@ -31,39 +31,39 @@ public interface R2MatricesObserverValuesType extends R2MatricesValuesType
    * @return The current projection
    */
 
-  R2ProjectionReadableType getProjection();
+  R2ProjectionReadableType projection();
 
   /**
    * @return The current projection matrix for an observer
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceClipType>
-  getMatrixProjection();
+  matrixProjection();
 
   /**
    * @return The current inverse projection matrix for an observer
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType>
-  getMatrixProjectionInverse();
+  matrixProjectionInverse();
 
   /**
    * @return The current view matrix for an observer
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType>
-  getMatrixView();
+  matrixView();
 
   /**
    * @return The current inverse view matrix for an observer
    */
 
   PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType>
-  getMatrixViewInverse();
+  matrixViewInverse();
 
   /**
    * @return The view rays for the current view
    */
 
-  R2ViewRaysReadableType getViewRays();
+  R2ViewRaysReadableType viewRays();
 }

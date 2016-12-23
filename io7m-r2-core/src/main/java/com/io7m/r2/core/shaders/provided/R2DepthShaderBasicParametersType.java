@@ -18,6 +18,7 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.R2TextureDefaultsType;
 import org.immutables.value.Value;
 
 /**
@@ -25,30 +26,27 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
-public interface R2DepthShaderBasicParametersType
+public interface R2DepthShaderBasicParametersType extends
+  R2DepthShaderBasicParametersValuesType
 {
-  /**
-   * @return The albedo texture for the surface
-   */
-
+  @Override
   @Value.Parameter
-  R2Texture2DUsableType getAlbedoTexture();
+  R2TextureDefaultsType textureDefaults();
 
-  /**
-   * The threshold value that defines whether or not the surface fragment will
-   * be discarded. If the opacity of the surface is less than this threshold
-   * value, the surface will be discarded. A threshold value of {@code 0.0} will
-   * result in no fragments ever being discarded.
-   *
-   * @return The threshold value
-   */
-
-  @Value.Parameter
+  @Override
   @Value.Default
-  default float getAlphaDiscardThreshold()
+  @Value.Parameter
+  default R2Texture2DUsableType albedoTexture()
   {
-    return 0.0f;
+    return R2DepthShaderBasicParametersValuesType.super.albedoTexture();
+  }
+
+  @Override
+  @Value.Default
+  @Value.Parameter
+  default float alphaDiscardThreshold()
+  {
+    return R2DepthShaderBasicParametersValuesType.super.alphaDiscardThreshold();
   }
 }

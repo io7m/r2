@@ -27,5 +27,5 @@ public interface R2IDPoolType
    * previously
    */
 
-  long getFreshID();
+  long freshID();
 }

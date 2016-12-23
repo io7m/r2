@@ -41,6 +41,7 @@ import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
 import com.io7m.jtensors.parameterized.PVector3FType;
+import com.io7m.jtensors.parameterized.PVectorI3F;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2AmbientOcclusionBuffer;
 import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
@@ -69,6 +70,7 @@ import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
 import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
+import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
@@ -76,28 +78,32 @@ import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
+import com.io7m.r2.filters.R2BilateralBlurParameters;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAware;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParameters;
 import com.io7m.r2.filters.R2FilterCompositor;
 import com.io7m.r2.filters.R2FilterCompositorItem;
 import com.io7m.r2.filters.R2FilterCompositorParameters;
-import com.io7m.r2.filters.R2FilterCompositorParametersType;
 import com.io7m.r2.filters.R2FilterSSAO;
-import com.io7m.r2.filters.R2FilterSSAOParametersMutable;
-import com.io7m.r2.filters.R2FilterSSAOParametersType;
+import com.io7m.r2.filters.R2FilterSSAOParameters;
 import com.io7m.r2.filters.R2SSAOKernel;
+import com.io7m.r2.filters.R2SSAOKernelType;
 import com.io7m.r2.filters.R2SSAONoiseTexture;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
+import com.io7m.sombrero.core.SoShaderPreprocessorType;
+import com.io7m.sombrero.core.SoShaderResolver;
+import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 // CHECKSTYLE_JAVADOC:OFF
 
@@ -120,25 +126,33 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
   private R2SurfaceShaderBasicParameters geom_shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
 
-  private R2UnitSphereType sphere;
   private R2InstanceBatchedDynamicType batched_instance;
-  private R2TransformSOT[] batched_transforms;
-  private R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader;
   private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
 
-  private R2FilterType<R2FilterCompositorParametersType> filter_compositor;
+  private R2FilterType<R2FilterCompositorParameters> filter_compositor;
   private R2FilterCompositorParameters filter_comp_parameters;
 
   private R2MainType main;
 
   private R2AmbientOcclusionBufferType ssao_buffer;
-  private R2RenderTargetPoolUsableType<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> pool_ssao;
-  private R2FilterType<R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType>> filter_blur_ssao;
-  private R2FilterBilateralBlurDepthAwareParameters<R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType, R2AmbientOcclusionBufferDescriptionType, R2AmbientOcclusionBufferUsableType> filter_blur_ssao_params;
-  private R2FilterSSAOParametersMutable filter_ssao_params;
-  private R2FilterType<R2FilterSSAOParametersType> filter_ssao;
-
-  private int frame_current;
+  private R2RenderTargetPoolUsableType<
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferUsableType> pool_ssao;
+  private R2FilterType<
+    R2FilterBilateralBlurDepthAwareParameters<
+      R2AmbientOcclusionBufferDescriptionType,
+      R2AmbientOcclusionBufferUsableType,
+      R2AmbientOcclusionBufferDescriptionType,
+      R2AmbientOcclusionBufferUsableType>> ssao_filter_blur;
+  private R2FilterBilateralBlurDepthAwareParameters<
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferUsableType,
+    R2AmbientOcclusionBufferDescriptionType,
+    R2AmbientOcclusionBufferUsableType> ssao_filter_blur_params;
+  private R2FilterSSAOParameters ssao_filter_params;
+  private R2FilterType<R2FilterSSAOParameters> ssao_filter;
+  private R2SSAOKernelType ssao_kernel;
+  private R2Texture2DType ssao_noise_texture;
 
   public ExampleSSAO1()
   {
@@ -153,7 +167,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     final R2MainType m)
   {
     this.main = NullCheck.notNull(m);
-    this.sphere = R2UnitSphere.newUnitSphere8(g);
+    final R2UnitSphereType sphere = R2UnitSphere.newUnitSphere8(g);
     this.opaques = R2SceneOpaques.newOpaques();
     this.stencils = R2SceneStencils.newMasks();
 
@@ -185,21 +199,29 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
           b.build());
     }
 
-    this.filter_ssao_params = R2FilterSSAOParametersMutable.create();
-    this.filter_ssao_params.setKernel(R2SSAOKernel.newKernel(64));
-    this.filter_ssao_params.setExponent(1.0f);
-    this.filter_ssao_params.setSampleRadius(1.0f);
-    this.filter_ssao_params.setGeometryBuffer(this.geom_buffer);
-    this.filter_ssao_params.setNoiseTexture(
+    this.ssao_kernel =
+      R2SSAOKernel.newKernel(64);
+
+    this.ssao_noise_texture =
       R2SSAONoiseTexture.newNoiseTexture(
         g.getTextures(),
-        this.main.getTextureUnitAllocator().getRootContext()));
-    this.filter_ssao_params.setOutputBuffer(this.ssao_buffer);
+        this.main.getTextureUnitAllocator().getRootContext());
 
-    this.filter_ssao = R2FilterSSAO.newFilter(
-      m.getShaderSources(),
+    this.ssao_filter_params =
+      R2FilterSSAOParameters.builder()
+        .setKernel(R2SSAOKernel.newKernel(64))
+        .setExponent(1.0f)
+        .setSampleRadius(1.0f)
+        .setGeometryBuffer(this.geom_buffer)
+        .setNoiseTexture(R2SSAONoiseTexture.newNoiseTexture(
+          g.getTextures(),
+          this.main.getTextureUnitAllocator().getRootContext()))
+        .setOutputBuffer(this.ssao_buffer)
+        .build();
+
+    this.ssao_filter = R2FilterSSAO.newFilter(
+      m.getShaderPreprocessingEnvironment(),
       g,
-      m.getTextureDefaults(),
       m.getTextureUnitAllocator().getRootContext(),
       m.getIDPool(),
       m.getUnitQuad());
@@ -213,44 +235,21 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       this.pool_ssao = R2AmbientOcclusionBufferPool.newPool(g, soft, hard);
     }
 
-    {
-      this.filter_blur_ssao_params =
-        R2FilterBilateralBlurDepthAwareParameters.newParameters(
-          this.ssao_buffer,
-          R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
-          this.geom_buffer.getDepthTexture(),
-          this.ssao_buffer,
-          R2AmbientOcclusionBufferUsableType::getAmbientOcclusionTexture,
-          (d, a) -> {
-            final R2AmbientOcclusionBufferDescription.Builder b =
-              R2AmbientOcclusionBufferDescription.builder();
-            b.from(d);
-            b.setArea(a);
-            return b.build();
-          },
-          this.pool_ssao);
-
-      this.filter_blur_ssao_params.setBlurPasses(1);
-      this.filter_blur_ssao_params.setBlurRadius(2.0f);
-      this.filter_blur_ssao_params.setBlurScale(1.0f);
-      this.filter_blur_ssao_params.setBlurSharpness(4.0f);
-
-      this.filter_blur_ssao =
-        R2FilterBilateralBlurDepthAware.newFilter(
-          m.getShaderSources(),
-          g,
-          m.getTextureDefaults(),
-          this.pool_ssao,
-          m.getIDPool(),
-          m.getUnitQuad());
-    }
+    this.ssao_filter_blur =
+      R2FilterBilateralBlurDepthAware.newFilter(
+        m.getShaderPreprocessingEnvironment(),
+        g,
+        m.getTextureDefaults(),
+        this.pool_ssao,
+        m.getIDPool(),
+        m.getUnitQuad());
 
     {
       final R2FilterCompositorParameters.Builder b =
         R2FilterCompositorParameters.builder();
 
       b.addItems(R2FilterCompositorItem.of(
-        this.ssao_buffer.getAmbientOcclusionTexture(),
+        this.ssao_buffer.ambientOcclusionTexture(),
         area,
         1.0f,
         Optional.empty()));
@@ -259,7 +258,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       final long y = 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getAlbedoEmissiveTexture(),
+        this.geom_buffer.albedoEmissiveTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -269,7 +268,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getNormalTexture(),
+        this.geom_buffer.normalTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -289,7 +288,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
       x += 128L + 20L;
 
       b.addItems(R2FilterCompositorItem.of(
-        this.geom_buffer.getDepthTexture(),
+        this.geom_buffer.depthTexture(),
         AreaInclusiveUnsignedL.of(
           new UnsignedRangeInclusiveL(x, x + 128L),
           new UnsignedRangeInclusiveL(y, y + 96L)),
@@ -301,7 +300,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
 
     this.filter_compositor =
       R2FilterCompositor.newFilter(
-        m.getShaderSources(),
+        m.getShaderPreprocessingEnvironment(),
         m.getTextureDefaults(),
         g,
         m.getIDPool(),
@@ -318,8 +317,8 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     transform.getTranslation().set3F(0.0f, -1.0f, 0.0f);
 
     this.instance =
-      R2InstanceSingle.newInstance(
-        id_pool, mesh, transform, PMatrixI3x3F.identity());
+      R2InstanceSingle.of(
+        id_pool.freshID(), mesh, transform, PMatrixI3x3F.identity());
 
     final int width = 16;
     final int height = 16;
@@ -330,10 +329,10 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
         id_pool,
         g.getArrayBuffers(),
         g.getArrayObjects(),
-        this.sphere.getArrayObject(),
+        sphere.arrayObject(),
         instance_count);
 
-    this.batched_transforms = new R2TransformSOT[instance_count];
+    final R2TransformSOT[] batched_transforms = new R2TransformSOT[instance_count];
 
     int index = 0;
     for (int x = 0; x < width; ++x) {
@@ -346,36 +345,42 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
           final float fy = (float) (y - (height / 2));
           final float fz = (float) -z * 1.5f;
           tr.set3F(fx, fy, fz);
-          this.batched_transforms[index] = t;
-          this.batched_instance.enableInstance(this.batched_transforms[index]);
+          batched_transforms[index] = t;
+          this.batched_instance.enableInstance(batched_transforms[index]);
           ++index;
         }
       }
     }
 
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final SoShaderPreprocessorConfig.Builder b =
+      SoShaderPreprocessorConfig.builder();
+    b.setResolver(SoShaderResolver.create());
+    b.setVersion(OptionalInt.of(330));
+    final SoShaderPreprocessorType p =
+      SoShaderPreprocessorJCPP.create(b.build());
+    final R2ShaderPreprocessingEnvironmentType sources =
+      R2ShaderPreprocessingEnvironment.create(p);
 
-    this.geom_shader =
-      R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(),
-        sources,
-        id_pool);
-    this.geom_shader_params =
-      R2SurfaceShaderBasicParameters.newParameters(
-        m.getTextureDefaults());
-    this.geom_shader_params.getSpecularColor().set3F(1.0f, 1.0f, 1.0f);
-    this.geom_shader_params.setSpecularExponent(64.0f);
-    this.geom_material = R2MaterialOpaqueSingle.newMaterial(
-      id_pool, this.geom_shader, this.geom_shader_params);
+    {
+      this.geom_shader =
+        R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
+      final R2SurfaceShaderBasicParameters gsp =
+        R2SurfaceShaderBasicParameters.builder()
+          .setSpecularColor(new PVectorI3F<>(1.0f, 1.0f, 1.0f))
+          .setSpecularExponent(64.0f)
+          .build();
+      this.geom_material = R2MaterialOpaqueSingle.of(
+        id_pool.freshID(), this.geom_shader, gsp);
+    }
 
-    this.batched_geom_shader =
-      R2SurfaceShaderBasicBatched.newShader(
-        g.getShaders(),
-        sources,
-        id_pool);
-    this.batched_geom_material = R2MaterialOpaqueBatched.newMaterial(
-      id_pool, this.batched_geom_shader, this.geom_shader_params);
+    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader = R2SurfaceShaderBasicBatched.newShader(
+      g.getShaders(),
+      sources,
+      id_pool);
+    this.batched_geom_material = R2MaterialOpaqueBatched.of(
+      id_pool.freshID(),
+      batched_geom_shader,
+      this.geom_material.shaderParameters());
 
     {
       final JCGLClearSpecification.Builder csb =
@@ -418,13 +423,12 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
 
 
     final R2MatricesType matrices = m.getMatrices();
-    this.frame_current = frame;
 
     matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
       final JCGLTextureUnitContextParentType uc =
         t.main.getTextureUnitAllocator().getRootContext();
       final JCGLFramebufferUsableType gbuffer_fb =
-        t.geom_buffer.getPrimaryFramebuffer();
+        t.geom_buffer.primaryFramebuffer();
 
       final JCGLFramebuffersType g_fb =
         t.g33.getFramebuffers();
@@ -450,10 +454,10 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
         mo,
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
-        t.geom_buffer.getArea(),
+        t.geom_buffer.area(),
         t.stencils);
       t.main.getGeometryRenderer().renderGeometry(
-        t.geom_buffer.getArea(),
+        t.geom_buffer.area(),
         Optional.empty(),
         pro_root,
         t.main.getTextureUnitAllocator().getRootContext(),
@@ -461,11 +465,51 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
         t.opaques);
       g_fb.framebufferDrawUnbind();
 
-      t.filter_ssao_params.setSceneObserverValues(mo);
-      t.filter_ssao.runFilter(pro_root, uc, t.filter_ssao_params);
+      /*
+       * Evaluate and blur ambient occlusion.
+       */
 
-      t.filter_blur_ssao_params.setSceneObserverValues(mo);
-      t.filter_blur_ssao.runFilter(pro_root, uc, t.filter_blur_ssao_params);
+      t.ssao_filter_params =
+        R2FilterSSAOParameters.builder()
+          .setKernel(t.ssao_kernel)
+          .setExponent(1.0f)
+          .setSampleRadius(1.0f)
+          .setGeometryBuffer(t.geom_buffer)
+          .setNoiseTexture(t.ssao_noise_texture)
+          .setOutputBuffer(t.ssao_buffer)
+          .setSceneObserverValues(mo)
+          .build();
+
+      t.ssao_filter.runFilter(pro_root, uc, t.ssao_filter_params);
+
+      final R2BilateralBlurParameters blur =
+        R2BilateralBlurParameters.builder()
+          .setBlurPasses(1)
+          .setBlurSize(2.0f)
+          .setBlurScale(1.0f)
+          .setBlurSharpness(4.0f)
+          .build();
+
+      t.ssao_filter_blur_params =
+        R2FilterBilateralBlurDepthAwareParameters.of(
+          t.ssao_buffer,
+          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
+          t.ssao_buffer,
+          R2AmbientOcclusionBufferUsableType::ambientOcclusionTexture,
+          t.pool_ssao,
+          (d, a) -> {
+            final R2AmbientOcclusionBufferDescription.Builder b =
+              R2AmbientOcclusionBufferDescription.builder();
+            b.from(d);
+            b.setArea(a);
+            return b.build();
+          },
+          mo,
+          t.geom_buffer.depthTexture(),
+          blur
+        );
+
+      t.ssao_filter_blur.runFilter(pro_root, uc, t.ssao_filter_blur_params);
 
       g_cb.colorBufferMask(true, true, true, true);
       g_db.depthBufferWriteEnable();

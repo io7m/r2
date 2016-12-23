@@ -61,17 +61,17 @@ public final class R2MeshBasic implements R2MeshBasicType
     this.vertices = NullCheck.notNull(in_vertices);
     this.triangles = NullCheck.notNull(in_triangles);
 
-    if (R2MeshBasic.LOG.isTraceEnabled()) {
-      R2MeshBasic.LOG.trace("allocated mesh");
-      R2MeshBasic.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("allocated mesh");
+      LOG.trace(
         "mesh positions: {}", Long.valueOf(this.positions.size64()));
-      R2MeshBasic.LOG.trace(
+      LOG.trace(
         "mesh normals:   {}", Long.valueOf(this.normals.size64()));
-      R2MeshBasic.LOG.trace(
+      LOG.trace(
         "mesh uvs:       {}", Long.valueOf(this.uvs.size64()));
-      R2MeshBasic.LOG.trace(
+      LOG.trace(
         "mesh vertices:  {}", Long.valueOf(this.vertices.size64()));
-      R2MeshBasic.LOG.trace(
+      LOG.trace(
         "mesh triangles: {}", Long.valueOf(this.triangles.size64()));
     }
   }
@@ -189,8 +189,8 @@ public final class R2MeshBasic implements R2MeshBasicType
     @Override
     public long addPosition(final PVectorReadable3DType<R2SpaceObjectType> p)
     {
-      if (R2MeshBasic.LOG.isTraceEnabled()) {
-        R2MeshBasic.LOG.trace(
+      if (LOG.isTraceEnabled()) {
+        LOG.trace(
           "[{}] position {}", Long.valueOf(this.positions.size64()), p);
       }
 
@@ -201,8 +201,8 @@ public final class R2MeshBasic implements R2MeshBasicType
     @Override
     public long addNormal(final PVectorReadable3DType<R2SpaceObjectType> n)
     {
-      if (R2MeshBasic.LOG.isTraceEnabled()) {
-        R2MeshBasic.LOG.trace(
+      if (LOG.isTraceEnabled()) {
+        LOG.trace(
           "[{}] normal {}", Long.valueOf(this.normals.size64()), n);
       }
 
@@ -213,8 +213,8 @@ public final class R2MeshBasic implements R2MeshBasicType
     @Override
     public long addUV(final PVectorReadable2DType<R2SpaceTextureType> u)
     {
-      if (R2MeshBasic.LOG.isTraceEnabled()) {
-        R2MeshBasic.LOG.trace(
+      if (LOG.isTraceEnabled()) {
+        LOG.trace(
           "[{}] uv {}", Long.valueOf(this.uvs.size64()), u);
       }
 
@@ -228,8 +228,8 @@ public final class R2MeshBasic implements R2MeshBasicType
       final long n,
       final long u)
     {
-      if (R2MeshBasic.LOG.isTraceEnabled()) {
-        R2MeshBasic.LOG.trace(
+      if (LOG.isTraceEnabled()) {
+        LOG.trace(
           "[{}] vertex {} {} {}",
           Long.valueOf(this.vertices.size64()),
           Long.valueOf(p),
@@ -257,8 +257,8 @@ public final class R2MeshBasic implements R2MeshBasicType
       final long v1,
       final long v2)
     {
-      if (R2MeshBasic.LOG.isTraceEnabled()) {
-        R2MeshBasic.LOG.trace(
+      if (LOG.isTraceEnabled()) {
+        LOG.trace(
           "[{}] triangle {} {} {}",
           Long.valueOf(this.triangles.size64()),
           Long.valueOf(v0),

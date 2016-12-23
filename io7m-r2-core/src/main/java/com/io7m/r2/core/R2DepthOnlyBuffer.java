@@ -37,7 +37,6 @@ import com.io7m.jcanephora.renderstate.JCGLDepthState;
 import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
 import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -60,16 +59,15 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
   private static final JCGLClearSpecification CLEAR_SPEC;
 
   static {
-    final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
-    k.setDepthState(JCGLDepthState.of(
-      JCGLDepthStrict.DEPTH_STRICT_ENABLED,
-      Optional.empty(),
-      JCGLDepthWriting.DEPTH_WRITE_ENABLED,
-      JCGLDepthClamping.DEPTH_CLAMP_ENABLED
-    ));
-    k.setColorBufferMaskingState(
-      JCGLColorBufferMaskingState.of(false, false, false, false));
-    CLEAR_STATE = JCGLRenderState.builder().from(k).build();
+    CLEAR_STATE = JCGLRenderState.builder()
+      .setDepthState(JCGLDepthState.of(
+        JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+        Optional.empty(),
+        JCGLDepthWriting.DEPTH_WRITE_ENABLED,
+        JCGLDepthClamping.DEPTH_CLAMP_ENABLED))
+      .setColorBufferMaskingState(
+        JCGLColorBufferMaskingState.of(false, false, false, false))
+      .build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
       Optional.empty(),
@@ -78,9 +76,9 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
       true);
   }
 
-  private final R2Texture2DType                  t_depth;
-  private final JCGLFramebufferType              framebuffer;
-  private final UnsignedRangeInclusiveL          range;
+  private final R2Texture2DType t_depth;
+  private final JCGLFramebufferType framebuffer;
+  private final UnsignedRangeInclusiveL range;
   private final R2DepthOnlyBufferDescriptionType desc;
 
   private R2DepthOnlyBuffer(
@@ -93,7 +91,7 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
     this.t_depth = NullCheck.notNull(in_t_depth);
 
     long size = 0L;
-    size += this.t_depth.get().getRange().getInterval();
+    size += this.t_depth.texture().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
   }
 
@@ -119,7 +117,7 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
     NullCheck.notNull(tc);
     NullCheck.notNull(desc);
 
-    final AreaInclusiveUnsignedLType area = desc.getArea();
+    final AreaInclusiveUnsignedLType area = desc.area();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -130,7 +128,7 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
           g_t,
           range_x.getInterval(),
           range_y.getInterval(),
-          R2DepthOnlyBuffer.formatForPrecision(desc.getDepthPrecision()),
+          formatForPrecision(desc.depthPrecision()),
           JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
@@ -139,7 +137,7 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
       final R2Texture2DType rt_depth = R2Texture2DStatic.of(p_depth.getRight());
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-      fbb.attachDepthTexture2D(rt_depth.get());
+      fbb.attachDepthTexture2D(rt_depth.texture());
 
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
       return new R2DepthOnlyBuffer(fb, desc, rt_depth);
@@ -164,25 +162,25 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
   }
 
   @Override
-  public R2Texture2DUsableType getDepthTexture()
+  public R2Texture2DUsableType depthTexture()
   {
     return this.t_depth;
   }
 
   @Override
-  public JCGLFramebufferUsableType getPrimaryFramebuffer()
+  public JCGLFramebufferUsableType primaryFramebuffer()
   {
     return this.framebuffer;
   }
 
   @Override
-  public AreaInclusiveUnsignedLType getArea()
+  public AreaInclusiveUnsignedLType area()
   {
-    return this.t_depth.get().textureGetArea();
+    return this.t_depth.texture().textureGetArea();
   }
 
   @Override
-  public R2DepthOnlyBufferDescriptionType getDescription()
+  public R2DepthOnlyBufferDescriptionType description()
   {
     return this.desc;
   }

@@ -1,0 +1,12 @@
+[part
+  [title API Documentation]
+  [section [title API Documentation] [id api]
+  [subsection [title Javadoc]
+    [paragraph
+      API documentation for the package is provided via the included
+      [link-ext [target "apidocs"] Javadoc].]]
+  [subsection [title GLSL Doxygen]
+    [paragraph
+      API documentation for the GLSL sources are provided via the included
+      [link-ext [target "doxygen/io7m-r2-shaders-${project.version}"] Doxygen].]]
+]]

@@ -56,7 +56,6 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
   private R2StencilRendererType stencil_renderer;
   private R2MatricesType matrices;
   private R2ProjectionFOV projection;
-  private R2UnitQuadType quad;
   private R2InstanceSingleType instance;
   private R2MainType main;
 
@@ -75,7 +74,7 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
     this.stencils = R2SceneStencils.newMasks();
     this.stencil_renderer = m.getStencilRenderer();
     this.matrices = m.getMatrices();
-    this.quad = R2UnitQuad.newUnitQuad(g);
+    final R2UnitQuadType quad = R2UnitQuad.newUnitQuad(g);
 
     this.projection = R2ProjectionFOV.newFrustumWith(
       m.getProjectionMatrices(),
@@ -88,9 +87,9 @@ public final class ExampleStencilPositive implements R2ExampleCustomType
       new VectorI3F(0.0f, 1.0f, 0.0f));
 
     final R2TransformSiOT transform = R2TransformSiOT.newTransform();
-    this.instance = R2InstanceSingle.newInstance(
-      m.getIDPool(),
-      this.quad.getArrayObject(),
+    this.instance = R2InstanceSingle.of(
+      m.getIDPool().freshID(),
+      quad.arrayObject(),
       transform,
       PMatrixI3x3F.identity());
   }

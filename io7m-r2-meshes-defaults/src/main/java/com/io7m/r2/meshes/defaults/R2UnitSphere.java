@@ -16,6 +16,7 @@
 
 package com.io7m.r2.meshes.defaults;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLArrayBufferType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
@@ -37,7 +38,6 @@ import com.io7m.r2.meshes.binary.R2MBReaderType;
 import com.io7m.r2.meshes.binary.R2MBUnmappedReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,7 +93,7 @@ public final class R2UnitSphere implements R2UnitSphereType
     final JCGLUsageHint index_usage = JCGLUsageHint.USAGE_STATIC_DRAW;
     final R2VertexCursorPUNT16 ci = R2VertexCursorPUNT16.getInstance();
     final String name = "sphere8.r2b";
-    return R2UnitSphere.newUnitSphere(g, array_usage, index_usage, ci, name);
+    return newUnitSphere(g, array_usage, index_usage, ci, name);
   }
 
   private static <T extends
@@ -105,7 +105,7 @@ public final class R2UnitSphere implements R2UnitSphereType
     final T ci,
     final String name)
   {
-    R2UnitSphere.LOG.debug("allocating unit sphere");
+    LOG.debug("allocating unit sphere");
 
     final R2MeshArrayObjectSynchronousAdapterType adapter =
       R2MeshArrayObjectSynchronousAdapter.newAdapter(
@@ -126,9 +126,9 @@ public final class R2UnitSphere implements R2UnitSphereType
 
         if (adapter.hasFailed()) {
           final Optional<Throwable> ex_opt =
-            adapter.getErrorException();
+            adapter.errorException();
           final String ex_msg =
-            adapter.getErrorMessage();
+            adapter.errorMessage();
 
           if (ex_opt.isPresent()) {
             throw new R2ExceptionIO(ex_msg, ex_opt.get());
@@ -137,9 +137,9 @@ public final class R2UnitSphere implements R2UnitSphereType
         }
 
         return new R2UnitSphere(
-          adapter.getArrayBuffer(),
-          adapter.getArrayObject(),
-          adapter.getIndexBuffer());
+          adapter.arrayBuffer(),
+          adapter.arrayObject(),
+          adapter.indexBuffer());
       }
     } catch (final IOException e) {
       throw new R2ExceptionIO(e.getMessage(), e);
@@ -163,7 +163,9 @@ public final class R2UnitSphere implements R2UnitSphereType
   public static double getUVSphereTriangleInteriorAngle(
     final int s)
   {
-    Assertive.require(s > 0, "Segment count must be positive");
+    Preconditions.checkPreconditionI(
+      s, s > 0, c -> "Segment count must be positive");
+
     return (2.0 * Math.PI) / (double) s;
   }
 
@@ -182,10 +184,12 @@ public final class R2UnitSphere implements R2UnitSphereType
     final double r,
     final int s)
   {
-    Assertive.require(s > 0, "Segment count must be positive");
-    Assertive.require(r > 0.0, "Radius must be positive");
+    Preconditions.checkPreconditionI(
+      s, s > 0, c -> "Segment count must be positive");
+    Preconditions.checkPreconditionD(
+      r, r > 0.0, c -> "Radius must be positive");
 
-    final double a = R2UnitSphere.getUVSphereTriangleInteriorAngle(s);
+    final double a = getUVSphereTriangleInteriorAngle(s);
     final double rs = r * r;
     return 0.5 * rs * Math.sin(a);
   }
@@ -205,11 +209,13 @@ public final class R2UnitSphere implements R2UnitSphereType
     final double r,
     final int s)
   {
-    Assertive.require(s > 0, "Segment count must be positive");
-    Assertive.require(r > 0.0, "Radius must be positive");
+    Preconditions.checkPreconditionI(
+      s, s > 0, c -> "Segment count must be positive");
+    Preconditions.checkPreconditionD(
+      r, r > 0.0, c -> "Radius must be positive");
 
-    final double ac = R2UnitSphere.getCircleArea(r);
-    final double aa = R2UnitSphere.getUVSphereApproximationArea(r, s);
+    final double ac = getCircleArea(r);
+    final double aa = getUVSphereApproximationArea(r, s);
     return ac / aa;
   }
 
@@ -227,10 +233,13 @@ public final class R2UnitSphere implements R2UnitSphereType
     final double r,
     final int s)
   {
-    Assertive.require(s > 0, "Segment count must be positive");
-    Assertive.require(r > 0.0, "Radius must be positive");
+    Preconditions.checkPreconditionI(
+      s, s > 0, c -> "Segment count must be positive");
+    Preconditions.checkPreconditionD(
+      r, r > 0.0, c -> "Radius must be positive");
+
     final double ds = (double) s;
-    final double a = R2UnitSphere.getUVSphereApproximationTriangleArea(r, s);
+    final double a = getUVSphereApproximationTriangleArea(r, s);
     return ds * a;
   }
 
@@ -245,7 +254,9 @@ public final class R2UnitSphere implements R2UnitSphereType
   public static double getCircleArea(
     final double r)
   {
-    Assertive.require(r > 0.0, "Radius must be positive");
+    Preconditions.checkPreconditionD(
+      r, r > 0.0, c -> "Radius must be positive");
+
     return Math.PI * (r * r);
   }
 
@@ -261,7 +272,7 @@ public final class R2UnitSphere implements R2UnitSphereType
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.array_object;
   }

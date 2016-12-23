@@ -28,7 +28,7 @@ public interface R2LightWithShadowSingleType extends R2LightSingleType
    * @return The shadow for the light
    */
 
-  R2ShadowType getShadow();
+  R2ShadowType shadow();
 
   /**
    * Match on the type of light.

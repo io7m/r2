@@ -50,10 +50,10 @@ import java.util.List;
 
 public final class R2EyeZBuffer implements R2EyeZBufferType
 {
-  private final R2Texture2DType            t_eye;
-  private final R2Texture2DType            t_depth;
-  private final JCGLFramebufferType        framebuffer;
-  private final UnsignedRangeInclusiveL    range;
+  private final R2Texture2DType t_eye;
+  private final R2Texture2DType t_depth;
+  private final JCGLFramebufferType framebuffer;
+  private final UnsignedRangeInclusiveL range;
   private final AreaInclusiveUnsignedLType area;
 
   private R2EyeZBuffer(
@@ -66,10 +66,10 @@ public final class R2EyeZBuffer implements R2EyeZBufferType
     this.t_depth = NullCheck.notNull(in_t_depth);
 
     long size = 0L;
-    size += this.t_eye.get().getRange().getInterval();
-    size += this.t_depth.get().getRange().getInterval();
+    size += this.t_eye.texture().getRange().getInterval();
+    size += this.t_depth.texture().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
-    this.area = in_t_eye.get().textureGetArea();
+    this.area = in_t_eye.texture().textureGetArea();
   }
 
   /**
@@ -125,8 +125,11 @@ public final class R2EyeZBuffer implements R2EyeZBufferType
       final R2Texture2DType rt_depth = R2Texture2DStatic.of(p_depth.getRight());
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_eye.get());
-      fbb.attachDepthStencilTexture2D(rt_depth.get());
+      fbb.attachColorTexture2DAt(
+        points.get(0),
+        buffers.get(0),
+        rt_eye.texture());
+      fbb.attachDepthStencilTexture2D(rt_depth.texture());
 
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
       return new R2EyeZBuffer(fb, rt_eye, rt_depth);
@@ -136,19 +139,19 @@ public final class R2EyeZBuffer implements R2EyeZBufferType
   }
 
   @Override
-  public R2Texture2DUsableType getEyeZTexture()
+  public R2Texture2DUsableType eyeZTexture()
   {
     return this.t_eye;
   }
 
   @Override
-  public JCGLFramebufferUsableType getFramebuffer()
+  public JCGLFramebufferUsableType framebuffer()
   {
     return this.framebuffer;
   }
 
   @Override
-  public AreaInclusiveUnsignedLType getArea()
+  public AreaInclusiveUnsignedLType area()
   {
     return this.area;
   }

@@ -19,6 +19,7 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jtensors.parameterized.PMatrixReadable3x3FType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
+import org.immutables.value.Value;
 
 /**
  * <p>The type of single instances.</p>
@@ -27,23 +28,32 @@ import com.io7m.r2.spaces.R2SpaceTextureType;
  * containing mesh data, a per-instance UV matrix, and a transform.</p>
  */
 
+@R2ImmutableStyleType
+@Value.Immutable
 public interface R2InstanceSingleType extends R2InstanceType
 {
-  /**
-   * @return The instance transform
-   */
-
-  R2TransformReadableType getTransform();
-
-  /**
-   * @return The instance UV matrix
-   */
-
-  PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> getUVMatrix();
+  @Override
+  @Value.Parameter
+  long instanceID();
 
   /**
    * @return The instance array object
    */
 
-  JCGLArrayObjectUsableType getArrayObject();
+  @Value.Parameter
+  JCGLArrayObjectUsableType arrayObject();
+
+  /**
+   * @return The instance transform
+   */
+
+  @Value.Parameter
+  R2TransformReadableType transform();
+
+  /**
+   * @return The instance UV matrix
+   */
+
+  @Value.Parameter
+  PMatrixReadable3x3FType<R2SpaceTextureType, R2SpaceTextureType> uvMatrix();
 }

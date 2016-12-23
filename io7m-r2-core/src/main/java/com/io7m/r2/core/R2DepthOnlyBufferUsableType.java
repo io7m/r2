@@ -27,5 +27,5 @@ public interface R2DepthOnlyBufferUsableType
    * @return The depth texture
    */
 
-  R2Texture2DUsableType getDepthTexture();
+  R2Texture2DUsableType depthTexture();
 }

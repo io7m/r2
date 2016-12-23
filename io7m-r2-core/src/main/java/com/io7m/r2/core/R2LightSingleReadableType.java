@@ -29,13 +29,13 @@ public interface R2LightSingleReadableType extends R2LightReadableType
    * @return The array object that will be used to render the light geometry
    */
 
-  JCGLArrayObjectUsableType getArrayObject();
+  JCGLArrayObjectUsableType arrayObject();
 
   /**
    * @return The transform for the light origin
    */
 
-  R2TransformReadableType getTransform();
+  R2TransformReadableType transform();
 
   /**
    * Match on the type of light.

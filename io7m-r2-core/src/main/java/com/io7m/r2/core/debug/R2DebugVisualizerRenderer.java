@@ -16,7 +16,10 @@
 
 package com.io7m.r2.core.debug;
 
+import com.io7m.jaffirm.core.Invariants;
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
+import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.JCGLDepthFunction;
 import com.io7m.jcanephora.core.JCGLFaceSelection;
 import com.io7m.jcanephora.core.JCGLFaceWindingOrder;
@@ -37,17 +40,19 @@ import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
+import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
-import com.io7m.jtensors.VectorM4F;
-import com.io7m.jtensors.VectorReadable4FType;
 import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.jtensors.parameterized.PVectorI4F;
+import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceBatchedType;
+import com.io7m.r2.core.R2InstanceBillboardedType;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2LightScreenSingleType;
@@ -55,6 +60,7 @@ import com.io7m.r2.core.R2LightSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightVolumeSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
+import com.io7m.r2.core.R2MaterialOpaqueBillboardedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2SceneLightsClipGroupConsumerType;
@@ -62,25 +68,35 @@ import com.io7m.r2.core.R2SceneLightsConsumerType;
 import com.io7m.r2.core.R2SceneLightsGroupConsumerType;
 import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaquesConsumerType;
-import com.io7m.r2.core.R2SceneOpaquesType;
+import com.io7m.r2.core.R2SceneOpaquesReadableType;
 import com.io7m.r2.core.R2TransformST;
 import com.io7m.r2.core.R2UnitSphereUsableType;
+import com.io7m.r2.core.shaders.provided.R2ShaderDebugColorVerticesWorldPosition;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualBatched;
+import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualBillboarded;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualScreen;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
+import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -99,31 +115,41 @@ public final class R2DebugVisualizerRenderer implements
 
   private final JCGLInterfaceGL33Type g;
 
-  private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
-  private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
-  private final R2ShaderInstanceSingleScreenType<VectorReadable4FType> shader_screen;
+  private final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> shader_single;
+  private final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> shader_batched;
+  private final R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>> shader_billboarded;
+  private final R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>> shader_screen;
+  private final R2ShaderInstanceSingleScreenType<Unit> shader_lines;
 
   private final JCGLRenderState render_geom_state_base;
   private final OpaqueConsumer opaque_consumer;
   private final LightConsumer light_consumer;
+  private final R2DebugLineSegmentsBatch lines_batch;
+
+  private final R2ShaderParametersViewMutable params_view;
+  private final R2ShaderParametersMaterialMutable<Object> params_material;
 
   private R2DebugVisualizerRenderer(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader_single = R2ShaderDebugVisualSingle.newShader(
-      this.g.getShaders(), in_sources, in_pool);
+      this.g.getShaders(), in_shader_env, in_pool);
     this.shader_batched = R2ShaderDebugVisualBatched.newShader(
-      this.g.getShaders(), in_sources, in_pool);
+      this.g.getShaders(), in_shader_env, in_pool);
+    this.shader_billboarded = R2ShaderDebugVisualBillboarded.newShader(
+      this.g.getShaders(), in_shader_env, in_pool);
     this.shader_screen = R2ShaderDebugVisualScreen.newShader(
-      this.g.getShaders(), in_sources, in_pool);
+      this.g.getShaders(), in_shader_env, in_pool);
+    this.shader_lines = R2ShaderDebugColorVerticesWorldPosition.newShader(
+      this.g.getShaders(), in_shader_env, in_pool);
 
     {
       final JCGLRenderState.Builder b = JCGLRenderState.builder();
 
-      /**
+      /*
        * Only front faces are rendered.
        */
 
@@ -131,7 +157,7 @@ public final class R2DebugVisualizerRenderer implements
         JCGLFaceSelection.FACE_BACK,
         JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
-      /**
+      /*
        * Enable depth testing and clamping. Note that the geometry in the
        * scene was originally rendered with DEPTH_LESS_THAN, so overwriting
        * is allowed here with DEPTH_LESS_THAN_OR_EQUAL.
@@ -144,7 +170,7 @@ public final class R2DebugVisualizerRenderer implements
         JCGLDepthClamping.DEPTH_CLAMP_ENABLED
       ));
 
-      /**
+      /*
        * Only render wireframes.
        */
 
@@ -153,33 +179,41 @@ public final class R2DebugVisualizerRenderer implements
       this.render_geom_state_base = b.build();
     }
 
-    this.opaque_consumer = new OpaqueConsumer(
-      this.g,
-      this.shader_single,
-      this.shader_batched);
-    this.light_consumer = new LightConsumer(
-      this.g,
-      this.shader_single,
-      this.shader_batched,
-      this.shader_screen);
+    this.opaque_consumer =
+      new OpaqueConsumer(
+        this.g,
+        this.shader_single,
+        this.shader_batched,
+        this.shader_billboarded);
+    this.light_consumer =
+      new LightConsumer(
+        this.g,
+        this.shader_single,
+        this.shader_batched,
+        this.shader_screen);
+
+    this.lines_batch = new R2DebugLineSegmentsBatch(this.g);
+
+    this.params_view = R2ShaderParametersViewMutable.create();
+    this.params_material = R2ShaderParametersMaterialMutable.create();
   }
 
   /**
    * Construct a new renderer.
    *
-   * @param in_g       An OpenGL interface
-   * @param in_pool    The ID pool
-   * @param in_sources Access to shader sources
+   * @param in_g          An OpenGL interface
+   * @param in_pool       The ID pool
+   * @param in_shader_env Access to shader sources
    *
    * @return A new renderer
    */
 
   public static R2DebugVisualizerRendererType newRenderer(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return new R2DebugVisualizerRenderer(in_g, in_sources, in_pool);
+    return new R2DebugVisualizerRenderer(in_g, in_shader_env, in_pool);
   }
 
   @Override
@@ -188,7 +222,7 @@ public final class R2DebugVisualizerRenderer implements
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
     final R2MatricesObserverType m,
-    final R2DebugVisualizerRendererParametersType s)
+    final R2DebugVisualizerRendererParameters s)
   {
     NullCheck.notNull(area);
     NullCheck.notNull(pc);
@@ -196,27 +230,245 @@ public final class R2DebugVisualizerRenderer implements
     NullCheck.notNull(m);
     NullCheck.notNull(s);
 
-    Assertive.require(!this.isDeleted(), "Renderer not deleted");
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Renderer must not be deleted");
 
     final JCGLProfilingContextType pc_base =
       pc.getChildContext("debug-visualizer");
 
-    final JCGLProfilingContextType pc_opaques =
-      pc_base.getChildContext("opaques");
-    pc_opaques.startMeasuringIfEnabled();
-    try {
-      this.renderSceneOpaques(area, uc, m, s);
-    } finally {
-      pc_opaques.stopMeasuringIfEnabled();
+    {
+      final JCGLProfilingContextType pc_opaques =
+        pc_base.getChildContext("opaques");
+      pc_opaques.startMeasuringIfEnabled();
+      try {
+        this.renderSceneOpaques(area, uc, m, s);
+      } finally {
+        pc_opaques.stopMeasuringIfEnabled();
+      }
     }
 
-    final JCGLProfilingContextType pc_lights =
-      pc_base.getChildContext("lights");
-    pc_lights.startMeasuringIfEnabled();
-    try {
-      this.renderSceneLights(area, uc, m, s);
-    } finally {
-      pc_lights.stopMeasuringIfEnabled();
+    {
+      final JCGLProfilingContextType pc_lights =
+        pc_base.getChildContext("lights");
+      pc_lights.startMeasuringIfEnabled();
+      try {
+        this.renderSceneLights(area, uc, m, s);
+      } finally {
+        pc_lights.stopMeasuringIfEnabled();
+      }
+    }
+
+    {
+      final JCGLProfilingContextType pc_extras =
+        pc_base.getChildContext("extras");
+      pc_extras.startMeasuringIfEnabled();
+      try {
+        this.renderSceneExtras(area, uc, m, s);
+      } finally {
+        pc_extras.stopMeasuringIfEnabled();
+      }
+    }
+  }
+
+  private void renderSceneExtras(
+    final AreaInclusiveUnsignedLType area,
+    final JCGLTextureUnitContextParentType uc,
+    final R2MatricesObserverType m,
+    final R2DebugVisualizerRendererParametersType p)
+  {
+    final R2DebugInstancesType extras = p.debugInstances();
+    this.renderSceneExtrasLineSegments(area, uc, m, extras);
+    this.renderSceneExtrasBoxes(area, uc, m, p, extras);
+    this.renderSceneExtrasInstanceSingles(area, uc, m, p, extras);
+  }
+
+  @SuppressWarnings("unchecked")
+  private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+    final JCGLTextureUnitContextMutableType tc,
+    final M p)
+  {
+    this.params_material.clear();
+    this.params_material.setTextureUnitContext(tc);
+    this.params_material.setValues(p);
+    Invariants.checkInvariant(
+      this.params_material.isInitialized(),
+      "Material parameters must be initialized");
+    return (R2ShaderParametersMaterialType<M>) this.params_material;
+  }
+
+  private R2ShaderParametersViewType configureViewParameters(
+    final AreaInclusiveUnsignedLType area,
+    final R2MatricesObserverType matrices)
+  {
+    this.params_view.clear();
+    this.params_view.setViewport(area);
+    this.params_view.setObserverMatrices(matrices);
+    Invariants.checkInvariant(
+      this.params_view.isInitialized(),
+      "View parameters must be initialized");
+    return this.params_view;
+  }
+
+  private void renderSceneExtrasInstanceSingles(
+    final AreaInclusiveUnsignedLType area,
+    final JCGLTextureUnitContextParentType uc,
+    final R2MatricesObserverType m,
+    final R2DebugVisualizerRendererParametersType p,
+    final R2DebugInstancesType extras)
+  {
+    final List<R2DebugInstanceSingle> singles = extras.instanceSingles();
+    if (!singles.isEmpty()) {
+      final JCGLViewportsType g_v = this.g.getViewports();
+      g_v.viewportSet(area);
+
+      JCGLRenderStates.activate(this.g, this.render_geom_state_base);
+
+      final JCGLTextureUnitContextType tc = uc.unitContextNew();
+      try {
+        this.shader_single.onActivate(this.g);
+        try {
+          this.shader_single.onReceiveViewValues(
+            this.g, this.configureViewParameters(area, m));
+
+          for (int index = 0; index < singles.size(); ++index) {
+            final R2DebugInstanceSingle single = singles.get(index);
+
+            final JCGLArrayObjectUsableType ao = single.instance().arrayObject();
+            final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
+            try {
+              g_ao.arrayObjectBind(ao);
+
+              this.shader_single.onReceiveMaterialValues(
+                this.g,
+                this.configureMaterialParameters(tc, single.color()));
+
+              m.withTransform(
+                single.instance().transform(),
+                PMatrixI3x3F.identity(),
+                this,
+                (m_instance, t) -> {
+                  t.shader_single.onReceiveInstanceTransformValues(
+                    t.g, m_instance);
+                  t.shader_single.onValidate();
+                  t.g.getDraw().drawElements(
+                    JCGLPrimitives.PRIMITIVE_TRIANGLES);
+                  return Unit.unit();
+                });
+
+            } finally {
+              g_ao.arrayObjectUnbind();
+            }
+          }
+
+        } finally {
+          this.shader_single.onDeactivate(this.g);
+        }
+      } finally {
+        tc.unitContextFinish(this.g.getTextures());
+      }
+    }
+  }
+
+  private void renderSceneExtrasBoxes(
+    final AreaInclusiveUnsignedLType area,
+    final JCGLTextureUnitContextParentType uc,
+    final R2MatricesObserverType m,
+    final R2DebugVisualizerRendererParametersType p,
+    final R2DebugInstancesType extras)
+  {
+    final List<R2DebugCubeInstance> cubes = extras.cubes();
+    if (!cubes.isEmpty()) {
+      final JCGLViewportsType g_v = this.g.getViewports();
+      g_v.viewportSet(area);
+
+      JCGLRenderStates.activate(this.g, this.render_geom_state_base);
+
+      final JCGLTextureUnitContextType tc = uc.unitContextNew();
+      try {
+        this.shader_single.onActivate(this.g);
+        try {
+          this.shader_single.onReceiveViewValues(
+            this.g, this.configureViewParameters(area, m));
+
+          final JCGLArrayObjectUsableType ao = p.debugCube().arrayObject();
+          final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
+          try {
+            g_ao.arrayObjectBind(ao);
+
+            for (int index = 0; index < cubes.size(); ++index) {
+              final R2DebugCubeInstance cube = cubes.get(index);
+
+              this.shader_single.onReceiveMaterialValues(
+                this.g,
+                this.configureMaterialParameters(tc, cube.color()));
+
+              m.withTransform(
+                cube.transform(),
+                PMatrixI3x3F.identity(),
+                this,
+                (m_instance, t) -> {
+                  t.shader_single.onReceiveInstanceTransformValues(
+                    t.g, m_instance);
+                  t.shader_single.onValidate();
+                  t.g.getDraw().drawElements(JCGLPrimitives.PRIMITIVE_LINES);
+                  return Unit.unit();
+                });
+            }
+
+          } finally {
+            g_ao.arrayObjectUnbind();
+          }
+
+        } finally {
+          this.shader_single.onDeactivate(this.g);
+        }
+      } finally {
+        tc.unitContextFinish(this.g.getTextures());
+      }
+    }
+  }
+
+  private void renderSceneExtrasLineSegments(
+    final AreaInclusiveUnsignedLType area,
+    final JCGLTextureUnitContextParentType uc,
+    final R2MatricesObserverType m,
+    final R2DebugInstancesType extras)
+  {
+    final List<R2DebugLineSegment> segments = extras.lineSegments();
+    if (!segments.isEmpty()) {
+      this.lines_batch.setLineSegments(segments);
+
+      final JCGLViewportsType g_v = this.g.getViewports();
+      g_v.viewportSet(area);
+
+      JCGLRenderStates.activate(this.g, this.render_geom_state_base);
+
+      final JCGLTextureUnitContextType tc = uc.unitContextNew();
+      try {
+        this.shader_lines.onActivate(this.g);
+        try {
+          this.shader_lines.onReceiveViewValues(
+            this.g, this.configureViewParameters(area, m));
+          this.shader_lines.onReceiveMaterialValues(
+            this.g, this.configureMaterialParameters(tc, Unit.unit()));
+          this.shader_lines.onValidate();
+
+          final JCGLArrayObjectUsableType ao = this.lines_batch.arrayObject();
+          final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
+          final JCGLDrawType g_d = this.g.getDraw();
+          try {
+            g_ao.arrayObjectBind(ao);
+            g_d.draw(JCGLPrimitives.PRIMITIVE_LINES, 0, segments.size());
+          } finally {
+            g_ao.arrayObjectUnbind();
+          }
+
+        } finally {
+          this.shader_lines.onDeactivate(this.g);
+        }
+      } finally {
+        tc.unitContextFinish(this.g.getTextures());
+      }
     }
   }
 
@@ -226,22 +478,24 @@ public final class R2DebugVisualizerRenderer implements
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
-    final R2SceneLightsType so = s.getLights();
+    final R2SceneLightsType so = s.lights();
     final JCGLViewportsType g_v = this.g.getViewports();
 
     final long light_count = so.lightsCount();
-    if (light_count > 0L && s.getShowLights()) {
+    if (light_count > 0L && s.showLights()) {
       g_v.viewportSet(area);
 
       this.light_consumer.matrices = m;
       this.light_consumer.texture_context = uc;
-      this.light_consumer.sphere = s.getUnitSphere();
+      this.light_consumer.sphere = s.unitSphere();
+      this.light_consumer.screen_area = area;
       try {
         so.lightsExecute(this.light_consumer);
       } finally {
         this.light_consumer.texture_context = null;
         this.light_consumer.matrices = null;
         this.light_consumer.sphere = null;
+        this.light_consumer.screen_area = null;
       }
     }
   }
@@ -252,13 +506,14 @@ public final class R2DebugVisualizerRenderer implements
     final R2MatricesObserverType m,
     final R2DebugVisualizerRendererParametersType s)
   {
-    final R2SceneOpaquesType so = s.getOpaqueInstances();
+    final R2SceneOpaquesReadableType so = s.opaqueInstances();
     final JCGLViewportsType g_v = this.g.getViewports();
 
     final long instance_count = so.opaquesCount();
-    if (instance_count > 0L && s.getShowOpaqueInstances()) {
+    if (instance_count > 0L && s.showOpaqueInstances()) {
       g_v.viewportSet(area);
 
+      this.opaque_consumer.screen_area = area;
       this.opaque_consumer.render_state.from(this.render_geom_state_base);
       this.opaque_consumer.matrices = m;
       this.opaque_consumer.texture_context = uc;
@@ -266,8 +521,10 @@ public final class R2DebugVisualizerRenderer implements
       try {
         so.opaquesExecute(this.opaque_consumer);
       } finally {
-        this.opaque_consumer.texture_context = null;
+        this.opaque_consumer.screen_area = null;
         this.opaque_consumer.matrices = null;
+        this.opaque_consumer.texture_context = null;
+        this.opaque_consumer.parameters = null;
       }
     }
   }
@@ -277,10 +534,12 @@ public final class R2DebugVisualizerRenderer implements
     throws R2Exception
   {
     if (!this.isDeleted()) {
-      R2DebugVisualizerRenderer.LOG.debug("delete");
+      LOG.debug("delete");
       this.shader_batched.delete(ig);
       this.shader_single.delete(ig);
       this.shader_screen.delete(ig);
+      this.shader_lines.delete(ig);
+      this.lines_batch.delete(ig);
     }
   }
 
@@ -299,34 +558,43 @@ public final class R2DebugVisualizerRenderer implements
     private final JCGLArrayObjectsType array_objects;
     private final JCGLDrawType draw;
     private final JCGLRenderStateMutable render_state;
-    private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
-    private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
+    private final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> shader_single;
+    private final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> shader_batched;
+    private final R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>> shader_billboarded;
+    private final R2ShaderParametersViewMutable params_view;
+    private final R2ShaderParametersMaterialMutable<Object> params_material;
     private @Nullable R2MatricesObserverType matrices;
     private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable JCGLTextureUnitContextType material_texture_context;
     private @Nullable R2DebugVisualizerRendererParametersType parameters;
-    private VectorReadable4FType color;
+    private @Nullable AreaInclusiveUnsignedLType screen_area;
+    private PVectorI4F<R2SpaceRGBAType> color;
 
     OpaqueConsumer(
       final JCGLInterfaceGL33Type ig,
-      final R2ShaderInstanceSingleType<VectorReadable4FType> in_shader_single,
-      final R2ShaderInstanceBatchedType<VectorReadable4FType> in_shader_batched)
+      final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> in_shader_single,
+      final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> in_shader_batched,
+      final R2ShaderInstanceBillboardedType<PVectorI4F<R2SpaceRGBAType>> in_shader_billboarded)
     {
       this.g33 = NullCheck.notNull(ig);
       this.shader_single = NullCheck.notNull(in_shader_single);
       this.shader_batched = NullCheck.notNull(in_shader_batched);
+      this.shader_billboarded = NullCheck.notNull(in_shader_billboarded);
 
       this.shaders = this.g33.getShaders();
       this.textures = this.g33.getTextures();
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
       this.render_state = JCGLRenderStateMutable.create();
+
+      this.params_view = R2ShaderParametersViewMutable.create();
+      this.params_material = R2ShaderParametersMaterialMutable.create();
     }
 
     @Override
     public void onStart()
     {
-      Assertive.require(this.g33 != null);
+      NullCheck.notNull(this.g33, "g33");
     }
 
     @Override
@@ -334,12 +602,12 @@ public final class R2DebugVisualizerRenderer implements
     {
       JCGLRenderStates.activate(this.g33, this.render_state);
 
-      final Int2ReferenceMap<VectorReadable4FType> g_colors =
-        this.parameters.getGeometryGroupColors();
+      final Int2ReferenceMap<PVectorI4F<R2SpaceRGBAType>> g_colors =
+        this.parameters.geometryGroupColors();
       if (g_colors.containsKey(group)) {
         this.color = g_colors.get(group);
       } else {
-        this.color = this.parameters.getGeometryDefaultColor();
+        this.color = this.parameters.geometryDefaultColor();
       }
     }
 
@@ -347,15 +615,41 @@ public final class R2DebugVisualizerRenderer implements
     public void onInstanceBatchedUpdate(
       final R2InstanceBatchedType i)
     {
-      i.update(this.g33, this.matrices.getTransformContext());
+      i.update(this.g33, this.matrices.transformContext());
     }
 
     @Override
     public <M> void onInstanceBatchedShaderStart(
       final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      this.shader_batched.onActivate(this.shaders);
-      this.shader_batched.onReceiveViewValues(this.shaders, this.matrices);
+      this.shader_batched.onActivate(this.g33);
+      this.shader_batched.onReceiveViewValues(
+        this.g33, this.configureViewParameters());
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+      final JCGLTextureUnitContextMutableType tc,
+      final M p)
+    {
+      this.params_material.clear();
+      this.params_material.setTextureUnitContext(tc);
+      this.params_material.setValues(p);
+      Invariants.checkInvariant(
+        this.params_material.isInitialized(),
+        "Material parameters must be initialized");
+      return (R2ShaderParametersMaterialType<M>) this.params_material;
+    }
+
+    private R2ShaderParametersViewType configureViewParameters()
+    {
+      this.params_view.clear();
+      this.params_view.setViewport(this.screen_area);
+      this.params_view.setObserverMatrices(this.matrices);
+      Invariants.checkInvariant(
+        this.params_view.isInitialized(),
+        "View parameters must be initialized");
+      return this.params_view;
     }
 
     @Override
@@ -363,11 +657,10 @@ public final class R2DebugVisualizerRenderer implements
       final R2MaterialOpaqueBatchedType<M> material)
     {
       this.material_texture_context = this.texture_context.unitContextNew();
-
-      final R2ShaderInstanceBatchedType<VectorReadable4FType> s =
-        this.shader_batched;
-      s.onReceiveMaterialValues(
-        this.textures, this.shaders, this.material_texture_context, this.color);
+      this.shader_batched.onReceiveMaterialValues(
+        this.g33,
+        this.configureMaterialParameters(
+          this.material_texture_context, this.color));
     }
 
     @Override
@@ -377,9 +670,9 @@ public final class R2DebugVisualizerRenderer implements
     {
       this.shader_batched.onValidate();
 
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.array_objects.arrayObjectBind(i.arrayObject());
       this.draw.drawElementsInstanced(
-        JCGLPrimitives.PRIMITIVE_TRIANGLES, i.getRenderCount());
+        JCGLPrimitives.PRIMITIVE_TRIANGLES, i.renderCount());
     }
 
     @Override
@@ -394,15 +687,69 @@ public final class R2DebugVisualizerRenderer implements
     public <M> void onInstanceBatchedShaderFinish(
       final R2ShaderInstanceBatchedUsableType<M> s)
     {
-      this.shader_batched.onDeactivate(this.shaders);
+      this.shader_batched.onDeactivate(this.g33);
+    }
+
+    @Override
+    public void onInstanceBillboardedUpdate(
+      final R2InstanceBillboardedType i)
+    {
+      i.update(this.g33, this.matrices.transformContext());
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderStart(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
+    {
+      this.shader_billboarded.onActivate(this.g33);
+
+      this.configureViewParameters();
+      this.shader_billboarded.onReceiveViewValues(this.g33, this.params_view);
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialStart(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      this.material_texture_context = this.texture_context.unitContextNew();
+      this.shader_billboarded.onReceiveMaterialValues(
+        this.g33,
+        this.configureMaterialParameters(
+          this.material_texture_context, this.color));
+    }
+
+    @Override
+    public <M> void onInstanceBillboarded(
+      final R2MaterialOpaqueBillboardedType<M> material,
+      final R2InstanceBillboardedType i)
+    {
+      this.shader_billboarded.onValidate();
+      this.array_objects.arrayObjectBind(i.arrayObject());
+      this.draw.draw(JCGLPrimitives.PRIMITIVE_POINTS, 0, i.enabledCount());
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialFinish(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      this.material_texture_context.unitContextFinish(this.textures);
+      this.material_texture_context = null;
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderFinish(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
+    {
+      this.shader_billboarded.onDeactivate(this.g33);
     }
 
     @Override
     public <M> void onInstanceSingleShaderStart(
       final R2ShaderInstanceSingleUsableType<M> s)
     {
-      this.shader_single.onActivate(this.shaders);
-      this.shader_single.onReceiveViewValues(this.shaders, this.matrices);
+      this.shader_single.onActivate(this.g33);
+      this.configureViewParameters();
+      this.shader_single.onReceiveViewValues(this.g33, this.params_view);
     }
 
     @Override
@@ -410,18 +757,17 @@ public final class R2DebugVisualizerRenderer implements
       final R2MaterialOpaqueSingleType<M> material)
     {
       this.material_texture_context = this.texture_context.unitContextNew();
-
-      final R2ShaderInstanceSingleType<VectorReadable4FType> s =
-        this.shader_single;
-      s.onReceiveMaterialValues(
-        this.textures, this.shaders, this.material_texture_context, this.color);
+      this.shader_single.onReceiveMaterialValues(
+        this.g33,
+        this.configureMaterialParameters(
+          this.material_texture_context, this.color));
     }
 
     @Override
     public void onInstanceSingleArrayStart(
       final R2InstanceSingleType i)
     {
-      this.array_objects.arrayObjectBind(i.getArrayObject());
+      this.array_objects.arrayObjectBind(i.arrayObject());
     }
 
     @Override
@@ -430,12 +776,12 @@ public final class R2DebugVisualizerRenderer implements
       final R2InstanceSingleType i)
     {
       this.matrices.withTransform(
-        i.getTransform(),
-        i.getUVMatrix(),
+        i.transform(),
+        i.uvMatrix(),
         this,
         (mi, t) -> {
           final R2ShaderInstanceSingleUsableType<?> s = t.shader_single;
-          s.onReceiveInstanceTransformValues(t.shaders, mi);
+          s.onReceiveInstanceTransformValues(t.g33, mi);
           s.onValidate();
           t.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
           return Unit.unit();
@@ -454,7 +800,7 @@ public final class R2DebugVisualizerRenderer implements
     public <M> void onInstanceSingleShaderFinish(
       final R2ShaderInstanceSingleUsableType<M> s)
     {
-      s.onDeactivate(this.shaders);
+      this.shader_single.onDeactivate(this.g33);
     }
 
     @Override
@@ -478,25 +824,28 @@ public final class R2DebugVisualizerRenderer implements
     private final JCGLTexturesType textures;
     private final JCGLArrayObjectsType array_objects;
     private final JCGLDrawType draw;
-    private final R2ShaderInstanceBatchedType<VectorReadable4FType> shader_batched;
-    private final R2ShaderInstanceSingleScreenType<VectorReadable4FType> shader_screen;
-    private final VectorM4F light_color;
+    private final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> shader_batched;
+    private final R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>> shader_screen;
+    private final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> shader_single;
     private final JCGLRenderStateMutable render_state_volume_fill;
     private final JCGLRenderStateMutable render_state_volume_lines;
     private final JCGLRenderStateMutable render_state_screen_lines;
-    private final R2ShaderInstanceSingleType<VectorReadable4FType> shader_single;
     private final ClipGroupConsumer clip_group_consumer;
     private final GroupConsumer group_consumer;
     private final R2TransformST sphere_transform;
+    private final R2ShaderParametersViewMutable params_view;
+    private final R2ShaderParametersMaterialMutable<Object> params_material;
     private @Nullable R2MatricesObserverType matrices;
     private @Nullable JCGLTextureUnitContextParentType texture_context;
     private @Nullable R2UnitSphereUsableType sphere;
+    private @Nullable AreaInclusiveUnsignedLType screen_area;
+    private PVectorI4F<R2SpaceRGBAType> light_color;
 
     private LightConsumer(
       final JCGLInterfaceGL33Type ig,
-      final R2ShaderInstanceSingleType<VectorReadable4FType> in_shader_single,
-      final R2ShaderInstanceBatchedType<VectorReadable4FType> in_shader_batched,
-      final R2ShaderInstanceSingleScreenType<VectorReadable4FType> in_shader_screen)
+      final R2ShaderInstanceSingleType<PVectorI4F<R2SpaceRGBAType>> in_shader_single,
+      final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> in_shader_batched,
+      final R2ShaderInstanceSingleScreenType<PVectorI4F<R2SpaceRGBAType>> in_shader_screen)
     {
       this.g33 = NullCheck.notNull(ig);
       this.shader_single = NullCheck.notNull(in_shader_single);
@@ -533,15 +882,42 @@ public final class R2DebugVisualizerRenderer implements
         JCGLPolygonMode.POLYGON_LINES);
 
       this.sphere_transform = R2TransformST.newTransform();
-      this.light_color = new VectorM4F(1.0f, 1.0f, 1.0f, 1.0f);
       this.clip_group_consumer = new ClipGroupConsumer();
       this.group_consumer = new GroupConsumer();
+
+      this.params_view = R2ShaderParametersViewMutable.create();
+      this.params_material = R2ShaderParametersMaterialMutable.create();
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M> R2ShaderParametersMaterialType<M> configureMaterialParameters(
+      final JCGLTextureUnitContextMutableType tc,
+      final M p)
+    {
+      this.params_material.clear();
+      this.params_material.setTextureUnitContext(tc);
+      this.params_material.setValues(p);
+      Invariants.checkInvariant(
+        this.params_material.isInitialized(),
+        "Material parameters must be initialized");
+      return (R2ShaderParametersMaterialType<M>) this.params_material;
+    }
+
+    private R2ShaderParametersViewType configureViewParameters()
+    {
+      this.params_view.clear();
+      this.params_view.setViewport(this.screen_area);
+      this.params_view.setObserverMatrices(this.matrices);
+      Invariants.checkInvariant(
+        this.params_view.isInitialized(),
+        "View parameters must be initialized");
+      return this.params_view;
     }
 
     @Override
     public void onStart()
     {
-      Assertive.require(this.g33 != null);
+      NullCheck.notNull(this.g33, "g33");
     }
 
     @Override
@@ -558,7 +934,6 @@ public final class R2DebugVisualizerRenderer implements
     public R2SceneLightsGroupConsumerType onStartGroup(
       final int group)
     {
-      this.group_consumer.group = group;
       return this.group_consumer;
     }
 
@@ -571,7 +946,6 @@ public final class R2DebugVisualizerRenderer implements
     private final class GroupConsumer
       implements R2SceneLightsGroupConsumerType
     {
-      private int group;
       private JCGLTextureUnitContextType group_texture_context;
 
       GroupConsumer()
@@ -612,8 +986,8 @@ public final class R2DebugVisualizerRenderer implements
         try {
           light.matchLightSingle(
             this,
-            (gc, lv) -> gc.onLightSingleVolume(lv),
-            (gc, ls) -> gc.onLightSingleScreen(ls));
+            GroupConsumer::onLightSingleVolume,
+            GroupConsumer::onLightSingleScreen);
         } finally {
           this.group_texture_context.unitContextFinish(
             LightConsumer.this.g33.getTextures());
@@ -631,8 +1005,8 @@ public final class R2DebugVisualizerRenderer implements
       {
         return lv.matchLightVolumeSingleReadable(
           this,
-          (gc, lp) -> gc.onLightProjective(lp),
-          (gc, ls) -> gc.onLightSpherical(ls));
+          GroupConsumer::onLightProjective,
+          GroupConsumer::onLightSpherical);
       }
 
       private Unit onLightSpherical(
@@ -644,44 +1018,54 @@ public final class R2DebugVisualizerRenderer implements
           PMatrixI3x3F.identity();
 
         try {
-          c.shader_single.onActivate(c.shaders);
-          c.array_objects.arrayObjectBind(c.sphere.getArrayObject());
+          c.shader_single.onActivate(c.g33);
+          c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(ls.getColor());
-            VectorM4F.scaleInPlace(c.light_color, (double) ls.getIntensity());
+            c.light_color =
+              PVectorI4F.scale(
+                new PVectorI4F<>(
+                  ls.color().getXF(),
+                  ls.color().getYF(),
+                  ls.color().getZF(),
+                  1.0f),
+                ls.intensity());
 
-            /**
+            /*
              * Render a tiny sphere at the light origin.
              */
 
             c.sphere_transform.setScale(0.1f);
-            c.sphere_transform.getTranslation().copyFrom3F(ls.getOriginPosition());
+            c.sphere_transform.getTranslation().copyFrom3F(ls.originPosition());
             c.matrices.withTransform(c.sphere_transform, im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_fill);
+
               c.shader_single.onReceiveViewValues(
-                c.shaders, c.matrices);
+                c.g33, c.configureViewParameters());
               c.shader_single.onReceiveMaterialValues(
-                c.textures, c.shaders, lc.group_texture_context, c.light_color);
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+                c.g33,
+                c.configureMaterialParameters(
+                  lc.group_texture_context, c.light_color));
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
               return Unit.unit();
             });
 
-            /**
+            /*
              * Render the light volume in wireframe mode.
              */
 
-            c.array_objects.arrayObjectBind(ls.getArrayObject());
-            c.matrices.withTransform(ls.getTransform(), im, this, (mi, lc) -> {
+            c.array_objects.arrayObjectBind(ls.arrayObject());
+            c.matrices.withTransform(ls.transform(), im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_lines);
+
               c.shader_single.onReceiveMaterialValues(
-                c.textures, c.shaders, lc.group_texture_context, c.light_color);
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+                c.g33,
+                c.configureMaterialParameters(
+                  lc.group_texture_context, c.light_color));
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -693,7 +1077,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          c.shader_single.onDeactivate(c.shaders);
+          c.shader_single.onDeactivate(c.g33);
         }
 
         return Unit.unit();
@@ -708,44 +1092,55 @@ public final class R2DebugVisualizerRenderer implements
           PMatrixI3x3F.identity();
 
         try {
-          c.shader_single.onActivate(c.shaders);
-          c.array_objects.arrayObjectBind(c.sphere.getArrayObject());
+          c.shader_single.onActivate(c.g33);
+          c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(lp.getColor());
-            VectorM4F.scaleInPlace(c.light_color, (double) lp.getIntensity());
+            final PVectorReadable3FType<R2SpaceRGBType> lp_color = lp.color();
+            c.light_color =
+              PVectorI4F.scale(
+                new PVectorI4F<>(
+                  lp_color.getXF(),
+                  lp_color.getYF(),
+                  lp_color.getZF(),
+                  1.0f),
+                lp.intensity());
 
-            /**
+            /*
              * Render a tiny sphere at the light origin.
              */
 
             c.sphere_transform.setScale(0.1f);
-            c.sphere_transform.getTranslation().copyFrom3F(lp.getPosition());
+            c.sphere_transform.getTranslation().copyFrom3F(lp.position());
             c.matrices.withTransform(c.sphere_transform, im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_fill);
+
               c.shader_single.onReceiveViewValues(
-                c.shaders, c.matrices);
+                c.g33, c.configureViewParameters());
               c.shader_single.onReceiveMaterialValues(
-                c.textures, c.shaders, lc.group_texture_context, c.light_color);
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+                c.g33,
+                c.configureMaterialParameters(
+                  lc.group_texture_context, c.light_color));
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
               return Unit.unit();
             });
 
-            /**
+            /*
              * Render the light volume in wireframe mode.
              */
 
-            c.array_objects.arrayObjectBind(lp.getArrayObject());
-            c.matrices.withTransform(lp.getTransform(), im, this, (mi, lc) -> {
+            c.array_objects.arrayObjectBind(lp.arrayObject());
+            c.matrices.withTransform(lp.transform(), im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_lines);
+
               c.shader_single.onReceiveMaterialValues(
-                c.textures, c.shaders, lc.group_texture_context, c.light_color);
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+                c.g33,
+                c.configureMaterialParameters(
+                  lc.group_texture_context, c.light_color));
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -757,7 +1152,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          c.shader_single.onDeactivate(c.shaders);
+          c.shader_single.onDeactivate(c.g33);
         }
 
         return Unit.unit();
@@ -804,33 +1199,30 @@ public final class R2DebugVisualizerRenderer implements
             PMatrixI3x3F.identity();
 
           try {
-            c.shader_single.onActivate(c.shaders);
-            c.array_objects.arrayObjectBind(this.volume.getArrayObject());
+            c.shader_single.onActivate(c.g33);
+            c.array_objects.arrayObjectBind(this.volume.arrayObject());
 
             try {
-              c.light_color.set4F(1.0f, 1.0f, 1.0f, 1.0f);
+              c.light_color = new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
 
-              /**
+              /*
                * Render the clip volume.
                */
 
               c.matrices.withTransform(
-                this.volume.getTransform(),
+                this.volume.transform(),
                 im,
                 this,
                 (mi, lc) -> {
-                  JCGLRenderStates.activate(
-                    c.g33,
-                    c.render_state_volume_lines);
+                  JCGLRenderStates.activate(c.g33, c.render_state_volume_lines);
+
                   c.shader_single.onReceiveViewValues(
-                    c.shaders, c.matrices);
+                    c.g33, c.configureViewParameters());
                   c.shader_single.onReceiveMaterialValues(
-                    c.textures,
-                    c.shaders,
-                    lc.texture_context,
-                    c.light_color);
-                  c.shader_single.onReceiveInstanceTransformValues(
-                    c.shaders, mi);
+                    c.g33,
+                    c.configureMaterialParameters(
+                      lc.texture_context, c.light_color));
+                  c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
                   c.shader_single.onValidate();
 
                   c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -842,7 +1234,7 @@ public final class R2DebugVisualizerRenderer implements
             }
 
           } finally {
-            c.shader_single.onDeactivate(c.shaders);
+            c.shader_single.onDeactivate(c.g33);
           }
 
         } finally {
@@ -878,8 +1270,8 @@ public final class R2DebugVisualizerRenderer implements
         try {
           light.matchLightSingle(
             this,
-            (cc, lv) -> cc.onLightSingleVolume(lv),
-            (cc, ls) -> cc.onLightSingleScreen(ls));
+            ClipGroupConsumer::onLightSingleVolume,
+            ClipGroupConsumer::onLightSingleScreen);
         } finally {
           this.texture_context.unitContextFinish(
             LightConsumer.this.g33.getTextures());
@@ -897,8 +1289,8 @@ public final class R2DebugVisualizerRenderer implements
       {
         return lv.matchLightVolumeSingleReadable(
           this,
-          (cc, lp) -> cc.onLightProjective(lp),
-          (cc, ls) -> cc.onLightSpherical(ls));
+          ClipGroupConsumer::onLightProjective,
+          ClipGroupConsumer::onLightSpherical);
       }
 
       private Unit onLightSpherical(
@@ -910,44 +1302,55 @@ public final class R2DebugVisualizerRenderer implements
           PMatrixI3x3F.identity();
 
         try {
-          c.shader_single.onActivate(c.shaders);
-          c.array_objects.arrayObjectBind(c.sphere.getArrayObject());
+          c.shader_single.onActivate(c.g33);
+          c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(ls.getColor());
-            VectorM4F.scaleInPlace(c.light_color, (double) ls.getIntensity());
+            final PVectorReadable3FType<R2SpaceRGBType> lp_color = ls.color();
+            c.light_color =
+              PVectorI4F.scale(
+                new PVectorI4F<>(
+                  lp_color.getXF(),
+                  lp_color.getYF(),
+                  lp_color.getZF(),
+                  1.0f),
+                ls.intensity());
 
-            /**
+            /*
              * Render a tiny sphere at the light origin.
              */
 
             c.sphere_transform.setScale(0.1f);
-            c.sphere_transform.getTranslation().copyFrom3F(ls.getOriginPosition());
+            c.sphere_transform.getTranslation().copyFrom3F(ls.originPosition());
             c.matrices.withTransform(c.sphere_transform, im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_fill);
+
               c.shader_single.onReceiveViewValues(
-                c.shaders, c.matrices);
+                c.g33, c.configureViewParameters());
               c.shader_single.onReceiveMaterialValues(
-                c.textures, c.shaders, lc.texture_context, c.light_color);
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+                c.g33,
+                c.configureMaterialParameters(
+                  lc.texture_context, c.light_color));
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
               return Unit.unit();
             });
 
-            /**
+            /*
              * Render the light volume in wireframe mode.
              */
 
-            c.array_objects.arrayObjectBind(ls.getArrayObject());
-            c.matrices.withTransform(ls.getTransform(), im, this, (mi, lc) -> {
+            c.array_objects.arrayObjectBind(ls.arrayObject());
+            c.matrices.withTransform(ls.transform(), im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_lines);
+
               c.shader_single.onReceiveMaterialValues(
-                c.textures, c.shaders, lc.texture_context, c.light_color);
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+                c.g33,
+                c.configureMaterialParameters(
+                  lc.texture_context, c.light_color));
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -959,7 +1362,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          c.shader_single.onDeactivate(c.shaders);
+          c.shader_single.onDeactivate(c.g33);
         }
 
         return Unit.unit();
@@ -974,44 +1377,55 @@ public final class R2DebugVisualizerRenderer implements
           PMatrixI3x3F.identity();
 
         try {
-          c.shader_single.onActivate(c.shaders);
-          c.array_objects.arrayObjectBind(c.sphere.getArrayObject());
+          c.shader_single.onActivate(c.g33);
+          c.array_objects.arrayObjectBind(c.sphere.arrayObject());
 
           try {
-            c.light_color.copyFrom3F(lp.getColor());
-            VectorM4F.scaleInPlace(c.light_color, (double) lp.getIntensity());
+            final PVectorReadable3FType<R2SpaceRGBType> lp_color = lp.color();
+            c.light_color =
+              PVectorI4F.scale(
+                new PVectorI4F<>(
+                  lp_color.getXF(),
+                  lp_color.getYF(),
+                  lp_color.getZF(),
+                  1.0f),
+                lp.intensity());
 
-            /**
+            /*
              * Render a tiny sphere at the light origin.
              */
 
             c.sphere_transform.setScale(0.1f);
-            c.sphere_transform.getTranslation().copyFrom3F(lp.getPosition());
+            c.sphere_transform.getTranslation().copyFrom3F(lp.position());
             c.matrices.withTransform(c.sphere_transform, im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_fill);
+
               c.shader_single.onReceiveViewValues(
-                c.shaders, c.matrices);
+                c.g33, c.configureViewParameters());
               c.shader_single.onReceiveMaterialValues(
-                c.textures, c.shaders, lc.texture_context, c.light_color);
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+                c.g33,
+                c.configureMaterialParameters(
+                  lc.texture_context, c.light_color));
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
               return Unit.unit();
             });
 
-            /**
+            /*
              * Render the light volume in wireframe mode.
              */
 
-            c.array_objects.arrayObjectBind(lp.getArrayObject());
-            c.matrices.withTransform(lp.getTransform(), im, this, (mi, lc) -> {
+            c.array_objects.arrayObjectBind(lp.arrayObject());
+            c.matrices.withTransform(lp.transform(), im, this, (mi, lc) -> {
               JCGLRenderStates.activate(c.g33, c.render_state_volume_lines);
+
               c.shader_single.onReceiveMaterialValues(
-                c.textures, c.shaders, lc.texture_context, c.light_color);
-              c.shader_single.onReceiveInstanceTransformValues(
-                c.shaders, mi);
+                c.g33,
+                c.configureMaterialParameters(
+                  lc.texture_context, c.light_color));
+              c.shader_single.onReceiveInstanceTransformValues(c.g33, mi);
               c.shader_single.onValidate();
 
               c.draw.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
@@ -1023,7 +1437,7 @@ public final class R2DebugVisualizerRenderer implements
           }
 
         } finally {
-          c.shader_single.onDeactivate(c.shaders);
+          c.shader_single.onDeactivate(c.g33);
         }
 
         return Unit.unit();

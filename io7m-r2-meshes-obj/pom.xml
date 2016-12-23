@@ -8,11 +8,11 @@
   <parent>
     <groupId>com.io7m.r2</groupId>
     <artifactId>io7m-r2</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
   <artifactId>io7m-r2-meshes-obj</artifactId>
 
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>io7m-r2-meshes-obj</name>
   <description>3D renderer (OBJ importer)</description>
   <url>http://io7m.github.io/r2/</url>
@@ -56,21 +56,6 @@
       <groupId>it.unimi.dsi</groupId>
       <artifactId>fastutil</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.valid4j</groupId>
-      <artifactId>valid4j</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -79,6 +64,20 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+
+      <!-- Produce OSGi bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              com.io7m.r2.meshes.obj
+            </Export-Package>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

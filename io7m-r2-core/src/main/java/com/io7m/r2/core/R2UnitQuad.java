@@ -57,11 +57,11 @@ public final class R2UnitQuad implements R2UnitQuadType
     LOG = LoggerFactory.getLogger(R2UnitQuad.class);
   }
 
-  private final JCGLArrayObjectType     array_object;
-  private final JCGLArrayBufferType     array;
-  private final JCGLIndexBufferType     index;
+  private final JCGLArrayObjectType array_object;
+  private final JCGLArrayBufferType array;
+  private final JCGLIndexBufferType index;
   private final UnsignedRangeInclusiveL range;
-  private       boolean                 deleted;
+  private boolean deleted;
 
   private R2UnitQuad(
     final JCGLArrayObjectType in_array_object,
@@ -90,7 +90,7 @@ public final class R2UnitQuad implements R2UnitQuadType
   public static R2UnitQuadType newUnitQuad(
     final JCGLInterfaceGL33Type g)
   {
-    R2UnitQuad.LOG.debug("allocating unit quad");
+    LOG.debug("allocating unit quad");
 
     final JCGLArrayBuffersType g_ab = g.getArrayBuffers();
     final JCGLIndexBuffersType g_ib = g.getIndexBuffers();
@@ -100,8 +100,8 @@ public final class R2UnitQuad implements R2UnitQuadType
     final JCGLIndexBufferType i;
     final JCGLArrayObjectType ao;
 
-    /**
-     * Allocate and populate array buffer.
+    /*
+      Allocate and populate array buffer.
      */
 
     {
@@ -152,8 +152,8 @@ public final class R2UnitQuad implements R2UnitQuadType
       g_ab.arrayBufferUnbind();
     }
 
-    /**
-     * Allocate and populate index buffer.
+    /*
+      Allocate and populate index buffer.
      */
 
     {
@@ -177,8 +177,8 @@ public final class R2UnitQuad implements R2UnitQuadType
       g_ib.indexBufferUnbind();
     }
 
-    /**
-     * Allocate and configure array object.
+    /*
+      Allocate and configure array object.
      */
 
     {
@@ -230,7 +230,7 @@ public final class R2UnitQuad implements R2UnitQuadType
   {
     if (!this.isDeleted()) {
       try {
-        R2UnitQuad.LOG.debug("delete");
+        LOG.debug("delete");
         final JCGLArrayBuffersType g_ab = g.getArrayBuffers();
         final JCGLIndexBuffersType g_ib = g.getIndexBuffers();
         final JCGLArrayObjectsType g_ao = g.getArrayObjects();
@@ -244,7 +244,7 @@ public final class R2UnitQuad implements R2UnitQuadType
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.array_object;
   }

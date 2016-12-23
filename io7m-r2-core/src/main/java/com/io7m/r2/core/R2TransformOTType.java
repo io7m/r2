@@ -32,11 +32,11 @@ public interface R2TransformOTType extends R2TransformOTReadableType,
    * @return A quaternion representing the current orientation
    */
 
-  Quaternion4FType getOrientation();
+  Quaternion4FType orientation();
 
   /**
    * @return A translation in world-space
    */
 
-  PVector3FType<R2SpaceWorldType> getTranslation();
+  PVector3FType<R2SpaceWorldType> translation();
 }

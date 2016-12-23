@@ -31,38 +31,38 @@ public interface R2LightProjectiveReadableType extends
    * @return The light radius
    */
 
-  float getRadius();
+  float radius();
 
   /**
    * @return The light falloff exponent
    */
 
-  float getFalloff();
+  float falloff();
 
   /**
    * @return The light's projection
    */
 
-  R2ProjectionReadableType getProjection();
+  R2ProjectionReadableType projection();
 
   /**
    * @return The image that will be projected from the light
    */
 
-  R2Texture2DUsableType getImage();
+  R2Texture2DUsableType image();
 
   /**
    * @return The transform for the light origin
    */
 
   @Override
-  R2TransformViewReadableType getTransform();
+  R2TransformViewReadableType transform();
 
   /**
    * @return The position of the origin of the light in world-space
    */
 
-  PVectorReadable3FType<R2SpaceWorldType> getPosition();
+  PVectorReadable3FType<R2SpaceWorldType> position();
 
   @Override
   default <A, B, E extends Throwable> B matchLightVolumeSingleReadable(
@@ -77,12 +77,12 @@ public interface R2LightProjectiveReadableType extends
   /**
    * Match on the type of projective light.
    *
-   * @param context   A context value
+   * @param context       A context value
    * @param on_shadowless Evaluated for projective lights without shadows
-   * @param on_shadowed Evaluated for projective lights with shadows
-   * @param <A>       The type of context values
-   * @param <B>       The type of returned values
-   * @param <E>       The type of raised exceptions
+   * @param on_shadowed   Evaluated for projective lights with shadows
+   * @param <A>           The type of context values
+   * @param <B>           The type of returned values
+   * @param <E>           The type of raised exceptions
    *
    * @return A value of type {@code B}
    *

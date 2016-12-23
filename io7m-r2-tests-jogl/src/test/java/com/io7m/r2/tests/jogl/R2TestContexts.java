@@ -16,6 +16,7 @@
 
 package com.io7m.r2.tests.jogl;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLExceptionNonCompliant;
 import com.io7m.jcanephora.core.JCGLExceptionUnsupported;
 import com.io7m.jcanephora.core.api.JCGLContextType;
@@ -31,7 +32,6 @@ import com.jogamp.opengl.GLOffscreenAutoDrawable;
 import com.jogamp.opengl.GLProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,11 +40,11 @@ import java.util.function.Function;
 
 public final class R2TestContexts
 {
-  private static final JCGLImplementationJOGLType           IMPLEMENTATION;
+  private static final JCGLImplementationJOGLType IMPLEMENTATION;
   private static final Map<String, GLOffscreenAutoDrawable> CACHED_CONTEXTS;
-  private static final Logger                               LOG;
+  private static final Logger LOG;
   private static final Function<GLContext, GL3>
-                                                            GL_CONTEXT_GL3_SUPPLIER;
+    GL_CONTEXT_GL3_SUPPLIER;
 
   static {
     IMPLEMENTATION = JCGLImplementationJOGL.getInstance();
@@ -52,7 +52,7 @@ public final class R2TestContexts
     LOG = LoggerFactory.getLogger(R2TestContexts.class);
     GL_CONTEXT_GL3_SUPPLIER = c -> {
       final DebugGL3 g = new DebugGL3(c.getGL().getGL3());
-      R2TestContexts.LOG.trace("supplying GL3: {}", g);
+      LOG.trace("supplying GL3: {}", g);
       return g;
     };
   }
@@ -68,8 +68,8 @@ public final class R2TestContexts
     final int stencil)
   {
     final Function<GLContext, GL3> supplier =
-      R2TestContexts.GL_CONTEXT_GL3_SUPPLIER;
-    return R2TestContexts.newGL33ContextWithSupplier(
+      GL_CONTEXT_GL3_SUPPLIER;
+    return newGL33ContextWithSupplier(
       name,
       supplier,
       depth,
@@ -83,7 +83,7 @@ public final class R2TestContexts
     final int stencil)
   {
     try {
-      return R2TestContexts.newGL33ContextWithSupplierAndErrors(
+      return newGL33ContextWithSupplierAndErrors(
         name, supplier, depth, stencil);
     } catch (final JCGLExceptionUnsupported | JCGLExceptionNonCompliant x) {
       throw new UnreachableCodeException(x);
@@ -97,8 +97,8 @@ public final class R2TestContexts
     final int stencil)
     throws JCGLExceptionUnsupported, JCGLExceptionNonCompliant
   {
-    final GLContext c = R2TestContexts.newGL33Drawable(name, depth, stencil);
-    return R2TestContexts.IMPLEMENTATION.newContextFromWithSupplier(
+    final GLContext c = newGL33Drawable(name, depth, stencil);
+    return IMPLEMENTATION.newContextFromWithSupplier(
       c, supplier, name);
   }
 
@@ -107,12 +107,12 @@ public final class R2TestContexts
     final int depth,
     final int stencil)
   {
-    R2TestContexts.LOG.debug(
+    LOG.debug(
       "creating drawable {} (depth {}) (stencil {})",
       name,
       Integer.valueOf(depth),
       Integer.valueOf(stencil));
-    R2TestContexts.destroyCachedDrawableAndRemove(name);
+    destroyCachedDrawableAndRemove(name);
 
     final GLProfile profile = GLProfile.get(GLProfile.GL3);
     final GLCapabilities cap = new GLCapabilities(profile);
@@ -125,7 +125,7 @@ public final class R2TestContexts
       f.createOffscreenAutoDrawable(null, cap, null, 640, 480);
     drawable.display();
 
-    R2TestContexts.CACHED_CONTEXTS.put(name, drawable);
+    CACHED_CONTEXTS.put(name, drawable);
 
     final GLContext c = drawable.getContext();
     final int r = c.makeCurrent();
@@ -137,58 +137,62 @@ public final class R2TestContexts
 
   private static void destroyCachedDrawableAndRemove(final String name)
   {
-    if (R2TestContexts.CACHED_CONTEXTS.containsKey(name)) {
-      R2TestContexts.LOG.debug("destroying existing drawable {}", name);
+    if (CACHED_CONTEXTS.containsKey(name)) {
+      LOG.debug("destroying existing drawable {}", name);
       final GLOffscreenAutoDrawable cached =
-        R2TestContexts.CACHED_CONTEXTS.get(name);
+        CACHED_CONTEXTS.get(name);
 
-      R2TestContexts.destroyDrawable(cached);
-      R2TestContexts.CACHED_CONTEXTS.remove(name);
+      destroyDrawable(cached);
+      CACHED_CONTEXTS.remove(name);
     }
   }
 
   public static void closeAllContexts()
   {
-    final int size = R2TestContexts.CACHED_CONTEXTS.size();
-    R2TestContexts.LOG.debug(
+    final int size = CACHED_CONTEXTS.size();
+    LOG.debug(
       "cleaning up {} contexts", Integer.valueOf(size));
 
     {
       final Iterator<String> iter =
-        R2TestContexts.CACHED_CONTEXTS.keySet().iterator();
+        CACHED_CONTEXTS.keySet().iterator();
 
       while (iter.hasNext()) {
         final String name = iter.next();
-        R2TestContexts.LOG.debug("releasing drawable {}", name);
-        Assertive.require(R2TestContexts.CACHED_CONTEXTS.containsKey(name));
+        LOG.debug("releasing drawable {}", name);
+        Preconditions.checkPrecondition(
+          CACHED_CONTEXTS.containsKey(name),
+          "Cached contexts must contain " + name);
         final GLOffscreenAutoDrawable drawable =
-          R2TestContexts.CACHED_CONTEXTS.get(name);
-        R2TestContexts.releaseDrawable(drawable);
+          CACHED_CONTEXTS.get(name);
+        releaseDrawable(drawable);
       }
     }
 
     {
       final Iterator<String> iter =
-        R2TestContexts.CACHED_CONTEXTS.keySet().iterator();
+        CACHED_CONTEXTS.keySet().iterator();
 
       while (iter.hasNext()) {
         final String name = iter.next();
-        R2TestContexts.LOG.debug("destroying drawable {}", name);
-        Assertive.require(R2TestContexts.CACHED_CONTEXTS.containsKey(name));
+        LOG.debug("destroying drawable {}", name);
+        Preconditions.checkPrecondition(
+          CACHED_CONTEXTS.containsKey(name),
+          "Cached contexts must contain " + name);
         final GLOffscreenAutoDrawable drawable =
-          R2TestContexts.CACHED_CONTEXTS.get(name);
+          CACHED_CONTEXTS.get(name);
 
-        R2TestContexts.destroyDrawable(drawable);
+        destroyDrawable(drawable);
         iter.remove();
       }
     }
 
-    R2TestContexts.LOG.debug("cleaned up {} contexts", Integer.valueOf(size));
+    LOG.debug("cleaned up {} contexts", Integer.valueOf(size));
   }
 
   private static void destroyDrawable(final GLOffscreenAutoDrawable drawable)
   {
-    R2TestContexts.releaseDrawable(drawable);
+    releaseDrawable(drawable);
     drawable.destroy();
   }
 

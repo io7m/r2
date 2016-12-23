@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureWrapS;
@@ -26,7 +27,6 @@ import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
-import org.valid4j.Assertive;
 
 /**
  * Parameters for simple projective lights that operate by rendering frustum
@@ -54,7 +54,7 @@ public final class R2LightProjectiveWithoutShadow implements
     this.mesh = NullCheck.notNull(in_mesh);
     this.image = NullCheck.notNull(in_image);
 
-    this.projection = this.mesh.getProjectionReadable();
+    this.projection = this.mesh.projectionReadable();
     this.id = in_id;
     this.transform = R2TransformOT.newTransform();
     this.color = new PVectorM3F<>(1.0f, 1.0f, 1.0f);
@@ -80,24 +80,27 @@ public final class R2LightProjectiveWithoutShadow implements
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_mesh);
 
-    final JCGLTexture2DUsableType t = in_image.get();
+    final JCGLTexture2DUsableType t = in_image.texture();
     final JCGLTextureWrapS wrap_s = t.textureGetWrapS();
     final JCGLTextureWrapT wrap_t = t.textureGetWrapT();
-    Assertive.ensure(
+
+    Preconditions.checkPrecondition(
+      wrap_s,
       wrap_s.equals(JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE),
-      "Wrapping mode should be CLAMP_TO_EDGE (is %s)", wrap_s);
-    Assertive.ensure(
+      m -> "Wrapping mode should be CLAMP_TO_EDGE (is " + m + ")");
+    Preconditions.checkPrecondition(
+      wrap_t,
       wrap_t.equals(JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE),
-      "Wrapping mode should be CLAMP_TO_EDGE (is %s)", wrap_t);
+      m -> "Wrapping mode should be CLAMP_TO_EDGE (is " + m + ")");
 
     return new R2LightProjectiveWithoutShadow(
       in_mesh,
       in_image,
-      in_pool.getFreshID());
+      in_pool.freshID());
   }
 
   @Override
-  public float getRadius()
+  public float radius()
   {
     return this.radius;
   }
@@ -110,13 +113,13 @@ public final class R2LightProjectiveWithoutShadow implements
   }
 
   @Override
-  public R2TransformOTType getTransformWritable()
+  public R2TransformOTType transformWritable()
   {
     return this.transform;
   }
 
   @Override
-  public float getFalloff()
+  public float falloff()
   {
     return this.falloff;
   }
@@ -128,13 +131,13 @@ public final class R2LightProjectiveWithoutShadow implements
   }
 
   @Override
-  public PVectorReadable3FType<R2SpaceRGBType> getColor()
+  public PVectorReadable3FType<R2SpaceRGBType> color()
   {
     return this.color;
   }
 
   @Override
-  public float getIntensity()
+  public float intensity()
   {
     return this.intensity;
   }
@@ -147,43 +150,43 @@ public final class R2LightProjectiveWithoutShadow implements
   }
 
   @Override
-  public PVector3FType<R2SpaceRGBType> getColorWritable()
+  public PVector3FType<R2SpaceRGBType> colorWritable()
   {
     return this.color;
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
-    return this.mesh.getArrayObject();
+    return this.mesh.arrayObject();
   }
 
   @Override
-  public R2TransformOTReadableType getTransform()
+  public R2TransformOTReadableType transform()
   {
     return this.transform;
   }
 
   @Override
-  public PVectorReadable3FType<R2SpaceWorldType> getPosition()
+  public PVectorReadable3FType<R2SpaceWorldType> position()
   {
-    return this.transform.getTranslationReadable();
+    return this.transform.translationReadable();
   }
 
   @Override
-  public long getLightID()
+  public long lightID()
   {
     return this.id;
   }
 
   @Override
-  public R2ProjectionReadableType getProjection()
+  public R2ProjectionReadableType projection()
   {
     return this.projection;
   }
 
   @Override
-  public R2Texture2DUsableType getImage()
+  public R2Texture2DUsableType image()
   {
     return this.image;
   }

@@ -45,11 +45,11 @@ public final class R2IndexBuffers
     final long count)
   {
     if (count < 256L) {
-      return R2IndexBuffers.maximum(
+      return maximum(
         minimum, JCGLUnsignedType.TYPE_UNSIGNED_BYTE);
     }
     if (count < 65536L) {
-      return R2IndexBuffers.maximum(
+      return maximum(
         minimum, JCGLUnsignedType.TYPE_UNSIGNED_SHORT);
     }
 

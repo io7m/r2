@@ -26,5 +26,5 @@ public interface R2MatricesValuesType
    * @return The transform context for the matrices
    */
 
-  R2TransformContextType getTransformContext();
+  R2TransformContextType transformContext();
 }

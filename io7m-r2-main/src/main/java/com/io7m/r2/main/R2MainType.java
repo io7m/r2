@@ -32,7 +32,7 @@ import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 
 /**
  * User-friendly frontend.
@@ -47,10 +47,10 @@ public interface R2MainType extends R2DeletableType
   R2IDPoolType getIDPool();
 
   /**
-   * @return The default set of shader sources
+   * @return The shader preprocessing environment
    */
 
-  R2ShaderSourcesType getShaderSources();
+  R2ShaderPreprocessingEnvironmentType getShaderPreprocessingEnvironment();
 
   /**
    * @return Access to functions to produce view matrices

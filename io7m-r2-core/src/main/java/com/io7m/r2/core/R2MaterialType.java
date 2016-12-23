@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.r2.core.shaders.types.R2ShaderUsableType;
+import org.immutables.value.Value;
 
 /**
  * The base type of materials. A material associates a shader with a set of
@@ -31,17 +32,20 @@ public interface R2MaterialType<M>
    * @return The material ID
    */
 
-  long getMaterialID();
+  @Value.Parameter
+  long materialID();
 
   /**
    * @return The shader parameters
    */
 
-  M getShaderParameters();
+  @Value.Parameter
+  M shaderParameters();
 
   /**
    * @return The material shader
    */
 
-  R2ShaderUsableType<M> getShader();
+  @Value.Parameter
+  R2ShaderUsableType<M> shader();
 }

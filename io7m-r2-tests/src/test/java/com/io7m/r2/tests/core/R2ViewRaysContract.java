@@ -45,14 +45,14 @@ public abstract class R2ViewRaysContract
   private static void dumpViewRays(
     final R2ViewRaysType vr)
   {
-    R2ViewRaysContract.LOG.debug("origin_X0Y0: {} ", vr.getOriginX0Y0());
-    R2ViewRaysContract.LOG.debug("origin_X1Y0: {}", vr.getOriginX1Y0());
-    R2ViewRaysContract.LOG.debug("origin_X0Y1: {}", vr.getOriginX0Y1());
-    R2ViewRaysContract.LOG.debug("origin_X1Y1: {}", vr.getOriginX1Y1());
-    R2ViewRaysContract.LOG.debug("ray_X0Y0: {}", vr.getRayX0Y0());
-    R2ViewRaysContract.LOG.debug("ray_X1Y0: {}", vr.getRayX1Y0());
-    R2ViewRaysContract.LOG.debug("ray_X0Y1: {}", vr.getRayX0Y1());
-    R2ViewRaysContract.LOG.debug("ray_X1Y1: {}", vr.getRayX1Y1());
+    R2ViewRaysContract.LOG.debug("origin_X0Y0: {} ", vr.originX0Y0());
+    R2ViewRaysContract.LOG.debug("origin_X1Y0: {}", vr.originX1Y0());
+    R2ViewRaysContract.LOG.debug("origin_X0Y1: {}", vr.originX0Y1());
+    R2ViewRaysContract.LOG.debug("origin_X1Y1: {}", vr.originX1Y1());
+    R2ViewRaysContract.LOG.debug("ray_X0Y0: {}", vr.rayX0Y0());
+    R2ViewRaysContract.LOG.debug("ray_X1Y0: {}", vr.rayX1Y0());
+    R2ViewRaysContract.LOG.debug("ray_X0Y1: {}", vr.rayX0Y1());
+    R2ViewRaysContract.LOG.debug("ray_X1Y1: {}", vr.rayX1Y1());
   }
 
   protected abstract R2ViewRaysType getViewRays(
@@ -93,45 +93,45 @@ public abstract class R2ViewRaysContract
     R2ViewRaysContract.dumpViewRays(vr);
 
     final float delta = 0.0001f;
-    Assert.assertEquals(0.0f, vr.getRayX0Y0().getXF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX0Y0().getYF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX0Y0().getZF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX0Y0().getWF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX0Y0().getXF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX0Y0().getYF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX0Y0().getZF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX0Y0().getWF(), delta);
 
-    Assert.assertEquals(0.0f, vr.getRayX1Y0().getXF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX1Y0().getYF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX1Y0().getZF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX1Y0().getWF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX1Y0().getXF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX1Y0().getYF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX1Y0().getZF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX1Y0().getWF(), delta);
 
-    Assert.assertEquals(0.0f, vr.getRayX0Y1().getXF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX0Y1().getYF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX0Y1().getZF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX0Y1().getWF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX0Y1().getXF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX0Y1().getYF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX0Y1().getZF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX0Y1().getWF(), delta);
 
-    Assert.assertEquals(0.0f, vr.getRayX1Y1().getXF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX1Y1().getYF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX1Y1().getZF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX1Y1().getWF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX1Y1().getXF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX1Y1().getYF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX1Y1().getZF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX1Y1().getWF(), delta);
 
-    Assert.assertEquals(-320.0f, vr.getOriginX0Y0().getXF(), delta);
-    Assert.assertEquals(-240.0f, vr.getOriginX0Y0().getYF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX0Y0().getZF(), delta);
-    Assert.assertEquals(1.0f, vr.getOriginX0Y0().getWF(), delta);
+    Assert.assertEquals(-320.0f, vr.originX0Y0().getXF(), delta);
+    Assert.assertEquals(-240.0f, vr.originX0Y0().getYF(), delta);
+    Assert.assertEquals(0.0f, vr.originX0Y0().getZF(), delta);
+    Assert.assertEquals(1.0f, vr.originX0Y0().getWF(), delta);
 
-    Assert.assertEquals(320.0f, vr.getOriginX1Y0().getXF(), delta);
-    Assert.assertEquals(-240.0f, vr.getOriginX1Y0().getYF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX1Y0().getZF(), delta);
-    Assert.assertEquals(1.0f, vr.getOriginX1Y0().getWF(), delta);
+    Assert.assertEquals(320.0f, vr.originX1Y0().getXF(), delta);
+    Assert.assertEquals(-240.0f, vr.originX1Y0().getYF(), delta);
+    Assert.assertEquals(0.0f, vr.originX1Y0().getZF(), delta);
+    Assert.assertEquals(1.0f, vr.originX1Y0().getWF(), delta);
 
-    Assert.assertEquals(-320.0f, vr.getOriginX0Y1().getXF(), delta);
-    Assert.assertEquals(240.0f, vr.getOriginX0Y1().getYF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX0Y1().getZF(), delta);
-    Assert.assertEquals(1.0f, vr.getOriginX0Y1().getWF(), delta);
+    Assert.assertEquals(-320.0f, vr.originX0Y1().getXF(), delta);
+    Assert.assertEquals(240.0f, vr.originX0Y1().getYF(), delta);
+    Assert.assertEquals(0.0f, vr.originX0Y1().getZF(), delta);
+    Assert.assertEquals(1.0f, vr.originX0Y1().getWF(), delta);
 
-    Assert.assertEquals(320.0f, vr.getOriginX1Y1().getXF(), delta);
-    Assert.assertEquals(240.0f, vr.getOriginX1Y1().getYF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX1Y1().getZF(), delta);
-    Assert.assertEquals(1.0f, vr.getOriginX1Y1().getWF(), delta);
+    Assert.assertEquals(320.0f, vr.originX1Y1().getXF(), delta);
+    Assert.assertEquals(240.0f, vr.originX1Y1().getYF(), delta);
+    Assert.assertEquals(0.0f, vr.originX1Y1().getZF(), delta);
+    Assert.assertEquals(1.0f, vr.originX1Y1().getWF(), delta);
   }
 
   @Test
@@ -162,54 +162,54 @@ public abstract class R2ViewRaysContract
 
       R2Bilinear.bilinear3F(
         vc,
-        vr.getRayX0Y0(),
-        vr.getRayX1Y0(),
-        vr.getRayX0Y1(),
-        vr.getRayX1Y1(),
+        vr.rayX0Y0(),
+        vr.rayX1Y0(),
+        vr.rayX0Y1(),
+        vr.rayX1Y1(),
         0.5f,
         0.5f, temp_0, temp_1, out);
       System.out.printf("q: %s\n", out);
     }
 
     final float delta = 0.0001f;
-    Assert.assertEquals(1.0f, vr.getRayX0Y0().getXF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX0Y0().getYF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX0Y0().getZF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX0Y0().getWF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX0Y0().getXF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX0Y0().getYF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX0Y0().getZF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX0Y0().getWF(), delta);
 
-    Assert.assertEquals(-1.0f, vr.getRayX1Y0().getXF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX1Y0().getYF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX1Y0().getZF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX1Y0().getWF(), delta);
+    Assert.assertEquals(-1.0f, vr.rayX1Y0().getXF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX1Y0().getYF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX1Y0().getZF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX1Y0().getWF(), delta);
 
-    Assert.assertEquals(1.0f, vr.getRayX0Y1().getXF(), delta);
-    Assert.assertEquals(-1.0f, vr.getRayX0Y1().getYF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX0Y1().getZF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX0Y1().getWF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX0Y1().getXF(), delta);
+    Assert.assertEquals(-1.0f, vr.rayX0Y1().getYF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX0Y1().getZF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX0Y1().getWF(), delta);
 
-    Assert.assertEquals(-1.0f, vr.getRayX1Y1().getXF(), delta);
-    Assert.assertEquals(-1.0f, vr.getRayX1Y1().getYF(), delta);
-    Assert.assertEquals(1.0f, vr.getRayX1Y1().getZF(), delta);
-    Assert.assertEquals(0.0f, vr.getRayX1Y1().getWF(), delta);
+    Assert.assertEquals(-1.0f, vr.rayX1Y1().getXF(), delta);
+    Assert.assertEquals(-1.0f, vr.rayX1Y1().getYF(), delta);
+    Assert.assertEquals(1.0f, vr.rayX1Y1().getZF(), delta);
+    Assert.assertEquals(0.0f, vr.rayX1Y1().getWF(), delta);
 
-    Assert.assertEquals(0.0f, vr.getOriginX0Y0().getXF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX0Y0().getYF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX0Y0().getZF(), delta);
-    Assert.assertEquals(1.0f, vr.getOriginX0Y0().getWF(), delta);
+    Assert.assertEquals(0.0f, vr.originX0Y0().getXF(), delta);
+    Assert.assertEquals(0.0f, vr.originX0Y0().getYF(), delta);
+    Assert.assertEquals(0.0f, vr.originX0Y0().getZF(), delta);
+    Assert.assertEquals(1.0f, vr.originX0Y0().getWF(), delta);
 
-    Assert.assertEquals(0.0f, vr.getOriginX1Y0().getXF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX1Y0().getYF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX1Y0().getZF(), delta);
-    Assert.assertEquals(1.0f, vr.getOriginX1Y0().getWF(), delta);
+    Assert.assertEquals(0.0f, vr.originX1Y0().getXF(), delta);
+    Assert.assertEquals(0.0f, vr.originX1Y0().getYF(), delta);
+    Assert.assertEquals(0.0f, vr.originX1Y0().getZF(), delta);
+    Assert.assertEquals(1.0f, vr.originX1Y0().getWF(), delta);
 
-    Assert.assertEquals(0.0f, vr.getOriginX0Y1().getXF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX0Y1().getYF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX0Y1().getZF(), delta);
-    Assert.assertEquals(1.0f, vr.getOriginX0Y1().getWF(), delta);
+    Assert.assertEquals(0.0f, vr.originX0Y1().getXF(), delta);
+    Assert.assertEquals(0.0f, vr.originX0Y1().getYF(), delta);
+    Assert.assertEquals(0.0f, vr.originX0Y1().getZF(), delta);
+    Assert.assertEquals(1.0f, vr.originX0Y1().getWF(), delta);
 
-    Assert.assertEquals(0.0f, vr.getOriginX1Y1().getXF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX1Y1().getYF(), delta);
-    Assert.assertEquals(0.0f, vr.getOriginX1Y1().getZF(), delta);
-    Assert.assertEquals(1.0f, vr.getOriginX1Y1().getWF(), delta);
+    Assert.assertEquals(0.0f, vr.originX1Y1().getXF(), delta);
+    Assert.assertEquals(0.0f, vr.originX1Y1().getYF(), delta);
+    Assert.assertEquals(0.0f, vr.originX1Y1().getZF(), delta);
+    Assert.assertEquals(1.0f, vr.originX1Y1().getWF(), delta);
   }
 }

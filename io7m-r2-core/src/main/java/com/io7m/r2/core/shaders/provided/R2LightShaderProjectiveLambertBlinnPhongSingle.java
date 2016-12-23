@@ -20,6 +20,8 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -31,7 +33,6 @@ import com.io7m.jtensors.parameterized.PVectorM3F;
 import com.io7m.jtensors.parameterized.PVectorM4F;
 import com.io7m.jtensors.parameterized.PVectorReadable3FType;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
@@ -45,7 +46,8 @@ import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
@@ -89,110 +91,115 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
   private final PVector4FType<R2SpaceEyeType> position_eye;
   private final PVector3FType<R2SpaceEyeType> position_eye3;
   private final PVector4FType<R2SpaceWorldType> position_world;
-  private JCGLTextureUnitType unit_image;
 
   private R2LightShaderProjectiveLambertBlinnPhongSingle(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2LightProjectiveLambertBlinnPhongSingle",
-      "R2LightProjectiveLambertBlinnPhongSingle.vert",
+      "com.io7m.r2.shaders.core.R2LightShaderProjectiveLambertBlinnPhongSingle",
+      "com.io7m.r2.shaders.core/R2LightPositionalSingle.vert",
       Optional.empty(),
-      "R2LightProjectiveLambertBlinnPhongSingle.frag");
+      "com.io7m.r2.shaders.core/R2LightProjectiveLambertBlinnPhongSingle.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 26);
 
     this.u_light_projective_color =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_projective.color");
+        p, "R2_light_projective.color", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_light_projective_intensity =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_projective.intensity");
+        p, "R2_light_projective.intensity", JCGLType.TYPE_FLOAT);
     this.u_light_projective_position =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_projective.position");
+        p, "R2_light_projective.position", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_light_projective_inverse_range =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_projective.inverse_range");
+        p, "R2_light_projective.inverse_range", JCGLType.TYPE_FLOAT);
     this.u_light_projective_inverse_falloff =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_projective.inverse_falloff");
+        p, "R2_light_projective.inverse_falloff", JCGLType.TYPE_FLOAT);
     this.u_light_projective_image =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_projective_image");
+        p, "R2_light_projective_image", JCGLType.TYPE_SAMPLER_2D);
 
     this.u_transform_volume_modelview =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_volume_modelview");
+        p,
+        "R2_light_matrices.transform_volume_modelview",
+        JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_projection");
+        p,
+        "R2_light_matrices.transform_projection",
+        JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection_inverse =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_matrices.transform_projection_inverse");
+        p,
+        "R2_light_matrices.transform_projection_inverse",
+        JCGLType.TYPE_FLOAT_MATRIX_4);
 
     this.u_transform_eye_to_light_eye =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_transform_eye_to_light_eye");
+        p, "R2_transform_eye_to_light_eye", JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_light_projection =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_transform_light_projection");
+        p, "R2_transform_light_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
 
     this.u_gbuffer_albedo =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_gbuffer.albedo");
+        p, "R2_light_gbuffer.albedo", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_normal =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_gbuffer.normal");
+        p, "R2_light_gbuffer.normal", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_specular =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_gbuffer.specular");
+        p, "R2_light_gbuffer.specular", JCGLType.TYPE_SAMPLER_2D);
     this.u_gbuffer_depth =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_gbuffer.depth");
+        p, "R2_light_gbuffer.depth", JCGLType.TYPE_SAMPLER_2D);
 
     this.u_viewport_inverse_width =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_viewport.inverse_width");
+        p, "R2_light_viewport.inverse_width", JCGLType.TYPE_FLOAT);
     this.u_viewport_inverse_height =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_viewport.inverse_height");
+        p, "R2_light_viewport.inverse_height", JCGLType.TYPE_FLOAT);
 
     this.u_depth_coefficient =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_depth_coefficient");
+        p, "R2_light_depth_coefficient", JCGLType.TYPE_FLOAT);
 
     this.u_view_rays_origin_x0y0 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_view_rays.origin_x0y0");
+        p, "R2_light_view_rays.origin_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y0 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_view_rays.origin_x1y0");
+        p, "R2_light_view_rays.origin_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x0y1 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_view_rays.origin_x0y1");
+        p, "R2_light_view_rays.origin_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y1 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_view_rays.origin_x1y1");
+        p, "R2_light_view_rays.origin_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
 
     this.u_view_rays_ray_x0y0 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_view_rays.ray_x0y0");
+        p, "R2_light_view_rays.ray_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y0 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_view_rays.ray_x1y0");
+        p, "R2_light_view_rays.ray_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x0y1 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_view_rays.ray_x0y1");
+        p, "R2_light_view_rays.ray_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y1 =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_light_view_rays.ray_x1y1");
+        p, "R2_light_view_rays.ray_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
 
     this.position_eye = new PVectorM4F<>();
     this.position_eye3 = new PVectorM3F<>();
@@ -202,9 +209,9 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env A shader preprocessing environment
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
@@ -212,17 +219,17 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
   public static R2ShaderLightProjectiveType<R2LightProjectiveReadableType>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderLightProjectiveVerifier.newVerifier(
       new R2LightShaderProjectiveLambertBlinnPhongSingle(
-        in_shaders, in_sources, in_pool));
+        in_shaders, in_shader_env, in_pool));
   }
 
   @Override
   public Class<R2LightProjectiveReadableType>
-  getShaderParametersType()
+  shaderParametersType()
   {
     return R2LightProjectiveReadableType.class;
   }
@@ -236,24 +243,25 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
 
   @Override
   public void onReceiveBoundGeometryBufferTextures(
-    final JCGLShadersType g_sh,
-    final R2GeometryBufferUsableType g,
+    final JCGLInterfaceGL33Type g,
+    final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
     final JCGLTextureUnitType unit_specular,
     final JCGLTextureUnitType unit_depth,
     final JCGLTextureUnitType unit_normals)
   {
-    NullCheck.notNull(g_sh);
     NullCheck.notNull(g);
+    NullCheck.notNull(gbuffer);
     NullCheck.notNull(unit_albedo);
     NullCheck.notNull(unit_depth);
     NullCheck.notNull(unit_normals);
     NullCheck.notNull(unit_specular);
 
-    /**
-     * Set each of the required G-Buffer textures.
+    /*
+      Set each of the required G-Buffer textures.
      */
 
+    final JCGLShadersType g_sh = g.getShaders();
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_normal, unit_normals);
     g_sh.shaderUniformPutTexture2DUnit(this.u_gbuffer_specular, unit_specular);
@@ -262,70 +270,79 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
 
   @Override
   public void onReceiveProjectiveLight(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesProjectiveLightValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
 
+    final JCGLShadersType g_sh = g.getShaders();
+
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_eye_to_light_eye, m.getMatrixProjectiveEyeToLightEye());
+      this.u_transform_eye_to_light_eye, m.matrixProjectiveEyeToLightEye());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_light_projection, m.getMatrixProjectiveProjection());
+      this.u_transform_light_projection, m.matrixProjectiveProjection());
   }
 
   @Override
   public void onReceiveVolumeLightTransform(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesVolumeLightValuesType m)
   {
-    NullCheck.notNull(g_sh);
+    NullCheck.notNull(g);
     NullCheck.notNull(m);
 
+    final JCGLShadersType g_sh = g.getShaders();
+
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_volume_modelview, m.getMatrixLightModelView());
+      this.u_transform_volume_modelview, m.matrixLightModelView());
   }
 
   @Override
   public void onReceiveValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final AreaInclusiveUnsignedLType viewport,
-    final R2LightProjectiveReadableType values,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersLightType<R2LightProjectiveReadableType> light_parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(values);
-    NullCheck.notNull(m);
+    NullCheck.notNull(g);
+    NullCheck.notNull(light_parameters);
 
-    /**
-     * Upload the current view rays.
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    final R2MatricesObserverValuesType m =
+      light_parameters.observerMatrices();
+    final AreaInclusiveUnsignedLType viewport =
+      light_parameters.viewport();
+    final R2LightProjectiveReadableType light =
+      light_parameters.values();
+    final JCGLTextureUnitContextMutableType tc =
+      light_parameters.textureUnitContext();
+
+    /*
+      Upload the current view rays.
      */
 
-    final R2ViewRaysReadableType view_rays = m.getViewRays();
+    final R2ViewRaysReadableType view_rays = m.viewRays();
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y0, view_rays.getOriginX0Y0());
+      this.u_view_rays_origin_x0y0, view_rays.originX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y0, view_rays.getOriginX1Y0());
+      this.u_view_rays_origin_x1y0, view_rays.originX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x0y1, view_rays.getOriginX0Y1());
+      this.u_view_rays_origin_x0y1, view_rays.originX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_origin_x1y1, view_rays.getOriginX1Y1());
+      this.u_view_rays_origin_x1y1, view_rays.originX1Y1());
 
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y0, view_rays.getRayX0Y0());
+      this.u_view_rays_ray_x0y0, view_rays.rayX0Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y0, view_rays.getRayX1Y0());
+      this.u_view_rays_ray_x1y0, view_rays.rayX1Y0());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x0y1, view_rays.getRayX0Y1());
+      this.u_view_rays_ray_x0y1, view_rays.rayX0Y1());
     g_sh.shaderUniformPutVector3f(
-      this.u_view_rays_ray_x1y1, view_rays.getRayX1Y1());
+      this.u_view_rays_ray_x1y1, view_rays.rayX1Y1());
 
-    /**
-     * Upload the viewport.
+    /*
+      Upload the viewport.
      */
 
     final UnsignedRangeInclusiveL range_x = viewport.getRangeX();
@@ -337,37 +354,35 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
       this.u_viewport_inverse_height,
       (float) (1.0 / (double) range_y.getInterval()));
 
-    /**
-     * Upload the scene's depth coefficient.
+    /*
+      Upload the scene's depth coefficient.
      */
 
     g_sh.shaderUniformPutFloat(
       this.u_depth_coefficient,
-      (float) R2Projections.getDepthCoefficient(m.getProjection()));
+      (float) R2Projections.getDepthCoefficient(m.projection()));
 
-    /**
-     * Upload the projection for the light volume.
+    /*
+      Upload the projection for the light volume.
      */
 
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection, m.getMatrixProjection());
+      this.u_transform_projection, m.matrixProjection());
     g_sh.shaderUniformPutMatrix4x4f(
-      this.u_transform_projection_inverse, m.getMatrixProjectionInverse());
+      this.u_transform_projection_inverse, m.matrixProjectionInverse());
 
-    /**
-     * Transform the light's position to eye-space and upload it.
+    /*
+      Transform the light's position to eye-space and upload it.
      */
 
-    final PVectorReadable3FType<R2SpaceWorldType> position =
-      values.getPosition();
-
+    final PVectorReadable3FType<R2SpaceWorldType> position = light.position();
     this.position_world.copyFrom3F(position);
     this.position_world.setWF(1.0f);
 
-    final R2TransformContextType trc = m.getTransformContext();
+    final R2TransformContextType trc = m.transformContext();
     PMatrixM4x4F.multiplyVector4F(
-      trc.getContextPM4F(),
-      m.getMatrixView(),
+      trc.contextPM4F(),
+      m.matrixView(),
       this.position_world,
       this.position_eye);
 
@@ -376,29 +391,29 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
     g_sh.shaderUniformPutVector3f(
       this.u_light_projective_position, this.position_eye3);
 
-    /**
-     * Upload the projected image.
+    /*
+      Upload the projected image.
      */
 
-    this.unit_image =
-      tc.unitContextBindTexture2D(g_tex, values.getImage().get());
+    final JCGLTextureUnitType unit_image =
+      tc.unitContextBindTexture2D(g_tex, light.image().texture());
     g_sh.shaderUniformPutTexture2DUnit(
       this.u_light_projective_image,
-      this.unit_image);
+      unit_image);
 
-    /**
-     * Upload the light values.
+    /*
+      Upload the light values.
      */
 
     g_sh.shaderUniformPutVector3f(
-      this.u_light_projective_color, values.getColor());
+      this.u_light_projective_color, light.color());
     g_sh.shaderUniformPutFloat(
-      this.u_light_projective_intensity, values.getIntensity());
+      this.u_light_projective_intensity, light.intensity());
     g_sh.shaderUniformPutFloat(
-      this.u_light_projective_inverse_falloff, 1.0f / values.getFalloff());
+      this.u_light_projective_inverse_falloff, 1.0f / light.falloff());
     g_sh.shaderUniformPutFloat(
-      this.u_light_projective_inverse_range, 1.0f / values.getRadius());
+      this.u_light_projective_inverse_range, 1.0f / light.radius());
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_light_projective_image, this.unit_image);
+      this.u_light_projective_image, unit_image);
   }
 }

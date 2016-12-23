@@ -28,29 +28,29 @@ import org.immutables.value.Value;
    * @return The index of the position attribute
    */
 
-  @Value.Parameter long getPositionIndex();
+  @Value.Parameter long positionIndex();
 
   /**
    * @return The index of the normal attribute
    */
 
-  @Value.Parameter long getNormalIndex();
+  @Value.Parameter long normalIndex();
 
   /**
    * @return The index of the tangent attribute
    */
 
-  @Value.Parameter long getTangentIndex();
+  @Value.Parameter long tangentIndex();
 
   /**
    * @return The index of the bitangent attribute
    */
 
-  @Value.Parameter long getBitangentIndex();
+  @Value.Parameter long bitangentIndex();
 
   /**
    * @return The index of the UV attribute
    */
 
-  @Value.Parameter long getUVIndex();
+  @Value.Parameter long uvIndex();
 }

@@ -1,0 +1,408 @@
+[section [title Deferred Rendering: Position Reconstruction]
+[id di.deferred-position-recon]]
+[subsection [title Overview] [id di.deferred-position-recon.overview]]
+[paragraph]
+Applying lighting during [term [type term] deferred rendering] is primarily a
+(link (target di.coords.screen) screen space) technique. When the
+visible opaque objects have been rendered into the
+(link (target di.deferred.geom.gbuffer) geometry buffer), the original
+(link (target di.coords.eye) eye space) positions of all of the
+surfaces that resulted in visible fragments in the scene are lost "(unless"
+explicitly saved into the geometry "buffer)." However, given the knowledge of the
+[term [type term] projection] that was used to render the scene "(such" as
+perspective or "orthographic)," it's possible to reconstruct the original
+eye space position of the surfaces that produced each of the fragments in the
+geometry buffer.
+
+[paragraph]
+Specifically then, for each fragment [term [type variable] f] in the geometry
+buffer for which lighting is being applied, a position reconstruction algorithm
+attempts to reconstruct [term [type expression] surface_eye] " -" the eye space
+position of the surface that produced [term [type variable] f] " -" using the
+screen space position of the current light volume fragment
+[term [type expression] "position = (screen_x, screen_y)"] and some form of
+[term [type term] depth] value "(such" as the screen space depth of
+[term [type variable] f] ")."
+
+[paragraph]
+Position reconstruction is a fundamental technique in deferred rendering, and
+there are a practically unlimited number of ways to reconstruct eye space
+positions for fragments, each with various advantages and disadvantages. Some
+rendering systems actually store the eye space position of each fragment in the
+geometry buffer, meaning that reconstructing positions means simply reading a value
+directly from a texture. Some systems store only a normalized eye space depth
+value in a separate texture: The first step of most position reconstruction
+algorithms is to compute the original eye space Z value of a fragment, so having
+this value computed during the population of the geometry buffer reduces the work
+performed later. Storing an entire eye space position into the geometry buffer is
+obviously the simplest and requires the least reconstruction work later on, but
+is costly in terms of memory bandwidth: Storing a full eye space position
+requires an extra [term [type expression] 4 * 4  = 16] bytes of storage per
+fragment "(four" 32-bit floating point "values)." As screen resolutions
+increase, the costs can be prohibitive. Storing a normalized depth value
+requires only a single 32-bit floating point value per fragment but even this
+can be too much on less capable hardware. Some algorithms take advantage of the
+fact that most projections used to render scenes are perspective projections.
+Some naive algorithms use the full inverse of the current projection matrix to
+reconstruct eye space positions having already calculated
+(link (target di.coords.clip) clip space) positions.
+
+[paragraph]
+The algorithm that the [term [type package] r2] package uses for position
+reconstruction is generalized to handle both orthographic and perspective
+projections, and uses only the existing
+(link (target di.log_depth) logarithmic depth values) that were written to
+the depth buffer during scene rendering. This keeps the geometry buffer compact, and
+memory bandwidth requirements comparatively low. The algorithm works with
+symmetric and asymmetric viewing frustums, but will only work with near and far
+planes that are parallel to the screen.
+
+[paragraph]
+The algorithm works in two steps: Firstly, the original
+(link (target di.deferred-position-recon.eye-space-z) eye space Z) value of
+the fragment in question is recovered, and then this Z value is used to recover
+the full
+(link (target di.deferred-position-recon.eye-space) eye space position).
+
+[subsection [title Recovering Eye space Z]
+[id di.deferred-position-recon.eye-space-z]]
+[paragraph]
+During rendering of arbitrary scenes, vertices specified in
+(link (target di.coords.object) object space) are transformed to
+eye space, and the eye space coordinates are transformed to
+(link (target di.coords.clip) clip space) with a
+[term [type term] projection matrix]. The resulting 4D clip space coordinates
+are divided by their own [term [type variable] w] components, resulting in
+(link (target di.coords.ndevice) normalized-device space)
+coordinates. These normalized-device space coordinates are then transformed to
+(link (target di.coords.screen) screen space) by multiplying by the
+current [term [type term] viewport transform]. The transitions from clip space
+to screen space are handled automatically by the graphics hardware.
+
+[paragraph [id di.deferred-position-recon.eye-space-z.initial]]
+The first step required is to recover the original eye space Z value of
+[term [type variable] f]. This involves sampling a depth value from the current
+depth buffer. Sampling from the depth buffer is achieved as with any other
+texture: A particular texel is addressed by using coordinates in the range
+[term [type expression] "[(0, 0), (1, 1)]"]. The [term [type package] r2]
+package currently assumes that the size of the [term [type term] viewport] is
+the same as that of the framebuffer [term [type expression] "(width, height)"]
+and that the bottom left corner of the viewport is positioned at
+[term [type expression] "(0, 0)"] in screen space. Given the assumption on the
+position and size of the viewport, and assuming that the screen space position
+of the current light volume fragment being shaded is
+[term [type expression] "position = (screen_x, screen_y)"], the texture
+coordinates [term [type expression] "(screen_uv_x, screen_uv_y)"] used to access
+the current depth value are given by:
+
+[formal-item [title Screen to texture]]
+[verbatim [include "haskell/ScreenToTexture.hs"]]
+
+[paragraph]
+Intuitively, [term [type expression] "(screen_uv_x, screen_uv_y) = (0, 0)"] when
+the current screen space position is the bottom-left corner of the screen,
+[term [type expression] "(screen_uv_x, screen_uv_y) = (1, 1)"] when the current
+screen space position is the top-right corner of the screen, and
+[term [type expression] "(screen_uv_x, screen_uv_y) = (0.5, 0.5)"] when the
+current screen space position is the exact center of the screen.
+
+[paragraph]
+Originally, the spiritual ancestor of the [term [type package] r2] package,
+[term [type package] r1], used a standard depth
+buffer and so recovering the eye space Z value required a slightly different
+method compared to the steps required for the
+(link (target di.log_depth) logarithmic depth encoding) that the
+[term [type package] r2] package uses. For historical reasons and for
+completeness, the method to reconstruct an eye space Z value from a traditional
+screen space depth value is given in the section on
+(link (target di.deferred-position-recon.eye-space-z.screen-space-encoding)
+screen space depth encoding).
+
+[subsection [title "Recovering Eye space Z (Logarithmic depth encoding)"]
+[id di.deferred-position-recon.eye-space-z.log-depth-encoding]]
+[paragraph]
+The [term [type package] r2] package uses a
+(link (target di.log_depth) logarithmic depth buffer). Depth values sampled
+from any depth buffer produced by the package can be transformed to a negated
+eye space Z value by with a simple decoding
+(link (target di.log_depth.encoding) equation).
+
+[subsection [title "Recovering Eye space Z (Screen space depth encoding)"]
+[id di.deferred-position-recon.eye-space-z.screen-space-encoding]]
+[paragraph]
+Note: This section is for completeness and historical interest. Please skip
+ahead to the section on
+(link (target di.deferred-position-recon.eye-space)
+eye space position reconstruction) if you are not interested.
+
+[paragraph]
+Assuming a screen space depth value [term [type variable] screen_depth] sampled
+from the depth buffer at [term [type expression] "(screen_uv_x, screen_uv_y)"],
+it's now necessary to transform the depth value back into normalized-device
+space. In OpenGL, screen space depth values are in the range
+[term [type expression] "[0, 1]"] by default, with [term [type expression] 0]
+representing the near plane and [term [type expression] 1] representing the far
+plane. However, in OpenGL, normalized-device space coordinates are in the range
+[term [type expression] "[(-1, -1, -1), (1, 1, 1)]"] . The transformation from
+screen space to normalized-device space is given by:
+
+[formal-item [title Screen space depth to NDC Z]]
+[verbatim [include "haskell/ScreenDepthToNDC.hs"]]
+
+[paragraph]
+In order to understand how to calculate the eye space depth value from the
+resulting NDC Z value
+[term [type variable] ndc_z = screen_depth_to_ndc screen_depth], it's necessary
+to understand how the normalized-device coordinates of [term [type variable] f]
+were derived in the first place. Given a standard 4x4 projection matrix
+[term [type variable] m] and an eye space position [term [type variable] eye],
+clip space coordinates are calculated by
+[term [type variable] Matrix4x4f.mult_v m eye]. This means that the
+[term [type variable] z] component of the resulting clip space coordinates is
+given by:
+
+[formal-item [title "Clip space Z Long (Diagram)"]]
+[image [target "images/matrix_clip_z_long.png"] "Clip space Z Long (Diagram)"]
+
+[formal-item [title Clip space Z Long]]
+[verbatim [include "haskell/ClipSpaceZLong.hs"]]
+
+[paragraph]
+Similarly, the [term [type variable] w] component of the resulting clip space
+coordinates is given by:
+
+[formal-item [title "Clip space W Long (Diagram)"]]
+[image [target "images/matrix_clip_w_long.png"] "Clip space W Long (Diagram)"]
+
+[formal-item [title Clip space W Long]]
+[verbatim [include "haskell/ClipSpaceWLong.hs"]]
+
+[paragraph]
+However, in the perspective and orthographic projections provided by the
+[term [type package]  r2] package,
+[term [type expression] "Matrix4x4f.row_column m (2, 0) == 0"],
+[term [type expression] "Matrix4x4f.row_column m (2, 1) == 0"],
+[term [type expression] "Matrix4x4f.row_column m (3, 0) == 0"], and
+[term [type expression] "Matrix4x4f.row_column m (3, 1) == 0"]. Additionally,
+the [term [type variable] w] component of all eye space coordinates is
+[term [type expression] 1]. With these assumptions, the previous definitions
+simplify to:
+
+[formal-item [title "Clip space Z Simple (Diagram)"]]
+[image [target "images/matrix_clip_z_simple.png"]
+"Clip space Z Simple (Diagram)"]
+
+[formal-item [title Clip space Z Simple]]
+[verbatim [include "haskell/ClipSpaceZSimple.hs"]]
+
+[formal-item [title "Clip space W Simple (Diagram)"]]
+[image [target "images/matrix_clip_w_simple.png"]
+"Clip space W Simple (Diagram)"]
+
+[formal-item [title Clip space W Simple]]
+[verbatim [include "haskell/ClipSpaceWSimple.hs"]]
+
+[paragraph]
+It should be noted that for perspective matrices in the
+[term [type package] r2] package,
+[term [type expression] "Matrix4x4f.row_column m (3, 2) == -1"] and
+[term [type expression] "Matrix4x4f.row_column m (3, 3) == 0"]:
+
+[formal-item [title "Clip space W Simple (Perspective, Diagram)"]]
+[image [target "images/matrix_clip_w_simple_perspective.png"]
+"Clip space W Simple (Perspective, Diagram)"]
+
+[paragraph]
+This means that the [term [type variable] w] component of the resulting
+clip space coordinates is equal to the negated "(and" therefore "positive)"
+eye space [term [type variable] z] of the original coordinates.
+
+[paragraph]
+For orthographic projections in the [term [type package] r2] package,
+[term [type expression] "Matrix4x4f.row_column m (3, 2) == 0"] and
+[term [type expression] "Matrix4x4f.row_column m (3, 3) == 1"]:
+
+[formal-item [title "Clip space W Simple (Orthographic, Diagram)"]]
+[image [target "images/matrix_clip_w_simple_orthographic.png"]
+"Clip space W Simple (Orthographic, Diagram)"]
+
+[paragraph]
+This means that the [term [type variable] w] component of the resulting
+clip space coordinates is always equal to [term [type constant] 1].
+
+[paragraph]
+As stated previously, normalized-device space coordinates are calculated by
+dividing a set of clip space coordinates by their own [term [type variable] w]
+component. So, given
+[term [type expression] clip_z = ClipSpaceZSimple.clip_z_simple m eye] and
+[term [type expression] clip_w = ClipSpaceWSimple.clip_w_simple m eye] for some
+arbitrary projection matrix [term [type variable] m] and eye space position
+[term [type variable] eye], the normalized-device space Z coordinate is given
+by [term [type expression] ndc_z = clip_z / clip_w]. Rearranging the
+definitions of [term [type expression] clip_z] and
+[term [type expression] clip_w] algebraically yields an equation that takes an
+arbitrary projection matrix [term [type variable] m] and a normalized-device
+space Z value [term [type expression] ndc_z] and returns an eye space Z value:
+
+[formal-item [title Eye space Z]]
+[verbatim [include "haskell/EyeSpaceZ.hs"]]
+
+[subsection [title Recovering Eye space Position] [id di.deferred-position-recon.eye-space]]
+[paragraph]
+Given that the eye space Z value is known, it's now necessary to reconstruct the
+full eye space position [term [type expression] surface_eye] of the surface that
+resulted in [term [type variable] f] .
+
+[paragraph]
+When the current projection is a perspective projection, there is conceptually a
+ray passing through the near clipping plane "(" [term [type variable] near] ")"
+from the origin, oriented towards the eye space position "("
+[term [type variable] eye] ")" of [term [type variable] f]:
+
+[formal-item [title "Perspective projection (Diagram)"]]
+[image [target "images/reconstruction_view_perspective.png"]
+"Perspective projection (Diagram)"]
+
+[paragraph]
+When the current projection is an orthographic projection, the ray is always
+perpendicular to the clipping planes and is offset by a certain amount "("
+[term [type variable] q] ")" on the X and Y axes:
+
+[formal-item [title "Orthographic projection (Diagram)"]]
+[image [target "images/reconstruction_view_ortho.png"]
+"Orthographic projection (Diagram)"]
+
+[paragraph]
+Assuming [term [type expression] ray = Vector3f.V3 ray_x ray_y 1.0] , the
+eye space position of [term [type variable] f] is given by
+[term [type expression]
+"surface_eye = Vector3f.add3 q (Vector3f.scale ray eye_z)"] . In the case of
+perspective projections, [term [type expression] q = Vector3f.V3 0.0 0.0 0.0] .
+The [term [type variable] q] term is sometimes referred to as the origin
+"(because" [term [type variable] q] is the origin of the view "ray)," but that
+terminology is not used here in order to avoid confusion between the
+[term [type variable] ray] origin and the eye space coordinate system origin.
+It's therefore necessary to calculate [term [type variable] q] and
+[term [type variable] ray] in order to reconstruct the full eye space position
+of the fragment. The way this is achieved in the [term [type package]  r2]
+package is to calculate [term [type variable] q] and [term [type variable] ray]
+for each of the viewing frustum corners [footnote-ref di.deferred-position-recon.matrix-once] and
+then bilinearly interpolate between the calculated values during rendering based
+on [term [type expression] screen_uv_x] and [term [type expression] screen_uv_y].
+
+[paragraph]
+As stated previously, normalized-device space coordinates are in the range
+[term [type expression] "[(-1, -1, -1), (1, 1, 1)]"] . Stating each of the eight
+corners of the cube that defines normalized-device space as 4D homogeneous
+coordinates [footnote-ref di.deferred-position-recon.w] yields the following values:
+
+[formal-item [title Normalized-device space corners]]
+[verbatim [include "haskell/NDCCorners.hs"]]
+
+[paragraph]
+Then, for the four pairs of near/far corners
+[term [type expression] "((near_x0y0, far_x0y0)"],
+[term [type expression] "(near_x1y0, far_x1y0)"],
+[term [type expression] "(near_x0y1, far_x0y1)"],
+[term [type expression] "(near_x1y1, far_x1y1))"], a [term [type variable] q]
+and [term [type variable] ray] value is calculated. The
+[term [type expression] ray_and_q] function describes the calculation for a
+given pair of near/far corners:
+
+[formal-item [title "Ray and Q calculation (Single)"]]
+[verbatim [include "haskell/RayAndQ.hs"]]
+
+[paragraph [id di.deferred-position-recon.eye-space.rays_and_qs]]
+The function takes a matrix representing the [term [type term] inverse] of the
+current projection matrix, and "\"unprojects\"" the given near and far frustum
+corners from normalized-device space to eye space. The desired
+[term [type variable] ray] value for the pair of corners is simply the vector
+that results from subtracting the near corner from the far corner, divided by
+its own [term [type variable] z] component. The desired [term [type variable] q]
+value is the vector that results from subtracting [term [type variable] ray]
+scaled by the [term [type variable] z] component of the near corner, from the
+near corner.
+
+[paragraph]
+Note: The function calculates [term [type variable] ray] in eye space, but the
+resulting value will have a non-negative [term [type variable] z] component. The
+reason for this is that the resulting ray will be multiplied by the calculated
+(link (target di.deferred-position-recon.eye-space-z) eye space Z value)
+[footnote-ref di.deferred-position-recon.eye_negative] to produce an eye space position. If the
+[term [type variable] z] component of [term [type variable] ray] was negative,
+the resulting position would have a positive [term [type variable] z] component.
+
+[paragraph]
+Calculating the [term [type variable] ray] and [term [type variable] q] value
+for each of the pairs of corners is straightforward:
+
+[formal-item [title "Ray and Q calculation (All)"]]
+[verbatim [include "haskell/RayAndQAll.hs"]]
+
+[paragraph]
+Then, by reusing the
+[term [type expression] "position = (screen_uv_x, screen_uv_y)"] values
+calculated during the initial
+(link (target di.deferred-position-recon.eye-space-z.initial) eye space Z)
+calculation, determining [term [type variable] ray] and [term [type variable] q]
+for the current fragment involves simply bilinearly interpolating between the
+precalculated values above. Bilinear interpolation between four vectors is
+defined as:
+
+[formal-item [title "Bilinear interpolation (Vector4f)"]]
+[verbatim [include "haskell/Bilinear4.hs"]]
+
+[paragraph]
+Finally, now that all of the required components are known, the eye space
+position [term [type variable] surface_eye] of [term [type variable] f] is
+calculated as
+[term [type expression]
+"surface_eye = Vector3f.add3 q (Vector3f.scale ray eye_z)"] .
+
+[footnote [id di.deferred-position-recon.matrix-once]]
+This step is performed once on the CPU and is only repeated when the projection
+matrix changes [footnote-ref di.deferred-position-recon.matrix-change] .
+
+[footnote [id di.deferred-position-recon.matrix-change]]
+Which, for many applications, may be once for the entire lifetime of the
+program.
+
+[footnote [id di.deferred-position-recon.w]]
+By simply setting the [term [type variable] w] component to
+[term [type constant] 1].
+
+[footnote [id di.deferred-position-recon.eye_negative]]
+Which is guaranteed to be negative, as only a negative Z value could have
+resulted in a visible fragment in the geometry buffer.
+
+[subsection [title Implementation]
+[id di.deferred-position-recon.implementation]]
+[paragraph]
+In the [term [type package] r2] package, the
+(link-ext (target "apidocs/com/io7m/r2/core/R2ViewRays.html") R2ViewRays) class
+precalculates the
+(link (target di.deferred-position-recon.eye-space.rays_and_qs)
+rays and q values) for each of the current frustum corners, and the results of
+which are cached and re-used based on the current projection each time the scene
+is rendered.
+
+[paragraph]
+The actual position reconstruction is performed in a
+[term [type term] fragment shader], producing an eye space Z value using the
+[term [type package] GLSL] functions in
+(link-ext (target "glsl/com/io7m/r2/shaders/core/R2LogDepth.h") R2LogDepth.h)
+and the final position in
+(link-ext (target "glsl/com/io7m/r2/shaders/core/R2PositionReconstruction.h") R2PositionReconstruction.h):
+
+[formal-item [title "Position reconstruction (LogDepth)"]]
+[verbatim [include "glsl/com/io7m/r2/shaders/core/R2LogDepth.h"]]
+
+[formal-item [title "Position reconstruction (GLSL)"]]
+[verbatim [include "glsl/com/io7m/r2/shaders/core/R2PositionReconstruction.h"]]
+
+[paragraph]
+The precalculated view ray vectors are passed to the fragment shader in a value
+of type [term [type type] R2_view_rays_t] :
+
+[formal-item [title "View Rays (GLSL)"]]
+[verbatim [include "glsl/com/io7m/r2/shaders/core/R2ViewRays.h"]]

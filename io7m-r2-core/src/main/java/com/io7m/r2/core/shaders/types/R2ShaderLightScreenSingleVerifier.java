@@ -16,19 +16,16 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
+import com.io7m.jfsm.core.FSMEnumMutable;
+import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2LightScreenSingleType;
-import com.io7m.r2.core.R2MatricesObserverValuesType;
 
 /**
  * A verifier for single-instance volume light shaders; a type that verifies
@@ -42,15 +39,30 @@ public final class R2ShaderLightScreenSingleVerifier<
   R2ShaderLightScreenSingleType<M>
 {
   private final R2ShaderLightScreenSingleType<M> shader;
-  private final StringBuilder text;
-  private State state;
+  private final FSMEnumMutable<State> state;
 
   private R2ShaderLightScreenSingleVerifier(
     final R2ShaderLightScreenSingleType<M> in_shader)
   {
     this.shader = NullCheck.notNull(in_shader);
-    this.text = new StringBuilder(128);
-    this.state = State.STATE_DEACTIVATED;
+
+    final FSMEnumMutableBuilderType<State> sb =
+      FSMEnumMutable.builder(State.STATE_DEACTIVATED);
+
+    sb.addTransition(
+      State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
+    sb.addTransition(
+      State.STATE_ACTIVATED, State.STATE_GEOMETRY_BUFFER_RECEIVED);
+    sb.addTransition(
+      State.STATE_GEOMETRY_BUFFER_RECEIVED, State.STATE_VALUES_RECEIVED);
+
+    for (final State target : State.values()) {
+      if (target != State.STATE_DEACTIVATED) {
+        sb.addTransition(target, State.STATE_DEACTIVATED);
+      }
+    }
+
+    this.state = sb.build();
   }
 
   /**
@@ -84,92 +96,71 @@ public final class R2ShaderLightScreenSingleVerifier<
   }
 
   @Override
-  public long getShaderID()
+  public long shaderID()
   {
-    return this.shader.getShaderID();
+    return this.shader.shaderID();
   }
 
   @Override
-  public Class<M> getShaderParametersType()
+  public Class<M> shaderParametersType()
   {
-    return this.shader.getShaderParametersType();
+    return this.shader.shaderParametersType();
   }
 
   @Override
-  public JCGLProgramShaderUsableType getShaderProgram()
+  public JCGLProgramShaderUsableType shaderProgram()
   {
-    return this.shader.getShaderProgram();
+    return this.shader.shaderProgram();
   }
 
   @Override
-  public void onActivate(final JCGLShadersType g_sh)
+  public void onActivate(final JCGLInterfaceGL33Type g)
   {
-    this.shader.onActivate(g_sh);
-    this.state = State.STATE_ACTIVATED;
+    this.state.transition(State.STATE_ACTIVATED);
+    this.shader.onActivate(g);
   }
 
   @Override
   public void onValidate()
     throws R2ExceptionShaderValidationFailed
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_VALUES_RECEIVED,
-      this.state);
-
+    this.state.transition(State.STATE_VALIDATED);
     this.shader.onValidate();
   }
 
   @Override
-  public void onDeactivate(final JCGLShadersType g_sh)
+  public void onDeactivate(final JCGLInterfaceGL33Type g)
   {
-    this.shader.onDeactivate(g_sh);
-    this.state = State.STATE_DEACTIVATED;
+    this.state.transition(State.STATE_DEACTIVATED);
+    this.shader.onDeactivate(g);
   }
 
   @Override
   public void onReceiveBoundGeometryBufferTextures(
-    final JCGLShadersType g_sh,
-    final R2GeometryBufferUsableType g,
+    final JCGLInterfaceGL33Type g,
+    final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
     final JCGLTextureUnitType unit_specular,
     final JCGLTextureUnitType unit_depth,
     final JCGLTextureUnitType unit_normals)
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_ACTIVATED,
-      this.state);
-
+    this.state.transition(State.STATE_GEOMETRY_BUFFER_RECEIVED);
     this.shader.onReceiveBoundGeometryBufferTextures(
-      g_sh,
       g,
+      gbuffer,
       unit_albedo,
       unit_specular,
       unit_depth,
       unit_normals);
-    this.state = State.STATE_GEOMETRY_BUFFER_RECEIVED;
   }
 
   @Override
   public void onReceiveValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final AreaInclusiveUnsignedLType area,
-    final M values,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersLightType<M> light_parameters)
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_GEOMETRY_BUFFER_RECEIVED,
-      this.state);
-
-    this.shader.onReceiveValues(g_tex, g_sh, tc, area, values, m);
-    this.state = State.STATE_VALUES_RECEIVED;
+    this.state.transition(State.STATE_VALUES_RECEIVED);
+    this.shader.onReceiveValues(g, light_parameters);
   }
 
   private enum State
@@ -177,6 +168,7 @@ public final class R2ShaderLightScreenSingleVerifier<
     STATE_DEACTIVATED,
     STATE_ACTIVATED,
     STATE_GEOMETRY_BUFFER_RECEIVED,
-    STATE_VALUES_RECEIVED
+    STATE_VALUES_RECEIVED,
+    STATE_VALIDATED
   }
 }

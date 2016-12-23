@@ -8,11 +8,11 @@
   <parent>
     <groupId>com.io7m.r2</groupId>
     <artifactId>io7m-r2</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
   <artifactId>io7m-r2-core</artifactId>
 
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>io7m-r2-core</name>
   <description>3D renderer (Core)</description>
   <url>http://io7m.github.io/r2/</url>
@@ -27,7 +27,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>io7m-r2-shaders</artifactId>
+      <artifactId>io7m-r2-shaders-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -92,14 +92,18 @@
       <groupId>com.io7m.jpuddle</groupId>
       <artifactId>io7m-jpuddle-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.sombrero</groupId>
+      <artifactId>io7m-sombrero-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jfsm</groupId>
+      <artifactId>io7m-jfsm-core</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>it.unimi.dsi</groupId>
       <artifactId>fastutil</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.valid4j</groupId>
-      <artifactId>valid4j</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -110,33 +114,6 @@
       <groupId>org.immutables</groupId>
       <artifactId>value</artifactId>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.io7m.jcanephora</groupId>
-      <artifactId>io7m-jcanephora-fake</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.jcanephora</groupId>
-      <artifactId>io7m-jcanephora-jogl</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.jtensors</groupId>
-      <artifactId>io7m-jtensors-core</artifactId>
-      <classifier>tests</classifier>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -166,6 +143,25 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Produce OSGi bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              com.io7m.r2.core,
+              com.io7m.r2.core.cursors,
+              com.io7m.r2.core.debug,
+              com.io7m.r2.core.shaders,
+              com.io7m.r2.core.shaders.provided,
+              com.io7m.r2.core.shaders.types
+            </Export-Package>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

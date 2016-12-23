@@ -49,6 +49,6 @@ public final class R2Projections
   {
     NullCheck.notNull(p);
     final double far = (double) p.projectionGetZFar();
-    return 2.0 / R2Projections.log2(far + 1.0);
+    return 2.0 / log2(far + 1.0);
   }
 }

@@ -26,7 +26,6 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2FilterOcclusionApplicatorParametersType
 {
@@ -35,14 +34,14 @@ public interface R2FilterOcclusionApplicatorParametersType
    */
 
   @Value.Parameter
-  R2LightBufferUsableType getOutputLightBuffer();
+  R2LightBufferUsableType outputLightBuffer();
 
   /**
    * @return A texture containing occlusion values
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getOcclusionTexture();
+  R2Texture2DUsableType occlusionTexture();
 
   /**
    * @return The intensity of the occlusion
@@ -50,7 +49,7 @@ public interface R2FilterOcclusionApplicatorParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getIntensity()
+  default float intensity()
   {
     return 1.0f;
   }

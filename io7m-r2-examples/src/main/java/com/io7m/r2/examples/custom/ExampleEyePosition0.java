@@ -59,22 +59,25 @@ import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.filters.R2EyePositionBuffer;
 import com.io7m.r2.filters.R2EyePositionBufferType;
 import com.io7m.r2.filters.R2FilterDebugEyePosition;
-import com.io7m.r2.filters.R2FilterDebugEyePositionParametersMutable;
-import com.io7m.r2.filters.R2FilterDebugEyePositionParametersType;
+import com.io7m.r2.filters.R2FilterDebugEyePositionParameters;
 import com.io7m.r2.main.R2MainType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
+import com.io7m.sombrero.core.SoShaderPreprocessorType;
+import com.io7m.sombrero.core.SoShaderResolver;
+import com.io7m.sombrero.jcpp.SoShaderPreprocessorJCPP;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 // CHECKSTYLE_JAVADOC:OFF
 
@@ -89,14 +92,11 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
   private R2EyePositionBufferType pbuffer;
 
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
-  private R2SurfaceShaderBasicParameters shader_params;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
 
-  private R2UnitSphereType sphere;
   private R2InstanceSingleType instance;
 
-  private R2FilterType<R2FilterDebugEyePositionParametersType> eye_filter;
-  private R2FilterDebugEyePositionParametersMutable eye_filter_params;
+  private R2FilterType<R2FilterDebugEyePositionParameters> eye_filter;
   private R2EyePositionBufferType eye_buffer;
 
   private JCGLClearSpecification geom_clear_spec;
@@ -123,11 +123,10 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
     this.eye_filter =
       R2FilterDebugEyePosition.newRenderer(
         g,
-        m.getShaderSources(),
+        m.getShaderPreprocessingEnvironment(),
         m.getIDPool(),
         m.getUnitQuad());
-    this.eye_filter_params =
-      R2FilterDebugEyePositionParametersMutable.create();
+
     this.eye_buffer =
       R2EyePositionBuffer.newEyePositionBuffer(
         g.getFramebuffers(),
@@ -165,29 +164,32 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
 
     final R2IDPoolType id_pool = m.getIDPool();
 
-    this.sphere = R2UnitSphere.newUnitSphere8(g);
+    final R2UnitSphereType sphere = R2UnitSphere.newUnitSphere8(g);
 
     final R2TransformReadableType tr = R2TransformSOT.newTransform();
-    this.instance = R2InstanceSingle.newInstance(
-      id_pool,
-      this.sphere.getArrayObject(),
+    this.instance = R2InstanceSingle.of(
+      id_pool.freshID(),
+      sphere.arrayObject(),
       tr,
       PMatrixI3x3F.identity());
 
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
-    this.shader =
-      R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(),
-        sources,
-        id_pool);
-    this.shader_params =
-      R2SurfaceShaderBasicParameters.newParameters(m.getTextureDefaults());
+    final SoShaderPreprocessorConfig.Builder b =
+      SoShaderPreprocessorConfig.builder();
+    b.setResolver(SoShaderResolver.create());
+    b.setVersion(OptionalInt.of(330));
+    final SoShaderPreprocessorType p =
+      SoShaderPreprocessorJCPP.create(b.build());
+    final R2ShaderPreprocessingEnvironmentType sources =
+      R2ShaderPreprocessingEnvironment.create(p);
 
-    this.material = R2MaterialOpaqueSingle.newMaterial(
-      id_pool,
-      this.shader,
-      this.shader_params);
+    this.shader =
+      R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
+    final R2SurfaceShaderBasicParameters shader_params = R2SurfaceShaderBasicParameters
+      .builder()
+      .setTextureDefaults(m.getTextureDefaults())
+      .build();
+    this.material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.shader, shader_params);
 
     {
       final JCGLClearSpecification.Builder csb =
@@ -242,9 +244,9 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
 
       matrices.withObserver(this.view, this.projection, this, (mo, t) -> {
         final JCGLFramebufferUsableType gbuffer_fb =
-          t.gbuffer.getPrimaryFramebuffer();
+          t.gbuffer.primaryFramebuffer();
         final JCGLFramebufferUsableType zbuffer_fb =
-          t.pbuffer.getFramebuffer();
+          t.pbuffer.framebuffer();
 
         final JCGLProfilingType pro =
           t.main.getProfiling();
@@ -264,10 +266,10 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
           mo,
           pro_root,
           t.main.getTextureUnitAllocator().getRootContext(),
-          t.gbuffer.getArea(),
+          t.gbuffer.area(),
           t.stencils);
         t.main.getGeometryRenderer().renderGeometry(
-          t.gbuffer.getArea(),
+          t.gbuffer.area(),
           Optional.empty(),
           pro_root,
           t.main.getTextureUnitAllocator().getRootContext(),
@@ -282,14 +284,18 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
           JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
         g_cl.clear(t.eye_clear_spec);
 
-        t.eye_filter_params.setGeometryBuffer(t.gbuffer);
-        t.eye_filter_params.setEyePositionBuffer(t.eye_buffer);
-        t.eye_filter_params.setObserverValues(mo);
+        final R2FilterDebugEyePositionParameters eye_filter_params =
+          R2FilterDebugEyePositionParameters
+            .builder()
+            .setEyePositionBuffer(t.eye_buffer)
+            .setGeometryBuffer(t.gbuffer)
+            .setObserverValues(mo)
+            .build();
 
         t.eye_filter.runFilter(
           pro_root,
           t.main.getTextureUnitAllocator().getRootContext(),
-          t.eye_filter_params);
+          eye_filter_params);
 
         g_fb.framebufferDrawUnbind();
         return Unit.unit();

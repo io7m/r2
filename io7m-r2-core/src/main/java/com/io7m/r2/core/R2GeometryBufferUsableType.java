@@ -29,25 +29,27 @@ public interface R2GeometryBufferUsableType
    * @return The albedo/emissive texture
    */
 
-  R2Texture2DUsableType getAlbedoEmissiveTexture();
+  R2Texture2DUsableType albedoEmissiveTexture();
 
   /**
    * @return The normal texture
    */
 
-  R2Texture2DUsableType getNormalTexture();
+  R2Texture2DUsableType normalTexture();
 
   /**
    * @return The specular texture
    */
 
-  Optional<R2Texture2DUsableType> getSpecularTexture();
+  Optional<R2Texture2DUsableType> specularTexture();
 
   /**
    * Return either the allocated specular texture, or a suitable default
    * replacement that behaves as if the geometry buffer contains no specular
    * components.
+   *
    * @param td The texture defaults
+   *
    * @return A specular texture, or a default replacement
    */
 
@@ -56,11 +58,11 @@ public interface R2GeometryBufferUsableType
   {
     // Checkstyle doesn't understand the final keyword in interfaces.
     // CHECKSTYLE:OFF
-    final Optional<R2Texture2DUsableType> s_opt = this.getSpecularTexture();
+    final Optional<R2Texture2DUsableType> s_opt = this.specularTexture();
     if (s_opt.isPresent()) {
       return s_opt.get();
     }
-    return td.getBlackTexture();
+    return td.texture2DBlack();
     // CHECKSTYLE:ON
   }
 
@@ -68,5 +70,5 @@ public interface R2GeometryBufferUsableType
    * @return The depth/stencil texture
    */
 
-  R2Texture2DUsableType getDepthTexture();
+  R2Texture2DUsableType depthTexture();
 }

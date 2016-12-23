@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.io7m.r2</groupId>
     <artifactId>io7m-r2</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
   <artifactId>io7m-r2-examples</artifactId>
 
@@ -47,6 +47,10 @@
     <dependency>
       <groupId>com.io7m.junreachable</groupId>
       <artifactId>io7m-junreachable-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jproperties</groupId>
+      <artifactId>io7m-jproperties-core</artifactId>
     </dependency>
 
     <dependency>

@@ -37,6 +37,7 @@ import com.io7m.jpra.runtime.java.JPRACursor2DType;
 import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
+
 /**
  * Functions for allocating noise textures for rotating SSAO kernels.
  */
@@ -81,7 +82,7 @@ public final class R2SSAONoiseTexture
       final R2Texture2DType rt = R2Texture2DStatic.of(p.getRight());
 
       final JCGLTexture2DUpdateType tu =
-        JCGLTextureUpdates.newUpdateReplacingAll2D(rt.get());
+        JCGLTextureUpdates.newUpdateReplacingAll2D(rt.texture());
       final JPRACursor2DType<JCGLRGB8Type> c =
         JPRACursor2DByteBufferedUnchecked.newCursor(
           tu.getData(),

@@ -44,7 +44,7 @@ public final class R2TransformIdentity implements
 
   public static R2TransformOrthogonalReadableType getInstance()
   {
-    return R2TransformIdentity.INSTANCE;
+    return INSTANCE;
   }
 
   @Override
@@ -74,7 +74,6 @@ public final class R2TransformIdentity implements
   public R2WatchableType<R2TransformOrthogonalReadableType>
   transformOrthogonalGetWatchable()
   {
-    final Object o = this.watchable;
-    return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
+    return (R2WatchableType<R2TransformOrthogonalReadableType>) (Object) this.watchable;
   }
 }

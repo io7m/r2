@@ -68,7 +68,7 @@ public final class R2Stencils
 
   public static boolean isValidGroup(final int x)
   {
-    return x > 0 && x < R2Stencils.MAXIMUM_GROUPS;
+    return x > 0 && x < MAXIMUM_GROUPS;
   }
 
   /**
@@ -84,12 +84,12 @@ public final class R2Stencils
   public static int checkValidGroup(final int x)
     throws R2ExceptionInvalidGroup
   {
-    if (!R2Stencils.isValidGroup(x)) {
+    if (!isValidGroup(x)) {
       throw new R2ExceptionInvalidGroup(
         String.format(
           "Group number %d is not in the range [1, %d]",
           Integer.valueOf(x),
-          Integer.valueOf(R2Stencils.MAXIMUM_GROUPS - 1)));
+          Integer.valueOf(MAXIMUM_GROUPS - 1)));
     }
     return x;
   }

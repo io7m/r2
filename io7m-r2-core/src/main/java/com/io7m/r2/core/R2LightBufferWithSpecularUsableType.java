@@ -26,5 +26,5 @@ public interface R2LightBufferWithSpecularUsableType
    * @return The specular texture
    */
 
-  R2Texture2DUsableType getSpecularTexture();
+  R2Texture2DUsableType specularTexture();
 }

@@ -16,6 +16,7 @@
 
 package com.io7m.r2.filters;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLFramebufferBlitBuffer;
 import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
@@ -28,7 +29,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -43,8 +44,8 @@ import com.io7m.r2.core.R2MatricesObserverType;
 import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import org.valid4j.Assertive;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -55,7 +56,7 @@ import java.util.Set;
  */
 
 public final class R2FilterDebugEyeZ implements
-  R2FilterType<R2FilterDebugEyeZParametersType>
+  R2FilterType<R2FilterDebugEyeZParameters>
 {
   private static final Set<JCGLFramebufferBlitBuffer> DEPTH_STENCIL;
 
@@ -65,41 +66,44 @@ public final class R2FilterDebugEyeZ implements
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_STENCIL);
   }
 
-  private final R2ShaderFilterType<R2FilterDebugEyeZParametersType> shader;
+  private final R2ShaderFilterType<R2FilterDebugEyeZParameters> shader;
   private final JCGLInterfaceGL33Type g;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderState render_state;
   private final R2UnitQuadUsableType quad;
+  private final R2ShaderParametersFilterMutable<R2FilterDebugEyeZParameters> values;
 
   private R2FilterDebugEyeZ(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
-    this.shader = R2ShaderFilterDebugEyeZ.newShader(
-      this.g.getShaders(), in_sources, in_pool);
-    this.render_state =
-      JCGLRenderStateMutable.create();
     this.quad = NullCheck.notNull(in_quad);
+
+    this.shader = R2ShaderFilterDebugEyeZ.newShader(
+      this.g.getShaders(), in_shader_env, in_pool);
+    this.render_state = JCGLRenderState.builder().build();
+
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
-   * @param in_g       An OpenGL interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
-   * @param in_quad    A unit quad
+   * @param in_g          An OpenGL interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new renderer
    */
 
-  public static R2FilterType<R2FilterDebugEyeZParametersType> newFilter(
+  public static R2FilterType<R2FilterDebugEyeZParameters> newFilter(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    return new R2FilterDebugEyeZ(in_g, in_sources, in_pool, in_quad);
+    return new R2FilterDebugEyeZ(in_g, in_shader_env, in_pool, in_quad);
   }
 
   @Override
@@ -121,12 +125,13 @@ public final class R2FilterDebugEyeZ implements
   public void runFilter(
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterDebugEyeZParametersType parameters)
+    final R2FilterDebugEyeZParameters parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
-    Assertive.require(!this.isDeleted(), "Filter not deleted");
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Filter must not be deleted");
 
     final JCGLProfilingContextType pc_base = pc.getChildContext("debug-eye-z");
     pc_base.startMeasuringIfEnabled();
@@ -139,14 +144,14 @@ public final class R2FilterDebugEyeZ implements
 
   private void run(
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterDebugEyeZParametersType parameters)
+    final R2FilterDebugEyeZParameters parameters)
   {
     final R2GeometryBufferUsableType gbuffer =
-      parameters.getGeometryBuffer();
+      parameters.geometryBuffer();
     final R2EyeZBufferUsableType zbuffer =
-      parameters.getEyeZBuffer();
+      parameters.eyeZBuffer();
 
-    final JCGLFramebufferUsableType gb_fb = gbuffer.getPrimaryFramebuffer();
+    final JCGLFramebufferUsableType gb_fb = gbuffer.primaryFramebuffer();
     final JCGLArrayObjectsType g_ao = this.g.getArrayObjects();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
     final JCGLTexturesType g_tex = this.g.getTextures();
@@ -155,22 +160,22 @@ public final class R2FilterDebugEyeZ implements
     final JCGLViewportsType g_v = this.g.getViewports();
 
     try {
-      g_fb.framebufferDrawBind(zbuffer.getFramebuffer());
+      g_fb.framebufferDrawBind(zbuffer.framebuffer());
 
-      /**
+      /*
        * Copy the contents of the depth/stencil attachment of the G-Buffer to
        * the current depth/stencil buffer.
        */
 
       g_fb.framebufferReadBind(gb_fb);
       g_fb.framebufferBlit(
-        gbuffer.getArea(),
-        zbuffer.getArea(),
-        R2FilterDebugEyeZ.DEPTH_STENCIL,
+        gbuffer.area(),
+        zbuffer.area(),
+        DEPTH_STENCIL,
         JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
       g_fb.framebufferReadUnbind();
 
-      /**
+      /*
        * Bind G-buffer.
        */
 
@@ -178,15 +183,18 @@ public final class R2FilterDebugEyeZ implements
 
       try {
         JCGLRenderStates.activate(this.g, this.render_state);
-        g_v.viewportSet(zbuffer.getArea());
+        g_v.viewportSet(zbuffer.area());
 
         try {
-          g_ao.arrayObjectBind(this.quad.getArrayObject());
+          g_ao.arrayObjectBind(this.quad.arrayObject());
 
-          final R2MatricesObserverType m = parameters.getObserverValues();
+          final R2MatricesObserverType m = parameters.observerValues();
 
-          this.shader.onActivate(g_sh);
-          this.shader.onReceiveFilterValues(g_tex, g_sh, tc, parameters);
+          this.values.setTextureUnitContext(tc);
+          this.values.setValues(parameters);
+
+          this.shader.onActivate(this.g);
+          this.shader.onReceiveFilterValues(this.g, this.values);
           this.shader.onValidate();
 
           m.withTransform(
@@ -200,7 +208,7 @@ public final class R2FilterDebugEyeZ implements
 
         } finally {
           g_ao.arrayObjectUnbind();
-          this.shader.onDeactivate(g_sh);
+          this.shader.onDeactivate(this.g);
         }
 
       } finally {

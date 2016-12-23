@@ -1,0 +1,54 @@
+[section [title Lighting: Spherical] [id di.lighting.spherical]]
+[subsection [title Overview] [id di.lighting.spherical.overview]]
+[paragraph]
+A [term [type term] spherical light] in the [term [type package] r2]
+package is a light that emits rays of light in all directions from a given
+[term [type term] origin] specified in
+(link (target di.coords.eye) eye space) up to a given maximum
+[term [type term] radius].
+
+[formal-item [title Spherical lighting]]
+[image [target "images/spherical_diagram.png"] Spherical lighting]
+
+[paragraph]
+The term [term [type term] spherical] comes from the fact that the light has a
+defined radius. Most rendering systems instead use [term [type term] point]
+lights that specify multiple [term [type term] attenuation] constants to control
+how light is attenuated over distance. The problem with this approach is that it
+requires solving a quadratic equation to determine a minimum bounding sphere
+that can contain the light. Essentially, the programmer/artist is forced to
+determine "\"at" which radius does the contribution from this light effectively
+reach "zero?\"." With spherical lights, the maximum radius is declared up front,
+and a single falloff value is used to determine the attenuation curve within
+that radius. This makes spherical lights more intuitive to use: The
+programmer/artist simply places a sphere within the scene and knows exactly from
+the radius which objects are lit by it. It also means that bounding light
+volumes can be trivially constructed from unit spheres by simply scaling those
+spheres by the light radius, when performing
+(link (target di.deferred) deferred rendering).
+
+[subsection [title Attenuation] [id di.lighting.spherical.attenuation]]
+[paragraph]
+The light supports (link (target di.lighting.attenuation) attenuation) using
+the [term [type term] radius] as the maximum range.
+
+[subsection [title Application] [id di.lighting.spherical.application]]
+[paragraph]
+The final light applied to the surface is given by
+[term [type function] spherical]
+(link-ext (target "haskell/Spherical.hs") "(Spherical.hs)"), where
+[term [type variable] sr], [term [type variable] sg],
+[term [type variable] sb] are the red, green, and blue channels, respectively,
+of the surface being lit. The surface-to-light vector [term [type variable] stl]
+is calculated by normalizing the negation of the difference between the the
+current eye space [term [type variable] surface_position] and the eye space
+origin of the light.
+
+[formal-item [title "Spherical lighting (Application)"]]
+[verbatim [include "haskell/Spherical.hs"]]
+
+[subsection [title Types] [id di.lighting.spherical.types]]
+[paragraph]
+Spherical lights are represented in the [term [type package] r2] package
+by the [link-ext [target "apidocs/com/io7m/r2/core/R2LightSphericalSingle.html"] R2LightSphericalSingle]
+type.

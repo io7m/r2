@@ -8,11 +8,11 @@
   <parent>
     <groupId>com.io7m.r2</groupId>
     <artifactId>io7m-r2</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
   <artifactId>io7m-r2-meshes-binary</artifactId>
 
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>io7m-r2-meshes-binary</name>
   <description>3D renderer (Binary mesh format)</description>
   <url>http://io7m.github.io/r2/</url>
@@ -59,24 +59,13 @@
       <artifactId>io7m-jtensors-ieee754b16</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
+      <groupId>com.io7m.jaffirm</groupId>
+      <artifactId>io7m-jaffirm-core</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <scope>test</scope>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
   </dependencies>
 
@@ -105,6 +94,21 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Produce OSGi bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Export-Package>
+              com.io7m.r2.meshes.binary,
+              com.io7m.r2.meshes.binary.r2mb
+            </Export-Package>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>

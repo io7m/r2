@@ -31,6 +31,7 @@ public interface R2TextureUsableType extends JCGLResourceUsableType
    *
    * @param context A user-defined context value
    * @param on_2d   Evaluated on values of type {@link R2Texture2DUsableType}
+   * @param on_cube Evaluated on values of type {@link R2TextureCubeUsableType}
    * @param <A>     The type of context values
    * @param <B>     The type of returned values
    *
@@ -39,5 +40,6 @@ public interface R2TextureUsableType extends JCGLResourceUsableType
 
   <A, B> B matchTexture(
     A context,
-    BiFunction<A, R2Texture2DUsableType, B> on_2d);
+    BiFunction<A, R2Texture2DUsableType, B> on_2d,
+    BiFunction<A, R2TextureCubeUsableType, B> on_cube);
 }

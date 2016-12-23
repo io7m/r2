@@ -31,9 +31,8 @@ import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -50,8 +49,7 @@ public abstract class R2SurfaceShaderBasicSingleContract extends
 
     final JCGLTextureUnitAllocatorType tp =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        8,
-        g_tex.textureGetUnits());
+        8, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tc_root =
       tp.getRootContext();
     final JCGLTextureUnitContextType tc_alloc =
@@ -60,7 +58,11 @@ public abstract class R2SurfaceShaderBasicSingleContract extends
     try {
       final R2TextureDefaultsType t =
         R2TextureDefaults.newDefaults(g.getTextures(), tc_alloc);
-      return R2SurfaceShaderBasicParameters.newParameters(t);
+
+      final R2SurfaceShaderBasicParameters.Builder pb =
+        R2SurfaceShaderBasicParameters.builder();
+      pb.setTextureDefaults(t);
+      return pb.build();
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
@@ -71,15 +73,12 @@ public abstract class R2SurfaceShaderBasicSingleContract extends
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> s =
-      R2SurfaceShaderBasicSingle.newShader(
-        g.getShaders(),
-        sources,
-        pool);
+      R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

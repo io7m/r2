@@ -19,17 +19,20 @@ package com.io7m.r2.filters;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.shaders.provided.R2AbstractShader;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -38,61 +41,61 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterTextureShow extends
-  R2AbstractShader<R2ShaderFilterTextureShowParametersType>
-  implements R2ShaderFilterType<R2ShaderFilterTextureShowParametersType>
+  R2AbstractShader<R2ShaderFilterTextureShowParameters>
+  implements R2ShaderFilterType<R2ShaderFilterTextureShowParameters>
 {
   private final JCGLProgramUniformType u_texture;
   private final JCGLProgramUniformType u_intensity;
-  private       JCGLTextureUnitType    unit_texture;
 
   private R2ShaderFilterTextureShow(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2FilterTextureShow",
-      "R2FilterTextureShow.vert",
+      "com.io7m.r2.shaders.core.R2ShaderFilterTextureShow",
+      "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "R2FilterTextureShow.frag");
+      "com.io7m.r2.shaders.core/R2FilterTextureShow.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 2);
-
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     this.u_texture =
-      R2ShaderParameters.getUniformChecked(p, "R2_texture");
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_texture", JCGLType.TYPE_SAMPLER_2D);
     this.u_intensity =
-      R2ShaderParameters.getUniformChecked(p, "R2_intensity");
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_intensity", JCGLType.TYPE_FLOAT);
+    R2ShaderParameters.checkUniformParameterCount(p, 2);
   }
 
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterTextureShowParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterTextureShowParameters>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterTextureShow(in_shaders, in_sources, in_pool));
+      new R2ShaderFilterTextureShow(in_shaders, in_shader_env, in_pool));
   }
 
   @Override
-  public Class<R2ShaderFilterTextureShowParametersType>
-  getShaderParametersType()
+  public Class<R2ShaderFilterTextureShowParameters>
+  shaderParametersType()
   {
-    return R2ShaderFilterTextureShowParametersType.class;
+    return R2ShaderFilterTextureShowParameters.class;
   }
 
   @Override
@@ -104,22 +107,26 @@ public final class R2ShaderFilterTextureShow extends
 
   @Override
   public void onReceiveFilterValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterTextureShowParametersType values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersFilterType<R2ShaderFilterTextureShowParameters> parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(parameters);
 
-    this.unit_texture =
-      tc.unitContextBindTexture2D(g_tex, values.getTexture().get());
+    final R2ShaderFilterTextureShowParameters values =
+      parameters.values();
+    final JCGLTextureUnitContextMutableType tc =
+      parameters.textureUnitContext();
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    final JCGLTextureUnitType unit_texture =
+      tc.unitContextBindTexture2D(g_tex, values.texture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture, this.unit_texture);
+      this.u_texture, unit_texture);
     g_sh.shaderUniformPutFloat(
-      this.u_intensity, values.getIntensity());
+      this.u_intensity, values.intensity());
   }
 }

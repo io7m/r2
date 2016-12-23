@@ -20,8 +20,7 @@ import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.r2.meshes.R2MeshParserInterleavedListenerType;
 import com.io7m.r2.meshes.binary.R2MBReaderType;
 import com.io7m.r2.meshes.binary.R2MBUnmappedReader;
-import com.io7m.r2.tests.meshes.arrayobject
-  .R2MeshArrayObjectSynchronousAdapterContract;
+import com.io7m.r2.tests.meshes.arrayobject.R2MeshArrayObjectSynchronousAdapterContract;
 import com.io7m.r2.tests.meshes.binary.R2MBMappedReaderTest;
 
 import java.nio.channels.Channels;

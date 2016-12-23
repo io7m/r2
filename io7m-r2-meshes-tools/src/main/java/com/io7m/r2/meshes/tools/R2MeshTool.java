@@ -97,7 +97,7 @@ public final class R2MeshTool implements Runnable
       if (cmd == null) {
         final StringBuilder sb = new StringBuilder(128);
         this.commander.usage(sb);
-        R2MeshTool.LOG.info("Arguments required.\n{}", sb.toString());
+        LOG.info("Arguments required.\n{}", sb.toString());
         return;
       }
 
@@ -107,7 +107,7 @@ public final class R2MeshTool implements Runnable
     } catch (final ParameterException e) {
       final StringBuilder sb = new StringBuilder(128);
       this.commander.usage(sb);
-      R2MeshTool.LOG.error("{}\n{}", e.getMessage(), sb.toString());
+      LOG.error("{}\n{}", e.getMessage(), sb.toString());
       this.exit_code = 1;
     } catch (final R2MeshFileFormatUnrecognized e) {
       final StringBuilder sb = new StringBuilder(128);
@@ -121,10 +121,10 @@ public final class R2MeshTool implements Runnable
         }
       }
       sb.append("})\n");
-      R2MeshTool.LOG.error("{}", sb.toString());
+      LOG.error("{}", sb.toString());
       this.exit_code = 1;
     } catch (final Exception e) {
-      R2MeshTool.LOG.error("{}", e.getMessage(), e);
+      LOG.error("{}", e.getMessage(), e);
       this.exit_code = 1;
     }
   }
@@ -133,7 +133,6 @@ public final class R2MeshTool implements Runnable
   {
 
   }
-
 
   private class CommandRoot implements CommandType,
     R2MeshConverterListenerType
@@ -166,67 +165,67 @@ public final class R2MeshTool implements Runnable
       final String name,
       final R2MeshType m)
     {
-      R2MeshTool.LOG.info("{}: loaded {}", p, name);
+      LOG.info("{}: loaded {}", p, name);
 
       m.matchMesh(
         basic -> {
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: basic mesh",
             name);
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} positions",
             name,
             Long.valueOf(basic.getPositions().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} normals",
             name,
             Long.valueOf(basic.getNormals().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} uvs",
             name,
             Long.valueOf(basic.getUVs().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} unique vertices",
             name,
             Long.valueOf(basic.getVertices().size64()));
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} triangles",
             name,
             Long.valueOf(basic.getTriangles().size64()));
           return Unit.unit();
         },
         with_tangents -> {
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: mesh with tangents",
             name);
-          R2MeshTool.LOG.info(
+          LOG.info(
             "{}: {} positions",
             name,
-            Long.valueOf(with_tangents.getPositions().size64()));
-          R2MeshTool.LOG.info(
+            Long.valueOf(with_tangents.positions().size64()));
+          LOG.info(
             "{}: {} normals",
             name,
-            Long.valueOf(with_tangents.getNormals().size64()));
-          R2MeshTool.LOG.info(
+            Long.valueOf(with_tangents.normals().size64()));
+          LOG.info(
             "{}: {} uvs",
             name,
-            Long.valueOf(with_tangents.getUVs().size64()));
-          R2MeshTool.LOG.info(
+            Long.valueOf(with_tangents.uvs().size64()));
+          LOG.info(
             "{}: {} tangents",
             name,
-            Long.valueOf(with_tangents.getTangents().size64()));
-          R2MeshTool.LOG.info(
+            Long.valueOf(with_tangents.tangents().size64()));
+          LOG.info(
             "{}: {} bitangents",
             name,
-            Long.valueOf(with_tangents.getBitangents().size64()));
-          R2MeshTool.LOG.info(
+            Long.valueOf(with_tangents.bitangents().size64()));
+          LOG.info(
             "{}: {} unique vertices",
             name,
-            Long.valueOf(with_tangents.getVertices().size64()));
-          R2MeshTool.LOG.info(
+            Long.valueOf(with_tangents.vertices().size64()));
+          LOG.info(
             "{}: {} triangles",
             name,
-            Long.valueOf(with_tangents.getTriangles().size64()));
+            Long.valueOf(with_tangents.triangles().size64()));
           return Unit.unit();
         });
     }
@@ -241,7 +240,7 @@ public final class R2MeshTool implements Runnable
         case LOG_TRACE:
         case LOG_DEBUG:
           if (e.isPresent()) {
-            R2MeshTool.LOG.error("{}: {}: ", p, message, e.get());
+            LOG.error("{}: {}: ", p, message, e.get());
           }
           break;
         case LOG_INFO:
@@ -250,7 +249,7 @@ public final class R2MeshTool implements Runnable
           break;
       }
 
-      R2MeshTool.LOG.error("{}: {}", p, message);
+      LOG.error("{}: {}", p, message);
       R2MeshTool.this.exit_code = 1;
     }
   }
@@ -309,7 +308,7 @@ public final class R2MeshTool implements Runnable
       }
 
       final Path out_name = Paths.get(this.out);
-      R2MeshTool.LOG.info("writing mesh {} to {}", this.name, out_name);
+      LOG.info("writing mesh {} to {}", this.name, out_name);
 
       if (this.out_format != null) {
         conv.writeMeshToFile(out_name, this.name, this.out_format);
@@ -358,7 +357,7 @@ public final class R2MeshTool implements Runnable
       }
 
       final Map<String, R2MeshType> ms = conv.getMeshes();
-      R2MeshTool.LOG.info("loaded {} meshes", Integer.valueOf(ms.size()));
+      LOG.info("loaded {} meshes", Integer.valueOf(ms.size()));
       return Unit.unit();
     }
   }
@@ -405,7 +404,7 @@ public final class R2MeshTool implements Runnable
       }
 
       final Map<String, R2MeshType> ms = conv.getMeshes();
-      R2MeshTool.LOG.info("loaded {} meshes", Integer.valueOf(ms.size()));
+      LOG.info("loaded {} meshes", Integer.valueOf(ms.size()));
 
       if (ms.containsKey(this.name)) {
         final R2MeshType m = ms.get(this.name);
@@ -422,18 +421,18 @@ public final class R2MeshTool implements Runnable
 
     private Void dumpTangents(final R2MeshTangentsType m)
     {
-      final BigList<PVectorI3D<R2SpaceObjectType>> p = m.getPositions();
-      final BigList<PVectorI3D<R2SpaceObjectType>> n = m.getNormals();
-      final BigList<PVectorI2D<R2SpaceTextureType>> u = m.getUVs();
-      final BigList<PVectorI4D<R2SpaceObjectType>> t = m.getTangents();
-      final BigList<PVectorI3D<R2SpaceObjectType>> b = m.getBitangents();
-      final BigList<R2MeshTangentsVertexType> vv = m.getVertices();
-      final BigList<R2MeshTriangleType> tt = m.getTriangles();
+      final BigList<PVectorI3D<R2SpaceObjectType>> p = m.positions();
+      final BigList<PVectorI3D<R2SpaceObjectType>> n = m.normals();
+      final BigList<PVectorI2D<R2SpaceTextureType>> u = m.uvs();
+      final BigList<PVectorI4D<R2SpaceObjectType>> t = m.tangents();
+      final BigList<PVectorI3D<R2SpaceObjectType>> b = m.bitangents();
+      final BigList<R2MeshTangentsVertexType> vv = m.vertices();
+      final BigList<R2MeshTriangleType> tt = m.triangles();
 
       for (long index = 0L; index < p.size64(); ++index) {
         final PVectorI3D<R2SpaceObjectType> v = p.get(index);
         System.out.printf(
-          "[%d] position: %.6f %.6f %.6f\n",
+          "[%d] position: %.6f %.6f %.6f%n",
           Long.valueOf(index),
           Double.valueOf(v.getXD()),
           Double.valueOf(v.getYD()),
@@ -443,7 +442,7 @@ public final class R2MeshTool implements Runnable
       for (long index = 0L; index < n.size64(); ++index) {
         final PVectorI3D<R2SpaceObjectType> v = n.get(index);
         System.out.printf(
-          "[%d] normal: %.6f %.6f %.6f\n",
+          "[%d] normal: %.6f %.6f %.6f%n",
           Long.valueOf(index),
           Double.valueOf(v.getXD()),
           Double.valueOf(v.getYD()),
@@ -453,7 +452,7 @@ public final class R2MeshTool implements Runnable
       for (long index = 0L; index < u.size64(); ++index) {
         final PVectorI2D<R2SpaceTextureType> v = u.get(index);
         System.out.printf(
-          "[%d] uv: %.6f %.6f\n",
+          "[%d] uv: %.6f %.6f%n",
           Long.valueOf(index),
           Double.valueOf(v.getXD()),
           Double.valueOf(v.getYD()));
@@ -462,7 +461,7 @@ public final class R2MeshTool implements Runnable
       for (long index = 0L; index < t.size64(); ++index) {
         final PVectorI4D<R2SpaceObjectType> v = t.get(index);
         System.out.printf(
-          "[%d] tangent: %.6f %.6f %.6f %.6f\n",
+          "[%d] tangent: %.6f %.6f %.6f %.6f%n",
           Long.valueOf(index),
           Double.valueOf(v.getXD()),
           Double.valueOf(v.getYD()),
@@ -473,7 +472,7 @@ public final class R2MeshTool implements Runnable
       for (long index = 0L; index < b.size64(); ++index) {
         final PVectorI3D<R2SpaceObjectType> v = b.get(index);
         System.out.printf(
-          "[%d] bitangent: %.6f %.6f %.6f\n",
+          "[%d] bitangent: %.6f %.6f %.6f%n",
           Long.valueOf(index),
           Double.valueOf(v.getXD()),
           Double.valueOf(v.getYD()),
@@ -483,23 +482,23 @@ public final class R2MeshTool implements Runnable
       for (long index = 0L; index < vv.size64(); ++index) {
         final R2MeshTangentsVertexType v = vv.get(index);
         System.out.printf(
-          "[%d] vertex: pos: %d norm: %d uv: %d tan: %d bi: %d\n",
+          "[%d] vertex: pos: %d norm: %d uv: %d tan: %d bi: %d%n",
           Long.valueOf(index),
-          Long.valueOf(v.getPositionIndex()),
-          Long.valueOf(v.getNormalIndex()),
-          Long.valueOf(v.getUVIndex()),
-          Long.valueOf(v.getTangentIndex()),
-          Long.valueOf(v.getBitangentIndex()));
+          Long.valueOf(v.positionIndex()),
+          Long.valueOf(v.normalIndex()),
+          Long.valueOf(v.uvIndex()),
+          Long.valueOf(v.tangentIndex()),
+          Long.valueOf(v.bitangentIndex()));
       }
 
       for (long index = 0L; index < tt.size64(); ++index) {
         final R2MeshTriangleType v = tt.get(index);
         System.out.printf(
-          "[%d] triangle: %d %d %d\n",
+          "[%d] triangle: %d %d %d%n",
           Long.valueOf(index),
-          Long.valueOf(v.getV0()),
-          Long.valueOf(v.getV1()),
-          Long.valueOf(v.getV2()));
+          Long.valueOf(v.v0()),
+          Long.valueOf(v.v1()),
+          Long.valueOf(v.v2()));
       }
 
       return null;
@@ -516,7 +515,7 @@ public final class R2MeshTool implements Runnable
       for (long index = 0L; index < p.size64(); ++index) {
         final PVectorI3D<R2SpaceObjectType> v = p.get(index);
         System.out.printf(
-          "[%d] position: %.6f %.6f %.6f\n",
+          "[%d] position: %.6f %.6f %.6f%n",
           Long.valueOf(index),
           Double.valueOf(v.getXD()),
           Double.valueOf(v.getYD()),
@@ -526,7 +525,7 @@ public final class R2MeshTool implements Runnable
       for (long index = 0L; index < n.size64(); ++index) {
         final PVectorI3D<R2SpaceObjectType> v = n.get(index);
         System.out.printf(
-          "[%d] normal: %.6f %.6f %.6f\n",
+          "[%d] normal: %.6f %.6f %.6f%n",
           Long.valueOf(index),
           Double.valueOf(v.getXD()),
           Double.valueOf(v.getYD()),
@@ -536,7 +535,7 @@ public final class R2MeshTool implements Runnable
       for (long index = 0L; index < u.size64(); ++index) {
         final PVectorI2D<R2SpaceTextureType> v = u.get(index);
         System.out.printf(
-          "[%d] uv: %.6f %.6f\n",
+          "[%d] uv: %.6f %.6f%n",
           Long.valueOf(index),
           Double.valueOf(v.getXD()),
           Double.valueOf(v.getYD()));
@@ -545,21 +544,21 @@ public final class R2MeshTool implements Runnable
       for (long index = 0L; index < vv.size64(); ++index) {
         final R2MeshBasicVertexType v = vv.get(index);
         System.out.printf(
-          "[%d] vertex: pos: %d norm: %d uv: %d\n",
+          "[%d] vertex: pos: %d norm: %d uv: %d%n",
           Long.valueOf(index),
-          Long.valueOf(v.getPositionIndex()),
-          Long.valueOf(v.getNormalIndex()),
-          Long.valueOf(v.getUVIndex()));
+          Long.valueOf(v.positionIndex()),
+          Long.valueOf(v.normalIndex()),
+          Long.valueOf(v.uvIndex()));
       }
 
       for (long index = 0L; index < tt.size64(); ++index) {
         final R2MeshTriangleType v = tt.get(index);
         System.out.printf(
-          "[%d] triangle: %d %d %d\n",
+          "[%d] triangle: %d %d %d%n",
           Long.valueOf(index),
-          Long.valueOf(v.getV0()),
-          Long.valueOf(v.getV1()),
-          Long.valueOf(v.getV2()));
+          Long.valueOf(v.v0()),
+          Long.valueOf(v.v1()),
+          Long.valueOf(v.v2()));
       }
 
       return null;

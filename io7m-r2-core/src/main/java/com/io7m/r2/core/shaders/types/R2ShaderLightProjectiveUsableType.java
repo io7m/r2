@@ -16,7 +16,7 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.jcanephora.core.api.JCGLShadersType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2LightProjectiveReadableType;
 import com.io7m.r2.core.R2MatricesProjectiveLightValuesType;
 
@@ -38,14 +38,14 @@ public interface R2ShaderLightProjectiveUsableType<
    * current shader.</p>
    *
    * <p>This method will be called after a call to {@link
-   * #onActivate(JCGLShadersType)} and before a call to {@link
-   * #onValidate()}.</p>
+   * R2ShaderUsableType#onActivate(com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type)}
+   * and before a call to {@link #onValidate()}.</p>
    *
-   * @param g_sh An OpenGL interface
-   * @param m    The instance matrices
+   * @param g An OpenGL interface
+   * @param m The instance matrices
    */
 
   void onReceiveProjectiveLight(
-    JCGLShadersType g_sh,
+    JCGLInterfaceGL33Type g,
     R2MatricesProjectiveLightValuesType m);
 }

@@ -28,6 +28,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jfsm.core.FSMTransitionException;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jtensors.parameterized.PMatrix4x4FType;
 import com.io7m.jtensors.parameterized.PMatrixHeapArrayM4x4F;
@@ -47,12 +48,12 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersLight;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import com.io7m.r2.tests.core.R2JCGLContract;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -90,7 +91,7 @@ public abstract class R2ShaderLightProjectiveContract<
 
   protected abstract R2ShaderLightProjectiveType<T> newShaderWithVerifier(
     JCGLInterfaceGL33Type g,
-    R2ShaderSourcesType sources,
+    R2ShaderPreprocessingEnvironmentType sources,
     R2IDPoolType pool);
 
   protected abstract T newLight(
@@ -107,8 +108,8 @@ public abstract class R2ShaderLightProjectiveContract<
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
@@ -121,29 +122,28 @@ public abstract class R2ShaderLightProjectiveContract<
 
     final JCGLTextureUnitAllocatorType ta =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        32,
-        g_tex.textureGetUnits());
+        32, g_tex.textureGetUnits());
     final JCGLTextureUnitContextParentType tr =
       ta.getRootContext();
     final R2TextureDefaultsType td =
       R2TextureDefaults.newDefaults(g_tex, tr);
 
     final R2GeometryBufferType gbuffer =
-      R2ShaderLightProjectiveContract.newGeometryBuffer(g_fb, g_tex, tr);
+      newGeometryBuffer(g_fb, g_tex, tr);
 
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
     final JCGLTextureUnitType ua =
       tc.unitContextBindTexture2D(
         g_tex,
-        gbuffer.getAlbedoEmissiveTexture().get());
+        gbuffer.albedoEmissiveTexture().texture());
     final JCGLTextureUnitType un =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getNormalTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.normalTexture().texture());
     final JCGLTextureUnitType us =
       tc.unitContextBindTexture2D(
         g_tex,
-        gbuffer.getSpecularTextureOrDefault(td).get());
+        gbuffer.getSpecularTextureOrDefault(td).texture());
     final JCGLTextureUnitType ud =
-      tc.unitContextBindTexture2D(g_tex, gbuffer.getDepthTexture().get());
+      tc.unitContextBindTexture2D(g_tex, gbuffer.depthTexture().texture());
 
     final R2ShaderLightProjectiveType<T> f =
       this.newShaderWithVerifier(g, sources, pool);
@@ -158,15 +158,16 @@ public abstract class R2ShaderLightProjectiveContract<
       PMatrixHeapArrayM4x4F.newMatrix();
 
     mat.withObserver(view, proj, this, (mo, x) -> {
-      f.onActivate(g.getShaders());
-      f.onReceiveBoundGeometryBufferTextures(g_sh, gbuffer, ua, us, ud, un);
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.getArea(), params, mo);
-
+      f.onActivate(g);
+      f.onReceiveBoundGeometryBufferTextures(g, gbuffer, ua, us, ud, un);
+      f.onReceiveValues(
+        g,
+        R2ShaderParametersLight.of(tc, params, mo, gbuffer.area()));
       return mo.withProjectiveLight(params, this, (mp, y) -> {
-        f.onReceiveVolumeLightTransform(g_sh, mp);
-        f.onReceiveProjectiveLight(g_sh, mp);
+        f.onReceiveVolumeLightTransform(g, mp);
+        f.onReceiveProjectiveLight(g, mp);
         f.onValidate();
-        f.onDeactivate(g_sh);
+        f.onDeactivate(g);
         return Unit.unit();
       });
     });
@@ -180,8 +181,8 @@ public abstract class R2ShaderLightProjectiveContract<
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
@@ -201,7 +202,7 @@ public abstract class R2ShaderLightProjectiveContract<
       R2TextureDefaults.newDefaults(g_tex, tr);
 
     final R2GeometryBufferType gbuffer =
-      R2ShaderLightProjectiveContract.newGeometryBuffer(g_fb, g_tex, tr);
+      newGeometryBuffer(g_fb, g_tex, tr);
 
     final JCGLTextureUnitContextType tc = tr.unitContextNew();
 
@@ -217,11 +218,13 @@ public abstract class R2ShaderLightProjectiveContract<
     final PMatrix4x4FType<R2SpaceWorldType, R2SpaceEyeType> view =
       PMatrixHeapArrayM4x4F.newMatrix();
 
-    f.onActivate(g.getShaders());
+    f.onActivate(g);
 
-    this.expected.expect(IllegalStateException.class);
+    this.expected.expect(FSMTransitionException.class);
     mat.withObserver(view, proj, this, (mo, x) -> {
-      f.onReceiveValues(g_tex, g_sh, tc, gbuffer.getArea(), params, mo);
+      f.onReceiveValues(
+        g,
+        R2ShaderParametersLight.of(tc, params, mo, gbuffer.area()));
       return Unit.unit();
     });
   }
@@ -231,8 +234,8 @@ public abstract class R2ShaderLightProjectiveContract<
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool =
       R2IDPool.newPool();
 
@@ -255,10 +258,10 @@ public abstract class R2ShaderLightProjectiveContract<
     final T light =
       this.newLight(g, pool, tc, td);
 
-    final Class<?> s_class = s.getShaderParametersType();
+    final Class<?> s_class = s.shaderParametersType();
     final Class<?> l_class = light.getClass();
     Assert.assertTrue(s_class.isAssignableFrom(l_class));
-    Assert.assertTrue(light.getLightID() >= 0L);
+    Assert.assertTrue(light.lightID() >= 0L);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

@@ -26,41 +26,30 @@ import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jfunctional.Pair;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jcanephora.profiler.JCGLProfiling;
-import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
-import com.io7m.jcanephora.profiler.JCGLProfilingType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jfunctional.Pair;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Texture2DStatic;
-import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2ShaderFilterTextureShow;
-import com.io7m.r2.filters.R2ShaderFilterTextureShowParametersMutable;
-import com.io7m.r2.filters.R2ShaderFilterTextureShowParametersType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.filters.R2ShaderFilterTextureShowParameters;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderTextureShowContract extends
-  R2ShaderFilterContract<R2ShaderFilterTextureShowParametersType,
-    R2ShaderFilterTextureShowParametersMutable>
+  R2ShaderFilterContract<R2ShaderFilterTextureShowParameters,
+    R2ShaderFilterTextureShowParameters>
 {
   @Override
-  protected R2ShaderFilterTextureShowParametersMutable newParameters(
+  protected R2ShaderFilterTextureShowParameters newParameters(
     final JCGLInterfaceGL33Type g)
   {
-    final R2ShaderFilterTextureShowParametersMutable p =
-      R2ShaderFilterTextureShowParametersMutable.create();
-
     final JCGLTexturesType g_tex = g.getTextures();
 
     final JCGLTextureUnitAllocatorType tp =
@@ -84,8 +73,9 @@ public abstract class R2ShaderTextureShowContract extends
         JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
     tc_alloc.unitContextFinish(g_tex);
 
-    p.setTexture(R2Texture2DStatic.of(r.getRight()));
-    return p;
+    return R2ShaderFilterTextureShowParameters.builder()
+      .setTexture(R2Texture2DStatic.of(r.getRight()))
+      .build();
   }
 
   @Test
@@ -93,11 +83,11 @@ public abstract class R2ShaderTextureShowContract extends
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderFilterType<R2ShaderFilterTextureShowParametersType> s =
+    final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> s =
       R2ShaderFilterTextureShow.newShader(
         g.getShaders(),
         sources,

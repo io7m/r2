@@ -39,7 +39,6 @@ import com.io7m.jcanephora.renderstate.JCGLDepthState;
 import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
 import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -64,16 +63,15 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
   private static final JCGLClearSpecification CLEAR_SPEC;
 
   static {
-    final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
-    k.setDepthState(JCGLDepthState.of(
-      JCGLDepthStrict.DEPTH_STRICT_ENABLED,
-      Optional.empty(),
-      JCGLDepthWriting.DEPTH_WRITE_ENABLED,
-      JCGLDepthClamping.DEPTH_CLAMP_ENABLED
-    ));
-    k.setColorBufferMaskingState(
-      JCGLColorBufferMaskingState.of(true, true, false, false));
-    CLEAR_STATE = JCGLRenderState.builder().from(k).build();
+    CLEAR_STATE = JCGLRenderState.builder()
+      .setDepthState(JCGLDepthState.of(
+        JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+        Optional.empty(),
+        JCGLDepthWriting.DEPTH_WRITE_ENABLED,
+        JCGLDepthClamping.DEPTH_CLAMP_ENABLED))
+      .setColorBufferMaskingState(
+        JCGLColorBufferMaskingState.of(true, true, false, false))
+      .build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
       Optional.of(new VectorI4F(1.0f, 1.0f, 0.0f, 0.0f)),
@@ -82,10 +80,10 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
       true);
   }
 
-  private final R2Texture2DType                      t_depth;
-  private final R2Texture2DType                      t_variance;
-  private final JCGLFramebufferType                  framebuffer;
-  private final UnsignedRangeInclusiveL              range;
+  private final R2Texture2DType t_depth;
+  private final R2Texture2DType t_variance;
+  private final JCGLFramebufferType framebuffer;
+  private final UnsignedRangeInclusiveL range;
   private final R2DepthVarianceBufferDescriptionType desc;
 
   private R2DepthVarianceBuffer(
@@ -100,8 +98,8 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
     this.t_variance = NullCheck.notNull(in_t_variance);
 
     long size = 0L;
-    size += this.t_depth.get().getRange().getInterval();
-    size += this.t_variance.get().getRange().getInterval();
+    size += this.t_depth.texture().getRange().getInterval();
+    size += this.t_variance.texture().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
   }
 
@@ -127,7 +125,7 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
     NullCheck.notNull(tc);
     NullCheck.notNull(desc);
 
-    final AreaInclusiveUnsignedLType area = desc.getArea();
+    final AreaInclusiveUnsignedLType area = desc.area();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -143,8 +141,8 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
           g_t,
           range_x.getInterval(),
           range_y.getInterval(),
-          R2DepthVarianceBuffer.formatDepthForPrecision(
-            desc.getDepthPrecision()),
+          formatDepthForPrecision(
+            desc.depthPrecision()),
           JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
@@ -155,12 +153,12 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
           g_t,
           range_x.getInterval(),
           range_y.getInterval(),
-          R2DepthVarianceBuffer.formatVarianceForPrecision(
-            desc.getDepthVariancePrecision()),
+          formatVarianceForPrecision(
+            desc.depthVariancePrecision()),
           JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          desc.getMinificationFilter(),
-          desc.getMagnificationFilter());
+          desc.minificationFilter(),
+          desc.magnificationFilter());
 
       final R2Texture2DType rt_depth =
         R2Texture2DStatic.of(p_depth.getRight());
@@ -168,9 +166,9 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
         R2Texture2DStatic.of(p_variance.getRight());
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-      fbb.attachDepthTexture2D(rt_depth.get());
+      fbb.attachDepthTexture2D(rt_depth.texture());
       fbb.attachColorTexture2DAt(
-        points.get(0), buffers.get(0), rt_variance.get());
+        points.get(0), buffers.get(0), rt_variance.texture());
 
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
       return new R2DepthVarianceBuffer(fb, desc, rt_depth, rt_variance);
@@ -208,19 +206,19 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
   }
 
   @Override
-  public JCGLFramebufferUsableType getPrimaryFramebuffer()
+  public JCGLFramebufferUsableType primaryFramebuffer()
   {
     return this.framebuffer;
   }
 
   @Override
-  public AreaInclusiveUnsignedLType getArea()
+  public AreaInclusiveUnsignedLType area()
   {
-    return this.t_depth.get().textureGetArea();
+    return this.t_depth.texture().textureGetArea();
   }
 
   @Override
-  public R2DepthVarianceBufferDescriptionType getDescription()
+  public R2DepthVarianceBufferDescriptionType description()
   {
     return this.desc;
   }
@@ -251,7 +249,7 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
   }
 
   @Override
-  public R2Texture2DUsableType getDepthVarianceTexture()
+  public R2Texture2DUsableType depthVarianceTexture()
   {
     return this.t_variance;
   }

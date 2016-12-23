@@ -18,14 +18,12 @@ package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
+import com.io7m.jfsm.core.FSMEnumMutable;
+import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
-import com.io7m.r2.core.R2MatricesObserverValuesType;
 
 /**
  * A delegating verifier for single-instance depth shaders; a type that verifies
@@ -37,27 +35,37 @@ import com.io7m.r2.core.R2MatricesObserverValuesType;
 public final class R2ShaderDepthSingleVerifier<M> implements
   R2ShaderDepthSingleType<M>
 {
-  private static final State[] VIEW_MATERIAL_OR_INSTANCE_RECEIVED = {
-    State.STATE_MATERIAL_RECEIVED,
-    State.STATE_VIEW_RECEIVED,
-    State.STATE_INSTANCE_RECEIVED,
-  };
-
-  private static final State[] MATERIAL_OR_INSTANCE_RECEIVED = {
-    State.STATE_MATERIAL_RECEIVED,
-    State.STATE_INSTANCE_RECEIVED,
-  };
-
   private final R2ShaderDepthSingleType<M> shader;
-  private final StringBuilder text;
-  private State state;
+  private final FSMEnumMutable<State> state;
 
   private R2ShaderDepthSingleVerifier(
     final R2ShaderDepthSingleType<M> in_shader)
   {
     this.shader = NullCheck.notNull(in_shader);
-    this.text = new StringBuilder(128);
-    this.state = State.STATE_DEACTIVATED;
+
+    final FSMEnumMutableBuilderType<State> sb =
+      FSMEnumMutable.builder(State.STATE_DEACTIVATED);
+
+    sb.addTransition(
+      State.STATE_DEACTIVATED, State.STATE_ACTIVATED);
+    sb.addTransition(
+      State.STATE_ACTIVATED, State.STATE_VIEW_RECEIVED);
+    sb.addTransition(
+      State.STATE_VIEW_RECEIVED, State.STATE_MATERIAL_RECEIVED);
+    sb.addTransition(
+      State.STATE_MATERIAL_RECEIVED, State.STATE_INSTANCE_RECEIVED);
+    sb.addTransition(
+      State.STATE_INSTANCE_RECEIVED, State.STATE_VALIDATED);
+    sb.addTransition(
+      State.STATE_VALIDATED, State.STATE_MATERIAL_RECEIVED);
+
+    for (final State target : State.values()) {
+      if (target != State.STATE_DEACTIVATED) {
+        sb.addTransition(target, State.STATE_DEACTIVATED);
+      }
+    }
+
+    this.state = sb.build();
   }
 
   /**
@@ -89,95 +97,70 @@ public final class R2ShaderDepthSingleVerifier<M> implements
   }
 
   @Override
-  public long getShaderID()
+  public long shaderID()
   {
-    return this.shader.getShaderID();
+    return this.shader.shaderID();
   }
 
   @Override
-  public Class<M> getShaderParametersType()
+  public Class<M> shaderParametersType()
   {
-    return this.shader.getShaderParametersType();
+    return this.shader.shaderParametersType();
   }
 
   @Override
-  public JCGLProgramShaderUsableType getShaderProgram()
+  public JCGLProgramShaderUsableType shaderProgram()
   {
-    return this.shader.getShaderProgram();
+    return this.shader.shaderProgram();
   }
 
   @Override
-  public void onActivate(final JCGLShadersType g_sh)
+  public void onActivate(final JCGLInterfaceGL33Type g)
   {
-    this.shader.onActivate(g_sh);
-    this.state = State.STATE_ACTIVATED;
+    this.shader.onActivate(g);
+    this.state.transition(State.STATE_ACTIVATED);
   }
 
   @Override
   public void onValidate()
     throws R2ExceptionShaderValidationFailed
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_INSTANCE_RECEIVED,
-      this.state);
-
+    this.state.transition(State.STATE_VALIDATED);
     this.shader.onValidate();
   }
 
   @Override
-  public void onDeactivate(final JCGLShadersType g_sh)
+  public void onDeactivate(final JCGLInterfaceGL33Type g)
   {
-    this.state = State.STATE_DEACTIVATED;
-    this.shader.onDeactivate(g_sh);
+    this.state.transition(State.STATE_DEACTIVATED);
+    this.shader.onDeactivate(g);
   }
 
   @Override
   public void onReceiveViewValues(
-    final JCGLShadersType g_sh,
-    final R2MatricesObserverValuesType m)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersViewType view_parameters)
   {
-    R2ShaderVerifiers.checkState(
-      this.text,
-      this.getShaderProgram().getName(),
-      State.STATE_ACTIVATED,
-      this.state);
-
-    this.state = State.STATE_VIEW_RECEIVED;
-    this.shader.onReceiveViewValues(g_sh, m);
+    this.state.transition(State.STATE_VIEW_RECEIVED);
+    this.shader.onReceiveViewValues(g, view_parameters);
   }
 
   @Override
   public void onReceiveMaterialValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final M values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersMaterialType<M> mat_parameters)
   {
-    R2ShaderVerifiers.checkStates(
-      this.text,
-      this.getShaderProgram().getName(),
-      R2ShaderDepthSingleVerifier.VIEW_MATERIAL_OR_INSTANCE_RECEIVED,
-      this.state);
-
-    this.state = State.STATE_MATERIAL_RECEIVED;
-    this.shader.onReceiveMaterialValues(g_tex, g_sh, tc, values);
+    this.state.transition(State.STATE_MATERIAL_RECEIVED);
+    this.shader.onReceiveMaterialValues(g, mat_parameters);
   }
 
   @Override
   public void onReceiveInstanceTransformValues(
-    final JCGLShadersType g_sh,
+    final JCGLInterfaceGL33Type g,
     final R2MatricesInstanceSingleValuesType m)
   {
-    R2ShaderVerifiers.checkStates(
-      this.text,
-      this.getShaderProgram().getName(),
-      R2ShaderDepthSingleVerifier.MATERIAL_OR_INSTANCE_RECEIVED,
-      this.state);
-
-    this.state = State.STATE_INSTANCE_RECEIVED;
-    this.shader.onReceiveInstanceTransformValues(g_sh, m);
+    this.state.transition(State.STATE_INSTANCE_RECEIVED);
+    this.shader.onReceiveInstanceTransformValues(g, m);
   }
 
   private enum State
@@ -186,6 +169,7 @@ public final class R2ShaderDepthSingleVerifier<M> implements
     STATE_ACTIVATED,
     STATE_MATERIAL_RECEIVED,
     STATE_INSTANCE_RECEIVED,
-    STATE_VIEW_RECEIVED
+    STATE_VIEW_RECEIVED,
+    STATE_VALIDATED
   }
 }

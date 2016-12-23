@@ -30,14 +30,18 @@ import com.io7m.jcamera.JCameraFPSStyleType;
 import com.io7m.jcamera.JCameraRotationCoefficients;
 import com.io7m.jcamera.JCameraScreenOrigin;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
+import com.io7m.jcanephora.core.JCGLCubeMapFaceRH;
 import com.io7m.jcanephora.core.JCGLExceptionNonCompliant;
 import com.io7m.jcanephora.core.JCGLExceptionUnsupported;
 import com.io7m.jcanephora.core.JCGLTexture2DType;
 import com.io7m.jcanephora.core.JCGLTexture2DUpdateType;
+import com.io7m.jcanephora.core.JCGLTextureCubeType;
+import com.io7m.jcanephora.core.JCGLTextureCubeUpdateType;
 import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLTextureWrapR;
 import com.io7m.jcanephora.core.JCGLTextureWrapS;
 import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.JCGLUnsignedType;
@@ -63,6 +67,9 @@ import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2Texture2DStatic;
 import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.R2TextureCubeStatic;
+import com.io7m.r2.core.R2TextureCubeType;
+import com.io7m.r2.core.R2TextureCubeUsableType;
 import com.io7m.r2.core.cursors.R2VertexCursorPUNT32;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.examples.R2ExampleType;
@@ -135,7 +142,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     throws Exception
   {
     if (args.length < 1) {
-      R2JOGLExampleSingleWindowMain.LOG.error("usage: class-name");
+      LOG.error("usage: class-name");
       System.exit(1);
     }
 
@@ -165,8 +172,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
       final Animator anim = new Animator(win);
 
-      /**
-       * Close the program when the window closes.
+      /*
+        Close the program when the window closes.
        */
 
       win.addWindowListener(new WindowAdapter()
@@ -175,9 +182,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         public void windowDestroyed(
           final WindowEvent e)
         {
-          R2JOGLExampleSingleWindowMain.LOG.debug("Stopping animator");
+          LOG.debug("Stopping animator");
           anim.stop();
-          R2JOGLExampleSingleWindowMain.LOG.debug("Exiting");
+          LOG.debug("Exiting");
           System.exit(0);
         }
       });
@@ -186,9 +193,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       anim.start();
       win.setVisible(true);
     } catch (final InstantiationException e) {
-      R2JOGLExampleSingleWindowMain.LOG.error("instantiation error: {}", e);
+      LOG.error("instantiation error: {}", e);
     } catch (final IllegalAccessException e) {
-      R2JOGLExampleSingleWindowMain.LOG.error("access error: {}", e);
+      LOG.error("access error: {}", e);
     }
   }
 
@@ -219,9 +226,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     {
       assert e != null;
 
-      /**
-       * If the camera is enabled, get the rotation coefficients for the mouse
-       * movement.
+      /*
+        If the camera is enabled, get the rotation coefficients for the mouse
+        movement.
        */
 
       if (this.services != null) {
@@ -247,7 +254,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     @Override
     public void dispose(final GLAutoDrawable drawable)
     {
-      R2JOGLExampleSingleWindowMain.LOG.debug("finishing example");
+      LOG.debug("finishing example");
       this.example.onFinish(this.context.contextGetGL33(), this.r2_main);
     }
 
@@ -256,7 +263,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     {
       try {
 
-        /**
+        /*
          * On the first frame, clear the screen. The second frame does
          * potentially very-long running resource initialization, so clearing
          * the frame here prevents the user from seeing the raw uncleared
@@ -273,7 +280,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           return;
         }
 
-        /**
+        /*
          * On the second frame, initialize all resources for the example.
          */
 
@@ -290,14 +297,14 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           this.r2_main = R2Main.newBuilder().build(g33);
           this.services = new Services(this.window, g33);
 
-          R2JOGLExampleSingleWindowMain.LOG.debug("initializing example");
+          LOG.debug("initializing example");
           this.example.onInitialize(
             this.services, g33, this.area, this.r2_main);
-          R2JOGLExampleSingleWindowMain.LOG.debug("initialized example");
+          LOG.debug("initialized example");
           return;
         }
 
-        /**
+        /*
          * Integrate the camera for the current frame.
          */
 
@@ -306,7 +313,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           this.want_cursor_warp = true;
         }
 
-        /**
+        /*
          * Render the current example.
          */
 
@@ -318,7 +325,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           this.r2_main,
           this.frame - 2);
 
-        /**
+        /*
          * The camera has requested that the cursor be warped to the center
          * of the screen.
          */
@@ -332,9 +339,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         }
 
       } catch (final JCGLExceptionUnsupported x) {
-        R2JOGLExampleSingleWindowMain.LOG.error("unsupported: ", x);
+        LOG.error("unsupported: ", x);
       } catch (final JCGLExceptionNonCompliant x) {
-        R2JOGLExampleSingleWindowMain.LOG.error("non compliant: ", x);
+        LOG.error("non compliant: ", x);
       } finally {
         ++this.frame;
       }
@@ -363,7 +370,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     {
       assert e != null;
 
-      /**
+      /*
        * Services are not available until the second frame. As unlikely as it
        * is that the user will be able to press a key in the 1/60th of a second
        * before they're available...
@@ -373,7 +380,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         return;
       }
 
-      /**
+      /*
        * Ignore events that are the result of keyboard auto-repeat. This means
        * there's one single event when a key is pressed, and another when it is
        * released (as opposed to an endless stream of both when the key is held
@@ -387,7 +394,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
       switch (e.getKeyCode()) {
 
-        /**
+        /*
          * Standard WASD camera controls, with E and Q moving up and down,
          * respectively.
          */
@@ -424,7 +431,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     {
       assert e != null;
 
-      /**
+      /*
        * Services are not available until the second frame. As unlikely as it
        * is that the user will be able to press a key in the 1/60th of a second
        * before they're available...
@@ -434,7 +441,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         return;
       }
 
-      /**
+      /*
        * Ignore events that are the result of keyboard auto-repeat. This means
        * there's one single event when a key is pressed, and another when it is
        * released (as opposed to an endless stream of both when the key is held
@@ -448,7 +455,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
       switch (e.getKeyCode()) {
 
-        /**
+        /*
          * Pressing 'M' enables/disables the camera.
          */
 
@@ -457,19 +464,19 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           break;
         }
 
-        /**
+        /*
          * Pressing 'P' makes the mouse cursor visible/invisible.
          */
 
         case KeyEvent.VK_P: {
-          R2JOGLExampleSingleWindowMain.LOG.debug(
+          LOG.debug(
             "Making pointer {}\n",
             this.window.isPointerVisible() ? "invisible" : "visible");
           this.window.setPointerVisible(!this.window.isPointerVisible());
           break;
         }
 
-        /**
+        /*
          * Standard WASD camera controls, with E and Q moving up and down,
          * respectively.
          */
@@ -504,10 +511,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private void toggleCameraEnabled()
     {
       if (this.services.camera_enabled) {
-        R2JOGLExampleSingleWindowMain.LOG.debug("Disabling camera");
+        LOG.debug("Disabling camera");
         this.window.confinePointer(false);
       } else {
-        R2JOGLExampleSingleWindowMain.LOG.debug("Enabling camera");
+        LOG.debug("Enabling camera");
         this.window.confinePointer(true);
         this.want_cursor_warp = true;
         this.services.camera_input.setRotationHorizontal(0.0F);
@@ -524,7 +531,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private final JCGLTLTextureUpdateProviderType  update_prov;
     private final JCGLTexturesType                 textures;
     private final List<JCGLTextureUnitType>        units;
-    private final Map<String, R2Texture2DType>     texture_cache;
+    private final Map<String, R2Texture2DType> texture_2d_cache;
+    private final Map<String, R2TextureCubeType> texture_cube_cache;
     private final Map<String, JCGLArrayObjectType> mesh_cache;
     private final JCameraFPSStyleType              camera;
     private final JCameraFPSStyleInputType         camera_input;
@@ -555,7 +563,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       this.units = this.textures.textureGetUnits();
       this.data_prov = JCGLAWTTextureDataProvider.newProvider();
       this.update_prov = JCGLTLTextureUpdateProvider.newProvider();
-      this.texture_cache = new HashMap<>(128);
+      this.texture_2d_cache = new HashMap<>(128);
+      this.texture_cube_cache = new HashMap<>(128);
       this.mesh_cache = new HashMap<>(128);
 
       this.camera = JCameraFPSStyle.newCamera();
@@ -591,8 +600,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     public R2Texture2DUsableType getTexture2D(
       final String name)
     {
-      if (this.texture_cache.containsKey(name)) {
-        return this.texture_cache.get(name);
+      if (this.texture_2d_cache.containsKey(name)) {
+        return this.texture_2d_cache.get(name);
       }
 
       final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
@@ -610,14 +619,111 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
             JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
             JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
         final JCGLTexture2DUpdateType update =
-          this.update_prov.getTextureUpdate(t, data);
+          this.update_prov.getTextureUpdate2D(t, data);
         this.textures.texture2DUpdate(u0, update);
         final R2Texture2DType r2 = R2Texture2DStatic.of(t);
-        this.texture_cache.put(name, r2);
+        this.texture_2d_cache.put(name, r2);
         return r2;
       } catch (final IOException e) {
         throw new UncheckedIOException(e);
       }
+    }
+
+    @Override
+    public R2TextureCubeUsableType getTextureCube(
+      final String name)
+    {
+      if (this.texture_cube_cache.containsKey(name)) {
+        return this.texture_cube_cache.get(name);
+      }
+
+      final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
+
+      final String name_positive_x = name + "/positive_x.png";
+      final String name_positive_y = name + "/positive_y.png";
+      final String name_positive_z = name + "/positive_z.png";
+      final String name_negative_x = name + "/negative_x.png";
+      final String name_negative_y = name + "/negative_y.png";
+      final String name_negative_z = name + "/negative_z.png";
+
+      final JCGLTextureUnitType u0 = this.units.get(0);
+      final JCGLTextureCubeType t;
+
+      try (final InputStream is = c.getResourceAsStream(name_positive_x)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+
+        t =
+          this.textures.textureCubeAllocate(
+            u0,
+            data.getWidth(),
+            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
+            JCGLTextureWrapR.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+            JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_POSITIVE_X, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_positive_y)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_POSITIVE_Y, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_positive_z)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_POSITIVE_Z, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_negative_x)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_NEGATIVE_X, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_negative_y)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_NEGATIVE_Y, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      try (final InputStream is = c.getResourceAsStream(name_negative_z)) {
+        final JCGLTLTextureDataType data = this.data_prov.loadFromStream(is);
+        final JCGLTextureCubeUpdateType update =
+          this.update_prov.getTextureUpdateCube(t, data);
+        this.textures.textureCubeUpdateRH(
+          u0, JCGLCubeMapFaceRH.CUBE_MAP_RH_NEGATIVE_Z, update);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+
+      final R2TextureCubeType r2 = R2TextureCubeStatic.of(t);
+      this.texture_cube_cache.put(name, r2);
+      return r2;
     }
 
     @Override
@@ -627,10 +733,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         return this.mesh_cache.get(name);
       }
 
-      R2JOGLExampleSingleWindowMain.LOG.debug("loading mesh {}", name);
+      LOG.debug("loading mesh {}", name);
 
       final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
-      try (final InputStream is = Services.getMeshStream(name, c)) {
+      try (final InputStream is = getMeshStream(name, c)) {
 
         final R2MeshArrayObjectSynchronousAdapterType adapter =
           R2MeshArrayObjectSynchronousAdapter.newAdapter(
@@ -649,15 +755,15 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         r.run();
 
         if (adapter.hasFailed()) {
-          adapter.getErrorException().ifPresent(x -> {
+          adapter.errorException().ifPresent(x -> {
             throw new RuntimeException(
-              "Failed to load " + name + ": " + adapter.getErrorMessage(), x);
+              "Failed to load " + name + ": " + adapter.errorMessage(), x);
           });
           throw new RuntimeException(
-            "Failed to load " + name + ": " + adapter.getErrorMessage());
+            "Failed to load " + name + ": " + adapter.errorMessage());
         }
 
-        final JCGLArrayObjectType ao = adapter.getArrayObject();
+        final JCGLArrayObjectType ao = adapter.arrayObject();
         this.mesh_cache.put(name, ao);
         return ao;
       } catch (final IOException e) {
@@ -680,7 +786,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
     void integrateCamera()
     {
-      /**
+      /*
        * Integrate the camera as many times as necessary for each rendering
        * frame interval.
        */
@@ -699,7 +805,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         this.camera_time_accum -= (double) sim_delta;
       }
 
-      /**
+      /*
        * Determine how far the current time is between the current camera state
        * and the next, and use that value to interpolate between the two saved
        * states.

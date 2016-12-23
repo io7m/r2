@@ -42,65 +42,61 @@ import com.io7m.r2.core.R2LightBufferUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 /**
  * A filter that applies ambient occlusion to a light buffer.
  */
 
 public final class R2FilterOcclusionApplicator implements
-  R2FilterType<R2FilterOcclusionApplicatorParametersType>
+  R2FilterType<R2FilterOcclusionApplicatorParameters>
 {
   private final JCGLInterfaceGL33Type g;
-  private final R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParametersType> shader;
+  private final R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParameters> shader;
   private final R2UnitQuadUsableType quad;
-  private final R2ShaderFilterOcclusionApplicatorParametersMutable shader_params;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterOcclusionApplicatorParameters> values;
 
   private R2FilterOcclusionApplicator(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParametersType>
-      in_shader,
+    final R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParameters> in_shader,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
-    this.shader_params =
-      R2ShaderFilterOcclusionApplicatorParametersMutable.create();
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
    * Construct a new filter.
    *
-   * @param in_sources  Shader sources
-   * @param in_textures A texture interface
-   * @param in_g        A GL interface
-   * @param in_pool     An ID pool
-   * @param in_quad     A unit quad
+   * @param in_shader_env Shader sources
+   * @param in_textures   A texture interface
+   * @param in_g          A GL interface
+   * @param in_pool       An ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new filter
    */
 
-  public static R2FilterType<R2FilterOcclusionApplicatorParametersType>
+  public static R2FilterType<R2FilterOcclusionApplicatorParameters>
   newFilter(
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2TextureDefaultsType in_textures,
     final JCGLInterfaceGL33Type in_g,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_sources);
+    NullCheck.notNull(in_shader_env);
     NullCheck.notNull(in_textures);
     NullCheck.notNull(in_g);
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_quad);
 
-    final R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParametersType>
-      s =
+    final R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParameters> s =
       R2ShaderFilterOcclusionApplicator.newShader(
-        in_g.getShaders(),
-        in_sources,
-        in_pool);
+        in_g.getShaders(), in_shader_env, in_pool);
 
     return new R2FilterOcclusionApplicator(in_g, s, in_quad);
   }
@@ -125,7 +121,7 @@ public final class R2FilterOcclusionApplicator implements
   public void runFilter(
     final JCGLProfilingContextType pc,
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterOcclusionApplicatorParametersType parameters)
+    final R2FilterOcclusionApplicatorParameters parameters)
   {
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
@@ -142,7 +138,7 @@ public final class R2FilterOcclusionApplicator implements
 
   private void run(
     final JCGLTextureUnitContextParentType uc,
-    final R2FilterOcclusionApplicatorParametersType parameters)
+    final R2FilterOcclusionApplicatorParameters parameters)
   {
     final JCGLDepthBuffersType g_db = this.g.getDepthBuffers();
     final JCGLBlendingType g_b = this.g.getBlending();
@@ -157,9 +153,9 @@ public final class R2FilterOcclusionApplicator implements
     final JCGLViewportsType g_v = this.g.getViewports();
 
     final R2LightBufferUsableType lb =
-      parameters.getOutputLightBuffer();
+      parameters.outputLightBuffer();
 
-    g_fb.framebufferDrawBind(lb.getPrimaryFramebuffer());
+    g_fb.framebufferDrawBind(lb.primaryFramebuffer());
 
     if (g_db.depthBufferGetBits() > 0) {
       g_db.depthBufferTestDisable();
@@ -180,25 +176,27 @@ public final class R2FilterOcclusionApplicator implements
 
     g_cu.cullingDisable();
     g_cm.colorBufferMask(true, true, true, true);
-    g_v.viewportSet(lb.getArea());
+    g_v.viewportSet(lb.area());
 
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
       try {
-        this.shader_params.setTexture(
-          parameters.getOcclusionTexture());
-        this.shader_params.setIntensity(
-          parameters.getIntensity());
+        this.values.setTextureUnitContext(c);
+        this.values.setValues(
+          R2ShaderFilterOcclusionApplicatorParameters.builder()
+            .setTexture(parameters.occlusionTexture())
+            .setIntensity(parameters.intensity())
+            .build());
 
-        g_sh.shaderActivateProgram(this.shader.getShaderProgram());
-        this.shader.onActivate(g_sh);
-        this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
+        g_sh.shaderActivateProgram(this.shader.shaderProgram());
+        this.shader.onActivate(this.g);
+        this.shader.onReceiveFilterValues(this.g, this.values);
         this.shader.onValidate();
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader.onDeactivate(g_sh);
+        this.shader.onDeactivate(this.g);
       }
     } finally {
       c.unitContextFinish(g_tx);

@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 public final class R2Watchable<T> implements R2WatchableType<T>
 {
   private final Map<Consumer<T>, Unit> watchers;
-  private final T                      value;
+  private final T value;
 
   private R2Watchable(final T in_value)
   {

@@ -1,0 +1,48 @@
+[section [title Stencils] [id di.stencil]]
+[subsection [title Overview] [id di.stencil.overview]]
+[paragraph]
+The [term [type term] stencil buffer] enables per-pixel control over rendering.
+The [term [type package] r2] package uses the stencil buffer to implement
+several rendering techniques internally, and also exposes limited control of
+the stencil buffer to users of the renderer via the
+[link [target di.stencil.allow_bit] allow bit].
+
+[subsection [title Reserved Bits] [id di.stencil.reserved]]
+[paragraph]
+The current stencil buffer layout used by the [term [type package] r2] package
+is as follows:
+
+[formal-item [title Reserved bits]]
+[image [target "images/stencil_bits.png"] Reserved stencil bits.]
+
+[paragraph]
+Bit [term [type constant] 0] is used for
+[link [target di.deferred.light.clip_volumes] light clip volumes].
+
+[paragraph]
+Bits [term [type constant] 1-2] are reserved for future use.
+
+[paragraph]
+Bits [term [type constant] 3-6] are used for
+[link [target di.deferred.geom.group] groups].
+
+[paragraph]
+Bit [term [type constant] 7] is the
+[link [target di.stencil.allow_bit] allow bit].
+
+[subsection [title Allow Bit] [id di.stencil.allow_bit]]
+[paragraph]
+The [term [type package] r2] package reserves a single bit in the current
+stencil buffer, known as the [term [type term] allow bit]. In all subsequent
+rendering operations, a pixel may only be written if the corresponding
+allow bit in the stencil buffer is [term [type constant] true].
+
+[paragraph]
+The stencil buffer allow bits are populated via the use of a
+[link-ext [target "apidocs/com/io7m/r2/core/R2StencilRendererType.html"] stencil renderer].
+The user specifies a series of [link [target di.instances] instances] whose
+only purpose is to either enable or disable the allow bit for each rendered
+pixel. Users may specify whether instances are [term [type term] positive]
+or [term [type term] negative]. Positive instances set the allow bit to
+[term [type constant] true] for each overlapped pixel, and negative instances
+set the allow bit to [term [type constant] false] for each overlapped pixel.

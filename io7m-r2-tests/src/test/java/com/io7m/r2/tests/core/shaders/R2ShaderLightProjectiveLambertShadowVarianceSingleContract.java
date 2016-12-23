@@ -23,11 +23,8 @@ import com.io7m.jcanephora.core.JCGLTextureFilterMagnification;
 import com.io7m.jcanephora.core.JCGLTextureFilterMinification;
 import com.io7m.jcanephora.core.JCGLUsageHint;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2DepthPrecision;
 import com.io7m.r2.core.R2DepthVarianceBufferDescription;
 import com.io7m.r2.core.R2DepthVariancePrecision;
@@ -41,7 +38,7 @@ import com.io7m.r2.core.R2ShadowDepthVariance;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 
 public abstract class R2ShaderLightProjectiveLambertShadowVarianceSingleContract
   extends R2ShaderLightProjectiveWithShadowContract<R2LightProjectiveWithShadowVarianceType>
@@ -51,7 +48,7 @@ public abstract class R2ShaderLightProjectiveLambertShadowVarianceSingleContract
     R2LightProjectiveWithShadowVarianceType>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderSourcesType sources,
+    final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
     return R2LightShaderProjectiveLambertShadowVarianceSingle.newShader(
@@ -80,7 +77,7 @@ public abstract class R2ShaderLightProjectiveLambertShadowVarianceSingleContract
 
     final R2ShadowDepthVariance sh =
       R2ShadowDepthVariance.of(
-        pool.getFreshID(),
+        pool.freshID(),
         R2DepthVarianceBufferDescription.of(
           area,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR,
@@ -89,6 +86,6 @@ public abstract class R2ShaderLightProjectiveLambertShadowVarianceSingleContract
           R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16));
 
     return R2LightProjectiveWithShadowVariance.newLight(
-      pm, td.getWhiteProjectiveTexture(), sh, pool);
+      pm, td.texture2DProjectiveWhite(), sh, pool);
   }
 }

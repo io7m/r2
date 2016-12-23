@@ -92,7 +92,7 @@ public final class R2UnitCube implements R2UnitCubeType
     final JCGLUsageHint index_usage = JCGLUsageHint.USAGE_STATIC_DRAW;
     final R2VertexCursorPUNT16 ci = R2VertexCursorPUNT16.getInstance();
     final String name = "cube.r2b";
-    return R2UnitCube.newUnitCube(g, array_usage, index_usage, ci, name);
+    return newUnitCube(g, array_usage, index_usage, ci, name);
   }
 
   private static <T extends
@@ -104,7 +104,7 @@ public final class R2UnitCube implements R2UnitCubeType
     final T ci,
     final String name)
   {
-    R2UnitCube.LOG.debug("allocating unit cube");
+    LOG.debug("allocating unit cube");
 
     final R2MeshArrayObjectSynchronousAdapterType adapter =
       R2MeshArrayObjectSynchronousAdapter.newAdapter(
@@ -125,9 +125,9 @@ public final class R2UnitCube implements R2UnitCubeType
 
         if (adapter.hasFailed()) {
           final Optional<Throwable> ex_opt =
-            adapter.getErrorException();
+            adapter.errorException();
           final String ex_msg =
-            adapter.getErrorMessage();
+            adapter.errorMessage();
 
           if (ex_opt.isPresent()) {
             throw new R2ExceptionIO(ex_msg, ex_opt.get());
@@ -136,9 +136,9 @@ public final class R2UnitCube implements R2UnitCubeType
         }
 
         return new R2UnitCube(
-          adapter.getArrayBuffer(),
-          adapter.getArrayObject(),
-          adapter.getIndexBuffer());
+          adapter.arrayBuffer(),
+          adapter.arrayObject(),
+          adapter.indexBuffer());
       }
     } catch (final IOException e) {
       throw new R2ExceptionIO(e.getMessage(), e);
@@ -157,7 +157,7 @@ public final class R2UnitCube implements R2UnitCubeType
   }
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.array_object;
   }

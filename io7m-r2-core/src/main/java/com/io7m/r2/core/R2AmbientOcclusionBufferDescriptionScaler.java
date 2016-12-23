@@ -47,7 +47,7 @@ public final class R2AmbientOcclusionBufferDescriptionScaler implements
 
   public static R2AmbientOcclusionBufferDescriptionScaler get()
   {
-    return R2AmbientOcclusionBufferDescriptionScaler.INSTANCE;
+    return INSTANCE;
   }
 
   @Override

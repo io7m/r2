@@ -46,13 +46,13 @@ import com.io7m.r2.core.R2TextureDefaults;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.filters.R2BilateralBlurParameters;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAware;
 import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParameters;
-import com.io7m.r2.shaders.R2Shaders;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.R2TestUtilities;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -68,8 +68,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLTexturesType g_t =
@@ -93,7 +93,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     Assert.assertFalse(f.isDeleted());
     f.delete(g);
@@ -107,8 +107,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -140,7 +140,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -156,30 +156,33 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(0)
+        .setBlurSize(0.0f)
+        .setBlurScale(1.0f)
+        .build();
+
     final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBilateralBlurDepthAwareParameters.newParameters(
+      R2FilterBilateralBlurDepthAwareParameters.of(
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        R2ImageBufferUsableType::imageTexture,
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
-        R2ImageBufferDescriptionScaler.get(), rtp);
-
-    params.setSourceRenderTarget(ib);
-    params.setOutputRenderTarget(ib);
-    params.setBlurPasses(0);
-    params.setBlurRadius(0.0f);
-    params.setBlurScale(1.0f);
-    params.setSceneObserverValues(R2TestUtilities.getMatricesObserverValues());
+        R2ImageBufferUsableType::imageTexture,
+        rtp,
+        R2ImageBufferDescriptionScaler.get(),
+        R2TestUtilities.getMatricesObserverValues(),
+        td.texture2DWhite(),
+        blur_params);
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -189,8 +192,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -222,7 +225,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -240,30 +243,33 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(0)
+        .setBlurSize(0.0f)
+        .setBlurScale(1.0f)
+        .build();
+
     final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBilateralBlurDepthAwareParameters.newParameters(
+      R2FilterBilateralBlurDepthAwareParameters.of(
         ib0,
-        R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        R2ImageBufferUsableType::imageTexture,
         ib1,
-        R2ImageBufferUsableType::getRGBATexture,
-        R2ImageBufferDescriptionScaler.get(), rtp);
-
-    params.setSourceRenderTarget(ib0);
-    params.setOutputRenderTarget(ib1);
-    params.setBlurPasses(0);
-    params.setBlurRadius(0.0f);
-    params.setBlurScale(1.0f);
-    params.setSceneObserverValues(R2TestUtilities.getMatricesObserverValues());
+        R2ImageBufferUsableType::imageTexture,
+        rtp,
+        R2ImageBufferDescriptionScaler.get(),
+        R2TestUtilities.getMatricesObserverValues(),
+        td.texture2DWhite(),
+        blur_params);
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib1.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib1.primaryFramebuffer()));
   }
 
   @Test
@@ -273,8 +279,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -306,7 +312,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -322,30 +328,33 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(1)
+        .setBlurSize(0.0f)
+        .setBlurScale(1.0f)
+        .build();
+
     final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBilateralBlurDepthAwareParameters.newParameters(
+      R2FilterBilateralBlurDepthAwareParameters.of(
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        R2ImageBufferUsableType::imageTexture,
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
-        R2ImageBufferDescriptionScaler.get(), rtp);
-
-    params.setSourceRenderTarget(ib);
-    params.setOutputRenderTarget(ib);
-    params.setBlurPasses(1);
-    params.setBlurScale(1.0f);
-    params.setBlurRadius(0.0f);
-    params.setSceneObserverValues(R2TestUtilities.getMatricesObserverValues());
+        R2ImageBufferUsableType::imageTexture,
+        rtp,
+        R2ImageBufferDescriptionScaler.get(),
+        R2TestUtilities.getMatricesObserverValues(),
+        td.texture2DWhite(),
+        blur_params);
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -355,8 +364,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -388,7 +397,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -404,30 +413,33 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(1)
+        .setBlurSize(1.0f)
+        .setBlurScale(1.0f)
+        .build();
+
     final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBilateralBlurDepthAwareParameters.newParameters(
+      R2FilterBilateralBlurDepthAwareParameters.of(
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        R2ImageBufferUsableType::imageTexture,
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
-        R2ImageBufferDescriptionScaler.get(), rtp);
-
-    params.setSourceRenderTarget(ib);
-    params.setOutputRenderTarget(ib);
-    params.setBlurPasses(1);
-    params.setBlurScale(1.0f);
-    params.setBlurRadius(1.0f);
-    params.setSceneObserverValues(R2TestUtilities.getMatricesObserverValues());
+        R2ImageBufferUsableType::imageTexture,
+        rtp,
+        R2ImageBufferDescriptionScaler.get(),
+        R2TestUtilities.getMatricesObserverValues(),
+        td.texture2DWhite(),
+        blur_params);
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 
   @Test
@@ -437,8 +449,8 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
       this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g =
       gc.contextGetGL33();
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id =
       R2IDPool.newPool();
     final JCGLFramebuffersType g_fb =
@@ -470,7 +482,7 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
         R2ImageBufferUsableType,
         R2ImageBufferDescriptionType,
         R2ImageBufferUsableType>> f =
-      R2FilterBilateralBlurDepthAware.newFilter(ss, g, td, rtp, id, quad);
+      R2FilterBilateralBlurDepthAware.newFilter(sources, g, td, rtp, id, quad);
 
     final AreaInclusiveUnsignedLType area = AreaInclusiveUnsignedL.of(
       new UnsignedRangeInclusiveL(0L, 127L),
@@ -486,29 +498,32 @@ public abstract class R2FilterBilateralBlurDepthAwareContract extends
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertFalse(g_fb.framebufferDrawAnyIsBound());
 
+    final R2BilateralBlurParameters blur_params =
+      R2BilateralBlurParameters.builder()
+        .setBlurPasses(1)
+        .setBlurSize(1.0f)
+        .setBlurScale(0.5f)
+        .build();
+
     final R2FilterBilateralBlurDepthAwareParameters<
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType,
       R2ImageBufferDescriptionType,
       R2ImageBufferUsableType> params =
-      R2FilterBilateralBlurDepthAwareParameters.newParameters(
+      R2FilterBilateralBlurDepthAwareParameters.of(
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
-        td.getWhiteTexture(),
+        R2ImageBufferUsableType::imageTexture,
         ib,
-        R2ImageBufferUsableType::getRGBATexture,
-        R2ImageBufferDescriptionScaler.get(), rtp);
-
-    params.setSourceRenderTarget(ib);
-    params.setOutputRenderTarget(ib);
-    params.setBlurPasses(1);
-    params.setBlurScale(0.5f);
-    params.setBlurRadius(1.0f);
-    params.setSceneObserverValues(R2TestUtilities.getMatricesObserverValues());
+        R2ImageBufferUsableType::imageTexture,
+        rtp,
+        R2ImageBufferDescriptionScaler.get(),
+        R2TestUtilities.getMatricesObserverValues(),
+        td.texture2DWhite(),
+        blur_params);
 
     f.runFilter(pro_root, tc, params);
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
-    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.getPrimaryFramebuffer()));
+    Assert.assertTrue(g_fb.framebufferDrawIsBound(ib.primaryFramebuffer()));
   }
 }

@@ -47,13 +47,13 @@ import java.nio.ByteBuffer;
 
 public final class R2ProjectionMesh implements R2ProjectionMeshType
 {
-  private final JCGLArrayObjectType                       array_object;
-  private final JCGLArrayBufferType                       array_buffer;
-  private final JCGLIndexBufferType                       index_buffer;
+  private final JCGLArrayObjectType array_object;
+  private final JCGLArrayBufferType array_buffer;
+  private final JCGLIndexBufferType index_buffer;
   private final JCGLBufferUpdateType<JCGLArrayBufferType> array_update;
-  private final JPRACursor1DType<R2VertexP32UNT16Type>    array_cursor;
-  private final R2ProjectionType                          projection;
-  private       boolean                                   mesh_needs_update;
+  private final JPRACursor1DType<R2VertexP32UNT16Type> array_cursor;
+  private final R2ProjectionType projection;
+  private boolean mesh_needs_update;
 
   private R2ProjectionMesh(
     final R2ProjectionType in_p,
@@ -70,9 +70,8 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
     this.array_update = NullCheck.notNull(in_array_update);
     this.array_cursor = NullCheck.notNull(in_array_cursor);
 
-    this.projection.projectionGetWatchable().watchableAdd(p -> {
-      this.mesh_needs_update = true;
-    });
+    this.projection.projectionGetWatchable().watchableAdd(
+      p -> this.mesh_needs_update = true);
   }
 
   /**
@@ -108,15 +107,15 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
     final JCGLBufferUpdateType<JCGLArrayBufferType> array_update;
     final JPRACursor1DType<R2VertexP32UNT16Type> array_cursor;
 
-    /**
-     * Allocate array buffer.
+    /*
+      Allocate array buffer.
      */
 
     {
       final R2VertexCursorP32UNT16 vci =
         R2VertexCursorP32UNT16.getInstance();
 
-      final long array_size = vci.getVertexSize() * 8L;
+      final long array_size = vci.vertexSize() * 8L;
       ab = ga.arrayBufferAllocate(array_size, array_hint);
       array_update =
         JCGLBufferUpdates.newUpdateReplacingAll(ab);
@@ -126,8 +125,8 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
           R2VertexP32UNT16ByteBuffered::newValueWithOffset);
     }
 
-    /**
-     * Allocate index buffer.
+    /*
+      Allocate index buffer.
      */
 
     {
@@ -142,55 +141,55 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
       final ByteBuffer d =
         index_update.getData();
 
-      /**
-       * Front side triangles.
+      /*
+        Front side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 1, 0, 3);
-      R2ProjectionMesh.triangle(d, 1, 3, 2);
+      triangle(d, 1, 0, 3);
+      triangle(d, 1, 3, 2);
 
-      /**
-       * Left side triangles.
+      /*
+        Left side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 5, 4, 0);
-      R2ProjectionMesh.triangle(d, 5, 0, 1);
+      triangle(d, 5, 4, 0);
+      triangle(d, 5, 0, 1);
 
-      /**
-       * Right side triangles.
+      /*
+        Right side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 6, 3, 7);
-      R2ProjectionMesh.triangle(d, 6, 2, 3);
+      triangle(d, 6, 3, 7);
+      triangle(d, 6, 2, 3);
 
-      /**
-       * Top side triangles.
+      /*
+        Top side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 5, 1, 2);
-      R2ProjectionMesh.triangle(d, 5, 2, 6);
+      triangle(d, 5, 1, 2);
+      triangle(d, 5, 2, 6);
 
-      /**
-       * Bottom side triangles.
+      /*
+        Bottom side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 4, 3, 0);
-      R2ProjectionMesh.triangle(d, 4, 7, 3);
+      triangle(d, 4, 3, 0);
+      triangle(d, 4, 7, 3);
 
-      /**
-       * Back side triangles.
+      /*
+        Back side triangles.
        */
 
-      R2ProjectionMesh.triangle(d, 5, 7, 4);
-      R2ProjectionMesh.triangle(d, 6, 7, 5);
+      triangle(d, 5, 7, 4);
+      triangle(d, 6, 7, 5);
 
       d.rewind();
       gi.indexBufferUpdate(index_update);
       gi.indexBufferUnbind();
     }
 
-    /**
-     * Allocate and configure array object.
+    /*
+      Allocate and configure array object.
      */
 
     {
@@ -256,13 +255,13 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
    */
 
   @Override
-  public JCGLArrayObjectUsableType getArrayObject()
+  public JCGLArrayObjectUsableType arrayObject()
   {
     return this.array_object;
   }
 
   @Override
-  public R2ProjectionReadableType getProjectionReadable()
+  public R2ProjectionReadableType projectionReadable()
   {
     return this.projection;
   }
@@ -359,7 +358,7 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
   }
 
   @Override
-  public R2ProjectionType getProjectionWritable()
+  public R2ProjectionType projectionWritable()
   {
     return this.projection;
   }

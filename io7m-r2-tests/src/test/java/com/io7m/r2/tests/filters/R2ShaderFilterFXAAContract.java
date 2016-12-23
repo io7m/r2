@@ -27,48 +27,39 @@ import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jfunctional.Pair;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jfunctional.Pair;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Texture2DStatic;
-import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.filters.R2FilterFXAAQuality;
 import com.io7m.r2.filters.R2ShaderFilterFXAAA;
-import com.io7m.r2.filters.R2ShaderFilterFXAAParametersMutable;
-import com.io7m.r2.filters.R2ShaderFilterFXAAParametersType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.filters.R2ShaderFilterFXAAParameters;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderFilterFXAAContract extends
-  R2ShaderFilterContract<R2ShaderFilterFXAAParametersType,
-    R2ShaderFilterFXAAParametersMutable>
+  R2ShaderFilterContract<R2ShaderFilterFXAAParameters,
+    R2ShaderFilterFXAAParameters>
 {
   @Override
-  protected final R2ShaderFilterFXAAParametersMutable
+  protected final R2ShaderFilterFXAAParameters
   newParameters(final JCGLInterfaceGL33Type g)
   {
-    final R2ShaderFilterFXAAParametersMutable p =
-      R2ShaderFilterFXAAParametersMutable.create();
-
     final JCGLTexturesType g_tex = g.getTextures();
 
     final JCGLTextureUnitAllocatorType tp =
       JCGLTextureUnitAllocator.newAllocatorWithStack(
-        8,
-        g_tex.textureGetUnits());
-    final JCGLTextureUnitContextParentType tc_root =
-      tp.getRootContext();
-    final JCGLTextureUnitContextType tc_alloc =
-      tc_root.unitContextNew();
+        8, g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tc_root = tp.getRootContext();
+    final JCGLTextureUnitContextType tc_alloc = tc_root.unitContextNew();
 
     try {
       final AreaInclusiveUnsignedL area =
@@ -87,13 +78,12 @@ public abstract class R2ShaderFilterFXAAContract extends
           JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
-      p.setTexture(R2Texture2DStatic.of(pq.getRight()));
-
+      return R2ShaderFilterFXAAParameters.builder()
+        .setTexture(R2Texture2DStatic.of(pq.getRight()))
+        .build();
     } finally {
       tc_alloc.unitContextFinish(g_tex);
     }
-
-    return p;
   }
 
   @Test
@@ -101,12 +91,12 @@ public abstract class R2ShaderFilterFXAAContract extends
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
     for (final R2FilterFXAAQuality q : R2FilterFXAAQuality.values()) {
-      final R2ShaderFilterType<R2ShaderFilterFXAAParametersType> s =
+      final R2ShaderFilterType<R2ShaderFilterFXAAParameters> s =
         R2ShaderFilterFXAAA.newShader(g.getShaders(), sources, pool, q);
       Assert.assertFalse(s.isDeleted());
       s.delete(g);

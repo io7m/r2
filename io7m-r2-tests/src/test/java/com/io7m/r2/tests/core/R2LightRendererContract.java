@@ -62,10 +62,8 @@ import com.io7m.r2.core.R2UnitSphereType;
 import com.io7m.r2.core.R2UnitSphereUsableType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
-import com.io7m.r2.shaders.R2Shaders;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -78,14 +76,14 @@ public abstract class R2LightRendererContract extends R2JCGLContract
     final R2UnitSphereUsableType sphere,
     final R2IDPoolType id_pool)
   {
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2LightSphericalSingleType ls =
       R2LightSphericalSingle.newLight(sphere, id_pool);
 
     final R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> ds =
       R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
-        g.getShaders(), ss, id_pool);
+        g.getShaders(), sources, id_pool);
 
     final R2SceneLightsType s = R2SceneLights.newLights();
     final R2SceneLightsGroupType lg = s.lightsGetGroup(1);
@@ -96,7 +94,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
   protected abstract R2LightRendererType getRenderer(
     final JCGLInterfaceGL33Type g,
     R2TextureDefaultsType td,
-    R2ShaderSourcesType ss,
+    R2ShaderPreprocessingEnvironmentType ss,
     R2IDPoolType id_pool,
     R2UnitQuadUsableType quad);
 
@@ -118,12 +116,12 @@ public abstract class R2LightRendererContract extends R2JCGLContract
 
     final R2UnitQuadType quad =
       R2UnitQuad.newUnitQuad(g);
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType id_pool =
       R2IDPool.newPool();
     final R2LightRendererType r =
-      this.getRenderer(g, td, ss, id_pool, quad);
+      this.getRenderer(g, td, sources, id_pool, quad);
 
     Assert.assertFalse(r.isDeleted());
     r.delete(g);
@@ -178,10 +176,10 @@ public abstract class R2LightRendererContract extends R2JCGLContract
     final R2ProjectionOrthographic proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2LightRendererType r =
-      this.getRenderer(g, td, ss, id_pool, quad);
+      this.getRenderer(g, td, sources, id_pool, quad);
 
     final R2GeometryBufferType gbuffer =
       R2GeometryBuffer.newGeometryBuffer(
@@ -259,10 +257,10 @@ public abstract class R2LightRendererContract extends R2JCGLContract
     final R2ProjectionOrthographic proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2LightRendererType r =
-      this.getRenderer(g, td, ss, id_pool, quad);
+      this.getRenderer(g, td, sources, id_pool, quad);
 
     final R2GeometryBufferType gbuffer =
       R2GeometryBuffer.newGeometryBuffer(
@@ -298,7 +296,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertTrue(g_fb.framebufferDrawIsBound(
-      lbuffer.getPrimaryFramebuffer()));
+      lbuffer.primaryFramebuffer()));
   }
 
   @Test
@@ -349,10 +347,10 @@ public abstract class R2LightRendererContract extends R2JCGLContract
     final R2ProjectionOrthographic proj =
       R2ProjectionOrthographic.newFrustum(JCGLProjectionMatrices.newMatrices());
 
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2LightRendererType r =
-      this.getRenderer(g, td, ss, id_pool, quad);
+      this.getRenderer(g, td, sources, id_pool, quad);
 
     final R2GeometryBufferType gbuffer =
       R2GeometryBuffer.newGeometryBuffer(
@@ -371,7 +369,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
 
     g_fb.framebufferReadUnbind();
     Assert.assertTrue(g_fb.framebufferDrawIsBound(
-      lbuffer.getPrimaryFramebuffer()));
+      lbuffer.primaryFramebuffer()));
 
     final R2MatricesType m = R2Matrices.newMatrices();
     m.withObserver(PMatrixI4x4F.identity(), proj, Unit.unit(), (x, y) -> {
@@ -389,6 +387,6 @@ public abstract class R2LightRendererContract extends R2JCGLContract
 
     Assert.assertFalse(g_fb.framebufferReadAnyIsBound());
     Assert.assertTrue(g_fb.framebufferDrawIsBound(
-      lbuffer.getPrimaryFramebuffer()));
+      lbuffer.primaryFramebuffer()));
   }
 }

@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2StencilRenderer;
 import com.io7m.r2.core.R2StencilRendererType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.R2StencilRendererContract;
 
 public final class R2StencilRendererTest extends
@@ -31,7 +31,7 @@ public final class R2StencilRendererTest extends
   @Override
   protected R2StencilRendererType getRenderer(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentType in_sources,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {

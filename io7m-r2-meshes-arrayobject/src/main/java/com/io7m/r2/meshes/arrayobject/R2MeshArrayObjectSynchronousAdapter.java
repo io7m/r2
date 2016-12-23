@@ -16,6 +16,7 @@
 
 package com.io7m.r2.meshes.arrayobject;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLArrayBufferType;
 import com.io7m.jcanephora.core.JCGLArrayObjectBuilderType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
@@ -35,7 +36,6 @@ import com.io7m.r2.core.cursors.R2VertexCursorProducerType;
 import com.io7m.r2.core.cursors.R2VertexCursorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.nio.ByteBuffer;
 import java.util.Optional;
@@ -56,25 +56,25 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     LOG = LoggerFactory.getLogger(R2MeshArrayObjectSynchronousAdapter.class);
   }
 
-  private final JCGLArrayObjectsType                   g_ao;
-  private final JCGLArrayBuffersType                   g_ab;
-  private final JCGLIndexBuffersType                   g_ib;
-  private final JCGLUsageHint                          array_usage;
-  private       JCGLUnsignedType                       index_type_actual;
-  private final JCGLUsageHint                          index_usage;
+  private final JCGLArrayObjectsType g_ao;
+  private final JCGLArrayBuffersType g_ab;
+  private final JCGLIndexBuffersType g_ib;
+  private final JCGLUsageHint array_usage;
+  private JCGLUnsignedType index_type_actual;
+  private final JCGLUsageHint index_usage;
   private final R2VertexCursorProducerType<ByteBuffer> cursor_producer;
-  private final R2VertexCursorProducerInfoType         cursor_info;
-  private final JCGLUnsignedType                       index_type_minimum;
-  private       boolean                                failed;
-  private       JCGLArrayBufferType                    array_buffer;
-  private       JCGLIndexBufferType                    index_buffer;
-  private JCGLArrayObjectType                       array_object;
+  private final R2VertexCursorProducerInfoType cursor_info;
+  private final JCGLUnsignedType index_type_minimum;
+  private boolean failed;
+  private JCGLArrayBufferType array_buffer;
+  private JCGLIndexBufferType index_buffer;
+  private JCGLArrayObjectType array_object;
   private JCGLBufferUpdateType<JCGLArrayBufferType> array_update;
   private JCGLBufferUpdateType<JCGLIndexBufferType> index_update;
-  private R2VertexCursorType                        array_cursor;
-  private Optional<Throwable>                       error_ex;
-  private String                                    error_message;
-  private OptionalLong                              vertex_count;
+  private R2VertexCursorType array_cursor;
+  private Optional<Throwable> error_ex;
+  private String error_message;
+  private OptionalLong vertex_count;
 
   private R2MeshArrayObjectSynchronousAdapter(
     final JCGLArrayObjectsType in_g_ao,
@@ -147,15 +147,18 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventVertexCount(final long count)
   {
-    Assertive.require(this.array_buffer == null);
-    Assertive.require(this.array_object == null);
-    Assertive.require(this.index_buffer == null);
+    Preconditions.checkPrecondition(
+      this.array_buffer == null, "Array buffer must be null");
+    Preconditions.checkPrecondition(
+      this.array_object == null, "Array object must be null");
+    Preconditions.checkPrecondition(
+      this.index_buffer == null, "Index buffer must be null");
 
     this.vertex_count = OptionalLong.of(count);
 
     this.array_buffer =
       this.g_ab.arrayBufferAllocate(
-        count * this.cursor_info.getVertexSize(),
+        count * this.cursor_info.vertexSize(),
         this.array_usage);
     this.g_ab.arrayBufferUnbind();
 
@@ -168,10 +171,14 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventTriangleCount(final long count)
   {
-    Assertive.require(this.array_buffer != null);
-    Assertive.require(this.array_object == null);
-    Assertive.require(this.index_buffer == null);
-    Assertive.require(this.vertex_count.isPresent());
+    NullCheck.notNull(
+      this.array_buffer, "Array buffer");
+    Preconditions.checkPrecondition(
+      this.array_object == null, "Array object must be null");
+    Preconditions.checkPrecondition(
+      this.index_buffer == null, "Index buffer must be null");
+    Preconditions.checkPrecondition(
+      this.vertex_count.isPresent(), "Vertex count must have been received");
 
     this.index_type_actual =
       R2IndexBuffers.getTypeForCount(
@@ -187,33 +194,33 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
       R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
       this.array_buffer,
       3,
-      this.cursor_info.getPositionElementType(),
-      (int) this.cursor_info.getVertexSize(),
-      this.cursor_info.getPositionOffset(),
+      this.cursor_info.positionElementType(),
+      (int) this.cursor_info.vertexSize(),
+      this.cursor_info.positionOffset(),
       false);
     aob.setAttributeFloatingPoint(
       R2AttributeConventions.UV_ATTRIBUTE_INDEX,
       this.array_buffer,
       2,
-      this.cursor_info.getUVElementType(),
-      (int) this.cursor_info.getVertexSize(),
-      this.cursor_info.getUVOffset(),
+      this.cursor_info.uvElementType(),
+      (int) this.cursor_info.vertexSize(),
+      this.cursor_info.uvOffset(),
       false);
     aob.setAttributeFloatingPoint(
       R2AttributeConventions.NORMAL_ATTRIBUTE_INDEX,
       this.array_buffer,
       3,
-      this.cursor_info.getNormalElementType(),
-      (int) this.cursor_info.getVertexSize(),
-      this.cursor_info.getNormalOffset(),
+      this.cursor_info.normalElementType(),
+      (int) this.cursor_info.vertexSize(),
+      this.cursor_info.normalOffset(),
       false);
     aob.setAttributeFloatingPoint(
       R2AttributeConventions.TANGENT4_ATTRIBUTE_INDEX,
       this.array_buffer,
       4,
-      this.cursor_info.getTangent4ElementType(),
-      (int) this.cursor_info.getVertexSize(),
-      this.cursor_info.getTangent4Offset(),
+      this.cursor_info.tangent4ElementType(),
+      (int) this.cursor_info.vertexSize(),
+      this.cursor_info.tangent4Offset(),
       false);
     aob.setIndexBuffer(this.index_buffer);
     this.array_object = this.g_ao.arrayObjectAllocate(aob);
@@ -236,8 +243,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final double y,
     final double z)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] position: {} {} {}",
         Long.valueOf(index),
         Double.valueOf(x),
@@ -255,8 +262,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final double y,
     final double z)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] normal: {} {} {}",
         Long.valueOf(index),
         Double.valueOf(x),
@@ -275,8 +282,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final double z,
     final double w)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] tangent: {} {} {}",
         Long.valueOf(index),
         Double.valueOf(x),
@@ -293,8 +300,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final double x,
     final double y)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] uv: {} {}",
         Long.valueOf(index),
         Double.valueOf(x),
@@ -314,9 +321,9 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventVerticesFinished()
   {
-    Assertive.require(this.array_buffer != null);
-    Assertive.require(this.index_buffer != null);
-    Assertive.require(this.array_object != null);
+    NullCheck.notNull(this.array_buffer, "Array buffer");
+    NullCheck.notNull(this.index_buffer, "Index buffer");
+    NullCheck.notNull(this.array_object, "Array object");
 
     this.g_ab.arrayBufferBind(this.array_buffer);
     this.g_ab.arrayBufferUpdate(this.array_update);
@@ -330,8 +337,8 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
     final long v1,
     final long v2)
   {
-    if (R2MeshArrayObjectSynchronousAdapter.LOG.isTraceEnabled()) {
-      R2MeshArrayObjectSynchronousAdapter.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "[{}] triangle: {} {} {}",
         Long.valueOf(index),
         Long.valueOf(v0),
@@ -377,9 +384,9 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   @Override
   public void onEventTrianglesFinished()
   {
-    Assertive.require(this.array_buffer != null);
-    Assertive.require(this.index_buffer != null);
-    Assertive.require(this.array_object != null);
+    NullCheck.notNull(this.array_buffer, "Array buffer");
+    NullCheck.notNull(this.index_buffer, "Index buffer");
+    NullCheck.notNull(this.array_object, "Array object");
 
     this.g_ao.arrayObjectBind(this.array_object);
     this.g_ib.indexBufferUpdate(this.index_update);
@@ -400,7 +407,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public JCGLArrayBufferType getArrayBuffer()
+  public JCGLArrayBufferType arrayBuffer()
   {
     if (this.failed) {
       throw new IllegalStateException("Parsing failed");
@@ -409,7 +416,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public JCGLIndexBufferType getIndexBuffer()
+  public JCGLIndexBufferType indexBuffer()
   {
     if (this.failed) {
       throw new IllegalStateException("Parsing failed");
@@ -418,7 +425,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public JCGLArrayObjectType getArrayObject()
+  public JCGLArrayObjectType arrayObject()
   {
     if (this.failed) {
       throw new IllegalStateException("Parsing failed");
@@ -427,7 +434,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public Optional<Throwable> getErrorException()
+  public Optional<Throwable> errorException()
   {
     if (!this.failed) {
       throw new IllegalStateException("Parsing did not fail");
@@ -436,7 +443,7 @@ public final class R2MeshArrayObjectSynchronousAdapter implements
   }
 
   @Override
-  public String getErrorMessage()
+  public String errorMessage()
   {
     if (!this.failed) {
       throw new IllegalStateException("Parsing did not fail");

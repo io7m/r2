@@ -29,17 +29,17 @@ public interface R2LightSphericalReadableType extends R2LightReadableType
    * @return The light radius
    */
 
-  float getRadius();
+  float radius();
 
   /**
    * @return The light falloff exponent
    */
 
-  float getFalloff();
+  float falloff();
 
   /**
    * @return The position of the origin of the light in world-space
    */
 
-  PVectorReadable3FType<R2SpaceWorldType> getOriginPosition();
+  PVectorReadable3FType<R2SpaceWorldType> originPosition();
 }

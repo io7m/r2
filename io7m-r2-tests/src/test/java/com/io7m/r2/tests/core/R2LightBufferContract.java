@@ -79,11 +79,11 @@ public abstract class R2LightBufferContract extends R2JCGLContract
           final R2LightBufferDiffuseOnlyUsableType gbb =
             (R2LightBufferDiffuseOnlyUsableType) gb;
           final R2Texture2DUsableType t_diffuse =
-            gbb.getDiffuseTexture();
+            gbb.diffuseTexture();
 
           Assert.assertEquals(
             JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-            t_diffuse.get().textureGetFormat());
+            t_diffuse.texture().textureGetFormat());
 
           Assert.assertEquals(640L * 480L * 8L, gb.getRange().getInterval());
           break;
@@ -92,11 +92,11 @@ public abstract class R2LightBufferContract extends R2JCGLContract
           final R2LightBufferSpecularOnlyUsableType gbb =
             (R2LightBufferSpecularOnlyUsableType) gb;
           final R2Texture2DUsableType t_spec =
-            gbb.getSpecularTexture();
+            gbb.specularTexture();
 
           Assert.assertEquals(
             JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-            t_spec.get().textureGetFormat());
+            t_spec.texture().textureGetFormat());
 
           Assert.assertEquals(640L * 480L * 8L, gb.getRange().getInterval());
           break;
@@ -105,16 +105,16 @@ public abstract class R2LightBufferContract extends R2JCGLContract
           final R2LightBufferDiffuseSpecularUsableType gbb =
             (R2LightBufferDiffuseSpecularUsableType) gb;
           final R2Texture2DUsableType t_diffuse =
-            gbb.getDiffuseTexture();
+            gbb.diffuseTexture();
           final R2Texture2DUsableType t_spec =
-            gbb.getSpecularTexture();
+            gbb.specularTexture();
 
           Assert.assertEquals(
             JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-            t_diffuse.get().textureGetFormat());
+            t_diffuse.texture().textureGetFormat());
           Assert.assertEquals(
             JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-            t_spec.get().textureGetFormat());
+            t_spec.texture().textureGetFormat());
 
           Assert.assertEquals(640L * 480L * 12L, gb.getRange().getInterval());
           break;
@@ -122,7 +122,7 @@ public abstract class R2LightBufferContract extends R2JCGLContract
       }
 
       final JCGLFramebufferUsableType fb =
-        gb.getPrimaryFramebuffer();
+        gb.primaryFramebuffer();
 
       gb.delete(g);
       Assert.assertTrue(fb.isDeleted());

@@ -21,12 +21,10 @@ import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jcanephora.core.JCGLTextureFormat;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2DepthOnlyBuffer;
 import com.io7m.r2.core.R2DepthOnlyBufferDescription;
 import com.io7m.r2.core.R2DepthOnlyBufferType;
@@ -87,15 +85,15 @@ public abstract class R2DepthOnlyBufferContract extends R2JCGLContract
       Assert.assertFalse(gb.isDeleted());
 
       final R2Texture2DUsableType t_dept =
-        gb.getDepthTexture();
+        gb.depthTexture();
       final JCGLFramebufferUsableType fb =
-        gb.getPrimaryFramebuffer();
+        gb.primaryFramebuffer();
 
-      Assert.assertEquals(desc, gb.getDescription());
-      Assert.assertEquals(area, gb.getArea());
+      Assert.assertEquals(desc, gb.description());
+      Assert.assertEquals(area, gb.area());
       Assert.assertEquals(
         f,
-        t_dept.get().textureGetFormat());
+        t_dept.texture().textureGetFormat());
 
       gb.delete(g);
       Assert.assertTrue(fb.isDeleted());

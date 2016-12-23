@@ -20,6 +20,8 @@ import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
@@ -27,14 +29,15 @@ import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.VectorM2F;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.core.shaders.provided.R2AbstractShader;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -43,8 +46,8 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterFXAAA extends
-  R2AbstractShader<R2ShaderFilterFXAAParametersType>
-  implements R2ShaderFilterType<R2ShaderFilterFXAAParametersType>
+  R2AbstractShader<R2ShaderFilterFXAAParameters>
+  implements R2ShaderFilterType<R2ShaderFilterFXAAParameters>
 {
   private final JCGLProgramUniformType u_image;
   private final JCGLProgramUniformType u_screen_inverse;
@@ -55,39 +58,38 @@ public final class R2ShaderFilterFXAAA extends
 
   private R2ShaderFilterFXAAA(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final String in_name,
-    final String in_vertex,
     final String in_fragment)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      in_name,
-      in_vertex,
+      "com.io7m.r2.shaders.core." + in_name,
+      "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      in_fragment);
+      "com.io7m.r2.shaders.core/" + in_fragment);
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 5);
 
     this.u_image =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.image");
+        p, "R2_fxaa.image", JCGLType.TYPE_SAMPLER_2D);
     this.u_screen_inverse =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.screen_inverse");
+        p, "R2_fxaa.screen_inverse", JCGLType.TYPE_FLOAT_VECTOR_2);
     this.u_subpixel_aliasing_removal =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.subpixel_aliasing_removal");
+        p, "R2_fxaa.subpixel_aliasing_removal", JCGLType.TYPE_FLOAT);
     this.u_edge_threshold =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.edge_threshold");
+        p, "R2_fxaa.edge_threshold", JCGLType.TYPE_FLOAT);
     this.u_edge_threshold_minimum =
       R2ShaderParameters.getUniformChecked(
-        p, "R2_fxaa.edge_threshold_minimum");
+        p, "R2_fxaa.edge_threshold_minimum", JCGLType.TYPE_FLOAT);
 
     this.screen_inverse = new VectorM2F();
   }
@@ -95,29 +97,28 @@ public final class R2ShaderFilterFXAAA extends
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
-   * @param q          The quality preset
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
+   * @param q             The quality preset
    *
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterFXAAParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterFXAAParameters>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
     final R2FilterFXAAQuality q)
   {
     NullCheck.notNull(q);
 
-    final String n = R2ShaderFilterFXAAA.qualityToShaderName(q);
-    final String v = n + ".vert";
+    final String n = qualityToShaderName(q);
     final String f = n + ".frag";
 
     return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterFXAAA(in_shaders, in_sources, in_pool, n, v, f));
+      new R2ShaderFilterFXAAA(in_shaders, in_shader_env, in_pool, n, f));
   }
 
   private static String qualityToShaderName(
@@ -143,25 +144,34 @@ public final class R2ShaderFilterFXAAA extends
 
   @Override
   public void onReceiveFilterValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterFXAAParametersType values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersFilterType<R2ShaderFilterFXAAParameters> parameters)
   {
-    /**
+    NullCheck.notNull(g);
+    NullCheck.notNull(parameters);
+
+    final R2ShaderFilterFXAAParameters values =
+      parameters.values();
+    final JCGLTextureUnitContextMutableType tc =
+      parameters.textureUnitContext();
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    /*
      * Upload the texture to be filtered.
      */
 
     final JCGLTextureUnitType u =
-      tc.unitContextBindTexture2D(g_tex, values.getTexture().get());
+      tc.unitContextBindTexture2D(g_tex, values.texture().texture());
     g_sh.shaderUniformPutTexture2DUnit(this.u_image, u);
 
-    /**
+    /*
      * Upload the viewport.
      */
 
-    final R2Texture2DUsableType texture = values.getTexture();
-    final AreaInclusiveUnsignedLType area = texture.get().textureGetArea();
+    final R2Texture2DUsableType texture = values.texture();
+    final AreaInclusiveUnsignedLType area = texture.texture().textureGetArea();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -171,22 +181,22 @@ public final class R2ShaderFilterFXAAA extends
 
     g_sh.shaderUniformPutVector2f(this.u_screen_inverse, this.screen_inverse);
 
-    /**
+    /*
      * Upload the various algorithm parameters.
      */
 
     g_sh.shaderUniformPutFloat(
-      this.u_edge_threshold, values.getEdgeThreshold());
+      this.u_edge_threshold, values.edgeThreshold());
     g_sh.shaderUniformPutFloat(
-      this.u_edge_threshold_minimum, values.getEdgeThresholdMinimum());
+      this.u_edge_threshold_minimum, values.edgeThresholdMinimum());
     g_sh.shaderUniformPutFloat(
-      this.u_subpixel_aliasing_removal, values.getSubPixelAliasingRemoval());
+      this.u_subpixel_aliasing_removal, values.subPixelAliasingRemoval());
   }
 
   @Override
-  public Class<R2ShaderFilterFXAAParametersType> getShaderParametersType()
+  public Class<R2ShaderFilterFXAAParameters> shaderParametersType()
   {
-    return R2ShaderFilterFXAAParametersType.class;
+    return R2ShaderFilterFXAAParameters.class;
   }
 
   @Override

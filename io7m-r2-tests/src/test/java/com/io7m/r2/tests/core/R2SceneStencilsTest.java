@@ -150,7 +150,7 @@ public final class R2SceneStencilsTest
       public void onInstanceSingleStartArray(final R2InstanceSingleType i)
       {
         R2SceneStencilsTest.LOG.debug("start-array {}", i);
-        aos.add(i.getArrayObject());
+        aos.add(i.arrayObject());
       }
 
       @Override

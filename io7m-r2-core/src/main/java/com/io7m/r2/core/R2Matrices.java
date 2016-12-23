@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.MatrixM3x3F;
 import com.io7m.jtensors.MatrixM4x4F;
@@ -39,7 +40,6 @@ import com.io7m.r2.spaces.R2SpaceNormalEyeType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
-import org.valid4j.Assertive;
 
 import java.util.function.BiFunction;
 
@@ -107,21 +107,21 @@ public final class R2Matrices implements R2MatricesType
       this.observer.active = true;
       MatrixM4x4F.copy(view, this.observer.m_view);
       MatrixM4x4F.invert(
-        this.context_tr.getContextMM4F(),
+        this.context_tr.contextMM4F(),
         this.observer.m_view,
         this.observer.m_view_inverse);
 
-      /**
+      /*
        * Produce projection and inverse projection matrices.
        */
 
       projection.projectionMakeMatrix(this.observer.m_projection);
       PMatrixM4x4F.invert(
-        this.context_tr.getContextPM4F(),
+        this.context_tr.contextPM4F(),
         this.observer.m_projection,
         this.observer.m_projection_inverse);
 
-      /**
+      /*
        * Recalculate view rays for the given projection.
        */
 
@@ -137,7 +137,7 @@ public final class R2Matrices implements R2MatricesType
   }
 
   @Override
-  public R2TransformContextType getTransformContext()
+  public R2TransformContextType transformContext()
   {
     return this.context_tr;
   }
@@ -168,43 +168,42 @@ public final class R2Matrices implements R2MatricesType
     }
 
 
-
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceLightEyeType>
-    getMatrixProjectiveEyeToLightEye()
+    matrixProjectiveEyeToLightEye()
     {
-      Assertive.require(this.active, "Projective is active");
+      Preconditions.checkPrecondition(this.active, "Projective must be active");
       return this.m_projective_eye_to_light_eye;
     }
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceLightEyeType,
-      R2SpaceLightClipType> getMatrixProjectiveProjection()
+      R2SpaceLightClipType> matrixProjectiveProjection()
     {
-      Assertive.require(this.active, "Projective is active");
+      Preconditions.checkPrecondition(this.active, "Projective must be active");
       return this.m_projective_projection;
     }
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceLightEyeType>
-    getMatrixProjectiveView()
+    matrixProjectiveView()
     {
-      Assertive.require(this.active, "Projective is active");
+      Preconditions.checkPrecondition(this.active, "Projective must be active");
       return this.m_projective_view;
     }
 
     @Override
-    public R2ProjectionType getProjectiveProjection()
+    public R2ProjectionType projectiveProjection()
     {
-      Assertive.require(this.active, "Projective is active");
+      Preconditions.checkPrecondition(this.active, "Projective must be active");
       return this.projection;
     }
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixLightModelView()
+    matrixLightModelView()
     {
-      Assertive.require(this.active, "Projective is active");
+      Preconditions.checkPrecondition(this.active, "Projective must be active");
       return this.m_modelview;
     }
   }
@@ -230,34 +229,34 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixModelView()
+    matrixModelView()
     {
-      Assertive.require(this.active, "Instance is active");
+      Preconditions.checkPrecondition(this.active, "Instance must be active");
       return this.m_modelview;
     }
 
     @Override
     public PMatrixDirectReadable3x3FType<R2SpaceObjectType,
-      R2SpaceNormalEyeType> getMatrixNormal()
+      R2SpaceNormalEyeType> matrixNormal()
     {
-      Assertive.require(this.active, "Instance is active");
+      Preconditions.checkPrecondition(this.active, "Instance must be active");
       return this.m_normal;
     }
 
     @Override
     public PMatrixDirectReadable3x3FType<R2SpaceTextureType,
-      R2SpaceTextureType> getMatrixUV()
+      R2SpaceTextureType> matrixUV()
     {
-      Assertive.require(this.active, "Instance is active");
+      Preconditions.checkPrecondition(this.active, "Instance must be active");
       return this.m_uv;
     }
   }
 
   private static final class VolumeLight implements R2MatricesVolumeLightType
   {
-    private boolean active;
     private final PMatrix4x4FType<R2SpaceObjectType, R2SpaceWorldType> m_model;
     private final PMatrixDirect4x4FType<R2SpaceObjectType, R2SpaceEyeType> m_modelview;
+    private boolean active;
 
     VolumeLight()
     {
@@ -268,9 +267,11 @@ public final class R2Matrices implements R2MatricesType
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceObjectType, R2SpaceEyeType>
-    getMatrixLightModelView()
+    matrixLightModelView()
     {
-      Assertive.require(this.active, "Volume light is active");
+      Preconditions.checkPrecondition(
+        this.active,
+        "Volume light must be active");
       return this.m_modelview;
     }
   }
@@ -311,48 +312,48 @@ public final class R2Matrices implements R2MatricesType
     }
 
     @Override
-    public R2ProjectionReadableType getProjection()
+    public R2ProjectionReadableType projection()
     {
-      Assertive.require(this.active, "Observer is active");
+      Preconditions.checkPrecondition(this.active, "Observer must be active");
       return this.projection;
     }
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceClipType>
-    getMatrixProjection()
+    matrixProjection()
     {
-      Assertive.require(this.active, "Observer is active");
+      Preconditions.checkPrecondition(this.active, "Observer must be active");
       return this.m_projection;
     }
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceClipType, R2SpaceEyeType>
-    getMatrixProjectionInverse()
+    matrixProjectionInverse()
     {
-      Assertive.require(this.active, "Observer is active");
+      Preconditions.checkPrecondition(this.active, "Observer must be active");
       return this.m_projection_inverse;
     }
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceWorldType, R2SpaceEyeType>
-    getMatrixView()
+    matrixView()
     {
-      Assertive.require(this.active, "Observer is active");
+      Preconditions.checkPrecondition(this.active, "Observer must be active");
       return this.m_view;
     }
 
     @Override
     public PMatrixDirectReadable4x4FType<R2SpaceEyeType, R2SpaceWorldType>
-    getMatrixViewInverse()
+    matrixViewInverse()
     {
-      Assertive.require(this.active, "Observer is active");
+      Preconditions.checkPrecondition(this.active, "Observer must be active");
       return this.m_view_inverse;
     }
 
     @Override
-    public R2ViewRaysReadableType getViewRays()
+    public R2ViewRaysReadableType viewRays()
     {
-      Assertive.require(this.active, "Observer is active");
+      Preconditions.checkPrecondition(this.active, "Observer must be active");
       return this.view_rays;
     }
 
@@ -369,7 +370,7 @@ public final class R2Matrices implements R2MatricesType
       NullCheck.notNull(x);
       NullCheck.notNull(f);
 
-      Assertive.require(this.active, "Observer is active");
+      Preconditions.checkPrecondition(this.active, "Observer must be active");
 
       if (this.instance_single.active) {
         throw new R2RendererExceptionInstanceAlreadyActive(
@@ -398,7 +399,7 @@ public final class R2Matrices implements R2MatricesType
           this.instance_single.m_model,
           this.instance_single.m_modelview);
 
-        R2Matrices.makeNormalMatrix(
+        makeNormalMatrix(
           this.context_3f,
           this.instance_single.m_modelview,
           this.instance_single.m_normal);
@@ -422,7 +423,7 @@ public final class R2Matrices implements R2MatricesType
       NullCheck.notNull(x);
       NullCheck.notNull(f);
 
-      Assertive.require(this.active, "Observer is active");
+      Preconditions.checkPrecondition(this.active, "Observer must be active");
 
       if (this.instance_single.active) {
         throw new R2RendererExceptionInstanceAlreadyActive(
@@ -442,11 +443,11 @@ public final class R2Matrices implements R2MatricesType
       try {
         this.projective.active = true;
 
-        /**
+        /*
          * Produce a modelview matrix for the light.
          */
 
-        final R2TransformViewReadableType ot = t.getTransform();
+        final R2TransformViewReadableType ot = t.transform();
 
         ot.transformMakeMatrix4x4F(
           this.context_tr, this.projective.m_model);
@@ -456,7 +457,7 @@ public final class R2Matrices implements R2MatricesType
           this.projective.m_model,
           this.projective.m_modelview);
 
-        /**
+        /*
          * Produce a view and projection matrix for the light's projection. The
          * view matrix is based on the light's origin transform.
          */
@@ -465,12 +466,12 @@ public final class R2Matrices implements R2MatricesType
           this.context_tr,
           this.projective.m_projective_view);
 
-        final R2ProjectionReadableType p = t.getProjection();
+        final R2ProjectionReadableType p = t.projection();
 
         p.projectionMakeMatrixUntyped(
           this.projective.m_projective_projection);
 
-        /**
+        /*
          * Produce a matrix that transforms a position in eye space to a
          * position in the light's eye space.
          */
@@ -497,7 +498,7 @@ public final class R2Matrices implements R2MatricesType
       NullCheck.notNull(x);
       NullCheck.notNull(f);
 
-      Assertive.require(this.active, "Observer is active");
+      Preconditions.checkPrecondition(this.active, "Observer must be active");
 
       if (this.instance_single.active) {
         throw new R2RendererExceptionInstanceAlreadyActive(
@@ -517,11 +518,11 @@ public final class R2Matrices implements R2MatricesType
       try {
         this.volume.active = true;
 
-        /**
+        /*
          * Produce a modelview matrix for the light.
          */
 
-        final R2TransformReadableType ot = t.getTransform();
+        final R2TransformReadableType ot = t.transform();
 
         ot.transformMakeMatrix4x4F(
           this.context_tr, this.volume.m_model);
@@ -538,7 +539,7 @@ public final class R2Matrices implements R2MatricesType
     }
 
     @Override
-    public R2TransformContextType getTransformContext()
+    public R2TransformContextType transformContext()
     {
       return this.context_tr;
     }

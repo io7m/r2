@@ -30,5 +30,5 @@ public interface R2RenderTargetDescriptionType
    */
 
   @Value.Parameter
-  AreaInclusiveUnsignedLType getArea();
+  AreaInclusiveUnsignedLType area();
 }

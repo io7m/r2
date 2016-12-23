@@ -28,7 +28,6 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2ShaderSSAOParametersType
 {
@@ -41,7 +40,7 @@ public interface R2ShaderSSAOParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getExponent()
+  default float exponent()
   {
     return 1.0f;
   }
@@ -56,7 +55,7 @@ public interface R2ShaderSSAOParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getSampleRadius()
+  default float sampleRadius()
   {
     return 1.0f;
   }
@@ -69,7 +68,7 @@ public interface R2ShaderSSAOParametersType
    */
 
   @Value.Parameter
-  R2SSAOKernelType getKernel();
+  R2SSAOKernelType kernel();
 
   /**
    * The noise texture that will be used to rotate the sampling hemisphere
@@ -79,7 +78,7 @@ public interface R2ShaderSSAOParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getNoiseTexture();
+  R2Texture2DUsableType noiseTexture();
 
   /**
    * The viewport of the ambient occlusion buffer to which occlusion terms are
@@ -89,19 +88,19 @@ public interface R2ShaderSSAOParametersType
    */
 
   @Value.Parameter
-  AreaInclusiveUnsignedLType getViewport();
+  AreaInclusiveUnsignedLType viewport();
 
   /**
    * @return The matrices for the current view
    */
 
   @Value.Parameter
-  R2MatricesObserverValuesType getViewMatrices();
+  R2MatricesObserverValuesType viewMatrices();
 
   /**
    * @return The geometry buffer that will be sampled
    */
 
   @Value.Parameter
-  R2GeometryBufferUsableType getGeometryBuffer();
+  R2GeometryBufferUsableType geometryBuffer();
 }

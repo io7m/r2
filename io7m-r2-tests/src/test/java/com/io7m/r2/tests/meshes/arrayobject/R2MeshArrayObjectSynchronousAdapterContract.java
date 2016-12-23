@@ -73,7 +73,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
     reader.run();
 
     if (adapter.hasFailed()) {
-      final Optional<Throwable> error_opt = adapter.getErrorException();
+      final Optional<Throwable> error_opt = adapter.errorException();
       error_opt.ifPresent(Throwable::printStackTrace);
     }
 
@@ -84,16 +84,16 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
      * usage hints.
      */
 
-    final JCGLArrayBufferType ab = adapter.getArrayBuffer();
+    final JCGLArrayBufferType ab = adapter.arrayBuffer();
     Assert.assertEquals(JCGLUsageHint.USAGE_STATIC_DRAW, ab.getUsageHint());
-    Assert.assertEquals(ci.getVertexSize(), ab.getRange().getInterval());
+    Assert.assertEquals(ci.vertexSize(), ab.getRange().getInterval());
 
     /**
      * The index buffer should have three indices and have the correct
      * usage hints.
      */
 
-    final JCGLIndexBufferType ib = adapter.getIndexBuffer();
+    final JCGLIndexBufferType ib = adapter.indexBuffer();
     Assert.assertEquals(JCGLUsageHint.USAGE_DYNAMIC_DRAW, ib.getUsageHint());
     Assert.assertEquals(JCGLUnsignedType.TYPE_UNSIGNED_INT, ib.getType());
     Assert.assertEquals(3L * 4L, ib.getRange().getInterval());
@@ -105,7 +105,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
     {
       final JCGLIndexBuffersType g_ib = gi.getIndexBuffers();
       final JCGLArrayObjectsType g_ao = gi.getArrayObjects();
-      g_ao.arrayObjectBind(adapter.getArrayObject());
+      g_ao.arrayObjectBind(adapter.arrayObject());
 
       final ByteBuffer data = g_ib.indexBufferRead(
         ib, size -> {
@@ -136,7 +136,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
      * index buffer.
      */
 
-    final JCGLArrayObjectType ao = adapter.getArrayObject();
+    final JCGLArrayObjectType ao = adapter.arrayObject();
     Assert.assertEquals(ao.getIndexBufferBound().get(), ib);
     Assert.assertTrue(ao.getAttributeAt(
       R2AttributeConventions.POSITION_ATTRIBUTE_INDEX).isPresent());
@@ -170,7 +170,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
     reader.run();
 
     if (adapter.hasFailed()) {
-      final Optional<Throwable> error_opt = adapter.getErrorException();
+      final Optional<Throwable> error_opt = adapter.errorException();
       error_opt.ifPresent(Throwable::printStackTrace);
     }
 
@@ -181,16 +181,16 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
      * usage hints.
      */
 
-    final JCGLArrayBufferType ab = adapter.getArrayBuffer();
+    final JCGLArrayBufferType ab = adapter.arrayBuffer();
     Assert.assertEquals(JCGLUsageHint.USAGE_STATIC_DRAW, ab.getUsageHint());
-    Assert.assertEquals(ci.getVertexSize(), ab.getRange().getInterval());
+    Assert.assertEquals(ci.vertexSize(), ab.getRange().getInterval());
 
     /**
      * The index buffer should have three indices and have the correct
      * usage hints.
      */
 
-    final JCGLIndexBufferType ib = adapter.getIndexBuffer();
+    final JCGLIndexBufferType ib = adapter.indexBuffer();
     Assert.assertEquals(JCGLUsageHint.USAGE_DYNAMIC_DRAW, ib.getUsageHint());
     Assert.assertEquals(JCGLUnsignedType.TYPE_UNSIGNED_SHORT, ib.getType());
     Assert.assertEquals(3L * 2L, ib.getRange().getInterval());
@@ -202,7 +202,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
     {
       final JCGLIndexBuffersType g_ib = gi.getIndexBuffers();
       final JCGLArrayObjectsType g_ao = gi.getArrayObjects();
-      g_ao.arrayObjectBind(adapter.getArrayObject());
+      g_ao.arrayObjectBind(adapter.arrayObject());
 
       final ByteBuffer data = g_ib.indexBufferRead(
         ib, size -> {
@@ -233,7 +233,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
      * index buffer.
      */
 
-    final JCGLArrayObjectType ao = adapter.getArrayObject();
+    final JCGLArrayObjectType ao = adapter.arrayObject();
     Assert.assertEquals(ao.getIndexBufferBound().get(), ib);
     Assert.assertTrue(ao.getAttributeAt(
       R2AttributeConventions.POSITION_ATTRIBUTE_INDEX).isPresent());
@@ -267,7 +267,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
     reader.run();
 
     if (adapter.hasFailed()) {
-      final Optional<Throwable> error_opt = adapter.getErrorException();
+      final Optional<Throwable> error_opt = adapter.errorException();
       error_opt.ifPresent(Throwable::printStackTrace);
     }
 
@@ -278,16 +278,16 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
      * usage hints.
      */
 
-    final JCGLArrayBufferType ab = adapter.getArrayBuffer();
+    final JCGLArrayBufferType ab = adapter.arrayBuffer();
     Assert.assertEquals(JCGLUsageHint.USAGE_STATIC_DRAW, ab.getUsageHint());
-    Assert.assertEquals(ci.getVertexSize(), ab.getRange().getInterval());
+    Assert.assertEquals(ci.vertexSize(), ab.getRange().getInterval());
 
     /**
      * The index buffer should have three indices and have the correct
      * usage hints.
      */
 
-    final JCGLIndexBufferType ib = adapter.getIndexBuffer();
+    final JCGLIndexBufferType ib = adapter.indexBuffer();
     Assert.assertEquals(JCGLUsageHint.USAGE_DYNAMIC_DRAW, ib.getUsageHint());
     Assert.assertEquals(JCGLUnsignedType.TYPE_UNSIGNED_BYTE, ib.getType());
     Assert.assertEquals(3L, ib.getRange().getInterval());
@@ -299,7 +299,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
     {
       final JCGLIndexBuffersType g_ib = gi.getIndexBuffers();
       final JCGLArrayObjectsType g_ao = gi.getArrayObjects();
-      g_ao.arrayObjectBind(adapter.getArrayObject());
+      g_ao.arrayObjectBind(adapter.arrayObject());
 
       final ByteBuffer data = g_ib.indexBufferRead(
         ib, size -> {
@@ -330,7 +330,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
      * index buffer.
      */
 
-    final JCGLArrayObjectType ao = adapter.getArrayObject();
+    final JCGLArrayObjectType ao = adapter.arrayObject();
     Assert.assertEquals(ao.getIndexBufferBound().get(), ib);
     Assert.assertTrue(ao.getAttributeAt(
       R2AttributeConventions.POSITION_ATTRIBUTE_INDEX).isPresent());
@@ -365,14 +365,14 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
     reader.run();
 
     if (adapter.hasFailed()) {
-      final Optional<Throwable> error_opt = adapter.getErrorException();
+      final Optional<Throwable> error_opt = adapter.errorException();
       error_opt.ifPresent(Throwable::printStackTrace);
     }
 
     Assert.assertTrue(adapter.hasFailed());
     Assert.assertThat(
-      adapter.getErrorMessage(), new StringStartsWith("Bad magic number"));
-    Assert.assertFalse(adapter.getErrorException().isPresent());
+      adapter.errorMessage(), new StringStartsWith("Bad magic number"));
+    Assert.assertFalse(adapter.errorException().isPresent());
   }
 
   @Test
@@ -399,7 +399,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
 
     Assert.assertTrue(adapter.hasFailed());
     this.expected.expect(IllegalStateException.class);
-    adapter.getArrayObject();
+    adapter.arrayObject();
   }
 
   @Test
@@ -426,7 +426,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
 
     Assert.assertTrue(adapter.hasFailed());
     this.expected.expect(IllegalStateException.class);
-    adapter.getArrayBuffer();
+    adapter.arrayBuffer();
   }
 
   @Test
@@ -453,7 +453,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
 
     Assert.assertTrue(adapter.hasFailed());
     this.expected.expect(IllegalStateException.class);
-    adapter.getIndexBuffer();
+    adapter.indexBuffer();
   }
 
 
@@ -480,7 +480,7 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
 
     Assert.assertFalse(adapter.hasFailed());
     this.expected.expect(IllegalStateException.class);
-    adapter.getErrorMessage();
+    adapter.errorMessage();
   }
 
   @Test
@@ -506,6 +506,6 @@ public abstract class R2MeshArrayObjectSynchronousAdapterContract extends
 
     Assert.assertFalse(adapter.hasFailed());
     this.expected.expect(IllegalStateException.class);
-    adapter.getErrorException();
+    adapter.errorException();
   }
 }

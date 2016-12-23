@@ -27,12 +27,11 @@ import com.io7m.jcanephora.core.JCGLTextureWrapT;
 import com.io7m.jcanephora.core.JCGLUsageHint;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jtensors.parameterized.PMatrixI3x3F;
-import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
+import com.io7m.jtensors.parameterized.PMatrixI3x3F;
+import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2DepthInstances;
 import com.io7m.r2.core.R2DepthInstancesType;
 import com.io7m.r2.core.R2DepthPrecision;
@@ -73,13 +72,10 @@ import com.io7m.r2.core.R2TransformIdentity;
 import com.io7m.r2.core.R2TransformOTType;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersMutable;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -227,24 +223,23 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       R2UnitQuad.newUnitQuad(g);
     final R2IDPoolType id_pool =
       R2IDPool.newPool();
-    final R2DepthShaderBasicParametersMutable ds_param =
-      R2DepthShaderBasicParametersMutable.create();
-    ds_param.setAlbedoTexture(td.getWhiteTexture());
+    final R2DepthShaderBasicParameters ds_param =
+      R2DepthShaderBasicParameters.of(td, td.texture2DWhite(), 0.0f);
 
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
-    final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> ds =
-      R2DepthShaderBasicSingle.newShader(g.getShaders(), ss, id_pool);
-    final R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> mat =
-      R2MaterialDepthSingle.newMaterial(id_pool, ds, ds_param);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
+    final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> ds =
+      R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
+    final R2MaterialDepthSingleType<R2DepthShaderBasicParameters> mat =
+      R2MaterialDepthSingle.of(id_pool.freshID(), ds, ds_param);
 
     final JCGLProjectionMatricesType pm =
       JCGLProjectionMatrices.newMatrices();
 
     final R2InstanceSingleType i =
-      R2InstanceSingle.newInstance(
-        id_pool,
-        quad.getArrayObject(),
+      R2InstanceSingle.of(
+        id_pool.freshID(),
+        quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
@@ -280,7 +275,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
         JCGLUsageHint.USAGE_STATIC_DRAW,
         JCGLUsageHint.USAGE_STATIC_DRAW);
     final R2Texture2DUsableType image =
-      td.getWhiteProjectiveTexture();
+      td.texture2DProjectiveWhite();
 
     final R2DepthVarianceBufferDescription.Builder db =
       R2DepthVarianceBufferDescription.builder();
@@ -298,14 +293,14 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2DepthVarianceBufferDescription desc = db.build();
 
     final R2ShadowDepthVariance shadow =
-      R2ShadowDepthVariance.of(id_pool.getFreshID(), desc);
+      R2ShadowDepthVariance.of(id_pool.freshID(), desc);
 
     final R2LightProjectiveWithShadowVarianceType ls =
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 
-    final R2TransformOTType tr = ls.getTransformWritable();
-    tr.getTranslation().set3F(0.0f, 0.0f, 10.0f);
+    final R2TransformOTType tr = ls.transformWritable();
+    tr.translation().set3F(0.0f, 0.0f, 10.0f);
 
     rc.shadowExecRenderLight(R2FakeProfilingContext.newFake(), tc, m, ls, di);
 
@@ -313,9 +308,9 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       rc.shadowExecComplete();
 
     final R2Texture2DUsableType rt_map = mc.shadowMapGet(ls);
-    final JCGLTexture2DUsableType map = rt_map.get();
+    final JCGLTexture2DUsableType map = rt_map.texture();
     Assert.assertEquals(
-      map.textureGetArea(), desc.getArea());
+      map.textureGetArea(), desc.area());
     Assert.assertEquals(
       map.textureGetWrapS(), JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE);
     Assert.assertEquals(
@@ -346,24 +341,23 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
       R2UnitQuad.newUnitQuad(g);
     final R2IDPoolType id_pool =
       R2IDPool.newPool();
-    final R2DepthShaderBasicParametersMutable ds_param =
-      R2DepthShaderBasicParametersMutable.create();
-    ds_param.setAlbedoTexture(td.getWhiteTexture());
+    final R2DepthShaderBasicParameters ds_param =
+      R2DepthShaderBasicParameters.of(td, td.texture2DWhite(), 0.0f);
 
-    final R2ShaderSourcesType ss =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
-    final R2ShaderDepthSingleType<R2DepthShaderBasicParametersType> ds =
-      R2DepthShaderBasicSingle.newShader(g.getShaders(), ss, id_pool);
-    final R2MaterialDepthSingleType<R2DepthShaderBasicParametersType> mat =
-      R2MaterialDepthSingle.newMaterial(id_pool, ds, ds_param);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
+    final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> ds =
+      R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
+    final R2MaterialDepthSingleType<R2DepthShaderBasicParameters> mat =
+      R2MaterialDepthSingle.of(id_pool.freshID(), ds, ds_param);
 
     final JCGLProjectionMatricesType pm =
       JCGLProjectionMatrices.newMatrices();
 
     final R2InstanceSingleType i =
-      R2InstanceSingle.newInstance(
-        id_pool,
-        quad.getArrayObject(),
+      R2InstanceSingle.of(
+        id_pool.freshID(),
+        quad.arrayObject(),
         R2TransformIdentity.getInstance(),
         PMatrixI3x3F.identity());
 
@@ -397,7 +391,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
         JCGLUsageHint.USAGE_STATIC_DRAW,
         JCGLUsageHint.USAGE_STATIC_DRAW);
     final R2Texture2DUsableType image =
-      td.getWhiteProjectiveTexture();
+      td.texture2DProjectiveWhite();
 
     final R2DepthVarianceBufferDescription.Builder db =
       R2DepthVarianceBufferDescription.builder();
@@ -415,14 +409,14 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2DepthVarianceBufferDescription desc = db.build();
 
     final R2ShadowDepthVariance shadow =
-      R2ShadowDepthVariance.of(id_pool.getFreshID(), desc);
+      R2ShadowDepthVariance.of(id_pool.freshID(), desc);
 
     final R2LightProjectiveWithShadowVarianceType ls =
       R2LightProjectiveWithShadowVariance.newLight(
         mesh, image, shadow, id_pool);
 
-    final R2TransformOTType tr = ls.getTransformWritable();
-    tr.getTranslation().set3F(0.0f, 0.0f, 10.0f);
+    final R2TransformOTType tr = ls.transformWritable();
+    tr.translation().set3F(0.0f, 0.0f, 10.0f);
 
     final R2ShadowMapContextUsableType mc =
       rc.shadowExecComplete();

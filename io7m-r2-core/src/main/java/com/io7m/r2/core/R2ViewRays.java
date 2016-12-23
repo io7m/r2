@@ -56,14 +56,14 @@ public final class R2ViewRays implements R2ViewRaysType
     FAR_X1Y1 = new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
-  private final Vector4FType                  origin_x0y0;
-  private final Vector4FType                  origin_x0y1;
-  private final Vector4FType                  origin_x1y0;
-  private final Vector4FType                  origin_x1y1;
-  private final Vector4FType                  ray_x0y0;
-  private final Vector4FType                  ray_x0y1;
-  private final Vector4FType                  ray_x1y0;
-  private final Vector4FType                  ray_x1y1;
+  private final Vector4FType origin_x0y0;
+  private final Vector4FType origin_x0y1;
+  private final Vector4FType origin_x1y0;
+  private final Vector4FType origin_x1y1;
+  private final Vector4FType ray_x0y0;
+  private final Vector4FType ray_x0y1;
+  private final Vector4FType ray_x1y0;
+  private final Vector4FType ray_x1y1;
   private final PVector4FType<R2SpaceEyeType> temp_near;
   private final PVector4FType<R2SpaceEyeType> temp_far;
 
@@ -124,36 +124,36 @@ public final class R2ViewRays implements R2ViewRaysType
     final Vector4FType out_ray,
     final Vector4FType out_origin)
   {
-    /**
-     * Transform NDC → Clip.
+    /*
+      Transform NDC → Clip.
      */
 
     PMatrixM4x4F.multiplyVector4F(c, m, near, temp_near);
     PMatrixM4x4F.multiplyVector4F(c, m, far, temp_far);
 
-    /**
-     * Normalize in terms of w: NDC coordinates would usually be lacking a w
-     * component, but the w component included in the original frustum corners
-     * is necessary in order to multiply by a 4x4 matrix.
+    /*
+      Normalize in terms of w: NDC coordinates would usually be lacking a w
+      component, but the w component included in the original frustum corners
+      is necessary in order to multiply by a 4x4 matrix.
      */
 
     PVectorM4F.scaleInPlace(temp_near, 1.0 / temp_near.getWF());
     PVectorM4F.scaleInPlace(temp_far, 1.0 / temp_far.getWF());
 
-    /**
-     * Subtract the near corner from the far corner to produce a ray.
+    /*
+      Subtract the near corner from the far corner to produce a ray.
      */
 
     VectorM4F.subtract(temp_far, temp_near, out_ray);
 
-    /**
-     * Normalize the ray in terms of z.
+    /*
+      Normalize the ray in terms of z.
      */
 
     VectorM4F.scaleInPlace(out_ray, 1.0 / out_ray.getZF());
 
-    /**
-     * Subtract the scaled ray from the near corner to produce an origin.
+    /*
+      Subtract the scaled ray from the near corner to produce an origin.
      */
 
     VectorM4F.scale(out_ray, temp_near.getZF(), out_origin);
@@ -168,41 +168,41 @@ public final class R2ViewRays implements R2ViewRaysType
     NullCheck.notNull(c);
     NullCheck.notNull(m);
 
-    R2ViewRays.calculateRayAndOrigin(
+    calculateRayAndOrigin(
       c,
       m,
-      R2ViewRays.NEAR_X0Y0,
-      R2ViewRays.FAR_X0Y0,
+      NEAR_X0Y0,
+      FAR_X0Y0,
       this.temp_near,
       this.temp_far,
       this.ray_x0y0,
       this.origin_x0y0);
 
-    R2ViewRays.calculateRayAndOrigin(
+    calculateRayAndOrigin(
       c,
       m,
-      R2ViewRays.NEAR_X1Y0,
-      R2ViewRays.FAR_X1Y0,
+      NEAR_X1Y0,
+      FAR_X1Y0,
       this.temp_near,
       this.temp_far,
       this.ray_x1y0,
       this.origin_x1y0);
 
-    R2ViewRays.calculateRayAndOrigin(
+    calculateRayAndOrigin(
       c,
       m,
-      R2ViewRays.NEAR_X0Y1,
-      R2ViewRays.FAR_X0Y1,
+      NEAR_X0Y1,
+      FAR_X0Y1,
       this.temp_near,
       this.temp_far,
       this.ray_x0y1,
       this.origin_x0y1);
 
-    R2ViewRays.calculateRayAndOrigin(
+    calculateRayAndOrigin(
       c,
       m,
-      R2ViewRays.NEAR_X1Y1,
-      R2ViewRays.FAR_X1Y1,
+      NEAR_X1Y1,
+      FAR_X1Y1,
       this.temp_near,
       this.temp_far,
       this.ray_x1y1,
@@ -214,7 +214,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getOriginX0Y0()
+  public VectorReadable4FType originX0Y0()
   {
     return this.origin_x0y0;
   }
@@ -224,7 +224,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getOriginX0Y1()
+  public VectorReadable4FType originX0Y1()
   {
     return this.origin_x0y1;
   }
@@ -234,7 +234,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getOriginX1Y0()
+  public VectorReadable4FType originX1Y0()
   {
     return this.origin_x1y0;
   }
@@ -244,7 +244,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getOriginX1Y1()
+  public VectorReadable4FType originX1Y1()
   {
     return this.origin_x1y1;
   }
@@ -254,7 +254,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getRayX0Y0()
+  public VectorReadable4FType rayX0Y0()
   {
     return this.ray_x0y0;
   }
@@ -264,7 +264,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getRayX0Y1()
+  public VectorReadable4FType rayX0Y1()
   {
     return this.ray_x0y1;
   }
@@ -274,7 +274,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getRayX1Y0()
+  public VectorReadable4FType rayX1Y0()
   {
     return this.ray_x1y0;
   }
@@ -284,7 +284,7 @@ public final class R2ViewRays implements R2ViewRaysType
    */
 
   @Override
-  public VectorReadable4FType getRayX1Y1()
+  public VectorReadable4FType rayX1Y1()
   {
     return this.ray_x1y1;
   }

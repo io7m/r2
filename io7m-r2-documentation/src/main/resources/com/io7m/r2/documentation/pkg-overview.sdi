@@ -1,0 +1,109 @@
+[section [title Orientation] [id pkg.orientation]]
+[subsection [title Overview]]
+[paragraph]
+The [term [type package] r2] package provides a minimalist deferred rendering
+system.
+
+[subsection [title Features]]
+(formal-item [title Features])
+(list-unordered
+  (item A (term [type term] deferred rendering) core for
+    (term [type term] opaque) objects.)
+
+  (item A (term [type term] forward renderer), supporting a subset of the
+    features of the (term [type term] deferred renderer), for rendering
+    (term [type term] translucent) objects.)
+
+  (item A full dynamic lighting system, including
+    (term [type term] variance) shadow mapping. The use of
+    (term [type term] deferred rendering) allows for potentially hundreds of
+    dynamic lights per scene.)
+
+  (item Ready-to-use shaders providing surfaces with a wide variety of
+    effects such as
+    (term [type term] normal mapping),
+    (term [type term] environment-mapped reflections),
+    (term [type term] generic refraction),
+    (term [type term] surface emission),
+    (term [type term] mapped specular highlights), etc.)
+
+  (item A variety of postprocessing effects such as
+    (term [type term] box blurring),
+    (term [type term] screen-space ambient occlusion "(SSAO)"),
+    (term [type term] fast approximate antialiasing "(FXAA)"),
+    (term [type term] color correction),
+    (term [type term] bloom), etc. Effects can be applied in any order.)
+
+  (item Explicit control over all resource loading and caching. For all
+    (term [type term] transient) resources,
+    the programmer is required to provide the renderer with explicit
+    (term [type term] pools), and the pools themselves are responsible for
+    allocating and loading resources.)
+
+  (item Extensive use of static types. As with all
+    (link-ext (target "http://io7m.com") io7m) packages, there is extreme
+    emphasis on using the type system to make it difficult to use the APIs
+    incorrectly.)
+
+  (item Portability. The renderer will run on any system supporting
+    OpenGL (term [type constant] 3.3) and Java 8.))
+
+(formal-item [title Non-features])
+(list-unordered
+  (item A scene graph. The renderer expects the programmer to provide a set of
+  (term [type term] instances) "(with" associated (term [type term] shaders) ")"
+  and (term [type term] lights) once per frame, and the renderer will obediently
+  draw exactly those instances. This frees the programmer from having to
+  interact with a clumsy and type-unsafe "object-oriented" scene graph as with
+  other 3D engines, and from having to try to crowbar their own program's data
+  structures into an existing graph system.)
+
+  (item Spatial partitioning. The renderer knows nothing of the world the
+  programmer is trying to render. The programmer is expected to have done the
+  work of deciding which (term [type term] instances) and
+  (term [type term] lights) contribute to the current image, and to provide only
+  those (term [type term] lights) and (term [type term] instances) for the
+  current frame. This means that the programmer is free to use any spatial
+  partitioning system desired.)
+
+  (item Input handling. The renderer knows nothing about keyboards, mice,
+  joysticks. The programmer passes an immutable snapshot of a scene to the
+  renderer, and the renderer returns an image. This means that the programmer is
+  free to use any input system desired without having to painfully integrate
+  their own code with an existing input system as with other 3D engines.)
+
+  (item Audio. The renderer makes images, not sounds. This allows programmers to
+  use any audio system they want in their programs.)
+
+  (item Skeletal animation. The input to the renderer is a set of triangle
+  (term [type term] meshes) in the form of
+  (term [type term] vertex buffer objects). This means that the programmer is
+  free to use any skeletal animation system desired, providing that the system
+  is capable of producing (term [type term] vertex buffer objects) of the
+  correct type as a result.)
+
+  (item Model loading. The input to the renderer is a set of triangle
+  (term [type term] meshes) in the form of
+  (term [type term] vertex buffer objects). This means that the programmer is
+  free to use any model loading system desired, providing that the system is
+  capable of producing (term [type term] vertex buffer objects) of the correct
+  type as a result.)
+
+  (item Future proofing. The average lifetime of a rendering system is about
+  five years. Due to the extremely rapid pace of advancement in graphics
+  hardware, the methods use to render graphics (term [type term] today) will
+  bear almost no relation to those used five years into the future. The
+  (term [type package] r2) package is under no illusion that it will still
+  be relevant in a decade's time. It is designed to get work done
+  (term [type term] today), using exactly those techniques that are relevant
+  (term [type term] today). It will not be indefinitely expanded and grown
+  organically, as this would directly contradict the goal of having a
+  (term [type term] minimalist) and (term [type term] correct) rendering
+  system.)
+
+  (item OpenGL ES 2 support. The ES 2 standard was written as a reaction to the
+  insane committee politics that plagued the OpenGL 2.* standards. It is
+  crippled to the point that it essentially cannot support almost any of the
+  rendering techniques present in the (term [type package] r2) package, and
+  is becoming increasingly irrelevant as the much saner ES 3 is adopted by
+  hardware vendors.))

@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="490"
+   height="150"
+   id="svg3522"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="New document 8">
+  <defs
+     id="defs3524" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="182.95336"
+     inkscape:cy="68.611369"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     borderlayer="true"
+     inkscape:showpageshadow="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="907"
+     inkscape:window-height="668"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3617"
+       empspacing="4"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="10px"
+       spacingy="10px" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="110,180"
+       id="guide3932" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3527">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-160.21875,-350.71875)">
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="180.21873"
+       y="380.71875"
+       id="text13421"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         sodipodi:role="line"
+         id="tspan13423"
+         x="180.21873"
+         y="380.71875">2 / (R - L)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="280.21875"
+       y="380.71875"
+       id="text13425"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         sodipodi:role="line"
+         id="tspan13427"
+         x="280.21875"
+         y="380.71875">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="280.21875"
+       y="470.71875"
+       id="text13429"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         sodipodi:role="line"
+         id="tspan13431"
+         x="280.21875"
+         y="470.71875">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="380.21875"
+       y="380.71875"
+       id="text13433"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         sodipodi:role="line"
+         id="tspan13435"
+         x="380.21875"
+         y="380.71875">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="180.21873"
+       y="410.71875"
+       id="text13437"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         sodipodi:role="line"
+         id="tspan13439"
+         x="180.21873"
+         y="410.71875">0</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       d="m 180.21875,360.71875 -10,0 0,130 10,0"
+       id="path13588"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text13590"
+       y="440.71875"
+       x="180.21873"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       xml:space="preserve"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         y="440.71875"
+         x="180.21873"
+         id="tspan13592"
+         sodipodi:role="line">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="180.21873"
+       y="470.71875"
+       id="text13594"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         sodipodi:role="line"
+         id="tspan13596"
+         x="180.21873"
+         y="470.71875">0</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text13598"
+       y="380.71875"
+       x="480.21875"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       xml:space="preserve"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         y="380.71875"
+         x="480.21875"
+         id="tspan13600"
+         sodipodi:role="line">- ((R + L) / (R - L))</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text13610"
+       y="470.71875"
+       x="380.21875"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       xml:space="preserve"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         y="470.71875"
+         x="380.21875"
+         id="tspan13612"
+         sodipodi:role="line">0</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text13614"
+       y="470.71875"
+       x="480.21875"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       xml:space="preserve"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         y="470.71875"
+         x="480.21875"
+         id="tspan13616"
+         sodipodi:role="line">1</tspan></text>
+    <path
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path13618"
+       d="m 630.21875,360.71875 10,0 0,130 -10,0"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110" />
+    <path
+       style="fill:#b3b3b3;stroke:#cccccc;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       d="m 180.21875,390.71875 450,0"
+       id="path13620"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path13622"
+       d="m 180.21875,420.71875 450,0"
+       style="fill:#b3b3b3;stroke:#cccccc;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110" />
+    <path
+       style="fill:#b3b3b3;stroke:#cccccc;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       d="m 180.21875,450.71875 450,0"
+       id="path13624"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path13626"
+       d="m 180.21875,480.71875 450,0"
+       style="fill:#b3b3b3;stroke:#cccccc;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110" />
+    <path
+       style="fill:none;stroke:#cccccc;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       d="m 270.21875,370.71875 0,120"
+       id="path13628"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path13630"
+       d="m 370.21875,370.71875 0,120"
+       style="fill:none;stroke:#cccccc;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110" />
+    <path
+       style="fill:none;stroke:#cccccc;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       d="m 470.21875,370.71875 0,120"
+       id="path13632"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="280.21875"
+       y="410.71875"
+       id="text13421-5"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         sodipodi:role="line"
+         id="tspan13423-6"
+         x="280.21875"
+         y="410.71875">2 / (T - B)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="380.21875"
+       y="440.71875"
+       id="text13421-5-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         sodipodi:role="line"
+         id="tspan13423-6-8"
+         x="380.21875"
+         y="440.71875">-2 / (F - N)</tspan></text>
+    <text
+       inkscape:export-ydpi="110"
+       inkscape:export-xdpi="110"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       sodipodi:linespacing="125%"
+       id="text3934"
+       y="410.71875"
+       x="380.21875"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       xml:space="preserve"><tspan
+         y="410.71875"
+         x="380.21875"
+         id="tspan3936"
+         sodipodi:role="line">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="280.21875"
+       y="440.71875"
+       id="text3938"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         sodipodi:role="line"
+         id="tspan3940"
+         x="280.21875"
+         y="440.71875">0</tspan></text>
+    <text
+       inkscape:export-ydpi="110"
+       inkscape:export-xdpi="110"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       x="480.21875"
+       y="410.71875"
+       id="text3942"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3944"
+         x="480.21875"
+         y="410.71875">- ((T + B) / (T - B))</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3946"
+       y="440.71875"
+       x="480.21875"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:DejaVu Sans Mono;-inkscape-font-specification:DejaVu Sans Mono"
+       xml:space="preserve"
+       inkscape:export-filename="/home/m0/fossil/com.io7m/io7m-jtensors/src/main/images/matrix_rx.png"
+       inkscape:export-xdpi="110"
+       inkscape:export-ydpi="110"><tspan
+         y="440.71875"
+         x="480.21875"
+         id="tspan3948"
+         sodipodi:role="line">- ((F + N) / (F - N))</tspan></text>
+  </g>
+</svg>

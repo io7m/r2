@@ -1,0 +1,78 @@
+[section [title Forward rendering "(Translucency)"] [id di.forward]]
+[subsection [title Overview] [id di.forward.overview]]
+[paragraph]
+Because the [link [target di.deferred] deferred renderer] in the
+[term [type package] r2] package is incapable of rendering
+[term [type term] translucent] instances, a separate
+[term [type term ] forward renderer] is provided. A
+[term [type translucent] translucent] instance is an instance that, when rendered,
+is simply blended with the current image. This is used to implement visual
+effects such as glass, water, smoke, fire, etc.
+
+[subsection [title Instances] [id di.forward.instances]]
+[paragraph]
+The [term [type package] r2] package provides a slightly different abstraction
+for translucent instances. Because of the strict
+[link [target di.forward.ordering] ordering] requirements when rendering
+translucent instances, it is simply not possible to batch translucent instances
+by material and shaders for performance reasons as is done with
+[link [target di.deferred.geom.ordering] opaque instances]. The
+[term [type package] r2] package therefore simply has users submit a list of
+values of type
+[link-ext [target "apidocs/com/io7m/r2/core/R2TranslucentType.html"] R2TranslucentType]
+in draw order. Each translucent value contains a
+[link [target di.forward.blending] blending] and
+[link [target di.forward.culling] culling] configuration, along with
+an [link [target di.instances.overview] instance], and a
+[link [target di.shaders.overview] shader] for rendering the instance.
+
+[subsection [title Blending] [id di.forward.blending]]
+[paragraph]
+Each translucent instance provides a blending configuration that states how
+the rendered instance is blended with the contents of the current framebuffer.
+
+[subsection [title Culling] [id di.forward.culling]]
+[paragraph]
+Typically, it is not desirable to render the [term [type term] back faces] of
+opaque instances as they are by definition invisible. However, translucent
+instances are by definition translucent and therefore the back faces of the
+instances may be visible. A translucent instance therefore contains a value
+that specifies whether front faces, back faces, or both should be rendered.
+
+[subsection [title Ordering] [id di.forward.ordering]]
+[paragraph]
+Unlike [term [type term] opaque] instances which can be rendered in any order
+due to depth testing, translucent instances must be rendered in strict
+[term [type term] furthest-to-nearest] order. The [term [type package] r2] package
+simply delegates the responsibility of submitting instances in the correct
+order to the user. This frees the package from having to know anything about
+the spatial properties of the scene being rendered.
+
+[subsection [title Types] [id di.forward.types]]
+[paragraph]
+In the [term [type package] r2] package, translucent instances are rendered
+via implementations of the
+[link-ext [target "apidocs/com/io7m/r2/core/R2TranslucentRendererType.html"] R2TranslucentRendererType] interface.
+
+[paragraph]
+Shaders for rendering translucent instances are of type
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderTranslucentType.html"] R2ShaderTranslucentType].
+
+[subsection [title Provided Shaders] [id di.forward.provided]]
+[paragraph]
+Because translucent surface can have a massive range of appearances, the
+[term [type package] r2] package makes no attempt to provide a wide range
+of shaders for translucent surfaces.
+
+[formal-item [title Provided instance shaders]]
+[table
+  [summary Provided instance shaders]
+  [type shaders]
+  [head
+    [name Shader]
+    [name Description]]
+  [body
+    [row
+      [cell [link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2TranslucentShaderBasicPremultipliedSingle.html"] R2TranslucentShaderBasicPremultipliedSingle]]
+      [cell Basic textured surface without lighting, with distance fading, producing premultiplied alpha output.]]
+  ]]

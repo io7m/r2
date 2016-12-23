@@ -43,10 +43,10 @@ public final class R2DepthInstances implements R2DepthInstancesType
     LOG = LoggerFactory.getLogger(R2DepthInstances.class);
   }
 
-  private final Singles           singles;
-  private final Batches           batches;
-  private final StringBuilder     text;
-  private       JCGLFaceSelection culling;
+  private final Singles singles;
+  private final Batches batches;
+  private final StringBuilder text;
+  private JCGLFaceSelection culling;
 
   private R2DepthInstances()
   {
@@ -80,7 +80,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
   @Override
   public void depthsReset()
   {
-    R2DepthInstances.LOG.trace("reset");
+    LOG.trace("reset");
     this.singles.clear();
     this.batches.clear();
   }
@@ -93,14 +93,14 @@ public final class R2DepthInstances implements R2DepthInstancesType
     NullCheck.notNull(i);
     NullCheck.notNull(m);
 
-    final long i_id = i.getInstanceID();
-    final long m_id = m.getMaterialID();
-    final R2ShaderDepthSingleUsableType<?> shader = m.getShader();
-    final long s_id = shader.getShaderID();
+    final long i_id = i.instanceID();
+    final long m_id = m.materialID();
+    final R2ShaderDepthSingleUsableType<?> shader = m.shader();
+    final long s_id = shader.shaderID();
 
-    /**
-     * Insert the instance into the set of all single instances. Instances
-     * that are already visible are rejected.
+    /*
+      Insert the instance into the set of all single instances. Instances
+      that are already visible are rejected.
      */
 
     if (this.singles.instances.containsKey(i_id)) {
@@ -112,8 +112,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
     this.singles.instance_shaders.put(s_id, shader);
     this.singles.instance_to_material.put(i_id, m_id);
 
-    /**
-     * Update the set of mappings from materials to instances for the group.
+    /*
+      Update the set of mappings from materials to instances for the group.
      */
 
     final LongSet m_instances;
@@ -125,8 +125,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
     m_instances.add(i_id);
     this.singles.material_to_instances.put(m_id, m_instances);
 
-    /**
-     * Update the set of mappings from shaders to materials for the group.
+    /*
+      Update the set of mappings from shaders to materials for the group.
      */
 
     final LongSet s_materials;
@@ -138,8 +138,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
     s_materials.add(m_id);
     this.singles.shader_to_materials.put(s_id, s_materials);
 
-    if (R2DepthInstances.LOG.isTraceEnabled()) {
-      R2DepthInstances.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "add single (instance {}, material {}, shader {})",
         Long.valueOf(i_id),
         Long.valueOf(m_id),
@@ -153,7 +153,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
     this.text.setLength(0);
     this.text.append("Instance is already visible.\n");
     this.text.append("Instance:         ");
-    this.text.append(i.getInstanceID());
+    this.text.append(i.instanceID());
     return new R2RendererExceptionInstanceAlreadyVisible(this.text.toString());
   }
 
@@ -165,14 +165,14 @@ public final class R2DepthInstances implements R2DepthInstancesType
     NullCheck.notNull(i);
     NullCheck.notNull(m);
 
-    final long i_id = i.getInstanceID();
-    final long m_id = m.getMaterialID();
-    final R2ShaderDepthBatchedUsableType<?> shader = m.getShader();
-    final long s_id = shader.getShaderID();
+    final long i_id = i.instanceID();
+    final long m_id = m.materialID();
+    final R2ShaderDepthBatchedUsableType<?> shader = m.shader();
+    final long s_id = shader.shaderID();
 
-    /**
-     * Insert the instance into the set of all batched instances. Instances
-     * that are already visible are rejected.
+    /*
+      Insert the instance into the set of all batched instances. Instances
+      that are already visible are rejected.
      */
 
     if (this.batches.instances.containsKey(i_id)) {
@@ -180,9 +180,9 @@ public final class R2DepthInstances implements R2DepthInstancesType
     }
     this.batches.instances.put(i_id, i);
 
-    /**
-     * Insert the instance, material, and shader into the group. Add a
-     * mapping from the instance to the material.
+    /*
+      Insert the instance, material, and shader into the group. Add a
+      mapping from the instance to the material.
      */
 
     this.batches.instances.put(i_id, i);
@@ -190,8 +190,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
     this.batches.instance_shaders.put(s_id, shader);
     this.batches.instance_to_material.put(i_id, m_id);
 
-    /**
-     * Update the set of mappings from materials to instances for the group.
+    /*
+      Update the set of mappings from materials to instances for the group.
      */
 
     final LongSet m_instances;
@@ -203,8 +203,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
     m_instances.add(i_id);
     this.batches.material_to_instances.put(m_id, m_instances);
 
-    /**
-     * Update the set of mappings from shaders to materials for the group.
+    /*
+      Update the set of mappings from shaders to materials for the group.
      */
 
     final LongSet s_materials;
@@ -216,8 +216,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
     s_materials.add(m_id);
     this.batches.shader_to_materials.put(s_id, s_materials);
 
-    if (R2DepthInstances.LOG.isTraceEnabled()) {
-      R2DepthInstances.LOG.trace(
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
         "add batched (instance {}, material {}, shader {})",
         Long.valueOf(i_id),
         Long.valueOf(m_id),
@@ -242,8 +242,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
   private void depthsExecuteSingles(
     final R2DepthInstancesConsumerType c)
   {
-    /**
-     * For each single instance shader {@code s}...
+    /*
+      For each single instance shader {@code s}...
      */
 
     final ObjectIterator<R2ShaderDepthSingleUsableType<?>> bs_iter =
@@ -255,12 +255,12 @@ public final class R2DepthInstances implements R2DepthInstancesType
 
       c.onInstanceSingleShaderStart(s);
 
-      /**
-       * For each material {@code m} using the shader {@code s}...
+      /*
+        For each material {@code m} using the shader {@code s}...
        */
 
       final LongSet s_materials =
-        this.singles.shader_to_materials.get(s.getShaderID());
+        this.singles.shader_to_materials.get(s.shaderID());
 
       for (final long m_id : s_materials) {
         final R2MaterialDepthSingleType<Object> material =
@@ -268,9 +268,9 @@ public final class R2DepthInstances implements R2DepthInstancesType
             this.singles.instance_materials.get(m_id);
         c.onInstanceSingleMaterialStart(material);
 
-        /**
-         * Sort the instances by their array object instances, to allow
-         * for rendering with the fewest number of array object binds.
+        /*
+          Sort the instances by their array object instances, to allow
+          for rendering with the fewest number of array object binds.
          */
 
         final LongSet m_instances =
@@ -283,14 +283,14 @@ public final class R2DepthInstances implements R2DepthInstancesType
         }
 
         this.singles.instances_sorted.sort((a, b) -> {
-          final JCGLArrayObjectUsableType ao = a.getArrayObject();
-          final JCGLArrayObjectUsableType bo = b.getArrayObject();
+          final JCGLArrayObjectUsableType ao = a.arrayObject();
+          final JCGLArrayObjectUsableType bo = b.arrayObject();
           return Integer.compare(ao.getGLName(), bo.getGLName());
         });
 
-        /**
-         * Render all instances with the minimum number of array object
-         * bindings.
+        /*
+          Render all instances with the minimum number of array object
+          bindings.
          */
 
         int current_array = -1;
@@ -298,7 +298,7 @@ public final class R2DepthInstances implements R2DepthInstancesType
         for (int index = 0; index < sorted_size; ++index) {
           final R2InstanceSingleType i =
             this.singles.instances_sorted.get(index);
-          final JCGLArrayObjectUsableType array_object = i.getArrayObject();
+          final JCGLArrayObjectUsableType array_object = i.arrayObject();
           final int next_array = array_object.getGLName();
           if (next_array != current_array) {
             c.onInstanceSingleArrayStart(i);
@@ -330,8 +330,8 @@ public final class R2DepthInstances implements R2DepthInstancesType
   private void depthsExecuteBatched(
     final R2DepthInstancesConsumerType c)
   {
-    /**
-     * For each shader {@code s}...
+    /*
+      For each shader {@code s}...
      */
 
     final ObjectIterator<R2ShaderDepthBatchedUsableType<?>> bs_iter =
@@ -343,12 +343,12 @@ public final class R2DepthInstances implements R2DepthInstancesType
 
       c.onInstanceBatchedShaderStart(s);
 
-      /**
-       * For each material {@code m} using the shader {@code s}...
+      /*
+        For each material {@code m} using the shader {@code s}...
        */
 
       final LongSet s_materials =
-        this.batches.shader_to_materials.get(s.getShaderID());
+        this.batches.shader_to_materials.get(s.shaderID());
 
       for (final long m_id : s_materials) {
         final R2MaterialDepthBatchedType<Object> material =
@@ -356,13 +356,13 @@ public final class R2DepthInstances implements R2DepthInstancesType
             this.batches.instance_materials.get(m_id);
         c.onInstanceBatchedMaterialStart(material);
 
-        /**
-         * Render all instances.
-         *
-         * Batched instances can be rendered in any order, because each
-         * batched instance is expected to have its own vertex array object.
-         * There are no efficiency gains to be made by imposing any particular
-         * order.
+        /*
+          Render all instances.
+
+          Batched instances can be rendered in any order, because each
+          batched instance is expected to have its own vertex array object.
+          There are no efficiency gains to be made by imposing any particular
+          order.
          */
 
         final LongSet m_instances =
@@ -431,15 +431,15 @@ public final class R2DepthInstances implements R2DepthInstancesType
   {
     private final Long2LongOpenHashMap instance_to_material;
     private final Long2ReferenceOpenHashMap<LongSet>
-                                       material_to_instances;
+      material_to_instances;
     private final Long2ReferenceOpenHashMap<LongSet>
-                                       shader_to_materials;
+      shader_to_materials;
     private final Long2ReferenceOpenHashMap<R2MaterialDepthBatchedType<?>>
-                                       instance_materials;
+      instance_materials;
     private final Long2ReferenceOpenHashMap<R2ShaderDepthBatchedUsableType<?>>
-                                       instance_shaders;
+      instance_shaders;
     private final Long2ReferenceOpenHashMap<R2InstanceBatchedType>
-                                       instances;
+      instances;
 
     Batches()
     {

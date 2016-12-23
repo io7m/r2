@@ -27,7 +27,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -39,14 +39,19 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * A trivial filter that combines a geometry buffer and a light buffer into a
- * lit image.
+ * <p>A trivial filter that combines a geometry buffer and a light buffer into a
+ * lit image.</p>
+ *
+ * <p>The filter takes various buffers as input and writes a lit image to the
+ * currently bound framebuffer. It can optionally copy the geometry buffer's
+ * depth buffer to the current depth buffer.</p>
  *
  * @see com.io7m.r2.core.R2GeometryBufferUsableType
  * @see com.io7m.r2.core.R2LightBufferUsableType
@@ -62,57 +67,50 @@ public final class R2FilterLightApplicator implements
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_DEPTH);
   }
 
-  private final
-  R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType> shader;
-
+  private final R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters> shader;
   private final JCGLInterfaceGL33Type g;
   private final R2UnitQuadUsableType quad;
-  private final R2ShaderFilterLightApplicatorParametersMutable shader_params;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterLightApplicatorParameters> values;
 
   private R2FilterLightApplicator(
     final JCGLInterfaceGL33Type in_g,
-    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType>
-      in_shader,
+    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters> in_shader,
     final R2UnitQuadUsableType in_quad)
   {
     this.g = NullCheck.notNull(in_g);
     this.shader = NullCheck.notNull(in_shader);
     this.quad = NullCheck.notNull(in_quad);
-
-    this.shader_params =
-      R2ShaderFilterLightApplicatorParametersMutable.create();
-    this.render_state = JCGLRenderStateMutable.create();
+    this.render_state = JCGLRenderState.builder().build();
+    this.values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
    * Construct a new filter.
    *
-   * @param in_sources Shader sources
-   * @param in_g       A GL interface
-   * @param in_pool    An ID pool
-   * @param in_quad    A unit quad
+   * @param in_shader_env Shader sources
+   * @param in_g          A GL interface
+   * @param in_pool       An ID pool
+   * @param in_quad       A unit quad
    *
    * @return A new filter
    */
 
   public static R2FilterType<R2FilterLightApplicatorParametersType>
   newFilter(
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final JCGLInterfaceGL33Type in_g,
     final R2IDPoolType in_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_sources);
+    NullCheck.notNull(in_shader_env);
     NullCheck.notNull(in_g);
     NullCheck.notNull(in_pool);
     NullCheck.notNull(in_quad);
 
-    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType> s =
+    final R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters> s =
       R2ShaderFilterLightApplicator.newShader(
-        in_g.getShaders(),
-        in_sources,
-        in_pool);
+        in_g.getShaders(), in_shader_env, in_pool);
 
     return new R2FilterLightApplicator(in_g, s, in_quad);
   }
@@ -157,11 +155,11 @@ public final class R2FilterLightApplicator implements
     final R2FilterLightApplicatorParametersType parameters)
   {
     final R2Texture2DUsableType ldiff =
-      parameters.getLightDiffuseTexture();
+      parameters.lightDiffuseTexture();
     final R2Texture2DUsableType lspec =
-      parameters.getLightSpecularTexture();
+      parameters.lightSpecularTexture();
     final R2GeometryBufferUsableType gb =
-      parameters.getGeometryBuffer();
+      parameters.geometryBuffer();
 
     final JCGLShadersType g_sh = this.g.getShaders();
     final JCGLDrawType g_dr = this.g.getDraw();
@@ -170,13 +168,13 @@ public final class R2FilterLightApplicator implements
     final JCGLViewportsType g_v = this.g.getViewports();
     final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
-    switch (parameters.getCopyDepth()) {
+    switch (parameters.copyDepth()) {
       case R2_COPY_DEPTH_ENABLED: {
-        g_fb.framebufferReadBind(gb.getPrimaryFramebuffer());
+        g_fb.framebufferReadBind(gb.primaryFramebuffer());
         g_fb.framebufferBlit(
-          gb.getArea(),
-          parameters.getOutputViewport(),
-          R2FilterLightApplicator.BLIT_BUFFERS,
+          gb.area(),
+          parameters.outputViewport(),
+          BLIT_BUFFERS,
           JCGLFramebufferBlitFilter.FRAMEBUFFER_BLIT_FILTER_NEAREST);
         g_fb.framebufferReadUnbind();
         break;
@@ -186,25 +184,29 @@ public final class R2FilterLightApplicator implements
       }
     }
 
-    g_v.viewportSet(parameters.getOutputViewport());
+    g_v.viewportSet(parameters.outputViewport());
     JCGLRenderStates.activate(this.g, this.render_state);
 
     final JCGLTextureUnitContextType c = uc.unitContextNew();
     try {
-      this.shader_params.setAlbedoTexture(gb.getAlbedoEmissiveTexture());
-      this.shader_params.setDiffuseTexture(ldiff);
-      this.shader_params.setSpecularTexture(lspec);
+      this.values.setTextureUnitContext(c);
+      this.values.setValues(
+        R2ShaderFilterLightApplicatorParameters.builder()
+          .setAlbedoTexture(gb.albedoEmissiveTexture())
+          .setDiffuseTexture(ldiff)
+          .setSpecularTexture(lspec)
+          .build());
 
       try {
-        this.shader.onActivate(g_sh);
-        this.shader.onReceiveFilterValues(g_tx, g_sh, c, this.shader_params);
+        this.shader.onActivate(this.g);
+        this.shader.onReceiveFilterValues(this.g, this.values);
         this.shader.onValidate();
 
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader.onDeactivate(g_sh);
+        this.shader.onDeactivate(this.g);
       }
 
     } finally {

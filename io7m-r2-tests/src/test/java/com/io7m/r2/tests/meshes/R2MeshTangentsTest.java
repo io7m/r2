@@ -54,13 +54,13 @@ public final class R2MeshTangentsTest
     final R2MeshTangentsBuilderType b = R2MeshTangents.newBuilder(0L, 0L);
     final R2MeshTangentsType m = b.build();
 
-    Assert.assertEquals(0L, m.getPositions().size64());
-    Assert.assertEquals(0L, m.getNormals().size64());
-    Assert.assertEquals(0L, m.getUVs().size64());
-    Assert.assertEquals(0L, m.getTangents().size64());
-    Assert.assertEquals(0L, m.getBitangents().size64());
-    Assert.assertEquals(0L, m.getVertices().size64());
-    Assert.assertEquals(0L, m.getTriangles().size64());
+    Assert.assertEquals(0L, m.positions().size64());
+    Assert.assertEquals(0L, m.normals().size64());
+    Assert.assertEquals(0L, m.uvs().size64());
+    Assert.assertEquals(0L, m.tangents().size64());
+    Assert.assertEquals(0L, m.bitangents().size64());
+    Assert.assertEquals(0L, m.vertices().size64());
+    Assert.assertEquals(0L, m.triangles().size64());
   }
 
   @Test
@@ -276,11 +276,11 @@ public final class R2MeshTangentsTest
     b.reset();
 
     final R2MeshTangentsType m = b.build();
-    Assert.assertEquals(0L, m.getPositions().size64());
-    Assert.assertEquals(0L, m.getNormals().size64());
-    Assert.assertEquals(0L, m.getUVs().size64());
-    Assert.assertEquals(0L, m.getVertices().size64());
-    Assert.assertEquals(0L, m.getTriangles().size64());
+    Assert.assertEquals(0L, m.positions().size64());
+    Assert.assertEquals(0L, m.normals().size64());
+    Assert.assertEquals(0L, m.uvs().size64());
+    Assert.assertEquals(0L, m.vertices().size64());
+    Assert.assertEquals(0L, m.triangles().size64());
   }
 
   @Test
@@ -310,14 +310,14 @@ public final class R2MeshTangentsTest
     final R2MeshTriangleType b_tri = mb.getTriangles().get(b_tri_i);
     final R2MeshTangentsType mtb = R2MeshTangents.generateTangents(mb);
 
-    final BigList<PVectorI3D<R2SpaceObjectType>> tp = mtb.getPositions();
-    final BigList<PVectorI3D<R2SpaceObjectType>> tn = mtb.getNormals();
-    final BigList<PVectorI2D<R2SpaceTextureType>> tu = mtb.getUVs();
-    final BigList<PVectorI4D<R2SpaceObjectType>> tt = mtb.getTangents();
-    final BigList<PVectorI3D<R2SpaceObjectType>> tb = mtb.getBitangents();
-    final BigList<R2MeshTangentsVertexType> tv = mtb.getVertices();
+    final BigList<PVectorI3D<R2SpaceObjectType>> tp = mtb.positions();
+    final BigList<PVectorI3D<R2SpaceObjectType>> tn = mtb.normals();
+    final BigList<PVectorI2D<R2SpaceTextureType>> tu = mtb.uvs();
+    final BigList<PVectorI4D<R2SpaceObjectType>> tt = mtb.tangents();
+    final BigList<PVectorI3D<R2SpaceObjectType>> tb = mtb.bitangents();
+    final BigList<R2MeshTangentsVertexType> tv = mtb.vertices();
 
-    final R2MeshTriangleType t_tri = mtb.getTriangles().get(b_tri_i);
+    final R2MeshTriangleType t_tri = mtb.triangles().get(b_tri_i);
 
     Assert.assertEquals(new PVectorI3D<>(0.0, 0.0, 0.0), tp.get(p0));
     Assert.assertEquals(new PVectorI3D<>(0.0, 0.0, 1.0), tn.get(n0));
@@ -334,24 +334,24 @@ public final class R2MeshTangentsTest
     Assert.assertEquals(b_tri, t_tri);
 
     {
-      final R2MeshTangentsVertexType tv_0 = tv.get(t_tri.getV0());
-      final R2MeshTangentsVertexType tv_1 = tv.get(t_tri.getV1());
-      final R2MeshTangentsVertexType tv_2 = tv.get(t_tri.getV2());
+      final R2MeshTangentsVertexType tv_0 = tv.get(t_tri.v0());
+      final R2MeshTangentsVertexType tv_1 = tv.get(t_tri.v1());
+      final R2MeshTangentsVertexType tv_2 = tv.get(t_tri.v2());
 
-      final PVectorI3D<R2SpaceObjectType> n_0 = tn.get(tv_0.getNormalIndex());
-      final PVectorI3D<R2SpaceObjectType> n_1 = tn.get(tv_1.getNormalIndex());
-      final PVectorI3D<R2SpaceObjectType> n_2 = tn.get(tv_2.getNormalIndex());
+      final PVectorI3D<R2SpaceObjectType> n_0 = tn.get(tv_0.normalIndex());
+      final PVectorI3D<R2SpaceObjectType> n_1 = tn.get(tv_1.normalIndex());
+      final PVectorI3D<R2SpaceObjectType> n_2 = tn.get(tv_2.normalIndex());
 
-      final PVectorI4D<R2SpaceObjectType> t_0 = tt.get(tv_0.getTangentIndex());
-      final PVectorI4D<R2SpaceObjectType> t_1 = tt.get(tv_1.getTangentIndex());
-      final PVectorI4D<R2SpaceObjectType> t_2 = tt.get(tv_2.getTangentIndex());
+      final PVectorI4D<R2SpaceObjectType> t_0 = tt.get(tv_0.tangentIndex());
+      final PVectorI4D<R2SpaceObjectType> t_1 = tt.get(tv_1.tangentIndex());
+      final PVectorI4D<R2SpaceObjectType> t_2 = tt.get(tv_2.tangentIndex());
 
       final PVectorI3D<R2SpaceObjectType> b_0 =
-        tb.get(tv_0.getBitangentIndex());
+        tb.get(tv_0.bitangentIndex());
       final PVectorI3D<R2SpaceObjectType> b_1 =
-        tb.get(tv_1.getBitangentIndex());
+        tb.get(tv_1.bitangentIndex());
       final PVectorI3D<R2SpaceObjectType> b_2 =
-        tb.get(tv_2.getBitangentIndex());
+        tb.get(tv_2.bitangentIndex());
 
       /**
        * Check orthonornmality.
@@ -410,14 +410,14 @@ public final class R2MeshTangentsTest
     final R2MeshTriangleType b_tri = mb.getTriangles().get(b_tri_i);
     final R2MeshTangentsType mtb = R2MeshTangents.generateTangents(mb);
 
-    final BigList<PVectorI3D<R2SpaceObjectType>> tp = mtb.getPositions();
-    final BigList<PVectorI3D<R2SpaceObjectType>> tn = mtb.getNormals();
-    final BigList<PVectorI2D<R2SpaceTextureType>> tu = mtb.getUVs();
-    final BigList<PVectorI4D<R2SpaceObjectType>> tt = mtb.getTangents();
-    final BigList<PVectorI3D<R2SpaceObjectType>> tb = mtb.getBitangents();
-    final BigList<R2MeshTangentsVertexType> tv = mtb.getVertices();
+    final BigList<PVectorI3D<R2SpaceObjectType>> tp = mtb.positions();
+    final BigList<PVectorI3D<R2SpaceObjectType>> tn = mtb.normals();
+    final BigList<PVectorI2D<R2SpaceTextureType>> tu = mtb.uvs();
+    final BigList<PVectorI4D<R2SpaceObjectType>> tt = mtb.tangents();
+    final BigList<PVectorI3D<R2SpaceObjectType>> tb = mtb.bitangents();
+    final BigList<R2MeshTangentsVertexType> tv = mtb.vertices();
 
-    final R2MeshTriangleType t_tri = mtb.getTriangles().get(b_tri_i);
+    final R2MeshTriangleType t_tri = mtb.triangles().get(b_tri_i);
 
     Assert.assertEquals(new PVectorI3D<>(1.0, 1.0, 0.0), tp.get(p0));
     Assert.assertEquals(new PVectorI3D<>(0.0, 0.0, -1.0), tn.get(n0));
@@ -434,24 +434,24 @@ public final class R2MeshTangentsTest
     Assert.assertEquals(b_tri, t_tri);
 
     {
-      final R2MeshTangentsVertexType tv_0 = tv.get(t_tri.getV0());
-      final R2MeshTangentsVertexType tv_1 = tv.get(t_tri.getV1());
-      final R2MeshTangentsVertexType tv_2 = tv.get(t_tri.getV2());
+      final R2MeshTangentsVertexType tv_0 = tv.get(t_tri.v0());
+      final R2MeshTangentsVertexType tv_1 = tv.get(t_tri.v1());
+      final R2MeshTangentsVertexType tv_2 = tv.get(t_tri.v2());
 
-      final PVectorI3D<R2SpaceObjectType> n_0 = tn.get(tv_0.getNormalIndex());
-      final PVectorI3D<R2SpaceObjectType> n_1 = tn.get(tv_1.getNormalIndex());
-      final PVectorI3D<R2SpaceObjectType> n_2 = tn.get(tv_2.getNormalIndex());
+      final PVectorI3D<R2SpaceObjectType> n_0 = tn.get(tv_0.normalIndex());
+      final PVectorI3D<R2SpaceObjectType> n_1 = tn.get(tv_1.normalIndex());
+      final PVectorI3D<R2SpaceObjectType> n_2 = tn.get(tv_2.normalIndex());
 
-      final PVectorI4D<R2SpaceObjectType> t_0 = tt.get(tv_0.getTangentIndex());
-      final PVectorI4D<R2SpaceObjectType> t_1 = tt.get(tv_1.getTangentIndex());
-      final PVectorI4D<R2SpaceObjectType> t_2 = tt.get(tv_2.getTangentIndex());
+      final PVectorI4D<R2SpaceObjectType> t_0 = tt.get(tv_0.tangentIndex());
+      final PVectorI4D<R2SpaceObjectType> t_1 = tt.get(tv_1.tangentIndex());
+      final PVectorI4D<R2SpaceObjectType> t_2 = tt.get(tv_2.tangentIndex());
 
       final PVectorI3D<R2SpaceObjectType> b_0 =
-        tb.get(tv_0.getBitangentIndex());
+        tb.get(tv_0.bitangentIndex());
       final PVectorI3D<R2SpaceObjectType> b_1 =
-        tb.get(tv_1.getBitangentIndex());
+        tb.get(tv_1.bitangentIndex());
       final PVectorI3D<R2SpaceObjectType> b_2 =
-        tb.get(tv_2.getBitangentIndex());
+        tb.get(tv_2.bitangentIndex());
 
       /**
        * Check orthonornmality.

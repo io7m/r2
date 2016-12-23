@@ -25,7 +25,6 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2ShaderFilterBoxBlurParametersType
 {
@@ -34,7 +33,7 @@ public interface R2ShaderFilterBoxBlurParametersType
    */
 
   @Value.Parameter
-  R2Texture2DUsableType getTexture();
+  R2Texture2DUsableType texture();
 
   /**
    * @return The blur radius
@@ -42,7 +41,8 @@ public interface R2ShaderFilterBoxBlurParametersType
 
   @Value.Parameter
   @Value.Default
-  default float getBlurRadius() {
+  default float blurRadius()
+  {
     return 1.0f;
   }
 }

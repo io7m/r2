@@ -19,17 +19,20 @@ package com.io7m.r2.filters;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
+import com.io7m.jcanephora.core.JCGLType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2AbstractShader;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.shaders.provided.R2AbstractShader;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
@@ -38,66 +41,65 @@ import java.util.Optional;
  */
 
 public final class R2ShaderFilterLightApplicator extends
-  R2AbstractShader<R2ShaderFilterLightApplicatorParametersType>
-  implements R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType>
+  R2AbstractShader<R2ShaderFilterLightApplicatorParameters>
+  implements R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters>
 {
   private final JCGLProgramUniformType u_texture_albedo;
   private final JCGLProgramUniformType u_texture_specular;
   private final JCGLProgramUniformType u_texture_diffuse;
-  private       JCGLTextureUnitType    unit_albedo;
-  private       JCGLTextureUnitType    unit_diffuse;
-  private       JCGLTextureUnitType    unit_specular;
 
   private R2ShaderFilterLightApplicator(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     super(
       in_shaders,
-      in_sources,
+      in_shader_env,
       in_pool,
-      "R2FilterLightApplicator",
-      "R2FilterLightApplicator.vert",
+      "com.io7m.r2.shaders.core.R2ShaderFilterLightApplicator",
+      "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "R2FilterLightApplicator.frag");
+      "com.io7m.r2.shaders.core/R2FilterLightApplicator.frag");
 
-    final JCGLProgramShaderUsableType p = this.getShaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 3);
-
+    final JCGLProgramShaderUsableType p = this.shaderProgram();
     this.u_texture_albedo =
-      R2ShaderParameters.getUniformChecked(p, "R2_textures_albedo");
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_textures_albedo", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_specular =
-      R2ShaderParameters.getUniformChecked(p, "R2_textures_specular");
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_textures_specular", JCGLType.TYPE_SAMPLER_2D);
     this.u_texture_diffuse =
-      R2ShaderParameters.getUniformChecked(p, "R2_textures_diffuse");
+      R2ShaderParameters.getUniformChecked(
+        p, "R2_textures_diffuse", JCGLType.TYPE_SAMPLER_2D);
+    R2ShaderParameters.checkUniformParameterCount(p, 3);
   }
 
   /**
    * Construct a new shader.
    *
-   * @param in_shaders A shader interface
-   * @param in_sources Shader sources
-   * @param in_pool    The ID pool
+   * @param in_shaders    A shader interface
+   * @param in_shader_env Shader sources
+   * @param in_pool       The ID pool
    *
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterLightApplicatorParametersType>
+  public static R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters>
   newShader(
     final JCGLShadersType in_shaders,
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterLightApplicator(in_shaders, in_sources, in_pool));
+      new R2ShaderFilterLightApplicator(in_shaders, in_shader_env, in_pool));
   }
 
   @Override
-  public Class<R2ShaderFilterLightApplicatorParametersType>
-  getShaderParametersType()
+  public Class<R2ShaderFilterLightApplicatorParameters>
+  shaderParametersType()
   {
-    return R2ShaderFilterLightApplicatorParametersType.class;
+    return R2ShaderFilterLightApplicatorParameters.class;
   }
 
   @Override
@@ -109,28 +111,32 @@ public final class R2ShaderFilterLightApplicator extends
 
   @Override
   public void onReceiveFilterValues(
-    final JCGLTexturesType g_tex,
-    final JCGLShadersType g_sh,
-    final JCGLTextureUnitContextMutableType tc,
-    final R2ShaderFilterLightApplicatorParametersType values)
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderParametersFilterType<R2ShaderFilterLightApplicatorParameters> parameters)
   {
-    NullCheck.notNull(g_tex);
-    NullCheck.notNull(tc);
-    NullCheck.notNull(g_sh);
-    NullCheck.notNull(values);
+    NullCheck.notNull(g);
+    NullCheck.notNull(parameters);
 
-    this.unit_albedo =
-      tc.unitContextBindTexture2D(g_tex, values.getAlbedoTexture().get());
-    this.unit_diffuse =
-      tc.unitContextBindTexture2D(g_tex, values.getDiffuseTexture().get());
-    this.unit_specular =
-      tc.unitContextBindTexture2D(g_tex, values.getSpecularTexture().get());
+    final R2ShaderFilterLightApplicatorParameters values =
+      parameters.values();
+    final JCGLTextureUnitContextMutableType tc =
+      parameters.textureUnitContext();
+
+    final JCGLShadersType g_sh = g.getShaders();
+    final JCGLTexturesType g_tex = g.getTextures();
+
+    final JCGLTextureUnitType unit_albedo =
+      tc.unitContextBindTexture2D(g_tex, values.albedoTexture().texture());
+    final JCGLTextureUnitType unit_diffuse =
+      tc.unitContextBindTexture2D(g_tex, values.diffuseTexture().texture());
+    final JCGLTextureUnitType unit_specular =
+      tc.unitContextBindTexture2D(g_tex, values.specularTexture().texture());
 
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_albedo, this.unit_albedo);
+      this.u_texture_albedo, unit_albedo);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_diffuse, this.unit_diffuse);
+      this.u_texture_diffuse, unit_diffuse);
     g_sh.shaderUniformPutTexture2DUnit(
-      this.u_texture_specular, this.unit_specular);
+      this.u_texture_specular, unit_specular);
   }
 }

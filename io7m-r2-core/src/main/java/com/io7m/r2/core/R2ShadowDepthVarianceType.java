@@ -24,17 +24,16 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2ShadowDepthVarianceType extends R2ShadowType
 {
   @Override
   @Value.Parameter
-  long getShadowID();
+  long shadowID();
 
   @Override
   @Value.Parameter
-  default float getMinimumFactor()
+  default float minimumFactor()
   {
     return 0.2f;
   }
@@ -44,7 +43,7 @@ public interface R2ShadowDepthVarianceType extends R2ShadowType
    */
 
   @Value.Parameter
-  R2DepthVarianceBufferDescriptionType getMapDescription();
+  R2DepthVarianceBufferDescriptionType mapDescription();
 
   /**
    * <p>The amount of light bleed reduction to apply.</p>
@@ -58,7 +57,7 @@ public interface R2ShadowDepthVarianceType extends R2ShadowType
    */
 
   @Value.Parameter
-  default float getLightBleedReduction()
+  default float lightBleedReduction()
   {
     return 0.2f;
   }
@@ -73,7 +72,7 @@ public interface R2ShadowDepthVarianceType extends R2ShadowType
    */
 
   @Value.Parameter
-  default float getMinimumVariance()
+  default float minimumVariance()
   {
     return 0.00002f;
   }

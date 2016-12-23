@@ -16,11 +16,12 @@
 
 package com.io7m.r2.core.debug;
 
-import com.io7m.jtensors.VectorReadable4FType;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2ImmutableStyleType;
 import com.io7m.r2.core.R2SceneLightsType;
-import com.io7m.r2.core.R2SceneOpaquesType;
+import com.io7m.r2.core.R2SceneOpaquesReadableType;
 import com.io7m.r2.core.R2UnitSphereUsableType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import org.immutables.value.Value;
@@ -30,7 +31,6 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2DebugVisualizerRendererParametersType
 {
@@ -39,21 +39,35 @@ public interface R2DebugVisualizerRendererParametersType
    */
 
   @Value.Parameter
-  R2UnitSphereUsableType getUnitSphere();
+  R2UnitSphereUsableType unitSphere();
+
+  /**
+   * @return A debug cube used to render various pieces of debug geometry
+   */
+
+  @Value.Parameter
+  R2DebugCubeUsableType debugCube();
 
   /**
    * @return The opaque instances in the scene.
    */
 
   @Value.Parameter
-  R2SceneOpaquesType getOpaqueInstances();
+  R2SceneOpaquesReadableType opaqueInstances();
 
   /**
    * @return The lights in the scene.
    */
 
   @Value.Parameter
-  R2SceneLightsType getLights();
+  R2SceneLightsType lights();
+
+  /**
+   * @return The extra debugging instances
+   */
+
+  @Value.Parameter
+  R2DebugInstancesType debugInstances();
 
   /**
    * @return {@code true} iff opaque instances should be rendered
@@ -61,7 +75,7 @@ public interface R2DebugVisualizerRendererParametersType
 
   @Value.Parameter
   @Value.Default
-  default boolean getShowOpaqueInstances()
+  default boolean showOpaqueInstances()
   {
     return true;
   }
@@ -72,7 +86,7 @@ public interface R2DebugVisualizerRendererParametersType
 
   @Value.Parameter
   @Value.Default
-  default boolean getShowLights()
+  default boolean showLights()
   {
     return true;
   }
@@ -84,12 +98,12 @@ public interface R2DebugVisualizerRendererParametersType
    *
    * @return A mapping from groups to colors
    *
-   * @see #getGeometryDefaultColor()
+   * @see #geometryDefaultColor()
    */
 
   @Value.Parameter
   @Value.Default
-  default Int2ReferenceMap<VectorReadable4FType> getGeometryGroupColors()
+  default Int2ReferenceMap<PVectorI4F<R2SpaceRGBAType>> geometryGroupColors()
   {
     return new Int2ReferenceLinkedOpenHashMap<>();
   }
@@ -98,12 +112,12 @@ public interface R2DebugVisualizerRendererParametersType
    * @return The default color with which to render instances, if no specific
    * color has been set
    *
-   * @see #getGeometryGroupColors()
+   * @see #geometryGroupColors()
    */
 
   @Value.Parameter
   @Value.Default
-  default VectorReadable4FType getGeometryDefaultColor()
+  default PVectorI4F<R2SpaceRGBAType> geometryDefaultColor()
   {
     return R2DebugVisualizerDefaults.DEFAULT_GROUP_COLOR;
   }

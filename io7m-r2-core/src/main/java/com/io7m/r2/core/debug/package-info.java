@@ -18,5 +18,6 @@
  * Types and functions associated with debugging.
  */
 
-@com.io7m.jnull.NonNullByDefault package com.io7m.r2.core.debug;
+@com.io7m.jnull.NonNullByDefault
+package com.io7m.r2.core.debug;
 

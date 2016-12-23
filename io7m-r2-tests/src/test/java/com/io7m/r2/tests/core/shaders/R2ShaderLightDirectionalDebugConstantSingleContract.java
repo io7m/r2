@@ -23,10 +23,9 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightDirectionalScreenSingle;
 import com.io7m.r2.core.debug.R2DebugShaderLightDirectionalConstantSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.R2JCGLContract;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,8 +37,8 @@ public abstract class R2ShaderLightDirectionalDebugConstantSingleContract extend
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderLightSingleType<R2LightDirectionalScreenSingle> s =

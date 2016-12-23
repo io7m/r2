@@ -41,7 +41,6 @@ import com.io7m.jcanephora.renderstate.JCGLDepthState;
 import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
 import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.renderstate.JCGLStencilState;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
@@ -66,34 +65,34 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
   private static final JCGLClearSpecification CLEAR_SPEC;
 
   static {
-    final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
-    k.setDepthState(JCGLDepthState.of(
-      JCGLDepthStrict.DEPTH_STRICT_ENABLED,
-      Optional.empty(),
-      JCGLDepthWriting.DEPTH_WRITE_ENABLED,
-      JCGLDepthClamping.DEPTH_CLAMP_ENABLED
-    ));
-    k.setColorBufferMaskingState(
-      JCGLColorBufferMaskingState.of(true, true, true, true));
-    k.setStencilState(JCGLStencilState.of(
-      true,
-      true,
-      JCGLStencilFunction.STENCIL_ALWAYS,
-      JCGLStencilFunction.STENCIL_ALWAYS,
-      0,
-      0,
-      0,
-      0,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      JCGLStencilOperation.STENCIL_OP_KEEP,
-      0b11111111,
-      0b11111111
-    ));
-    CLEAR_STATE = JCGLRenderState.builder().from(k).build();
+    CLEAR_STATE =
+      JCGLRenderState.builder()
+        .setDepthState(JCGLDepthState.of(
+          JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+          Optional.empty(),
+          JCGLDepthWriting.DEPTH_WRITE_ENABLED,
+          JCGLDepthClamping.DEPTH_CLAMP_ENABLED
+        ))
+        .setColorBufferMaskingState(
+          JCGLColorBufferMaskingState.of(true, true, true, true))
+        .setStencilState(JCGLStencilState.of(
+          true,
+          true,
+          JCGLStencilFunction.STENCIL_ALWAYS,
+          JCGLStencilFunction.STENCIL_ALWAYS,
+          0,
+          0,
+          0,
+          0,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          JCGLStencilOperation.STENCIL_OP_KEEP,
+          0b11111111,
+          0b11111111
+        )).build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
       Optional.of(new VectorI4F(0.0f, 0.0f, 0.0f, 0.0f)),
@@ -134,14 +133,14 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
     }
 
     long size = 0L;
-    size += this.t_rgba.get().getRange().getInterval();
-    size += this.t_norm.get().getRange().getInterval();
+    size += this.t_rgba.texture().getRange().getInterval();
+    size += this.t_norm.texture().getRange().getInterval();
 
     if (this.t_spec != null) {
-      size += this.t_spec.get().getRange().getInterval();
+      size += this.t_spec.texture().getRange().getInterval();
     }
 
-    size += this.t_depth.get().getRange().getInterval();
+    size += this.t_depth.texture().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
   }
 
@@ -172,7 +171,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
-    final AreaInclusiveUnsignedLType area = desc.getArea();
+    final AreaInclusiveUnsignedLType area = desc.area();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -212,7 +211,7 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       Pair<JCGLTextureUnitType, JCGLTexture2DType> p_spec = null;
-      switch (desc.getComponents()) {
+      switch (desc.components()) {
         case R2_GEOMETRY_BUFFER_FULL:
           p_spec = cc.unitContextAllocateTexture2D(
             g_t,
@@ -235,13 +234,22 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
       R2Texture2DType rt_spec = null;
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_rgba.get());
-      fbb.attachColorTexture2DAt(points.get(1), buffers.get(1), rt_norm.get());
+      fbb.attachColorTexture2DAt(
+        points.get(0),
+        buffers.get(0),
+        rt_rgba.texture());
+      fbb.attachColorTexture2DAt(
+        points.get(1),
+        buffers.get(1),
+        rt_norm.texture());
       if (p_spec != null) {
         rt_spec = R2Texture2DStatic.of(p_spec.getRight());
-        fbb.attachColorTexture2DAt(points.get(2), buffers.get(2), rt_spec.get());
+        fbb.attachColorTexture2DAt(
+          points.get(2),
+          buffers.get(2),
+          rt_spec.texture());
       }
-      fbb.attachDepthStencilTexture2D(rt_depth.get());
+      fbb.attachDepthStencilTexture2D(rt_depth.texture());
 
       final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
       return new R2GeometryBuffer(
@@ -252,43 +260,43 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
   }
 
   @Override
-  public R2Texture2DUsableType getAlbedoEmissiveTexture()
+  public R2Texture2DUsableType albedoEmissiveTexture()
   {
     return this.t_rgba;
   }
 
   @Override
-  public R2Texture2DUsableType getNormalTexture()
+  public R2Texture2DUsableType normalTexture()
   {
     return this.t_norm;
   }
 
   @Override
-  public Optional<R2Texture2DUsableType> getSpecularTexture()
+  public Optional<R2Texture2DUsableType> specularTexture()
   {
     return this.t_spec_opt;
   }
 
   @Override
-  public R2Texture2DUsableType getDepthTexture()
+  public R2Texture2DUsableType depthTexture()
   {
     return this.t_depth;
   }
 
   @Override
-  public JCGLFramebufferUsableType getPrimaryFramebuffer()
+  public JCGLFramebufferUsableType primaryFramebuffer()
   {
     return this.framebuffer;
   }
 
   @Override
-  public AreaInclusiveUnsignedLType getArea()
+  public AreaInclusiveUnsignedLType area()
   {
-    return this.t_rgba.get().textureGetArea();
+    return this.t_rgba.texture().textureGetArea();
   }
 
   @Override
-  public R2GeometryBufferDescriptionType getDescription()
+  public R2GeometryBufferDescriptionType description()
   {
     return this.desc;
   }
@@ -339,8 +347,8 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
       throw new R2RendererExceptionFramebufferNotBound(sb.toString());
     }
 
-    JCGLRenderStates.activate(g, R2GeometryBuffer.CLEAR_STATE);
-    g.getClear().clear(R2GeometryBuffer.CLEAR_SPEC);
+    JCGLRenderStates.activate(g, CLEAR_STATE);
+    g.getClear().clear(CLEAR_SPEC);
   }
 
 }

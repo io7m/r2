@@ -18,31 +18,52 @@ package com.io7m.r2.tests.core.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jtensors.VectorReadable4FType;
+import com.io7m.jtensors.parameterized.PVectorI4F;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.provided.R2ShaderDebugVisualBatched;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesResources;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import com.io7m.r2.shaders.R2Shaders;
-import com.io7m.r2.tests.core.R2JCGLContract;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.spaces.R2SpaceRGBAType;
+import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderDebugVisualBatchedContract extends
-  R2JCGLContract
+  R2ShaderInstanceBatchedContract<PVectorI4F<R2SpaceRGBAType>,
+    PVectorI4F<R2SpaceRGBAType>>
 {
+  @Override
+  protected final PVectorI4F<R2SpaceRGBAType> newParameters(
+    final JCGLInterfaceGL33Type g)
+  {
+    return new PVectorI4F<>(1.0f, 1.0f, 1.0f, 1.0f);
+  }
+
+  @Override
+  protected R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>>
+  newShaderWithVerifier(
+    final JCGLInterfaceGL33Type g,
+    final R2ShaderPreprocessingEnvironmentType sources,
+    final R2IDPoolType pool)
+  {
+    return R2ShaderDebugVisualBatched.newShader(
+      g.getShaders(),
+      sources,
+      pool);
+  }
+
+
   @Test
   public final void testNew()
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
-    final R2ShaderSourcesType sources =
-      R2ShaderSourcesResources.newSources(R2Shaders.class);
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
     final R2IDPoolType pool = R2IDPool.newPool();
 
-    final R2ShaderInstanceBatchedType<VectorReadable4FType> s =
+    final R2ShaderInstanceBatchedType<PVectorI4F<R2SpaceRGBAType>> s =
       R2ShaderDebugVisualBatched.newShader(
         g.getShaders(),
         sources,

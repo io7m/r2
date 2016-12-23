@@ -1,0 +1,13 @@
+[section [title Shaders: Light] [id di.shaders.light]]
+[subsection [title Overview] [id di.shaders.light.overview]]
+[paragraph]
+A [term [type term] light shader] is a shader used to render the contributions
+of a [link [target di.deferred.light] light source]. Light shaders in the
+[term [type package] r2] package are only used within the context of
+[link [target di.deferred] deferred rendering].
+
+[subsection [title Types] [id di.shaders.light.types]]
+[paragraph]
+Light shaders are instances of the
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderLightSingleType.html"] R2ShaderLightSingleType]
+type.

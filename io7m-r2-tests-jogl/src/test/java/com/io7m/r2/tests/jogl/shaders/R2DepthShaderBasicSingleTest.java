@@ -19,10 +19,10 @@ package com.io7m.r2.tests.jogl.shaders;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParametersType;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.tests.core.shaders.R2DepthShaderBasicSingleContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 
@@ -39,10 +39,10 @@ public final class R2DepthShaderBasicSingleTest extends
   }
 
   @Override
-  protected R2ShaderDepthSingleType<R2DepthShaderBasicParametersType>
+  protected R2ShaderDepthSingleType<R2DepthShaderBasicParameters>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderSourcesType sources,
+    final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
     return R2DepthShaderBasicSingle.newShader(g.getShaders(), sources, pool);

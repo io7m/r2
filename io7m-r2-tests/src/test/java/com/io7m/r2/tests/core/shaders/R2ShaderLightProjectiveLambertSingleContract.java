@@ -19,9 +19,6 @@ package com.io7m.r2.tests.core.shaders;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLUsageHint;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocator;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitAllocatorType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightProjectiveReadableType;
@@ -33,7 +30,7 @@ import com.io7m.r2.core.R2ProjectionType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 
 public abstract class R2ShaderLightProjectiveLambertSingleContract
   extends R2ShaderLightProjectiveContract<R2LightProjectiveReadableType>
@@ -42,7 +39,7 @@ public abstract class R2ShaderLightProjectiveLambertSingleContract
   protected final R2ShaderLightProjectiveType<R2LightProjectiveReadableType>
   newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderSourcesType sources,
+    final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
     return R2LightShaderProjectiveLambertSingle.newShader(
@@ -62,6 +59,6 @@ public abstract class R2ShaderLightProjectiveLambertSingleContract
       R2ProjectionMesh.newMesh(
         g, p, JCGLUsageHint.USAGE_STATIC_DRAW, JCGLUsageHint.USAGE_STATIC_DRAW);
     return R2LightProjectiveWithoutShadow.newLight(
-      pm, td.getWhiteProjectiveTexture(), pool);
+      pm, td.texture2DProjectiveWhite(), pool);
   }
 }

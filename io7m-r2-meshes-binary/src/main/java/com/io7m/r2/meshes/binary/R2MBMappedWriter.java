@@ -16,6 +16,7 @@
 
 package com.io7m.r2.meshes.binary;
 
+import com.io7m.jaffirm.core.Invariants;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jpra.runtime.java.JPRACursor1DByteBufferedChecked;
 import com.io7m.jpra.runtime.java.JPRACursor1DType;
@@ -39,7 +40,6 @@ import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.BigList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.valid4j.Assertive;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -61,8 +61,8 @@ public final class R2MBMappedWriter implements R2MBWriterType
   }
 
   private final R2MeshTangentsType mesh;
-  private final MappedByteBuffer   buffer;
-  private final FileChannel        channel;
+  private final MappedByteBuffer buffer;
+  private final FileChannel channel;
 
   private R2MBMappedWriter(
     final FileChannel in_channel,
@@ -93,8 +93,8 @@ public final class R2MBMappedWriter implements R2MBWriterType
     NullCheck.notNull(p);
     NullCheck.notNull(m);
 
-    final long size = R2MBMappedWriter.expectedSize(m);
-    R2MBMappedWriter.LOG.debug("map {} ({} bytes)", p, Long.valueOf(size));
+    final long size = expectedSize(m);
+    LOG.debug("map {} ({} bytes)", p, Long.valueOf(size));
 
     final FileChannel fc = FileChannel.open(
       p,
@@ -116,22 +116,23 @@ public final class R2MBMappedWriter implements R2MBWriterType
 
     long size = 0L;
     size += header;
-    size += triangle * m.getTriangles().size64();
-    size += vertex * m.getVertices().size64();
+    size += triangle * m.triangles().size64();
+    size += vertex * m.vertices().size64();
     return size;
   }
 
-  @Override public long run()
+  @Override
+  public long run()
     throws IOException
   {
     final long v_offset;
     final long t_offset;
 
-    final long v_count = this.mesh.getVertices().size64();
-    final long t_count = this.mesh.getTriangles().size64();
+    final long v_count = this.mesh.vertices().size64();
+    final long t_count = this.mesh.triangles().size64();
 
-    /**
-     * Write header.
+    /*
+      Write header.
      */
 
     {
@@ -157,8 +158,8 @@ public final class R2MBMappedWriter implements R2MBWriterType
       t_offset = header + vertices;
     }
 
-    /**
-     * Write vertices.
+    /*
+      Write vertices.
      */
 
     if (v_count > 0L) {
@@ -175,15 +176,15 @@ public final class R2MBMappedWriter implements R2MBWriterType
       final Vector2FType v_uv = v.getUvWritable();
 
       final BigList<R2MeshTangentsVertexType> vertices =
-        this.mesh.getVertices();
+        this.mesh.vertices();
       final BigList<PVectorI3D<R2SpaceObjectType>> m_pos =
-        this.mesh.getPositions();
+        this.mesh.positions();
       final BigList<PVectorI3D<R2SpaceObjectType>> m_nor =
-        this.mesh.getNormals();
+        this.mesh.normals();
       final BigList<PVectorI4D<R2SpaceObjectType>> m_tan =
-        this.mesh.getTangents();
+        this.mesh.tangents();
       final BigList<PVectorI2D<R2SpaceTextureType>> m_uv =
-        this.mesh.getUVs();
+        this.mesh.uvs();
 
       for (long index = 0L; index < v_count; ++index) {
         c.setElementIndex((int) index);
@@ -193,108 +194,156 @@ public final class R2MBMappedWriter implements R2MBWriterType
 
         {
           final PVectorI3D<R2SpaceObjectType> k =
-            m_pos.get(vv.getPositionIndex());
+            m_pos.get(vv.positionIndex());
 
           final double x = k.getXD();
           final double y = k.getYD();
           final double z = k.getZD();
 
-          Assertive.ensure(
-            Double.isFinite(x), "Position [%d].x must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(y), "Position [%d].y must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(z), "Position [%d].z must be finite", bi);
+          Invariants.checkInvariantD(
+            x,
+            Double.isFinite(x),
+            n -> String.format("Position [%d].x must be finite", bi));
+          Invariants.checkInvariantD(
+            y,
+            Double.isFinite(y),
+            n -> String.format("Position [%d].y must be finite", bi));
+          Invariants.checkInvariantD(
+            z,
+            Double.isFinite(z),
+            n -> String.format("Position [%d].z must be finite", bi));
 
-          Assertive.ensure(
-            !Double.isNaN(x), "Position [%d].x must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(y), "Position [%d].y must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(z), "Position [%d].z must be a valid number", bi);
+          Invariants.checkInvariantD(
+            x,
+            !Double.isNaN(x),
+            n -> String.format("Position [%d].x must be a valid number", bi));
+          Invariants.checkInvariantD(
+            y,
+            !Double.isNaN(y),
+            n -> String.format("Position [%d].y must be a valid number", bi));
+          Invariants.checkInvariantD(
+            z,
+            !Double.isNaN(z),
+            n -> String.format("Position [%d].z must be a valid number", bi));
 
           v_pos.set3F((float) x, (float) y, (float) z);
         }
 
         {
           final PVectorI3D<R2SpaceObjectType> k =
-            m_nor.get(vv.getNormalIndex());
+            m_nor.get(vv.normalIndex());
 
           final double x = k.getXD();
           final double y = k.getYD();
           final double z = k.getZD();
 
-          Assertive.ensure(
-            Double.isFinite(x), "Normal [%d].x must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(y), "Normal [%d].y must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(z), "Normal [%d].z must be finite", bi);
+          Invariants.checkInvariantD(
+            x,
+            Double.isFinite(x),
+            n -> String.format("Normal [%d].x must be finite", bi));
+          Invariants.checkInvariantD(
+            y,
+            Double.isFinite(y),
+            n -> String.format("Normal [%d].y must be finite", bi));
+          Invariants.checkInvariantD(
+            z,
+            Double.isFinite(z),
+            n -> String.format("Normal [%d].z must be finite", bi));
 
-          Assertive.ensure(
-            !Double.isNaN(x), "Normal [%d].x must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(y), "Normal [%d].y must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(z), "Normal [%d].z must be a valid number", bi);
+          Invariants.checkInvariantD(
+            x,
+            !Double.isNaN(x),
+            n -> String.format("Normal [%d].x must be a valid number", bi));
+          Invariants.checkInvariantD(
+            y,
+            !Double.isNaN(y),
+            n -> String.format("Normal [%d].y must be a valid number", bi));
+          Invariants.checkInvariantD(
+            z,
+            !Double.isNaN(z),
+            n -> String.format("Normal [%d].z must be a valid number", bi));
 
           v_nor.set3F((float) x, (float) y, (float) z);
         }
 
         {
           final PVectorI4D<R2SpaceObjectType> k =
-            m_tan.get(vv.getTangentIndex());
+            m_tan.get(vv.tangentIndex());
 
           final double x = k.getXD();
           final double y = k.getYD();
           final double z = k.getZD();
           final double w = k.getWD();
 
-          Assertive.ensure(
-            Double.isFinite(x), "Tangent [%d].x must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(y), "Tangent [%d].y must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(z), "Tangent [%d].z must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(w), "Tangent [%d].w must be finite", bi);
+          Invariants.checkInvariantD(
+            x,
+            Double.isFinite(x),
+            n -> String.format("Tangent [%d].x must be finite", bi));
+          Invariants.checkInvariantD(
+            y,
+            Double.isFinite(y),
+            n -> String.format("Tangent [%d].y must be finite", bi));
+          Invariants.checkInvariantD(
+            z,
+            Double.isFinite(z),
+            n -> String.format("Tangent [%d].z must be finite", bi));
+          Invariants.checkInvariantD(
+            w,
+            Double.isFinite(z),
+            n -> String.format("Tangent [%d].w must be finite", bi));
 
-          Assertive.ensure(
-            !Double.isNaN(x), "Tangent [%d].x must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(y), "Tangent [%d].y must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(z), "Tangent [%d].z must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(w), "Tangent [%d].w must be a valid number", bi);
+          Invariants.checkInvariantD(
+            x,
+            !Double.isNaN(x),
+            n -> String.format("Tangent [%d].x must be a valid number", bi));
+          Invariants.checkInvariantD(
+            y,
+            !Double.isNaN(y),
+            n -> String.format("Tangent [%d].y must be a valid number", bi));
+          Invariants.checkInvariantD(
+            z,
+            !Double.isNaN(z),
+            n -> String.format("Tangent [%d].z must be a valid number", bi));
+          Invariants.checkInvariantD(
+            w,
+            !Double.isNaN(w),
+            n -> String.format("Tangent [%d].w must be a valid number", bi));
 
           v_tan.set4F((float) x, (float) y, (float) z, (float) w);
         }
 
         {
           final PVectorI2D<R2SpaceTextureType> k =
-            m_uv.get(vv.getUVIndex());
+            m_uv.get(vv.uvIndex());
 
           final double x = k.getXD();
           final double y = k.getYD();
 
-          Assertive.ensure(
-            Double.isFinite(x), "UV [%d].x must be finite", bi);
-          Assertive.ensure(
-            Double.isFinite(y), "UV [%d].y must be finite", bi);
+          Invariants.checkInvariantD(
+            x,
+            Double.isFinite(x),
+            n -> String.format("UV [%d].x must be finite", bi));
+          Invariants.checkInvariantD(
+            y,
+            Double.isFinite(y),
+            n -> String.format("UV [%d].y must be finite", bi));
 
-          Assertive.ensure(
-            !Double.isNaN(x), "UV [%d].x must be a valid number", bi);
-          Assertive.ensure(
-            !Double.isNaN(y), "UV [%d].y must be a valid number", bi);
+          Invariants.checkInvariantD(
+            x,
+            !Double.isNaN(x),
+            n -> String.format("UV [%d].x must be a valid number", bi));
+          Invariants.checkInvariantD(
+            y,
+            !Double.isNaN(y),
+            n -> String.format("UV [%d].y must be a valid number", bi));
 
           v_uv.set2F((float) x, (float) y);
         }
       }
     }
 
-    /**
-     * Write triangles.
+    /*
+      Write triangles.
      */
 
     if (t_count > 0L) {
@@ -307,14 +356,14 @@ public final class R2MBMappedWriter implements R2MBWriterType
       final R2MBTriangleType v = c.getElementView();
 
       final BigList<R2MeshTriangleType> m_tri =
-        this.mesh.getTriangles();
+        this.mesh.triangles();
 
       for (long index = 0L; index < t_count; ++index) {
         c.setElementIndex((int) index);
         final R2MeshTriangleType t = m_tri.get(index);
-        v.setV0((int) (t.getV0() & 0xFFFFFFFFL));
-        v.setV1((int) (t.getV1() & 0xFFFFFFFFL));
-        v.setV2((int) (t.getV2() & 0xFFFFFFFFL));
+        v.setV0((int) (t.v0() & 0xFFFFFFFFL));
+        v.setV1((int) (t.v1() & 0xFFFFFFFFL));
+        v.setV2((int) (t.v2() & 0xFFFFFFFFL));
       }
     }
 
@@ -322,7 +371,8 @@ public final class R2MBMappedWriter implements R2MBWriterType
     return (long) this.buffer.capacity();
   }
 
-  @Override public void close()
+  @Override
+  public void close()
     throws IOException
   {
     this.channel.close();

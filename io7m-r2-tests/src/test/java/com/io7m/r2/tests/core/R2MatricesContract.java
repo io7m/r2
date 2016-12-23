@@ -16,6 +16,7 @@
 
 package com.io7m.r2.tests.core;
 
+import com.io7m.jaffirm.core.PreconditionViolationException;
 import com.io7m.jcanephora.core.JCGLProjectionMatrices;
 import com.io7m.jcanephora.core.JCGLProjectionMatricesType;
 import com.io7m.jcanephora.core.JCGLTexture2DType;
@@ -56,7 +57,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.valid4j.exceptions.RequireViolation;
 
 import java.util.List;
 
@@ -128,8 +128,8 @@ public abstract class R2MatricesContract
       Unit.unit(),
       (mm, u0) -> mm);
 
-    this.expected.expect(RequireViolation.class);
-    r.getMatrixProjection();
+    this.expected.expect(PreconditionViolationException.class);
+    r.matrixProjection();
   }
 
   @Test
@@ -144,8 +144,8 @@ public abstract class R2MatricesContract
       Unit.unit(),
       (mm, u0) -> mm);
 
-    this.expected.expect(RequireViolation.class);
-    r.getMatrixView();
+    this.expected.expect(PreconditionViolationException.class);
+    r.matrixView();
   }
 
   @Test
@@ -160,8 +160,8 @@ public abstract class R2MatricesContract
       Unit.unit(),
       (mm, u0) -> mm);
 
-    this.expected.expect(RequireViolation.class);
-    r.getMatrixViewInverse();
+    this.expected.expect(PreconditionViolationException.class);
+    r.matrixViewInverse();
   }
 
   @Test
@@ -176,8 +176,8 @@ public abstract class R2MatricesContract
       Unit.unit(),
       (mm, u0) -> mm);
 
-    this.expected.expect(RequireViolation.class);
-    r.getViewRays();
+    this.expected.expect(PreconditionViolationException.class);
+    r.viewRays();
   }
 
   @Test

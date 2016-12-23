@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2LightSphericalSingle;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.debug.R2DebugShaderLightSphericalConstantSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 
 public abstract class R2ShaderLightSphericalDebugConstantSingleContract
@@ -32,7 +32,7 @@ public abstract class R2ShaderLightSphericalDebugConstantSingleContract
   protected final R2ShaderLightVolumeSingleType<
     R2LightSphericalSingleReadableType> newShaderWithVerifier(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderSourcesType sources,
+    final R2ShaderPreprocessingEnvironmentReadableType sources,
     final R2IDPoolType pool)
   {
     return R2DebugShaderLightSphericalConstantSingle.newShader(

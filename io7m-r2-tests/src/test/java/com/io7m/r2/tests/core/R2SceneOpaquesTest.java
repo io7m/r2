@@ -21,15 +21,19 @@ import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.r2.core.R2InstanceBatchedType;
+import com.io7m.r2.core.R2InstanceBillboardedType;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
+import com.io7m.r2.core.R2MaterialOpaqueBillboardedType;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MaterialType;
 import com.io7m.r2.core.R2RendererExceptionInstanceAlreadyVisible;
 import com.io7m.r2.core.R2SceneOpaques;
 import com.io7m.r2.core.R2SceneOpaquesConsumerType;
+import com.io7m.r2.core.R2SceneOpaquesReadableType;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderUsableType;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -60,7 +64,7 @@ public final class R2SceneOpaquesTest
   {
     final AtomicBoolean finished = new AtomicBoolean(false);
     final AtomicBoolean started = new AtomicBoolean(false);
-    final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
+    final R2SceneOpaquesReadableType o = R2SceneOpaques.newOpaques();
 
     o.opaquesExecute(new UnreachableConsumer()
     {
@@ -670,6 +674,320 @@ public final class R2SceneOpaquesTest
     Assert.assertTrue(op.isEmpty());
   }
 
+  @Test
+  public void testBillboardedAlreadyVisible()
+    throws Exception
+  {
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getFakeGL();
+    final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
+    final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
+    final R2InstanceBillboardedType i =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 0L);
+    final R2ShaderInstanceBillboardedUsableType<Object> s =
+      R2TestUtilities.getShaderInstanceBillboarded(g, 0L);
+    final R2MaterialOpaqueBillboardedType<Object> m0 =
+      R2TestUtilities.getMaterialBillboarded(g, s, new Object(), 0L);
+    final R2MaterialOpaqueBillboardedType<Object> m1 =
+      R2TestUtilities.getMaterialBillboarded(g, s, new Object(), 1L);
+
+    o.opaquesAddBillboardedInstance(i, m0);
+    this.expected.expect(R2RendererExceptionInstanceAlreadyVisible.class);
+    o.opaquesAddBillboardedInstance(i, m1);
+  }
+
+  @Test
+  public void testBillboardedReset()
+    throws Exception
+  {
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getFakeGL();
+
+    final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
+    final JCGLArrayObjectType a1 = R2TestUtilities.getArrayObject(g);
+
+    final R2InstanceBillboardedType i0a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 0L);
+    final R2ShaderInstanceBillboardedUsableType<Object> s0 =
+      R2TestUtilities.getShaderInstanceBillboarded(g, 0L);
+    final R2MaterialOpaqueBillboardedType<Object> m0 =
+      R2TestUtilities.getMaterialBillboarded(g, s0, new Object(), 0L);
+
+    final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
+    o.opaquesAddBillboardedInstance(i0a0, m0);
+    Assert.assertEquals(1L, o.opaquesCount());
+
+    final LoggingConsumer cc = new LoggingConsumer();
+    final List<String> op = cc.ops;
+    o.opaquesExecute(cc);
+
+    Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedUpdate 0", op.remove(0));
+    Assert.assertEquals("onStartGroup 1", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedShaderStart 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedMaterialStart 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 0", op.remove(0));
+    Assert.assertEquals(
+      "onInstanceBillboardedMaterialFinish 0 0",
+      op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedShaderFinish 0", op.remove(0));
+    Assert.assertEquals("onFinishGroup 1", op.remove(0));
+    Assert.assertEquals("onFinish", op.remove(0));
+    Assert.assertTrue(op.isEmpty());
+
+    o.opaquesReset();
+    o.opaquesExecute(cc);
+
+    Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onFinish", op.remove(0));
+    Assert.assertTrue(op.isEmpty());
+  }
+
+  @Test
+  public void testBillboardedGroups()
+    throws Exception
+  {
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getFakeGL();
+
+    final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
+    final JCGLArrayObjectType a1 = R2TestUtilities.getArrayObject(g);
+
+    final R2InstanceBillboardedType i0a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 0L);
+    final R2InstanceBillboardedType i0a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 1L);
+
+    final R2ShaderInstanceBillboardedUsableType<Object> s0 =
+      R2TestUtilities.getShaderInstanceBillboarded(g, 0L);
+    final R2MaterialOpaqueBillboardedType<Object> m0 =
+      R2TestUtilities.getMaterialBillboarded(g, s0, new Object(), 0L);
+
+    final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
+    o.opaquesAddBillboardedInstance(i0a0, m0);
+    o.opaquesAddBillboardedInstanceInGroup(i0a1, m0, 3);
+    Assert.assertEquals(2L, o.opaquesCount());
+
+    final LoggingConsumer cc = new LoggingConsumer();
+    final List<String> op = cc.ops;
+    o.opaquesExecute(cc);
+
+    Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedUpdate 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedUpdate 1", op.remove(0));
+
+    Assert.assertEquals("onStartGroup 1", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedShaderStart 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedMaterialStart 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 0", op.remove(0));
+    Assert.assertEquals(
+      "onInstanceBillboardedMaterialFinish 0 0",
+      op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedShaderFinish 0", op.remove(0));
+    Assert.assertEquals("onFinishGroup 1", op.remove(0));
+
+    Assert.assertEquals("onStartGroup 3", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedShaderStart 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedMaterialStart 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 1", op.remove(0));
+    Assert.assertEquals(
+      "onInstanceBillboardedMaterialFinish 0 0",
+      op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedShaderFinish 0", op.remove(0));
+    Assert.assertEquals("onFinishGroup 3", op.remove(0));
+
+    Assert.assertEquals("onFinish", op.remove(0));
+    Assert.assertTrue(op.isEmpty());
+
+    o.opaquesReset();
+    o.opaquesExecute(cc);
+
+    Assert.assertEquals("onStart", op.remove(0));
+    Assert.assertEquals("onFinish", op.remove(0));
+    Assert.assertTrue(op.isEmpty());
+  }
+
+  @Test
+  public void testBillboardedOrdering()
+    throws Exception
+  {
+    final JCGLInterfaceGL33Type g = R2TestUtilities.getFakeGL();
+
+    final JCGLArrayObjectType a0 = R2TestUtilities.getArrayObject(g);
+    final JCGLArrayObjectType a1 = R2TestUtilities.getArrayObject(g);
+
+    final R2InstanceBillboardedType i0a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 0L);
+    final R2InstanceBillboardedType i1a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 1L);
+    final R2InstanceBillboardedType i2a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 2L);
+
+    final R2InstanceBillboardedType i3a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 3L);
+    final R2InstanceBillboardedType i4a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 4L);
+    final R2InstanceBillboardedType i5a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 5L);
+
+    final R2InstanceBillboardedType i6a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 6L);
+    final R2InstanceBillboardedType i7a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 7L);
+    final R2InstanceBillboardedType i8a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 8L);
+
+    final R2InstanceBillboardedType i9a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 9L);
+    final R2InstanceBillboardedType i10a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 10L);
+    final R2InstanceBillboardedType i11a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 11L);
+
+    final R2InstanceBillboardedType i12a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 12L);
+    final R2InstanceBillboardedType i13a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 13L);
+    final R2InstanceBillboardedType i14a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 14L);
+
+    final R2InstanceBillboardedType i15a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 15L);
+    final R2InstanceBillboardedType i16a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 16L);
+    final R2InstanceBillboardedType i17a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 17L);
+
+    final R2InstanceBillboardedType i18a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 18L);
+    final R2InstanceBillboardedType i19a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 19L);
+    final R2InstanceBillboardedType i20a0 =
+      R2TestUtilities.getInstanceBillboarded(g, a0, 20L);
+
+    final R2InstanceBillboardedType i21a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 21L);
+    final R2InstanceBillboardedType i22a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 22L);
+    final R2InstanceBillboardedType i23a1 =
+      R2TestUtilities.getInstanceBillboarded(g, a1, 23L);
+
+    final R2ShaderInstanceBillboardedUsableType<Object> s0 =
+      R2TestUtilities.getShaderInstanceBillboarded(g, 0L);
+    final R2ShaderInstanceBillboardedUsableType<Object> s1 =
+      R2TestUtilities.getShaderInstanceBillboarded(g, 1L);
+
+    final R2MaterialOpaqueBillboardedType<Object> m0 =
+      R2TestUtilities.getMaterialBillboarded(g, s0, new Object(), 0L);
+    final R2MaterialOpaqueBillboardedType<Object> m1 =
+      R2TestUtilities.getMaterialBillboarded(g, s0, new Object(), 1L);
+    final R2MaterialOpaqueBillboardedType<Object> m2 =
+      R2TestUtilities.getMaterialBillboarded(g, s1, new Object(), 2L);
+    final R2MaterialOpaqueBillboardedType<Object> m3 =
+      R2TestUtilities.getMaterialBillboarded(g, s1, new Object(), 3L);
+
+    final R2SceneOpaquesType o = R2SceneOpaques.newOpaques();
+    o.opaquesAddBillboardedInstance(i0a0, m0);
+    o.opaquesAddBillboardedInstance(i1a0, m0);
+    o.opaquesAddBillboardedInstance(i2a0, m0);
+    o.opaquesAddBillboardedInstance(i3a1, m0);
+    o.opaquesAddBillboardedInstance(i4a1, m0);
+    o.opaquesAddBillboardedInstance(i5a1, m0);
+
+    o.opaquesAddBillboardedInstance(i6a0, m1);
+    o.opaquesAddBillboardedInstance(i7a0, m1);
+    o.opaquesAddBillboardedInstance(i8a0, m1);
+    o.opaquesAddBillboardedInstance(i9a1, m1);
+    o.opaquesAddBillboardedInstance(i10a1, m1);
+    o.opaquesAddBillboardedInstance(i11a1, m1);
+
+    o.opaquesAddBillboardedInstance(i12a0, m2);
+    o.opaquesAddBillboardedInstance(i13a0, m2);
+    o.opaquesAddBillboardedInstance(i14a0, m2);
+    o.opaquesAddBillboardedInstance(i15a1, m2);
+    o.opaquesAddBillboardedInstance(i16a1, m2);
+    o.opaquesAddBillboardedInstance(i17a1, m2);
+
+    o.opaquesAddBillboardedInstance(i18a0, m3);
+    o.opaquesAddBillboardedInstance(i19a0, m3);
+    o.opaquesAddBillboardedInstance(i20a0, m3);
+    o.opaquesAddBillboardedInstance(i21a1, m3);
+    o.opaquesAddBillboardedInstance(i22a1, m3);
+    o.opaquesAddBillboardedInstance(i23a1, m3);
+
+    Assert.assertEquals(24L, o.opaquesCount());
+
+    final LoggingConsumer cc = new LoggingConsumer();
+    final List<String> op = cc.ops;
+    o.opaquesExecute(cc);
+
+    Assert.assertEquals(4L, (long) a0.getGLName());
+    Assert.assertEquals(7L, (long) a1.getGLName());
+
+    op.stream().forEach(System.out::println);
+
+    Assert.assertEquals("onStart", op.remove(0));
+
+    final IntOpenHashSet updates = new IntOpenHashSet();
+    for (int index = 0; index < 24; ++index) {
+      final String cmd = op.remove(0);
+      Assert.assertThat(
+        cmd,
+        new StringStartsWith("onInstanceBillboardedUpdate "));
+      final String[] segments = cmd.split("\\s+");
+      final int k = Integer.parseInt(segments[1]);
+      Assert.assertFalse(updates.contains(k));
+      updates.add(k);
+    }
+
+    Assert.assertEquals("onStartGroup 1", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedShaderStart 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedMaterialStart 0 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 0", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 5", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 1", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 3", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 4", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 2", op.remove(0));
+    Assert.assertEquals(
+      "onInstanceBillboardedMaterialFinish 0 0",
+      op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedMaterialStart 0 1", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 9", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 6", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 11", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 10", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 7", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 8", op.remove(0));
+    Assert.assertEquals(
+      "onInstanceBillboardedMaterialFinish 0 1",
+      op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedShaderFinish 0", op.remove(0));
+
+    Assert.assertEquals("onInstanceBillboardedShaderStart 1", op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedMaterialStart 1 3", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 21", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 20", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 22", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 19", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 18", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 23", op.remove(0));
+    Assert.assertEquals(
+      "onInstanceBillboardedMaterialFinish 1 3",
+      op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedMaterialStart 1 2", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 15", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 14", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 16", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 17", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 12", op.remove(0));
+    Assert.assertEquals("onInstanceBillboarded 13", op.remove(0));
+    Assert.assertEquals(
+      "onInstanceBillboardedMaterialFinish 1 2",
+      op.remove(0));
+    Assert.assertEquals("onInstanceBillboardedShaderFinish 1", op.remove(0));
+    Assert.assertEquals("onFinishGroup 1", op.remove(0));
+    Assert.assertEquals("onFinish", op.remove(0));
+    Assert.assertTrue(op.isEmpty());
+  }
+
   private static final class LoggingConsumer implements
     R2SceneOpaquesConsumerType
   {
@@ -714,7 +1032,7 @@ public final class R2SceneOpaquesTest
     {
       this.ops.add(String.format(
         "onInstanceBatchedUpdate %d",
-        Long.valueOf(i.getInstanceID())));
+        Long.valueOf(i.instanceID())));
     }
 
     @Override
@@ -724,20 +1042,20 @@ public final class R2SceneOpaquesTest
       this.shader_current = s;
       this.ops.add(String.format(
         "onInstanceBatchedShaderStart %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
     public <M> void onInstanceBatchedMaterialStart(
       final R2MaterialOpaqueBatchedType<M> material)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.shader();
       Assert.assertEquals(this.shader_current, s);
       this.material_current = material;
       this.ops.add(String.format(
         "onInstanceBatchedMaterialStart %d %d",
-        Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
+        Long.valueOf(s.shaderID()),
+        Long.valueOf(material.materialID())));
     }
 
     @Override
@@ -745,26 +1063,26 @@ public final class R2SceneOpaquesTest
       final R2MaterialOpaqueBatchedType<M> material,
       final R2InstanceBatchedType i)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.shader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       this.ops.add(String.format(
         "onInstanceBatched %d",
-        Long.valueOf(i.getInstanceID())));
+        Long.valueOf(i.instanceID())));
     }
 
     @Override
     public <M> void onInstanceBatchedMaterialFinish(
       final R2MaterialOpaqueBatchedType<M> material)
     {
-      final R2ShaderInstanceBatchedUsableType<M> s = material.getShader();
+      final R2ShaderInstanceBatchedUsableType<M> s = material.shader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       this.material_current = null;
       this.ops.add(String.format(
         "onInstanceBatchedMaterialFinish %d %d",
-        Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
+        Long.valueOf(s.shaderID()),
+        Long.valueOf(material.materialID())));
     }
 
     @Override
@@ -775,7 +1093,77 @@ public final class R2SceneOpaquesTest
       this.shader_current = null;
       this.ops.add(String.format(
         "onInstanceBatchedShaderFinish %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
+    }
+
+    @Override
+    public void onInstanceBillboardedUpdate(
+      final R2InstanceBillboardedType i)
+    {
+      this.ops.add(String.format(
+        "onInstanceBillboardedUpdate %d",
+        Long.valueOf(i.instanceID())));
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderStart(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
+    {
+      this.shader_current = s;
+      this.ops.add(String.format(
+        "onInstanceBillboardedShaderStart %d",
+        Long.valueOf(s.shaderID())));
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialStart(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      final R2ShaderInstanceBillboardedUsableType<M> s = material.shader();
+      Assert.assertEquals(this.shader_current, s);
+      this.material_current = material;
+      this.ops.add(String.format(
+        "onInstanceBillboardedMaterialStart %d %d",
+        Long.valueOf(s.shaderID()),
+        Long.valueOf(material.materialID())));
+    }
+
+    @Override
+    public <M> void onInstanceBillboarded(
+      final R2MaterialOpaqueBillboardedType<M> material,
+      final R2InstanceBillboardedType i)
+    {
+      final R2ShaderInstanceBillboardedUsableType<M> s = material.shader();
+      Assert.assertEquals(s, this.shader_current);
+      Assert.assertEquals(material, this.material_current);
+      this.ops.add(String.format(
+        "onInstanceBillboarded %d",
+        Long.valueOf(i.instanceID())));
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialFinish(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      final R2ShaderInstanceBillboardedUsableType<M> s = material.shader();
+      Assert.assertEquals(s, this.shader_current);
+      Assert.assertEquals(material, this.material_current);
+      this.material_current = null;
+      this.ops.add(String.format(
+        "onInstanceBillboardedMaterialFinish %d %d",
+        Long.valueOf(s.shaderID()),
+        Long.valueOf(material.materialID())));
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderFinish(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
+    {
+      Assert.assertEquals(s, this.shader_current);
+      this.shader_current = null;
+      this.ops.add(String.format(
+        "onInstanceBillboardedShaderFinish %d",
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -785,27 +1173,27 @@ public final class R2SceneOpaquesTest
       this.shader_current = s;
       this.ops.add(String.format(
         "onInstanceSingleShaderStart %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
     public <M> void onInstanceSingleMaterialStart(
       final R2MaterialOpaqueSingleType<M> material)
     {
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+      final R2ShaderInstanceSingleUsableType<M> s = material.shader();
       Assert.assertEquals(this.shader_current, s);
       this.material_current = material;
       this.ops.add(String.format(
         "onInstanceSingleMaterialStart %d %d",
-        Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
+        Long.valueOf(s.shaderID()),
+        Long.valueOf(material.materialID())));
     }
 
     @Override
     public void onInstanceSingleArrayStart(
       final R2InstanceSingleType i)
     {
-      this.array_current = i.getArrayObject();
+      this.array_current = i.arrayObject();
       this.ops.add(String.format(
         "onInstanceSingleArrayStart %d",
         Integer.valueOf(this.array_current.getGLName())));
@@ -816,27 +1204,27 @@ public final class R2SceneOpaquesTest
       final R2MaterialOpaqueSingleType<M> material,
       final R2InstanceSingleType i)
     {
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+      final R2ShaderInstanceSingleUsableType<M> s = material.shader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
-      Assert.assertEquals(i.getArrayObject(), this.array_current);
+      Assert.assertEquals(i.arrayObject(), this.array_current);
       this.ops.add(String.format(
         "onInstanceSingle %d",
-        Long.valueOf(i.getInstanceID())));
+        Long.valueOf(i.instanceID())));
     }
 
     @Override
     public <M> void onInstanceSingleMaterialFinish(
       final R2MaterialOpaqueSingleType<M> material)
     {
-      final R2ShaderInstanceSingleUsableType<M> s = material.getShader();
+      final R2ShaderInstanceSingleUsableType<M> s = material.shader();
       Assert.assertEquals(s, this.shader_current);
       Assert.assertEquals(material, this.material_current);
       this.material_current = null;
       this.ops.add(String.format(
         "onInstanceSingleMaterialFinish %d %d",
-        Long.valueOf(s.getShaderID()),
-        Long.valueOf(material.getMaterialID())));
+        Long.valueOf(s.shaderID()),
+        Long.valueOf(material.materialID())));
     }
 
     @Override
@@ -847,7 +1235,7 @@ public final class R2SceneOpaquesTest
       this.shader_current = null;
       this.ops.add(String.format(
         "onInstanceSingleShaderFinish %d",
-        Long.valueOf(s.getShaderID())));
+        Long.valueOf(s.shaderID())));
     }
 
     @Override
@@ -871,6 +1259,49 @@ public final class R2SceneOpaquesTest
 
     @Override
     public void onStartGroup(final int group)
+    {
+      throw new UnreachableCodeException();
+    }
+
+    @Override
+    public void onInstanceBillboardedUpdate(
+      final R2InstanceBillboardedType i)
+    {
+      throw new UnreachableCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderStart(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
+    {
+      throw new UnreachableCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialStart(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      throw new UnreachableCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBillboarded(
+      final R2MaterialOpaqueBillboardedType<M> material,
+      final R2InstanceBillboardedType i)
+    {
+      throw new UnreachableCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedMaterialFinish(
+      final R2MaterialOpaqueBillboardedType<M> material)
+    {
+      throw new UnreachableCodeException();
+    }
+
+    @Override
+    public <M> void onInstanceBillboardedShaderFinish(
+      final R2ShaderInstanceBillboardedUsableType<M> s)
     {
       throw new UnreachableCodeException();
     }

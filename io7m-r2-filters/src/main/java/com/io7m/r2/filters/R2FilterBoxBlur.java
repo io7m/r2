@@ -16,6 +16,7 @@
 
 package com.io7m.r2.filters;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jareas.core.AreaInclusiveUnsignedLType;
 import com.io7m.jcanephora.core.JCGLFramebufferBlitBuffer;
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
@@ -28,7 +29,7 @@ import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.core.api.JCGLViewportsType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
+import com.io7m.jcanephora.renderstate.JCGLRenderState;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -45,8 +46,8 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderSourcesType;
-import org.valid4j.Assertive;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterMutable;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.EnumSet;
 import java.util.Objects;
@@ -78,43 +79,34 @@ public final class R2FilterBoxBlur<
       JCGLFramebufferBlitBuffer.FRAMEBUFFER_BLIT_BUFFER_COLOR);
   }
 
-  private final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType> shader_blur_h;
-  private final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType> shader_blur_v;
+  private final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> shader_blur_h;
+  private final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> shader_blur_v;
   private final JCGLInterfaceGL33Type g;
   private final R2RenderTargetPoolUsableType<DD, D> render_target_pool;
   private final R2UnitQuadUsableType quad;
-  private final R2ShaderFilterBoxBlurParametersMutable shader_params;
-  private final JCGLRenderStateMutable render_state;
+  private final JCGLRenderState render_state;
+  private final R2ShaderParametersFilterMutable<R2ShaderFilterBoxBlurParameters> blur_values;
 
   private R2FilterBoxBlur(
     final JCGLInterfaceGL33Type in_g,
     final R2RenderTargetPoolUsableType<DD, D> in_rtp_pool,
     final R2UnitQuadUsableType in_quad,
-    final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType>
-      in_shader_blur_h,
-    final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType>
-      in_shader_blur_v)
+    final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> in_shader_blur_h,
+    final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> in_shader_blur_v)
   {
-    this.g =
-      NullCheck.notNull(in_g);
-    this.shader_blur_h =
-      NullCheck.notNull(in_shader_blur_h);
-    this.shader_blur_v =
-      NullCheck.notNull(in_shader_blur_v);
-    this.render_target_pool =
-      NullCheck.notNull(in_rtp_pool);
-    this.quad =
-      NullCheck.notNull(in_quad);
-    this.shader_params =
-      R2ShaderFilterBoxBlurParametersMutable.create();
-    this.render_state =
-      JCGLRenderStateMutable.create();
+    this.g = NullCheck.notNull(in_g);
+    this.shader_blur_h = NullCheck.notNull(in_shader_blur_h);
+    this.shader_blur_v = NullCheck.notNull(in_shader_blur_v);
+    this.render_target_pool = NullCheck.notNull(in_rtp_pool);
+    this.quad = NullCheck.notNull(in_quad);
+    this.render_state = JCGLRenderState.builder().build();
+    this.blur_values = R2ShaderParametersFilterMutable.create();
   }
 
   /**
    * Construct a new filter.
    *
-   * @param in_sources      Shader sources
+   * @param in_shader_env   Shader sources
    * @param in_g            A GL interface
    * @param in_tex_defaults The set of default textures
    * @param in_rtp_pool     A render target pool
@@ -135,14 +127,14 @@ public final class R2FilterBoxBlur<
     D extends R2RenderTargetUsableType<DD>>
   R2FilterType<R2FilterBoxBlurParameters<SD, S, DD, D>>
   newFilter(
-    final R2ShaderSourcesType in_sources,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final JCGLInterfaceGL33Type in_g,
     final R2TextureDefaultsType in_tex_defaults,
     final R2RenderTargetPoolUsableType<DD, D> in_rtp_pool,
     final R2IDPoolType in_id_pool,
     final R2UnitQuadUsableType in_quad)
   {
-    NullCheck.notNull(in_sources);
+    NullCheck.notNull(in_shader_env);
     NullCheck.notNull(in_g);
     NullCheck.notNull(in_tex_defaults);
     NullCheck.notNull(in_id_pool);
@@ -150,10 +142,12 @@ public final class R2FilterBoxBlur<
     NullCheck.notNull(in_quad);
 
     final JCGLShadersType g_sh = in_g.getShaders();
-    final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType> s_blur_h =
-      R2ShaderFilterBoxBlurHorizontal4f.newShader(g_sh, in_sources, in_id_pool);
-    final R2ShaderFilterType<R2ShaderFilterBoxBlurParametersType> s_blur_v =
-      R2ShaderFilterBoxBlurVertical4f.newShader(g_sh, in_sources, in_id_pool);
+    final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> s_blur_h =
+      R2ShaderFilterBoxBlurHorizontal4f.newShader(
+        g_sh, in_shader_env, in_id_pool);
+    final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> s_blur_v =
+      R2ShaderFilterBoxBlurVertical4f.newShader(
+        g_sh, in_shader_env, in_id_pool);
 
     return new R2FilterBoxBlur<>(
       in_g, in_rtp_pool, in_quad, s_blur_h, s_blur_v);
@@ -190,38 +184,37 @@ public final class R2FilterBoxBlur<
     try {
       final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
 
-      final S source =
-        parameters.getSourceRenderTarget();
-      final D destination =
-        parameters.getOutputRenderTarget();
+      final S source = parameters.sourceRenderTarget();
+      final D destination = parameters.outputRenderTarget();
 
-      final DD desc_orig =
-        destination.getDescription();
+      final DD desc_orig = destination.description();
+      final R2BlurParameters blur_params = parameters.blurParameters();
+
       final DD desc_scaled =
         R2RenderTargetDescriptions.scale(
           desc_orig,
-          parameters.getOutputDescriptionScaler(),
-          (double) parameters.getBlurScale());
+          parameters.outputDescriptionScaler(),
+          (double) blur_params.blurScale());
 
       final D destination_scaled =
         this.render_target_pool.get(uc, desc_scaled);
 
       try {
-        g_fb.framebufferReadBind(source.getPrimaryFramebuffer());
-        g_fb.framebufferDrawBind(destination_scaled.getPrimaryFramebuffer());
+        g_fb.framebufferReadBind(source.primaryFramebuffer());
+        g_fb.framebufferDrawBind(destination_scaled.primaryFramebuffer());
         g_fb.framebufferBlit(
-          source.getArea(),
-          destination_scaled.getArea(),
-          R2FilterBoxBlur.BLIT_BUFFERS,
-          parameters.getBlurScaleFilter());
+          source.area(),
+          destination_scaled.area(),
+          BLIT_BUFFERS,
+          blur_params.blurScaleFilter());
 
-        g_fb.framebufferReadBind(destination_scaled.getPrimaryFramebuffer());
-        g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
+        g_fb.framebufferReadBind(destination_scaled.primaryFramebuffer());
+        g_fb.framebufferDrawBind(destination.primaryFramebuffer());
         g_fb.framebufferBlit(
-          destination_scaled.getArea(),
-          destination.getArea(),
-          R2FilterBoxBlur.BLIT_BUFFERS,
-          parameters.getBlurScaleFilter());
+          destination_scaled.area(),
+          destination.area(),
+          BLIT_BUFFERS,
+          blur_params.blurScaleFilter());
 
       } finally {
         this.render_target_pool.returnValue(uc, destination_scaled);
@@ -245,20 +238,20 @@ public final class R2FilterBoxBlur<
     pc_copy.startMeasuringIfEnabled();
     try {
       final S source =
-        parameters.getSourceRenderTarget();
+        parameters.sourceRenderTarget();
       final D destination =
-        parameters.getOutputRenderTarget();
+        parameters.outputRenderTarget();
 
-      /**
+      /*
        * The output framebuffer is bound here even though it may not be
        * necessary. The reason for this is that filters are supposed to have
        * consistent binding semantics: If a framebuffer is specified as an output,
        * that framebuffer will be bound when the filter has finished executing.
        */
 
-      g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
+      g_fb.framebufferDrawBind(destination.primaryFramebuffer());
 
-      /**
+      /*
        * No point copying something to itself...
        */
 
@@ -267,12 +260,12 @@ public final class R2FilterBoxBlur<
       }
 
       try {
-        g_fb.framebufferReadBind(source.getPrimaryFramebuffer());
+        g_fb.framebufferReadBind(source.primaryFramebuffer());
         g_fb.framebufferBlit(
-          source.getArea(),
-          destination.getArea(),
-          R2FilterBoxBlur.BLIT_BUFFERS,
-          parameters.getBlurScaleFilter());
+          source.area(),
+          destination.area(),
+          BLIT_BUFFERS,
+          parameters.blurParameters().blurScaleFilter());
       } finally {
         g_fb.framebufferReadUnbind();
       }
@@ -291,24 +284,38 @@ public final class R2FilterBoxBlur<
     NullCheck.notNull(uc);
     NullCheck.notNull(parameters);
 
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Filter must not be deleted");
+
     final JCGLProfilingContextType pc_base = pc.getChildContext("box-blur");
 
-    final int blur_passes = parameters.getBlurPasses();
+    final R2BlurParameters blur_params = parameters.blurParameters();
+    final int blur_passes = blur_params.blurPasses();
     if (blur_passes == 0) {
       this.runSimpleCopy(pc_base, parameters);
       return;
     }
 
-    Assertive.ensure(blur_passes > 0);
+    Preconditions.checkPreconditionI(
+      blur_passes,
+      blur_passes > 0,
+      p -> "Blur passes must be positive");
 
-    final float blur_size = parameters.getBlurSize();
+    final float blur_size = blur_params.blurSize();
     if (blur_size == 0.0f) {
       this.runSimpleScale(pc_base, uc, parameters);
       return;
     }
 
-    Assertive.ensure(blur_passes > 0);
-    Assertive.ensure(blur_size > 0.0f);
+    Preconditions.checkPreconditionI(
+      blur_passes,
+      blur_passes > 0,
+      p -> "Blur passes must be positive");
+
+    Preconditions.checkPreconditionD(
+      blur_size,
+      blur_size > 0.0f,
+      p -> "Blur size must be positive");
 
     this.runBlur(pc_base, uc, parameters);
   }
@@ -327,15 +334,15 @@ public final class R2FilterBoxBlur<
 
     try {
       final S source =
-        parameters.getSourceRenderTarget();
+        parameters.sourceRenderTarget();
       final D destination =
-        parameters.getOutputRenderTarget();
+        parameters.outputRenderTarget();
 
       final DD desc_scaled =
         R2RenderTargetDescriptions.scale(
-          destination.getDescription(),
-          parameters.getOutputDescriptionScaler(),
-          parameters.getBlurScale());
+          destination.description(),
+          parameters.outputDescriptionScaler(),
+          (double) parameters.blurParameters().blurScale());
 
       final D temporary_a =
         this.render_target_pool.get(uc, desc_scaled);
@@ -347,49 +354,50 @@ public final class R2FilterBoxBlur<
 
         try {
 
-          /**
+          /*
            * Copy the contents of the source to TA.
            */
 
           final JCGLFramebuffersType g_fb = this.g.getFramebuffers();
-          g_fb.framebufferReadBind(source.getPrimaryFramebuffer());
-          g_fb.framebufferDrawBind(temporary_a.getPrimaryFramebuffer());
+          g_fb.framebufferReadBind(source.primaryFramebuffer());
+          g_fb.framebufferDrawBind(temporary_a.primaryFramebuffer());
+          final R2BlurParameters blur_params = parameters.blurParameters();
           g_fb.framebufferBlit(
-            source.getArea(),
-            temporary_a.getArea(),
-            R2FilterBoxBlur.BLIT_BUFFERS,
-            parameters.getBlurScaleFilter());
+            source.area(),
+            temporary_a.area(),
+            BLIT_BUFFERS,
+            blur_params.blurScaleFilter());
 
-          /**
+          /*
            * Now repeatedly blur TA → TB, TB → TA.
            */
 
-          for (int pass = 0; pass < parameters.getBlurPasses(); ++pass) {
+          for (int pass = 0; pass < blur_params.blurPasses(); ++pass) {
             this.evaluateBlurH(
               uc,
-              parameters,
-              parameters.getOutputTextureSelector().apply(temporary_a),
-              temporary_b.getArea(),
-              temporary_b.getPrimaryFramebuffer());
+              blur_params,
+              parameters.outputTextureSelector().apply(temporary_a),
+              temporary_b.area(),
+              temporary_b.primaryFramebuffer());
             this.evaluateBlurV(
               uc,
-              parameters,
-              parameters.getOutputTextureSelector().apply(temporary_b),
-              temporary_a.getArea(),
-              temporary_a.getPrimaryFramebuffer());
+              blur_params,
+              parameters.outputTextureSelector().apply(temporary_b),
+              temporary_a.area(),
+              temporary_a.primaryFramebuffer());
           }
 
-          /**
+          /*
            * Now, copy TA → Output.
            */
 
-          g_fb.framebufferReadBind(temporary_a.getPrimaryFramebuffer());
-          g_fb.framebufferDrawBind(destination.getPrimaryFramebuffer());
+          g_fb.framebufferReadBind(temporary_a.primaryFramebuffer());
+          g_fb.framebufferDrawBind(destination.primaryFramebuffer());
           g_fb.framebufferBlit(
-            temporary_a.getArea(),
-            destination.getArea(),
-            R2FilterBoxBlur.BLIT_BUFFERS,
-            parameters.getBlurScaleFilter());
+            temporary_a.area(),
+            destination.area(),
+            BLIT_BUFFERS,
+            blur_params.blurScaleFilter());
           g_fb.framebufferReadUnbind();
 
         } finally {
@@ -405,7 +413,7 @@ public final class R2FilterBoxBlur<
 
   private void evaluateBlurH(
     final JCGLTextureUnitContextParentType uc,
-    final R2BlurParametersReadableType parameters,
+    final R2BlurParameters parameters,
     final R2Texture2DUsableType source_texture,
     final AreaInclusiveUnsignedLType target_area,
     final JCGLFramebufferUsableType target_fb)
@@ -426,26 +434,28 @@ public final class R2FilterBoxBlur<
       g_v.viewportSet(target_area);
 
       try {
-        this.shader_blur_h.onActivate(g_sh);
+        this.shader_blur_h.onActivate(this.g);
 
         final AreaInclusiveUnsignedLType source_area =
-          source_texture.get().textureGetArea();
+          source_texture.texture().textureGetArea();
         final UnsignedRangeInclusiveL range_x =
           source_area.getRangeX();
 
-        this.shader_params.setBlurRadius(
-          (float) range_x.getInterval() / parameters.getBlurSize());
-        this.shader_params.setTexture(source_texture);
+        this.blur_values.setTextureUnitContext(tc);
+        this.blur_values.setValues(
+          R2ShaderFilterBoxBlurParameters.builder()
+            .setTexture(source_texture)
+            .setBlurRadius((float) range_x.getInterval() / parameters.blurSize())
+            .build());
 
-        this.shader_blur_h.onReceiveFilterValues(
-          g_tex, g_sh, tc, this.shader_params);
+        this.shader_blur_h.onReceiveFilterValues(this.g, this.blur_values);
         this.shader_blur_h.onValidate();
 
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader_blur_h.onDeactivate(g_sh);
+        this.shader_blur_h.onDeactivate(this.g);
       }
 
     } finally {
@@ -455,7 +465,7 @@ public final class R2FilterBoxBlur<
 
   private void evaluateBlurV(
     final JCGLTextureUnitContextParentType uc,
-    final R2BlurParametersReadableType parameters,
+    final R2BlurParameters parameters,
     final R2Texture2DUsableType source_texture,
     final AreaInclusiveUnsignedLType target_area,
     final JCGLFramebufferUsableType target_fb)
@@ -476,26 +486,28 @@ public final class R2FilterBoxBlur<
       g_v.viewportSet(target_area);
 
       try {
-        this.shader_blur_v.onActivate(g_sh);
+        this.shader_blur_v.onActivate(this.g);
 
         final AreaInclusiveUnsignedLType source_area =
-          source_texture.get().textureGetArea();
+          source_texture.texture().textureGetArea();
         final UnsignedRangeInclusiveL range_y =
           source_area.getRangeY();
 
-        this.shader_params.setBlurRadius(
-          (float) range_y.getInterval() / parameters.getBlurSize());
-        this.shader_params.setTexture(source_texture);
+        this.blur_values.setTextureUnitContext(tc);
+        this.blur_values.setValues(
+          R2ShaderFilterBoxBlurParameters.builder()
+            .setTexture(source_texture)
+            .setBlurRadius((float) range_y.getInterval() / parameters.blurSize())
+            .build());
 
-        this.shader_blur_v.onReceiveFilterValues(
-          g_tex, g_sh, tc, this.shader_params);
+        this.shader_blur_v.onReceiveFilterValues(this.g, this.blur_values);
         this.shader_blur_v.onValidate();
 
-        g_ao.arrayObjectBind(this.quad.getArrayObject());
+        g_ao.arrayObjectBind(this.quad.arrayObject());
         g_dr.drawElements(JCGLPrimitives.PRIMITIVE_TRIANGLES);
       } finally {
         g_ao.arrayObjectUnbind();
-        this.shader_blur_v.onDeactivate(g_sh);
+        this.shader_blur_v.onDeactivate(this.g);
       }
 
     } finally {

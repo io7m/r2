@@ -27,7 +27,6 @@ import org.immutables.value.Value;
  */
 
 @Value.Immutable
-@Value.Modifiable
 @R2ImmutableStyleType
 public interface R2FilterDebugEyePositionParametersType
 {
@@ -37,26 +36,26 @@ public interface R2FilterDebugEyePositionParametersType
    */
 
   @Value.Parameter
-  R2GeometryBufferUsableType getGeometryBuffer();
+  R2GeometryBufferUsableType geometryBuffer();
 
   /**
    * @return The output eye-space position buffer
    */
 
   @Value.Parameter
-  R2EyePositionBufferUsableType getEyePositionBuffer();
+  R2EyePositionBufferUsableType eyePositionBuffer();
 
   /**
    * @return The observer matrix values that were used to produce the scene
    */
 
   @Value.Parameter
-  R2MatricesObserverType getObserverValues();
+  R2MatricesObserverType observerValues();
 
   /**
    * @return A set of default textures
    */
 
   @Value.Parameter
-  R2TextureDefaultsType getTextureDefaults();
+  R2TextureDefaultsType textureDefaults();
 }

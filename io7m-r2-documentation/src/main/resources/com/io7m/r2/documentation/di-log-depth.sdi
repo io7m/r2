@@ -1,0 +1,120 @@
+[section [title Logarithmic Depth] [id di.log_depth]]
+[subsection [title Overview] [id di.log_depth.overview]]
+[paragraph]
+The [term [type package] r2] package exclusively utilizes a so-called
+[term [type term] logarithmic depth buffer] for all rendering operations.
+
+[subsection [title OpenGL Depth Issues] [id di.log_depth.issues_existing]]
+[paragraph]
+By default, OpenGL "(effectively)" stores a depth value proportional to the
+reciprocal of the [term [type variable] z] component of the
+(link (target di.coords.clip) clip space) coordinates of each vertex
+projected onto the screen [footnote-ref di.log_depth.love_depth]. Informally, the
+[term [type term] perspective projection] matrix used to transform
+(link (target di.coords.eye) eye space) coordinates to clip space will
+place the negated [term [type variable] z] component of the original eye space
+coordinates into the [term [type variable] w] component of the resulting
+clip space coordinates. When the hardware performs the
+(link (target di.coords.ndevice) division by w) to produce
+normalized-device space coordinates, the resulting [term [type variable] z]
+component falls within the range [term [type expression] "[-1.0, 1.0]"]
+"(although" any point with a [term [type variable] z] component less than
+[term [type constant] 0] will be clipped away by the clipping "hardware)." This
+final value is linearly mapped to a configurable range "(typically"
+[term [type expression] "[0.0, 1.0]"] ")" to produce a
+(link (target di.coords.screen) screen space) depth value.
+
+[paragraph]
+Unfortunately, the encoding scheme above means that most of the depth buffer is
+essentially wasted. The above scheme will give excessive precision for objects
+close to the viewing plane, and almost none for objects further away.
+Fortunately, a better encoding scheme known as
+[term [type term] logarithmic depth] [footnote-ref di.log_depth.kemen] can be
+implemented that provides vastly greater precision and coexists happily with
+the standard projection matrices used in OpenGL-based renderers.
+
+[footnote [id di.log_depth.love_depth]]
+See
+(link-ext (target "http://www.sjbaker.org/steve/omniv/love_your_z_buffer.html")
+Learning To Love Your Depth Buffer).
+
+[footnote [id di.log_depth.kemen]]
+Apparently first discovered by
+(link-ext
+(target
+"http://outerra.blogspot.co.uk/2012/11/maximizing-depth-buffer-range-and.html")
+Brano Kemen).
+
+[subsection [title Logarithmic Encoding] [id di.log_depth.encoding]]
+[paragraph]
+A [term [type term] logarithmic depth value] is produced by encoding a negated
+"(and" therefore [term [type term] positive] ")" eye space
+[term [type variable] z] value in the manner specified by
+[term [type function] encode]
+(link-ext (target "haskell/LogDepth.hs") "LogDepth.hs"):
+
+[formal-item [title "Logarithmic Depth (Encoding)"]]
+[verbatim [include "haskell/LogDepth.hs"]]
+
+[paragraph]
+The function is parameterized by a so-called
+[term [type term] depth coefficient] that is derived from the
+[term [type term] far plane distance] as shown by
+[term [type expression] depth_coefficient].
+
+[paragraph]
+The inverse of [term [type function] encode] is [term [type function] decode],
+such that for a given negated eye space [term [type variable] z],
+[term [type expression] "z = decode d (encode d z)"].
+
+[paragraph]
+A graph of the functions is as follows:
+
+[formal-item [title "Logarithmic Depth (Graph)"]]
+[image [target "images/log_depth.png"] "Logarithmic Depth (Graph)"]
+
+[paragraph]
+An interactive (link-ext (target "http://geogebra.org") GeoGebra) construction
+is provided in (link-ext (target "log_depth.ggb") "log_depth.ggb").
+
+[paragraph]
+The [term [type package] r2] package uses a slightly modified version of
+the encoding function that clamps the original [term [type variable] z] value to
+the range [term [type expression] "[0.000001, ∞]"] . The reason for this is that
+[term [type expression] "log2 (0)"] is undefined, and so attempting to derive a
+depth value in this manner tends to cause issues with triangle clipping. The
+encoding function is also separated into two parts as a simple optimization: The
+encoding function contains a term [term [type expression] z + 1.0] , and this
+term can be calculated by a [term [type term] vertex shader] and interpolated.
+The actual functions as implemented are given by
+(link-ext (target "glsl/com/io7m/r2/shaders/core/R2LogDepth.h") R2LogDepth.h):
+
+[formal-item [title "Logarithmic Depth (GLSL)"]]
+[verbatim [include "glsl/com/io7m/r2/shaders/core/R2LogDepth.h"]]
+
+[paragraph]
+A fragment shader can use [term [type function] encode_full] to compute a
+logarithmic depth value from a given positive eye space [term [type variable] z]
+value. Alternatively, a vertex shader can compute the
+[term [type expression] z + 1.0] term [term [type variable] r] from a
+non-negated eye space [term [type variable] z] value, and pass
+[term [type variable] r] to a cooperating fragment shader which then finishes
+the computation by applying [term [type function] encode_partial] to
+[term [type variable] r]. When performing
+(link (target di.deferred-position-recon) position reconstruction) during
+[term [type term] deferred rendering], the original eye space
+[term [type variable] z] value of a fragment is retrieved by negating the result
+of [term [type function] decode] applied to a given logarithmic depth sample.
+
+[paragraph]
+The original derivation of the encoding and decoding functions as described by
+Brano Kemen used the [term [type variable] w] component of the resulting
+clip space coordinates. Unfortunately, this does not work correctly with
+orthographic projections, as the typical orthographic projection matrix will
+produce clip space coordinates with a [term [type variable] w] component always
+equal to [term [type constant] 1]. Aside from the effects that this will have
+on depth testing "(essentially" mapping the depth of all fragments to the far
+"plane)," it also makes position reconstruction impossible as the original
+eye space [term [type variable] z] value cannot be recovered. Instead, the
+[term [type package] r2] package uses the negated eye space
+[term [type variable] z] value directly in all cases.

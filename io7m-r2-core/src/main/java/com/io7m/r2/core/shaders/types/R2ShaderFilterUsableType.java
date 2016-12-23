@@ -16,9 +16,7 @@
 
 package com.io7m.r2.core.shaders.types;
 
-import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jcanephora.core.api.JCGLTexturesType;
-import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextMutableType;
+import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 
 /**
  * The type of usable shaders for implementing full-screen filters.
@@ -32,17 +30,14 @@ public interface R2ShaderFilterUsableType<M> extends R2ShaderScreenUsableType<M>
    * <p>Set filter values.</p>
    *
    * <p>This method will be called exactly once between calls to {@link
-   * #onActivate(JCGLShadersType)} and {@link #onValidate()}.</p>
+   * R2ShaderUsableType#onActivate(JCGLInterfaceGL33Type)} and {@link
+   * #onValidate()}.</p>
    *
-   * @param g_tex  A texture interface
-   * @param g_sh   A shader interface
-   * @param tc     A texture unit context
-   * @param values The filter parameters
+   * @param g          A texture interface
+   * @param parameters The current filter parameters
    */
 
   void onReceiveFilterValues(
-    JCGLTexturesType g_tex,
-    JCGLShadersType g_sh,
-    JCGLTextureUnitContextMutableType tc,
-    M values);
+    JCGLInterfaceGL33Type g,
+    R2ShaderParametersFilterType<M> parameters);
 }

@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.jaffirm.core.Preconditions;
 import com.io7m.jcanephora.core.JCGLArrayBufferType;
 import com.io7m.jcanephora.core.JCGLArrayObjectBuilderType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
@@ -35,7 +36,6 @@ import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
-import org.valid4j.Assertive;
 
 /**
  * <p>The default implementation of the {@link R2InstanceBatchedDynamicType}
@@ -51,12 +51,12 @@ import org.valid4j.Assertive;
 public final class R2InstanceBatchedDynamic implements
   R2InstanceBatchedDynamicType
 {
-  private final long                                      instance_id;
-  private final R2TransformOrthogonalReadableType[]       members;
-  private final IntSortedSet                              free;
-  private final int                                       max_size;
-  private final JCGLArrayBufferType                       matrix_vbo;
-  private final JCGLArrayObjectType                       matrix_vao;
+  private final long instance_id;
+  private final R2TransformOrthogonalReadableType[] members;
+  private final IntSortedSet free;
+  private final int max_size;
+  private final JCGLArrayBufferType matrix_vbo;
+  private final JCGLArrayObjectType matrix_vao;
   private final JCGLBufferUpdateType<JCGLArrayBufferType> update_vbo;
 
   private final PMatrixByteBuffered4x4FType<R2SpaceObjectType,
@@ -72,7 +72,11 @@ public final class R2InstanceBatchedDynamic implements
     NullCheck.notNull(g_ab);
     NullCheck.notNull(g_ao);
     NullCheck.notNull(o);
-    Assertive.require(count > 0, "Count must be positive");
+
+    Preconditions.checkPreconditionI(
+      count,
+      count > 0,
+      c -> "Count " + c + " must be positive");
 
     this.instance_id = in_id;
     this.max_size = count;
@@ -88,8 +92,8 @@ public final class R2InstanceBatchedDynamic implements
 
     try {
 
-      /**
-       * Allocate a buffer to store one model matrix per instance.
+      /*
+        Allocate a buffer to store one model matrix per instance.
        */
 
       vbo = g_ab.arrayBufferAllocate(
@@ -186,23 +190,23 @@ public final class R2InstanceBatchedDynamic implements
   {
     NullCheck.notNull(pool);
     return new R2InstanceBatchedDynamic(
-      g_ab, g_ao, o, pool.getFreshID(), count);
+      g_ab, g_ao, o, pool.freshID(), count);
   }
 
   @Override
-  public int getMaximumSize()
+  public int maximumSize()
   {
     return this.max_size;
   }
 
   @Override
-  public int getEnabledCount()
+  public int enabledCount()
   {
     return this.max_size - this.free.size();
   }
 
   @Override
-  public int getRenderCount()
+  public int renderCount()
   {
     return this.max_size;
   }
@@ -227,7 +231,7 @@ public final class R2InstanceBatchedDynamic implements
   {
     NullCheck.notNull(t);
 
-    if (this.getEnabledCount() == this.max_size) {
+    if (this.enabledCount() == this.max_size) {
       final StringBuilder sb = new StringBuilder(64);
       sb.append("Batch is full (capacity is ");
       sb.append(this.max_size);
@@ -235,7 +239,9 @@ public final class R2InstanceBatchedDynamic implements
       throw new R2ExceptionBatchIsFull(sb.toString());
     }
 
-    Assertive.require(!this.free.isEmpty());
+    Preconditions.checkPrecondition(
+      !this.free.isEmpty(), "Free set must not be empty");
+
     final int next = this.free.firstInt();
     this.members[next] = t;
     this.free.remove(next);
@@ -268,9 +274,9 @@ public final class R2InstanceBatchedDynamic implements
         trans.transformMakeMatrix4x4F(context, this.matrix_pointer);
       } else {
 
-        /**
-         * "Disable" the instance by specifying that it be drawn with
-         * a scale of zero.
+        /*
+          "Disable" the instance by specifying that it be drawn with
+          a scale of zero.
          */
 
         this.matrix_pointer.setR0C0F(0.0f);
@@ -290,13 +296,13 @@ public final class R2InstanceBatchedDynamic implements
   }
 
   @Override
-  public JCGLArrayObjectType getArrayObject()
+  public JCGLArrayObjectType arrayObject()
   {
     return this.matrix_vao;
   }
 
   @Override
-  public long getInstanceID()
+  public long instanceID()
   {
     return this.instance_id;
   }

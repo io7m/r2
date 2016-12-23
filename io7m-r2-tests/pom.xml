@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.io7m.r2</groupId>
     <artifactId>io7m-r2</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
   <artifactId>io7m-r2-tests</artifactId>
 
@@ -32,6 +32,11 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>io7m-r2-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>io7m-r2-shaders-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -64,11 +69,6 @@
       <artifactId>io7m-r2-meshes-arrayobject</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>io7m-r2-shaders-pp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>com.io7m.jnull</groupId>
@@ -86,33 +86,27 @@
     <dependency>
       <groupId>com.io7m.jcanephora</groupId>
       <artifactId>io7m-jcanephora-fake</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.io7m.jtensors</groupId>
-      <artifactId>io7m-jtensors-core</artifactId>
-      <scope>test</scope>
+      <artifactId>io7m-jtensors-tests</artifactId>
       <classifier>tests</classifier>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.github.marschall</groupId>
       <artifactId>memoryfilesystem</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

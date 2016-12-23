@@ -39,7 +39,6 @@ import com.io7m.jcanephora.renderstate.JCGLDepthState;
 import com.io7m.jcanephora.renderstate.JCGLDepthStrict;
 import com.io7m.jcanephora.renderstate.JCGLDepthWriting;
 import com.io7m.jcanephora.renderstate.JCGLRenderState;
-import com.io7m.jcanephora.renderstate.JCGLRenderStateMutable;
 import com.io7m.jcanephora.renderstate.JCGLRenderStates;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextType;
@@ -65,16 +64,15 @@ public final class R2AmbientOcclusionBuffer implements
   private static final JCGLClearSpecification CLEAR_SPEC;
 
   static {
-    final JCGLRenderStateMutable k = JCGLRenderStateMutable.create();
-    k.setDepthState(JCGLDepthState.of(
-      JCGLDepthStrict.DEPTH_STRICT_ENABLED,
-      Optional.empty(),
-      JCGLDepthWriting.DEPTH_WRITE_ENABLED,
-      JCGLDepthClamping.DEPTH_CLAMP_ENABLED
-    ));
-    k.setColorBufferMaskingState(
-      JCGLColorBufferMaskingState.of(true, false, false, false));
-    CLEAR_STATE = JCGLRenderState.builder().from(k).build();
+    CLEAR_STATE = JCGLRenderState.builder()
+      .setDepthState(JCGLDepthState.of(
+        JCGLDepthStrict.DEPTH_STRICT_ENABLED,
+        Optional.empty(),
+        JCGLDepthWriting.DEPTH_WRITE_ENABLED,
+        JCGLDepthClamping.DEPTH_CLAMP_ENABLED))
+      .setColorBufferMaskingState(
+        JCGLColorBufferMaskingState.of(true, false, false, false))
+      .build();
 
     CLEAR_SPEC = JCGLClearSpecification.of(
       Optional.of(new VectorI4F(1.0f, 0.0f, 0.0f, 0.0f)),
@@ -83,9 +81,9 @@ public final class R2AmbientOcclusionBuffer implements
       true);
   }
 
-  private final R2Texture2DType                         t_occ;
-  private final JCGLFramebufferType                     framebuffer;
-  private final UnsignedRangeInclusiveL                 range;
+  private final R2Texture2DType t_occ;
+  private final JCGLFramebufferType framebuffer;
+  private final UnsignedRangeInclusiveL range;
   private final R2AmbientOcclusionBufferDescriptionType desc;
 
   private R2AmbientOcclusionBuffer(
@@ -98,7 +96,7 @@ public final class R2AmbientOcclusionBuffer implements
     this.desc = NullCheck.notNull(in_desc);
 
     long size = 0L;
-    size += this.t_occ.get().getRange().getInterval();
+    size += this.t_occ.texture().getRange().getInterval();
     this.range = new UnsignedRangeInclusiveL(0L, size - 1L);
   }
 
@@ -124,7 +122,7 @@ public final class R2AmbientOcclusionBuffer implements
     final List<JCGLFramebufferDrawBufferType> buffers =
       g_fb.framebufferGetDrawBuffers();
 
-    final AreaInclusiveUnsignedLType area = d.getArea();
+    final AreaInclusiveUnsignedLType area = d.area();
     final UnsignedRangeInclusiveL range_x = area.getRangeX();
     final UnsignedRangeInclusiveL range_y = area.getRangeY();
 
@@ -143,7 +141,10 @@ public final class R2AmbientOcclusionBuffer implements
 
       final R2Texture2DType rt_occ = R2Texture2DStatic.of(p_occ.getRight());
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
-      fbb.attachColorTexture2DAt(points.get(0), buffers.get(0), rt_occ.get());
+      fbb.attachColorTexture2DAt(
+        points.get(0),
+        buffers.get(0),
+        rt_occ.texture());
 
       final R2AmbientOcclusionBufferDescription.Builder ab =
         R2AmbientOcclusionBufferDescription.builder();
@@ -157,25 +158,25 @@ public final class R2AmbientOcclusionBuffer implements
   }
 
   @Override
-  public R2Texture2DUsableType getAmbientOcclusionTexture()
+  public R2Texture2DUsableType ambientOcclusionTexture()
   {
     return this.t_occ;
   }
 
   @Override
-  public JCGLFramebufferUsableType getPrimaryFramebuffer()
+  public JCGLFramebufferUsableType primaryFramebuffer()
   {
     return this.framebuffer;
   }
 
   @Override
-  public AreaInclusiveUnsignedLType getArea()
+  public AreaInclusiveUnsignedLType area()
   {
-    return this.t_occ.get().textureGetArea();
+    return this.t_occ.texture().textureGetArea();
   }
 
   @Override
-  public R2AmbientOcclusionBufferDescriptionType getDescription()
+  public R2AmbientOcclusionBufferDescriptionType description()
   {
     return this.desc;
   }
@@ -197,8 +198,8 @@ public final class R2AmbientOcclusionBuffer implements
       throw new R2RendererExceptionFramebufferNotBound(sb.toString());
     }
 
-    JCGLRenderStates.activate(g, R2AmbientOcclusionBuffer.CLEAR_STATE);
-    g.getClear().clear(R2AmbientOcclusionBuffer.CLEAR_SPEC);
+    JCGLRenderStates.activate(g, CLEAR_STATE);
+    g.getClear().clear(CLEAR_SPEC);
   }
 
   @Override

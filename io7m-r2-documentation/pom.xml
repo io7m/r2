@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.io7m.r2</groupId>
     <artifactId>io7m-r2</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
   <artifactId>io7m-r2-documentation</artifactId>
 
@@ -28,7 +28,71 @@
       <groupId>com.io7m.jnull</groupId>
       <artifactId>io7m-jnull-core</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>io7m-r2-shaders-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
+
+  <profiles>
+    <!-- A profile that aggregates the javadocs of all of the project's modules. -->
+    <profile>
+      <id>io7m-r2-javadoc-aggregate</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>io7m-r2-core</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>io7m-r2-filters</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>io7m-r2-meshes</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>io7m-r2-meshes-arrayobject</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>io7m-r2-meshes-binary</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>io7m-r2-meshes-defaults</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>io7m-r2-meshes-obj</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>io7m-r2-meshes-tools</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>io7m-r2-spaces</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
@@ -56,35 +120,84 @@
         </executions>
       </plugin>
 
-      <!-- Produce documentation -->
+      <!-- Unpack core shader sources -->
       <plugin>
-        <groupId>com.io7m.jstructural</groupId>
-        <artifactId>io7m-jstructural-maven-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>make-documentation-single</id>
-            <phase>prepare-package</phase>
+            <id>unpack-shaders-core-sources</id>
+            <phase>generate-resources</phase>
             <goals>
-              <goal>transform</goal>
+              <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-              <documentFile>${project.build.directory}/documentation/documentation.xml</documentFile>
-              <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
-              <brandFile>${project.build.directory}/documentation/brand.xml</brandFile>
-              <pagination>XHTML_SINGLE</pagination>
+              <includeGroupIds>${project.groupId}</includeGroupIds>
+              <includeArtifactIds>io7m-r2-shaders-core</includeArtifactIds>
+              <outputDirectory>${project.build.directory}/documentation/glsl/</outputDirectory>
             </configuration>
           </execution>
           <execution>
-            <id>make-documentation-multi</id>
-            <phase>prepare-package</phase>
+            <id>unpack-shaders-doxygen</id>
+            <phase>generate-resources</phase>
             <goals>
-              <goal>transform</goal>
+              <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-              <documentFile>${project.build.directory}/documentation/documentation.xml</documentFile>
+              <includeGroupIds>${project.groupId}</includeGroupIds>
+              <includeArtifactIds>io7m-r2-shaders-core</includeArtifactIds>
+              <classifier>doxygen</classifier>
+              <type>zip</type>
+              <outputDirectory>${project.build.directory}/documentation/doxygen/</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Produce documentation -->
+      <plugin>
+        <groupId>com.io7m.kstructural</groupId>
+        <artifactId>io7m-kstructural-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>exec-multi</id>
+            <goals>
+              <goal>compileXHTML</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <documentFile>${project.build.directory}/documentation/documentation.sd</documentFile>
               <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
-              <brandFile>${project.build.directory}/documentation/brand.xml</brandFile>
-              <pagination>XHTML_MULTI</pagination>
+              <pagination>XHTML_MULTI_PAGE</pagination>
+              <cssExtraStyles>
+                <param>documentation.css</param>
+              </cssExtraStyles>
+            </configuration>
+          </execution>
+          <execution>
+            <id>exec-single</id>
+            <goals>
+              <goal>compileXHTML</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <documentFile>${project.build.directory}/documentation/documentation.sd</documentFile>
+              <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
+              <pagination>XHTML_SINGLE_PAGE</pagination>
+              <cssExtraStyles>
+                <param>documentation.css</param>
+              </cssExtraStyles>
+            </configuration>
+          </execution>
+          <execution>
+            <id>exec-plain</id>
+            <goals>
+              <goal>compilePlain</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <documentFile>${project.build.directory}/documentation/documentation.sd</documentFile>
+              <outputDirectory>${project.build.directory}/documentation/</outputDirectory>
             </configuration>
           </execution>
         </executions>

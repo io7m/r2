@@ -28,8 +28,7 @@ import com.io7m.jcanephora.texture_unit_allocator.JCGLTextureUnitContextParentTy
 public interface R2FilterUsableType<P>
 {
   /**
-   * Run the filter for the given parameters. The output will be written to
-   * {@code destination}.
+   * Run the filter for the given parameters.
    *
    * @param pc         A profiling context
    * @param uc         A texture unit context

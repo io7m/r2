@@ -127,14 +127,14 @@ public final class R2TransformST implements
     NullCheck.notNull(context);
     NullCheck.notNull(m);
 
-    final Matrix4x4FType accum = context.getTemporaryMatrix4x4_0();
+    final Matrix4x4FType accum = context.temporaryMatrix4x4_0();
 
     {
       MatrixM4x4F.makeTranslation3F(this.translation, accum);
     }
 
     {
-      final Matrix4x4FType temporary = context.getTemporaryMatrix4x4_1();
+      final Matrix4x4FType temporary = context.temporaryMatrix4x4_1();
       MatrixM4x4F.setIdentity(temporary);
       temporary.setR0C0F(this.scale);
       temporary.setR1C1F(this.scale);
@@ -147,17 +147,14 @@ public final class R2TransformST implements
   @SuppressWarnings("unchecked")
   public R2WatchableType<R2TransformReadableType> transformGetWatchable()
   {
-    final Object o = this.watchable;
-    return (R2WatchableType<R2TransformReadableType>) o;
+    return (R2WatchableType<R2TransformReadableType>) (Object) this.watchable;
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public R2WatchableType<R2TransformOrthogonalReadableType>
   transformOrthogonalGetWatchable()
   {
-    final Object o = this.watchable;
-    return (R2WatchableType<R2TransformOrthogonalReadableType>) o;
+    return this.watchable;
   }
 
   @Override

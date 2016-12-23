@@ -32,7 +32,7 @@ public interface R2DepthVarianceBufferDescriptionType extends
 {
   @Override
   @Value.Parameter
-  AreaInclusiveUnsignedLType getArea();
+  AreaInclusiveUnsignedLType area();
 
   /**
    * @return The magnification filter used for the buffer
@@ -40,7 +40,7 @@ public interface R2DepthVarianceBufferDescriptionType extends
 
   @Value.Parameter
   @Value.Default
-  default JCGLTextureFilterMagnification getMagnificationFilter()
+  default JCGLTextureFilterMagnification magnificationFilter()
   {
     return JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR;
   }
@@ -51,7 +51,7 @@ public interface R2DepthVarianceBufferDescriptionType extends
 
   @Value.Parameter
   @Value.Default
-  default JCGLTextureFilterMinification getMinificationFilter()
+  default JCGLTextureFilterMinification minificationFilter()
   {
     return JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR;
   }
@@ -62,7 +62,7 @@ public interface R2DepthVarianceBufferDescriptionType extends
 
   @Value.Parameter
   @Value.Default
-  default R2DepthPrecision getDepthPrecision()
+  default R2DepthPrecision depthPrecision()
   {
     return R2DepthPrecision.R2_DEPTH_PRECISION_24;
   }
@@ -73,7 +73,7 @@ public interface R2DepthVarianceBufferDescriptionType extends
 
   @Value.Parameter
   @Value.Default
-  default R2DepthVariancePrecision getDepthVariancePrecision()
+  default R2DepthVariancePrecision depthVariancePrecision()
   {
     return R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16;
   }

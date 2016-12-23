@@ -17,6 +17,7 @@
 package com.io7m.r2.core;
 
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
+import org.immutables.value.Value;
 
 /**
  * The type of opaque materials that can be applied to single depth-only
@@ -25,12 +26,25 @@ import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
  * @param <M> The type of shader parameters
  */
 
+@R2ImmutableStyleType
+@Value.Immutable
 public interface R2MaterialDepthSingleType<M> extends R2MaterialType<M>
 {
+  @Override
+  @Value.Parameter
+  long materialID();
+
   /**
    * @return The material shader
    */
 
   @Override
-  R2ShaderDepthSingleUsableType<M> getShader();
+  @Value.Auxiliary
+  @Value.Parameter
+  R2ShaderDepthSingleUsableType<M> shader();
+
+  @Override
+  @Value.Auxiliary
+  @Value.Parameter
+  M shaderParameters();
 }
