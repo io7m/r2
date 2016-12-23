@@ -7,3 +7,4 @@ r2
 
 Aggressively minimalist deferred renderer.
 
+See https://io7m.github.io/r2/ for more information.
