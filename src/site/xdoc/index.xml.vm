@@ -17,6 +17,34 @@
     </subsection>
     <subsection name="Features">
       <ul>
+        <li>Deferred rendering system for rendering hundreds of dynamic light sources at a time.</li>
+        <li>Batched instancing for rendering large numbers of instances with one draw call.</li>
+        <li>Billboarded instances for rendering particle systems and foliage.</li>
+        <li>Dynamic spherical, directional, and projective lighting.</li>
+        <li>Optional specular lighting.</li>
+        <li>Light clip volumes for preventing light volumes from leaking.</li>
+        <li>Variance shadow mapping for soft-edged per-pixel shadows.</li>
+        <li>Artist-controllable alpha stippling for crossfading opaque instances.</li>
+        <li>Emission and glow filters for simulating emissive surfaces and bloom.</li>
+        <li>Normal mapping for per-pixel control over surface lighting.</li>
+        <li>Command-line tools and API to generate consistent tangent vectors for meshes for normal mapping.</li>
+        <li>Environment mapping for simple pseudo reflections.</li>
+        <li>High quality haloless screen-space ambient occlusion (SSAO).</li>
+        <li>Generic refraction for simulating refractive surfaces.</li>
+        <li>Simple forward renderer for translucent instances.</li>
+        <li>Logarithmic depth by default, supporting planetary-scale scenes.</li>
+        <li>Box blur and bilateral depth-aware blur filters.</li>
+        <li>Fog filters for simple postprocessed atmospheric fog.</li>
+        <li>FXAA antialiasing.</li>
+        <li>Reusable and heavily documented GLSL shader library. Integrated with <a href="https://io7m.github.io/sombrero/">sombrero</a> for consuming and publishing shader modules.</li>
+        <li>Safely extensible via strongly-typed shader interfaces.</li>
+        <li>Scene independent: The package provides batching and does not require the user to use a complicated and error-prone scene graph or any kind of baked-in visibility determination.</li>
+        <li>Heavily documented including Javadoc and full design and implementation manual.</li>
+        <li>Strongly typed interfaces with run-time checking to catch programming mistakes early.</li>
+        <li>Written in pure Java 8 for platform independence.</li>
+        <li>Works on <a href="http://jogamp.org">JOGL</a> or <a href="http://lwjgl.org">LWJGL</a> via <a href="https://io7m.github.io/jcanephora/">jcanephora</a>.</li>
+        <li>Works on any OpenGL 3.3 implementation.</li>
+        <li>High converage automated test suite.</li>
         <li>ISC license.</li>
       </ul>
     </subsection>
