@@ -1,0 +1,5 @@
+<map id="R2CubeMaps.h" name="R2CubeMaps.h">
+<area shape="rect" id="node2" href="$R2EnvironmentReflection_8h.html" title="Functions for environment&#45;mapped reflections. " alt="" coords="9,77,181,101"/>
+<area shape="rect" id="node3" href="$R2SurfaceBasicReflective_8h.html" title="Basic pseudo&#45;reflective (environment mapped) deferred surface implementation. " alt="" coords="5,149,184,173"/>
+<area shape="rect" id="node4" href="$R2SurfaceBasicReflectiveSingle_8frag.html" title="An instantiation of the R2SurfaceBasicReflective shader for single instances. " alt="" coords="11,221,178,257"/>
+</map>

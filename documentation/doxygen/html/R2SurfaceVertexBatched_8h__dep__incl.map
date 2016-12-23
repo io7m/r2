@@ -1,0 +1,6 @@
+<map id="R2SurfaceVertexBatched.h" name="R2SurfaceVertexBatched.h">
+<area shape="rect" id="node2" href="$R2DepthBatched_8vert.html" title="A vertex shader for batched instances. " alt="" coords="5,77,141,101"/>
+<area shape="rect" id="node3" href="$R2MaskBatched_8vert.html" title="A vertex shader for masking batched instances. " alt="" coords="165,77,296,101"/>
+<area shape="rect" id="node4" href="$R2RefractionMaskedDeltaBatched_8vert_source.html" title="R2RefractionMaskedDeltaBatched.vert" alt="" coords="320,77,552,101"/>
+<area shape="rect" id="node5" href="$R2SurfaceBatched_8vert.html" title="A vertex shader for batched instances. " alt="" coords="577,77,725,101"/>
+</map>

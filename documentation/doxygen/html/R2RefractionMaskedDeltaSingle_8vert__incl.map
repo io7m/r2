@@ -1,0 +1,8 @@
+<map id="R2RefractionMaskedDeltaSingle.vert" name="R2RefractionMaskedDeltaSingle.vert">
+<area shape="rect" id="node2" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,77,100,101"/>
+<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="124,77,243,101"/>
+<area shape="rect" id="node5" href="$R2SurfaceVertex_8h.html" title="Data required by each vertex in deferred rendering, provided as vertex attributes. " alt="" coords="267,77,391,101"/>
+<area shape="rect" id="node6" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="415,77,485,101"/>
+<area shape="rect" id="node7" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="509,77,604,101"/>
+<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="121,149,245,173"/>
+</map>

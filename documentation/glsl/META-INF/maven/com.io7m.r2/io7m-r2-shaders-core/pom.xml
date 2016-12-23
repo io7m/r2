@@ -23,18 +23,6 @@
     <developerConnection>${project.parent.scm.developerConnection}</developerConnection>
   </scm>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>com.soebes.maven.plugins</groupId>
-        <artifactId>doxygen-maven-plugin</artifactId>
-        <configuration>
-          <configurationFile>src/main/doxygen/glsl.conf</configurationFile>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <dependencies>
     <dependency>
       <groupId>com.io7m.jnull</groupId>
@@ -56,6 +44,47 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+
+      <!-- Run doxygen -->
+      <plugin>
+        <groupId>com.soebes.maven.plugins</groupId>
+        <artifactId>doxygen-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-doxygen</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <configurationFile>src/main/doxygen/glsl.conf</configurationFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Produce documentation archive -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/doxygen.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <appendAssemblyId>true</appendAssemblyId>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

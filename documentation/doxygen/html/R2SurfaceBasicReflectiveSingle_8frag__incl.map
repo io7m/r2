@@ -1,0 +1,14 @@
+<map id="R2SurfaceBasicReflectiveSingle.frag" name="R2SurfaceBasicReflectiveSingle.frag">
+<area shape="rect" id="node2" href="$R2SurfaceBasicReflective_8h.html" title="Basic pseudo&#45;reflective (environment mapped) deferred surface implementation. " alt="" coords="512,89,691,113"/>
+<area shape="rect" id="node10" href="$R2SurfaceShaderDriverSingle_8h.html" title="A fragment shader driver for single instance surfaces. " alt="" coords="215,161,411,185"/>
+<area shape="rect" id="node3" href="$R2SurfaceShaderMain_8h.html" title="The main function that all deferred surface shaders must implement. " alt="" coords="435,161,583,185"/>
+<area shape="rect" id="node7" href="$R2EnvironmentReflection_8h.html" title="Functions for environment&#45;mapped reflections. " alt="" coords="607,161,779,185"/>
+<area shape="rect" id="node9" href="$R2SurfaceBasicTypes_8h.html" title="Types for basic surfaces. " alt="" coords="803,161,951,185"/>
+<area shape="rect" id="node4" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="479,233,598,257"/>
+<area shape="rect" id="node6" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="385,233,455,257"/>
+<area shape="rect" id="node5" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="477,305,601,329"/>
+<area shape="rect" id="node8" href="$R2CubeMaps_8h.html" title="Functions for dealing with cube maps. " alt="" coords="646,233,741,257"/>
+<area shape="rect" id="node11" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="266,233,361,257"/>
+<area shape="rect" id="node12" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="5,233,93,257"/>
+<area shape="rect" id="node13" href="$R2GBufferOutput_8h.html" title="The G&#45;Buffer format. " alt="" coords="118,233,242,257"/>
+</map>

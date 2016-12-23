@@ -1,0 +1,51 @@
+<map id="R2LogDepth.h" name="R2LogDepth.h">
+<area shape="rect" id="node2" href="$R2BilateralBlur_8h.html" title="Functions for performing bilateral blurs. " alt="" coords="134,83,258,107"/>
+<area shape="rect" id="node5" href="$R2Billboarded_8vert.html" title="A vertex shader for billboarded instances. " alt="" coords="283,83,413,107"/>
+<area shape="rect" id="node6" href="$R2DebugColorVertices_8frag.html" title="Write the given color to the first fragment output. " alt="" coords="438,83,610,107"/>
+<area shape="rect" id="node7" href="$R2DebugColorVerticesWorldPosition_8vert_source.html" title="R2DebugColorVerticesWorld\lPosition.vert" alt="" coords="634,77,806,113"/>
+<area shape="rect" id="node8" href="$R2DebugEyePositionReconstruction_8frag.html" title="A fragment shader driver for reconstructing eye&#45;space positions. " alt="" coords="830,83,1074,107"/>
+<area shape="rect" id="node9" href="$R2DebugEyeZReconstruction_8frag.html" title="A fragment shader driver for reconstructing eye&#45;space Z positions. " alt="" coords="1099,83,1301,107"/>
+<area shape="rect" id="node10" href="$R2DebugLogDepth_8frag.html" title="Writes the logarithmic depth of the fragment to the first fragment output. " alt="" coords="1326,83,1469,107"/>
+<area shape="rect" id="node11" href="$R2DebugLogDepthComposed_8frag.html" title="Writes the logarithmic depth of the fragment to the first fragment output. " alt="" coords="1493,83,1683,107"/>
+<area shape="rect" id="node12" href="$R2DebugVisualConstant_8frag.html" title="Write the given color to the first fragment output. " alt="" coords="1708,83,1887,107"/>
+<area shape="rect" id="node13" href="$R2DebugVisualConstantScreen_8vert.html" title="A vertex shader for full&#45;screen debug geometry. " alt="" coords="1911,83,2126,107"/>
+<area shape="rect" id="node14" href="$R2DepthShaderDriverBatched_8h.html" title="A fragment depth shader driver for batched instances. " alt="" coords="2150,83,2341,107"/>
+<area shape="rect" id="node16" href="$R2DepthShaderDriverSingle_8h.html" title="A fragment shader driver for single instance depth shaders. " alt="" coords="2365,83,2549,107"/>
+<area shape="rect" id="node19" href="$R2DepthBatched_8vert.html" title="A vertex shader for batched instances. " alt="" coords="2573,83,2709,107"/>
+<area shape="rect" id="node20" href="$R2DepthSingle_8vert.html" title="A vertex shader for single (depth&#45;only) instances. " alt="" coords="2733,83,2864,107"/>
+<area shape="rect" id="node21" href="$R2FilterFogDepthLinear_8frag.html" title="Linear fog filter based on depth. " alt="" coords="2888,83,3072,107"/>
+<area shape="rect" id="node22" href="$R2FilterFogDepthQuadratic_8frag.html" title="Quadratic fog filter based on depth. " alt="" coords="3096,83,3299,107"/>
+<area shape="rect" id="node23" href="$R2FilterFogDepthQuadraticInverse_8frag.html" title="Inverse quadratic fog filter based on depth. " alt="" coords="3323,77,3495,113"/>
+<area shape="rect" id="node24" href="$R2ReconstructedSurface_8h.html" title="Surface data reconstructed from the G&#45;Buffer. " alt="" coords="3519,83,3686,107"/>
+<area shape="rect" id="node26" href="$R2LightShaderDriverSingle_8h.html" title="A fragment shader driver for single instance lights. " alt="" coords="3632,167,3816,191"/>
+<area shape="rect" id="node33" href="$R2LightAmbientSingle_8vert.html" title="A vertex shader for full&#45;screen single&#45;instance ambient lights. " alt="" coords="3762,83,3934,107"/>
+<area shape="rect" id="node34" href="$R2LightDirectionalSingle_8vert.html" title="A vertex shader for full&#45;screen single&#45;instance directional lights. " alt="" coords="3958,83,4154,107"/>
+<area shape="rect" id="node35" href="$R2LightPositionalSingle_8vert.html" title="Single&#45;instance positional light vertex shader. " alt="" coords="4178,83,4369,107"/>
+<area shape="rect" id="node36" href="$R2ShadowVariance_8h.html" title="Functions for variance shadows. " alt="" coords="4393,83,4524,107"/>
+<area shape="rect" id="node37" href="$R2LogDepthOnlySingle_8frag.html" title="Single&#45;instance logarithmic depth only fragment shader. " alt="" coords="4549,83,4721,107"/>
+<area shape="rect" id="node38" href="$R2LogDepthOnlySingle_8vert.html" title="Single&#45;instance logarithmic depth only vertex shader. " alt="" coords="4745,83,4917,107"/>
+<area shape="rect" id="node39" href="$R2Mask_8frag.html" title="Write the given color to the first fragment output. " alt="" coords="4941,83,5029,107"/>
+<area shape="rect" id="node40" href="$R2MaskBatched_8vert.html" title="A vertex shader for masking batched instances. " alt="" coords="5053,83,5184,107"/>
+<area shape="rect" id="node41" href="$R2MaskSingle_8vert.html" title="A vertex shader for masking single instances. " alt="" coords="5209,83,5333,107"/>
+<area shape="rect" id="node42" href="$R2RefractionMaskedDelta_8frag.html" title="Apply masked delta refraction. " alt="" coords="5357,83,5547,107"/>
+<area shape="rect" id="node43" href="$R2RefractionMaskedDeltaBatched_8vert_source.html" title="R2RefractionMaskedDeltaBatched.vert" alt="" coords="5572,83,5804,107"/>
+<area shape="rect" id="node44" href="$R2RefractionMaskedDeltaSingle_8vert.html" title="A vertex shader for refracting single instances. " alt="" coords="5828,83,6055,107"/>
+<area shape="rect" id="node45" href="$R2SSAO_8frag.html" title="Fragment shader for calculating an ambient occlusion term. " alt="" coords="6079,83,6167,107"/>
+<area shape="rect" id="node46" href="$R2SurfaceShaderDriverBatched_8h.html" title="A fragment shader driver for batched instance surfaces. " alt="" coords="6191,83,6393,107"/>
+<area shape="rect" id="node47" href="$R2SurfaceShaderDriverSingle_8h.html" title="A fragment shader driver for single instance surfaces. " alt="" coords="6418,83,6614,107"/>
+<area shape="rect" id="node48" href="$R2SurfaceBatched_8vert.html" title="A vertex shader for batched instances. " alt="" coords="6638,83,6786,107"/>
+<area shape="rect" id="node49" href="$R2SurfaceSingle_8vert.html" title="A vertex shader for single instances. " alt="" coords="6810,83,6953,107"/>
+<area shape="rect" id="node50" href="$R2TranslucentBasicPremultiplied_8frag.html" title="A fragment shader that provides basic textured instances with premultiplied alpha. " alt="" coords="6977,83,7215,107"/>
+<area shape="rect" id="node3" href="$R2FilterBilateralBlurDepthAwareHorizontal4f_8frag.html" title="Horizontal RGBA bilateral depth&#45;aware blur filter. " alt="" coords="5,161,184,197"/>
+<area shape="rect" id="node4" href="$R2FilterBilateralBlurDepthAwareVertical4f_8frag.html" title="Vertical RGBA bilateral depth&#45;aware blur filter. " alt="" coords="208,161,387,197"/>
+<area shape="rect" id="node15" href="$R2DepthBasicBatched_8frag.html" title="An instantiation of the R2DepthBasic shader for batched instances. " alt="" coords="2162,167,2329,191"/>
+<area shape="rect" id="node17" href="$R2DepthBasicSingle_8frag.html" title="An instantiation of the R2DepthBasic shader for single instances. " alt="" coords="2365,167,2525,191"/>
+<area shape="rect" id="node18" href="$R2DepthBasicStippledSingle_8frag.html" title="An instantiation of the R2DepthBasicStippled shader for single instances. " alt="" coords="2549,167,2757,191"/>
+<area shape="rect" id="node25" href="$R2LightShaderMain_8h.html" title="The main function that all deferred light shaders must implement. " alt="" coords="3472,167,3608,191"/>
+<area shape="rect" id="node27" href="$R2LightAmbientSingle_8frag.html" title="An instantiation of the R2LightAmbientWithOcclusion shader for single instances. " alt="" coords="3091,251,3263,275"/>
+<area shape="rect" id="node28" href="$R2LightDirectionalDebugConstantSingle_8frag.html" title="An instantiation of the R2LightDirectionalDebugConstant shader for single instances. " alt="" coords="3288,245,3496,281"/>
+<area shape="rect" id="node29" href="$R2LightDirectionalSpecularSingle_8frag.html" title="An instantiation of the R2LightDirectionalSpecular shader for single instances. " alt="" coords="3520,245,3699,281"/>
+<area shape="rect" id="node30" href="$R2LightProjectiveLambertBlinnPhongShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhongShadowVariance shader for single instances..." alt="" coords="3723,245,3955,281"/>
+<area shape="rect" id="node31" href="$R2LightProjectiveLambertBlinnPhongSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhong shader for single instances. " alt="" coords="3979,245,4146,281"/>
+<area shape="rect" id="node32" href="$R2LightProjectiveLambertShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertShadowVariance shader for single instances. " alt="" coords="4170,245,4342,281"/>
+</map>

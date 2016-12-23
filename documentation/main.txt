@@ -4459,7 +4459,7 @@ other image) , rendering only the depth [ref:
 3.1.2 GLSL Doxygen
 
 1     API documentation for the GLSL sources are provided via the included
-      Doxygen [url: doxygen/io7m-r2-shaders-0.2.0].
+      Doxygen [url: doxygen/io7m-r2-shaders-core-0.2.0].
 
 
 Footnotes

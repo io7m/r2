@@ -1,0 +1,8 @@
+<map id="R2MaskBatched.vert" name="R2MaskBatched.vert">
+<area shape="rect" id="node2" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,77,100,101"/>
+<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="124,77,243,101"/>
+<area shape="rect" id="node5" href="$R2SurfaceVertexBatched_8h.html" title="Data delivered via vertex attributes to batched instances in deferred rendering. " alt="" coords="267,77,433,101"/>
+<area shape="rect" id="node7" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="457,77,528,101"/>
+<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="121,149,245,173"/>
+<area shape="rect" id="node6" href="$R2SurfaceVertex_8h.html" title="Data required by each vertex in deferred rendering, provided as vertex attributes. " alt="" coords="288,149,412,173"/>
+</map>

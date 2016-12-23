@@ -1,0 +1,6 @@
+<map id="R2Fog.h" name="R2Fog.h">
+<area shape="rect" id="node2" href="$R2FilterFogDepthLinear_8frag.html" title="Linear fog filter based on depth. " alt="" coords="5,83,189,107"/>
+<area shape="rect" id="node3" href="$R2FilterFogDepthQuadratic_8frag.html" title="Quadratic fog filter based on depth. " alt="" coords="213,83,416,107"/>
+<area shape="rect" id="node4" href="$R2FilterFogDepthQuadraticInverse_8frag.html" title="Inverse quadratic fog filter based on depth. " alt="" coords="441,77,613,113"/>
+<area shape="rect" id="node5" href="$R2TranslucentBasicPremultiplied_8frag.html" title="A fragment shader that provides basic textured instances with premultiplied alpha. " alt="" coords="637,83,875,107"/>
+</map>

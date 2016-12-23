@@ -1,0 +1,11 @@
+<map id="R2LightShaderDriverSingle.h" name="R2LightShaderDriverSingle.h">
+<area shape="rect" id="node2" href="$R2LightOutput_8h.html" title="Types describing calculated light contributions. " alt="" coords="61,77,173,101"/>
+<area shape="rect" id="node3" href="$R2ReconstructedSurface_8h.html" title="Surface data reconstructed from the G&#45;Buffer. " alt="" coords="349,77,516,101"/>
+<area shape="rect" id="node4" href="$R2GBufferInput_8h.html" title="The textures that make up the G&#45;Buffer. " alt="" coords="5,149,124,173"/>
+<area shape="rect" id="node5" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="148,149,243,173"/>
+<area shape="rect" id="node6" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="267,149,355,173"/>
+<area shape="rect" id="node9" href="$R2ViewRays_8h.html" title="View ray types. " alt="" coords="548,221,643,245"/>
+<area shape="rect" id="node10" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="633,149,728,173"/>
+<area shape="rect" id="node7" href="$R2PositionReconstruction_8h.html" title="Functions for performing position reconstruction during deferred rendering. " alt="" coords="379,149,558,173"/>
+<area shape="rect" id="node8" href="$R2Bilinear_8h.html" title="Functions for performing bilinear interpolation. " alt="" coords="421,221,516,245"/>
+</map>
