@@ -458,7 +458,7 @@ public final class R2DebugVisualizerRenderer implements
           final JCGLDrawType g_d = this.g.getDraw();
           try {
             g_ao.arrayObjectBind(ao);
-            g_d.draw(JCGLPrimitives.PRIMITIVE_LINES, 0, segments.size());
+            g_d.draw(JCGLPrimitives.PRIMITIVE_LINES, 0, segments.size() * 2);
           } finally {
             g_ao.arrayObjectUnbind();
           }
