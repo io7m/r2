@@ -359,6 +359,7 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
       final R2SurfaceShaderBasicParameters gsp =
         R2SurfaceShaderBasicParameters.builder()
+          .setTextureDefaults(m.getTextureDefaults())
           .setSpecularColor(new PVectorI3F<>(1.0f, 1.0f, 1.0f))
           .setSpecularExponent(64.0f)
           .build();
@@ -366,10 +367,11 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         id_pool.freshID(), this.geom_shader, gsp);
     }
 
-    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader = R2SurfaceShaderBasicBatched.newShader(
-      g.getShaders(),
-      sources,
-      id_pool);
+    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader =
+      R2SurfaceShaderBasicBatched.newShader(
+        g.getShaders(),
+        sources,
+        id_pool);
     this.batched_geom_material = R2MaterialOpaqueBatched.of(
       id_pool.freshID(),
       batched_geom_shader,
@@ -470,14 +472,11 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
       t.filter_ssao.runFilter(pro_root, uc, filter_ssao_params);
       t.ssao_filter_blur.runFilter(pro_root, uc, t.ssao_filter_blur_params);
 
+      g_fb.framebufferDrawUnbind();
       g_cb.colorBufferMask(true, true, true, true);
-      g_db.depthBufferWriteEnable();
-      g_sb.stencilBufferMask(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
       g_cl.clear(t.screen_clear_spec);
 
       t.filter_compositor.runFilter(pro_root, uc, t.filter_comp_parameters);
-
       return Unit.unit();
     });
   }

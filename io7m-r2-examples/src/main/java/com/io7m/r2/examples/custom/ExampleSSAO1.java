@@ -207,18 +207,6 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
         g.getTextures(),
         this.main.getTextureUnitAllocator().getRootContext());
 
-    this.ssao_filter_params =
-      R2FilterSSAOParameters.builder()
-        .setKernel(R2SSAOKernel.newKernel(64))
-        .setExponent(1.0f)
-        .setSampleRadius(1.0f)
-        .setGeometryBuffer(this.geom_buffer)
-        .setNoiseTexture(R2SSAONoiseTexture.newNoiseTexture(
-          g.getTextures(),
-          this.main.getTextureUnitAllocator().getRootContext()))
-        .setOutputBuffer(this.ssao_buffer)
-        .build();
-
     this.ssao_filter = R2FilterSSAO.newFilter(
       m.getShaderPreprocessingEnvironment(),
       g,
@@ -366,6 +354,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
         R2SurfaceShaderBasicSingle.newShader(g.getShaders(), sources, id_pool);
       final R2SurfaceShaderBasicParameters gsp =
         R2SurfaceShaderBasicParameters.builder()
+          .setTextureDefaults(this.main.getTextureDefaults())
           .setSpecularColor(new PVectorI3F<>(1.0f, 1.0f, 1.0f))
           .setSpecularExponent(64.0f)
           .build();
@@ -373,10 +362,11 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
         id_pool.freshID(), this.geom_shader, gsp);
     }
 
-    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader = R2SurfaceShaderBasicBatched.newShader(
-      g.getShaders(),
-      sources,
-      id_pool);
+    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader =
+      R2SurfaceShaderBasicBatched.newShader(
+        g.getShaders(),
+        sources,
+        id_pool);
     this.batched_geom_material = R2MaterialOpaqueBatched.of(
       id_pool.freshID(),
       batched_geom_shader,
@@ -511,14 +501,11 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
 
       t.ssao_filter_blur.runFilter(pro_root, uc, t.ssao_filter_blur_params);
 
+      g_fb.framebufferDrawUnbind();
       g_cb.colorBufferMask(true, true, true, true);
-      g_db.depthBufferWriteEnable();
-      g_sb.stencilBufferMask(
-        JCGLFaceSelection.FACE_FRONT_AND_BACK, 0b11111111);
       g_cl.clear(t.screen_clear_spec);
 
       t.filter_compositor.runFilter(pro_root, uc, t.filter_comp_parameters);
-
       return Unit.unit();
     });
   }
