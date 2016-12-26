@@ -3,6 +3,33 @@
   <c:project>io7m-r2</c:project>
 
   <c:release c:ticket-system="com.github.io7m.r2">
+    <c:date>2016-12-26</c:date>
+    <c:version>0.3.0</c:version>
+    <c:item>
+      <c:date>2016-12-26</c:date>
+      <c:type-code-fix/>
+      <c:ticket>86</c:ticket>
+      <c:summary>Fix a bug that would result in too few line segments being drawn by the debug visualizer.</c:summary>
+    </c:item>
+    <c:item>
+      <c:date>2016-12-26</c:date>
+      <c:type-code-fix/>
+      <c:ticket>87</c:ticket>
+      <c:summary>Fix a bug in the light renderer related to stencil light clip volumes.</c:summary>
+    </c:item>
+  </c:release>
+
+  <c:release c:ticket-system="com.github.io7m.r2">
+    <c:date>2016-12-23</c:date>
+    <c:version>0.2.0</c:version>
+    <c:item>
+      <c:date>2016-12-23</c:date>
+      <c:type-code-new/>
+      <c:summary>Initial public release.</c:summary>
+    </c:item>
+  </c:release>
+
+  <c:release c:ticket-system="com.github.io7m.r2">
     <c:date>2016-05-06</c:date>
     <c:version>0.1.0</c:version>
     <c:item>
