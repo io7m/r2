@@ -3,8 +3,8 @@
   <c:project>io7m-r2</c:project>
 
   <c:release c:ticket-system="com.github.io7m.r2">
-    <c:date>2016-12-26</c:date>
-    <c:version>0.3.0</c:version>
+    <c:date>2017-01-02</c:date>
+    <c:version>0.2.1</c:version>
     <c:item>
       <c:date>2016-12-26</c:date>
       <c:type-code-fix/>
