@@ -17,6 +17,11 @@
       <c:ticket>87</c:ticket>
       <c:summary>Fix a bug in the light renderer related to stencil light clip volumes.</c:summary>
     </c:item>
+    <c:item>
+      <c:date>2017-01-02</c:date>
+      <c:type-code-new/>
+      <c:summary>Update all dependencies to their latest compatible versions.</c:summary>
+    </c:item>
   </c:release>
 
   <c:release c:ticket-system="com.github.io7m.r2">
