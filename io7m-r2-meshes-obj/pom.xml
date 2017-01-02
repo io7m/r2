@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.io7m.r2</groupId>
     <artifactId>io7m-r2</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.2.1</version>
   </parent>
   <artifactId>io7m-r2-meshes-obj</artifactId>
 
