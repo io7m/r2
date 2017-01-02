@@ -316,7 +316,6 @@ public final class R2LightRenderer implements R2LightRendererType
     implements R2SceneLightsGroupConsumerType
   {
     private final JCGLInterfaceGL33Type g33;
-    private final JCGLShadersType shaders;
     private final JCGLTexturesType textures;
     private final JCGLArrayObjectsType array_objects;
     private final JCGLDrawType draw;
@@ -339,7 +338,6 @@ public final class R2LightRenderer implements R2LightRendererType
     {
       this.g33 = NullCheck.notNull(in_g);
 
-      this.shaders = this.g33.getShaders();
       this.textures = this.g33.getTextures();
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
@@ -768,7 +766,6 @@ public final class R2LightRenderer implements R2LightRendererType
     private final R2ShaderInstanceSingleScreenUsableType<Unit> clip_screen_stencil;
     private final JCGLRenderStateMutable clip_screen_stencil_state;
     private final JCGLRenderStateMutable clip_volume_stencil_state;
-    private final JCGLShadersType shaders;
     private final JCGLTexturesType textures;
     private final R2UnitQuadUsableType quad;
     private final JCGLArrayObjectsType array_objects;
@@ -800,7 +797,6 @@ public final class R2LightRenderer implements R2LightRendererType
       this.quad =
         NullCheck.notNull(in_quad);
 
-      this.shaders = this.g33.getShaders();
       this.textures = this.g33.getTextures();
       this.array_objects = this.g33.getArrayObjects();
       this.draw = this.g33.getDraw();
@@ -1107,10 +1103,10 @@ public final class R2LightRenderer implements R2LightRendererType
         this.clip_volume_stencil.onActivate(this.g33);
 
         try {
-          this.clip_volume_stencil.onReceiveMaterialValues(
-            this.g33, this.configureMaterialParameters(tc, Unit.unit()));
           this.clip_volume_stencil.onReceiveViewValues(
             this.g33, this.configureViewParameters());
+          this.clip_volume_stencil.onReceiveMaterialValues(
+            this.g33, this.configureMaterialParameters(tc, Unit.unit()));
 
           this.input_state.parent.matrices.withTransform(
             this.input_state.volume.transform(),
@@ -1199,11 +1195,10 @@ public final class R2LightRenderer implements R2LightRendererType
         this.clip_screen_stencil.onActivate(this.g33);
 
         try {
-
-          this.clip_screen_stencil.onReceiveMaterialValues(
-            this.g33, this.configureMaterialParameters(tc, Unit.unit()));
           this.clip_screen_stencil.onReceiveViewValues(
             this.g33, this.configureViewParameters());
+          this.clip_screen_stencil.onReceiveMaterialValues(
+            this.g33, this.configureMaterialParameters(tc, Unit.unit()));
           this.clip_screen_stencil.onValidate();
 
           this.array_objects.arrayObjectBind(this.quad.arrayObject());
@@ -1433,7 +1428,6 @@ public final class R2LightRenderer implements R2LightRendererType
     private @Nullable JCGLTextureUnitType unit_specular;
     private @Nullable JCGLTextureUnitType unit_depth;
     private @Nullable JCGLTextureUnitContextType light_base_context;
-    private @Nullable AreaInclusiveUnsignedLType viewport;
     private @Nullable R2InstanceSingleType volume;
     private int group;
 
@@ -1450,8 +1444,7 @@ public final class R2LightRenderer implements R2LightRendererType
       final JCGLTextureUnitType in_unit_depth,
       final JCGLTextureUnitType in_unit_normals,
       final JCGLTextureUnitType in_unit_specular,
-      final JCGLTextureUnitContextType in_light_base_context,
-      final AreaInclusiveUnsignedLType in_viewport)
+      final JCGLTextureUnitContextType in_light_base_context)
     {
       this.volume = in_volume;
       this.group = in_group;
@@ -1460,7 +1453,6 @@ public final class R2LightRenderer implements R2LightRendererType
       this.unit_specular = NullCheck.notNull(in_unit_specular);
       this.unit_depth = NullCheck.notNull(in_unit_depth);
       this.light_base_context = NullCheck.notNull(in_light_base_context);
-      this.viewport = NullCheck.notNull(in_viewport);
     }
 
     void clear()
@@ -1472,7 +1464,6 @@ public final class R2LightRenderer implements R2LightRendererType
       this.unit_normals = null;
       this.unit_specular = null;
       this.light_base_context = null;
-      this.viewport = null;
     }
   }
 
@@ -1563,8 +1554,8 @@ public final class R2LightRenderer implements R2LightRendererType
         this.unit_depth,
         this.unit_normals,
         this.unit_specular,
-        this.light_base_context,
-        this.input_state.viewport);
+        this.light_base_context
+      );
       return this.clip_group_consumer;
     }
 

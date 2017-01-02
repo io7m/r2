@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.io7m.r2</groupId>
   <artifactId>io7m-r2</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
 
   <packaging>pom</packaging>
   <name>io7m-r2</name>
@@ -114,47 +114,47 @@
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-core</artifactId>
-        <version>0.52.0</version>
+        <version>0.53.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-texture-loader-core</artifactId>
-        <version>0.52.0</version>
+        <version>0.53.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-texture-loader-awt</artifactId>
-        <version>0.52.0</version>
+        <version>0.53.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-jogl</artifactId>
-        <version>0.52.0</version>
+        <version>0.53.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-fake</artifactId>
-        <version>0.52.0</version>
+        <version>0.53.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-cursors</artifactId>
-        <version>0.52.0</version>
+        <version>0.53.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-renderstate</artifactId>
-        <version>0.52.0</version>
+        <version>0.53.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-texture-unit-allocator</artifactId>
-        <version>0.52.0</version>
+        <version>0.53.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
         <artifactId>io7m-jcanephora-profiler</artifactId>
-        <version>0.52.0</version>
+        <version>0.53.1</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jpra</groupId>
@@ -267,12 +267,12 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.7.21</version>
+        <version>1.7.22</version>
       </dependency>
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.1.7</version>
+        <version>1.1.8</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
@@ -287,7 +287,7 @@
       <dependency>
         <groupId>com.beust</groupId>
         <artifactId>jcommander</artifactId>
-        <version>1.48</version>
+        <version>1.58</version>
       </dependency>
       <dependency>
         <groupId>org.jogamp.jogl</groupId>
@@ -300,6 +300,11 @@
         <version>2.3.2</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.jmockit</groupId>
+        <artifactId>jmockit</artifactId>
+        <version>1.30</version>
+      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
