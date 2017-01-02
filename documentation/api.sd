@@ -8,5 +8,5 @@
   [subsection [title GLSL Doxygen]
     [paragraph
       API documentation for the GLSL sources are provided via the included
-      [link-ext [target "doxygen/io7m-r2-shaders-core-0.2.0"] Doxygen].]]
+      [link-ext [target "doxygen/html"] Doxygen].]]
 ]]

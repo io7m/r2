@@ -6,9 +6,23 @@
   </a:author>
   <a:id>http://github.com/io7m/r2/releases.atom</a:id>
   <a:title>io7m-r2 Releases</a:title>
-  <a:updated>2016-05-06T00:00:00Z</a:updated>
+  <a:updated>2017-01-02T00:00:00Z</a:updated>
   <a:entry>
     <a:id>0</a:id>
+    <a:updated>2017-01-02T00:00:00Z</a:updated>
+    <a:published>2017-01-02T00:00:00Z</a:published>
+    <a:title>io7m-r2 0.2.1 released</a:title>
+    <a:content type="text"> io7m-r2 0.2.1 released </a:content>
+  </a:entry>
+  <a:entry>
+    <a:id>1</a:id>
+    <a:updated>2016-12-23T00:00:00Z</a:updated>
+    <a:published>2016-12-23T00:00:00Z</a:published>
+    <a:title>io7m-r2 0.2.0 released</a:title>
+    <a:content type="text"> io7m-r2 0.2.0 released </a:content>
+  </a:entry>
+  <a:entry>
+    <a:id>2</a:id>
     <a:updated>2016-05-06T00:00:00Z</a:updated>
     <a:published>2016-05-06T00:00:00Z</a:published>
     <a:title>io7m-r2 0.1.0 released</a:title>

@@ -19,7 +19,7 @@ in your projects with the following Maven dependencies:
 "<dependency>
   <groupId>com.io7m.r2</groupId>
   <artifactId>io7m-r2-main</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
 </dependency>"]
 
 [paragraph]

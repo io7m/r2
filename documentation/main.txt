@@ -1,4 +1,4 @@
-io7m-r2 0.2.0 Documentation
+io7m-r2 0.2.1 Documentation
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Contents
@@ -165,7 +165,7 @@ io7m-r2 0.2.0 Documentation
 2     <dependency>
         <groupId>com.io7m.r2</groupId>
         <artifactId>io7m-r2-main</artifactId>
-        <version>0.2.0</version>
+        <version>0.2.1</version>
       </dependency>
 
 3     All io7m.com [url: http://io7m.com] packages use Semantic Versioning [0],
@@ -4348,7 +4348,7 @@ other image) , rendering only the depth [ref:
 2.29.9 Shaders [id: di.ssao.shaders]
 
 1     The shader implementation of the SSAO algorithm is the R2SSAO [url:
-      doxygen/io7m-r2-shaders-0.2.0/R2SSAO_8frag_source.html] shader.
+      doxygen/io7m-r2-shaders-0.2.1/R2SSAO_8frag_source.html] shader.
 
 2.30 Filter: Emission [id: di.emission]
 
@@ -4459,7 +4459,7 @@ other image) , rendering only the depth [ref:
 3.1.2 GLSL Doxygen
 
 1     API documentation for the GLSL sources are provided via the included
-      Doxygen [url: doxygen/io7m-r2-shaders-core-0.2.0].
+      Doxygen [url: doxygen/html].
 
 
 Footnotes
