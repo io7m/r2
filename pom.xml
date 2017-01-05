@@ -37,8 +37,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <siteReposDirectory>/com/io7m/r2</siteReposDirectory>
-    <siteDocumentationDirectory>/com/io7m/r2/io7m-r2-documentation</siteDocumentationDirectory>
+    <siteReposDirectory>com/io7m/r2</siteReposDirectory>
+    <siteDocumentationDirectory>com/io7m/r2/io7m-r2-documentation</siteDocumentationDirectory>
   </properties>
 
   <licenses>
