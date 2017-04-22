@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.io7m.r2</groupId>
+    <artifactId>com.io7m.r2</artifactId>
+    <version>0.3.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>com.io7m.r2.examples</artifactId>
+
+  <packaging>jar</packaging>
+  <name>com.io7m.r2.examples</name>
+  <description>3D renderer (Examples)</description>
+  <url>http://io7m.github.io/r2/</url>
+
+  <scm>
+    <url>${project.parent.scm.url}</url>
+    <connection>${project.parent.scm.connection}</connection>
+    <developerConnection>${project.parent.scm.developerConnection}</developerConnection>
+  </scm>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.spaces</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.filters</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.facade</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.meshes.defaults</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.io7m.jregions</groupId>
+      <artifactId>com.io7m.jregions.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jfunctional</groupId>
+      <artifactId>com.io7m.jfunctional.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>com.io7m.jcanephora.profiler</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>com.io7m.jcanephora.renderstate</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>com.io7m.jcanephora.texture.unit_allocator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jtensors</groupId>
+      <artifactId>com.io7m.jtensors.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jnull</groupId>
+      <artifactId>com.io7m.jnull.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jproperties</groupId>
+      <artifactId>com.io7m.jproperties.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>com.io7m.jcanephora.core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Check style -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

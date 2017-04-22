@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.io7m.r2</groupId>
+    <artifactId>com.io7m.r2</artifactId>
+    <version>0.3.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>com.io7m.r2.core</artifactId>
+
+  <packaging>bundle</packaging>
+  <name>com.io7m.r2.core</name>
+  <description>3D renderer (Core)</description>
+  <url>http://io7m.github.io/r2/</url>
+
+  <scm>
+    <url>${project.parent.scm.url}</url>
+    <connection>${project.parent.scm.connection}</connection>
+    <developerConnection>${project.parent.scm.developerConnection}
+    </developerConnection>
+  </scm>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.shaders.core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.spaces</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.io7m.jaffirm</groupId>
+      <artifactId>com.io7m.jaffirm.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.mutable.numbers</groupId>
+      <artifactId>com.io7m.mutable.numbers.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jnull</groupId>
+      <artifactId>com.io7m.jnull.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.junreachable</groupId>
+      <artifactId>com.io7m.junreachable.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jfunctional</groupId>
+      <artifactId>com.io7m.jfunctional.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jpra</groupId>
+      <artifactId>com.io7m.jpra.runtime.java</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jtensors</groupId>
+      <artifactId>com.io7m.jtensors.storage.bytebuffered</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jtensors</groupId>
+      <artifactId>com.io7m.jtensors.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jtensors</groupId>
+      <artifactId>com.io7m.jtensors.storage.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jranges</groupId>
+      <artifactId>com.io7m.jranges.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.junsigned</groupId>
+      <artifactId>com.io7m.junsigned.ranges</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jregions</groupId>
+      <artifactId>com.io7m.jregions.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcip</groupId>
+      <artifactId>jcip-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>com.io7m.jcanephora.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>com.io7m.jcanephora.cursors</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>com.io7m.jcanephora.renderstate</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>com.io7m.jcanephora.texture.unit_allocator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jcanephora</groupId>
+      <artifactId>com.io7m.jcanephora.profiler</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jpuddle</groupId>
+      <artifactId>com.io7m.jpuddle.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.sombrero</groupId>
+      <artifactId>com.io7m.sombrero.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.jfsm</groupId>
+      <artifactId>com.io7m.jfsm.core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>it.unimi.dsi</groupId>
+      <artifactId>fastutil</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.immutables</groupId>
+      <artifactId>value</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Check style -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+
+      <!-- Generate cursors -->
+      <plugin>
+        <groupId>com.io7m.jpra</groupId>
+        <artifactId>com.io7m.jpra.maven.plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-java</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <targetDirectory>${project.build.directory}/generated-sources/cursors</targetDirectory>
+              <packages>
+                <package>com.io7m.r2.core.cursors</package>
+              </packages>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Produce OSGi bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Require-Capability>
+              com.io7m.r2.shaders.module;filter:="(name=com.io7m.r2.shaders.core)"
+            </Require-Capability>
+            <Export-Package>
+              com.io7m.r2.core,
+              com.io7m.r2.core.cursors,
+              com.io7m.r2.core.debug,
+              com.io7m.r2.core.shaders,
+              com.io7m.r2.core.shaders.provided,
+              com.io7m.r2.core.shaders.types
+            </Export-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <!-- Ignore dependencies that bytecode analysis gets wrong. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <failOnWarning>true</failOnWarning>
+          <ignoredUnusedDeclaredDependencies>
+            <ignoredUnusedDeclaredDependency>com.io7m.r2:com.io7m.r2.shaders.core:*</ignoredUnusedDeclaredDependency>
+          </ignoredUnusedDeclaredDependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
