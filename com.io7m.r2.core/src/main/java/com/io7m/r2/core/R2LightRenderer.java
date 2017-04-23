@@ -53,6 +53,7 @@ import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jnull.Nullable;
 import com.io7m.jregions.core.unparameterized.areas.AreaL;
+import com.io7m.junreachable.UnimplementedCodeException;
 import com.io7m.r2.core.shaders.provided.R2ShaderLogDepthOnlySingle;
 import com.io7m.r2.core.shaders.provided.R2StencilShaderScreen;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
@@ -176,7 +177,7 @@ public final class R2LightRenderer implements R2LightRendererType
   }
 
   @Override
-  public void renderLights(
+  public void renderLightsToLightBuffer(
     final R2GeometryBufferUsableType gbuffer,
     final AreaL area,
     final Optional<R2LightBufferUsableType> lbuffer,
@@ -219,6 +220,29 @@ public final class R2LightRenderer implements R2LightRendererType
 
     this.renderLightInstances(
       gbuffer, area, pc_base, uc, shadows, m, s);
+  }
+
+  @Override
+  public void renderLightsToImageBuffer(
+    final R2GeometryBufferUsableType gbuffer,
+    final AreaL area,
+    final Optional<R2ImageBufferUsableType> ibuffer,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
+    final R2ShadowMapContextUsableType shadows,
+    final R2MatricesObserverType m,
+    final R2SceneLightsType s)
+  {
+    NullCheck.notNull(gbuffer, "G-Buffer");
+    NullCheck.notNull(area, "Area");
+    NullCheck.notNull(ibuffer, "I-Buffer");
+    NullCheck.notNull(pc, "Profiling");
+    NullCheck.notNull(uc, "Texture context");
+    NullCheck.notNull(shadows, "Shadows");
+    NullCheck.notNull(m, "Matrices");
+    NullCheck.notNull(s, "Scene");
+
+    throw new UnimplementedCodeException();
   }
 
   private void renderLightInstances(

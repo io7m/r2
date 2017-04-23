@@ -106,6 +106,7 @@ import com.io7m.r2.spaces.R2SpaceTextureType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -316,6 +317,12 @@ public final class R2TestUtilities
       }
 
       @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
+      }
+
+      @Override
       public long shaderID()
       {
         return s_id;
@@ -400,6 +407,12 @@ public final class R2TestUtilities
         final R2ShaderParametersViewType view_parameters)
       {
 
+      }
+
+      @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
       }
 
       @Override
@@ -602,6 +615,12 @@ public final class R2TestUtilities
       }
 
       @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
+      }
+
+      @Override
       public void onReceiveMaterialValues(
         final JCGLInterfaceGL33Type g,
         final R2ShaderParametersMaterialType<Object> mat_parameters)
@@ -711,6 +730,12 @@ public final class R2TestUtilities
       }
 
       @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
+      }
+
+      @Override
       public boolean isDeleted()
       {
         return false;
@@ -809,6 +834,12 @@ public final class R2TestUtilities
         final R2ShaderParametersMaterialType<Object> mat_parameters)
       {
 
+      }
+
+      @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
       }
 
       @Override
@@ -973,6 +1004,12 @@ public final class R2TestUtilities
       }
 
       @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
+      }
+
+      @Override
       public long shaderID()
       {
         return s_id;
@@ -1062,6 +1099,12 @@ public final class R2TestUtilities
         final R2ShaderParametersLightType<R2LightSingleType> light_parameters)
       {
 
+      }
+
+      @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
       }
 
       @Override
@@ -1333,6 +1376,12 @@ public final class R2TestUtilities
       }
 
       @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
+      }
+
+      @Override
       public void onReceiveViewValues(
         final JCGLInterfaceGL33Type g,
         final R2ShaderParametersViewType view_parameters)
@@ -1448,6 +1497,12 @@ public final class R2TestUtilities
       }
 
       @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
+      }
+
+      @Override
       public void onReceiveViewValues(
         final JCGLInterfaceGL33Type g,
         final R2ShaderParametersViewType view_parameters)
@@ -1541,11 +1596,16 @@ public final class R2TestUtilities
 
     return new R2ShaderTranslucentInstanceBillboardedType<Object>()
     {
-
       @Override
       public Optional<JCGLBlendState> suggestedBlendState()
       {
         return Optional.empty();
+      }
+
+      @Override
+      public Map<String, String> environment()
+      {
+        return new HashMap<>();
       }
 
       @Override

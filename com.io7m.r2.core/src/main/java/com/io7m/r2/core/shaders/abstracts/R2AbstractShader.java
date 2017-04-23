@@ -32,6 +32,9 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableTy
 import com.io7m.r2.core.shaders.types.R2ShaderType;
 import com.io7m.sombrero.core.SoShaderException;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceMaps;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +71,14 @@ public abstract class R2AbstractShader<S extends Enum<S>, M> implements
   private final long id;
   private final JCGLProgramShaderType program;
   private final FSMEnumMutable<S> fsm;
+  private final Object2ReferenceMap<String, String> environment;
   private boolean deleted;
+
+  @Override
+  public final Map<String, String> environment()
+  {
+    return this.environment;
+  }
 
   protected R2AbstractShader(
     final JCGLShadersType in_shaders,
@@ -149,6 +159,10 @@ public abstract class R2AbstractShader<S extends Enum<S>, M> implements
       in_shaders.shaderDeleteVertex(v);
       g.ifPresent(in_shaders::shaderDeleteGeometry);
       in_shaders.shaderDeleteFragment(f);
+
+      this.environment =
+        Object2ReferenceMaps.unmodifiable(
+          new Object2ReferenceOpenHashMap<>(pp_defines));
 
       this.fsm = this.onCheckGetFSM();
       this.deleted = false;

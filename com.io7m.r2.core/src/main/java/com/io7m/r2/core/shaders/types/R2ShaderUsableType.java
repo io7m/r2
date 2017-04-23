@@ -21,6 +21,8 @@ import com.io7m.jcanephora.core.JCGLResourceUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 
+import java.util.Map;
+
 /**
  * The type of usable shaders.
  *
@@ -29,6 +31,13 @@ import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 
 public interface R2ShaderUsableType<M> extends JCGLResourceUsableType
 {
+  /**
+   * @return A read-only view of the shading environment that was used to
+   * compile the shader
+   */
+
+  Map<String, String> environment();
+
   /**
    * @return The unique shader ID
    */
