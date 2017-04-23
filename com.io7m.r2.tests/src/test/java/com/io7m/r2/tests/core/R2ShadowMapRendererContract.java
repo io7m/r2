@@ -226,7 +226,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2ShaderPreprocessingEnvironmentType sources =
       ShaderPreprocessing.preprocessor();
     final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> ds =
-      R2DepthShaderBasicSingle.newShader(g.shaders(), sources, id_pool);
+      R2DepthShaderBasicSingle.create(g.shaders(), sources, id_pool);
     final R2MaterialDepthSingleType<R2DepthShaderBasicParameters> mat =
       R2MaterialDepthSingle.of(id_pool.freshID(), ds, ds_param);
 
@@ -338,7 +338,7 @@ public abstract class R2ShadowMapRendererContract extends R2JCGLContract
     final R2ShaderPreprocessingEnvironmentType sources =
       ShaderPreprocessing.preprocessor();
     final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> ds =
-      R2DepthShaderBasicSingle.newShader(g.shaders(), sources, id_pool);
+      R2DepthShaderBasicSingle.create(g.shaders(), sources, id_pool);
     final R2MaterialDepthSingleType<R2DepthShaderBasicParameters> mat =
       R2MaterialDepthSingle.of(id_pool.freshID(), ds, ds_param);
 

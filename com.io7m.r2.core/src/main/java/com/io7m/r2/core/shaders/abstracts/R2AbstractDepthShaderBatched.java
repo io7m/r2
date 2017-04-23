@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 <code@io7m.com> http://io7m.com
+ * Copyright © 2017 <code@io7m.com> http://io7m.com
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -14,33 +14,57 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.shaders.types;
+package com.io7m.r2.core.shaders.abstracts;
 
-import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jfsm.core.FSMEnumMutable;
 import com.io7m.jfsm.core.FSMEnumMutableBuilderType;
 import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2Exception;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
+import com.io7m.r2.core.R2ExceptionShaderPreprocessingFailed;
+import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
+import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
+import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+
+import java.util.Optional;
 
 /**
- * A verifier for batched instance shaders; a type that verifies that a renderer
- * has called all of the required methods in the correct order.
+ * An abstract shader implementation that checks state transitions for
+ * correctness.
  *
- * @param <M> See {@link R2ShaderInstanceSingleType}
+ * @param <M> The type of shader parameters
  */
 
-public final class R2ShaderDepthBatchedVerifier<M> implements
-  R2ShaderDepthBatchedType<M>
+public abstract class R2AbstractDepthShaderBatched<M>
+  extends R2AbstractShader<R2AbstractDepthShaderBatched.State, M>
+  implements R2ShaderDepthBatchedType<M>
 {
-  private final R2ShaderDepthBatchedType<M> shader;
   private final FSMEnumMutable<State> state;
+  private final R2ShaderStateChecking check;
 
-  private R2ShaderDepthBatchedVerifier(
-    final R2ShaderDepthBatchedType<M> in_shader)
+  protected R2AbstractDepthShaderBatched(
+    final JCGLShadersType in_shaders,
+    final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
+    final R2IDPoolType in_pool,
+    final String in_name,
+    final String in_vertex,
+    final Optional<String> in_geometry,
+    final String in_fragment,
+    final R2ShaderStateChecking in_check)
+    throws R2ExceptionShaderPreprocessingFailed
   {
-    this.shader = NullCheck.notNull(in_shader, "Shader");
+    super(
+      in_shaders,
+      in_shader_env,
+      in_pool,
+      in_name,
+      in_vertex,
+      in_geometry,
+      in_fragment);
+
+    this.check = NullCheck.notNull(in_check, "Check");
 
     final FSMEnumMutableBuilderType<State> sb =
       FSMEnumMutable.builder(State.STATE_DEACTIVATED);
@@ -71,93 +95,61 @@ public final class R2ShaderDepthBatchedVerifier<M> implements
     this.state = sb.build();
   }
 
-  /**
-   * Construct a new verifier for the given shader.
-   *
-   * @param s   The shader
-   * @param <M> See {@link R2ShaderDepthBatchedType}
-   *
-   * @return A new verifier
-   */
+  protected abstract void onActualReceiveViewValues(
+    JCGLInterfaceGL33Type g,
+    R2ShaderParametersViewType view_parameters);
 
-  public static <M> R2ShaderDepthBatchedType<M>
-  newVerifier(final R2ShaderDepthBatchedType<M> s)
+  protected abstract void onActualReceiveMaterialValues(
+    JCGLInterfaceGL33Type g,
+    R2ShaderParametersMaterialType<M> mat_parameters);
+
+  @Override
+  protected final FSMEnumMutable<State> onCheckGetFSM()
   {
-    return new R2ShaderDepthBatchedVerifier<>(s);
+    return this.state;
   }
 
   @Override
-  public void delete(final JCGLInterfaceGL33Type g)
-    throws R2Exception
+  protected final void onCheckActivated()
   {
-    this.shader.delete(g);
-  }
-
-  @Override
-  public boolean isDeleted()
-  {
-    return this.shader.isDeleted();
-  }
-
-  @Override
-  public long shaderID()
-  {
-    return this.shader.shaderID();
-  }
-
-  @Override
-  public Class<M> shaderParametersType()
-  {
-    return this.shader.shaderParametersType();
-  }
-
-  @Override
-  public JCGLProgramShaderUsableType shaderProgram()
-  {
-    return this.shader.shaderProgram();
-  }
-
-  @Override
-  public void onActivate(final JCGLInterfaceGL33Type g)
-  {
-    this.shader.onActivate(g);
     this.state.transition(State.STATE_ACTIVATED);
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    this.state.transition(State.STATE_VALIDATED);
-    this.shader.onValidate();
-  }
-
-  @Override
-  public void onDeactivate(final JCGLInterfaceGL33Type g)
+  protected final void onCheckDeactivated()
   {
     this.state.transition(State.STATE_DEACTIVATED);
-    this.shader.onDeactivate(g);
   }
 
   @Override
-  public void onReceiveViewValues(
+  protected final void onCheckValidated()
+  {
+    this.state.transition(State.STATE_VALIDATED);
+  }
+
+  @Override
+  public final void onReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
+    NullCheck.notNull(g, "G33");
+    NullCheck.notNull(view_parameters, "View parameters");
     this.state.transition(State.STATE_VIEW_RECEIVED);
-    this.shader.onReceiveViewValues(g, view_parameters);
+    this.onActualReceiveViewValues(g, view_parameters);
   }
 
   @Override
-  public void onReceiveMaterialValues(
+  public final void onReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<M> mat_parameters)
   {
+    NullCheck.notNull(g, "G33");
+    NullCheck.notNull(mat_parameters, "Material parameters");
     this.state.transition(State.STATE_MATERIAL_RECEIVED);
-    this.shader.onReceiveMaterialValues(g, mat_parameters);
+    this.onActualReceiveMaterialValues(g, mat_parameters);
   }
 
-  private enum State
+  protected enum State
   {
     STATE_DEACTIVATED,
     STATE_ACTIVATED,

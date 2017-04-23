@@ -45,7 +45,7 @@ public final class R2ShaderFilterOcclusionApplicatorTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderFilterOcclusionApplicator.newShader(
+    return R2ShaderFilterOcclusionApplicator.create(
       g.shaders(),
       sources,
       pool);

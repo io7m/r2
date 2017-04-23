@@ -35,7 +35,7 @@ public abstract class R2ShaderLightSphericalDebugAttenuationSingleContract
     final R2ShaderPreprocessingEnvironmentReadableType sources,
     final R2IDPoolType pool)
   {
-    return R2DebugShaderLightSphericalAttenuationSingle.newShader(
+    return R2DebugShaderLightSphericalAttenuationSingle.create(
       g.shaders(), sources, pool);
   }
 

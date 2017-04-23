@@ -78,7 +78,7 @@ public abstract class R2SurfaceShaderBasicSingleContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> s =
-      R2SurfaceShaderBasicSingle.newShader(g.shaders(), sources, pool);
+      R2SurfaceShaderBasicSingle.create(g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

@@ -46,7 +46,7 @@ public final class R2ShaderFilterFXAATest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderFilterFXAAA.newShader(
+    return R2ShaderFilterFXAAA.create(
       g.shaders(), sources, pool, R2FilterFXAAQuality.R2_FXAA_QUALITY_29);
   }
 }

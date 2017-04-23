@@ -99,7 +99,7 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
       m.instances().createSingle(m.unitQuad().arrayObject(), transform);
 
     this.shader =
-      R2SurfaceShaderBasicSingle.newShader(
+      R2SurfaceShaderBasicSingle.create(
         g.shaders(),
         m.shaderPreprocessingEnvironment(),
         id_pool);

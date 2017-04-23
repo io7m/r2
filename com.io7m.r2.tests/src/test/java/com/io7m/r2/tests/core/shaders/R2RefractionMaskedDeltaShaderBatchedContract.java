@@ -76,7 +76,7 @@ public abstract class R2RefractionMaskedDeltaShaderBatchedContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderTranslucentInstanceBatchedType<R2RefractionMaskedDeltaParameters> s =
-      R2RefractionMaskedDeltaShaderBatched.newShader(
+      R2RefractionMaskedDeltaShaderBatched.create(
         g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

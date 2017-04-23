@@ -103,7 +103,7 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
       m.instances().createSingle(m.unitSphere8().arrayObject(), tr);
 
     final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader =
-      R2DepthShaderBasicSingle.newShader(
+      R2DepthShaderBasicSingle.create(
         g.shaders(), m.shaderPreprocessingEnvironment(), m.idPool());
     final R2DepthShaderBasicParameters depth_shader_params =
       R2DepthShaderBasicParameters.of(
@@ -112,7 +112,7 @@ public final class ExampleDepthOnly0 implements R2ExampleCustomType
       id_pool.freshID(), depth_shader, depth_shader_params);
 
     this.shader =
-      R2SurfaceShaderBasicSingle.newShader(
+      R2SurfaceShaderBasicSingle.create(
         g.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
   }
 

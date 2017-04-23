@@ -147,10 +147,10 @@ public final class R2FilterBoxBlur<
 
     final JCGLShadersType g_sh = in_g.shaders();
     final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> s_blur_h =
-      R2ShaderFilterBoxBlurHorizontal4f.newShader(
+      R2ShaderFilterBoxBlurHorizontal4f.create(
         g_sh, in_shader_env, in_id_pool);
     final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> s_blur_v =
-      R2ShaderFilterBoxBlurVertical4f.newShader(
+      R2ShaderFilterBoxBlurVertical4f.create(
         g_sh, in_shader_env, in_id_pool);
 
     return new R2FilterBoxBlur<>(

@@ -47,7 +47,7 @@ public abstract class R2ShaderDebugVisualBillboardedContract extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderDebugVisualBillboarded.newShader(
+    return R2ShaderDebugVisualBillboarded.create(
       g.shaders(),
       sources,
       pool);
@@ -63,7 +63,7 @@ public abstract class R2ShaderDebugVisualBillboardedContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceBillboardedType<PVector4D<R2SpaceRGBAType>> s =
-      R2ShaderDebugVisualBillboarded.newShader(
+      R2ShaderDebugVisualBillboarded.create(
         g.shaders(),
         sources,
         pool);

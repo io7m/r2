@@ -21,14 +21,13 @@ import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.core.parameterized.vectors.PVector4D;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractInstanceShaderBillboarded;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
@@ -42,7 +41,7 @@ import java.util.Optional;
  */
 
 public final class R2ShaderDebugVisualBillboarded extends
-  R2AbstractShader<PVector4D<R2SpaceRGBAType>>
+  R2AbstractInstanceShaderBillboarded<PVector4D<R2SpaceRGBAType>>
   implements R2ShaderInstanceBillboardedType<PVector4D<R2SpaceRGBAType>>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
@@ -53,7 +52,8 @@ public final class R2ShaderDebugVisualBillboarded extends
   private R2ShaderDebugVisualBillboarded(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -62,19 +62,20 @@ public final class R2ShaderDebugVisualBillboarded extends
       "com.io7m.r2.shaders.core.R2ShaderDebugVisualBillboarded",
       "com.io7m.r2.shaders.core/R2Billboarded.vert",
       Optional.of("com.io7m.r2.shaders.core/R2Billboarded.geom"),
-      "com.io7m.r2.shaders.core/R2DebugVisualConstant.frag");
+      "com.io7m.r2.shaders.core/R2DebugVisualConstant.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 4);
 
-    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
+    this.u_transform_projection = R2ShaderParameters.uniform(
       p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_view = R2ShaderParameters.getUniformChecked(
+    this.u_transform_view = R2ShaderParameters.uniform(
       p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
+    this.u_depth_coefficient = R2ShaderParameters.uniform(
       p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
 
-    this.u_color = R2ShaderParameters.getUniformChecked(
+    this.u_color = R2ShaderParameters.uniform(
       p, "R2_color", JCGLType.TYPE_FLOAT_VECTOR_4);
   }
 
@@ -88,13 +89,13 @@ public final class R2ShaderDebugVisualBillboarded extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceBillboardedType<PVector4D<R2SpaceRGBAType>> newShader(
+  public static R2ShaderInstanceBillboardedType<PVector4D<R2SpaceRGBAType>> create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderInstanceBillboardedVerifier.newVerifier(
-      new R2ShaderDebugVisualBillboarded(in_shaders, in_shader_env, in_pool));
+    return new R2ShaderDebugVisualBillboarded(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @SuppressWarnings("unchecked")
@@ -106,20 +107,10 @@ public final class R2ShaderDebugVisualBillboarded extends
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveViewValues(
+  protected void onActualReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(view_parameters, "View parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     final R2MatricesObserverValuesType matrices =
       view_parameters.observerMatrices();
@@ -134,13 +125,10 @@ public final class R2ShaderDebugVisualBillboarded extends
   }
 
   @Override
-  public void onReceiveMaterialValues(
+  protected void onActualReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<PVector4D<R2SpaceRGBAType>> mat_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(mat_parameters, "Material parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     g_sh.shaderUniformPutPVector4f(this.u_color, mat_parameters.values());
   }

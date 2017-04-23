@@ -19,10 +19,9 @@ package com.io7m.r2.core.shaders.provided;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jfunctional.Unit;
-import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractInstanceShaderSingleScreen;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
@@ -34,13 +33,14 @@ import java.util.Optional;
  * A stencil-only shader implementation.
  */
 
-public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
-  implements R2ShaderInstanceSingleScreenType<Unit>
+public final class R2StencilShaderScreen
+  extends R2AbstractInstanceShaderSingleScreen<Unit>
 {
   private R2StencilShaderScreen(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -49,7 +49,8 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
       "com.io7m.r2.shaders.core.R2StencilShaderScreen",
       "com.io7m.r2.shaders.core/R2StencilScreen.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2Nothing.frag");
+      "com.io7m.r2.shaders.core/R2Nothing.frag",
+      in_check);
 
     R2ShaderParameters.checkUniformParameterCount(this.shaderProgram(), 0);
   }
@@ -64,12 +65,13 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleScreenType<Unit> newShader(
+  public static R2StencilShaderScreen newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return new R2StencilShaderScreen(in_shaders, in_shader_env, in_pool);
+    return new R2StencilShaderScreen(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -79,27 +81,18 @@ public final class R2StencilShaderScreen extends R2AbstractShader<Unit>
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveViewValues(
+  protected void onActualReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(view_parameters, "View parameters");
+
   }
 
   @Override
-  public void onReceiveMaterialValues(
+  protected void onActualReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<Unit> mat_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(mat_parameters, "Material parameters");
+
   }
 }

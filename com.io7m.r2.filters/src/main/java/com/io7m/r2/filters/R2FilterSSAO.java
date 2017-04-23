@@ -102,7 +102,7 @@ public final class R2FilterSSAO implements R2FilterType<R2FilterSSAOParameters>
     NullCheck.notNull(in_quad, "Quad");
 
     final R2ShaderFilterType<R2ShaderSSAOParameters> s =
-      R2ShaderSSAO.newShader(in_g.shaders(), in_shader_env, in_pool);
+      R2ShaderSSAO.create(in_g.shaders(), in_shader_env, in_pool);
 
     return new R2FilterSSAO(in_g, s, in_quad);
   }

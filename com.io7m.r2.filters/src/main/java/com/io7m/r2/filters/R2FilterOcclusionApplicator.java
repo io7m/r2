@@ -94,7 +94,7 @@ public final class R2FilterOcclusionApplicator implements
     NullCheck.notNull(in_quad, "Quad");
 
     final R2ShaderFilterType<R2ShaderFilterOcclusionApplicatorParameters> s =
-      R2ShaderFilterOcclusionApplicator.newShader(
+      R2ShaderFilterOcclusionApplicator.create(
         in_g.shaders(), in_shader_env, in_pool);
 
     return new R2FilterOcclusionApplicator(in_g, s, in_quad);

@@ -79,7 +79,7 @@ public abstract class R2SurfaceShaderBasicStippledSingleContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParameters> s =
-      R2SurfaceShaderBasicStippledSingle.newShader(
+      R2SurfaceShaderBasicStippledSingle.create(
         g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

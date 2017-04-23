@@ -59,7 +59,7 @@ public final class R2ShaderPreprocessingEnvironment implements
    * @return A new empty environment
    */
 
-  public static R2ShaderPreprocessingEnvironmentType create(
+  public static R2ShaderPreprocessingEnvironment create(
     final SoShaderPreprocessorType in_preproc)
   {
     return new R2ShaderPreprocessingEnvironment(in_preproc);

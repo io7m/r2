@@ -35,7 +35,7 @@ public abstract class R2ShaderLightSphericalDebugConstantSingleContract
     final R2ShaderPreprocessingEnvironmentReadableType sources,
     final R2IDPoolType pool)
   {
-    return R2DebugShaderLightSphericalConstantSingle.newShader(
+    return R2DebugShaderLightSphericalConstantSingle.create(
       g.shaders(), sources, pool);
   }
 

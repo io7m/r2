@@ -24,17 +24,14 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
 import com.io7m.jregions.core.unparameterized.areas.AreaL;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightAmbientScreenSingle;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleVerifier;
-import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractLightScreenShaderSingle;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
@@ -46,8 +43,7 @@ import java.util.Optional;
  */
 
 public final class R2LightShaderAmbientSingle extends
-  R2AbstractShader<R2LightAmbientScreenSingle>
-  implements R2ShaderLightScreenSingleType<R2LightAmbientScreenSingle>
+  R2AbstractLightScreenShaderSingle<R2LightAmbientScreenSingle>
 {
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_projection_inverse;
@@ -61,7 +57,8 @@ public final class R2LightShaderAmbientSingle extends
   private R2LightShaderAmbientSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -70,46 +67,49 @@ public final class R2LightShaderAmbientSingle extends
       "com.io7m.r2.shaders.core.R2LightShaderAmbientSingle",
       "com.io7m.r2.shaders.core/R2LightAmbientSingle.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2LightAmbientSingle.frag");
+      "com.io7m.r2.shaders.core/R2LightAmbientSingle.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 9);
 
     this.u_light_color =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_ambient.color", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_light_intensity =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_ambient.intensity", JCGLType.TYPE_FLOAT);
     this.u_light_occlusion =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_ambient.occlusion", JCGLType.TYPE_SAMPLER_2D);
 
-    final JCGLProgramUniformType u_transform_volume_modelview = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_light_matrices.transform_volume_modelview",
-      JCGLType.TYPE_FLOAT_MATRIX_4);
+    final JCGLProgramUniformType u_transform_volume_modelview =
+      R2ShaderParameters.uniform(
+        p,
+        "R2_light_matrices.transform_volume_modelview",
+        JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p,
         "R2_light_matrices.transform_projection",
         JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection_inverse =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p,
         "R2_light_matrices.transform_projection_inverse",
         JCGLType.TYPE_FLOAT_MATRIX_4);
 
     this.u_viewport_inverse_width =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_viewport.inverse_width", JCGLType.TYPE_FLOAT);
     this.u_viewport_inverse_height =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_viewport.inverse_height", JCGLType.TYPE_FLOAT);
 
     this.u_depth_coefficient =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_depth_coefficient", JCGLType.TYPE_FLOAT);
+
+    R2ShaderParameters.checkUniformParameterCount(p, 9);
   }
 
   /**
@@ -122,14 +122,13 @@ public final class R2LightShaderAmbientSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderLightSingleType<R2LightAmbientScreenSingle>
-  newShader(
+  public static R2LightShaderAmbientSingle create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderLightScreenSingleVerifier.newVerifier(
-      new R2LightShaderAmbientSingle(in_shaders, in_shader_env, in_pool));
+    return new R2LightShaderAmbientSingle(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -140,14 +139,7 @@ public final class R2LightShaderAmbientSingle extends
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveBoundGeometryBufferTextures(
+  protected void onActualReceiveBoundGeometryBufferTextures(
     final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
@@ -155,22 +147,14 @@ public final class R2LightShaderAmbientSingle extends
     final JCGLTextureUnitType unit_depth,
     final JCGLTextureUnitType unit_normals)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(gbuffer, "G-Buffer");
-    NullCheck.notNull(unit_albedo, "Albedo");
-    NullCheck.notNull(unit_depth, "Depth");
-    NullCheck.notNull(unit_normals, "Normals");
-    NullCheck.notNull(unit_specular, "Specular");
+
   }
 
   @Override
-  public void onReceiveValues(
+  protected void onActualReceiveValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersLightType<R2LightAmbientScreenSingle> light_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(light_parameters, "Light parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     final JCGLTexturesType g_tex = g.textures();
 

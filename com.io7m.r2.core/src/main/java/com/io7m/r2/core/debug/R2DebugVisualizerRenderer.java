@@ -137,15 +137,15 @@ public final class R2DebugVisualizerRenderer
     final R2IDPoolType in_pool)
   {
     this.g = NullCheck.notNull(in_g, "GL33");
-    this.shader_single = R2ShaderDebugVisualSingle.newShader(
+    this.shader_single = R2ShaderDebugVisualSingle.create(
       this.g.shaders(), in_shader_env, in_pool);
-    this.shader_batched = R2ShaderDebugVisualBatched.newShader(
+    this.shader_batched = R2ShaderDebugVisualBatched.create(
       this.g.shaders(), in_shader_env, in_pool);
-    this.shader_billboarded = R2ShaderDebugVisualBillboarded.newShader(
+    this.shader_billboarded = R2ShaderDebugVisualBillboarded.create(
       this.g.shaders(), in_shader_env, in_pool);
-    this.shader_screen = R2ShaderDebugVisualScreen.newShader(
+    this.shader_screen = R2ShaderDebugVisualScreen.create(
       this.g.shaders(), in_shader_env, in_pool);
-    this.shader_lines = R2ShaderDebugColorVerticesWorldPosition.newShader(
+    this.shader_lines = R2ShaderDebugColorVerticesWorldPosition.create(
       this.g.shaders(), in_shader_env, in_pool);
 
     {

@@ -41,7 +41,7 @@ public abstract class R2ShaderLightProjectiveLambertSingleContract
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2LightShaderProjectiveLambertSingle.newShader(
+    return R2LightShaderProjectiveLambertSingle.create(
       g.shaders(), sources, pool);
   }
 

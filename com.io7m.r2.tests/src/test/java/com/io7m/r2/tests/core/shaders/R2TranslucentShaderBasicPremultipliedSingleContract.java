@@ -75,7 +75,7 @@ public abstract class R2TranslucentShaderBasicPremultipliedSingleContract extend
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderTranslucentInstanceSingleType<R2TranslucentShaderBasicParameters> s =
-      R2TranslucentShaderBasicPremultipliedSingle.newShader(
+      R2TranslucentShaderBasicPremultipliedSingle.create(
         g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

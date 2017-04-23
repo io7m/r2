@@ -79,7 +79,7 @@ public abstract class R2ShaderFilterFogDepthQuadraticInverseContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderFilterType<R2ShaderFilterFogParameters> s =
-      R2ShaderFilterFogDepthQuadraticInverse.newShader(
+      R2ShaderFilterFogDepthQuadraticInverse.create(
         g.shaders(),
         sources,
         pool);

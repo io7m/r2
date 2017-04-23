@@ -19,30 +19,30 @@ package com.io7m.r2.filters;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.provided.R2AbstractShader;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractFilterShader;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
+
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
+import static com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking.STATE_CHECK;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
 
 /**
  * A light applicator shader.
  */
 
 public final class R2ShaderFilterLightApplicator extends
-  R2AbstractShader<R2ShaderFilterLightApplicatorParameters>
-  implements R2ShaderFilterType<R2ShaderFilterLightApplicatorParameters>
+  R2AbstractFilterShader<R2ShaderFilterLightApplicatorParameters>
 {
   private final JCGLProgramUniformType u_texture_albedo;
   private final JCGLProgramUniformType u_texture_specular;
@@ -51,7 +51,8 @@ public final class R2ShaderFilterLightApplicator extends
   private R2ShaderFilterLightApplicator(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -60,19 +61,18 @@ public final class R2ShaderFilterLightApplicator extends
       "com.io7m.r2.shaders.core.R2ShaderFilterLightApplicator",
       "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2FilterLightApplicator.frag");
+      "com.io7m.r2.shaders.core/R2FilterLightApplicator.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
     this.u_texture_albedo =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_textures_albedo", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_textures_albedo", TYPE_SAMPLER_2D);
     this.u_texture_specular =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_textures_specular", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_textures_specular", TYPE_SAMPLER_2D);
     this.u_texture_diffuse =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_textures_diffuse", JCGLType.TYPE_SAMPLER_2D);
-    R2ShaderParameters.checkUniformParameterCount(p, 3);
+      uniform(p, "R2_textures_diffuse", TYPE_SAMPLER_2D);
+
+    checkUniformParameterCount(p, 3);
   }
 
   /**
@@ -91,8 +91,8 @@ public final class R2ShaderFilterLightApplicator extends
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterLightApplicator(in_shaders, in_shader_env, in_pool));
+    return new R2ShaderFilterLightApplicator(
+      in_shaders, in_shader_env, in_pool, STATE_CHECK);
   }
 
   @Override
@@ -103,19 +103,10 @@ public final class R2ShaderFilterLightApplicator extends
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveFilterValues(
+  protected void onActualReceiveFilterValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersFilterType<R2ShaderFilterLightApplicatorParameters> parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(parameters, "Filter parameters");
 
     final R2ShaderFilterLightApplicatorParameters values =
       parameters.values();

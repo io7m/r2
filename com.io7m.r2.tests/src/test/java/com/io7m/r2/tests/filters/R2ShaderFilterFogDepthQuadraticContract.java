@@ -78,7 +78,7 @@ public abstract class R2ShaderFilterFogDepthQuadraticContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderFilterType<R2ShaderFilterFogParameters> s =
-      R2ShaderFilterFogDepthQuadratic.newShader(g.shaders(), sources, pool);
+      R2ShaderFilterFogDepthQuadratic.create(g.shaders(), sources, pool);
     Assert.assertFalse(s.isDeleted());
     s.delete(g);
     Assert.assertTrue(s.isDeleted());

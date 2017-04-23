@@ -18,30 +18,30 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jfunctional.Unit;
-import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractInstanceShaderSingle;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_4;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
+
 /**
  * A stencil-only shader implementation.
  */
 
-public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
-  implements R2ShaderInstanceSingleType<Unit>
+public final class R2StencilShaderSingle
+  extends R2AbstractInstanceShaderSingle<Unit>
 {
   private final JCGLProgramUniformType u_transform_modelview;
   private final JCGLProgramUniformType u_transform_projection;
@@ -49,7 +49,8 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   private R2StencilShaderSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -58,21 +59,22 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
       "com.io7m.r2.shaders.core.R2StencilShaderSingle",
       "com.io7m.r2.shaders.core/R2StencilSingle.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2Nothing.frag");
+      "com.io7m.r2.shaders.core/R2Nothing.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
     this.u_transform_modelview =
-      R2ShaderParameters.getUniformChecked(
+      uniform(
         p,
         "R2_stencil_parameters.transform_modelview",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+        TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
-      R2ShaderParameters.getUniformChecked(
+      uniform(
         p,
         "R2_stencil_parameters.transform_projection",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+        TYPE_FLOAT_MATRIX_4);
 
-    R2ShaderParameters.checkUniformParameterCount(p, 2);
+    checkUniformParameterCount(p, 2);
   }
 
   /**
@@ -85,13 +87,13 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleType<Unit> newShader(
+  public static R2StencilShaderSingle create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderInstanceSingleVerifier.newVerifier(
-      new R2StencilShaderSingle(in_shaders, in_shader_env, in_pool));
+    return new R2StencilShaderSingle(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -101,20 +103,10 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveViewValues(
+  protected void onActualReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(view_parameters, "View parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     final R2MatricesObserverValuesType matrices =
       view_parameters.observerMatrices();
@@ -124,25 +116,22 @@ public final class R2StencilShaderSingle extends R2AbstractShader<Unit>
   }
 
   @Override
-  public void onReceiveMaterialValues(
+  protected void onActualReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<Unit> mat_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(mat_parameters, "Material parameters");
+
   }
 
   @Override
-  public void onReceiveInstanceTransformValues(
+  protected void onActualReceiveInstanceTransformValues(
     final JCGLInterfaceGL33Type g,
     final R2MatricesInstanceSingleValuesType m)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(m, "Instance matrices");
-
     final JCGLShadersType g_sh = g.shaders();
 
     g_sh.shaderUniformPutPMatrix4x4f(
       this.u_transform_modelview, m.matrixModelView());
   }
+
 }

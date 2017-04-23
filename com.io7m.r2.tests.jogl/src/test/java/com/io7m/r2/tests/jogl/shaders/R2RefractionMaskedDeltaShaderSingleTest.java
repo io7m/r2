@@ -45,7 +45,7 @@ public final class R2RefractionMaskedDeltaShaderSingleTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2RefractionMaskedDeltaShaderSingle.newShader(
+    return R2RefractionMaskedDeltaShaderSingle.create(
       g.shaders(),
       sources,
       pool);

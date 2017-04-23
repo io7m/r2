@@ -19,34 +19,33 @@ package com.io7m.r2.filters;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
 import com.io7m.jregions.core.unparameterized.sizes.AreaSizeL;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.provided.R2AbstractShader;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractFilterShader;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
+
 /**
  * A shader that recovers the eye-space Z value of the g-buffer surface.
  */
 
-public final class R2ShaderFilterDebugEyeZ extends
-  R2AbstractShader<R2FilterDebugEyeZParameters>
-  implements R2ShaderFilterType<R2FilterDebugEyeZParameters>
+public final class R2ShaderFilterDebugEyeZ
+  extends R2AbstractFilterShader<R2FilterDebugEyeZParameters>
 {
   private final JCGLProgramUniformType u_gbuffer_albedo;
   private final JCGLProgramUniformType u_gbuffer_normal;
@@ -59,7 +58,8 @@ public final class R2ShaderFilterDebugEyeZ extends
   private R2ShaderFilterDebugEyeZ(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -68,34 +68,29 @@ public final class R2ShaderFilterDebugEyeZ extends
       "com.io7m.r2.shaders.core.R2ShaderFilterDebugEyeZ",
       "com.io7m.r2.shaders.core/R2DebugPositionOnly.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2DebugEyeZReconstruction.frag");
+      "com.io7m.r2.shaders.core/R2DebugEyeZReconstruction.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 7);
 
     this.u_gbuffer_albedo =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.albedo", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_gbuffer.albedo", TYPE_SAMPLER_2D);
     this.u_gbuffer_normal =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.normal", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_gbuffer.normal", TYPE_SAMPLER_2D);
     this.u_gbuffer_specular =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.specular", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_gbuffer.specular", TYPE_SAMPLER_2D);
     this.u_gbuffer_depth =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.depth", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_gbuffer.depth", TYPE_SAMPLER_2D);
 
     this.u_viewport_inverse_width =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_viewport.inverse_width", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_viewport.inverse_width", TYPE_FLOAT);
     this.u_viewport_inverse_height =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_viewport.inverse_height", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_viewport.inverse_height", TYPE_FLOAT);
 
     this.u_depth_coefficient =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_depth_coefficient", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_depth_coefficient", TYPE_FLOAT);
+
+    checkUniformParameterCount(p, 7);
   }
 
   /**
@@ -108,13 +103,13 @@ public final class R2ShaderFilterDebugEyeZ extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2FilterDebugEyeZParameters> newShader(
+  public static R2ShaderFilterDebugEyeZ newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterDebugEyeZ(in_shaders, in_shader_env, in_pool));
+    return new R2ShaderFilterDebugEyeZ(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -125,20 +120,10 @@ public final class R2ShaderFilterDebugEyeZ extends
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveFilterValues(
+  protected void onActualReceiveFilterValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersFilterType<R2FilterDebugEyeZParameters> parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(parameters, "Filter parameters");
-
     final R2FilterDebugEyeZParameters values =
       parameters.values();
     final JCGLTextureUnitContextMutableType tc =

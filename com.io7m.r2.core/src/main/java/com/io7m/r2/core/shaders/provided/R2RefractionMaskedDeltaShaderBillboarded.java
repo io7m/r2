@@ -19,35 +19,37 @@ package com.io7m.r2.core.shaders.provided;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrices4x4D;
 import com.io7m.jtensors.core.parameterized.vectors.PVectors3D;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractTranslucentInstanceShaderBillboarded;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedVerifier;
 
 import java.util.Optional;
+
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_4;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_3;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
 
 /**
  * Shader for refracting billboarded instances.
  */
 
 public final class R2RefractionMaskedDeltaShaderBillboarded
-  extends R2AbstractShader<R2RefractionMaskedDeltaParameters>
-  implements R2ShaderTranslucentInstanceBillboardedType<R2RefractionMaskedDeltaParameters>
+  extends R2AbstractTranslucentInstanceShaderBillboarded<R2RefractionMaskedDeltaParameters>
 {
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_view;
@@ -61,7 +63,8 @@ public final class R2RefractionMaskedDeltaShaderBillboarded
   private R2RefractionMaskedDeltaShaderBillboarded(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -70,30 +73,31 @@ public final class R2RefractionMaskedDeltaShaderBillboarded
       "com.io7m.r2.shaders.core.R2RefractionMaskedDelta",
       "com.io7m.r2.shaders.core/R2Billboarded.vert",
       Optional.of("com.io7m.r2.shaders.core/R2Billboarded.geom"),
-      "com.io7m.r2.shaders.core/R2RefractionMaskedDelta.frag");
+      "com.io7m.r2.shaders.core/R2RefractionMaskedDelta.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
 
-    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
+    this.u_transform_projection =
+      uniform(p, "R2_view.transform_projection", TYPE_FLOAT_MATRIX_4);
+    this.u_transform_view =
+      uniform(p, "R2_view.transform_view", TYPE_FLOAT_MATRIX_4);
 
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
+    this.u_depth_coefficient =
+      uniform(p, "R2_view.depth_coefficient", TYPE_FLOAT);
 
-    this.u_refraction_scale = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction.scale", JCGLType.TYPE_FLOAT);
-    this.u_refraction_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction.color", JCGLType.TYPE_FLOAT_VECTOR_3);
-    this.u_refraction_scene = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction.scene", JCGLType.TYPE_SAMPLER_2D);
-    this.u_refraction_mask = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction.mask", JCGLType.TYPE_SAMPLER_2D);
-    this.u_refraction_delta = R2ShaderParameters.getUniformChecked(
-      p, "R2_refraction_delta", JCGLType.TYPE_SAMPLER_2D);
+    this.u_refraction_scale =
+      uniform(p, "R2_refraction.scale", TYPE_FLOAT);
+    this.u_refraction_color =
+      uniform(p, "R2_refraction.color", TYPE_FLOAT_VECTOR_3);
+    this.u_refraction_scene =
+      uniform(p, "R2_refraction.scene", TYPE_SAMPLER_2D);
+    this.u_refraction_mask =
+      uniform(p, "R2_refraction.mask", TYPE_SAMPLER_2D);
+    this.u_refraction_delta =
+      uniform(p, "R2_refraction_delta", TYPE_SAMPLER_2D);
 
-    R2ShaderParameters.checkUniformParameterCount(p, 8);
+    checkUniformParameterCount(p, 8);
   }
 
   /**
@@ -106,15 +110,14 @@ public final class R2RefractionMaskedDeltaShaderBillboarded
    * @return A new shader
    */
 
-  public static R2ShaderTranslucentInstanceBillboardedType<R2RefractionMaskedDeltaParameters>
+  public static R2RefractionMaskedDeltaShaderBillboarded
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderTranslucentInstanceBillboardedVerifier.newVerifier(
-      new R2RefractionMaskedDeltaShaderBillboarded(
-        in_shaders, in_shader_env, in_pool));
+    return new R2RefractionMaskedDeltaShaderBillboarded(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -124,13 +127,10 @@ public final class R2RefractionMaskedDeltaShaderBillboarded
   }
 
   @Override
-  public void onReceiveViewValues(
+  protected void onActualReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(view_parameters, "View parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     final R2MatricesObserverValuesType matrices =
       view_parameters.observerMatrices();
@@ -147,20 +147,10 @@ public final class R2RefractionMaskedDeltaShaderBillboarded
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-
-  }
-
-  @Override
-  public void onReceiveMaterialValues(
+  protected void onActualReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<R2RefractionMaskedDeltaParameters> mat_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(mat_parameters, "Material parameters");
-
     final JCGLTexturesType g_tex = g.textures();
     final JCGLShadersType g_sh = g.shaders();
 

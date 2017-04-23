@@ -48,7 +48,7 @@ public abstract class R2MaskShaderBatchedContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceBatchedType<Unit> s =
-      R2MaskShaderBatched.newShader(g.shaders(), sources, pool);
+      R2MaskShaderBatched.create(g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

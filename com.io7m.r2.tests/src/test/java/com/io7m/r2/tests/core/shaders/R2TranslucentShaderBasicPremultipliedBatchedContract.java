@@ -75,7 +75,7 @@ public abstract class R2TranslucentShaderBasicPremultipliedBatchedContract exten
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderTranslucentInstanceBatchedType<R2TranslucentShaderBasicParameters> s =
-      R2TranslucentShaderBasicPremultipliedBatched.newShader(
+      R2TranslucentShaderBasicPremultipliedBatched.create(
         g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

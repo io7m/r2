@@ -96,7 +96,7 @@ public abstract class R2ShaderFilterFXAAContract extends
 
     for (final R2FilterFXAAQuality q : R2FilterFXAAQuality.values()) {
       final R2ShaderFilterType<R2ShaderFilterFXAAParameters> s =
-        R2ShaderFilterFXAAA.newShader(g.shaders(), sources, pool, q);
+        R2ShaderFilterFXAAA.create(g.shaders(), sources, pool, q);
       Assert.assertFalse(s.isDeleted());
       s.delete(g);
       Assert.assertTrue(s.isDeleted());

@@ -72,7 +72,7 @@ public abstract class R2DepthShaderBasicBatchedContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderDepthBatchedType<R2DepthShaderBasicParameters> s =
-      R2DepthShaderBasicBatched.newShader(g.shaders(), sources, pool);
+      R2DepthShaderBasicBatched.create(g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

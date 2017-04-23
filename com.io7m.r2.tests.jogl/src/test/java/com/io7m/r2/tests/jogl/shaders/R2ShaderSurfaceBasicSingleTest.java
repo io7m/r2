@@ -45,6 +45,6 @@ public final class R2ShaderSurfaceBasicSingleTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2SurfaceShaderBasicSingle.newShader(g.shaders(), sources, pool);
+    return R2SurfaceShaderBasicSingle.create(g.shaders(), sources, pool);
   }
 }

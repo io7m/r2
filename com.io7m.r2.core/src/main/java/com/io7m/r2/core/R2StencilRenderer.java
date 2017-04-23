@@ -90,7 +90,7 @@ public final class R2StencilRenderer implements R2StencilRendererType
 
     final JCGLShadersType g_sh = in_g.shaders();
     this.program_instance =
-      R2StencilShaderSingle.newShader(g_sh, in_shader_env, in_pool);
+      R2StencilShaderSingle.create(g_sh, in_shader_env, in_pool);
     this.program_screen =
       R2StencilShaderScreen.newShader(g_sh, in_shader_env, in_pool);
     this.stencil_consumer =

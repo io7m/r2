@@ -18,31 +18,32 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jfunctional.Unit;
-import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleScreenType;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractInstanceShaderSingleScreen;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_4;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
+
 /**
  * Debug visualization shader for printing a set of line segments specified in
  * world space.
  */
 
-public final class R2ShaderDebugColorVerticesWorldPosition extends
-  R2AbstractShader<Unit>
-  implements R2ShaderInstanceSingleScreenType<Unit>
+public final class R2ShaderDebugColorVerticesWorldPosition
+  extends R2AbstractInstanceShaderSingleScreen<Unit>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_view;
@@ -51,7 +52,8 @@ public final class R2ShaderDebugColorVerticesWorldPosition extends
   private R2ShaderDebugColorVerticesWorldPosition(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -60,17 +62,19 @@ public final class R2ShaderDebugColorVerticesWorldPosition extends
       "com.io7m.r2.shaders.core.R2ShaderDebugColorVerticesWorldPosition",
       "com.io7m.r2.shaders.core/R2DebugColorVerticesWorldPosition.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2DebugColorVertices.frag");
+      "com.io7m.r2.shaders.core/R2DebugColorVertices.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 3);
 
-    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
+    this.u_transform_projection =
+      uniform(p, "R2_view.transform_projection", TYPE_FLOAT_MATRIX_4);
+    this.u_transform_view =
+      uniform(p, "R2_view.transform_view", TYPE_FLOAT_MATRIX_4);
+    this.u_depth_coefficient =
+      uniform(p, "R2_view.depth_coefficient", TYPE_FLOAT);
+
+    checkUniformParameterCount(p, 3);
   }
 
   /**
@@ -83,16 +87,13 @@ public final class R2ShaderDebugColorVerticesWorldPosition extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleScreenType<Unit>
-  newShader(
+  public static R2ShaderDebugColorVerticesWorldPosition create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
     return new R2ShaderDebugColorVerticesWorldPosition(
-      in_shaders,
-      in_shader_env,
-      in_pool);
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -102,20 +103,10 @@ public final class R2ShaderDebugColorVerticesWorldPosition extends
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveViewValues(
+  protected void onActualReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(view_parameters, "View parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     final R2MatricesObserverValuesType matrices =
       view_parameters.observerMatrices();
@@ -130,10 +121,10 @@ public final class R2ShaderDebugColorVerticesWorldPosition extends
   }
 
   @Override
-  public void onReceiveMaterialValues(
+  protected void onActualReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<Unit> mat_parameters)
   {
-    NullCheck.notNull(g, "G33");
+
   }
 }

@@ -20,36 +20,39 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTexture2DUsableType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
 import com.io7m.jregions.core.unparameterized.areas.AreaL;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector2D;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2ViewRaysReadableType;
-import com.io7m.r2.core.shaders.provided.R2AbstractShader;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractFilterShader;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_4;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_2;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_3;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_INTEGER;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
+
 /**
  * An SSAO shader.
  */
 
-public final class R2ShaderSSAO extends
-  R2AbstractShader<R2ShaderSSAOParameters>
-  implements R2ShaderFilterType<R2ShaderSSAOParameters>
+public final class R2ShaderSSAO
+  extends R2AbstractFilterShader<R2ShaderSSAOParameters>
 {
   private final JCGLProgramUniformType u_ssao_noise_uv_scale;
   private final JCGLProgramUniformType u_ssao_kernel;
@@ -76,7 +79,8 @@ public final class R2ShaderSSAO extends
   private R2ShaderSSAO(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -85,75 +89,57 @@ public final class R2ShaderSSAO extends
       "com.io7m.r2.shaders.core.R2SSAO",
       "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2SSAO.frag");
+      "com.io7m.r2.shaders.core/R2SSAO.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 20);
 
     final JCGLProgramUniformType u_gbuffer_albedo =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.albedo", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_gbuffer.albedo", TYPE_SAMPLER_2D);
     this.u_gbuffer_normal =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.normal", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_gbuffer.normal", TYPE_SAMPLER_2D);
     final JCGLProgramUniformType u_gbuffer_specular =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.specular", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_gbuffer.specular", TYPE_SAMPLER_2D);
     this.u_gbuffer_depth =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_gbuffer.depth", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_gbuffer.depth", TYPE_SAMPLER_2D);
 
     this.u_ssao_noise_uv_scale =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_noise_uv_scale", JCGLType.TYPE_FLOAT_VECTOR_2);
+      uniform(p, "R2_ssao_noise_uv_scale", TYPE_FLOAT_VECTOR_2);
     this.u_ssao_kernel =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_kernel[0]", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_ssao_kernel[0]", TYPE_FLOAT_VECTOR_3);
     this.u_ssao_kernel_size =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_kernel_size", JCGLType.TYPE_INTEGER);
+      uniform(p, "R2_ssao_kernel_size", TYPE_INTEGER);
     this.u_ssao_texture_noise =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_noise", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_ssao_noise", TYPE_SAMPLER_2D);
     this.u_ssao_sample_radius =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_sample_radius", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_ssao_sample_radius", TYPE_FLOAT);
     this.u_ssao_power =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_power", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_ssao_power", TYPE_FLOAT);
     this.u_ssao_transform_projection =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_ssao_transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
+      uniform(p, "R2_ssao_transform_projection", TYPE_FLOAT_MATRIX_4);
 
     this.u_depth_coefficient =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_depth_coefficient", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_depth_coefficient", TYPE_FLOAT);
 
     this.u_view_rays_origin_x0y0 =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.origin_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_view_rays.origin_x0y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y0 =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.origin_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_view_rays.origin_x1y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x0y1 =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.origin_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_view_rays.origin_x0y1", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y1 =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.origin_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_view_rays.origin_x1y1", TYPE_FLOAT_VECTOR_3);
 
     this.u_view_rays_ray_x0y0 =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.ray_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_view_rays.ray_x0y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y0 =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.ray_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_view_rays.ray_x1y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x0y1 =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.ray_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_view_rays.ray_x0y1", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y1 =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_view_rays.ray_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_view_rays.ray_x1y1", TYPE_FLOAT_VECTOR_3);
+
+    checkUniformParameterCount(p, 20);
   }
 
   /**
@@ -166,14 +152,13 @@ public final class R2ShaderSSAO extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderSSAOParameters>
-  newShader(
+  public static R2ShaderSSAO create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderSSAO(in_shaders, in_shader_env, in_pool));
+    return new R2ShaderSSAO(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -183,13 +168,6 @@ public final class R2ShaderSSAO extends
     return R2ShaderSSAOParameters.class;
   }
 
-  @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
   private boolean shouldSetKernel(
     final R2SSAOKernelReadableType k)
   {
@@ -197,13 +175,10 @@ public final class R2ShaderSSAO extends
   }
 
   @Override
-  public void onReceiveFilterValues(
+  protected void onActualReceiveFilterValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersFilterType<R2ShaderSSAOParameters> parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(parameters, "Filter parameters");
-
     final R2ShaderSSAOParameters values =
       parameters.values();
     final JCGLTextureUnitContextMutableType tc =

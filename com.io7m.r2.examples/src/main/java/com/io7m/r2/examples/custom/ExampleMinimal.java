@@ -185,7 +185,7 @@ public final class ExampleMinimal implements R2ExampleCustomType
     this.instance = m.instances().createSingle(mesh, transform);
 
     this.geom_shader =
-      R2SurfaceShaderBasicReflectiveSingle.newShader(
+      R2SurfaceShaderBasicReflectiveSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
 
     final R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
@@ -203,7 +203,7 @@ public final class ExampleMinimal implements R2ExampleCustomType
       id_pool.freshID(), this.geom_shader, geom_shader_params);
 
     this.light_ambient_shader =
-      R2LightShaderAmbientSingle.newShader(
+      R2LightShaderAmbientSingle.create(
         gx.shaders(),
         m.shaderPreprocessingEnvironment(),
         id_pool);
@@ -213,7 +213,7 @@ public final class ExampleMinimal implements R2ExampleCustomType
     this.light_ambient.setColor(PVector3D.of(0.0, 1.0, 1.0));
 
     this.sphere_light_shader =
-      R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
+      R2LightShaderSphericalLambertBlinnPhongSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
 
     this.sphere_light = m.lights().createSphericalSingle();

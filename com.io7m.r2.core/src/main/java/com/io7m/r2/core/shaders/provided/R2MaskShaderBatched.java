@@ -18,31 +18,33 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jfunctional.Unit;
-import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector4D;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedVerifier;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractInstanceShaderBatched;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_4;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_4;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
+
 /**
  * Shader for masking single instances.
  */
 
-public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
-  implements R2ShaderInstanceBatchedType<Unit>
+public final class R2MaskShaderBatched
+  extends R2AbstractInstanceShaderBatched<Unit>
 {
   private static final Vector4D WHITE = Vector4D.of(1.0, 1.0, 1.0, 1.0);
 
@@ -54,7 +56,8 @@ public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
   private R2MaskShaderBatched(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -63,20 +66,21 @@ public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
       "com.io7m.r2.shaders.core.R2MaskBatched",
       "com.io7m.r2.shaders.core/R2MaskBatched.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2Mask.frag");
+      "com.io7m.r2.shaders.core/R2Mask.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
 
-    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
-    this.u_frag_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_frag_color", JCGLType.TYPE_FLOAT_VECTOR_4);
+    this.u_transform_projection =
+      uniform(p, "R2_view.transform_projection", TYPE_FLOAT_MATRIX_4);
+    this.u_transform_view =
+      uniform(p, "R2_view.transform_view", TYPE_FLOAT_MATRIX_4);
+    this.u_depth_coefficient =
+      uniform(p, "R2_view.depth_coefficient", TYPE_FLOAT);
+    this.u_frag_color =
+      uniform(p, "R2_frag_color", TYPE_FLOAT_VECTOR_4);
 
-    R2ShaderParameters.checkUniformParameterCount(p, 4);
+    checkUniformParameterCount(p, 4);
   }
 
   /**
@@ -89,14 +93,13 @@ public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
    * @return A new shader
    */
 
-  public static R2ShaderInstanceBatchedType<Unit>
-  newShader(
+  public static R2MaskShaderBatched create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderInstanceBatchedVerifier.newVerifier(
-      new R2MaskShaderBatched(in_shaders, in_shader_env, in_pool));
+    return new R2MaskShaderBatched(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -106,13 +109,10 @@ public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
   }
 
   @Override
-  public void onReceiveViewValues(
+  protected void onActualReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(view_parameters, "View parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     final R2MatricesObserverValuesType matrices =
       view_parameters.observerMatrices();
@@ -127,20 +127,10 @@ public final class R2MaskShaderBatched extends R2AbstractShader<Unit>
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-
-  }
-
-  @Override
-  public void onReceiveMaterialValues(
+  protected void onActualReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<Unit> mat_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(mat_parameters, "Material parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     g_sh.shaderUniformPutVector4f(this.u_frag_color, WHITE);
   }

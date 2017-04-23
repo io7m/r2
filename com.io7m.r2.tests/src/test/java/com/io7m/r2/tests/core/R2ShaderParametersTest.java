@@ -80,7 +80,7 @@ public final class R2ShaderParametersTest
     };
 
     this.expected.expect(R2ExceptionShaderParameterNotPresent.class);
-    R2ShaderParameters.getUniformChecked(p, "nonexistent", JCGLType.TYPE_FLOAT);
+    R2ShaderParameters.uniform(p, "nonexistent", JCGLType.TYPE_FLOAT);
   }
 
   @Test
@@ -162,7 +162,7 @@ public final class R2ShaderParametersTest
     u.put("exists", uu);
 
     final JCGLProgramUniformType ur =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p,
         "exists",
         JCGLType.TYPE_FLOAT_VECTOR_4);
@@ -248,7 +248,7 @@ public final class R2ShaderParametersTest
     u.put("exists", uu);
 
     this.expected.expect(R2ExceptionShaderParameterWrongType.class);
-    R2ShaderParameters.getUniformChecked(
+    R2ShaderParameters.uniform(
       p,
       "exists",
       JCGLType.TYPE_FLOAT_VECTOR_3);

@@ -91,7 +91,7 @@ public final class R2FilterCompositor implements
     NullCheck.notNull(in_quad, "Quad");
 
     final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> s =
-      R2ShaderFilterTextureShow.newShader(
+      R2ShaderFilterTextureShow.create(
         in_g.shaders(), in_shader_env, in_pool);
 
     return new R2FilterCompositor(in_g, s, in_quad);

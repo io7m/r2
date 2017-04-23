@@ -19,34 +19,39 @@ package com.io7m.r2.core.shaders.provided;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleVerifier;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractInstanceShaderSingle;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_3;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_4;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_3;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_4;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_CUBE;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
+
 /**
  * Basic deferred surface shader for single instances, with pseudo-reflectivity
  * provided by an environment map.
  */
 
-public final class R2SurfaceShaderBasicReflectiveSingle extends
-  R2AbstractShader<R2SurfaceShaderBasicReflectiveParameters>
-  implements R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters>
+public final class R2SurfaceShaderBasicReflectiveSingle
+  extends R2AbstractInstanceShaderSingle<R2SurfaceShaderBasicReflectiveParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_normal;
@@ -71,7 +76,8 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
   private R2SurfaceShaderBasicReflectiveSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -80,70 +86,81 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
       "com.io7m.r2.shaders.core.R2SurfaceShaderBasicReflectiveSingle",
       "com.io7m.r2.shaders.core/R2SurfaceSingle.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2SurfaceBasicReflectiveSingle.frag");
+      "com.io7m.r2.shaders.core/R2SurfaceBasicReflectiveSingle.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 19);
 
-    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_view_inverse = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_surface_reflective_parameters.transform_view_inverse",
-      JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
+    this.u_transform_projection =
+      uniform(p, "R2_view.transform_projection", TYPE_FLOAT_MATRIX_4);
+    this.u_transform_view =
+      uniform(p, "R2_view.transform_view", TYPE_FLOAT_MATRIX_4);
+    this.u_transform_view_inverse =
+      uniform(
+        p,
+        "R2_surface_reflective_parameters.transform_view_inverse",
+        TYPE_FLOAT_MATRIX_4);
+    this.u_depth_coefficient =
+      uniform(p, "R2_view.depth_coefficient", TYPE_FLOAT);
 
-    this.u_transform_normal = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_surface_matrices_instance.transform_normal",
-      JCGLType.TYPE_FLOAT_MATRIX_3);
-    this.u_transform_modelview = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_surface_matrices_instance.transform_modelview",
-      JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_uv = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_surface_matrices_instance.transform_uv",
-      JCGLType.TYPE_FLOAT_MATRIX_3);
+    this.u_transform_normal =
+      uniform(
+        p,
+        "R2_surface_matrices_instance.transform_normal",
+        TYPE_FLOAT_MATRIX_3);
+    this.u_transform_modelview =
+      uniform(
+        p,
+        "R2_surface_matrices_instance.transform_modelview",
+        TYPE_FLOAT_MATRIX_4);
+    this.u_transform_uv =
+      uniform(
+        p,
+        "R2_surface_matrices_instance.transform_uv",
+        TYPE_FLOAT_MATRIX_3);
 
-    this.u_emission_amount = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_parameters.emission_amount", JCGLType.TYPE_FLOAT);
-    this.u_albedo_color = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_basic_surface_parameters.albedo_color",
-      JCGLType.TYPE_FLOAT_VECTOR_4);
-    this.u_albedo_mix = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_parameters.albedo_mix", JCGLType.TYPE_FLOAT);
-    this.u_specular_color = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_basic_surface_parameters.specular_color",
-      JCGLType.TYPE_FLOAT_VECTOR_3);
-    this.u_specular_exponent = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_parameters.specular_exponent", JCGLType.TYPE_FLOAT);
-    this.u_alpha_discard_threshold = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_basic_surface_parameters.alpha_discard_threshold",
-      JCGLType.TYPE_FLOAT);
-    this.u_environment_mix = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_surface_reflective_parameters.environment_mix",
-      JCGLType.TYPE_FLOAT);
+    this.u_emission_amount =
+      uniform(p, "R2_basic_surface_parameters.emission_amount", TYPE_FLOAT);
+    this.u_albedo_color =
+      uniform(
+        p,
+        "R2_basic_surface_parameters.albedo_color",
+        TYPE_FLOAT_VECTOR_4);
+    this.u_albedo_mix =
+      uniform(p, "R2_basic_surface_parameters.albedo_mix", TYPE_FLOAT);
+    this.u_specular_color =
+      uniform(
+        p,
+        "R2_basic_surface_parameters.specular_color",
+        TYPE_FLOAT_VECTOR_3);
+    this.u_specular_exponent =
+      uniform(p, "R2_basic_surface_parameters.specular_exponent", TYPE_FLOAT);
+    this.u_alpha_discard_threshold =
+      uniform(
+        p,
+        "R2_basic_surface_parameters.alpha_discard_threshold",
+        TYPE_FLOAT);
+    this.u_environment_mix =
+      uniform(
+        p,
+        "R2_surface_reflective_parameters.environment_mix",
+        TYPE_FLOAT);
 
-    this.u_texture_normal = R2ShaderParameters.getUniformChecked(
-      p, "R2_surface_textures.normal", JCGLType.TYPE_SAMPLER_2D);
-    this.u_texture_albedo = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_textures.albedo", JCGLType.TYPE_SAMPLER_2D);
-    this.u_texture_specular = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_textures.specular", JCGLType.TYPE_SAMPLER_2D);
-    this.u_texture_emission = R2ShaderParameters.getUniformChecked(
-      p, "R2_basic_surface_textures.emission", JCGLType.TYPE_SAMPLER_2D);
-    this.u_texture_environment = R2ShaderParameters.getUniformChecked(
-      p,
-      "R2_surface_reflective_textures.environment",
-      JCGLType.TYPE_SAMPLER_CUBE);
+    this.u_texture_normal =
+      uniform(p, "R2_surface_textures.normal", TYPE_SAMPLER_2D);
+    this.u_texture_albedo =
+      uniform(p, "R2_basic_surface_textures.albedo", TYPE_SAMPLER_2D);
+    this.u_texture_specular =
+      uniform(p, "R2_basic_surface_textures.specular", TYPE_SAMPLER_2D);
+    this.u_texture_emission =
+      uniform(p, "R2_basic_surface_textures.emission", TYPE_SAMPLER_2D);
+    this.u_texture_environment =
+      uniform(
+        p,
+        "R2_surface_reflective_textures.environment",
+        TYPE_SAMPLER_CUBE);
+
+    checkUniformParameterCount(p, 19);
   }
 
   /**
@@ -156,15 +173,13 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters>
-  newShader(
+  public static R2SurfaceShaderBasicReflectiveSingle create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderInstanceSingleVerifier.newVerifier(
-      new R2SurfaceShaderBasicReflectiveSingle(
-        in_shaders, in_shader_env, in_pool));
+    return new R2SurfaceShaderBasicReflectiveSingle(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -174,41 +189,10 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveInstanceTransformValues(
-    final JCGLInterfaceGL33Type g,
-    final R2MatricesInstanceSingleValuesType m)
-  {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(m, "Instance matrices");
-
-    final JCGLShadersType g_sh = g.shaders();
-
-    g_sh.shaderUniformPutPMatrix4x4f(
-      this.u_transform_modelview,
-      m.matrixModelView());
-    g_sh.shaderUniformPutPMatrix3x3f(
-      this.u_transform_normal,
-      m.matrixNormal());
-    g_sh.shaderUniformPutPMatrix3x3f(
-      this.u_transform_uv,
-      m.matrixUV());
-  }
-
-  @Override
-  public void onReceiveViewValues(
+  protected void onActualReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(view_parameters, "View parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     final R2MatricesObserverValuesType matrices =
       view_parameters.observerMatrices();
@@ -228,13 +212,10 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
   }
 
   @Override
-  public void onReceiveMaterialValues(
+  protected void onActualReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<R2SurfaceShaderBasicReflectiveParameters> mat_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(mat_parameters, "Material parameters");
-
     final JCGLTexturesType g_tex = g.textures();
     final JCGLShadersType g_sh = g.shaders();
 
@@ -292,5 +273,23 @@ public final class R2SurfaceShaderBasicReflectiveSingle extends
     g_sh.shaderUniformPutFloat(
       this.u_alpha_discard_threshold,
       (float) values.alphaDiscardThreshold());
+  }
+
+  @Override
+  protected void onActualReceiveInstanceTransformValues(
+    final JCGLInterfaceGL33Type g,
+    final R2MatricesInstanceSingleValuesType m)
+  {
+    final JCGLShadersType g_sh = g.shaders();
+
+    g_sh.shaderUniformPutPMatrix4x4f(
+      this.u_transform_modelview,
+      m.matrixModelView());
+    g_sh.shaderUniformPutPMatrix3x3f(
+      this.u_transform_normal,
+      m.matrixNormal());
+    g_sh.shaderUniformPutPMatrix3x3f(
+      this.u_transform_uv,
+      m.matrixUV());
   }
 }

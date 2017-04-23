@@ -24,13 +24,12 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractDepthShaderBatched;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedVerifier;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
@@ -43,7 +42,7 @@ import java.util.Optional;
  */
 
 public final class R2DepthShaderBasicBatched extends
-  R2AbstractShader<R2DepthShaderBasicParameters>
+  R2AbstractDepthShaderBatched<R2DepthShaderBasicParameters>
   implements R2ShaderDepthBatchedType<R2DepthShaderBasicParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
@@ -55,7 +54,8 @@ public final class R2DepthShaderBasicBatched extends
   private R2DepthShaderBasicBatched(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -64,22 +64,24 @@ public final class R2DepthShaderBasicBatched extends
       "com.io7m.r2.shaders.core.R2DepthBasicBatched",
       "com.io7m.r2.shaders.core/R2DepthBatched.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2DepthBasicBatched.frag");
+      "com.io7m.r2.shaders.core/R2DepthBasicBatched.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 5);
 
-    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
+    this.u_transform_projection = R2ShaderParameters.uniform(
       p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_view = R2ShaderParameters.getUniformChecked(
+    this.u_transform_view = R2ShaderParameters.uniform(
       p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
+    this.u_depth_coefficient = R2ShaderParameters.uniform(
       p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
 
-    this.u_alpha_discard_threshold = R2ShaderParameters.getUniformChecked(
+    this.u_alpha_discard_threshold = R2ShaderParameters.uniform(
       p, "R2_alpha_discard_threshold", JCGLType.TYPE_FLOAT);
-    this.u_texture_albedo = R2ShaderParameters.getUniformChecked(
+    this.u_texture_albedo = R2ShaderParameters.uniform(
       p, "R2_texture_albedo", JCGLType.TYPE_SAMPLER_2D);
+
+    R2ShaderParameters.checkUniformParameterCount(p, 5);
   }
 
   /**
@@ -92,37 +94,20 @@ public final class R2DepthShaderBasicBatched extends
    * @return A new shader
    */
 
-  public static R2ShaderDepthBatchedType<R2DepthShaderBasicParameters>
-  newShader(
+  public static R2DepthShaderBasicBatched create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderDepthBatchedVerifier.newVerifier(
-      new R2DepthShaderBasicBatched(in_shaders, in_shader_env, in_pool));
+    return new R2DepthShaderBasicBatched(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
-  public Class<R2DepthShaderBasicParameters> shaderParametersType()
-  {
-    return R2DepthShaderBasicParameters.class;
-  }
-
-  @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveViewValues(
+  protected void onActualReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(view_parameters, "View parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     final R2MatricesObserverValuesType m = view_parameters.observerMatrices();
 
@@ -138,13 +123,10 @@ public final class R2DepthShaderBasicBatched extends
   }
 
   @Override
-  public void onReceiveMaterialValues(
+  protected void onActualReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<R2DepthShaderBasicParameters> mat_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(mat_parameters, "Material parameters");
-
     final JCGLTexturesType g_tex = g.textures();
     final JCGLShadersType g_sh = g.shaders();
 
@@ -161,5 +143,11 @@ public final class R2DepthShaderBasicBatched extends
     g_sh.shaderUniformPutFloat(
       this.u_alpha_discard_threshold,
       (float) values.alphaDiscardThreshold());
+  }
+
+  @Override
+  public Class<R2DepthShaderBasicParameters> shaderParametersType()
+  {
+    return R2DepthShaderBasicParameters.class;
   }
 }

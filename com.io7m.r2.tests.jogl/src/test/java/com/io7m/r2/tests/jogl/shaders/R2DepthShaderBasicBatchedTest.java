@@ -45,6 +45,6 @@ public final class R2DepthShaderBasicBatchedTest extends
     final R2ShaderPreprocessingEnvironmentReadableType sources,
     final R2IDPoolType pool)
   {
-    return R2DepthShaderBasicBatched.newShader(g.shaders(), sources, pool);
+    return R2DepthShaderBasicBatched.create(g.shaders(), sources, pool);
   }
 }

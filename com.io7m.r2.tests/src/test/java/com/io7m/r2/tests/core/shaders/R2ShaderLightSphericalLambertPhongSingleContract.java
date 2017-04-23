@@ -35,7 +35,7 @@ public abstract class R2ShaderLightSphericalLambertPhongSingleContract extends
     final R2ShaderPreprocessingEnvironmentReadableType sources,
     final R2IDPoolType pool)
   {
-    return R2LightShaderSphericalLambertPhongSingle.newShader(
+    return R2LightShaderSphericalLambertPhongSingle.create(
       g.shaders(), sources, pool);
   }
 

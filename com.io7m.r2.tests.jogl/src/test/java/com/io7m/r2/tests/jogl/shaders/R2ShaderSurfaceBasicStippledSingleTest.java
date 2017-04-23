@@ -45,7 +45,7 @@ public final class R2ShaderSurfaceBasicStippledSingleTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2SurfaceShaderBasicStippledSingle.newShader(
+    return R2SurfaceShaderBasicStippledSingle.create(
       g.shaders(), sources, pool);
   }
 }

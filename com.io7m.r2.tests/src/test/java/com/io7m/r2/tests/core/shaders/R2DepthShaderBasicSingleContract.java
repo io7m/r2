@@ -72,7 +72,7 @@ public abstract class R2DepthShaderBasicSingleContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> s =
-      R2DepthShaderBasicSingle.newShader(g.shaders(), sources, pool);
+      R2DepthShaderBasicSingle.create(g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

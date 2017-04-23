@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core.shaders.provided;
+package com.io7m.r2.core.shaders.abstracts;
 
 import com.io7m.jcanephora.core.JCGLFragmentShaderType;
 import com.io7m.jcanephora.core.JCGLGeometryShaderType;
@@ -23,8 +23,10 @@ import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLVertexShaderType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
+import com.io7m.jfsm.core.FSMEnumMutable;
 import com.io7m.jnull.NullCheck;
 import com.io7m.r2.core.R2ExceptionShaderPreprocessingFailed;
+import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderType;
@@ -40,10 +42,12 @@ import java.util.Optional;
 /**
  * An abstract shader implementation.
  *
+ * @param <S> The type of shader state identifiers
  * @param <M> The type of shader parameters
  */
 
-public abstract class R2AbstractShader<M> implements R2ShaderType<M>
+public abstract class R2AbstractShader<S extends Enum<S>, M> implements
+  R2ShaderType<M>
 {
   private static final Logger LOG;
   private static final Logger LOG_VS;
@@ -63,6 +67,7 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
 
   private final long id;
   private final JCGLProgramShaderType program;
+  private final FSMEnumMutable<S> fsm;
   private boolean deleted;
 
   protected R2AbstractShader(
@@ -145,10 +150,26 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
       g.ifPresent(in_shaders::shaderDeleteGeometry);
       in_shaders.shaderDeleteFragment(f);
 
+      this.fsm = this.onCheckGetFSM();
       this.deleted = false;
     } catch (final SoShaderException e) {
       throw new R2ExceptionShaderPreprocessingFailed(e);
     }
+  }
+
+  protected abstract FSMEnumMutable<S> onCheckGetFSM();
+
+  protected abstract void onCheckActivated();
+
+  protected abstract void onCheckDeactivated();
+
+  protected abstract void onCheckValidated();
+
+  @Override
+  public final void onValidate()
+    throws R2ExceptionShaderValidationFailed
+  {
+    this.onCheckValidated();
   }
 
   @Override
@@ -161,6 +182,7 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
   public final void onActivate(
     final JCGLInterfaceGL33Type g)
   {
+    this.onCheckActivated();
     g.shaders().shaderActivateProgram(this.program);
   }
 
@@ -168,6 +190,7 @@ public abstract class R2AbstractShader<M> implements R2ShaderType<M>
   public final void onDeactivate(
     final JCGLInterfaceGL33Type g)
   {
+    this.onCheckDeactivated();
     g.shaders().shaderDeactivateProgram();
   }
 

@@ -62,7 +62,7 @@ public abstract class R2ShaderSSAOContract extends
       R2IDPool.newPool();
 
     final R2ShaderFilterType<R2ShaderSSAOParameters> s =
-      R2ShaderSSAO.newShader(
+      R2ShaderSSAO.create(
         g.shaders(),
         sources,
         pool);

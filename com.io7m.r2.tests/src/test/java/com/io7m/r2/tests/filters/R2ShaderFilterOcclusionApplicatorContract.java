@@ -94,7 +94,7 @@ public abstract class R2ShaderFilterOcclusionApplicatorContract extends
 
     final R2ShaderFilterType<
       R2ShaderFilterOcclusionApplicatorParameters> s =
-      R2ShaderFilterOcclusionApplicator.newShader(
+      R2ShaderFilterOcclusionApplicator.create(
         g.shaders(),
         sources,
         pool);

@@ -41,6 +41,7 @@ import com.io7m.r2.core.R2ProjectionOrthographic;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadType;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
+import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import org.junit.Ignore;
@@ -53,7 +54,6 @@ import static com.io7m.r2.core.R2IDPool.newPool;
 import static com.io7m.r2.core.R2TextureDefaults.create;
 import static com.io7m.r2.core.R2TransformIdentity.get;
 import static com.io7m.r2.core.R2UnitQuad.newUnitQuad;
-import static com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle.newShader;
 import static com.io7m.r2.tests.core.ShaderPreprocessing.preprocessor;
 
 public abstract class R2DepthRendererContract extends R2JCGLContract
@@ -108,7 +108,7 @@ public abstract class R2DepthRendererContract extends R2JCGLContract
       preprocessor();
 
     final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> ds =
-      newShader(g.shaders(), sources, id_pool);
+      R2DepthShaderBasicSingle.create(g.shaders(), sources, id_pool);
 
     final R2DepthShaderBasicParameters ds_param =
       R2DepthShaderBasicParameters.of(td, td.white2D(), 0.0f);

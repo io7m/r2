@@ -44,6 +44,6 @@ public final class R2StencilShaderSingleTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2StencilShaderSingle.newShader(g.shaders(), sources, pool);
+    return R2StencilShaderSingle.create(g.shaders(), sources, pool);
   }
 }

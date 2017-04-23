@@ -45,7 +45,7 @@ public final class R2ShaderSurfaceBasicBillboardedTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2SurfaceShaderBasicBillboarded.newShader(
+    return R2SurfaceShaderBasicBillboarded.create(
       g.shaders(),
       sources,
       pool);

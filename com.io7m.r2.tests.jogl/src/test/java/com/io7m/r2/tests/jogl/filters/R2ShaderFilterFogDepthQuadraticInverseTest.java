@@ -45,7 +45,7 @@ public final class R2ShaderFilterFogDepthQuadraticInverseTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderFilterFogDepthQuadraticInverse.newShader(
+    return R2ShaderFilterFogDepthQuadraticInverse.create(
       g.shaders(), sources, pool);
   }
 }

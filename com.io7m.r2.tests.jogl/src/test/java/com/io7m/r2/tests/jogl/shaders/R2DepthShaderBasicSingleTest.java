@@ -45,6 +45,6 @@ public final class R2DepthShaderBasicSingleTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2DepthShaderBasicSingle.newShader(g.shaders(), sources, pool);
+    return R2DepthShaderBasicSingle.create(g.shaders(), sources, pool);
   }
 }

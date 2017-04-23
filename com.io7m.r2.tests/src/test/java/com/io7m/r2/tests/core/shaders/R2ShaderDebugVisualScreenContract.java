@@ -43,7 +43,7 @@ public abstract class R2ShaderDebugVisualScreenContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceSingleScreenType<PVector4D<R2SpaceRGBAType>> s =
-      R2ShaderDebugVisualScreen.newShader(
+      R2ShaderDebugVisualScreen.create(
         g.shaders(),
         sources,
         pool);

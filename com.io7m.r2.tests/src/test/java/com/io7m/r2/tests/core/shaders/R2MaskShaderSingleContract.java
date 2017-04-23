@@ -48,7 +48,7 @@ public abstract class R2MaskShaderSingleContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceSingleType<Unit> s =
-      R2MaskShaderSingle.newShader(g.shaders(), sources, pool);
+      R2MaskShaderSingle.create(g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

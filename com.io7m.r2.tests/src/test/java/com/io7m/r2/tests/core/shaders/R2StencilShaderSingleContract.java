@@ -47,7 +47,7 @@ public abstract class R2StencilShaderSingleContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceSingleType<Unit> s =
-      R2StencilShaderSingle.newShader(
+      R2StencilShaderSingle.create(
         g.shaders(),
         sources,
         pool);

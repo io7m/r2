@@ -78,7 +78,7 @@ public abstract class R2SurfaceShaderBasicReflectiveSingleContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> s =
-      R2SurfaceShaderBasicReflectiveSingle.newShader(
+      R2SurfaceShaderBasicReflectiveSingle.create(
         g.shaders(),
         sources,
         pool);

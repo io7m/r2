@@ -77,7 +77,7 @@ public abstract class R2ShaderLightProjectiveLambertBlinnPhongShadowVarianceSing
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle.newShader(
+    return R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle.create(
       g.shaders(), sources, pool);
   }
 }

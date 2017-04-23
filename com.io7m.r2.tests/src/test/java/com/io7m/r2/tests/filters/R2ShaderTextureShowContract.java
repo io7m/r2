@@ -88,7 +88,7 @@ public abstract class R2ShaderTextureShowContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderFilterType<R2ShaderFilterTextureShowParameters> s =
-      R2ShaderFilterTextureShow.newShader(
+      R2ShaderFilterTextureShow.create(
         g.shaders(),
         sources,
         pool);

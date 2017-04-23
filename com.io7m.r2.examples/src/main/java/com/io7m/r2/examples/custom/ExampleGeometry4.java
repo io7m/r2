@@ -101,7 +101,7 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
       m.instances().createSingle(m.unitQuad().arrayObject(), tr);
 
     this.shader =
-      R2SurfaceShaderBasicSingle.newShader(
+      R2SurfaceShaderBasicSingle.create(
         g.shaders(),
         m.shaderPreprocessingEnvironment(),
         id_pool);

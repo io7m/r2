@@ -42,7 +42,7 @@ public abstract class R2ShaderLightDirectionalSpecularSingleContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderLightSingleType<R2LightDirectionalScreenSingle> s =
-      R2LightShaderDirectionalSpecularSingle.newShader(
+      R2LightShaderDirectionalSpecularSingle.create(
         g.shaders(),
         sources,
         pool);

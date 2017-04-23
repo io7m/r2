@@ -54,7 +54,7 @@ public final class R2ShaderParameters
    *                                              optimized out
    */
 
-  public static JCGLProgramUniformType getUniformChecked(
+  public static JCGLProgramUniformType uniform(
     final JCGLProgramShaderUsableType p,
     final String name,
     final JCGLType type)

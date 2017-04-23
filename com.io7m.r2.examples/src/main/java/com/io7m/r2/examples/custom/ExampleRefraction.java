@@ -231,7 +231,7 @@ public final class ExampleRefraction implements R2ExampleCustomType
     this.instance = m.instances().createSingle(mesh, transform);
 
     this.geom_shader =
-      R2SurfaceShaderBasicReflectiveSingle.newShader(
+      R2SurfaceShaderBasicReflectiveSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
 
     final R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
@@ -249,14 +249,14 @@ public final class ExampleRefraction implements R2ExampleCustomType
       id_pool.freshID(), this.geom_shader, geom_shader_params);
 
     this.light_ambient_shader =
-      R2LightShaderAmbientSingle.newShader(
+      R2LightShaderAmbientSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
     this.light_ambient = m.lights().createAmbientScreenSingle();
     this.light_ambient.setIntensity(0.15);
     this.light_ambient.setColor(PVector3D.of(0.0, 1.0, 1.0));
 
     this.sphere_light_shader =
-      R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
+      R2LightShaderSphericalLambertBlinnPhongSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
 
     this.sphere_light = m.lights().createSphericalSingle();
@@ -319,13 +319,13 @@ public final class ExampleRefraction implements R2ExampleCustomType
     {
       this.refract_mask_renderer = m.maskRenderer();
       this.refract_shader_delta_single =
-        R2RefractionMaskedDeltaShaderSingle.newShader(
+        R2RefractionMaskedDeltaShaderSingle.create(
           gx.shaders(),
           m.shaderPreprocessingEnvironment(),
           m.idPool());
 
       this.refract_shader_delta_batched =
-        R2RefractionMaskedDeltaShaderBatched.newShader(
+        R2RefractionMaskedDeltaShaderBatched.create(
           gx.shaders(),
           m.shaderPreprocessingEnvironment(),
           m.idPool());

@@ -42,7 +42,7 @@ public abstract class R2ShaderDebugColorVerticesWorldPositionContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceSingleScreenType<Unit> s =
-      R2ShaderDebugColorVerticesWorldPosition.newShader(
+      R2ShaderDebugColorVerticesWorldPosition.create(
         g.shaders(),
         sources,
         pool);

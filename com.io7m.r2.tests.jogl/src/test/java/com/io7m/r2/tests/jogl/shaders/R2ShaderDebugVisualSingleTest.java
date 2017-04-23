@@ -46,6 +46,6 @@ public final class R2ShaderDebugVisualSingleTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderDebugVisualSingle.newShader(g.shaders(), sources, pool);
+    return R2ShaderDebugVisualSingle.create(g.shaders(), sources, pool);
   }
 }

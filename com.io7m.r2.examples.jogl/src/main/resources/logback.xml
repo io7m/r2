@@ -11,13 +11,13 @@
   </appender>
 
   <logger
-    name="com.io7m.r2.core.shaders.provided.R2AbstractShader.vertex"
+    name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader.vertex"
     level="DEBUG"/>
   <logger
-    name="com.io7m.r2.core.shaders.provided.R2AbstractShader.fragment"
+    name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader.fragment"
     level="DEBUG"/>
   <logger
-    name="com.io7m.r2.core.shaders.provided.R2AbstractShader.geometry"
+    name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader.geometry"
     level="DEBUG"/>
 
   <root level="DEBUG">

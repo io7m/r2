@@ -52,11 +52,11 @@ public final class R2FilterFogDepth implements R2FilterType<R2FilterFogParameter
     this.g = NullCheck.notNull(in_g, "G33");
     this.quad = NullCheck.notNull(in_quad, "Quad");
 
-    this.shader_linear = R2ShaderFilterFogDepthLinear.newShader(
+    this.shader_linear = R2ShaderFilterFogDepthLinear.create(
       this.g.shaders(), in_shader_env, in_pool);
-    this.shader_quad = R2ShaderFilterFogDepthQuadratic.newShader(
+    this.shader_quad = R2ShaderFilterFogDepthQuadratic.create(
       this.g.shaders(), in_shader_env, in_pool);
-    this.shader_quad_inv = R2ShaderFilterFogDepthQuadraticInverse.newShader(
+    this.shader_quad_inv = R2ShaderFilterFogDepthQuadraticInverse.create(
       this.g.shaders(), in_shader_env, in_pool);
 
     this.render_state = JCGLRenderState.builder().build();

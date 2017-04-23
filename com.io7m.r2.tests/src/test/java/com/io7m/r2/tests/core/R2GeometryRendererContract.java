@@ -85,7 +85,7 @@ public abstract class R2GeometryRendererContract extends R2JCGLContract
         PMatrices3x3D.identity());
 
     final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> ds =
-      R2SurfaceShaderBasicSingle.newShader(g.shaders(), sources, id_pool);
+      R2SurfaceShaderBasicSingle.create(g.shaders(), sources, id_pool);
 
     final R2SurfaceShaderBasicParameters ds_param =
       R2SurfaceShaderBasicParameters.builder().setTextureDefaults(td).build();

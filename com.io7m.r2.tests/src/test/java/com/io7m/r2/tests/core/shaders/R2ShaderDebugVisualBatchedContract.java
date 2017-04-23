@@ -47,7 +47,7 @@ public abstract class R2ShaderDebugVisualBatchedContract extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderDebugVisualBatched.newShader(
+    return R2ShaderDebugVisualBatched.create(
       g.shaders(),
       sources,
       pool);
@@ -64,7 +64,7 @@ public abstract class R2ShaderDebugVisualBatchedContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceBatchedType<PVector4D<R2SpaceRGBAType>> s =
-      R2ShaderDebugVisualBatched.newShader(
+      R2ShaderDebugVisualBatched.create(
         g.shaders(),
         sources,
         pool);

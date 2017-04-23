@@ -138,7 +138,7 @@ public final class ExampleEyePosition0 implements R2ExampleCustomType
       m.instances().createSingle(m.unitSphere8().arrayObject(), tr);
 
     this.shader =
-      R2SurfaceShaderBasicSingle.newShader(
+      R2SurfaceShaderBasicSingle.create(
         g.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
 
     final R2SurfaceShaderBasicParameters shader_params =

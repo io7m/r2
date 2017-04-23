@@ -95,7 +95,7 @@ public abstract class R2ShaderFilterBoxBlurHorizontal4fContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> s =
-      R2ShaderFilterBoxBlurHorizontal4f.newShader(
+      R2ShaderFilterBoxBlurHorizontal4f.create(
         g.shaders(),
         sources,
         pool);

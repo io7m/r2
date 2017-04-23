@@ -90,7 +90,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
       R2LightSphericalSingle.newLight(sphere, id_pool);
 
     final R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> ds =
-      R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
+      R2LightShaderSphericalLambertBlinnPhongSingle.create(
         g.shaders(), sources, id_pool);
 
     final R2SceneLightsType s = R2SceneLights.create();

@@ -282,7 +282,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
     this.instance = m.instances().createSingle(mesh, transform);
 
     final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader =
-      R2DepthShaderBasicSingle.newShader(
+      R2DepthShaderBasicSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), m.idPool());
     final R2DepthShaderBasicParameters depth_params =
       R2DepthShaderBasicParameters.of(
@@ -291,7 +291,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       id_pool.freshID(), depth_shader, depth_params);
 
     this.geom_shader =
-      R2SurfaceShaderBasicReflectiveSingle.newShader(
+      R2SurfaceShaderBasicReflectiveSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
 
     final R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
@@ -309,14 +309,14 @@ public final class ExampleEnvironment implements R2ExampleCustomType
       id_pool.freshID(), this.geom_shader, geom_shader_params);
 
     this.light_ambient_shader =
-      R2LightShaderAmbientSingle.newShader(
+      R2LightShaderAmbientSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
     this.light_ambient = m.lights().createAmbientScreenSingle();
     this.light_ambient.setIntensity(0.15);
     this.light_ambient.setColor(PVector3D.of(0.0, 1.0, 1.0));
 
     this.proj_light_shader =
-      R2LightShaderProjectiveLambertShadowVarianceSingle.newShader(
+      R2LightShaderProjectiveLambertShadowVarianceSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
     this.proj_proj =
       R2ProjectionFrustum.createWith(-0.5, 0.5, -0.5, 0.5, 1.0, 10.0);
@@ -352,7 +352,7 @@ public final class ExampleEnvironment implements R2ExampleCustomType
     this.proj_shadow_instances = R2DepthInstances.create();
 
     this.sphere_light_shader =
-      R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
+      R2LightShaderSphericalLambertBlinnPhongSingle.create(
         gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
 
     this.sphere_light = m.lights().createSphericalSingle();

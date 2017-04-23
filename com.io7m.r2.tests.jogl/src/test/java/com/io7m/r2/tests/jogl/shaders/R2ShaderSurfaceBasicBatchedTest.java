@@ -45,6 +45,6 @@ public final class R2ShaderSurfaceBasicBatchedTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2SurfaceShaderBasicBatched.newShader(g.shaders(), sources, pool);
+    return R2SurfaceShaderBasicBatched.create(g.shaders(), sources, pool);
   }
 }

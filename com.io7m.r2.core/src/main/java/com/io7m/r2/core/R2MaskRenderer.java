@@ -137,9 +137,9 @@ public final class R2MaskRenderer implements R2MaskRendererType
     final R2IDPoolType in_pool)
   {
     final R2ShaderInstanceSingleType<Unit> shader_single =
-      R2MaskShaderSingle.newShader(in_g.shaders(), in_shader_env, in_pool);
+      R2MaskShaderSingle.create(in_g.shaders(), in_shader_env, in_pool);
     final R2ShaderInstanceBatchedType<Unit> shader_batched =
-      R2MaskShaderBatched.newShader(in_g.shaders(), in_shader_env, in_pool);
+      R2MaskShaderBatched.create(in_g.shaders(), in_shader_env, in_pool);
     return new R2MaskRenderer(in_g, shader_single, shader_batched);
   }
 

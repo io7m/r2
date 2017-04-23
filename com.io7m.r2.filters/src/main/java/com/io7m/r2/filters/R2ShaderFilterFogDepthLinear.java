@@ -18,8 +18,7 @@ package com.io7m.r2.filters;
 
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 /**
@@ -34,7 +33,12 @@ public final class R2ShaderFilterFogDepthLinear extends
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    super(in_shaders, in_shader_env, in_pool, "Linear");
+    super(
+      in_shaders,
+      in_shader_env,
+      in_pool,
+      "Linear",
+      R2ShaderStateChecking.STATE_CHECK);
   }
 
   /**
@@ -47,13 +51,12 @@ public final class R2ShaderFilterFogDepthLinear extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterFogParameters>
-  newShader(
+  public static R2ShaderFilterFogDepthLinear create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterFogDepthLinear(in_shaders, in_shader_env, in_pool));
+    return new R2ShaderFilterFogDepthLinear(
+      in_shaders, in_shader_env, in_pool);
   }
 }

@@ -45,6 +45,6 @@ public final class R2MaskShaderBatchedTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2MaskShaderBatched.newShader(g.shaders(), sources, pool);
+    return R2MaskShaderBatched.create(g.shaders(), sources, pool);
   }
 }

@@ -44,7 +44,7 @@ public final class R2ShaderFilterBoxBlurHorizontal4fTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderFilterBoxBlurHorizontal4f.newShader(
+    return R2ShaderFilterBoxBlurHorizontal4f.create(
       g.shaders(), sources, pool);
   }
 }

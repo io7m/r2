@@ -78,7 +78,7 @@ public abstract class R2SurfaceShaderBasicBillboardedContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceBillboardedType<R2SurfaceShaderBasicParameters> s =
-      R2SurfaceShaderBasicBillboarded.newShader(g.shaders(), sources, pool);
+      R2SurfaceShaderBasicBillboarded.create(g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

@@ -19,30 +19,31 @@ package com.io7m.r2.filters;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.provided.R2AbstractShader;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractFilterShader;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_3;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
+
 /**
  * A shader that renders fog based on depth.
  */
 
-public abstract class R2ShaderFilterFogDepth extends
-  R2AbstractShader<R2ShaderFilterFogParameters>
-  implements R2ShaderFilterType<R2ShaderFilterFogParameters>
+public abstract class R2ShaderFilterFogDepth
+  extends R2AbstractFilterShader<R2ShaderFilterFogParameters>
 {
   private final JCGLProgramUniformType u_image_texture;
   private final JCGLProgramUniformType u_image_depth_texture;
@@ -55,7 +56,8 @@ public abstract class R2ShaderFilterFogDepth extends
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool,
-    final String type)
+    final String type,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -64,32 +66,26 @@ public abstract class R2ShaderFilterFogDepth extends
       "com.io7m.r2.shaders.core.R2ShaderFilterFogDepth" + type,
       "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2FilterFogDepth" + type + ".frag");
+      "com.io7m.r2.shaders.core/R2FilterFogDepth" + type + ".frag", in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
 
     this.u_image_texture =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_image", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_image", TYPE_SAMPLER_2D);
     this.u_image_depth_texture =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_image_depth", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_image_depth", TYPE_SAMPLER_2D);
 
     this.u_depth_coefficient =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_depth_coefficient", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_depth_coefficient", TYPE_FLOAT);
 
     this.u_fog_near_z =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_fog.z_near", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_fog.z_near", TYPE_FLOAT);
     this.u_fog_far_z =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_fog.z_far", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_fog.z_far", TYPE_FLOAT);
     this.u_fog_color =
-      R2ShaderParameters.getUniformChecked(
-        p, "R2_fog.color", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_fog.color", TYPE_FLOAT_VECTOR_3);
 
-    R2ShaderParameters.checkUniformParameterCount(p, 6);
+    checkUniformParameterCount(p, 6);
   }
 
   @Override
@@ -100,20 +96,10 @@ public abstract class R2ShaderFilterFogDepth extends
   }
 
   @Override
-  public final void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public final void onReceiveFilterValues(
+  protected final void onActualReceiveFilterValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersFilterType<R2ShaderFilterFogParameters> parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(parameters, "Filter parameters");
-
     final R2ShaderFilterFogParameters values =
       parameters.values();
     final JCGLTextureUnitContextMutableType tc =

@@ -79,7 +79,7 @@ public abstract class R2ShaderFilterFogDepthLinearContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderFilterType<R2ShaderFilterFogParameters> s =
-      R2ShaderFilterFogDepthLinear.newShader(g.shaders(), sources, pool);
+      R2ShaderFilterFogDepthLinear.create(g.shaders(), sources, pool);
     Assert.assertFalse(s.isDeleted());
     s.delete(g);
     Assert.assertTrue(s.isDeleted());

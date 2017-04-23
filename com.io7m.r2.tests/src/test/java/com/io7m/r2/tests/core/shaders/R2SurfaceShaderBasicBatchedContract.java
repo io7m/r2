@@ -78,7 +78,7 @@ public abstract class R2SurfaceShaderBasicBatchedContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> s =
-      R2SurfaceShaderBasicBatched.newShader(g.shaders(), sources, pool);
+      R2SurfaceShaderBasicBatched.create(g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

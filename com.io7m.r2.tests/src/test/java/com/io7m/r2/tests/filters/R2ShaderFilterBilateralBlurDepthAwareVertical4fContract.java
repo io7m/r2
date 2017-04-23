@@ -126,7 +126,7 @@ public abstract class R2ShaderFilterBilateralBlurDepthAwareVertical4fContract
 
     final R2ShaderFilterType<
       R2ShaderFilterBilateralBlurDepthAwareParameters> s =
-      R2ShaderFilterBilateralBlurDepthAwareVertical4f.newShader(
+      R2ShaderFilterBilateralBlurDepthAwareVertical4f.create(
         g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

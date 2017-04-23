@@ -45,7 +45,7 @@ public final class R2DepthShaderBasicStippledSingleTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2DepthShaderBasicStippledSingle.newShader(
+    return R2DepthShaderBasicStippledSingle.create(
       g.shaders(),
       sources,
       pool);

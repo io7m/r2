@@ -45,7 +45,7 @@ public final class R2ShaderFilterFogDepthLinearTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderFilterFogDepthLinear.newShader(
+    return R2ShaderFilterFogDepthLinear.create(
       g.shaders(),
       sources,
       pool);

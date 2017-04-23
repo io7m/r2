@@ -21,33 +21,35 @@ import com.io7m.jcanephora.core.JCGLBlendFunction;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractTranslucentInstanceShaderBillboarded;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedVerifier;
 
 import java.util.Optional;
+
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_4;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_4;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
 
 /**
  * Simple translucent shader for billboarded instances.
  */
 
 public final class R2TranslucentShaderBasicPremultipliedBillboarded
-  extends R2AbstractShader<R2TranslucentShaderBasicParameters>
-  implements R2ShaderTranslucentInstanceBillboardedType<R2TranslucentShaderBasicParameters>
+  extends R2AbstractTranslucentInstanceShaderBillboarded<R2TranslucentShaderBasicParameters>
 {
   private final JCGLProgramUniformType u_transform_projection;
   private final JCGLProgramUniformType u_transform_view;
@@ -60,7 +62,8 @@ public final class R2TranslucentShaderBasicPremultipliedBillboarded
   private R2TranslucentShaderBasicPremultipliedBillboarded(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -69,28 +72,29 @@ public final class R2TranslucentShaderBasicPremultipliedBillboarded
       "com.io7m.r2.shaders.core.R2TranslucentBasicPremultiplied",
       "com.io7m.r2.shaders.core/R2Billboarded.vert",
       Optional.of("com.io7m.r2.shaders.core/R2Billboarded.geom"),
-      "com.io7m.r2.shaders.core/R2TranslucentBasicPremultiplied.frag");
+      "com.io7m.r2.shaders.core/R2TranslucentBasicPremultiplied.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
 
-    this.u_transform_projection = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_projection", JCGLType.TYPE_FLOAT_MATRIX_4);
-    this.u_transform_view = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.transform_view", JCGLType.TYPE_FLOAT_MATRIX_4);
+    this.u_transform_projection =
+      uniform(p, "R2_view.transform_projection", TYPE_FLOAT_MATRIX_4);
+    this.u_transform_view =
+      uniform(p, "R2_view.transform_view", TYPE_FLOAT_MATRIX_4);
 
-    this.u_depth_coefficient = R2ShaderParameters.getUniformChecked(
-      p, "R2_view.depth_coefficient", JCGLType.TYPE_FLOAT);
+    this.u_depth_coefficient =
+      uniform(p, "R2_view.depth_coefficient", TYPE_FLOAT);
 
-    this.u_texture_albedo = R2ShaderParameters.getUniformChecked(
-      p, "R2_texture_albedo", JCGLType.TYPE_SAMPLER_2D);
-    this.u_color = R2ShaderParameters.getUniformChecked(
-      p, "R2_color", JCGLType.TYPE_FLOAT_VECTOR_4);
-    this.u_fade_positive_eye_z_near = R2ShaderParameters.getUniformChecked(
-      p, "R2_fade_positive_eye_z_near", JCGLType.TYPE_FLOAT);
-    this.u_fade_positive_eye_z_far = R2ShaderParameters.getUniformChecked(
-      p, "R2_fade_positive_eye_z_far", JCGLType.TYPE_FLOAT);
+    this.u_texture_albedo =
+      uniform(p, "R2_texture_albedo", TYPE_SAMPLER_2D);
+    this.u_color =
+      uniform(p, "R2_color", TYPE_FLOAT_VECTOR_4);
+    this.u_fade_positive_eye_z_near =
+      uniform(p, "R2_fade_positive_eye_z_near", TYPE_FLOAT);
+    this.u_fade_positive_eye_z_far =
+      uniform(p, "R2_fade_positive_eye_z_far", TYPE_FLOAT);
 
-    R2ShaderParameters.checkUniformParameterCount(p, 7);
+    checkUniformParameterCount(p, 7);
   }
 
   /**
@@ -103,15 +107,14 @@ public final class R2TranslucentShaderBasicPremultipliedBillboarded
    * @return A new shader
    */
 
-  public static R2ShaderTranslucentInstanceBillboardedType<R2TranslucentShaderBasicParameters>
+  public static R2TranslucentShaderBasicPremultipliedBillboarded
   newShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderTranslucentInstanceBillboardedVerifier.newVerifier(
-      new R2TranslucentShaderBasicPremultipliedBillboarded(
-        in_shaders, in_shader_env, in_pool));
+    return new R2TranslucentShaderBasicPremultipliedBillboarded(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -121,13 +124,10 @@ public final class R2TranslucentShaderBasicPremultipliedBillboarded
   }
 
   @Override
-  public void onReceiveViewValues(
+  protected void onActualReceiveViewValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersViewType view_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(view_parameters, "View parameters");
-
     final JCGLShadersType g_sh = g.shaders();
     final R2MatricesObserverValuesType matrices =
       view_parameters.observerMatrices();
@@ -142,20 +142,10 @@ public final class R2TranslucentShaderBasicPremultipliedBillboarded
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-
-  }
-
-  @Override
-  public void onReceiveMaterialValues(
+  protected void onActualReceiveMaterialValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersMaterialType<R2TranslucentShaderBasicParameters> mat_parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(mat_parameters, "Material parameters");
-
     final JCGLTexturesType g_tex = g.textures();
     final JCGLShadersType g_sh = g.shaders();
 

@@ -22,20 +22,17 @@ import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
-import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrices4x4D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector4D;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2GeometryBufferUsableType;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2MatricesVolumeLightValuesType;
 import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.shaders.provided.R2AbstractShader;
-import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleVerifier;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractLightVolumeShaderSingle;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
@@ -50,8 +47,7 @@ import java.util.Optional;
  */
 
 public final class R2DebugShaderLightSphericalConstantSingle extends
-  R2AbstractShader<R2LightSphericalSingleReadableType>
-  implements R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType>
+  R2AbstractLightVolumeShaderSingle<R2LightSphericalSingleReadableType>
 {
   private final JCGLProgramUniformType u_transform_volume_modelview;
   private final JCGLProgramUniformType u_transform_projection;
@@ -66,7 +62,8 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
   private R2DebugShaderLightSphericalConstantSingle(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -75,45 +72,46 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
       "com.io7m.r2.shaders.core.R2DebugShaderLightSphericalConstantSingle",
       "com.io7m.r2.shaders.core/R2LightPositionalSingle.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2LightSphericalDebugConstantSingle.frag");
+      "com.io7m.r2.shaders.core/R2LightSphericalDebugConstantSingle.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
     R2ShaderParameters.checkUniformParameterCount(p, 9);
 
     this.u_light_spherical_color =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_spherical.color", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_light_spherical_intensity =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_spherical.intensity", JCGLType.TYPE_FLOAT);
     this.u_light_spherical_position =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_spherical.position", JCGLType.TYPE_FLOAT_VECTOR_3);
     this.u_light_spherical_inverse_range =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_spherical.inverse_range", JCGLType.TYPE_FLOAT);
     this.u_light_spherical_inverse_falloff =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_spherical.inverse_falloff", JCGLType.TYPE_FLOAT);
 
     this.u_transform_volume_modelview =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p,
         "R2_light_matrices.transform_volume_modelview",
         JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p,
         "R2_light_matrices.transform_projection",
         JCGLType.TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection_inverse =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p,
         "R2_light_matrices.transform_projection_inverse",
         JCGLType.TYPE_FLOAT_MATRIX_4);
 
     this.u_depth_coefficient =
-      R2ShaderParameters.getUniformChecked(
+      R2ShaderParameters.uniform(
         p, "R2_light_depth_coefficient", JCGLType.TYPE_FLOAT);
   }
 
@@ -127,15 +125,13 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
    * @return A new shader
    */
 
-  public static R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType>
-  newShader(
+  public static R2DebugShaderLightSphericalConstantSingle create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderLightVolumeSingleVerifier.newVerifier(
-      new R2DebugShaderLightSphericalConstantSingle(
-        in_shaders, in_shader_env, in_pool));
+    return new R2DebugShaderLightSphericalConstantSingle(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -146,14 +142,7 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveBoundGeometryBufferTextures(
+  protected void onActualReceiveBoundGeometryBufferTextures(
     final JCGLInterfaceGL33Type g,
     final R2GeometryBufferUsableType gbuffer,
     final JCGLTextureUnitType unit_albedo,
@@ -161,22 +150,14 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
     final JCGLTextureUnitType unit_depth,
     final JCGLTextureUnitType unit_normals)
   {
-    NullCheck.notNull(g, "GL33");
-    NullCheck.notNull(gbuffer, "G-Buffer");
-    NullCheck.notNull(unit_albedo, "Albedo texture unit");
-    NullCheck.notNull(unit_depth, "Depth texture unit");
-    NullCheck.notNull(unit_normals, "Normal texture unit");
-    NullCheck.notNull(unit_specular, "Specular texture unit");
+
   }
 
   @Override
-  public void onReceiveValues(
+  protected void onActualReceiveValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersLightType<R2LightSphericalSingleReadableType> light_parameters)
   {
-    NullCheck.notNull(g, "GL33");
-    NullCheck.notNull(light_parameters, "Light parameters");
-
     final JCGLShadersType g_sh = g.shaders();
 
     final R2MatricesObserverValuesType m =
@@ -237,13 +218,10 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
   }
 
   @Override
-  public void onReceiveVolumeLightTransform(
+  protected void onActualReceiveVolumeLightTransform(
     final JCGLInterfaceGL33Type g,
     final R2MatricesVolumeLightValuesType m)
   {
-    NullCheck.notNull(g, "GL33");
-    NullCheck.notNull(m, "Light matrices");
-
     /*
      * Upload the light volume modelview matrix.
      */
@@ -254,4 +232,5 @@ public final class R2DebugShaderLightSphericalConstantSingle extends
       this.u_transform_volume_modelview,
       m.matrixLightModelView());
   }
+
 }

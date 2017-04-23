@@ -45,6 +45,6 @@ public final class R2ShaderFilterTextureShowTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderFilterTextureShow.newShader(g.shaders(), sources, pool);
+    return R2ShaderFilterTextureShow.create(g.shaders(), sources, pool);
   }
 }

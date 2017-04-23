@@ -100,7 +100,7 @@ public final class R2FilterFXAA implements R2FilterFXAAType
     for (final R2FilterFXAAQuality c : R2FilterFXAAQuality.values()) {
       sh.put(
         c,
-        R2ShaderFilterFXAAA.newShader(g_sh, in_shader_env, in_id_pool, c));
+        R2ShaderFilterFXAAA.create(g_sh, in_shader_env, in_id_pool, c));
     }
 
     return new R2FilterFXAA(in_g, sh, in_quad);

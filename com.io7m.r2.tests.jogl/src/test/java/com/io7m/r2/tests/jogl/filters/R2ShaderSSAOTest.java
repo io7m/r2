@@ -44,6 +44,6 @@ public final class R2ShaderSSAOTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderSSAO.newShader(g.shaders(), sources, pool);
+    return R2ShaderSSAO.create(g.shaders(), sources, pool);
   }
 }

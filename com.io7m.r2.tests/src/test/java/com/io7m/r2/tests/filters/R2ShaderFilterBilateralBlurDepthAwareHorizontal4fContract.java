@@ -126,7 +126,7 @@ R2ShaderFilterBilateralBlurDepthAwareHorizontal4fContract extends
 
     final R2ShaderFilterType<
       R2ShaderFilterBilateralBlurDepthAwareParameters> s =
-      R2ShaderFilterBilateralBlurDepthAwareHorizontal4f.newShader(
+      R2ShaderFilterBilateralBlurDepthAwareHorizontal4f.check(
         g.shaders(),
         sources,
         pool);

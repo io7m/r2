@@ -201,7 +201,7 @@ public final class ExampleBillboarded0 implements R2ExampleCustomType
       this.main.shaderPreprocessingEnvironment();
 
     this.billboarded_shader =
-      R2SurfaceShaderBasicBillboarded.newShader(
+      R2SurfaceShaderBasicBillboarded.create(
         gx.shaders(), sources, id_pool);
 
     final R2SurfaceShaderBasicParameters billboarded_shader_params =
@@ -230,7 +230,7 @@ public final class ExampleBillboarded0 implements R2ExampleCustomType
     }
 
     this.geom_shader =
-      R2SurfaceShaderBasicReflectiveSingle.newShader(
+      R2SurfaceShaderBasicReflectiveSingle.create(
         gx.shaders(), sources, id_pool);
 
     final R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
@@ -248,14 +248,14 @@ public final class ExampleBillboarded0 implements R2ExampleCustomType
       id_pool.freshID(), this.geom_shader, geom_shader_params);
 
     this.light_ambient_shader =
-      R2LightShaderAmbientSingle.newShader(gx.shaders(), sources, id_pool);
+      R2LightShaderAmbientSingle.create(gx.shaders(), sources, id_pool);
 
     this.light_ambient = m.lights().createAmbientScreenSingle();
     this.light_ambient.setIntensity(0.15);
     this.light_ambient.setColor(PVector3D.of(0.0, 1.0, 1.0));
 
     this.sphere_light_shader =
-      R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
+      R2LightShaderSphericalLambertBlinnPhongSingle.create(
         gx.shaders(), sources, id_pool);
 
     this.sphere_light = m.lights().createSphericalSingle();

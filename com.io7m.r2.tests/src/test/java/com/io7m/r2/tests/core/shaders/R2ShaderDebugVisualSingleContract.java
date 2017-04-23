@@ -49,7 +49,7 @@ public abstract class R2ShaderDebugVisualSingleContract extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderDebugVisualSingle.newShader(
+    return R2ShaderDebugVisualSingle.create(
       g.shaders(),
       sources,
       pool);
@@ -66,7 +66,7 @@ public abstract class R2ShaderDebugVisualSingleContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderInstanceSingleType<PVector4D<R2SpaceRGBAType>> s =
-      R2ShaderDebugVisualSingle.newShader(
+      R2ShaderDebugVisualSingle.create(
         g.shaders(),
         sources,
         pool);

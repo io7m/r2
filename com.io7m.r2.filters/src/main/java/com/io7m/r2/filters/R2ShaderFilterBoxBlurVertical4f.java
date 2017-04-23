@@ -19,30 +19,29 @@ package com.io7m.r2.filters;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
-import com.io7m.jnull.NullCheck;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.shaders.provided.R2AbstractShader;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterVerifier;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.core.shaders.abstracts.R2AbstractFilterShader;
+import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 
 import java.util.Optional;
 
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
+
 /**
  * A vertical RGBA box blur shader.
  */
 
-public final class R2ShaderFilterBoxBlurVertical4f extends
-  R2AbstractShader<R2ShaderFilterBoxBlurParameters>
-  implements R2ShaderFilterType<R2ShaderFilterBoxBlurParameters>
+public final class R2ShaderFilterBoxBlurVertical4f
+  extends R2AbstractFilterShader<R2ShaderFilterBoxBlurParameters>
 {
   private final JCGLProgramUniformType u_texture;
   private final JCGLProgramUniformType u_blur_size;
@@ -50,7 +49,8 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
   private R2ShaderFilterBoxBlurVertical4f(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
-    final R2IDPoolType in_pool)
+    final R2IDPoolType in_pool,
+    final R2ShaderStateChecking in_check)
   {
     super(
       in_shaders,
@@ -59,21 +59,15 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
       "com.io7m.r2.shaders.core.R2ShaderFilterBoxBlurVertical4f",
       "com.io7m.r2.shaders.core/R2Filter.vert",
       Optional.empty(),
-      "com.io7m.r2.shaders.core/R2FilterBoxBlurVertical4f.frag");
+      "com.io7m.r2.shaders.core/R2FilterBoxBlurVertical4f.frag",
+      in_check);
 
     final JCGLProgramShaderUsableType p = this.shaderProgram();
-    R2ShaderParameters.checkUniformParameterCount(p, 2);
 
-    this.u_texture =
-      R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_texture",
-        JCGLType.TYPE_SAMPLER_2D);
-    this.u_blur_size =
-      R2ShaderParameters.getUniformChecked(
-        p,
-        "R2_blur_size",
-        JCGLType.TYPE_FLOAT);
+    this.u_texture = uniform(p, "R2_texture", TYPE_SAMPLER_2D);
+    this.u_blur_size = uniform(p, "R2_blur_size", TYPE_FLOAT);
+
+    checkUniformParameterCount(p, 2);
   }
 
   /**
@@ -86,14 +80,13 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
    * @return A new shader
    */
 
-  public static R2ShaderFilterType<R2ShaderFilterBoxBlurParameters>
-  newShader(
+  public static R2ShaderFilterBoxBlurVertical4f create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)
   {
-    return R2ShaderFilterVerifier.newVerifier(
-      new R2ShaderFilterBoxBlurVertical4f(in_shaders, in_shader_env, in_pool));
+    return new R2ShaderFilterBoxBlurVertical4f(
+      in_shaders, in_shader_env, in_pool, R2ShaderStateChecking.STATE_CHECK);
   }
 
   @Override
@@ -104,20 +97,10 @@ public final class R2ShaderFilterBoxBlurVertical4f extends
   }
 
   @Override
-  public void onValidate()
-    throws R2ExceptionShaderValidationFailed
-  {
-    // Nothing
-  }
-
-  @Override
-  public void onReceiveFilterValues(
+  protected void onActualReceiveFilterValues(
     final JCGLInterfaceGL33Type g,
     final R2ShaderParametersFilterType<R2ShaderFilterBoxBlurParameters> parameters)
   {
-    NullCheck.notNull(g, "G33");
-    NullCheck.notNull(parameters, "Filter parameters");
-
     final R2ShaderFilterBoxBlurParameters values =
       parameters.values();
     final JCGLTextureUnitContextMutableType tc =

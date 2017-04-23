@@ -43,7 +43,7 @@ public abstract class R2ShaderLightAmbientSingleContract
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderLightSingleType<R2LightAmbientScreenSingle> s =
-      R2LightShaderAmbientSingle.newShader(
+      R2LightShaderAmbientSingle.create(
         g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

@@ -45,7 +45,7 @@ public final class R2TranslucentShaderBasicPremultipliedBatchedTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2TranslucentShaderBasicPremultipliedBatched.newShader(
+    return R2TranslucentShaderBasicPremultipliedBatched.create(
       g.shaders(), sources, pool);
   }
 }

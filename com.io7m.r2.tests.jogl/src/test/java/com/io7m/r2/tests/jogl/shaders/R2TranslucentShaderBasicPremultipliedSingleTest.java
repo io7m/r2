@@ -45,7 +45,7 @@ public final class R2TranslucentShaderBasicPremultipliedSingleTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2TranslucentShaderBasicPremultipliedSingle.newShader(
+    return R2TranslucentShaderBasicPremultipliedSingle.create(
       g.shaders(), sources, pool);
   }
 }

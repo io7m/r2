@@ -149,11 +149,11 @@ public final class R2FilterBilateralBlurDepthAware<
     final JCGLShadersType g_sh = in_g.shaders();
     final R2ShaderFilterType<
       R2ShaderFilterBilateralBlurDepthAwareParameters> s_blur_h =
-      R2ShaderFilterBilateralBlurDepthAwareHorizontal4f.newShader(
+      R2ShaderFilterBilateralBlurDepthAwareHorizontal4f.check(
         g_sh, in_shader_env, in_id_pool);
     final R2ShaderFilterType<
       R2ShaderFilterBilateralBlurDepthAwareParameters> s_blur_v =
-      R2ShaderFilterBilateralBlurDepthAwareVertical4f.newShader(
+      R2ShaderFilterBilateralBlurDepthAwareVertical4f.create(
         g_sh, in_shader_env, in_id_pool);
 
     return new R2FilterBilateralBlurDepthAware<>(

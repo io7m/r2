@@ -45,7 +45,7 @@ public final class R2ShaderFilterBilateralBlurDepthAwareVertical4fTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2ShaderFilterBilateralBlurDepthAwareVertical4f.newShader(
+    return R2ShaderFilterBilateralBlurDepthAwareVertical4f.create(
       g.shaders(),
       sources,
       pool);

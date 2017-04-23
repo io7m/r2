@@ -95,7 +95,7 @@ public abstract class R2ShaderFilterBoxBlurVertical4fContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderFilterType<R2ShaderFilterBoxBlurParameters> s =
-      R2ShaderFilterBoxBlurVertical4f.newShader(g.shaders(), sources, pool);
+      R2ShaderFilterBoxBlurVertical4f.create(g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());
     s.delete(g);

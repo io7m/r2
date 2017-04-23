@@ -261,7 +261,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
 
     {
       this.geom_shader =
-        R2SurfaceShaderBasicSingle.newShader(
+        R2SurfaceShaderBasicSingle.create(
           g.shaders(),
           m.shaderPreprocessingEnvironment(),
           id_pool);
@@ -276,7 +276,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     }
 
     final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader =
-      R2SurfaceShaderBasicBatched.newShader(
+      R2SurfaceShaderBasicBatched.create(
         g.shaders(),
         m.shaderPreprocessingEnvironment(),
         id_pool);

@@ -407,7 +407,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       this.main.shaderPreprocessingEnvironment();
 
     this.billboarded_shader =
-      R2SurfaceShaderBasicBillboarded.newShader(
+      R2SurfaceShaderBasicBillboarded.create(
         gx.shaders(), sources, id_pool);
 
     final R2SurfaceShaderBasicParameters billboarded_shader_params =
@@ -435,7 +435,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
       }
     }
 
-    final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader = R2DepthShaderBasicSingle.newShader(
+    final R2ShaderDepthSingleType<R2DepthShaderBasicParameters> depth_shader = R2DepthShaderBasicSingle.create(
       gx.shaders(), m.shaderPreprocessingEnvironment(), m.idPool());
     final R2DepthShaderBasicParameters depth_params = R2DepthShaderBasicParameters.of(
       m.textureDefaults(), m.textureDefaults().white2D(), 0.1);
@@ -444,7 +444,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
 
     {
       this.geom_shader =
-        R2SurfaceShaderBasicSingle.newShader(gx.shaders(), sources, id_pool);
+        R2SurfaceShaderBasicSingle.create(gx.shaders(), sources, id_pool);
 
       final R2SurfaceShaderBasicParameters gs =
         R2SurfaceShaderBasicParameters.builder()
@@ -503,7 +503,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     }
 
     final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader =
-      R2SurfaceShaderBasicBatched.newShader(
+      R2SurfaceShaderBasicBatched.create(
         gx.shaders(),
         sources,
         id_pool);
@@ -514,13 +514,13 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
         this.geom_material.shaderParameters());
 
     this.light_ambient_shader =
-      R2LightShaderAmbientSingle.newShader(gx.shaders(), sources, id_pool);
+      R2LightShaderAmbientSingle.create(gx.shaders(), sources, id_pool);
     this.light_ambient = m.lights().createAmbientScreenSingle();
     this.light_ambient.setIntensity(0.15);
     this.light_ambient.setColor(PVector3D.of(0.0, 1.0, 1.0));
 
     this.proj_light_shader =
-      R2LightShaderProjectiveLambertShadowVarianceSingle.newShader(
+      R2LightShaderProjectiveLambertShadowVarianceSingle.create(
         gx.shaders(), sources, id_pool);
     this.proj_proj =
       R2ProjectionFrustum.createWith(-0.5, 0.5, -0.5, 0.5, 1.0, 10.0);
@@ -553,7 +553,7 @@ public final class ExampleLightSpherical4Profiled implements R2ExampleCustomType
     this.proj_shadow_instances = R2DepthInstances.create();
 
     this.sphere_light_shader =
-      R2LightShaderSphericalLambertBlinnPhongSingle.newShader(
+      R2LightShaderSphericalLambertBlinnPhongSingle.create(
         gx.shaders(), sources, id_pool);
 
     this.sphere_light = m.lights().createSphericalSingle();
