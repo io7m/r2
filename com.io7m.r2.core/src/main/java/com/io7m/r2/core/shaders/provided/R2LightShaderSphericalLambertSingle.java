@@ -189,8 +189,7 @@ public final class R2LightShaderSphericalLambertSingle extends
    * @return A new shader
    */
 
-  public static R2LightShaderSphericalLambertSingle
-  newShader(
+  public static R2LightShaderSphericalLambertSingle create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)

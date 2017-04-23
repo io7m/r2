@@ -62,8 +62,6 @@ import com.io7m.r2.core.R2Texture2DType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
@@ -236,8 +234,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     final int depth = 16;
     final int instance_count = width * height * depth;
     this.batched_instance =
-      m.instances().createBatchedDynamic(
-        m.unitSphere8().arrayObject(), instance_count);
+      m.instances().createSphere8BatchedDynamic(instance_count);
 
     final R2TransformSOT[] batched_transforms =
       new R2TransformSOT[instance_count];
@@ -260,26 +257,19 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     }
 
     {
-      this.geom_shader =
-        R2SurfaceShaderBasicSingle.create(
-          g.shaders(),
-          m.shaderPreprocessingEnvironment(),
-          id_pool);
+      this.geom_shader = m.instanceShaders().createBasicSingle();
       final R2SurfaceShaderBasicParameters gsp =
         R2SurfaceShaderBasicParameters.builder()
           .setTextureDefaults(this.main.textureDefaults())
           .setSpecularColor(PVector3D.of(1.0, 1.0, 1.0))
           .setSpecularExponent(64.0)
           .build();
-      this.geom_material = R2MaterialOpaqueSingle.of(
-        id_pool.freshID(), this.geom_shader, gsp);
+      this.geom_material =
+        R2MaterialOpaqueSingle.of(id_pool.freshID(), this.geom_shader, gsp);
     }
 
-    final R2ShaderInstanceBatchedType<R2SurfaceShaderBasicParameters> batched_geom_shader =
-      R2SurfaceShaderBasicBatched.create(
-        g.shaders(),
-        m.shaderPreprocessingEnvironment(),
-        id_pool);
+    final R2SurfaceShaderBasicBatched batched_geom_shader =
+      m.instanceShaders().createBasicBatched();
     this.batched_geom_material = R2MaterialOpaqueBatched.of(
       id_pool.freshID(),
       batched_geom_shader,

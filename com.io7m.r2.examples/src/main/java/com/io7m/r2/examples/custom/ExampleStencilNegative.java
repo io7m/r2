@@ -73,8 +73,7 @@ public final class ExampleStencilNegative implements R2ExampleCustomType
       Math.toRadians(90.0), 640.0 / 480.0, 0.01, 1000.0);
 
     final R2TransformSiOT transform = R2TransformSiOT.create();
-    this.instance =
-      m.instances().createSingle(m.unitQuad().arrayObject(), transform);
+    this.instance = m.instances().createQuadSingle(transform);
   }
 
   @Override

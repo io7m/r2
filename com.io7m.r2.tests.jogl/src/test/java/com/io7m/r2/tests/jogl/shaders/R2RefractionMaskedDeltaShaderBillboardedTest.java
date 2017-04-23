@@ -45,7 +45,7 @@ public final class R2RefractionMaskedDeltaShaderBillboardedTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2RefractionMaskedDeltaShaderBillboarded.newShader(
+    return R2RefractionMaskedDeltaShaderBillboarded.create(
       g.shaders(), sources, pool);
   }
 }

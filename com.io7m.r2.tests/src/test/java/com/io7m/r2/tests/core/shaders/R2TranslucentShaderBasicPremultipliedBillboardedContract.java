@@ -75,7 +75,7 @@ public abstract class R2TranslucentShaderBasicPremultipliedBillboardedContract e
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderTranslucentInstanceBillboardedType<R2TranslucentShaderBasicParameters> s =
-      R2TranslucentShaderBasicPremultipliedBillboarded.newShader(
+      R2TranslucentShaderBasicPremultipliedBillboarded.create(
         g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

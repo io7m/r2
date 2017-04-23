@@ -51,7 +51,6 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
@@ -130,14 +129,9 @@ public final class ExampleEyeZ0 implements R2ExampleCustomType
 
     final R2TransformReadableType tr = R2TransformSOT.create();
 
-    this.instance =
-      m.instances().createSingle(m.unitSphere8().arrayObject(), tr);
+    this.instance = m.instances().createSphere8Single(tr);
+    this.shader = m.instanceShaders().createBasicSingle();
 
-    this.shader =
-      R2SurfaceShaderBasicSingle.create(
-        g.shaders(),
-        m.shaderPreprocessingEnvironment(),
-        id_pool);
     final R2SurfaceShaderBasicParameters shader_params =
       R2SurfaceShaderBasicParameters.builder()
         .setTextureDefaults(m.textureDefaults())

@@ -182,8 +182,7 @@ public final class R2LightShaderProjectiveLambertBlinnPhongSingle extends
    * @return A new shader
    */
 
-  public static R2LightShaderProjectiveLambertBlinnPhongSingle
-  newShader(
+  public static R2LightShaderProjectiveLambertBlinnPhongSingle create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)

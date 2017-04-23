@@ -43,7 +43,6 @@ import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2TransformReadableType;
 import com.io7m.r2.core.R2TransformSOT;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
@@ -97,14 +96,8 @@ public final class ExampleGeometry4 implements R2ExampleCustomType
     final R2IDPoolType id_pool = m.idPool();
 
     final R2TransformReadableType tr = R2TransformSOT.create();
-    this.instance =
-      m.instances().createSingle(m.unitQuad().arrayObject(), tr);
-
-    this.shader =
-      R2SurfaceShaderBasicSingle.create(
-        g.shaders(),
-        m.shaderPreprocessingEnvironment(),
-        id_pool);
+    this.instance = m.instances().createCubeSingle(tr);
+    this.shader = m.instanceShaders().createBasicSingle();
     final R2SurfaceShaderBasicParameters shader_params =
       R2SurfaceShaderBasicParameters.builder()
         .setTextureDefaults(m.textureDefaults())

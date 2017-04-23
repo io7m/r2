@@ -62,7 +62,6 @@ import com.io7m.r2.core.R2LightBufferDescription;
 import com.io7m.r2.core.R2LightBufferDiffuseSpecularUsableType;
 import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2LightProjectiveWithShadowVarianceType;
-import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2MaterialDepthSingle;
 import com.io7m.r2.core.R2MaterialDepthSingleType;
@@ -96,18 +95,14 @@ import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledParameters;
 import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicStippledSingle;
-import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
-import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertShadowVarianceSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicStippledParameters;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicStippledSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.examples.ExampleProfilingWindow;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
@@ -150,7 +145,7 @@ public final class ExampleStipple implements R2ExampleCustomType
   private R2MaterialOpaqueSingle<R2SurfaceShaderBasicStippledParameters> geom_stipple_material;
   private R2InstanceSingleType stipple_sphere;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
-  private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
+  private R2LightShaderSphericalLambertBlinnPhongSingle sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
   private R2LightSphericalSingleType sphere_light_bounded;
   private R2InstanceSingleType sphere_light_bounds;
@@ -352,15 +347,11 @@ public final class ExampleStipple implements R2ExampleCustomType
     stipple_sphere_transform.setScale(0.5);
 
     this.stipple_sphere =
-      m.instances().createSingle(
-        m.unitSphere8().arrayObject(), stipple_sphere_transform);
+      m.instances().createSphere8Single(stipple_sphere_transform);
 
     {
       final R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> geom_shader =
-        R2SurfaceShaderBasicSingle.create(
-          gx.shaders(),
-          m.shaderPreprocessingEnvironment(),
-          id_pool);
+        m.instanceShaders().createBasicSingle();
 
       final R2SurfaceShaderBasicParameters gsp =
         R2SurfaceShaderBasicParameters.builder()
@@ -372,16 +363,13 @@ public final class ExampleStipple implements R2ExampleCustomType
         R2MaterialOpaqueSingle.of(id_pool.freshID(), geom_shader, gsp);
     }
 
-    this.light_ambient_shader =
-      R2LightShaderAmbientSingle.create(
-        gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
+    this.light_ambient_shader = m.lightShaders().createAmbientSingle();
     this.light_ambient = m.lights().createAmbientScreenSingle();
     this.light_ambient.setIntensity(0.15);
     this.light_ambient.setColor(PVector3D.of(0.0, 1.0, 1.0));
 
     this.proj_light_shader =
-      R2LightShaderProjectiveLambertShadowVarianceSingle.create(
-        gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
+      m.lightShaders().createProjectiveLambertShadowVarianceSingle();
     this.proj_proj =
       R2ProjectionFrustum.createWith(-0.5, 0.5, -0.5, 0.5, 1.0, 10.0);
     this.proj_mesh =
@@ -410,20 +398,15 @@ public final class ExampleStipple implements R2ExampleCustomType
       m.lights().createProjectiveWithShadowVariance(
         this.proj_mesh, proj_shadow);
 
-
     this.proj_light.setRadius(10.0);
     this.proj_light.setColor(PVector3D.of(1.0, 1.0, 1.0));
-    this.proj_light.transformWritable().setTranslation(PVector3D.of(
-      0.0,
-      0.0,
-      3.0));
+    this.proj_light.transformWritable().setTranslation(
+      PVector3D.of(0.0, 0.0, 3.0));
 
     this.proj_shadow_instances = R2DepthInstances.create();
 
     this.sphere_light_shader =
-      R2LightShaderSphericalLambertBlinnPhongSingle.create(
-        gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
-
+      m.lightShaders().createSphericalLambertBlinnPhongSingle();
     this.sphere_light = m.lights().createSphericalSingle();
     this.sphere_light.setColor(PVector3D.of(1.0, 1.0, 1.0));
     this.sphere_light.setIntensity(1.0);
@@ -440,8 +423,7 @@ public final class ExampleStipple implements R2ExampleCustomType
       Vector3D.of(9.0, 9.0, 9.0));
 
     this.sphere_light_bounds =
-      m.instances().createSingle(
-        m.unitCube().arrayObject(), sphere_light_bounded_transform);
+      m.instances().createCubeSingle(sphere_light_bounded_transform);
     this.sphere_light_bounded = m.lights().createSphericalSingle();
     this.sphere_light_bounded.setColor(PVector3D.of(1.0, 0.0, 0.0));
     this.sphere_light_bounded.setIntensity(1.0);

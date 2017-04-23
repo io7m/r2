@@ -108,7 +108,7 @@ public final class R2TranslucentShaderBasicPremultipliedBillboarded
    */
 
   public static R2TranslucentShaderBasicPremultipliedBillboarded
-  newShader(
+  create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)

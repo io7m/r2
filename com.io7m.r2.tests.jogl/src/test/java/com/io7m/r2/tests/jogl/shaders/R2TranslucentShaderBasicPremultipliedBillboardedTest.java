@@ -45,7 +45,7 @@ public final class R2TranslucentShaderBasicPremultipliedBillboardedTest extends
     final R2ShaderPreprocessingEnvironmentType sources,
     final R2IDPoolType pool)
   {
-    return R2TranslucentShaderBasicPremultipliedBillboarded.newShader(
+    return R2TranslucentShaderBasicPremultipliedBillboarded.create(
       g.shaders(), sources, pool);
   }
 }

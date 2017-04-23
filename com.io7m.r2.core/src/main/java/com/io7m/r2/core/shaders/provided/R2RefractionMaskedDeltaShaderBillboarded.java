@@ -110,8 +110,7 @@ public final class R2RefractionMaskedDeltaShaderBillboarded
    * @return A new shader
    */
 
-  public static R2RefractionMaskedDeltaShaderBillboarded
-  newShader(
+  public static R2RefractionMaskedDeltaShaderBillboarded create(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool)

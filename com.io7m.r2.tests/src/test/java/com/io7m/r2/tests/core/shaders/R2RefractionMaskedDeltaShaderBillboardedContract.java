@@ -75,7 +75,7 @@ public abstract class R2RefractionMaskedDeltaShaderBillboardedContract extends
     final R2IDPoolType pool = R2IDPool.newPool();
 
     final R2ShaderTranslucentInstanceBillboardedType<R2RefractionMaskedDeltaParameters> s =
-      R2RefractionMaskedDeltaShaderBillboarded.newShader(
+      R2RefractionMaskedDeltaShaderBillboarded.create(
         g.shaders(), sources, pool);
 
     Assert.assertFalse(s.isDeleted());

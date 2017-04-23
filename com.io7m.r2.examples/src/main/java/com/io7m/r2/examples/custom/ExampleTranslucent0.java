@@ -54,7 +54,6 @@ import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightAmbientScreenSingle;
 import com.io7m.r2.core.R2LightBufferDescription;
 import com.io7m.r2.core.R2LightBufferType;
-import com.io7m.r2.core.R2LightSphericalSingleReadableType;
 import com.io7m.r2.core.R2LightSphericalSingleType;
 import com.io7m.r2.core.R2MaterialOpaqueSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
@@ -77,15 +76,11 @@ import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.core.R2TranslucentRendererType;
 import com.io7m.r2.core.R2TranslucentSingle;
 import com.io7m.r2.core.R2TranslucentType;
-import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveSingle;
 import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicPremultipliedSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
 import com.io7m.r2.examples.ExampleProfilingWindow;
 import com.io7m.r2.examples.R2ExampleCustomType;
@@ -129,7 +124,7 @@ public final class ExampleTranslucent0 implements R2ExampleCustomType
   private R2SceneOpaquesType opaques;
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
-  private R2ShaderLightVolumeSingleType<R2LightSphericalSingleReadableType> sphere_light_shader;
+  private R2LightShaderSphericalLambertBlinnPhongSingle sphere_light_shader;
   private R2LightSphericalSingleType sphere_light;
   private R2LightSphericalSingleType sphere_light_bounded;
   private R2InstanceSingleType sphere_light_bounds;
@@ -201,10 +196,6 @@ public final class ExampleTranslucent0 implements R2ExampleCustomType
 
     this.instance = m.instances().createSingle(mesh, transform);
 
-    this.geom_shader =
-      R2SurfaceShaderBasicReflectiveSingle.create(
-        gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
-
     final R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
     {
       final R2SurfaceShaderBasicReflectiveParameters.Builder spb =
@@ -216,22 +207,17 @@ public final class ExampleTranslucent0 implements R2ExampleCustomType
       geom_shader_params = spb.build();
     }
 
+    this.geom_shader = m.instanceShaders().createBasicReflectiveSingle();
     this.geom_material = R2MaterialOpaqueSingle.of(
       id_pool.freshID(), this.geom_shader, geom_shader_params);
 
-    this.light_ambient_shader =
-      R2LightShaderAmbientSingle.create(
-        gx.shaders(),
-        m.shaderPreprocessingEnvironment(),
-        id_pool);
+    this.light_ambient_shader = m.lightShaders().createAmbientSingle();
     this.light_ambient = m.lights().createAmbientScreenSingle();
     this.light_ambient.setIntensity(0.15);
     this.light_ambient.setColor(PVector3D.of(0.0, 1.0, 1.0));
 
     this.sphere_light_shader =
-      R2LightShaderSphericalLambertBlinnPhongSingle.create(
-        gx.shaders(), m.shaderPreprocessingEnvironment(), id_pool);
-
+      m.lightShaders().createSphericalLambertBlinnPhongSingle();
     this.sphere_light = m.lights().createSphericalSingle();
     this.sphere_light.setColor(PVector3D.of(1.0, 1.0, 1.0));
     this.sphere_light.setIntensity(1.0);
@@ -248,8 +234,7 @@ public final class ExampleTranslucent0 implements R2ExampleCustomType
       Vector3D.of(9.0, 9.0, 9.0));
 
     this.sphere_light_bounds =
-      m.instances().createSingle(
-        m.unitCube().arrayObject(), sphere_light_bounded_transform);
+      m.instances().createCubeSingle(sphere_light_bounded_transform);
     this.sphere_light_bounded = m.lights().createSphericalSingle();
     this.sphere_light_bounded.setColor(PVector3D.of(1.0, 0.0, 0.0));
     this.sphere_light_bounded.setIntensity(1.0);
@@ -293,17 +278,12 @@ public final class ExampleTranslucent0 implements R2ExampleCustomType
     {
       this.translucent_renderer = m.translucentRenderer();
       this.translucent_shader =
-        R2TranslucentShaderBasicPremultipliedSingle.create(
-          gx.shaders(),
-          this.main.shaderPreprocessingEnvironment(),
-          m.idPool());
+        m.instanceTranslucentShaders().createBasicPremultipliedSingle();
 
-      final R2TransformST translucent_transform = R2TransformST.create();
-      translucent_transform.setTranslation(PVector3D.of(0.0, 1.0, 0.0));
+      final R2TransformST tr_transform = R2TransformST.create();
+      tr_transform.setTranslation(PVector3D.of(0.0, 1.0, 0.0));
 
-      this.translucent =
-        m.instances().createSingle(
-          m.unitSphere8().arrayObject(), translucent_transform);
+      this.translucent = m.instances().createSphere8Single(tr_transform);
     }
 
     {

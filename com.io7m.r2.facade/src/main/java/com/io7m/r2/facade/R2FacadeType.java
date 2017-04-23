@@ -418,13 +418,43 @@ public interface R2FacadeType extends R2DeletableType
   }
 
   /**
-   * @return A shader provider
+   * @return A light shader provider
    */
 
   @Value.Default
-  default R2FacadeShaderProviderType shaders()
+  default R2FacadeLightShaderProviderType lightShaders()
   {
-    return R2FacadeShaderProvider.of(this);
+    return R2FacadeLightShaderProvider.of(this);
+  }
+
+  /**
+   * @return A depth shader provider
+   */
+
+  @Value.Default
+  default R2FacadeDepthShaderProviderType depthShaders()
+  {
+    return R2FacadeDepthShaderProvider.of(this);
+  }
+
+  /**
+   * @return An instance shader provider
+   */
+
+  @Value.Default
+  default R2FacadeInstanceShaderProviderType instanceShaders()
+  {
+    return R2FacadeInstanceShaderProvider.of(this);
+  }
+
+  /**
+   * @return A translucent instance shader provider
+   */
+
+  @Value.Default
+  default R2FacadeTranslucentInstanceShaderProviderType instanceTranslucentShaders()
+  {
+    return R2FacadeTranslucentInstanceShaderProvider.of(this);
   }
 
   /**

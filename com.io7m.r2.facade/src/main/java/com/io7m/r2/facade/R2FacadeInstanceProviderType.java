@@ -104,7 +104,7 @@ public interface R2FacadeInstanceProviderType
    * Create a new batched instance.
    *
    * @param array_object The mesh to be used for the instance
-   * @param size         The size of the billboarded instance
+   * @param size         The size of the batched instance
    *
    * @return A new billboarded instance
    */
@@ -118,6 +118,70 @@ public interface R2FacadeInstanceProviderType
       this.main().gl33().arrayBuffers(),
       this.main().gl33().arrayObjects(),
       array_object,
+      size);
+  }
+
+  /**
+   * Create a single instance that uses a unit cube as the mesh.
+   *
+   * @param transform The mesh transform
+   *
+   * @return A new single instance
+   */
+
+  default R2InstanceSingle createCubeSingle(
+    final R2TransformReadableType transform)
+  {
+    return this.createSingle(
+      this.main().unitCube().arrayObject(),
+      transform);
+  }
+
+  /**
+   * Create a single instance that uses a unit sphere as the mesh.
+   *
+   * @param transform The mesh transform
+   *
+   * @return A new single instance
+   */
+
+  default R2InstanceSingle createSphere8Single(
+    final R2TransformReadableType transform)
+  {
+    return this.createSingle(
+      this.main().unitSphere8().arrayObject(),
+      transform);
+  }
+
+  /**
+   * Create a single instance that uses a unit quad as the mesh.
+   *
+   * @param transform The mesh transform
+   *
+   * @return A new single instance
+   */
+
+  default R2InstanceSingle createQuadSingle(
+    final R2TransformReadableType transform)
+  {
+    return this.createSingle(
+      this.main().unitQuad().arrayObject(),
+      transform);
+  }
+
+  /**
+   * Create a new batched instance using a unit sphere as the base.
+   *
+   * @param size The size of the batched instance
+   *
+   * @return A new batched instance
+   */
+
+  default R2InstanceBatchedDynamic createSphere8BatchedDynamic(
+    final int size)
+  {
+    return this.createBatchedDynamic(
+      this.main().unitSphere8().arrayObject(),
       size);
   }
 }
