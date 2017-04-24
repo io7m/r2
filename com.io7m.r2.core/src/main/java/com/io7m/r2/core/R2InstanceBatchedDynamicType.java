@@ -21,8 +21,8 @@ package com.io7m.r2.core;
  * number of instances, and the transforms of individual instances.
  */
 
-public interface R2InstanceBatchedDynamicType extends R2InstanceBatchedType,
-  R2DeletableType
+public interface R2InstanceBatchedDynamicType
+  extends R2InstanceBatchedType, R2DeletableType
 {
   /**
    * @return The maximum number of instances that can be placed into the batch
