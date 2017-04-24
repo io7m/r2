@@ -4,6 +4,7 @@
 /// \file R2ReconstructedSurface.h
 /// \brief Surface data reconstructed from the G-Buffer
 
+#include "R2LightShaderOutputTargets.h"
 #include "R2GBufferInput.h"
 #include "R2LogDepth.h"
 #include "R2Normals.h"
@@ -38,13 +39,16 @@ struct R2_reconstructed_surface_t {
 /// The implementation of this function is affected by the following preprocessor
 /// defines:
 ///
-/// If `R2_RECONSTRUCT_DIFFUSE_ONLY` is defined, the function only samples those parts
-/// of the geometry buffer that are required for diffuse lighting (specifically depth
-/// and normals).
+/// If `R2_RECONSTRUCT_REQUIRE_ALBEDO_EMISSION` is defined, the function samples
+/// the albedo and emission values from the given geometry buffer.
 ///
-/// If `R2_RECONSTRUCT_DIFFUSE_SPECULAR_ONLY` is defined, the function only samples
-/// those parts of the geometry buffer that are required for diffuse lighting
-/// (specifically depth, normals, and specular).
+/// If `R2_RECONSTRUCT_REQUIRE_NORMAL` is defined, the function samples
+/// the normal values from the given geometry buffer.
+///
+/// If `R2_RECONSTRUCT_REQUIRE_SPECULAR` is defined, the function samples
+/// the specular values from the given geometry buffer.
+///
+/// If `R2_RECONSTRUCT_REQUIRE_ALL` is defined, all of the above are sampled.
 ///
 /// Otherwise, the surface is fully reconstructed.
 ///
@@ -55,6 +59,23 @@ struct R2_reconstructed_surface_t {
 ///
 /// @return The fully reconstructed surface
 ///
+
+#if R2_LIGHT_SHADER_OUTPUT_TARGET == R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER
+  // R2_LIGHT_SHADER_OUTPUT_TARGET == R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER
+  #define R2_RECONSTRUCT_REQUIRE_ALBEDO_EMISSION
+#endif
+
+#if (!defined(R2_RECONSTRUCT_REQUIRE_ALBEDO_EMISSION)) && (!defined(R2_RECONSTRUCT_REQUIRE_NORMAL)) && (!defined(R2_RECONSTRUCT_REQUIRE_SPECULAR))
+  // define R2_RECONSTRUCT_REQUIRE_ALL
+  #define R2_RECONSTRUCT_REQUIRE_ALL
+#endif
+
+#ifdef R2_RECONSTRUCT_REQUIRE_ALL
+  // R2_RECONSTRUCT_REQUIRE_ALL
+  #define R2_RECONSTRUCT_REQUIRE_ALBEDO_EMISSION
+  #define R2_RECONSTRUCT_REQUIRE_NORMAL
+  #define R2_RECONSTRUCT_REQUIRE_SPECULAR
+#endif
 
 R2_reconstructed_surface_t
 R2_deferredSurfaceReconstruct(
@@ -80,10 +101,18 @@ R2_deferredSurfaceReconstruct(
   vec4 position_eye =
     R2_positionReconstructFromEyeZ (eye_z, screen_uv, view_rays);
 
-#if defined(R2_RECONSTRUCT_DIFFUSE_ONLY) || defined(R2_RECONSTRUCT_DIFFUSE_SPECULAR_ONLY)
-  vec3 albedo    = vec3 (0.0);
-  float emission = 0.0;
+#ifdef R2_RECONSTRUCT_REQUIRE_NORMAL
+  // Sample normals
+  vec2 normal_compressed =
+    texture (gbuffer.normal, screen_uv).xy;
+  vec3 normal =
+    R2_normalsDecompress (normal_compressed);
 #else
+  // Use default normal
+  vec3 normal = vec3(0.0, 0.0, 1.0);
+#endif
+
+#ifdef R2_RECONSTRUCT_REQUIRE_ALBEDO_EMISSION
   // Sample albedo/emission
   vec4 albedo_raw =
     texture (gbuffer.albedo, screen_uv);
@@ -91,15 +120,13 @@ R2_deferredSurfaceReconstruct(
     albedo_raw.rgb;
   float emission =
     albedo_raw.a;
+#else
+  // Use default albedo/emission
+  vec3 albedo = vec3(0.0, 0.0, 0.0);
+  float emission = 0.0;
 #endif
 
-  // Sample normals
-  vec2 normal_compressed =
-    texture (gbuffer.normal, screen_uv).xy;
-  vec3 normal =
-    R2_normalsDecompress (normal_compressed);
-
-#if !defined(R2_RECONSTRUCT_DIFFUSE_ONLY)
+#ifdef R2_RECONSTRUCT_REQUIRE_SPECULAR
   // Sample specular
   vec4 specular_raw =
     texture (gbuffer.specular, screen_uv);
@@ -108,7 +135,7 @@ R2_deferredSurfaceReconstruct(
   float specular_exponent =
     specular_raw.a * 256.0;
 #else
-  vec3 specular_color     = vec3 (0.0);
+  vec3 specular_color = vec3(0.0, 0.0, 0.0);
   float specular_exponent = 0.0;
 #endif
 

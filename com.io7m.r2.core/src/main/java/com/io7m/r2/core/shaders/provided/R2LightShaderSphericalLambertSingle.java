@@ -19,7 +19,6 @@ package com.io7m.r2.core.shaders.provided;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextMutableType;
@@ -36,13 +35,19 @@ import com.io7m.r2.core.R2Projections;
 import com.io7m.r2.core.R2ViewRaysReadableType;
 import com.io7m.r2.core.shaders.abstracts.R2AbstractLightVolumeShaderSingle;
 import com.io7m.r2.core.shaders.abstracts.R2ShaderStateChecking;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 import java.util.Optional;
+
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_4;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_3;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.checkUniformParameterCount;
+import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
 
 /**
  * Spherical light shader for single lights. Will not produce any specular
@@ -95,88 +100,68 @@ public final class R2LightShaderSphericalLambertSingle extends
     final JCGLProgramShaderUsableType p = this.shaderProgram();
 
     this.u_light_spherical_color =
-      R2ShaderParameters.uniform(
-        p, "R2_light_spherical.color", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_spherical.color", TYPE_FLOAT_VECTOR_3);
     this.u_light_spherical_intensity =
-      R2ShaderParameters.uniform(
-        p, "R2_light_spherical.intensity", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_light_spherical.intensity", TYPE_FLOAT);
     this.u_light_spherical_position =
-      R2ShaderParameters.uniform(
-        p, "R2_light_spherical.position", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_spherical.position", TYPE_FLOAT_VECTOR_3);
     this.u_light_spherical_inverse_range =
-      R2ShaderParameters.uniform(
-        p, "R2_light_spherical.inverse_range", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_light_spherical.inverse_range", TYPE_FLOAT);
     this.u_light_spherical_inverse_falloff =
-      R2ShaderParameters.uniform(
-        p, "R2_light_spherical.inverse_falloff", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_light_spherical.inverse_falloff", TYPE_FLOAT);
 
     this.u_transform_volume_modelview =
-      R2ShaderParameters.uniform(
+      uniform(
         p,
         "R2_light_matrices.transform_volume_modelview",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+        TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
-      R2ShaderParameters.uniform(
+      uniform(
         p,
         "R2_light_matrices.transform_projection",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+        TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection_inverse =
-      R2ShaderParameters.uniform(
+      uniform(
         p,
         "R2_light_matrices.transform_projection_inverse",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+        TYPE_FLOAT_MATRIX_4);
 
     this.u_gbuffer_albedo =
-      R2ShaderParameters.uniform(
-        p, "R2_light_gbuffer.albedo", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_light_gbuffer.albedo", TYPE_SAMPLER_2D);
     this.u_gbuffer_normal =
-      R2ShaderParameters.uniform(
-        p, "R2_light_gbuffer.normal", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_light_gbuffer.normal", TYPE_SAMPLER_2D);
     this.u_gbuffer_specular =
-      R2ShaderParameters.uniform(
-        p, "R2_light_gbuffer.specular", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_light_gbuffer.specular", TYPE_SAMPLER_2D);
     this.u_gbuffer_depth =
-      R2ShaderParameters.uniform(
-        p, "R2_light_gbuffer.depth", JCGLType.TYPE_SAMPLER_2D);
+      uniform(p, "R2_light_gbuffer.depth", TYPE_SAMPLER_2D);
 
     this.u_viewport_inverse_width =
-      R2ShaderParameters.uniform(
-        p, "R2_light_viewport.inverse_width", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_light_viewport.inverse_width", TYPE_FLOAT);
     this.u_viewport_inverse_height =
-      R2ShaderParameters.uniform(
-        p, "R2_light_viewport.inverse_height", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_light_viewport.inverse_height", TYPE_FLOAT);
 
     this.u_depth_coefficient =
-      R2ShaderParameters.uniform(
-        p, "R2_light_depth_coefficient", JCGLType.TYPE_FLOAT);
+      uniform(p, "R2_light_depth_coefficient", TYPE_FLOAT);
 
     this.u_view_rays_origin_x0y0 =
-      R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.origin_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_view_rays.origin_x0y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y0 =
-      R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.origin_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_view_rays.origin_x1y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x0y1 =
-      R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.origin_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_view_rays.origin_x0y1", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y1 =
-      R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.origin_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_view_rays.origin_x1y1", TYPE_FLOAT_VECTOR_3);
 
     this.u_view_rays_ray_x0y0 =
-      R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.ray_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_view_rays.ray_x0y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y0 =
-      R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.ray_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_view_rays.ray_x1y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x0y1 =
-      R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.ray_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_view_rays.ray_x0y1", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y1 =
-      R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.ray_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+      uniform(p, "R2_light_view_rays.ray_x1y1", TYPE_FLOAT_VECTOR_3);
 
-    R2ShaderParameters.checkUniformParameterCount(p, 23);
+    checkUniformParameterCount(p, 23);
   }
 
   /**

@@ -19,7 +19,6 @@ package com.io7m.r2.core.shaders.provided;
 import com.io7m.jcanephora.core.JCGLProgramShaderUsableType;
 import com.io7m.jcanephora.core.JCGLProgramUniformType;
 import com.io7m.jcanephora.core.JCGLTextureUnitType;
-import com.io7m.jcanephora.core.JCGLType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLShadersType;
 import com.io7m.jregions.core.unparameterized.areas.AreaL;
@@ -41,6 +40,11 @@ import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
 import java.util.Optional;
+
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_MATRIX_4;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_FLOAT_VECTOR_3;
+import static com.io7m.jcanephora.core.JCGLType.TYPE_SAMPLER_2D;
 
 /**
  * Directional light shader for single lights.
@@ -90,79 +94,78 @@ public final class R2LightShaderDirectionalSpecularSingle extends
 
     this.u_light_directional_color =
       R2ShaderParameters.uniform(
-        p, "R2_light_directional.color", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_directional.color", TYPE_FLOAT_VECTOR_3);
     this.u_light_directional_direction =
       R2ShaderParameters.uniform(
-        p, "R2_light_directional.direction", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_directional.direction", TYPE_FLOAT_VECTOR_3);
     this.u_light_directional_intensity =
       R2ShaderParameters.uniform(
-        p, "R2_light_directional.intensity", JCGLType.TYPE_FLOAT);
+        p, "R2_light_directional.intensity", TYPE_FLOAT);
 
-    final JCGLProgramUniformType u_transform_volume_modelview =
-      R2ShaderParameters.uniform(
-        p,
-        "R2_light_matrices.transform_volume_modelview",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+    R2ShaderParameters.uniform(
+      p,
+      "R2_light_matrices.transform_volume_modelview",
+      TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection =
       R2ShaderParameters.uniform(
         p,
         "R2_light_matrices.transform_projection",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+        TYPE_FLOAT_MATRIX_4);
     this.u_transform_projection_inverse =
       R2ShaderParameters.uniform(
         p,
         "R2_light_matrices.transform_projection_inverse",
-        JCGLType.TYPE_FLOAT_MATRIX_4);
+        TYPE_FLOAT_MATRIX_4);
 
     this.u_gbuffer_albedo =
       R2ShaderParameters.uniform(
-        p, "R2_light_gbuffer.albedo", JCGLType.TYPE_SAMPLER_2D);
+        p, "R2_light_gbuffer.albedo", TYPE_SAMPLER_2D);
     this.u_gbuffer_normal =
       R2ShaderParameters.uniform(
-        p, "R2_light_gbuffer.normal", JCGLType.TYPE_SAMPLER_2D);
+        p, "R2_light_gbuffer.normal", TYPE_SAMPLER_2D);
     this.u_gbuffer_specular =
       R2ShaderParameters.uniform(
-        p, "R2_light_gbuffer.specular", JCGLType.TYPE_SAMPLER_2D);
+        p, "R2_light_gbuffer.specular", TYPE_SAMPLER_2D);
     this.u_gbuffer_depth =
       R2ShaderParameters.uniform(
-        p, "R2_light_gbuffer.depth", JCGLType.TYPE_SAMPLER_2D);
+        p, "R2_light_gbuffer.depth", TYPE_SAMPLER_2D);
 
     this.u_viewport_inverse_width =
       R2ShaderParameters.uniform(
-        p, "R2_light_viewport.inverse_width", JCGLType.TYPE_FLOAT);
+        p, "R2_light_viewport.inverse_width", TYPE_FLOAT);
     this.u_viewport_inverse_height =
       R2ShaderParameters.uniform(
-        p, "R2_light_viewport.inverse_height", JCGLType.TYPE_FLOAT);
+        p, "R2_light_viewport.inverse_height", TYPE_FLOAT);
 
     this.u_depth_coefficient =
       R2ShaderParameters.uniform(
-        p, "R2_light_depth_coefficient", JCGLType.TYPE_FLOAT);
+        p, "R2_light_depth_coefficient", TYPE_FLOAT);
 
     this.u_view_rays_origin_x0y0 =
       R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.origin_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_view_rays.origin_x0y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y0 =
       R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.origin_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_view_rays.origin_x1y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x0y1 =
       R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.origin_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_view_rays.origin_x0y1", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_origin_x1y1 =
       R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.origin_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_view_rays.origin_x1y1", TYPE_FLOAT_VECTOR_3);
 
     this.u_view_rays_ray_x0y0 =
       R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.ray_x0y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_view_rays.ray_x0y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y0 =
       R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.ray_x1y0", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_view_rays.ray_x1y0", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x0y1 =
       R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.ray_x0y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_view_rays.ray_x0y1", TYPE_FLOAT_VECTOR_3);
     this.u_view_rays_ray_x1y1 =
       R2ShaderParameters.uniform(
-        p, "R2_light_view_rays.ray_x1y1", JCGLType.TYPE_FLOAT_VECTOR_3);
+        p, "R2_light_view_rays.ray_x1y1", TYPE_FLOAT_VECTOR_3);
 
     R2ShaderParameters.checkUniformParameterCount(p, 21);
   }

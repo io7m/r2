@@ -40,19 +40,18 @@ import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector4D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vectors3D;
-import com.io7m.r2.core.R2DepthAttachmentShare;
+import com.io7m.r2.core.R2DepthAttachmentCreateWithStencil;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2ImageBuffer;
 import com.io7m.r2.core.R2ImageBufferDescription;
-import com.io7m.r2.core.R2ImageBufferType;
 import com.io7m.r2.core.R2ImageBufferUsableType;
+import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightAmbientScreenSingle;
-import com.io7m.r2.core.R2LightBufferDescription;
-import com.io7m.r2.core.R2LightBufferType;
-import com.io7m.r2.core.R2LightSphericalSingleType;
+import com.io7m.r2.core.R2LightSphericalSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
@@ -84,9 +83,8 @@ import com.io7m.r2.filters.R2FilterBoxBlurParameters;
 import com.io7m.r2.filters.R2FilterEmissionParameters;
 import com.io7m.r2.filters.R2FilterFXAAParameters;
 import com.io7m.r2.filters.R2FilterFXAAType;
-import com.io7m.r2.filters.R2FilterLightApplicator;
-import com.io7m.r2.filters.R2FilterLightApplicatorParameters;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
+import com.io7m.r2.shaders.core.R2LightShaderDefines;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
@@ -94,13 +92,12 @@ import java.util.Optional;
 
 import static com.io7m.jcanephora.core.JCGLFaceSelection.FACE_FRONT_AND_BACK;
 import static com.io7m.r2.core.R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
-import static com.io7m.r2.core.R2LightBufferComponents.R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR;
 import static com.io7m.r2.core.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
 import static com.io7m.r2.filters.R2FilterFXAAQuality.R2_FXAA_QUALITY_10;
 
 // CHECKSTYLE:OFF
 
-public final class ExampleMinimal implements R2ExampleCustomType
+public final class ExampleMinimalNoLBuffer implements R2ExampleCustomType
 {
   private JCGLClearSpecification screen_clear_spec;
   private R2SceneStencilsType stencils;
@@ -108,17 +105,10 @@ public final class ExampleMinimal implements R2ExampleCustomType
   private R2InstanceSingleType instance;
   private R2SceneLightsType lights;
   private R2GeometryBufferType gbuffer;
-  private R2LightBufferType lbuffer;
-  private R2ImageBufferType ibuffer;
+  private R2ImageBuffer ibuffer;
   private R2SceneOpaquesType opaques;
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
-  private R2LightShaderSphericalLambertBlinnPhongSingle sphere_light_shader;
-  private R2LightSphericalSingleType sphere_light;
-  private R2LightSphericalSingleType sphere_light_bounded;
-  private R2InstanceSingleType sphere_light_bounds;
-  private R2FilterType<R2FilterLightApplicatorParameters> filter_light;
-  private R2FilterLightApplicatorParameters filter_light_params;
   private R2FilterFXAAParameters filter_fxaa_params;
   private R2FacadeType main;
   private R2LightAmbientScreenSingle light_ambient;
@@ -130,8 +120,12 @@ public final class ExampleMinimal implements R2ExampleCustomType
   private R2FilterType<R2FilterEmissionParameters> filter_emission;
   private R2FilterEmissionParameters filter_emission_params;
   private R2FilterFXAAType filter_fxaa;
+  private R2LightShaderSphericalLambertBlinnPhongSingle sphere_light_shader;
+  private R2LightSphericalSingle sphere_light;
+  private R2InstanceSingle sphere_light_bounds;
+  private R2LightSphericalSingle sphere_light_bounded;
 
-  public ExampleMinimal()
+  public ExampleMinimalNoLBuffer()
   {
 
   }
@@ -145,19 +139,23 @@ public final class ExampleMinimal implements R2ExampleCustomType
   {
     this.main = NullCheck.notNull(m, "Main");
 
+    this.main.shaderPreprocessingEnvironment().preprocessorDefineSet(
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE,
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER);
+
     this.opaques = R2SceneOpaques.create();
     this.lights = R2SceneLights.create();
     this.stencils = R2SceneStencils.create();
 
     final R2FacadeBufferProviderType buffers = m.buffers();
-    this.gbuffer = buffers.createGeometryBuffer(
-      R2GeometryBufferDescription.of(area, R2_GEOMETRY_BUFFER_FULL));
-    this.lbuffer = buffers.createLightBuffer(
-      R2LightBufferDescription.of(area, R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR));
-    this.ibuffer = buffers.createImageBuffer(
-      R2ImageBufferDescription.of(
-        area,
-        Optional.of(R2DepthAttachmentShare.of(this.gbuffer.depthTexture()))));
+    this.gbuffer =
+      buffers.createGeometryBuffer(
+        R2GeometryBufferDescription.of(area, R2_GEOMETRY_BUFFER_FULL));
+    this.ibuffer =
+      buffers.createImageBuffer(
+        R2ImageBufferDescription.of(
+          area,
+          Optional.of(R2DepthAttachmentCreateWithStencil.builder().build())));
 
     this.filter_fxaa = m.filters().createFXAA();
     this.filter_fxaa_params =
@@ -224,14 +222,6 @@ public final class ExampleMinimal implements R2ExampleCustomType
     this.sphere_light_bounded.setIntensity(1.0);
     this.sphere_light_bounded.setOriginPosition(PVector3D.of(-10.0, 1.0, 0.0));
     this.sphere_light_bounded.setRadius(9.0);
-
-    this.filter_light = m.filters().createLightApplicator();
-    this.filter_light_params =
-      R2FilterLightApplicator.parametersFor(
-        m.textureDefaults(),
-        this.gbuffer,
-        this.lbuffer,
-        this.ibuffer.sizeAsViewport());
 
     {
       final R2RenderTargetPoolType<R2ImageBufferDescription, R2ImageBufferUsableType> pool =
@@ -319,8 +309,8 @@ public final class ExampleMinimal implements R2ExampleCustomType
         t.main.textureUnitAllocator().rootContext();
       final JCGLFramebufferUsableType gbuffer_fb =
         t.gbuffer.primaryFramebuffer();
-      final JCGLFramebufferUsableType lbuffer_fb =
-        t.lbuffer.primaryFramebuffer();
+      final JCGLFramebufferUsableType ibuffer_fb =
+        t.ibuffer.primaryFramebuffer();
 
       final JCGLFramebuffersType g_fb = t.g.framebuffers();
       final JCGLClearType g_cl = t.g.clearing();
@@ -328,9 +318,9 @@ public final class ExampleMinimal implements R2ExampleCustomType
       final JCGLStencilBuffersType g_sb = t.g.stencilBuffers();
       final JCGLDepthBuffersType g_db = t.g.depthBuffers();
 
-        /*
-         * Populate geometry buffer.
-         */
+      /*
+       * Populate geometry buffer.
+       */
 
       final AreaL gbuffer_viewport = AreaSizesL.area(t.gbuffer.size());
       g_fb.framebufferDrawBind(gbuffer_fb);
@@ -349,15 +339,11 @@ public final class ExampleMinimal implements R2ExampleCustomType
         mo,
         t.opaques);
 
-        /*
-         * Populate light buffer.
-         */
-
-      g_fb.framebufferDrawBind(lbuffer_fb);
-      t.lbuffer.clearBoundPrimaryFramebuffer(t.g);
-      t.main.lightRenderer().renderLightsToLightBuffer(
+      g_fb.framebufferDrawBind(ibuffer_fb);
+      t.ibuffer.clearBoundPrimaryFramebuffer(t.g);
+      t.main.lightRenderer().renderLightsToImageBuffer(
         t.gbuffer,
-        t.lbuffer.sizeAsViewport(),
+        t.ibuffer.sizeAsViewport(),
         Optional.empty(),
         t.profiling_root,
         uc,
@@ -365,24 +351,16 @@ public final class ExampleMinimal implements R2ExampleCustomType
         mo,
         t.lights);
 
-        /*
-         * Combine light and geometry buffers into lit image.
-         */
-
-      g_fb.framebufferDrawBind(t.ibuffer.primaryFramebuffer());
-      t.ibuffer.clearBoundPrimaryFramebuffer(t.g);
-      t.filter_light.runFilter(t.profiling_root, uc, t.filter_light_params);
-
-        /*
-         * Apply emission.
-         */
+      /*
+       * Apply emission.
+       */
 
       t.filter_emission.runFilter(
         t.profiling_root, uc, t.filter_emission_params);
 
-        /*
-         * Filter the lit image with FXAA, writing it to the screen.
-         */
+      /*
+       * Filter the lit image with FXAA, writing it to the screen.
+       */
 
       g_fb.framebufferDrawUnbind();
       g_cb.colorBufferMask(true, true, true, true);

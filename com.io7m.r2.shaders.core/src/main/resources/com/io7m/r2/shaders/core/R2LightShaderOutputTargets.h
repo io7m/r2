@@ -1,0 +1,14 @@
+#ifndef R2_LIGHT_SHADER_OUTPUT_TARGETS_H
+#define R2_LIGHT_SHADER_OUTPUT_TARGETS_H
+
+/// \file R2LightShaderOutputTargets.h
+/// \brief A header that defines constants related to light shader outputs
+
+#define R2_LIGHT_SHADER_OUTPUT_TARGET_LBUFFER 0x1000
+#define R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER 0x1001
+
+#ifndef R2_LIGHT_SHADER_OUTPUT_TARGET
+  #define R2_LIGHT_SHADER_OUTPUT_TARGET R2_LIGHT_SHADER_OUTPUT_TARGET_LBUFFER
+#endif
+
+#endif // R2_LIGHT_SHADER_OUTPUT_TARGETS_H

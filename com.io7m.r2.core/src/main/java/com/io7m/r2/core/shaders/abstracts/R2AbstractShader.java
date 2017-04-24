@@ -74,12 +74,6 @@ public abstract class R2AbstractShader<S extends Enum<S>, M> implements
   private final Object2ReferenceMap<String, String> environment;
   private boolean deleted;
 
-  @Override
-  public final Map<String, String> environment()
-  {
-    return this.environment;
-  }
-
   protected R2AbstractShader(
     final JCGLShadersType in_shaders,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
@@ -169,6 +163,12 @@ public abstract class R2AbstractShader<S extends Enum<S>, M> implements
     } catch (final SoShaderException e) {
       throw new R2ExceptionShaderPreprocessingFailed(e);
     }
+  }
+
+  @Override
+  public final Map<String, String> environment()
+  {
+    return this.environment;
   }
 
   protected abstract FSMEnumMutable<S> onCheckGetFSM();

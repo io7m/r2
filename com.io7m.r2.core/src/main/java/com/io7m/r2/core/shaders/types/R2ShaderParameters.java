@@ -27,6 +27,11 @@ import com.io7m.r2.core.R2ExceptionShaderParameterWrongType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import static com.io7m.r2.shaders.core.R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE;
+import static com.io7m.r2.shaders.core.R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER;
+import static com.io7m.r2.shaders.core.R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_LBUFFER;
 
 /**
  * Convenient functions for dealing with shader parameters.
@@ -154,5 +159,41 @@ public final class R2ShaderParameters
       dumpParameters(u, sb);
       throw new R2ExceptionShaderParameterCountMismatch(sb.toString());
     }
+  }
+
+  /**
+   * Determine if a given shader environment implies that the light shader to
+   * which the environment belongs was compiled to write its output to an image
+   * buffer instead of a light buffer.
+   *
+   * @param environment The shader environment of the shader
+   *
+   * @return {@code true} if the given shader is writing to an image buffer
+   */
+
+  public static boolean lightShaderTargetIsImageBuffer(
+    final Map<String, String> environment)
+  {
+    return Objects.equals(
+      R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER,
+      environment.get(R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE));
+  }
+
+  /**
+   * Determine if a given shader environment implies that the light shader to
+   * which the environment belongs was compiled to write its output to a light
+   * buffer instead of an image buffer.
+   *
+   * @param environment The shader environment of the shader
+   *
+   * @return {@code true} if the given shader is writing to a light buffer
+   */
+
+  public static boolean lightShaderTargetIsLightBuffer(
+    final Map<String, String> environment)
+  {
+    return Objects.equals(
+      R2_LIGHT_SHADER_OUTPUT_TARGET_LBUFFER,
+      environment.get(R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE));
   }
 }

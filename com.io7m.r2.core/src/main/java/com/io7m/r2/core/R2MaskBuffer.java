@@ -167,6 +167,8 @@ public final class R2MaskBuffer implements R2MaskBufferType
           (ignored, share) -> createMaskBufferWithShared(
             g_fb, desc, area, fbb, rt, share),
           (ignored, create) -> createMaskBufferWithCreated(
+            g_fb, g_t, desc, area, cc, fbb, rt, create),
+          (ignored, create) -> createMaskBufferWithStencilCreated(
             g_fb, g_t, desc, area, cc, fbb, rt, create));
       }
 
@@ -175,6 +177,33 @@ public final class R2MaskBuffer implements R2MaskBufferType
     } finally {
       cc.unitContextFinish(g_t);
     }
+  }
+
+  private static R2MaskBuffer createMaskBufferWithStencilCreated(
+    final JCGLFramebuffersType g_fb,
+    final JCGLTexturesType g_t,
+    final R2MaskBufferDescriptionType desc,
+    final AreaSizeL area,
+    final JCGLTextureUnitContextType cc,
+    final JCGLFramebufferBuilderType fbb,
+    final R2Texture2DType rt,
+    final R2DepthAttachmentCreateWithStencilType create)
+  {
+    final Pair<JCGLTextureUnitType, JCGLTexture2DType> pd =
+      cc.unitContextAllocateTexture2D(
+        g_t,
+        area.width(),
+        area.height(),
+        JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
+        JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+        JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
+        JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
+        JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
+    final JCGLTexture2DType td = pd.getRight();
+    fbb.attachDepthStencilTexture2D(td);
+    final JCGLFramebufferType fb = g_fb.framebufferAllocate(fbb);
+    return new R2MaskBuffer(
+      fb, desc, rt, R2Texture2DStatic.of(td), null);
   }
 
   private static R2MaskBuffer createMaskBufferWithCreated(

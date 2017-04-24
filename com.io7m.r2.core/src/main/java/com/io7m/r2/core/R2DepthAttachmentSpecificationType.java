@@ -28,11 +28,15 @@ public interface R2DepthAttachmentSpecificationType
   /**
    * Match on the type of depth attachment specification.
    *
-   * @param context   A user-defined context value
-   * @param on_share  Evaluated on values of type {@link R2DepthAttachmentShareType}
-   * @param on_create Evaluated on values of type {@link R2DepthAttachmentCreateType}
-   * @param <A>       The type of context values
-   * @param <B>       The type of returned values
+   * @param context           A user-defined context value
+   * @param on_share          Evaluated on values of type {@link
+   *                          R2DepthAttachmentShareType}
+   * @param on_create         Evaluated on values of type {@link
+   *                          R2DepthAttachmentCreateType}
+   * @param on_create_stencil Evaluated on values of type {@link
+   *                          R2DepthAttachmentCreateWithStencilType}
+   * @param <A>               The type of context values
+   * @param <B>               The type of returned values
    *
    * @return The value returned by one of the given functions
    */
@@ -40,5 +44,6 @@ public interface R2DepthAttachmentSpecificationType
   <A, B> B matchDepthAttachment(
     A context,
     BiFunction<A, R2DepthAttachmentShareType, B> on_share,
-    BiFunction<A, R2DepthAttachmentCreateType, B> on_create);
+    BiFunction<A, R2DepthAttachmentCreateType, B> on_create,
+    BiFunction<A, R2DepthAttachmentCreateWithStencilType, B> on_create_stencil);
 }
