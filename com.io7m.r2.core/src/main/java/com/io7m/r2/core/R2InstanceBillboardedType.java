@@ -49,6 +49,13 @@ public interface R2InstanceBillboardedType extends R2InstanceType
     JCGLInterfaceGL33Type g);
 
   /**
+   * @return {@code true} if the instance data has changed since the last call
+   * to {{@link #update(JCGLInterfaceGL33Type)}}
+   */
+
+  boolean updateRequired();
+
+  /**
    * @return The number of instances currently present in the set
    */
 

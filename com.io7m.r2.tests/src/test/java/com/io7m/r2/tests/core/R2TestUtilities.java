@@ -559,6 +559,12 @@ public final class R2TestUtilities
       }
 
       @Override
+      public boolean updateRequired()
+      {
+        return false;
+      }
+
+      @Override
       public int renderCount()
       {
         return 1;
@@ -1285,6 +1291,12 @@ public final class R2TestUtilities
         final JCGLInterfaceGL33Type g)
       {
 
+      }
+
+      @Override
+      public boolean updateRequired()
+      {
+        return false;
       }
 
       @Override

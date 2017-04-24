@@ -18,6 +18,7 @@ package com.io7m.r2.tests.core;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
+import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.r2.core.R2ExceptionBatchIsFull;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
@@ -26,6 +27,7 @@ import com.io7m.r2.core.R2InstanceBatchedDynamicType;
 import com.io7m.r2.core.R2TransformT;
 import com.io7m.r2.core.R2UnitQuad;
 import com.io7m.r2.core.R2UnitQuadType;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -50,11 +52,51 @@ public abstract class R2InstanceBatchedDynamicContract extends R2JCGLContract
         quad.arrayObject(),
         8);
 
+    Assert.assertTrue(i.updateRequired());
+
     for (int index = 0; index < 8; ++index) {
       i.enableInstance(R2TransformT.create());
     }
 
     this.expected.expect(R2ExceptionBatchIsFull.class);
     i.enableInstance(R2TransformT.create());
+  }
+
+  @Test
+  public void testUpdateRequired()
+  {
+    final JCGLContextType c = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g33 = c.contextGetGL33();
+    final R2IDPoolType id_pool = R2IDPool.newPool();
+    final R2UnitQuadType quad = R2UnitQuad.newUnitQuad(g33);
+
+    final R2InstanceBatchedDynamicType i =
+      R2InstanceBatchedDynamic.create(
+        id_pool,
+        g33.arrayBuffers(),
+        g33.arrayObjects(),
+        quad.arrayObject(),
+        8);
+
+    Assert.assertTrue(i.updateRequired());
+    i.update(g33);
+    Assert.assertFalse(i.updateRequired());
+
+    final R2TransformT trans = R2TransformT.create();
+    final int id = i.enableInstance(trans);
+
+    Assert.assertTrue(i.updateRequired());
+    i.update(g33);
+    Assert.assertFalse(i.updateRequired());
+
+    trans.setTranslation(PVector3D.of(23.0, 23.0, 23.0));
+    Assert.assertTrue(i.updateRequired());
+    i.update(g33);
+    Assert.assertFalse(i.updateRequired());
+
+    i.disableInstance(id);
+    Assert.assertTrue(i.updateRequired());
+    i.update(g33);
+    Assert.assertFalse(i.updateRequired());
   }
 }

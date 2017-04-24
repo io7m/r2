@@ -271,7 +271,9 @@ public final class R2DepthVarianceRenderer
     public void onInstanceBatchedUpdate(
       final R2InstanceBatchedType i)
     {
-      i.update(this.g33);
+      if (i.updateRequired()) {
+        i.update(this.g33);
+      }
     }
 
     @Override

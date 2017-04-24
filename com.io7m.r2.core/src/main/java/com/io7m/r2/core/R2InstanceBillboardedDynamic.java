@@ -54,6 +54,7 @@ public final class R2InstanceBillboardedDynamic
   private final JCGLArrayBufferType data_vbo;
   private final JCGLArrayObjectType data_vao;
   private final JCGLBufferUpdateType<JCGLArrayBufferType> update_vbo;
+  private boolean update_required;
   private int used;
 
   private R2InstanceBillboardedDynamic(
@@ -143,6 +144,7 @@ public final class R2InstanceBillboardedDynamic
     this.data_vbo = vbo;
     this.data_vao = vao;
     this.update_vbo = JCGLBufferUpdates.newUpdateReplacingAll(this.data_vbo);
+    this.update_required = true;
   }
 
   /**
@@ -176,6 +178,7 @@ public final class R2InstanceBillboardedDynamic
   public void clear()
   {
     this.used = 0;
+    this.update_required = true;
   }
 
   @Override
@@ -206,6 +209,7 @@ public final class R2InstanceBillboardedDynamic
     floats.put(offset + 3, (float) scale);
     floats.put(offset + 4, (float) rotation);
     this.used = Math.addExact(this.used, 1);
+    this.update_required = true;
     return index;
   }
 
@@ -268,6 +272,13 @@ public final class R2InstanceBillboardedDynamic
     g_ab.arrayBufferReallocate(this.data_vbo);
     g_ab.arrayBufferUpdate(this.update_vbo);
     g_ao.arrayObjectUnbind();
+    this.update_required = false;
+  }
+
+  @Override
+  public boolean updateRequired()
+  {
+    return this.update_required;
   }
 
   @Override

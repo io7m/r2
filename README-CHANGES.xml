@@ -3,6 +3,43 @@
   <c:project>io7m-r2</c:project>
 
   <c:release c:ticket-system="com.github.io7m.r2">
+    <c:date>2017-04-24</c:date>
+    <c:version>0.3.0</c:version>
+    <c:item>
+      <c:date>2017-04-22</c:date>
+      <c:type-code-change/>
+      <c:ticket>91</c:ticket>
+      <c:ticket>92</c:ticket>
+      <c:ticket>93</c:ticket>
+      <c:ticket>94</c:ticket>
+      <c:summary>Massive update; rename project, change API to use latest core io7m modules.</c:summary>
+    </c:item>
+    <c:item>
+      <c:date>2017-04-22</c:date>
+      <c:type-code-change/>
+      <c:summary>Replace old "main" module with a new "facade" module.</c:summary>
+    </c:item>
+    <c:item>
+      <c:date>2017-04-23</c:date>
+      <c:type-code-new/>
+      <c:ticket>89</c:ticket>
+      <c:summary>Add the ability to render lit images without an intermediate light buffer.</c:summary>
+    </c:item>
+    <c:item>
+      <c:date>2017-04-23</c:date>
+      <c:type-code-change/>
+      <c:ticket>94</c:ticket>
+      <c:summary>Replace shader verifiers with abstract shaders, for performance reasons.</c:summary>
+    </c:item>
+    <c:item>
+      <c:date>2017-04-24</c:date>
+      <c:type-code-new/>
+      <c:ticket>62</c:ticket>
+      <c:summary>Eliminate redundant batch/billboarded instance updates.</c:summary>
+    </c:item>
+  </c:release>
+
+  <c:release c:ticket-system="com.github.io7m.r2">
     <c:date>2017-01-02</c:date>
     <c:version>0.2.1</c:version>
     <c:item>

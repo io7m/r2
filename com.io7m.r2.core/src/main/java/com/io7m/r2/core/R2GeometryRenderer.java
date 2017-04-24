@@ -261,7 +261,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public void onInstanceBatchedUpdate(
       final R2InstanceBatchedType i)
     {
-      i.update(this.g33);
+      if (i.updateRequired()) {
+        i.update(this.g33);
+      }
     }
 
     private R2ShaderParametersViewMutable configureViewParameters()
@@ -342,7 +344,9 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
     public void onInstanceBillboardedUpdate(
       final R2InstanceBillboardedType i)
     {
-      i.update(this.g33);
+      if (i.updateRequired()) {
+        i.update(this.g33);
+      }
     }
 
     @Override

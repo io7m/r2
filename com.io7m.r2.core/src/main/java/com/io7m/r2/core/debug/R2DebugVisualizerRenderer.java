@@ -621,7 +621,9 @@ public final class R2DebugVisualizerRenderer
     public void onInstanceBatchedUpdate(
       final R2InstanceBatchedType i)
     {
-      i.update(this.g33);
+      if (i.updateRequired()) {
+        i.update(this.g33);
+      }
     }
 
     @Override
@@ -700,7 +702,9 @@ public final class R2DebugVisualizerRenderer
     public void onInstanceBillboardedUpdate(
       final R2InstanceBillboardedType i)
     {
-      i.update(this.g33);
+      if (i.updateRequired()) {
+        i.update(this.g33);
+      }
     }
 
     @Override

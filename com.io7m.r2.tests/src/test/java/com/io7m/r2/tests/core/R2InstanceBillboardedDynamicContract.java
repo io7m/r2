@@ -24,6 +24,8 @@ import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.R2InstanceBillboardedDynamic;
 import com.io7m.r2.core.R2InstanceBillboardedDynamicType;
+import com.io7m.r2.core.R2TransformT;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -50,10 +52,40 @@ public abstract class R2InstanceBillboardedDynamicContract extends
         8);
 
     for (int index = 0; index < 8; ++index) {
-      i.addInstance(PVector3D.of(0.0f, 0.0f, 0.0f), 1.0f, 0.0f);
+      i.addInstance(PVector3D.of(0.0, 0.0, 0.0), 1.0, 0.0);
     }
 
     this.expected.expect(R2ExceptionBatchIsFull.class);
-    i.addInstance(PVector3D.of(0.0f, 0.0f, 0.0f), 1.0f, 0.0f);
+    i.addInstance(PVector3D.of(0.0, 0.0, 0.0), 1.0, 0.0);
+  }
+
+  @Test
+  public void testUpdateRequired()
+  {
+    final JCGLContextType c = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g33 = c.contextGetGL33();
+    final R2IDPoolType id_pool = R2IDPool.newPool();
+
+    final R2InstanceBillboardedDynamicType i =
+      R2InstanceBillboardedDynamic.create(
+        id_pool,
+        g33.arrayBuffers(),
+        g33.arrayObjects(),
+        8);
+
+    Assert.assertTrue(i.updateRequired());
+    i.update(g33);
+    Assert.assertFalse(i.updateRequired());
+
+    i.addInstance(PVector3D.of(23.0, 23.0, 23.0), 1.0, 0.0);
+
+    Assert.assertTrue(i.updateRequired());
+    i.update(g33);
+    Assert.assertFalse(i.updateRequired());
+
+    i.clear();
+    Assert.assertTrue(i.updateRequired());
+    i.update(g33);
+    Assert.assertFalse(i.updateRequired());
   }
 }

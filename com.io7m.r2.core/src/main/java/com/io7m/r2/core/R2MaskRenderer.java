@@ -238,7 +238,9 @@ public final class R2MaskRenderer implements R2MaskRendererType
 
         for (int index = 0; index < batches.size(); ++index) {
           final R2InstanceBatchedType instance = batches.get(index);
-          instance.update(this.g);
+          if (instance.updateRequired()) {
+            instance.update(this.g);
+          }
           g_a.arrayObjectBind(instance.arrayObject());
 
           this.shader_batched.onValidate();

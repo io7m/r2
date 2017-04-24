@@ -40,6 +40,8 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
 
+import java.util.function.Consumer;
+
 /**
  * <p>The default implementation of the {@link R2InstanceBatchedDynamicType}
  * interface.</p>
@@ -63,6 +65,8 @@ public final class R2InstanceBatchedDynamic
   private final MutableLong index;
   private final PMatrixByteBuffered4x4Type<
     R2SpaceObjectType, R2SpaceWorldType> matrix_pointer;
+  private boolean update_required;
+  private final Consumer<R2TransformOrthogonalReadableType> update_consumer;
 
   private R2InstanceBatchedDynamic(
     final JCGLArrayBuffersType g_ab,
@@ -167,6 +171,8 @@ public final class R2InstanceBatchedDynamic
     this.matrix_vao = vao;
     this.update_vbo = JCGLBufferUpdates.newUpdateReplacingAll(this.matrix_vbo);
     this.index = MutableLong.create();
+    this.update_required = true;
+    this.update_consumer = transform -> this.update_required = true;
 
     this.matrix_pointer =
       PMatrixByteBuffered4x4s32.createWithBase(
@@ -224,8 +230,10 @@ public final class R2InstanceBatchedDynamic
 
   private void remove(final int i)
   {
+    this.members[i].transformOrthogonalGetWatchable().watchableRemove(this.update_consumer);
     this.members[i] = null;
     this.free.add(i);
+    this.update_required = true;
   }
 
   @Override
@@ -247,6 +255,7 @@ public final class R2InstanceBatchedDynamic
 
     final int next = this.free.firstInt();
     this.members[next] = t;
+    t.transformOrthogonalGetWatchable().watchableAdd(this.update_consumer);
     this.free.remove(next);
     return next;
   }
@@ -293,6 +302,14 @@ public final class R2InstanceBatchedDynamic
     g_ab.arrayBufferReallocate(this.matrix_vbo);
     g_ab.arrayBufferUpdate(this.update_vbo);
     g_ao.arrayObjectUnbind();
+
+    this.update_required = false;
+  }
+
+  @Override
+  public boolean updateRequired()
+  {
+    return this.update_required;
   }
 
   @Override

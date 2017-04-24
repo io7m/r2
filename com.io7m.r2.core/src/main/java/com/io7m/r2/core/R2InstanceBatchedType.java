@@ -48,6 +48,13 @@ public interface R2InstanceBatchedType extends R2InstanceType
     JCGLInterfaceGL33Type g);
 
   /**
+   * @return {@code true} if the instance data has changed since the last call
+   * to {{@link #update(JCGLInterfaceGL33Type)}}
+   */
+
+  boolean updateRequired();
+
+  /**
    * @return The number of instances that will be rendered.
    */
 

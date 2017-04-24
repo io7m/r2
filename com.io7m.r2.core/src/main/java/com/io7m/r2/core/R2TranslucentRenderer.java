@@ -224,11 +224,13 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
       this.g33,
       JCGLRenderState.builder()
         .from(this.render_state)
-        .setBlendState(b.blending().map(x -> x))
+        .setBlendState(b.blending())
         .setCullingState(b.culling())
         .build());
 
-    b.instance().update(this.g33);
+    if (b.instance().updateRequired()) {
+      b.instance().update(this.g33);
+    }
 
     try {
       shader.onActivate(this.g33);
@@ -270,11 +272,13 @@ public final class R2TranslucentRenderer implements R2TranslucentRendererType
       this.g33,
       JCGLRenderState.builder()
         .from(this.render_state)
-        .setBlendState(b.blending().map(x -> x))
+        .setBlendState(b.blending())
         .setCullingState(b.culling())
         .build());
 
-    b.instance().update(this.g33);
+    if (b.instance().updateRequired()) {
+      b.instance().update(this.g33);
+    }
 
     try {
       shader.onActivate(this.g33);
