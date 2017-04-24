@@ -64,12 +64,14 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowUsableTyp
 import com.io7m.r2.core.shaders.types.R2ShaderLightScreenSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleUsableType;
+import com.io7m.r2.core.shaders.types.R2ShaderParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersLightMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersViewMutable;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.core.shaders.types.R2ShaderUsableType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +178,7 @@ public final class R2LightRenderer implements R2LightRendererType
   }
 
   @Override
-  public void renderLights(
+  public void renderLightsToLightBuffer(
     final R2GeometryBufferUsableType gbuffer,
     final AreaL area,
     final Optional<R2LightBufferUsableType> lbuffer,
@@ -218,7 +220,67 @@ public final class R2LightRenderer implements R2LightRendererType
     }
 
     this.renderLightInstances(
-      gbuffer, area, pc_base, uc, shadows, m, s);
+      gbuffer,
+      area,
+      pc_base,
+      uc,
+      shadows,
+      m,
+      s,
+      OutputTarget.OUTPUT_TARGET_LIGHT_BUFFER);
+  }
+
+  @Override
+  public void renderLightsToImageBuffer(
+    final R2GeometryBufferUsableType gbuffer,
+    final AreaL area,
+    final Optional<R2ImageBufferUsableType> ibuffer,
+    final JCGLProfilingContextType pc,
+    final JCGLTextureUnitContextParentType uc,
+    final R2ShadowMapContextUsableType shadows,
+    final R2MatricesObserverType m,
+    final R2SceneLightsType s)
+  {
+    NullCheck.notNull(gbuffer, "G-Buffer");
+    NullCheck.notNull(area, "Area");
+    NullCheck.notNull(ibuffer, "I-Buffer");
+    NullCheck.notNull(pc, "Profiling");
+    NullCheck.notNull(uc, "Texture context");
+    NullCheck.notNull(shadows, "Shadows");
+    NullCheck.notNull(m, "Matrices");
+    NullCheck.notNull(s, "Scene");
+
+    Preconditions.checkPrecondition(
+      !this.isDeleted(), "Renderer must not be deleted");
+
+    final JCGLProfilingContextType pc_base =
+      pc.childContext("lights");
+
+    final JCGLProfilingContextType pc_copy_depth =
+      pc_base.childContext("copy-depth");
+
+    pc_copy_depth.startMeasuringIfEnabled();
+    try {
+      if (ibuffer.isPresent()) {
+        final R2ImageBufferUsableType lb = ibuffer.get();
+        final JCGLFramebuffersType g_fb = this.g.framebuffers();
+        g_fb.framebufferDrawBind(lb.primaryFramebuffer());
+      }
+
+      this.renderCopyDepthStencil(gbuffer, area);
+    } finally {
+      pc_copy_depth.stopMeasuringIfEnabled();
+    }
+
+    this.renderLightInstances(
+      gbuffer,
+      area,
+      pc_base,
+      uc,
+      shadows,
+      m,
+      s,
+      OutputTarget.OUTPUT_TARGET_IMAGE_BUFFER);
   }
 
   private void renderLightInstances(
@@ -228,7 +290,8 @@ public final class R2LightRenderer implements R2LightRendererType
     final JCGLTextureUnitContextParentType uc,
     final R2ShadowMapContextUsableType shadows,
     final R2MatricesObserverType m,
-    final R2SceneLightsType s)
+    final R2SceneLightsType s,
+    final OutputTarget out)
   {
     final JCGLProfilingContextType pc_instances =
       pc_base.childContext("instances");
@@ -238,7 +301,7 @@ public final class R2LightRenderer implements R2LightRendererType
       g_v.viewportSet(lbuffer_area);
 
       this.light_consumer.input_state.set(
-        gbuffer, m, uc, shadows, lbuffer_area, pc_instances);
+        gbuffer, m, uc, shadows, lbuffer_area, pc_instances, out);
       try {
         s.lightsExecute(this.light_consumer);
       } finally {
@@ -266,6 +329,28 @@ public final class R2LightRenderer implements R2LightRendererType
       DEPTH_STENCIL,
       FRAMEBUFFER_BLIT_FILTER_NEAREST);
     g_fb.framebufferReadUnbind();
+  }
+
+  private static <M> void checkCompatible(
+    final R2ShaderUsableType<M> shader,
+    final OutputTarget out)
+  {
+    switch (out) {
+      case OUTPUT_TARGET_LIGHT_BUFFER: {
+        Invariants.checkInvariant(
+          shader,
+          R2ShaderParameters.lightShaderTargetIsLightBuffer(shader.environment()),
+          s -> "Shader must have been compiled to produce output for a light buffer");
+        break;
+      }
+      case OUTPUT_TARGET_IMAGE_BUFFER: {
+        Invariants.checkInvariant(
+          shader,
+          R2ShaderParameters.lightShaderTargetIsImageBuffer(shader.environment()),
+          s -> "Shader must have been compiled to produce output for an image buffer");
+        break;
+      }
+    }
   }
 
   private static final class LightGroupConsumerInputState
@@ -364,7 +449,7 @@ public final class R2LightRenderer implements R2LightRendererType
           JCGLColorBufferMaskingState.of(true, true, true, false));
 
         /*
-          The light contributions are summed with pure additive blending.
+         * The light contributions are summed with pure additive blending.
          */
 
         this.render_state_screen.setBlendState(
@@ -377,7 +462,7 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLBlendEquation.BLEND_EQUATION_ADD)));
 
         /*
-          For full-screen quads, the front faces should be rendered.
+         * For full-screen quads, the front faces should be rendered.
          */
 
         this.render_state_screen.setCullingState(
@@ -386,7 +471,7 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
         /*
-          No depth testing and no depth writing is required.
+         * No depth testing and no depth writing is required.
          */
 
         this.render_state_screen.setDepthState(JCGLDepthState.of(
@@ -410,7 +495,7 @@ public final class R2LightRenderer implements R2LightRendererType
           JCGLColorBufferMaskingState.of(true, true, true, false));
 
         /*
-          The light contributions are summed with pure additive blending.
+         * The light contributions are summed with pure additive blending.
          */
 
         this.render_state_volume.setBlendState(
@@ -423,8 +508,8 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLBlendEquation.BLEND_EQUATION_ADD)));
 
         /*
-          For typical volume lights, only the back faces should be
-          rendered.
+         * For typical volume lights, only the back faces should be
+         * rendered.
          */
 
         this.render_state_volume.setCullingState(
@@ -433,9 +518,9 @@ public final class R2LightRenderer implements R2LightRendererType
             JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE)));
 
         /*
-          The fragments of the back faces of the light volume will have a
-          depth greater than or equal to the geometry fragments that
-          should be affected. No depth writing is required.
+         * The fragments of the back faces of the light volume will have a
+         * depth greater than or equal to the geometry fragments that
+         * should be affected. No depth writing is required.
          */
 
         this.render_state_volume.setDepthState(
@@ -507,6 +592,8 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
+      checkCompatible(s, this.input_state.parent.output_target);
+
       s.onActivate(this.g33);
       s.onReceiveBoundGeometryBufferTextures(
         this.g33,
@@ -724,6 +811,12 @@ public final class R2LightRenderer implements R2LightRendererType
     }
   }
 
+  private enum OutputTarget
+  {
+    OUTPUT_TARGET_LIGHT_BUFFER,
+    OUTPUT_TARGET_IMAGE_BUFFER
+  }
+
   private static final class LightConsumerInputState
   {
     private @Nullable R2GeometryBufferUsableType gbuffer;
@@ -732,6 +825,7 @@ public final class R2LightRenderer implements R2LightRendererType
     private @Nullable R2ShadowMapContextUsableType shadow_maps;
     private @Nullable AreaL viewport;
     private @Nullable JCGLProfilingContextType profiling_context;
+    private @Nullable OutputTarget output_target;
 
     LightConsumerInputState()
     {
@@ -744,7 +838,8 @@ public final class R2LightRenderer implements R2LightRendererType
       final JCGLTextureUnitContextParentType in_texture_context,
       final R2ShadowMapContextUsableType in_shadows,
       final AreaL in_viewport,
-      final JCGLProfilingContextType pc_base)
+      final JCGLProfilingContextType pc_base,
+      final OutputTarget in_output_target)
     {
       this.gbuffer =
         NullCheck.notNull(in_gbuffer, "G-Buffer");
@@ -758,6 +853,8 @@ public final class R2LightRenderer implements R2LightRendererType
         NullCheck.notNull(in_viewport, "Viewport");
       this.profiling_context =
         NullCheck.notNull(pc_base, "Profiling");
+      this.output_target =
+        NullCheck.notNull(in_output_target, "Output target");
     }
 
     void clear()
@@ -768,6 +865,7 @@ public final class R2LightRenderer implements R2LightRendererType
       this.shadow_maps = null;
       this.viewport = null;
       this.profiling_context = null;
+      this.output_target = null;
     }
   }
 
@@ -832,11 +930,11 @@ public final class R2LightRenderer implements R2LightRendererType
 
       {
         /*
-          Configure rendering state for the full-screen stencil clearing pass.
-
-          Configure stencil settings that will unconditionally clear the
-          {@link R2Stencils#LIGHT_MASK_BIT}, but leave the rest of the
-          contents of the stencil buffer intact.
+         * Configure rendering state for the full-screen stencil clearing pass.
+         *
+         * Configure stencil settings that will unconditionally clear the
+         * {@link R2Stencils#LIGHT_MASK_BIT}, but leave the rest of the
+         * contents of the stencil buffer intact.
          */
 
         this.clip_screen_stencil_state =
@@ -871,14 +969,14 @@ public final class R2LightRenderer implements R2LightRendererType
 
       {
         /*
-          Configure rendering state for clipping volumes.
+         * Configure rendering state for clipping volumes.
          */
 
         this.clip_volume_stencil_state =
           JCGLRenderStateMutable.create();
 
         /*
-          Use a standard less-than-or-equal depth test for the clip volume.
+         * Use a standard less-than-or-equal depth test for the clip volume.
          */
 
         this.clip_volume_stencil_state.setDepthState(JCGLDepthState.of(
@@ -892,9 +990,9 @@ public final class R2LightRenderer implements R2LightRendererType
           JCGLColorBufferMaskingState.of(false, false, false, false));
 
         /*
-          Configure stencil settings that will, in effect, set the
-          {@link R2Stencils#LIGHT_MASK_BIT} for any fragment the light volume
-          touches.
+         * Configure stencil settings that will, in effect, set the
+         * {@link R2Stencils#LIGHT_MASK_BIT} for any fragment the light volume
+         * touches.
          */
 
         final JCGLStencilStateMutable ss = JCGLStencilStateMutable.create();
@@ -1348,6 +1446,8 @@ public final class R2LightRenderer implements R2LightRendererType
     void onLightSingleShaderStart(
       final R2ShaderLightSingleUsableType<M> s)
     {
+      checkCompatible(s, this.input_state.parent.output_target);
+
       s.onActivate(this.g33);
       s.onReceiveBoundGeometryBufferTextures(
         this.g33,
@@ -1430,8 +1530,11 @@ public final class R2LightRenderer implements R2LightRendererType
     @Override
     public void onFinish()
     {
-      this.profiling_instances.stopMeasuringIfEnabled();
-      this.profiling_instances = null;
+      final JCGLProfilingContextType i = this.profiling_instances;
+      if (i != null) {
+        i.stopMeasuringIfEnabled();
+        this.profiling_instances = null;
+      }
     }
   }
 

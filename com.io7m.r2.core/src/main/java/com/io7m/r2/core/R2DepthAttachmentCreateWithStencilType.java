@@ -21,13 +21,13 @@ import org.immutables.value.Value;
 import java.util.function.BiFunction;
 
 /**
- * A specification that will create a depth-only attachment on the created
+ * A specification that will create a depth+stencil attachment on the created
  * framebuffer.
  */
 
 @R2ImmutableStyleType
 @Value.Immutable
-public interface R2DepthAttachmentCreateType extends
+public interface R2DepthAttachmentCreateWithStencilType extends
   R2DepthAttachmentSpecificationType
 {
   @Override
@@ -37,13 +37,6 @@ public interface R2DepthAttachmentCreateType extends
     final BiFunction<A, R2DepthAttachmentCreateType, B> on_create,
     final BiFunction<A, R2DepthAttachmentCreateWithStencilType, B> on_create_stencil)
   {
-    return on_create.apply(context, this);
+    return on_create_stencil.apply(context, this);
   }
-
-  /**
-   * @return The precision of the depth buffer to be created
-   */
-
-  @Value.Parameter
-  R2DepthPrecision precision();
 }

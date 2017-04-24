@@ -203,7 +203,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
       proj,
       unit(),
       (x, y) -> {
-        r.renderLights(
+        r.renderLightsToLightBuffer(
           gbuffer,
           AreaSizesL.area(area),
           empty(),
@@ -290,7 +290,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
       proj,
       unit(),
       (x, y) -> {
-        r.renderLights(
+        r.renderLightsToLightBuffer(
           gbuffer,
           AreaSizesL.area(area),
           Optional.of(lbuffer),
@@ -382,7 +382,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
       proj,
       unit(),
       (x, y) -> {
-        r.renderLights(
+        r.renderLightsToLightBuffer(
           gbuffer,
           AreaSizesL.area(area),
           empty(),

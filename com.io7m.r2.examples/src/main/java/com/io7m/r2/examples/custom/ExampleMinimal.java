@@ -292,8 +292,7 @@ public final class ExampleMinimal implements R2ExampleCustomType
 
     final R2SceneLightsClipGroupType lcg =
       lg.lightGroupNewClipGroup(this.sphere_light_bounds);
-    lcg.clipGroupAddSingle(
-      this.sphere_light_bounded, this.sphere_light_shader);
+    lcg.clipGroupAddSingle(this.sphere_light_bounded, this.sphere_light_shader);
 
     final PMatrix4x4D<R2SpaceWorldType, R2SpaceEyeType> view;
     if (servx.isFreeCameraEnabled()) {
@@ -356,7 +355,7 @@ public final class ExampleMinimal implements R2ExampleCustomType
 
       g_fb.framebufferDrawBind(lbuffer_fb);
       t.lbuffer.clearBoundPrimaryFramebuffer(t.g);
-      t.main.lightRenderer().renderLights(
+      t.main.lightRenderer().renderLightsToLightBuffer(
         t.gbuffer,
         t.lbuffer.sizeAsViewport(),
         Optional.empty(),

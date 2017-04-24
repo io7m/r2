@@ -49,6 +49,7 @@ import com.io7m.r2.core.shaders.types.R2ShaderLightProjectiveWithShadowType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderParametersLight;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.shaders.core.R2LightShaderDefines;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import com.io7m.r2.tests.core.R2JCGLContract;
@@ -234,12 +235,98 @@ public abstract class R2ShaderLightProjectiveWithShadowContract<
   }
 
   @Test
-  public final void testNew()
+  public final void testNewDefault()
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
     final R2ShaderPreprocessingEnvironmentType sources =
       ShaderPreprocessing.preprocessor();
+    final R2IDPoolType pool =
+      R2IDPool.newPool();
+
+    final JCGLTexturesType g_tex =
+      g.textures();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr =
+      ta.rootContext();
+    final R2TextureDefaultsType td =
+      R2TextureDefaults.create(g_tex, tr);
+    final JCGLTextureUnitContextType tc =
+      tr.unitContextNew();
+
+    final R2ShaderLightProjectiveWithShadowType<T> s =
+      this.newShaderWithVerifier(g, sources, pool);
+
+    final T light =
+      this.newLight(g, pool, tc, td);
+
+    final Class<?> s_class = s.shaderParametersType();
+    final Class<?> l_class = light.getClass();
+    Assert.assertTrue(s_class.isAssignableFrom(l_class));
+    Assert.assertTrue(light.lightID() >= 0L);
+
+    Assert.assertFalse(s.isDeleted());
+    s.delete(g);
+    Assert.assertTrue(s.isDeleted());
+  }
+
+  @Test
+  public final void testNewLightBuffer()
+  {
+    final JCGLContextType c = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g = c.contextGetGL33();
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
+    sources.preprocessorDefineSet(
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE,
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_LBUFFER);
+
+    final R2IDPoolType pool =
+      R2IDPool.newPool();
+
+    final JCGLTexturesType g_tex =
+      g.textures();
+    final JCGLTextureUnitAllocatorType ta =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        32,
+        g_tex.textureGetUnits());
+    final JCGLTextureUnitContextParentType tr =
+      ta.rootContext();
+    final R2TextureDefaultsType td =
+      R2TextureDefaults.create(g_tex, tr);
+    final JCGLTextureUnitContextType tc =
+      tr.unitContextNew();
+
+    final R2ShaderLightProjectiveWithShadowType<T> s =
+      this.newShaderWithVerifier(g, sources, pool);
+
+    final T light =
+      this.newLight(g, pool, tc, td);
+
+    final Class<?> s_class = s.shaderParametersType();
+    final Class<?> l_class = light.getClass();
+    Assert.assertTrue(s_class.isAssignableFrom(l_class));
+    Assert.assertTrue(light.lightID() >= 0L);
+
+    Assert.assertFalse(s.isDeleted());
+    s.delete(g);
+    Assert.assertTrue(s.isDeleted());
+  }
+
+  @Test
+  public final void testNewImageBuffer()
+  {
+    final JCGLContextType c = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g = c.contextGetGL33();
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
+    sources.preprocessorDefineSet(
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE,
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER);
+
     final R2IDPoolType pool =
       R2IDPool.newPool();
 

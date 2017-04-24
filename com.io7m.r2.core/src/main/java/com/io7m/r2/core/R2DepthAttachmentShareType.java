@@ -34,7 +34,8 @@ public interface R2DepthAttachmentShareType extends
   default <A, B> B matchDepthAttachment(
     final A context,
     final BiFunction<A, R2DepthAttachmentShareType, B> on_share,
-    final BiFunction<A, R2DepthAttachmentCreateType, B> on_create)
+    final BiFunction<A, R2DepthAttachmentCreateType, B> on_create,
+    final BiFunction<A, R2DepthAttachmentCreateWithStencilType, B> on_create_stencil)
   {
     return on_share.apply(context, this);
   }

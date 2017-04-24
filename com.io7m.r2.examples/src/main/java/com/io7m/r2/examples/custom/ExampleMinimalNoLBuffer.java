@@ -29,31 +29,29 @@ import com.io7m.jcanephora.core.api.JCGLStencilBuffersType;
 import com.io7m.jcanephora.profiler.JCGLProfilingContextType;
 import com.io7m.jcanephora.profiler.JCGLProfilingFrameType;
 import com.io7m.jcanephora.profiler.JCGLProfilingType;
-import com.io7m.jcanephora.renderstate.JCGLCullingState;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextParentType;
 import com.io7m.jfunctional.Unit;
 import com.io7m.jnull.NullCheck;
+import com.io7m.jregions.core.unparameterized.areas.AreaL;
 import com.io7m.jregions.core.unparameterized.sizes.AreaSizeL;
+import com.io7m.jregions.core.unparameterized.sizes.AreaSizesL;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
-import com.io7m.jtensors.core.parameterized.vectors.PVector4D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector4D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vectors3D;
-import com.io7m.r2.core.R2DepthAttachmentShare;
+import com.io7m.r2.core.R2DepthAttachmentCreateWithStencil;
 import com.io7m.r2.core.R2FilterType;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2GeometryBufferType;
 import com.io7m.r2.core.R2IDPoolType;
+import com.io7m.r2.core.R2ImageBuffer;
 import com.io7m.r2.core.R2ImageBufferDescription;
-import com.io7m.r2.core.R2ImageBufferType;
 import com.io7m.r2.core.R2ImageBufferUsableType;
-import com.io7m.r2.core.R2InstanceBatchedDynamicType;
+import com.io7m.r2.core.R2InstanceSingle;
 import com.io7m.r2.core.R2InstanceSingleType;
 import com.io7m.r2.core.R2LightAmbientScreenSingle;
-import com.io7m.r2.core.R2LightBufferDescription;
-import com.io7m.r2.core.R2LightBufferType;
-import com.io7m.r2.core.R2LightSphericalSingleType;
+import com.io7m.r2.core.R2LightSphericalSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingle;
 import com.io7m.r2.core.R2MaterialOpaqueSingleType;
 import com.io7m.r2.core.R2MatricesType;
@@ -66,22 +64,15 @@ import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaques;
 import com.io7m.r2.core.R2SceneOpaquesType;
 import com.io7m.r2.core.R2SceneStencils;
-import com.io7m.r2.core.R2SceneStencilsMode;
 import com.io7m.r2.core.R2SceneStencilsType;
 import com.io7m.r2.core.R2ShadowMapContextType;
 import com.io7m.r2.core.R2ShadowMapRendererExecutionType;
 import com.io7m.r2.core.R2TransformSOT;
-import com.io7m.r2.core.R2TransformST;
 import com.io7m.r2.core.R2TransformSiOT;
-import com.io7m.r2.core.R2TranslucentBatched;
-import com.io7m.r2.core.R2TranslucentRendererType;
-import com.io7m.r2.core.R2TranslucentType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
-import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicParameters;
 import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
 import com.io7m.r2.examples.ExampleProfilingWindow;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
@@ -91,26 +82,22 @@ import com.io7m.r2.filters.R2BlurParameters;
 import com.io7m.r2.filters.R2FilterBoxBlurParameters;
 import com.io7m.r2.filters.R2FilterEmissionParameters;
 import com.io7m.r2.filters.R2FilterFXAAParameters;
-import com.io7m.r2.filters.R2FilterLightApplicator;
-import com.io7m.r2.filters.R2FilterLightApplicatorParameters;
+import com.io7m.r2.filters.R2FilterFXAAType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
+import com.io7m.r2.shaders.core.R2LightShaderDefines;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import static com.io7m.jcanephora.core.JCGLFaceSelection.FACE_BACK;
 import static com.io7m.jcanephora.core.JCGLFaceSelection.FACE_FRONT_AND_BACK;
-import static com.io7m.jcanephora.core.JCGLFaceWindingOrder.FRONT_FACE_COUNTER_CLOCKWISE;
 import static com.io7m.r2.core.R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
-import static com.io7m.r2.core.R2LightBufferComponents.R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR;
+import static com.io7m.r2.core.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
 import static com.io7m.r2.filters.R2FilterFXAAQuality.R2_FXAA_QUALITY_10;
 
 // CHECKSTYLE:OFF
 
-public final class ExampleTranslucent1 implements R2ExampleCustomType
+public final class ExampleMinimalNoLBuffer implements R2ExampleCustomType
 {
   private JCGLClearSpecification screen_clear_spec;
   private R2SceneStencilsType stencils;
@@ -118,21 +105,10 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
   private R2InstanceSingleType instance;
   private R2SceneLightsType lights;
   private R2GeometryBufferType gbuffer;
-  private R2LightBufferType lbuffer;
-  private R2ImageBufferType ibuffer;
+  private R2ImageBuffer ibuffer;
   private R2SceneOpaquesType opaques;
   private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
   private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
-  private R2LightShaderSphericalLambertBlinnPhongSingle sphere_light_shader;
-  private R2LightSphericalSingleType sphere_light;
-  private R2LightSphericalSingleType sphere_light_bounded;
-  private R2InstanceSingleType sphere_light_bounds;
-  private R2TranslucentRendererType translucent_renderer;
-  private R2ShaderTranslucentInstanceBatchedType<R2TranslucentShaderBasicParameters> translucent_shader;
-  private R2InstanceBatchedDynamicType translucent;
-  private R2FilterLightApplicator filter_light;
-  private R2FilterLightApplicatorParameters filter_light_params;
-  private R2FilterType<R2FilterFXAAParameters> filter_fxaa;
   private R2FilterFXAAParameters filter_fxaa_params;
   private R2FacadeType main;
   private R2LightAmbientScreenSingle light_ambient;
@@ -143,8 +119,13 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
   private JCGLProfilingContextType profiling_root;
   private R2FilterType<R2FilterEmissionParameters> filter_emission;
   private R2FilterEmissionParameters filter_emission_params;
+  private R2FilterFXAAType filter_fxaa;
+  private R2LightShaderSphericalLambertBlinnPhongSingle sphere_light_shader;
+  private R2LightSphericalSingle sphere_light;
+  private R2InstanceSingle sphere_light_bounds;
+  private R2LightSphericalSingle sphere_light_bounded;
 
-  public ExampleTranslucent1()
+  public ExampleMinimalNoLBuffer()
   {
 
   }
@@ -158,23 +139,25 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
   {
     this.main = NullCheck.notNull(m, "Main");
 
+    this.main.shaderPreprocessingEnvironment().preprocessorDefineSet(
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE,
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER);
+
     this.opaques = R2SceneOpaques.create();
     this.lights = R2SceneLights.create();
     this.stencils = R2SceneStencils.create();
 
     final R2FacadeBufferProviderType buffers = m.buffers();
-    this.gbuffer = buffers.createGeometryBuffer(
-      R2GeometryBufferDescription.of(area, R2_GEOMETRY_BUFFER_FULL));
-    this.lbuffer = buffers.createLightBuffer(
-      R2LightBufferDescription.of(area, R2_LIGHT_BUFFER_DIFFUSE_AND_SPECULAR));
-    this.ibuffer = buffers.createImageBuffer(
-      R2ImageBufferDescription.of(
-        area,
-        Optional.of(R2DepthAttachmentShare.of(this.gbuffer.depthTexture()))));
+    this.gbuffer =
+      buffers.createGeometryBuffer(
+        R2GeometryBufferDescription.of(area, R2_GEOMETRY_BUFFER_FULL));
+    this.ibuffer =
+      buffers.createImageBuffer(
+        R2ImageBufferDescription.of(
+          area,
+          Optional.of(R2DepthAttachmentCreateWithStencil.builder().build())));
 
-    this.filter_fxaa =
-      m.filters().createFXAA();
-
+    this.filter_fxaa = m.filters().createFXAA();
     this.filter_fxaa_params =
       R2FilterFXAAParameters.builder()
         .setSubPixelAliasingRemoval(0.0)
@@ -193,8 +176,7 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
     final R2TransformSOT transform = R2TransformSOT.create();
     transform.setTranslation(PVector3D.of(0.0, -1.0, 0.0));
 
-    this.instance =
-      m.instances().createSingle(mesh, transform);
+    this.instance = m.instances().createSingle(mesh, transform);
 
     final R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
     {
@@ -208,9 +190,8 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
     }
 
     this.geom_shader = m.instanceShaders().createBasicReflectiveSingle();
-    this.geom_material =
-      R2MaterialOpaqueSingle.of(
-        id_pool.freshID(), this.geom_shader, geom_shader_params);
+    this.geom_material = R2MaterialOpaqueSingle.of(
+      id_pool.freshID(), this.geom_shader, geom_shader_params);
 
     this.light_ambient_shader = m.lightShaders().createAmbientSingle();
     this.light_ambient = m.lights().createAmbientScreenSingle();
@@ -227,7 +208,8 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
     this.sphere_light.setGeometryScaleFactor(
       R2UnitSphere.uvSphereApproximationScaleFactor(30.0, 8));
 
-    final R2TransformSiOT sphere_light_bounded_transform = R2TransformSiOT.create();
+    final R2TransformSiOT sphere_light_bounded_transform =
+      R2TransformSiOT.create();
     sphere_light_bounded_transform.setTranslation(
       PVector3D.of(-10.0, 1.0, 0.0));
     sphere_light_bounded_transform.setScaleAxes(
@@ -240,15 +222,6 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
     this.sphere_light_bounded.setIntensity(1.0);
     this.sphere_light_bounded.setOriginPosition(PVector3D.of(-10.0, 1.0, 0.0));
     this.sphere_light_bounded.setRadius(9.0);
-
-    this.filter_light = m.filters().createLightApplicator();
-
-    this.filter_light_params =
-      R2FilterLightApplicator.parametersFor(
-        m.textureDefaults(),
-        this.gbuffer,
-        this.lbuffer,
-        this.ibuffer.sizeAsViewport());
 
     {
       final R2RenderTargetPoolType<R2ImageBufferDescription, R2ImageBufferUsableType> pool =
@@ -271,23 +244,7 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
           .setScale(0.25)
           .build();
 
-      this.filter_emission =
-        m.filters().createEmission(pool, filter_blur);
-    }
-
-    {
-      this.translucent_renderer = m.translucentRenderer();
-      this.translucent_shader =
-        m.instanceTranslucentShaders().createBasicPremultipliedBatched();
-      this.translucent =
-        m.instances().createSphere8BatchedDynamic(3);
-
-      for (int x = -2; x <= 2; x += 2) {
-        final R2TransformST translucent_transform = R2TransformST.create();
-        translucent_transform.setTranslation(PVector3D.of(x, 1.0, 0.0));
-        translucent_transform.setScale(0.1);
-        this.translucent.enableInstance(translucent_transform);
-      }
+      this.filter_emission = m.filters().createEmission(pool, filter_blur);
     }
 
     {
@@ -313,23 +270,19 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
     this.g = gx;
 
     this.stencils.stencilsReset();
-    this.stencils.stencilsSetMode(
-      R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
+    this.stencils.stencilsSetMode(STENCIL_MODE_INSTANCES_ARE_NEGATIVE);
 
     this.opaques.opaquesReset();
     this.opaques.opaquesAddSingleInstance(this.instance, this.geom_material);
 
     this.lights.lightsReset();
     final R2SceneLightsGroupType lg = this.lights.lightsGetGroup(1);
-    lg.lightGroupAddSingle(
-      this.light_ambient, this.light_ambient_shader);
-    lg.lightGroupAddSingle(
-      this.sphere_light, this.sphere_light_shader);
+    lg.lightGroupAddSingle(this.light_ambient, this.light_ambient_shader);
+    lg.lightGroupAddSingle(this.sphere_light, this.sphere_light_shader);
 
     final R2SceneLightsClipGroupType lcg =
       lg.lightGroupNewClipGroup(this.sphere_light_bounds);
-    lcg.clipGroupAddSingle(
-      this.sphere_light_bounded, this.sphere_light_shader);
+    lcg.clipGroupAddSingle(this.sphere_light_bounded, this.sphere_light_shader);
 
     final PMatrix4x4D<R2SpaceWorldType, R2SpaceEyeType> view;
     if (servx.isFreeCameraEnabled()) {
@@ -342,7 +295,6 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
     }
 
     final R2MatricesType matrices = mx.matrices();
-
     final JCGLProfilingType pro = this.main.profiling();
     pro.setEnabled(true);
     final JCGLProfilingFrameType profiling_frame = pro.startFrame();
@@ -350,7 +302,6 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
 
     final R2ShadowMapRendererExecutionType sme =
       this.main.shadowMapRenderer().shadowBegin();
-
     this.shadow_context = sme.shadowExecComplete();
 
     matrices.withObserver(view, this.projection, this, (mo, t) -> {
@@ -358,8 +309,8 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
         t.main.textureUnitAllocator().rootContext();
       final JCGLFramebufferUsableType gbuffer_fb =
         t.gbuffer.primaryFramebuffer();
-      final JCGLFramebufferUsableType lbuffer_fb =
-        t.lbuffer.primaryFramebuffer();
+      final JCGLFramebufferUsableType ibuffer_fb =
+        t.ibuffer.primaryFramebuffer();
 
       final JCGLFramebuffersType g_fb = t.g.framebuffers();
       final JCGLClearType g_cl = t.g.clearing();
@@ -367,35 +318,32 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
       final JCGLStencilBuffersType g_sb = t.g.stencilBuffers();
       final JCGLDepthBuffersType g_db = t.g.depthBuffers();
 
-        /*
-         * Populate geometry buffer.
-         */
+      /*
+       * Populate geometry buffer.
+       */
 
+      final AreaL gbuffer_viewport = AreaSizesL.area(t.gbuffer.size());
       g_fb.framebufferDrawBind(gbuffer_fb);
       t.gbuffer.clearBoundPrimaryFramebuffer(t.g);
       t.main.stencilRenderer().renderStencilsWithBoundBuffer(
         mo,
         t.profiling_root,
         t.main.textureUnitAllocator().rootContext(),
-        t.gbuffer.sizeAsViewport(),
+        gbuffer_viewport,
         t.stencils);
       t.main.geometryRenderer().renderGeometry(
-        t.gbuffer.sizeAsViewport(),
+        gbuffer_viewport,
         Optional.empty(),
         t.profiling_root,
         uc,
         mo,
         t.opaques);
 
-        /*
-         * Populate light buffer.
-         */
-
-      g_fb.framebufferDrawBind(lbuffer_fb);
-      t.lbuffer.clearBoundPrimaryFramebuffer(t.g);
-      t.main.lightRenderer().renderLightsToLightBuffer(
+      g_fb.framebufferDrawBind(ibuffer_fb);
+      t.ibuffer.clearBoundPrimaryFramebuffer(t.g);
+      t.main.lightRenderer().renderLightsToImageBuffer(
         t.gbuffer,
-        t.lbuffer.sizeAsViewport(),
+        t.ibuffer.sizeAsViewport(),
         Optional.empty(),
         t.profiling_root,
         uc,
@@ -403,46 +351,16 @@ public final class ExampleTranslucent1 implements R2ExampleCustomType
         mo,
         t.lights);
 
-        /*
-         * Combine light and geometry buffers into lit image.
-         */
-
-      g_fb.framebufferDrawBind(t.ibuffer.primaryFramebuffer());
-      t.ibuffer.clearBoundPrimaryFramebuffer(t.g);
-      t.filter_light.runFilter(t.profiling_root, uc, t.filter_light_params);
-
-        /*
-         * Apply emission.
-         */
+      /*
+       * Apply emission.
+       */
 
       t.filter_emission.runFilter(
         t.profiling_root, uc, t.filter_emission_params);
 
-      final List<R2TranslucentType<?>> translucents = new ArrayList<>();
-      translucents.add(R2TranslucentBatched.of(
-        t.translucent,
-        t.translucent_shader,
-        R2TranslucentShaderBasicParameters.builder()
-          .setTextureDefaults(t.main.textureDefaults())
-          .setAlbedoColor(PVector4D.of(0.2, 0.2, 0.2, 1.0))
-          .setFadeZFar(2.0)
-          .setFadeZNear(1.0)
-          .build(),
-        t.translucent_shader.suggestedBlendState(),
-        JCGLCullingState.of(FACE_BACK, FRONT_FACE_COUNTER_CLOCKWISE)));
-
-      t.translucent_renderer.renderTranslucents(
-        t.ibuffer.sizeAsViewport(),
-        Optional.empty(),
-        t.profiling_root,
-        uc,
-        t.shadow_context,
-        mo,
-        translucents);
-
-        /*
-         * Filter the lit image with FXAA, writing it to the screen.
-         */
+      /*
+       * Filter the lit image with FXAA, writing it to the screen.
+       */
 
       g_fb.framebufferDrawUnbind();
       g_cb.colorBufferMask(true, true, true, true);

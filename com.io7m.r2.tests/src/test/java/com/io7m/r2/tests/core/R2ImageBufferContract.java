@@ -31,6 +31,7 @@ import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextType;
 import com.io7m.jfunctional.Pair;
 import com.io7m.jregions.core.unparameterized.sizes.AreaSizeL;
 import com.io7m.r2.core.R2DepthAttachmentCreate;
+import com.io7m.r2.core.R2DepthAttachmentCreateWithStencil;
 import com.io7m.r2.core.R2DepthAttachmentShare;
 import com.io7m.r2.core.R2DepthPrecision;
 import com.io7m.r2.core.R2ExceptionBadTextureSize;
@@ -157,6 +158,53 @@ public abstract class R2ImageBufferContract extends R2JCGLContract
       assertTrue(fb.isDeleted());
       assertTrue(gb.isDeleted());
     }
+  }
+
+  @Test
+  public final void testIdentitiesWithDepthStencilCreate()
+  {
+    final JCGLContextType c = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g = c.contextGetGL33();
+    final JCGLTextureUnitAllocatorType a =
+      JCGLTextureUnitAllocator.newAllocatorWithStack(
+        4, g.textures().textureGetUnits());
+
+    final AreaSizeL area = AreaSizeL.of(640L, 480L);
+    final R2ImageBufferDescription desc =
+      of(
+        area,
+        Optional.of(R2DepthAttachmentCreateWithStencil.builder().build()));
+
+    final R2ImageBufferType gb =
+      create(
+        g.framebuffers(),
+        g.textures(),
+        a.rootContext(),
+        desc);
+
+    final long pixel_size = 8L;
+
+    Assert.assertEquals(
+      640L * 480L * pixel_size,
+      gb.byteRange().getInterval());
+    assertFalse(gb.isDeleted());
+
+    final R2Texture2DUsableType t_rgba =
+      gb.imageTexture();
+
+    final JCGLFramebufferUsableType fb =
+      gb.primaryFramebuffer();
+
+    assertEquals(desc, gb.description());
+    Assert.assertEquals(area, gb.size());
+
+    Assert.assertEquals(
+      TEXTURE_FORMAT_RGBA_8_4BPP,
+      t_rgba.texture().format());
+
+    gb.delete(g);
+    assertTrue(fb.isDeleted());
+    assertTrue(gb.isDeleted());
   }
 
   @Test

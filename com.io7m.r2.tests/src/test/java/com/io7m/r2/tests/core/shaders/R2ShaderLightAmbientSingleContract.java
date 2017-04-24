@@ -24,24 +24,67 @@ import com.io7m.r2.core.R2LightAmbientScreenSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.shaders.core.R2LightShaderDefines;
 import com.io7m.r2.tests.core.R2JCGLContract;
 import com.io7m.r2.tests.core.ShaderPreprocessing;
 import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class R2ShaderLightAmbientSingleContract
-  extends
-  R2JCGLContract
+  extends R2JCGLContract
 {
   @Test
-  public final void testNew()
+  public final void testNewLightBufferDefault()
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
     final R2ShaderPreprocessingEnvironmentType sources =
       ShaderPreprocessing.preprocessor();
+
     final R2IDPoolType pool = R2IDPool.newPool();
 
+    final R2ShaderLightSingleType<R2LightAmbientScreenSingle> s =
+      R2LightShaderAmbientSingle.create(
+        g.shaders(), sources, pool);
+
+    Assert.assertFalse(s.isDeleted());
+    s.delete(g);
+    Assert.assertTrue(s.isDeleted());
+  }
+
+  @Test
+  public final void testNewLightBuffer()
+  {
+    final JCGLContextType c = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g = c.contextGetGL33();
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
+    sources.preprocessorDefineSet(
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE,
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_LBUFFER);
+
+    final R2IDPoolType pool = R2IDPool.newPool();
+    final R2ShaderLightSingleType<R2LightAmbientScreenSingle> s =
+      R2LightShaderAmbientSingle.create(
+        g.shaders(), sources, pool);
+
+    Assert.assertFalse(s.isDeleted());
+    s.delete(g);
+    Assert.assertTrue(s.isDeleted());
+  }
+
+  @Test
+  public final void testNewImageBuffer()
+  {
+    final JCGLContextType c = this.newGL33Context("main", 24, 8);
+    final JCGLInterfaceGL33Type g = c.contextGetGL33();
+    final R2ShaderPreprocessingEnvironmentType sources =
+      ShaderPreprocessing.preprocessor();
+    sources.preprocessorDefineSet(
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE,
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER);
+
+    final R2IDPoolType pool = R2IDPool.newPool();
     final R2ShaderLightSingleType<R2LightAmbientScreenSingle> s =
       R2LightShaderAmbientSingle.create(
         g.shaders(), sources, pool);

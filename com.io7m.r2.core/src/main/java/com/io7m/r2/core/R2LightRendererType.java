@@ -44,10 +44,36 @@ public interface R2LightRendererType extends R2DeletableType
    * @param s       The opaque lights
    */
 
-  void renderLights(
+  void renderLightsToLightBuffer(
     R2GeometryBufferUsableType gbuffer,
     AreaL area,
     Optional<R2LightBufferUsableType> lbuffer,
+    JCGLProfilingContextType pc,
+    JCGLTextureUnitContextParentType uc,
+    R2ShadowMapContextUsableType shadows,
+    R2MatricesObserverType m,
+    R2SceneLightsType s);
+
+  /**
+   * <p>Render the given lights into the given image buffer.</p>
+   *
+   * <p>If an image buffer is provided, it will be bound before evaluation and
+   * left bound after the method returns.</p>
+   *
+   * @param gbuffer The populated geometry buffer
+   * @param area    The output viewport
+   * @param ibuffer The output image buffer
+   * @param pc      A profiling context
+   * @param uc      A texture unit context
+   * @param shadows A set of rendered shadow maps
+   * @param m       A matrix context
+   * @param s       The opaque lights
+   */
+
+  void renderLightsToImageBuffer(
+    R2GeometryBufferUsableType gbuffer,
+    AreaL area,
+    Optional<R2ImageBufferUsableType> ibuffer,
     JCGLProfilingContextType pc,
     JCGLTextureUnitContextParentType uc,
     R2ShadowMapContextUsableType shadows,

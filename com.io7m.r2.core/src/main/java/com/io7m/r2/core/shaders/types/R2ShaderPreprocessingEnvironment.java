@@ -17,6 +17,7 @@
 package com.io7m.r2.core.shaders.types;
 
 import com.io7m.jnull.NullCheck;
+import com.io7m.r2.shaders.core.R2LightShaderDefines;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +47,13 @@ public final class R2ShaderPreprocessingEnvironment implements
   private R2ShaderPreprocessingEnvironment(
     final SoShaderPreprocessorType in_preproc)
   {
+    this.preproc = NullCheck.notNull(in_preproc, "Preproc");
     this.defines = new HashMap<>(16);
     this.defines_view = Collections.unmodifiableMap(this.defines);
-    this.preproc = NullCheck.notNull(in_preproc, "Preproc");
+
+    this.preprocessorDefineSet(
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE,
+      R2LightShaderDefines.R2_LIGHT_SHADER_OUTPUT_TARGET_LBUFFER);
   }
 
   /**

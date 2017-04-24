@@ -394,7 +394,7 @@ public final class ExampleFog implements R2ExampleCustomType
 
       g_fb.framebufferDrawBind(lbuffer_fb);
       t.lbuffer.clearBoundPrimaryFramebuffer(t.g);
-      t.main.lightRenderer().renderLights(
+      t.main.lightRenderer().renderLightsToLightBuffer(
         t.gbuffer,
         t.lbuffer.sizeAsViewport(),
         Optional.empty(),
