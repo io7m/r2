@@ -48,7 +48,7 @@
     <io7m.checkstyle.path>/com/io7m/r2/checkstyle/checkstyle.xml</io7m.checkstyle.path>
     <io7m.api.previousVersion>0.3.0-SNAPSHOT</io7m.api.previousVersion>
     <com.io7m.r2.jcanephora.versionRange>0.60.0</com.io7m.r2.jcanephora.versionRange>
-    <com.io7m.r2.jtensors.versionRange>8.0.0</com.io7m.r2.jtensors.versionRange>
+    <com.io7m.r2.jtensors.versionRange>[8.0.0, 9.0.0)</com.io7m.r2.jtensors.versionRange>
     <com.io7m.r2.sombrero.versionRange>0.3.1</com.io7m.r2.sombrero.versionRange>
     <com.io7m.r2.fastutil.versionRange>[7.1.0, 8.0.0)</com.io7m.r2.fastutil.versionRange>
     <com.io7m.r2.jdae.versionRange>0.1.2</com.io7m.r2.jdae.versionRange>
