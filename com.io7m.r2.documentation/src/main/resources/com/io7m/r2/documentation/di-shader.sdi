@@ -113,6 +113,13 @@ refers to that file within the module. The [term [type package] sombrero]
 resolver maps the request to a concrete resource on the filesystem or in
 a jar file and returns the content for inclusion.
 
+[paragraph]
+The [term [type package] r2] package also provides an interface, the
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderPreprocessingEnvironmentType.html"] R2ShaderPreprocessingEnvironmentType]
+type, that allows constants to be set that will be exposed to shaders upon
+being preprocessed. Each shader stores an immutable snapshot of the environment
+used to preprocess it after successful compilation.
+
 [footnote [id di.shaders.modules.classpath]]
 The core of the [term [type package] r2] package depends directly on the
 shader package, so the correct jars will inevitably be on the classpath already.
