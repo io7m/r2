@@ -1,26 +1,26 @@
 <map id="R2LightShaderMain.h" name="R2LightShaderMain.h">
-<area shape="rect" id="node2" href="$R2LightAmbientWithOcclusion_8h.html" title="A trivial ambient light with mapped occlusion. " alt="" coords="5,83,201,107"/>
-<area shape="rect" id="node4" href="$R2LightDirectionalDebugConstant_8h.html" title="A trivial directional light that simply ignores the surface and applies a constant color..." alt="" coords="225,83,445,107"/>
-<area shape="rect" id="node6" href="$R2LightDirectionalSpecular_8h.html" title="A trivial directional light with Phong specular highlights. " alt="" coords="469,83,660,107"/>
-<area shape="rect" id="node8" href="$R2LightProjectiveLambert_8h.html" title="A projective light with no specular highlights. " alt="" coords="685,83,863,107"/>
-<area shape="rect" id="node10" href="$R2LightProjectiveLambertBlinnPhong_8h.html" title="A projective light with Blinn&#45;Phong specular highlights. " alt="" coords="888,77,1055,113"/>
-<area shape="rect" id="node12" href="$R2LightProjectiveLambertBlinnPhongShadowVariance_8h.html" title="A projective light with Blinn&#45;Phong specular highlights and a variance shadow. " alt="" coords="1079,77,1258,113"/>
-<area shape="rect" id="node14" href="$R2LightProjectiveLambertShadowVariance_8h.html" title="A projective light with no specular highlights and a variance shadow. " alt="" coords="1283,77,1449,113"/>
+<area shape="rect" id="node2" href="$R2LightAmbientWithOcclusion_8h.html" title="A trivial ambient light with mapped occlusion. " alt="" coords="5,83,204,107"/>
+<area shape="rect" id="node4" href="$R2LightDirectionalDebugConstant_8h.html" title="A trivial directional light that simply ignores the surface and applies a constant color..." alt="" coords="229,83,450,107"/>
+<area shape="rect" id="node6" href="$R2LightDirectionalSpecular_8h.html" title="A trivial directional light with Phong specular highlights. " alt="" coords="475,83,657,107"/>
+<area shape="rect" id="node8" href="$R2LightProjectiveLambert_8h.html" title="A projective light with no specular highlights. " alt="" coords="682,83,858,107"/>
+<area shape="rect" id="node10" href="$R2LightProjectiveLambertBlinnPhong_8h.html" title="A projective light with Blinn&#45;Phong specular highlights. " alt="" coords="882,77,1047,113"/>
+<area shape="rect" id="node12" href="$R2LightProjectiveLambertBlinnPhongShadowVariance_8h.html" title="A projective light with Blinn&#45;Phong specular highlights and a variance shadow. " alt="" coords="1071,77,1261,113"/>
+<area shape="rect" id="node14" href="$R2LightProjectiveLambertShadowVariance_8h.html" title="A projective light with no specular highlights and a variance shadow. " alt="" coords="1285,77,1450,113"/>
 <area shape="rect" id="node16" href="$R2LightSphericalDebugAttenuation_8h.html" title="A spherical light that ignores everything about the surface other than the position. " alt="" coords="1474,83,1701,107"/>
-<area shape="rect" id="node18" href="$R2LightSphericalDebugConstant_8h.html" title="A spherical light that simply ignores the surface and applies a constant color. " alt="" coords="1725,83,1933,107"/>
-<area shape="rect" id="node20" href="$R2LightSphericalLambert_8h.html" title="A spherical light with no specular highlights. " alt="" coords="1963,83,2135,107"/>
-<area shape="rect" id="node22" href="$R2LightSphericalLambertBlinnPhong_8h.html" title="A spherical light with Blinn&#45;Phong specular highlights. " alt="" coords="2169,77,2360,113"/>
-<area shape="rect" id="node24" href="$R2LightSphericalLambertPhong_8h.html" title="A spherical light with Phong specular highlights. " alt="" coords="2406,83,2609,107"/>
-<area shape="rect" id="node3" href="$R2LightAmbientSingle_8frag.html" title="An instantiation of the R2LightAmbientWithOcclusion shader for single instances. " alt="" coords="17,167,189,191"/>
-<area shape="rect" id="node5" href="$R2LightDirectionalDebugConstantSingle_8frag.html" title="An instantiation of the R2LightDirectionalDebugConstant shader for single instances. " alt="" coords="222,161,430,197"/>
-<area shape="rect" id="node7" href="$R2LightDirectionalSpecularSingle_8frag.html" title="An instantiation of the R2LightDirectionalSpecular shader for single instances. " alt="" coords="454,161,633,197"/>
-<area shape="rect" id="node9" href="$R2LightProjectiveLambertSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambert shader for single instances. " alt="" coords="657,161,824,197"/>
-<area shape="rect" id="node11" href="$R2LightProjectiveLambertBlinnPhongSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhong shader for single instances. " alt="" coords="848,161,1015,197"/>
-<area shape="rect" id="node13" href="$R2LightProjectiveLambertBlinnPhongShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhongShadowVariance shader for single instances..." alt="" coords="1039,161,1271,197"/>
-<area shape="rect" id="node15" href="$R2LightProjectiveLambertShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertShadowVariance shader for single instances. " alt="" coords="1296,161,1468,197"/>
-<area shape="rect" id="node17" href="$R2LightSphericalDebugAttenuationSingle_8frag.html" title="An instantiation of the R2LightSphericalDebugAttenuation shader for single instances. " alt="" coords="1492,161,1707,197"/>
-<area shape="rect" id="node19" href="$R2LightSphericalDebugConstantSingle_8frag.html" title="An instantiation of the R2LightSphericalDebugConstant shader for single instances. " alt="" coords="1731,161,1927,197"/>
-<area shape="rect" id="node21" href="$R2LightSphericalLambertSingle_8frag.html" title="An instantiation of the R2LightSphericalLambert shader for single instances. " alt="" coords="1951,167,2178,191"/>
-<area shape="rect" id="node23" href="$R2LightSphericalLambertBlinnPhongSingle_8frag.html" title="An instantiation of the R2LightSphericalLambertBlinnPhong shader for single instances. " alt="" coords="2203,161,2393,197"/>
-<area shape="rect" id="node25" href="$R2LightSphericalLambertPhongSingle_8frag.html" title="An instantiation of the R2LightSphericalLambertPhong shader for single instances. ..." alt="" coords="2417,161,2608,197"/>
+<area shape="rect" id="node18" href="$R2LightSphericalDebugConstant_8h.html" title="A spherical light that simply ignores the surface and applies a constant color. " alt="" coords="1725,83,1940,107"/>
+<area shape="rect" id="node20" href="$R2LightSphericalLambert_8h.html" title="A spherical light with no specular highlights. " alt="" coords="1973,83,2148,107"/>
+<area shape="rect" id="node22" href="$R2LightSphericalLambertBlinnPhong_8h.html" title="A spherical light with Blinn&#45;Phong specular highlights. " alt="" coords="2187,77,2377,113"/>
+<area shape="rect" id="node24" href="$R2LightSphericalLambertPhong_8h.html" title="A spherical light with Phong specular highlights. " alt="" coords="2409,83,2619,107"/>
+<area shape="rect" id="node3" href="$R2LightAmbientSingle_8frag.html" title="An instantiation of the R2LightAmbientWithOcclusion shader for single instances. " alt="" coords="19,167,190,191"/>
+<area shape="rect" id="node5" href="$R2LightDirectionalDebugConstantSingle_8frag.html" title="An instantiation of the R2LightDirectionalDebugConstant shader for single instances. " alt="" coords="214,161,425,197"/>
+<area shape="rect" id="node7" href="$R2LightDirectionalSpecularSingle_8frag.html" title="An instantiation of the R2LightDirectionalSpecular shader for single instances. " alt="" coords="449,161,622,197"/>
+<area shape="rect" id="node9" href="$R2LightProjectiveLambertSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambert shader for single instances. " alt="" coords="646,161,811,197"/>
+<area shape="rect" id="node11" href="$R2LightProjectiveLambertBlinnPhongSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhong shader for single instances. " alt="" coords="835,161,1001,197"/>
+<area shape="rect" id="node13" href="$R2LightProjectiveLambertBlinnPhongShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhongShadowVariance shader for single instances..." alt="" coords="1025,161,1265,197"/>
+<area shape="rect" id="node15" href="$R2LightProjectiveLambertShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertShadowVariance shader for single instances. " alt="" coords="1289,161,1467,197"/>
+<area shape="rect" id="node17" href="$R2LightSphericalDebugAttenuationSingle_8frag.html" title="An instantiation of the R2LightSphericalDebugAttenuation shader for single instances. " alt="" coords="1491,161,1707,197"/>
+<area shape="rect" id="node19" href="$R2LightSphericalDebugConstantSingle_8frag.html" title="An instantiation of the R2LightSphericalDebugConstant shader for single instances. " alt="" coords="1731,161,1934,197"/>
+<area shape="rect" id="node21" href="$R2LightSphericalLambertSingle_8frag.html" title="An instantiation of the R2LightSphericalLambert shader for single instances. " alt="" coords="1959,167,2184,191"/>
+<area shape="rect" id="node23" href="$R2LightSphericalLambertBlinnPhongSingle_8frag.html" title="An instantiation of the R2LightSphericalLambertBlinnPhong shader for single instances. " alt="" coords="2208,161,2399,197"/>
+<area shape="rect" id="node25" href="$R2LightSphericalLambertPhongSingle_8frag.html" title="An instantiation of the R2LightSphericalLambertPhong shader for single instances. ..." alt="" coords="2423,161,2621,197"/>
 </map>

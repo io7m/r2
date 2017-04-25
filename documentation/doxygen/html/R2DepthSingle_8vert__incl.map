@@ -1,8 +1,8 @@
 <map id="R2DepthSingle.vert" name="R2DepthSingle.vert">
-<area shape="rect" id="node2" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,77,100,101"/>
-<area shape="rect" id="node3" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="125,77,213,101"/>
-<area shape="rect" id="node4" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="237,77,356,101"/>
-<area shape="rect" id="node6" href="$R2SurfaceVertex_8h.html" title="Data required by each vertex in deferred rendering, provided as vertex attributes. " alt="" coords="380,77,504,101"/>
-<area shape="rect" id="node7" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="528,77,599,101"/>
-<area shape="rect" id="node5" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="235,149,359,173"/>
+<area shape="rect" id="node2" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,77,105,101"/>
+<area shape="rect" id="node3" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="129,77,224,101"/>
+<area shape="rect" id="node4" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="249,77,371,101"/>
+<area shape="rect" id="node6" href="$R2SurfaceVertex_8h.html" title="Data required by each vertex in deferred rendering, provided as vertex attributes. " alt="" coords="396,77,523,101"/>
+<area shape="rect" id="node7" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="547,77,619,101"/>
+<area shape="rect" id="node5" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="245,149,375,173"/>
 </map>

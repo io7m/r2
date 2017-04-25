@@ -10,8 +10,8 @@ The project can be compiled and installed with
 [subsection [title Maven]]
 [paragraph]
 Regular releases are made to the
-[link-ext [target "http://search.maven.org/#search%7Cga%7C1%7Cio7m-r2"] Central Repository],
-so it's possible to use the [term [type package] io7m-r2] package
+[link-ext [target "http://search.maven.org/#search%7Cga%7C1%7Ccom.io7m.r2"] Central Repository],
+so it's possible to use the [term [type package] com.io7m.r2] package
 in your projects with the following Maven dependencies:
 
 [paragraph]
@@ -19,7 +19,7 @@ in your projects with the following Maven dependencies:
 "<dependency>
   <groupId>com.io7m.r2</groupId>
   <artifactId>io7m-r2-main</artifactId>
-  <version>0.2.1</version>
+  <version>0.3.0-SNAPSHOT</version>
 </dependency>"]
 
 [paragraph]

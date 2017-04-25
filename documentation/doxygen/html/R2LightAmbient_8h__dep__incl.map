@@ -1,4 +1,4 @@
 <map id="R2LightAmbient.h" name="R2LightAmbient.h">
-<area shape="rect" id="node2" href="$R2LightAmbientWithOcclusion_8h.html" title="A trivial ambient light with mapped occlusion. " alt="" coords="5,77,201,101"/>
-<area shape="rect" id="node3" href="$R2LightAmbientSingle_8frag.html" title="An instantiation of the R2LightAmbientWithOcclusion shader for single instances. " alt="" coords="17,149,189,173"/>
+<area shape="rect" id="node2" href="$R2LightAmbientWithOcclusion_8h.html" title="A trivial ambient light with mapped occlusion. " alt="" coords="5,77,204,101"/>
+<area shape="rect" id="node3" href="$R2LightAmbientSingle_8frag.html" title="An instantiation of the R2LightAmbientWithOcclusion shader for single instances. " alt="" coords="19,149,190,173"/>
 </map>

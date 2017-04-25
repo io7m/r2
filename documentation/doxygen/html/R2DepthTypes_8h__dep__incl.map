@@ -1,7 +1,7 @@
 <map id="R2DepthTypes.h" name="R2DepthTypes.h">
-<area shape="rect" id="node2" href="$R2DepthShaderDriverBatched_8h.html" title="A fragment depth shader driver for batched instances. " alt="" coords="5,77,196,101"/>
-<area shape="rect" id="node4" href="$R2DepthShaderDriverSingle_8h.html" title="A fragment shader driver for single instance depth shaders. " alt="" coords="221,77,405,101"/>
-<area shape="rect" id="node3" href="$R2DepthBasicBatched_8frag.html" title="An instantiation of the R2DepthBasic shader for batched instances. " alt="" coords="17,149,184,173"/>
-<area shape="rect" id="node5" href="$R2DepthBasicSingle_8frag.html" title="An instantiation of the R2DepthBasic shader for single instances. " alt="" coords="221,149,381,173"/>
-<area shape="rect" id="node6" href="$R2DepthBasicStippledSingle_8frag.html" title="An instantiation of the R2DepthBasicStippled shader for single instances. " alt="" coords="405,149,613,173"/>
+<area shape="rect" id="node2" href="$R2DepthShaderDriverBatched_8h.html" title="A fragment depth shader driver for batched instances. " alt="" coords="5,77,207,101"/>
+<area shape="rect" id="node4" href="$R2DepthShaderDriverSingle_8h.html" title="A fragment shader driver for single instance depth shaders. " alt="" coords="231,77,421,101"/>
+<area shape="rect" id="node3" href="$R2DepthBasicBatched_8frag.html" title="An instantiation of the R2DepthBasic shader for batched instances. " alt="" coords="19,149,193,173"/>
+<area shape="rect" id="node5" href="$R2DepthBasicSingle_8frag.html" title="An instantiation of the R2DepthBasic shader for single instances. " alt="" coords="230,149,393,173"/>
+<area shape="rect" id="node6" href="$R2DepthBasicStippledSingle_8frag.html" title="An instantiation of the R2DepthBasicStippled shader for single instances. " alt="" coords="417,149,625,173"/>
 </map>

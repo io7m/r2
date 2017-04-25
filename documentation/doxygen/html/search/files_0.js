@@ -69,6 +69,7 @@ var searchData=
   ['r2lightprojectivelambertsingle_2efrag',['R2LightProjectiveLambertSingle.frag',['../R2LightProjectiveLambertSingle_8frag.html',1,'']]],
   ['r2lightshaderdriversingle_2eh',['R2LightShaderDriverSingle.h',['../R2LightShaderDriverSingle_8h.html',1,'']]],
   ['r2lightshadermain_2eh',['R2LightShaderMain.h',['../R2LightShaderMain_8h.html',1,'']]],
+  ['r2lightshaderoutputtargets_2eh',['R2LightShaderOutputTargets.h',['../R2LightShaderOutputTargets_8h.html',1,'']]],
   ['r2lightspherical_2eh',['R2LightSpherical.h',['../R2LightSpherical_8h.html',1,'']]],
   ['r2lightsphericaldebugattenuation_2eh',['R2LightSphericalDebugAttenuation.h',['../R2LightSphericalDebugAttenuation_8h.html',1,'']]],
   ['r2lightsphericaldebugattenuationsingle_2efrag',['R2LightSphericalDebugAttenuationSingle.frag',['../R2LightSphericalDebugAttenuationSingle_8frag.html',1,'']]],

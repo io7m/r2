@@ -1,5 +1,5 @@
 <map id="R2SurfaceShaderDriverBatched.h" name="R2SurfaceShaderDriverBatched.h">
-<area shape="rect" id="node2" href="$R2SurfaceBasicBatched_8frag.html" title="An instantiation of the R2SurfaceBasic shader for batched instances. " alt="" coords="5,77,184,101"/>
-<area shape="rect" id="node3" href="$R2SurfaceShaderDriverBillboarded_8h.html" title="A fragment shader driver for billboarded instance surfaces. " alt="" coords="208,77,435,101"/>
-<area shape="rect" id="node4" href="$R2SurfaceBasicBillboarded_8frag.html" title="An instantiation of the R2SurfaceBasic shader for billboarded instances. " alt="" coords="220,149,423,173"/>
+<area shape="rect" id="node2" href="$R2SurfaceBasicBatched_8frag.html" title="An instantiation of the R2SurfaceBasic shader for batched instances. " alt="" coords="5,77,189,101"/>
+<area shape="rect" id="node3" href="$R2SurfaceShaderDriverBillboarded_8h.html" title="A fragment shader driver for billboarded instance surfaces. " alt="" coords="214,77,445,101"/>
+<area shape="rect" id="node4" href="$R2SurfaceBasicBillboarded_8frag.html" title="An instantiation of the R2SurfaceBasic shader for billboarded instances. " alt="" coords="228,149,431,173"/>
 </map>

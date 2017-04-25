@@ -1,6 +1,6 @@
 <map id="R2DepthBasic.h" name="R2DepthBasic.h">
-<area shape="rect" id="node2" href="$R2DepthShaderMain_8h.html" title="The main function that all depth shaders must implement. " alt="" coords="58,77,194,101"/>
-<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="8,149,127,173"/>
-<area shape="rect" id="node5" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="151,149,221,173"/>
-<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="5,221,129,245"/>
+<area shape="rect" id="node2" href="$R2DepthShaderMain_8h.html" title="The main function that all depth shaders must implement. " alt="" coords="57,77,203,101"/>
+<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="9,149,131,173"/>
+<area shape="rect" id="node5" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="155,149,227,173"/>
+<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="5,221,135,245"/>
 </map>

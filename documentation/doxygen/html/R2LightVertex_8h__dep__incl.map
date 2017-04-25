@@ -1,4 +1,4 @@
 <map id="R2LightVertex.h" name="R2LightVertex.h">
-<area shape="rect" id="node2" href="$R2LightAmbientSingle_8vert.html" title="A vertex shader for full&#45;screen single&#45;instance ambient lights. " alt="" coords="5,77,177,101"/>
-<area shape="rect" id="node3" href="$R2LightDirectionalSingle_8vert.html" title="A vertex shader for full&#45;screen single&#45;instance directional lights. " alt="" coords="201,77,397,101"/>
+<area shape="rect" id="node2" href="$R2LightAmbientSingle_8vert.html" title="A vertex shader for full&#45;screen single&#45;instance ambient lights. " alt="" coords="5,77,176,101"/>
+<area shape="rect" id="node3" href="$R2LightDirectionalSingle_8vert.html" title="A vertex shader for full&#45;screen single&#45;instance directional lights. " alt="" coords="200,77,384,101"/>
 </map>

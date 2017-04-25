@@ -1,8 +1,8 @@
 <map id="R2RefractionMaskedDelta.frag" name="R2RefractionMaskedDelta.frag">
-<area shape="rect" id="node2" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,77,100,101"/>
-<area shape="rect" id="node3" href="$R2Refraction_8h.html" title="Functions and types to render generic refraction. " alt="" coords="125,77,231,101"/>
-<area shape="rect" id="node4" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="256,77,375,101"/>
-<area shape="rect" id="node6" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="399,77,469,101"/>
-<area shape="rect" id="node7" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="493,77,588,101"/>
-<area shape="rect" id="node5" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="253,149,377,173"/>
+<area shape="rect" id="node2" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,77,105,101"/>
+<area shape="rect" id="node3" href="$R2Refraction_8h.html" title="Functions and types to render generic refraction. " alt="" coords="130,77,234,101"/>
+<area shape="rect" id="node4" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="258,77,381,101"/>
+<area shape="rect" id="node6" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="405,77,477,101"/>
+<area shape="rect" id="node7" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="501,77,597,101"/>
+<area shape="rect" id="node5" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="255,149,384,173"/>
 </map>

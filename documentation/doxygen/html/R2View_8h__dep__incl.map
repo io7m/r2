@@ -1,40 +1,40 @@
 <map id="R2View.h" name="R2View.h">
-<area shape="rect" id="node2" href="$R2Billboarded_8vert.html" title="A vertex shader for billboarded instances. " alt="" coords="5,83,136,107"/>
-<area shape="rect" id="node3" href="$R2DebugColorVertices_8frag.html" title="Write the given color to the first fragment output. " alt="" coords="161,83,333,107"/>
-<area shape="rect" id="node4" href="$R2DebugColorVerticesWorldPosition_8vert_source.html" title="R2DebugColorVerticesWorld\lPosition.vert" alt="" coords="357,77,529,113"/>
-<area shape="rect" id="node5" href="$R2DebugVisualConstant_8frag.html" title="Write the given color to the first fragment output. " alt="" coords="553,83,732,107"/>
-<area shape="rect" id="node6" href="$R2DebugVisualConstantScreen_8vert.html" title="A vertex shader for full&#45;screen debug geometry. " alt="" coords="757,83,971,107"/>
-<area shape="rect" id="node7" href="$R2DepthShaderMain_8h.html" title="The main function that all depth shaders must implement. " alt="" coords="1097,83,1233,107"/>
-<area shape="rect" id="node13" href="$R2DepthShaderDriverBatched_8h.html" title="A fragment depth shader driver for batched instances. " alt="" coords="759,161,950,185"/>
-<area shape="rect" id="node14" href="$R2DepthShaderDriverSingle_8h.html" title="A fragment shader driver for single instance depth shaders. " alt="" coords="1105,161,1289,185"/>
-<area shape="rect" id="node15" href="$R2DepthBatched_8vert.html" title="A vertex shader for batched instances. " alt="" coords="1257,83,1393,107"/>
-<area shape="rect" id="node16" href="$R2DepthSingle_8vert.html" title="A vertex shader for single (depth&#45;only) instances. " alt="" coords="1417,83,1548,107"/>
-<area shape="rect" id="node17" href="$R2LogDepthOnlySingle_8frag.html" title="Single&#45;instance logarithmic depth only fragment shader. " alt="" coords="1573,83,1745,107"/>
-<area shape="rect" id="node18" href="$R2LogDepthOnlySingle_8vert.html" title="Single&#45;instance logarithmic depth only vertex shader. " alt="" coords="1769,83,1941,107"/>
-<area shape="rect" id="node19" href="$R2Mask_8frag.html" title="Write the given color to the first fragment output. " alt="" coords="1965,83,2053,107"/>
-<area shape="rect" id="node20" href="$R2MaskBatched_8vert.html" title="A vertex shader for masking batched instances. " alt="" coords="2077,83,2208,107"/>
-<area shape="rect" id="node21" href="$R2MaskSingle_8vert.html" title="A vertex shader for masking single instances. " alt="" coords="2233,83,2357,107"/>
-<area shape="rect" id="node22" href="$R2RefractionMaskedDelta_8frag.html" title="Apply masked delta refraction. " alt="" coords="2381,83,2571,107"/>
-<area shape="rect" id="node23" href="$R2RefractionMaskedDeltaBatched_8vert_source.html" title="R2RefractionMaskedDeltaBatched.vert" alt="" coords="2596,83,2828,107"/>
-<area shape="rect" id="node24" href="$R2RefractionMaskedDeltaSingle_8vert.html" title="A vertex shader for refracting single instances. " alt="" coords="2852,83,3079,107"/>
-<area shape="rect" id="node25" href="$R2SurfaceShaderMain_8h.html" title="The main function that all deferred surface shaders must implement. " alt="" coords="3330,83,3478,107"/>
-<area shape="rect" id="node34" href="$R2SurfaceShaderDriverBatched_8h.html" title="A fragment shader driver for batched instance surfaces. " alt="" coords="3103,83,3305,107"/>
-<area shape="rect" id="node36" href="$R2SurfaceShaderDriverSingle_8h.html" title="A fragment shader driver for single instance surfaces. " alt="" coords="3603,161,3799,185"/>
-<area shape="rect" id="node37" href="$R2SurfaceBatched_8vert.html" title="A vertex shader for batched instances. " alt="" coords="3554,83,3702,107"/>
-<area shape="rect" id="node38" href="$R2SurfaceSingle_8vert.html" title="A vertex shader for single instances. " alt="" coords="3726,83,3869,107"/>
-<area shape="rect" id="node39" href="$R2TranslucentBasicPremultiplied_8frag.html" title="A fragment shader that provides basic textured instances with premultiplied alpha. " alt="" coords="3893,83,4131,107"/>
-<area shape="rect" id="node8" href="$R2DepthBasic_8h.html" title="Basic depth&#45;only implementation that discards fragments based on the opacity of an albedo texture and..." alt="" coords="975,161,1081,185"/>
-<area shape="rect" id="node11" href="$R2DepthBasicStippled_8h.html" title="Basic depth&#45;only implementation that discards fragments based on the opacity of an albedo texture..." alt="" coords="1313,161,1468,185"/>
-<area shape="rect" id="node9" href="$R2DepthBasicBatched_8frag.html" title="An instantiation of the R2DepthBasic shader for batched instances. " alt="" coords="790,239,957,263"/>
-<area shape="rect" id="node10" href="$R2DepthBasicSingle_8frag.html" title="An instantiation of the R2DepthBasic shader for single instances. " alt="" coords="1016,239,1176,263"/>
-<area shape="rect" id="node12" href="$R2DepthBasicStippledSingle_8frag.html" title="An instantiation of the R2DepthBasicStippled shader for single instances. " alt="" coords="1217,239,1425,263"/>
-<area shape="rect" id="node26" href="$R2SurfaceBasic_8h.html" title="Basic surface implementation. " alt="" coords="3257,161,3375,185"/>
-<area shape="rect" id="node30" href="$R2SurfaceBasicReflective_8h.html" title="Basic pseudo&#45;reflective (environment mapped) deferred surface implementation. " alt="" coords="3400,161,3579,185"/>
-<area shape="rect" id="node32" href="$R2SurfaceBasicStippled_8h.html" title="Basic surface implementation. " alt="" coords="3823,161,3990,185"/>
-<area shape="rect" id="node27" href="$R2SurfaceBasicBatched_8frag.html" title="An instantiation of the R2SurfaceBasic shader for batched instances. " alt="" coords="2881,239,3060,263"/>
-<area shape="rect" id="node28" href="$R2SurfaceBasicBillboarded_8frag.html" title="An instantiation of the R2SurfaceBasic shader for billboarded instances. " alt="" coords="3135,239,3337,263"/>
-<area shape="rect" id="node29" href="$R2SurfaceBasicSingle_8frag.html" title="An instantiation of the R2SurfaceBasic shader for single instances. " alt="" coords="3387,239,3559,263"/>
-<area shape="rect" id="node31" href="$R2SurfaceBasicReflectiveSingle_8frag.html" title="An instantiation of the R2SurfaceBasicReflective shader for single instances. " alt="" coords="3595,233,3762,269"/>
-<area shape="rect" id="node33" href="$R2SurfaceBasicStippledSingle_8frag.html" title="An instantiation of the R2SurfaceBasicStippled shader for single instances. " alt="" coords="3793,239,4013,263"/>
-<area shape="rect" id="node35" href="$R2SurfaceShaderDriverBillboarded_8h.html" title="A fragment shader driver for billboarded instance surfaces. " alt="" coords="3005,161,3232,185"/>
+<area shape="rect" id="node2" href="$R2Billboarded_8vert.html" title="A vertex shader for billboarded instances. " alt="" coords="5,83,132,107"/>
+<area shape="rect" id="node3" href="$R2DebugColorVertices_8frag.html" title="Write the given color to the first fragment output. " alt="" coords="156,83,331,107"/>
+<area shape="rect" id="node4" href="$R2DebugColorVerticesWorldPosition_8vert_source.html" title="R2DebugColorVerticesWorld\lPosition.vert" alt="" coords="355,77,532,113"/>
+<area shape="rect" id="node5" href="$R2DebugVisualConstant_8frag.html" title="Write the given color to the first fragment output. " alt="" coords="557,83,741,107"/>
+<area shape="rect" id="node6" href="$R2DebugVisualConstantScreen_8vert.html" title="A vertex shader for full&#45;screen debug geometry. " alt="" coords="765,83,988,107"/>
+<area shape="rect" id="node7" href="$R2DepthShaderMain_8h.html" title="The main function that all depth shaders must implement. " alt="" coords="1113,83,1259,107"/>
+<area shape="rect" id="node13" href="$R2DepthShaderDriverBatched_8h.html" title="A fragment depth shader driver for batched instances. " alt="" coords="763,161,964,185"/>
+<area shape="rect" id="node14" href="$R2DepthShaderDriverSingle_8h.html" title="A fragment shader driver for single instance depth shaders. " alt="" coords="1123,161,1313,185"/>
+<area shape="rect" id="node15" href="$R2DepthBatched_8vert.html" title="A vertex shader for batched instances. " alt="" coords="1283,83,1425,107"/>
+<area shape="rect" id="node16" href="$R2DepthSingle_8vert.html" title="A vertex shader for single (depth&#45;only) instances. " alt="" coords="1449,83,1579,107"/>
+<area shape="rect" id="node17" href="$R2LogDepthOnlySingle_8frag.html" title="Single&#45;instance logarithmic depth only fragment shader. " alt="" coords="1603,83,1779,107"/>
+<area shape="rect" id="node18" href="$R2LogDepthOnlySingle_8vert.html" title="Single&#45;instance logarithmic depth only vertex shader. " alt="" coords="1804,83,1979,107"/>
+<area shape="rect" id="node19" href="$R2Mask_8frag.html" title="Write the given color to the first fragment output. " alt="" coords="2003,83,2095,107"/>
+<area shape="rect" id="node20" href="$R2MaskBatched_8vert.html" title="A vertex shader for masking batched instances. " alt="" coords="2119,83,2256,107"/>
+<area shape="rect" id="node21" href="$R2MaskSingle_8vert.html" title="A vertex shader for masking single instances. " alt="" coords="2280,83,2407,107"/>
+<area shape="rect" id="node22" href="$R2RefractionMaskedDelta_8frag.html" title="Apply masked delta refraction. " alt="" coords="2431,83,2623,107"/>
+<area shape="rect" id="node23" href="$R2RefractionMaskedDeltaBatched_8vert_source.html" title="R2RefractionMaskedDeltaBatched.vert" alt="" coords="2647,83,2885,107"/>
+<area shape="rect" id="node24" href="$R2RefractionMaskedDeltaSingle_8vert.html" title="A vertex shader for refracting single instances. " alt="" coords="2909,83,3135,107"/>
+<area shape="rect" id="node25" href="$R2SurfaceShaderMain_8h.html" title="The main function that all deferred surface shaders must implement. " alt="" coords="3396,83,3555,107"/>
+<area shape="rect" id="node34" href="$R2SurfaceShaderDriverBatched_8h.html" title="A fragment shader driver for batched instance surfaces. " alt="" coords="3160,83,3372,107"/>
+<area shape="rect" id="node36" href="$R2SurfaceShaderDriverSingle_8h.html" title="A fragment shader driver for single instance surfaces. " alt="" coords="3671,161,3872,185"/>
+<area shape="rect" id="node37" href="$R2SurfaceBatched_8vert.html" title="A vertex shader for batched instances. " alt="" coords="3630,83,3782,107"/>
+<area shape="rect" id="node38" href="$R2SurfaceSingle_8vert.html" title="A vertex shader for single instances. " alt="" coords="3806,83,3947,107"/>
+<area shape="rect" id="node39" href="$R2TranslucentBasicPremultiplied_8frag.html" title="A fragment shader that provides basic textured instances with premultiplied alpha. " alt="" coords="3972,83,4205,107"/>
+<area shape="rect" id="node8" href="$R2DepthBasic_8h.html" title="Basic depth&#45;only implementation that discards fragments based on the opacity of an albedo texture and..." alt="" coords="988,161,1099,185"/>
+<area shape="rect" id="node11" href="$R2DepthBasicStippled_8h.html" title="Basic depth&#45;only implementation that discards fragments based on the opacity of an albedo texture..." alt="" coords="1338,161,1495,185"/>
+<area shape="rect" id="node9" href="$R2DepthBasicBatched_8frag.html" title="An instantiation of the R2DepthBasic shader for batched instances. " alt="" coords="797,239,970,263"/>
+<area shape="rect" id="node10" href="$R2DepthBasicSingle_8frag.html" title="An instantiation of the R2DepthBasic shader for single instances. " alt="" coords="1031,239,1194,263"/>
+<area shape="rect" id="node12" href="$R2DepthBasicStippledSingle_8frag.html" title="An instantiation of the R2DepthBasicStippled shader for single instances. " alt="" coords="1237,239,1445,263"/>
+<area shape="rect" id="node26" href="$R2SurfaceBasic_8h.html" title="Basic surface implementation. " alt="" coords="3323,161,3446,185"/>
+<area shape="rect" id="node30" href="$R2SurfaceBasicReflective_8h.html" title="Basic pseudo&#45;reflective (environment mapped) deferred surface implementation. " alt="" coords="3470,161,3646,185"/>
+<area shape="rect" id="node32" href="$R2SurfaceBasicStippled_8h.html" title="Basic surface implementation. " alt="" coords="3897,161,4065,185"/>
+<area shape="rect" id="node27" href="$R2SurfaceBasicBatched_8frag.html" title="An instantiation of the R2SurfaceBasic shader for batched instances. " alt="" coords="2942,239,3126,263"/>
+<area shape="rect" id="node28" href="$R2SurfaceBasicBillboarded_8frag.html" title="An instantiation of the R2SurfaceBasic shader for billboarded instances. " alt="" coords="3206,239,3409,263"/>
+<area shape="rect" id="node29" href="$R2SurfaceBasicSingle_8frag.html" title="An instantiation of the R2SurfaceBasic shader for single instances. " alt="" coords="3461,239,3634,263"/>
+<area shape="rect" id="node31" href="$R2SurfaceBasicReflectiveSingle_8frag.html" title="An instantiation of the R2SurfaceBasicReflective shader for single instances. " alt="" coords="3671,233,3837,269"/>
+<area shape="rect" id="node33" href="$R2SurfaceBasicStippledSingle_8frag.html" title="An instantiation of the R2SurfaceBasicStippled shader for single instances. " alt="" coords="3867,239,4086,263"/>
+<area shape="rect" id="node35" href="$R2SurfaceShaderDriverBillboarded_8h.html" title="A fragment shader driver for billboarded instance surfaces. " alt="" coords="3068,161,3299,185"/>
 </map>

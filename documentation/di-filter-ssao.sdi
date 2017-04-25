@@ -209,7 +209,7 @@ type.
 [subsection [title Shaders] [id di.ssao.shaders]]
 [paragraph]
 The shader implementation of the SSAO algorithm is the
-[link-ext [target "doxygen/io7m-r2-shaders-0.2.1/R2SSAO_8frag_source.html"] R2SSAO]
+[link-ext [target "doxygen/io7m-r2-shaders-0.3.0-SNAPSHOT/R2SSAO_8frag_source.html"] R2SSAO]
 shader.
 
 [footnote [id di.ssao.application]]

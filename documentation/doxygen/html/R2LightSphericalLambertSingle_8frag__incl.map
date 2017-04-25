@@ -1,16 +1,17 @@
 <map id="R2LightSphericalLambertSingle.frag" name="R2LightSphericalLambertSingle.frag">
-<area shape="rect" id="node2" href="$R2LightSphericalLambert_8h.html" title="A spherical light with no specular highlights. " alt="" coords="745,77,917,101"/>
-<area shape="rect" id="node15" href="$R2LightShaderDriverSingle_8h.html" title="A fragment shader driver for single instance lights. " alt="" coords="413,149,597,173"/>
-<area shape="rect" id="node3" href="$R2LightShaderMain_8h.html" title="The main function that all deferred light shaders must implement. " alt="" coords="711,149,847,173"/>
-<area shape="rect" id="node13" href="$R2LightPositional_8h.html" title="Functions and types related to positional lighting. " alt="" coords="919,221,1055,245"/>
-<area shape="rect" id="node14" href="$R2LightSpherical_8h.html" title="Functions and types related to spherical lighting. " alt="" coords="922,149,1053,173"/>
-<area shape="rect" id="node4" href="$R2LightOutput_8h.html" title="Types describing calculated light contributions. " alt="" coords="783,221,895,245"/>
-<area shape="rect" id="node5" href="$R2ReconstructedSurface_8h.html" title="Surface data reconstructed from the G&#45;Buffer. " alt="" coords="411,221,577,245"/>
-<area shape="rect" id="node6" href="$R2GBufferInput_8h.html" title="The textures that make up the G&#45;Buffer. " alt="" coords="5,293,124,317"/>
-<area shape="rect" id="node7" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="267,293,361,317"/>
-<area shape="rect" id="node8" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="639,293,727,317"/>
-<area shape="rect" id="node9" href="$R2PositionReconstruction_8h.html" title="Functions for performing position reconstruction during deferred rendering. " alt="" coords="386,293,565,317"/>
-<area shape="rect" id="node11" href="$R2ViewRays_8h.html" title="View ray types. " alt="" coords="555,365,649,389"/>
-<area shape="rect" id="node12" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="148,293,243,317"/>
-<area shape="rect" id="node10" href="$R2Bilinear_8h.html" title="Functions for performing bilinear interpolation. " alt="" coords="428,365,523,389"/>
+<area shape="rect" id="node2" href="$R2LightSphericalLambert_8h.html" title="A spherical light with no specular highlights. " alt="" coords="689,77,863,101"/>
+<area shape="rect" id="node16" href="$R2LightShaderDriverSingle_8h.html" title="A fragment shader driver for single instance lights. " alt="" coords="355,149,539,173"/>
+<area shape="rect" id="node3" href="$R2LightShaderMain_8h.html" title="The main function that all deferred light shaders must implement. " alt="" coords="652,149,793,173"/>
+<area shape="rect" id="node14" href="$R2LightPositional_8h.html" title="Functions and types related to positional lighting. " alt="" coords="867,221,997,245"/>
+<area shape="rect" id="node15" href="$R2LightSpherical_8h.html" title="Functions and types related to spherical lighting. " alt="" coords="869,149,995,173"/>
+<area shape="rect" id="node4" href="$R2LightOutput_8h.html" title="Types describing calculated light contributions. " alt="" coords="732,221,844,245"/>
+<area shape="rect" id="node5" href="$R2ReconstructedSurface_8h.html" title="Surface data reconstructed from the G&#45;Buffer. " alt="" coords="485,221,657,245"/>
+<area shape="rect" id="node6" href="$R2LightShaderOutputTargets_8h.html" title="A header that defines constants related to light shader outputs. " alt="" coords="183,293,377,317"/>
+<area shape="rect" id="node7" href="$R2GBufferInput_8h.html" title="The textures that make up the G&#45;Buffer. " alt="" coords="39,293,158,317"/>
+<area shape="rect" id="node8" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="521,293,621,317"/>
+<area shape="rect" id="node9" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="402,293,497,317"/>
+<area shape="rect" id="node10" href="$R2PositionReconstruction_8h.html" title="Functions for performing position reconstruction during deferred rendering. " alt="" coords="696,293,872,317"/>
+<area shape="rect" id="node12" href="$R2ViewRays_8h.html" title="View ray types. " alt="" coords="609,365,709,389"/>
+<area shape="rect" id="node13" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="896,293,992,317"/>
+<area shape="rect" id="node11" href="$R2Bilinear_8h.html" title="Functions for performing bilinear interpolation. " alt="" coords="739,365,829,389"/>
 </map>

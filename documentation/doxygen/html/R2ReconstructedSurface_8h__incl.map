@@ -1,9 +1,10 @@
 <map id="R2ReconstructedSurface.h" name="R2ReconstructedSurface.h">
-<area shape="rect" id="node2" href="$R2GBufferInput_8h.html" title="The textures that make up the G&#45;Buffer. " alt="" coords="5,77,124,101"/>
-<area shape="rect" id="node3" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="148,77,243,101"/>
-<area shape="rect" id="node4" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="267,77,355,101"/>
-<area shape="rect" id="node5" href="$R2PositionReconstruction_8h.html" title="Functions for performing position reconstruction during deferred rendering. " alt="" coords="379,77,558,101"/>
-<area shape="rect" id="node7" href="$R2ViewRays_8h.html" title="View ray types. " alt="" coords="544,149,639,173"/>
-<area shape="rect" id="node8" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="633,77,728,101"/>
-<area shape="rect" id="node6" href="$R2Bilinear_8h.html" title="Functions for performing bilinear interpolation. " alt="" coords="421,149,516,173"/>
+<area shape="rect" id="node2" href="$R2LightShaderOutputTargets_8h.html" title="A header that defines constants related to light shader outputs. " alt="" coords="5,77,200,101"/>
+<area shape="rect" id="node3" href="$R2GBufferInput_8h.html" title="The textures that make up the G&#45;Buffer. " alt="" coords="225,77,343,101"/>
+<area shape="rect" id="node4" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="367,77,467,101"/>
+<area shape="rect" id="node5" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="491,77,586,101"/>
+<area shape="rect" id="node6" href="$R2PositionReconstruction_8h.html" title="Functions for performing position reconstruction during deferred rendering. " alt="" coords="611,77,787,101"/>
+<area shape="rect" id="node8" href="$R2ViewRays_8h.html" title="View ray types. " alt="" coords="770,149,870,173"/>
+<area shape="rect" id="node9" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="861,77,957,101"/>
+<area shape="rect" id="node7" href="$R2Bilinear_8h.html" title="Functions for performing bilinear interpolation. " alt="" coords="654,149,743,173"/>
 </map>

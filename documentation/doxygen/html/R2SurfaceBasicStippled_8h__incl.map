@@ -1,9 +1,9 @@
 <map id="R2SurfaceBasicStippled.h" name="R2SurfaceBasicStippled.h">
-<area shape="rect" id="node2" href="$R2SurfaceShaderMain_8h.html" title="The main function that all deferred surface shaders must implement. " alt="" coords="52,77,200,101"/>
-<area shape="rect" id="node6" href="$R2SurfaceBasicTypes_8h.html" title="Types for basic surfaces. " alt="" coords="224,77,372,101"/>
-<area shape="rect" id="node7" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="403,149,497,173"/>
-<area shape="rect" id="node8" href="$R2Stipple_8h.html" title="Stippling types and functions. " alt="" coords="447,77,535,101"/>
-<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="8,149,127,173"/>
-<area shape="rect" id="node5" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="151,149,221,173"/>
-<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="5,221,129,245"/>
+<area shape="rect" id="node2" href="$R2SurfaceShaderMain_8h.html" title="The main function that all deferred surface shaders must implement. " alt="" coords="51,77,209,101"/>
+<area shape="rect" id="node6" href="$R2SurfaceBasicTypes_8h.html" title="Types for basic surfaces. " alt="" coords="234,77,389,101"/>
+<area shape="rect" id="node7" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="418,149,514,173"/>
+<area shape="rect" id="node8" href="$R2Stipple_8h.html" title="Stippling types and functions. " alt="" coords="464,77,551,101"/>
+<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="9,149,131,173"/>
+<area shape="rect" id="node5" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="155,149,227,173"/>
+<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="5,221,135,245"/>
 </map>

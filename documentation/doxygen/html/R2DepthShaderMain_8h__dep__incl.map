@@ -1,7 +1,7 @@
 <map id="R2DepthShaderMain.h" name="R2DepthShaderMain.h">
-<area shape="rect" id="node2" href="$R2DepthBasic_8h.html" title="Basic depth&#45;only implementation that discards fragments based on the opacity of an albedo texture and..." alt="" coords="223,77,330,101"/>
-<area shape="rect" id="node5" href="$R2DepthBasicStippled_8h.html" title="Basic depth&#45;only implementation that discards fragments based on the opacity of an albedo texture..." alt="" coords="381,77,535,101"/>
-<area shape="rect" id="node3" href="$R2DepthBasicBatched_8frag.html" title="An instantiation of the R2DepthBasic shader for batched instances. " alt="" coords="5,149,172,173"/>
-<area shape="rect" id="node4" href="$R2DepthBasicSingle_8frag.html" title="An instantiation of the R2DepthBasic shader for single instances. " alt="" coords="197,149,357,173"/>
-<area shape="rect" id="node6" href="$R2DepthBasicStippledSingle_8frag.html" title="An instantiation of the R2DepthBasicStippled shader for single instances. " alt="" coords="381,149,589,173"/>
+<area shape="rect" id="node2" href="$R2DepthBasic_8h.html" title="Basic depth&#45;only implementation that discards fragments based on the opacity of an albedo texture and..." alt="" coords="229,77,339,101"/>
+<area shape="rect" id="node5" href="$R2DepthBasicStippled_8h.html" title="Basic depth&#45;only implementation that discards fragments based on the opacity of an albedo texture..." alt="" coords="389,77,547,101"/>
+<area shape="rect" id="node3" href="$R2DepthBasicBatched_8frag.html" title="An instantiation of the R2DepthBasic shader for batched instances. " alt="" coords="5,149,179,173"/>
+<area shape="rect" id="node4" href="$R2DepthBasicSingle_8frag.html" title="An instantiation of the R2DepthBasic shader for single instances. " alt="" coords="203,149,365,173"/>
+<area shape="rect" id="node6" href="$R2DepthBasicStippledSingle_8frag.html" title="An instantiation of the R2DepthBasicStippled shader for single instances. " alt="" coords="389,149,597,173"/>
 </map>

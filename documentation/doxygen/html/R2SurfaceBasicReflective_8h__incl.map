@@ -1,9 +1,9 @@
 <map id="R2SurfaceBasicReflective.h" name="R2SurfaceBasicReflective.h">
-<area shape="rect" id="node2" href="$R2SurfaceShaderMain_8h.html" title="The main function that all deferred surface shaders must implement. " alt="" coords="73,77,221,101"/>
-<area shape="rect" id="node6" href="$R2EnvironmentReflection_8h.html" title="Functions for environment&#45;mapped reflections. " alt="" coords="245,77,417,101"/>
-<area shape="rect" id="node8" href="$R2SurfaceBasicTypes_8h.html" title="Types for basic surfaces. " alt="" coords="441,77,589,101"/>
-<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="8,149,127,173"/>
-<area shape="rect" id="node5" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="151,149,221,173"/>
-<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="5,221,129,245"/>
-<area shape="rect" id="node7" href="$R2CubeMaps_8h.html" title="Functions for dealing with cube maps. " alt="" coords="284,149,379,173"/>
+<area shape="rect" id="node2" href="$R2SurfaceShaderMain_8h.html" title="The main function that all deferred surface shaders must implement. " alt="" coords="73,77,232,101"/>
+<area shape="rect" id="node6" href="$R2EnvironmentReflection_8h.html" title="Functions for environment&#45;mapped reflections. " alt="" coords="257,77,430,101"/>
+<area shape="rect" id="node8" href="$R2SurfaceBasicTypes_8h.html" title="Types for basic surfaces. " alt="" coords="454,77,609,101"/>
+<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="9,149,131,173"/>
+<area shape="rect" id="node5" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="155,149,227,173"/>
+<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="5,221,135,245"/>
+<area shape="rect" id="node7" href="$R2CubeMaps_8h.html" title="Functions for dealing with cube maps. " alt="" coords="290,149,397,173"/>
 </map>

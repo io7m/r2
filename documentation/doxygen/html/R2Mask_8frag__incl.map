@@ -1,6 +1,6 @@
 <map id="R2Mask.frag" name="R2Mask.frag">
-<area shape="rect" id="node2" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,77,100,101"/>
-<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="124,77,243,101"/>
-<area shape="rect" id="node5" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="267,77,337,101"/>
-<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="121,149,245,173"/>
+<area shape="rect" id="node2" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,77,105,101"/>
+<area shape="rect" id="node3" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="130,77,253,101"/>
+<area shape="rect" id="node5" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="277,77,349,101"/>
+<area shape="rect" id="node4" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="127,149,256,173"/>
 </map>

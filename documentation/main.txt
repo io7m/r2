@@ -1,4 +1,4 @@
-io7m-r2 0.2.1 Documentation
+com.io7m.r2 0.3.0-SNAPSHOT Documentation
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Contents
@@ -158,14 +158,14 @@ io7m-r2 0.2.1 Documentation
 1.2.2 Maven
 
 1     Regular releases are made to the Central Repository [url:
-      http://search.maven.org/#search%7Cga%7C1%7Cio7m-r2], so it's possible to
-      use the io7m-r2 package in your projects with the following Maven
+      http://search.maven.org/#search%7Cga%7C1%7Ccom.io7m.r2], so it's possible
+      to use the com.io7m.r2 package in your projects with the following Maven
       dependencies:
 
 2     <dependency>
         <groupId>com.io7m.r2</groupId>
         <artifactId>io7m-r2-main</artifactId>
-        <version>0.2.1</version>
+        <version>0.3.0-SNAPSHOT</version>
       </dependency>
 
 3     All io7m.com [url: http://io7m.com] packages use Semantic Versioning [0],
@@ -180,7 +180,7 @@ io7m-r2 0.2.1 Documentation
 
 1.4 License [id: pkg.license]
 
-1     All files distributed with the io7m-r2 package are placed under the
+1     All files distributed with the com.io7m.r2 package are placed under the
       following license:
       Copyright © 2016 <code@io7m.com> http://io7m.com
 
@@ -303,7 +303,8 @@ io7m-r2 0.2.1 Documentation
     2.20.1 Overview ................................ di.deferred.light.overview
     2.20.2 Light Buffer ............................. di.deferred.light.lbuffer
     2.20.3 Light Clip Volumes .................. di.deferred.light.clip_volumes
-    2.20.4 Types ...................................... di.deferred.light.types
+    2.20.4 No L-Buffer ........................... di.deferred.light.no_lbuffer
+    2.20.5 Types ...................................... di.deferred.light.types
   2.21 Deferred Rendering: Position Reconstruction . di.deferred-position-recon
     2.21.1 Overview ....................... di.deferred-position-recon.overview
     2.21.2 Recovering Eye space Z ...... di.deferred-position-recon.eye-space-z
@@ -1143,17 +1144,15 @@ io7m-r2 0.2.1 Documentation
 
 4     Of course, actually requiring the programmer to manually implement all of
       the above for each new shader would be unreasonable and would just become
-      a new source of bugs. The r2 provides verifiers to perform the run-time
-      checks listed above without forcing the programmer to implement them all
-      manually. The R2ShaderInstanceSingleVerifier [url:
-      apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceSingleVerifier.html]
+      a new source of bugs. The r2 provides abstract shader implementations to
+      perform the run-time checks listed above without forcing the programmer
+      to implement them all manually. The R2AbstractInstanceShaderSingle [url:
+      apidocs/com/io7m/r2/core/shaders/abstracts/R2AbstractInstanceShaderSingle.html]
       type, for example, implements the R2ShaderInstanceSingleUsableType [url:
       apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceSingleUsableType.html]
-      interface and wraps call calls to an existing shader in calls that
-      enforce the invariants and call order described above. The programmer
-      writes the simple version of the shader that simply uploads parameters,
-      and the verifier prevents callers from calling shader methods in the
-      wrong order.
+      interface and provides a few abstract methods that the programmer
+      implements in order to upload parameters to the GPU. The abstract
+      implementation enforces the calling protocol.
 
 5     The calling protocol described both ensures that all shader parameters
       will be set and that the renderers themselves are insulated from the
@@ -1196,6 +1195,13 @@ io7m-r2 0.2.1 Documentation
       and the R2Bilinear.h name refers to that file within the module. The
       sombrero resolver maps the request to a concrete resource on the
       filesystem or in a jar file and returns the content for inclusion.
+
+5     The r2 package also provides an interface, the
+      R2ShaderPreprocessingEnvironmentType [url:
+      apidocs/com/io7m/r2/core/shaders/types/R2ShaderPreprocessingEnvironmentType.html]
+      type, that allows constants to be set that will be exposed to shaders
+      upon being preprocessed. Each shader stores an immutable snapshot of the
+      environment used to preprocess it after successful compilation.
 
 2.8.4 Types [id: di.shaders.types]
 
@@ -2555,7 +2561,27 @@ other image) , rendering only the depth [ref:
       (result) .)
 
 
-2.20.4 Types [id: di.deferred.light.types]
+2.20.4 No L-Buffer [id: di.deferred.light.no_lbuffer]
+
+1     The r2 package also provides basic support for rendering lit images
+      directly without the use of an intermediate light buffer. This can save
+      greatly on memory bandwidth if no intermediate processing of light
+      buffers is required. In order to achieve this, light shaders must be
+      preprocessed [ref: di.shaders.modules] such that the output of the
+      generated code is a lit image rather than simply the light contribution.
+      Doing this is simple: Simply set R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE
+      [url:
+      apidocs/com/io7m/r2/shaders/core/R2LightShaderDefines.html#R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE]
+      to R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER [url:
+      apidocs/com/io7m/r2/shaders/core/R2LightShaderDefines.html#R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER]
+      in the shading environment [ref: di.shaders.modules] prior to compiling
+      any light shaders. The r2 renderer implementations perform simple
+      run-time checks to ensure that light shaders have been compiled to
+      support the current output type, so the programmer will be notified if
+      they try to render directly to an image but fail to make the above
+      configuration change.
+
+2.20.5 Types [id: di.deferred.light.types]
 
 1     In the r2 package, the primary implementation of the deferred light
       rendering algorithm is the R2LightRenderer [url:
@@ -4348,7 +4374,7 @@ other image) , rendering only the depth [ref:
 2.29.9 Shaders [id: di.ssao.shaders]
 
 1     The shader implementation of the SSAO algorithm is the R2SSAO [url:
-      doxygen/io7m-r2-shaders-0.2.1/R2SSAO_8frag_source.html] shader.
+      doxygen/io7m-r2-shaders-0.3.0-SNAPSHOT/R2SSAO_8frag_source.html] shader.
 
 2.30 Filter: Emission [id: di.emission]
 

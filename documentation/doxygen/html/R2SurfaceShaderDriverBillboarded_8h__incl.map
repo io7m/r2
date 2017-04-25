@@ -1,9 +1,9 @@
 <map id="R2SurfaceShaderDriverBillboarded.h" name="R2SurfaceShaderDriverBillboarded.h">
-<area shape="rect" id="node2" href="$R2SurfaceShaderDriverBatched_8h.html" title="A fragment shader driver for batched instance surfaces. " alt="" coords="195,77,398,101"/>
-<area shape="rect" id="node3" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,149,100,173"/>
-<area shape="rect" id="node4" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="125,149,213,173"/>
-<area shape="rect" id="node5" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="237,149,356,173"/>
-<area shape="rect" id="node7" href="$R2GBufferOutput_8h.html" title="The G&#45;Buffer format. " alt="" coords="380,149,504,173"/>
-<area shape="rect" id="node8" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="528,149,599,173"/>
-<area shape="rect" id="node6" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="235,221,359,245"/>
+<area shape="rect" id="node2" href="$R2SurfaceShaderDriverBatched_8h.html" title="A fragment shader driver for batched instance surfaces. " alt="" coords="204,77,416,101"/>
+<area shape="rect" id="node3" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="5,149,105,173"/>
+<area shape="rect" id="node4" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="129,149,224,173"/>
+<area shape="rect" id="node5" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="249,149,371,173"/>
+<area shape="rect" id="node7" href="$R2GBufferOutput_8h.html" title="The G&#45;Buffer format. " alt="" coords="396,149,525,173"/>
+<area shape="rect" id="node8" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="550,149,622,173"/>
+<area shape="rect" id="node6" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="245,221,375,245"/>
 </map>

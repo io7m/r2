@@ -1,14 +1,30 @@
 Manifest-Version: 1.0
-Implementation-Title: io7m-r2-shaders-core
-Implementation-Version: 0.2.1
-Archiver-Version: Plexus Archiver
-Built-By: io7m
-Sealed: true
-Specification-Vendor: io7m.com
-Implementation-Vendor-Id: com.io7m.r2
-Specification-Title: io7m-r2-shaders-core
+Bnd-LastModified: 1493131079120
+Build-Jdk: 1.8.0_121
+Built-By: someone
+Bundle-Description: 3D renderer (Core shaders)
+Bundle-DocURL: http://io7m.github.io/r2/
+Bundle-License: http://io7m.com/license/isc.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: com.io7m.r2.shaders.core
+Bundle-SymbolicName: com.io7m.r2.shaders.core
+Bundle-Version: 0.3.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: com.io7m.r2.shaders.core;uses:="com.io7m.sombrero.core
+ ";version="0.3.0"
+Implementation-Build: 25fd4cc194a6e7fc8e4c898531aa98d4b5d9a81c
+Implementation-Date: 2017-04-25T14:37:21+0000
+Implementation-Title: com.io7m.r2.shaders.core
 Implementation-Vendor: io7m.com
-Created-By: Apache Maven 3.3.9
-Build-Jdk: 1.8.0_112
-Specification-Version: 0.2.1
-
+Implementation-Vendor-Id: com.io7m.r2
+Implementation-Version: 0.3.0-SNAPSHOT
+Import-Package: com.io7m.jnull;version="[1.1,2)",com.io7m.sombrero.cor
+ e;version="[0.3,1)"
+Provide-Capability: com.io7m.r2.shaders.module;name:String="com.io7m.r
+ 2.shaders.core"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Sealed: true
+Specification-Title: com.io7m.r2.shaders.core
+Specification-Vendor: io7m.com
+Specification-Version: 0.3.0-SNAPSHOT
+Tool: Bnd-3.2.0.201605172007

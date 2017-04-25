@@ -1,6 +1,6 @@
 <map id="R2LightDirectional.h" name="R2LightDirectional.h">
-<area shape="rect" id="node2" href="$R2LightDirectionalDebugConstant_8h.html" title="A trivial directional light that simply ignores the surface and applies a constant color..." alt="" coords="5,77,225,101"/>
-<area shape="rect" id="node4" href="$R2LightDirectionalSpecular_8h.html" title="A trivial directional light with Phong specular highlights. " alt="" coords="249,77,440,101"/>
-<area shape="rect" id="node3" href="$R2LightDirectionalDebugConstantSingle_8frag.html" title="An instantiation of the R2LightDirectionalDebugConstant shader for single instances. " alt="" coords="11,149,219,185"/>
-<area shape="rect" id="node5" href="$R2LightDirectionalSpecularSingle_8frag.html" title="An instantiation of the R2LightDirectionalSpecular shader for single instances. " alt="" coords="255,149,434,185"/>
+<area shape="rect" id="node2" href="$R2LightDirectionalDebugConstant_8h.html" title="A trivial directional light that simply ignores the surface and applies a constant color..." alt="" coords="5,77,227,101"/>
+<area shape="rect" id="node4" href="$R2LightDirectionalSpecular_8h.html" title="A trivial directional light with Phong specular highlights. " alt="" coords="251,77,434,101"/>
+<area shape="rect" id="node3" href="$R2LightDirectionalDebugConstantSingle_8frag.html" title="An instantiation of the R2LightDirectionalDebugConstant shader for single instances. " alt="" coords="11,149,221,185"/>
+<area shape="rect" id="node5" href="$R2LightDirectionalSpecularSingle_8frag.html" title="An instantiation of the R2LightDirectionalSpecular shader for single instances. " alt="" coords="256,149,429,185"/>
 </map>

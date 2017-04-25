@@ -1,4 +1,4 @@
 <map id="R2BilateralBlur.h" name="R2BilateralBlur.h">
-<area shape="rect" id="node2" href="$R2FilterBilateralBlurDepthAwareHorizontal4f_8frag.html" title="Horizontal RGBA bilateral depth&#45;aware blur filter. " alt="" coords="5,77,184,113"/>
-<area shape="rect" id="node3" href="$R2FilterBilateralBlurDepthAwareVertical4f_8frag.html" title="Vertical RGBA bilateral depth&#45;aware blur filter. " alt="" coords="208,77,387,113"/>
+<area shape="rect" id="node2" href="$R2FilterBilateralBlurDepthAwareHorizontal4f_8frag.html" title="Horizontal RGBA bilateral depth&#45;aware blur filter. " alt="" coords="5,77,172,113"/>
+<area shape="rect" id="node3" href="$R2FilterBilateralBlurDepthAwareVertical4f_8frag.html" title="Vertical RGBA bilateral depth&#45;aware blur filter. " alt="" coords="196,77,363,113"/>
 </map>

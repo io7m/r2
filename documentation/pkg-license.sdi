@@ -1,6 +1,6 @@
 [section [title License] [id pkg.license]]
 [paragraph]
-All files distributed with the [term [type package] io7m-r2]
+All files distributed with the [term [type package] com.io7m.r2]
 package are placed under the following license:
 
 [verbatim [type license]

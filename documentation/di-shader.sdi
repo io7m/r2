@@ -61,16 +61,14 @@ happen.
 Of course, actually requiring the programmer to manually implement all of the
 above for each new shader would be unreasonable and would just become a new
 source of bugs.
-The [term [type package] r2] provides [term [type term] verifiers] to perform the
+The [term [type package] r2] provides abstract shader implementations to perform the
 run-time checks listed above without forcing the programmer to implement them all manually.
-The [link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceSingleVerifier.html"] R2ShaderInstanceSingleVerifier]
+The [link-ext [target "apidocs/com/io7m/r2/core/shaders/abstracts/R2AbstractInstanceShaderSingle.html"] R2AbstractInstanceShaderSingle]
 type, for example, implements the
 [link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceSingleUsableType.html"] R2ShaderInstanceSingleUsableType]
-interface and wraps call calls to an existing shader in calls that enforce
-the invariants and call order described above. The programmer writes the
-simple version of the shader that simply uploads parameters, and the
-[term [type term] verifier] prevents callers from calling shader methods
-in the wrong order.
+interface and provides a few abstract methods that the programmer implements
+in order to upload parameters to the GPU. The abstract implementation enforces
+the calling protocol.
 
 [paragraph]
 The calling protocol described
@@ -114,6 +112,13 @@ to be the module name, and the [term [type file] "R2Bilinear.h"] name
 refers to that file within the module. The [term [type package] sombrero]
 resolver maps the request to a concrete resource on the filesystem or in
 a jar file and returns the content for inclusion.
+
+[paragraph]
+The [term [type package] r2] package also provides an interface, the
+[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderPreprocessingEnvironmentType.html"] R2ShaderPreprocessingEnvironmentType]
+type, that allows constants to be set that will be exposed to shaders upon
+being preprocessed. Each shader stores an immutable snapshot of the environment
+used to preprocess it after successful compilation.
 
 [footnote [id di.shaders.modules.classpath]]
 The core of the [term [type package] r2] package depends directly on the

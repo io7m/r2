@@ -1,12 +1,12 @@
 <map id="R2SurfaceBasicSingle.frag" name="R2SurfaceBasicSingle.frag">
-<area shape="rect" id="node2" href="$R2SurfaceBasic_8h.html" title="Basic surface implementation. " alt="" coords="192,77,311,101"/>
-<area shape="rect" id="node8" href="$R2SurfaceShaderDriverSingle_8h.html" title="A fragment shader driver for single instance surfaces. " alt="" coords="349,149,545,173"/>
-<area shape="rect" id="node3" href="$R2SurfaceShaderMain_8h.html" title="The main function that all deferred surface shaders must implement. " alt="" coords="177,149,325,173"/>
-<area shape="rect" id="node7" href="$R2SurfaceBasicTypes_8h.html" title="Types for basic surfaces. " alt="" coords="5,149,153,173"/>
-<area shape="rect" id="node4" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="257,221,376,245"/>
-<area shape="rect" id="node6" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="163,221,233,245"/>
-<area shape="rect" id="node5" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="255,293,379,317"/>
-<area shape="rect" id="node9" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="400,221,495,245"/>
-<area shape="rect" id="node10" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="519,221,607,245"/>
-<area shape="rect" id="node11" href="$R2GBufferOutput_8h.html" title="The G&#45;Buffer format. " alt="" coords="632,221,756,245"/>
+<area shape="rect" id="node2" href="$R2SurfaceBasic_8h.html" title="Basic surface implementation. " alt="" coords="203,77,325,101"/>
+<area shape="rect" id="node8" href="$R2SurfaceShaderDriverSingle_8h.html" title="A fragment shader driver for single instance surfaces. " alt="" coords="367,149,569,173"/>
+<area shape="rect" id="node3" href="$R2SurfaceShaderMain_8h.html" title="The main function that all deferred surface shaders must implement. " alt="" coords="185,149,343,173"/>
+<area shape="rect" id="node7" href="$R2SurfaceBasicTypes_8h.html" title="Types for basic surfaces. " alt="" coords="5,149,160,173"/>
+<area shape="rect" id="node4" href="$R2SurfaceTypes_8h.html" title="Types for deferred surface shading. " alt="" coords="271,221,393,245"/>
+<area shape="rect" id="node6" href="$R2View_8h.html" title="Types relating to the view. " alt="" coords="175,221,247,245"/>
+<area shape="rect" id="node5" href="$R2SurfaceOutput_8h.html" title="Types describing calculated surfaces. " alt="" coords="267,293,397,317"/>
+<area shape="rect" id="node9" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="418,221,518,245"/>
+<area shape="rect" id="node10" href="$R2Normals_8h.html" title="Functions for transforming normal vectors. " alt="" coords="542,221,637,245"/>
+<area shape="rect" id="node11" href="$R2GBufferOutput_8h.html" title="The G&#45;Buffer format. " alt="" coords="661,221,790,245"/>
 </map>

@@ -1,6 +1,6 @@
 <map id="R2FilterFogDepthQuadratic.frag" name="R2FilterFogDepthQuadratic.frag">
-<area shape="rect" id="node2" href="$R2Fog_8h.html" title="Types related to fog rendering. " alt="" coords="5,77,69,101"/>
-<area shape="rect" id="node3" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="94,77,189,101"/>
-<area shape="rect" id="node4" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="213,77,307,101"/>
-<area shape="rect" id="node5" href="$R2ViewRays_8h.html" title="View ray types. " alt="" coords="331,77,426,101"/>
+<area shape="rect" id="node2" href="$R2Fog_8h.html" title="Types related to fog rendering. " alt="" coords="5,77,72,101"/>
+<area shape="rect" id="node3" href="$R2LogDepth_8h.html" title="Logarithmic depth functions. " alt="" coords="97,77,197,101"/>
+<area shape="rect" id="node4" href="$R2Viewport_8h.html" title="Viewport types and functions. " alt="" coords="221,77,317,101"/>
+<area shape="rect" id="node5" href="$R2ViewRays_8h.html" title="View ray types. " alt="" coords="342,77,442,101"/>
 </map>

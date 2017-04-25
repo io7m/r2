@@ -5,6 +5,7 @@
 /// \brief A fragment shader driver for single instance lights.
 
 #include "R2LightOutput.h"
+#include "R2LightShaderOutputTargets.h"
 #include "R2ReconstructedSurface.h"
 #include "R2GBufferInput.h"
 #include "R2LogDepth.h"
@@ -12,8 +13,18 @@
 #include "R2Viewport.h"
 #include "R2ViewRays.h"
 
+#if R2_LIGHT_SHADER_OUTPUT_TARGET == R2_LIGHT_SHADER_OUTPUT_TARGET_LBUFFER
+// The output is a light buffer
 layout(location = 0) out vec4 R2_out_diffuse;
 layout(location = 1) out vec4 R2_out_specular;
+
+#elif R2_LIGHT_SHADER_OUTPUT_TARGET == R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER
+// The output is an image buffer
+layout(location = 0) out vec4 R2_out_image;
+
+#else
+#error "Must define R2_LIGHT_SHADER_OUTPUT_TARGET to a recognized value"
+#endif
 
 uniform R2_viewport_t      R2_light_viewport;
 uniform R2_gbuffer_input_t R2_light_gbuffer;
@@ -31,7 +42,7 @@ main (void)
   // volume in order to get correct depth testing with respect to the
   // contents of the G-Buffer.
 
-  float depth_log = R2_logDepthEncodePartial (
+  float depth_log = R2_logDepthEncodePartial(
     R2_light_volume_positive_eye_z,
     R2_light_depth_coefficient);
 
@@ -45,10 +56,17 @@ main (void)
       gl_FragCoord.xy);
 
   // Evaluate light
-  R2_light_output_t o = R2_deferredLightMain (surface);
-  R2_out_diffuse      = vec4 (o.diffuse, 1.0);
-  R2_out_specular     = vec4 (o.specular, 1.0);
-  gl_FragDepth        = depth_log;
+  R2_light_output_t o = R2_deferredLightMain(surface);
+
+  // Write the evaluated light to the output(s)
+#if R2_LIGHT_SHADER_OUTPUT_TARGET == R2_LIGHT_SHADER_OUTPUT_TARGET_LBUFFER
+  R2_out_diffuse  = vec4 (o.diffuse, 1.0);
+  R2_out_specular = vec4 (o.specular, 1.0);
+#elif R2_LIGHT_SHADER_OUTPUT_TARGET == R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER
+  R2_out_image = vec4 (surface.albedo * (o.diffuse + o.specular), 1.0);
+#endif
+
+  gl_FragDepth = depth_log;
 }
 
 #endif // R2_LIGHT_SHADER_DRIVER_SINGLE_H

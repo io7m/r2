@@ -1,4 +1,4 @@
-[document [title io7m-r2 0.2.1 Documentation]
+[document [title com.io7m.r2 0.3.0-SNAPSHOT Documentation]
   [import "pkg.sdi"]
   [import "di.sd"]
   [import "api.sd"]]

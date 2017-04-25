@@ -1,10 +1,10 @@
 <map id="R2SurfaceShaderMain.h" name="R2SurfaceShaderMain.h">
-<area shape="rect" id="node2" href="$R2SurfaceBasic_8h.html" title="Basic surface implementation. " alt="" coords="355,77,474,101"/>
-<area shape="rect" id="node6" href="$R2SurfaceBasicReflective_8h.html" title="Basic pseudo&#45;reflective (environment mapped) deferred surface implementation. " alt="" coords="625,77,804,101"/>
-<area shape="rect" id="node8" href="$R2SurfaceBasicStippled_8h.html" title="Basic surface implementation. " alt="" coords="838,77,1005,101"/>
-<area shape="rect" id="node3" href="$R2SurfaceBasicBatched_8frag.html" title="An instantiation of the R2SurfaceBasic shader for batched instances. " alt="" coords="5,155,184,179"/>
-<area shape="rect" id="node4" href="$R2SurfaceBasicBillboarded_8frag.html" title="An instantiation of the R2SurfaceBasic shader for billboarded instances. " alt="" coords="208,155,411,179"/>
-<area shape="rect" id="node5" href="$R2SurfaceBasicSingle_8frag.html" title="An instantiation of the R2SurfaceBasic shader for single instances. " alt="" coords="435,155,607,179"/>
-<area shape="rect" id="node7" href="$R2SurfaceBasicReflectiveSingle_8frag.html" title="An instantiation of the R2SurfaceBasicReflective shader for single instances. " alt="" coords="631,149,798,185"/>
-<area shape="rect" id="node9" href="$R2SurfaceBasicStippledSingle_8frag.html" title="An instantiation of the R2SurfaceBasicStippled shader for single instances. " alt="" coords="822,155,1042,179"/>
+<area shape="rect" id="node2" href="$R2SurfaceBasic_8h.html" title="Basic surface implementation. " alt="" coords="359,77,481,101"/>
+<area shape="rect" id="node6" href="$R2SurfaceBasicReflective_8h.html" title="Basic pseudo&#45;reflective (environment mapped) deferred surface implementation. " alt="" coords="632,77,808,101"/>
+<area shape="rect" id="node8" href="$R2SurfaceBasicStippled_8h.html" title="Basic surface implementation. " alt="" coords="841,77,1009,101"/>
+<area shape="rect" id="node3" href="$R2SurfaceBasicBatched_8frag.html" title="An instantiation of the R2SurfaceBasic shader for batched instances. " alt="" coords="5,155,189,179"/>
+<area shape="rect" id="node4" href="$R2SurfaceBasicBillboarded_8frag.html" title="An instantiation of the R2SurfaceBasic shader for billboarded instances. " alt="" coords="213,155,416,179"/>
+<area shape="rect" id="node5" href="$R2SurfaceBasicSingle_8frag.html" title="An instantiation of the R2SurfaceBasic shader for single instances. " alt="" coords="440,155,613,179"/>
+<area shape="rect" id="node7" href="$R2SurfaceBasicReflectiveSingle_8frag.html" title="An instantiation of the R2SurfaceBasicReflective shader for single instances. " alt="" coords="637,149,803,185"/>
+<area shape="rect" id="node9" href="$R2SurfaceBasicStippledSingle_8frag.html" title="An instantiation of the R2SurfaceBasicStippled shader for single instances. " alt="" coords="827,155,1045,179"/>
 </map>

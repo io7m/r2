@@ -1,10 +1,10 @@
 <map id="R2LightProjective.h" name="R2LightProjective.h">
-<area shape="rect" id="node2" href="$R2LightProjectiveLambert_8h.html" title="A projective light with no specular highlights. " alt="" coords="5,83,184,107"/>
-<area shape="rect" id="node4" href="$R2LightProjectiveLambertBlinnPhong_8h.html" title="A projective light with Blinn&#45;Phong specular highlights. " alt="" coords="214,77,381,113"/>
-<area shape="rect" id="node6" href="$R2LightProjectiveLambertBlinnPhongShadowVariance_8h.html" title="A projective light with Blinn&#45;Phong specular highlights and a variance shadow. " alt="" coords="415,77,593,113"/>
-<area shape="rect" id="node8" href="$R2LightProjectiveLambertShadowVariance_8h.html" title="A projective light with no specular highlights and a variance shadow. " alt="" coords="642,77,809,113"/>
-<area shape="rect" id="node3" href="$R2LightProjectiveLambertSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambert shader for single instances. " alt="" coords="9,161,175,197"/>
-<area shape="rect" id="node5" href="$R2LightProjectiveLambertBlinnPhongSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhong shader for single instances. " alt="" coords="199,161,366,197"/>
-<area shape="rect" id="node7" href="$R2LightProjectiveLambertBlinnPhongShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhongShadowVariance shader for single instances..." alt="" coords="391,161,623,197"/>
-<area shape="rect" id="node9" href="$R2LightProjectiveLambertShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertShadowVariance shader for single instances. " alt="" coords="647,161,819,197"/>
+<area shape="rect" id="node2" href="$R2LightProjectiveLambert_8h.html" title="A projective light with no specular highlights. " alt="" coords="9,83,185,107"/>
+<area shape="rect" id="node4" href="$R2LightProjectiveLambertBlinnPhong_8h.html" title="A projective light with Blinn&#45;Phong specular highlights. " alt="" coords="215,77,380,113"/>
+<area shape="rect" id="node6" href="$R2LightProjectiveLambertBlinnPhongShadowVariance_8h.html" title="A projective light with Blinn&#45;Phong specular highlights and a variance shadow. " alt="" coords="407,77,596,113"/>
+<area shape="rect" id="node8" href="$R2LightProjectiveLambertShadowVariance_8h.html" title="A projective light with no specular highlights and a variance shadow. " alt="" coords="637,77,803,113"/>
+<area shape="rect" id="node3" href="$R2LightProjectiveLambertSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambert shader for single instances. " alt="" coords="5,161,171,197"/>
+<area shape="rect" id="node5" href="$R2LightProjectiveLambertBlinnPhongSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhong shader for single instances. " alt="" coords="195,161,360,197"/>
+<area shape="rect" id="node7" href="$R2LightProjectiveLambertBlinnPhongShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertBlinnPhongShadowVariance shader for single instances..." alt="" coords="384,161,624,197"/>
+<area shape="rect" id="node9" href="$R2LightProjectiveLambertShadowVarianceSingle_8frag.html" title="An instantiation of the R2LightProjectiveLambertShadowVariance shader for single instances. " alt="" coords="649,161,826,197"/>
 </map>
