@@ -24,10 +24,13 @@ import com.io7m.r2.core.debug.R2DebugShaderLightSphericalAttenuationSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
 
 public abstract class R2ShaderLightSphericalDebugAttenuationSingleContract
   extends R2ShaderLightVolumeSingleContract<R2LightSphericalSingleReadableType>
 {
+  protected abstract R2MeshLoaderType loader();
+
   @Override
   protected final R2ShaderLightVolumeSingleType<
     R2LightSphericalSingleReadableType> newShaderWithVerifier(
@@ -45,6 +48,6 @@ public abstract class R2ShaderLightSphericalDebugAttenuationSingleContract
     final R2IDPoolType pool)
   {
     return R2LightSphericalSingle.newLight(
-      R2UnitSphere.newUnitSphere8(g), pool);
+      R2UnitSphere.newUnitSphere8(this.loader(), g), pool);
   }
 }

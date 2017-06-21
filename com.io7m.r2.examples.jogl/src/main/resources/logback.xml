@@ -5,19 +5,43 @@
     name="STDERR"
     class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%level %logger{128}: %msg%n</pattern>
+      <pattern>[%thread] %level %logger: %msg%n</pattern>
     </encoder>
     <target>System.err</target>
   </appender>
 
   <logger
     name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader.vertex"
-    level="TRACE"/>
+    level="INFO"/>
   <logger
     name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader.fragment"
-    level="TRACE"/>
+    level="INFO"/>
   <logger
     name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader.geometry"
+    level="INFO"/>
+  <logger
+    name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader"
+    level="INFO"/>
+
+  <logger
+    name="com.io7m.jcanephora.jogl.JOGLShaders"
+    level="INFO"/>
+  <logger
+    name="com.io7m.jcanephora.jogl.JOGLFramebuffers"
+    level="INFO"/>
+  <logger
+    name="com.io7m.jcanephora.jogl.JOGLTextures"
+    level="INFO"/>
+
+  <logger
+    name="com.io7m.sombrero.serviceloader.SoShaderResolverServiceLoader"
+    level="INFO"/>
+  <logger
+    name="com.io7m.sombrero.core.SoShaderStoreResource"
+    level="INFO"/>
+
+  <logger
+    name="com.io7m.jcanephora.jogl.JOGLIndexBuffers"
     level="TRACE"/>
 
   <root level="DEBUG">

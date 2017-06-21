@@ -173,7 +173,7 @@ public final class ExampleMinimal implements R2ExampleCustomType
       Math.toRadians(90.0), 640.0 / 480.0, 0.001, 1000.0);
 
     final R2IDPoolType id_pool = m.idPool();
-    final JCGLArrayObjectType mesh = serv.getMesh("halls_complex.r2z");
+    final JCGLArrayObjectType mesh = serv.getMesh("halls_complex.smfb");
 
     final R2TransformSOT transform = R2TransformSOT.create();
     transform.setTranslation(PVector3D.of(0.0, -1.0, 0.0));

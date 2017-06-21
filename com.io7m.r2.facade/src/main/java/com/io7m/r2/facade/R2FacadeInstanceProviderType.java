@@ -95,8 +95,8 @@ public interface R2FacadeInstanceProviderType
   {
     return R2InstanceBillboardedDynamic.create(
       this.main().idPool(),
-      this.main().gl33().arrayBuffers(),
-      this.main().gl33().arrayObjects(),
+      this.main().rendererGL33().arrayBuffers(),
+      this.main().rendererGL33().arrayObjects(),
       size);
   }
 
@@ -115,8 +115,8 @@ public interface R2FacadeInstanceProviderType
   {
     return R2InstanceBatchedDynamic.create(
       this.main().idPool(),
-      this.main().gl33().arrayBuffers(),
-      this.main().gl33().arrayObjects(),
+      this.main().rendererGL33().arrayBuffers(),
+      this.main().rendererGL33().arrayObjects(),
       array_object,
       size);
   }

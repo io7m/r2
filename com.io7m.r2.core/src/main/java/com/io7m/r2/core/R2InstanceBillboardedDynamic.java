@@ -35,6 +35,10 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 
 import java.nio.FloatBuffer;
 
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.BILLBOARDED_ATTRIBUTE_ROTATION_INDEX;
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.BILLBOARDED_ATTRIBUTE_SCALE_INDEX;
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.POSITION_ATTRIBUTE_INDEX;
+
 /**
  * <p>The default implementation of the {@link R2InstanceBatchedDynamicType}
  * interface.</p>
@@ -98,7 +102,7 @@ public final class R2InstanceBillboardedDynamic
 
       long offset = 0L;
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
+        POSITION_ATTRIBUTE_INDEX,
         vbo,
         3,
         JCGLScalarType.TYPE_FLOAT,
@@ -107,7 +111,7 @@ public final class R2InstanceBillboardedDynamic
         false);
       offset += 3L * 4L;
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.BILLBOARDED_ATTRIBUTE_SCALE_INDEX,
+        BILLBOARDED_ATTRIBUTE_SCALE_INDEX,
         vbo,
         1,
         JCGLScalarType.TYPE_FLOAT,
@@ -116,7 +120,7 @@ public final class R2InstanceBillboardedDynamic
         false);
       offset += 4L;
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.BILLBOARDED_ATTRIBUTE_ROTATION_INDEX,
+        BILLBOARDED_ATTRIBUTE_ROTATION_INDEX,
         vbo,
         1,
         JCGLScalarType.TYPE_FLOAT,

@@ -17,6 +17,10 @@
   <description>3D renderer (JOGL examples frontend)</description>
   <url>http://io7m.github.io/r2/</url>
 
+  <properties>
+    <mdep.analyze.skip>true</mdep.analyze.skip>
+  </properties>
+
   <scm>
     <url>${project.parent.scm.url}</url>
     <connection>${project.parent.scm.connection}</connection>
@@ -46,12 +50,27 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes.binary</artifactId>
+      <artifactId>com.io7m.r2.meshes.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes.arrayobject</artifactId>
+      <artifactId>com.io7m.r2.meshes.defaults</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.meshes.processing.smf</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.meshes.loading.smf</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.meshes.tangents</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -90,6 +109,10 @@
     <dependency>
       <groupId>com.io7m.sombrero</groupId>
       <artifactId>com.io7m.sombrero.serviceloader</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.format.binary</artifactId>
     </dependency>
 
     <dependency>

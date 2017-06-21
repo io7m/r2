@@ -35,12 +35,14 @@ import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
 import com.io7m.jtensors.storage.bytebuffered.PMatrixByteBuffered4x4Type;
 import com.io7m.jtensors.storage.bytebuffered.PMatrixByteBuffered4x4s32;
 import com.io7m.mutable.numbers.core.MutableLong;
+import com.io7m.r2.meshes.api.R2MeshAttributeConventions;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
 
 import java.util.function.Consumer;
+
 
 /**
  * <p>The default implementation of the {@link R2InstanceBatchedDynamicType}
@@ -115,7 +117,7 @@ public final class R2InstanceBatchedDynamic
       final int stride = 16 * 4;
       long offset = 0L;
       aob.setAttributeFloatingPointWithDivisor(
-        R2AttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_0_ATTRIBUTE_INDEX,
+        R2MeshAttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_0_ATTRIBUTE_INDEX,
         vbo,
         4,
         JCGLScalarType.TYPE_FLOAT,
@@ -125,7 +127,7 @@ public final class R2InstanceBatchedDynamic
         1);
       offset += 4L * 4L;
       aob.setAttributeFloatingPointWithDivisor(
-        R2AttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_1_ATTRIBUTE_INDEX,
+        R2MeshAttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_1_ATTRIBUTE_INDEX,
         vbo,
         4,
         JCGLScalarType.TYPE_FLOAT,
@@ -135,7 +137,7 @@ public final class R2InstanceBatchedDynamic
         1);
       offset += 4L * 4L;
       aob.setAttributeFloatingPointWithDivisor(
-        R2AttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_2_ATTRIBUTE_INDEX,
+        R2MeshAttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_2_ATTRIBUTE_INDEX,
         vbo,
         4,
         JCGLScalarType.TYPE_FLOAT,
@@ -145,7 +147,7 @@ public final class R2InstanceBatchedDynamic
         1);
       offset += 4L * 4L;
       aob.setAttributeFloatingPointWithDivisor(
-        R2AttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_3_ATTRIBUTE_INDEX,
+        R2MeshAttributeConventions.BATCHED_MODEL_MATRIX_COLUMN_3_ATTRIBUTE_INDEX,
         vbo,
         4,
         JCGLScalarType.TYPE_FLOAT,

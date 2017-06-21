@@ -20,30 +20,22 @@ import com.io7m.jcanephora.core.JCGLArrayBufferType;
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jcanephora.core.JCGLIndexBufferType;
-import com.io7m.jcanephora.core.JCGLUnsignedType;
 import com.io7m.jcanephora.core.JCGLUsageHint;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jnull.NullCheck;
+import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
 import com.io7m.r2.core.R2Exception;
-import com.io7m.r2.core.R2ExceptionIO;
 import com.io7m.r2.core.R2UnitCubeType;
-import com.io7m.r2.core.cursors.R2VertexCursorPUNT16;
-import com.io7m.r2.core.cursors.R2VertexCursorProducerInfoType;
-import com.io7m.r2.core.cursors.R2VertexCursorProducerType;
-import com.io7m.r2.meshes.arrayobject.R2MeshArrayObjectSynchronousAdapter;
-import com.io7m.r2.meshes.arrayobject.R2MeshArrayObjectSynchronousAdapterType;
-import com.io7m.r2.meshes.binary.R2MBReaderType;
-import com.io7m.r2.meshes.binary.R2MBUnmappedReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaded;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderRequest;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
+import com.io7m.r2.meshes.loading.api.R2MeshRequireTangents;
+import com.io7m.r2.meshes.loading.api.R2MeshRequireUV;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.Optional;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * The default implementation of the {@link R2UnitCubeType} interface.
@@ -51,12 +43,6 @@ import java.util.Optional;
 
 public final class R2UnitCube implements R2UnitCubeType
 {
-  private static final Logger LOG;
-
-  static {
-    LOG = LoggerFactory.getLogger(R2UnitCube.class);
-  }
-
   private final JCGLArrayBufferType array_buffer;
   private final JCGLIndexBufferType index_buffer;
   private final JCGLArrayObjectType array_object;
@@ -78,70 +64,43 @@ public final class R2UnitCube implements R2UnitCubeType
   }
 
   /**
-   * Construct a new {@code 8} segment unit sphere.
+   * Construct a new unit cube.
    *
-   * @param g An OpenGL interface
+   * @param in_loader A mesh loader
+   * @param in_g      An OpenGL interface
    *
    * @return A new unit sphere
    */
 
   public static R2UnitCubeType newUnitCube(
-    final JCGLInterfaceGL33Type g)
+    final R2MeshLoaderType in_loader,
+    final JCGLInterfaceGL33Type in_g)
   {
-    final JCGLUsageHint array_usage = JCGLUsageHint.USAGE_STATIC_DRAW;
-    final JCGLUsageHint index_usage = JCGLUsageHint.USAGE_STATIC_DRAW;
-    final R2VertexCursorPUNT16 ci = R2VertexCursorPUNT16.getInstance();
-    final String name = "cube.r2b";
-    return newUnitCube(g, array_usage, index_usage, ci, name);
-  }
+    NullCheck.notNull(in_loader, "Loader");
+    NullCheck.notNull(in_g, "G33");
 
-  private static <T extends
-    R2VertexCursorProducerInfoType & R2VertexCursorProducerType<ByteBuffer>>
-  R2UnitCubeType newUnitCube(
-    final JCGLInterfaceGL33Type g,
-    final JCGLUsageHint array_usage,
-    final JCGLUsageHint index_usage,
-    final T ci,
-    final String name)
-  {
-    LOG.debug("allocating unit cube");
+    final URL url = R2UnitCube.class.getResource("unit_cube.smfb");
+    if (url == null) {
+      throw new IllegalStateException("unit_cube.smfb resource is missing");
+    }
 
-    final R2MeshArrayObjectSynchronousAdapterType adapter =
-      R2MeshArrayObjectSynchronousAdapter.newAdapter(
-        g.arrayObjects(),
-        g.arrayBuffers(),
-        g.indexBuffers(),
-        array_usage,
-        JCGLUnsignedType.TYPE_UNSIGNED_SHORT,
-        index_usage,
-        ci,
-        ci);
-
-    final Class<R2UnitCube> cc = R2UnitCube.class;
-    try (final InputStream is = cc.getResourceAsStream(name)) {
-      try (final ReadableByteChannel chan = Channels.newChannel(is)) {
-        final R2MBReaderType r = R2MBUnmappedReader.newReader(chan, adapter);
-        r.run();
-
-        if (adapter.hasFailed()) {
-          final Optional<Throwable> ex_opt =
-            adapter.errorException();
-          final String ex_msg =
-            adapter.errorMessage();
-
-          if (ex_opt.isPresent()) {
-            throw new R2ExceptionIO(ex_msg, ex_opt.get());
-          }
-          throw new R2ExceptionIO(ex_msg);
-        }
-
-        return new R2UnitCube(
-          adapter.arrayBuffer(),
-          adapter.arrayObject(),
-          adapter.indexBuffer());
-      }
-    } catch (final IOException e) {
-      throw new R2ExceptionIO(e.getMessage(), e);
+    try {
+      final URI uri = url.toURI();
+      final R2MeshLoaderRequest request =
+        R2MeshLoaderRequest.of(
+          uri,
+          R2MeshRequireTangents.R2_TANGENTS_REQUIRED,
+          R2MeshRequireUV.R2_UV_REQUIRED,
+          JCGLUsageHint.USAGE_STATIC_DRAW,
+          JCGLUsageHint.USAGE_STATIC_DRAW);
+      final R2MeshLoaded mesh =
+        in_loader.loadSynchronously(in_g, request);
+      return new R2UnitCube(
+        mesh.arrayBuffer(),
+        mesh.newArrayObject(in_g.arrayObjects()),
+        mesh.indexBuffer());
+    } catch (final URISyntaxException e) {
+      throw new UnreachableCodeException(e);
     }
   }
 

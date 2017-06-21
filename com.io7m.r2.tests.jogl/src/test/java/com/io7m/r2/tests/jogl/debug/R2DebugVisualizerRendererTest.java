@@ -22,8 +22,11 @@ import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.core.debug.R2DebugVisualizerRenderer;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
+import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderSynchronous;
 import com.io7m.r2.tests.debug.R2DebugVisualizerRendererContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
+import com.io7m.smfj.format.binary.SMFFormatBinary;
 
 public final class R2DebugVisualizerRendererTest extends
   R2DebugVisualizerRendererContract
@@ -35,6 +38,12 @@ public final class R2DebugVisualizerRendererTest extends
     final R2IDPoolType in_pool)
   {
     return R2DebugVisualizerRenderer.create(in_g, in_shader_env, in_pool);
+  }
+
+  @Override
+  protected R2MeshLoaderType loader()
+  {
+    return R2SMFMeshLoaderSynchronous.create(new SMFFormatBinary());
   }
 
   @Override

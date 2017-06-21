@@ -48,7 +48,7 @@ public interface R2FacadeTranslucentInstanceShaderProviderType
   default R2TranslucentShaderBasicPremultipliedSingle createBasicPremultipliedSingle()
   {
     return R2TranslucentShaderBasicPremultipliedSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -60,7 +60,7 @@ public interface R2FacadeTranslucentInstanceShaderProviderType
   default R2TranslucentShaderBasicPremultipliedBatched createBasicPremultipliedBatched()
   {
     return R2TranslucentShaderBasicPremultipliedBatched.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -72,7 +72,7 @@ public interface R2FacadeTranslucentInstanceShaderProviderType
   default R2TranslucentShaderBasicPremultipliedBillboarded createBasicPremultipliedBillboarded()
   {
     return R2TranslucentShaderBasicPremultipliedBillboarded.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -84,7 +84,7 @@ public interface R2FacadeTranslucentInstanceShaderProviderType
   default R2RefractionMaskedDeltaShaderSingle createRefractionMaskedDeltaSingle()
   {
     return R2RefractionMaskedDeltaShaderSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -96,7 +96,7 @@ public interface R2FacadeTranslucentInstanceShaderProviderType
   default R2RefractionMaskedDeltaShaderBatched createRefractionMaskedDeltaBatched()
   {
     return R2RefractionMaskedDeltaShaderBatched.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -108,7 +108,7 @@ public interface R2FacadeTranslucentInstanceShaderProviderType
   default R2RefractionMaskedDeltaShaderBillboarded createRefractionMaskedDeltaBillboarded()
   {
     return R2RefractionMaskedDeltaShaderBillboarded.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }

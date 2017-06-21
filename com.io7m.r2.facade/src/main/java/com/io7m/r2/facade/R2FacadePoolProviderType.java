@@ -57,7 +57,10 @@ public interface R2FacadePoolProviderType
     final long soft_size,
     final long hard_size)
   {
-    return R2ImageBufferPool.newPool(this.main().gl33(), soft_size, hard_size);
+    return R2ImageBufferPool.newPool(
+      this.main().rendererGL33(),
+      soft_size,
+      hard_size);
   }
 
   /**
@@ -76,7 +79,7 @@ public interface R2FacadePoolProviderType
     final long hard_size)
   {
     return R2AmbientOcclusionBufferPool.newPool(
-      this.main().gl33(),
+      this.main().rendererGL33(),
       soft_size,
       hard_size);
   }

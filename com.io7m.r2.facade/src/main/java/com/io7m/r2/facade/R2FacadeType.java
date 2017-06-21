@@ -60,6 +60,11 @@ import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
 import com.io7m.r2.meshes.defaults.R2UnitCube;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderAsynchronousType;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
+import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderAsynchronous;
+import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderSynchronous;
+import com.io7m.smfj.format.binary.SMFFormatBinary;
 import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;
 import com.io7m.sombrero.core.SoShaderResolverType;
@@ -69,6 +74,9 @@ import org.immutables.value.Value;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.OptionalInt;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -80,11 +88,31 @@ import java.util.concurrent.atomic.AtomicReference;
 public interface R2FacadeType extends R2DeletableType
 {
   /**
-   * @return The GL33 interface
+   * @return The GL33 interface used for rendering operations
    */
 
   @Value.Parameter
-  JCGLInterfaceGL33Type gl33();
+  JCGLInterfaceGL33Type rendererGL33();
+
+  /**
+   * The executor service used to perform background I/O operations. The
+   * default executor uses fixed thread pool containing a single low-priority
+   * thread.
+   *
+   * @return An executor service used for background I/O operations
+   */
+
+  @Value.Default
+  default ExecutorService executorForIO()
+  {
+    return Executors.newFixedThreadPool(1, r -> {
+      final Thread th = new Thread(r);
+      th.setName("com.io7m.r2.io:" + th.getId());
+      th.setDaemon(true);
+      th.setPriority(Thread.MIN_PRIORITY);
+      return th;
+    });
+  }
 
   @Override
   default boolean isDeleted()
@@ -93,7 +121,8 @@ public interface R2FacadeType extends R2DeletableType
   }
 
   @Override
-  default void delete(final JCGLInterfaceGL33Type g)
+  default void delete(
+    final JCGLInterfaceGL33Type g)
     throws R2Exception
   {
     final Collection<R2DeletableType> deletables = new ArrayList<>(16);
@@ -127,6 +156,13 @@ public interface R2FacadeType extends R2DeletableType
         });
       }
     });
+
+    this.executorForIO().shutdown();
+    try {
+      this.executorForIO().awaitTermination(3L, TimeUnit.SECONDS);
+    } catch (final InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
 
     final R2Exception result = ref.get();
     if (result != null) {
@@ -184,9 +220,36 @@ public interface R2FacadeType extends R2DeletableType
   {
     return R2StencilRenderer.create(
       this.shaderPreprocessingEnvironment(),
-      this.gl33(),
+      this.rendererGL33(),
       this.idPool(),
       this.unitQuad());
+  }
+
+  /**
+   * A mesh loader that loads meshes asynchronously. The default mesh loader
+   * supports only SMF/B files.
+   *
+   * @return An asynchronous mesh loader
+   */
+
+  @Value.Default
+  default R2MeshLoaderAsynchronousType meshLoaderAsynchronous()
+  {
+    return R2SMFMeshLoaderAsynchronous.create(
+      new SMFFormatBinary(), this.executorForIO());
+  }
+
+  /**
+   * A mesh loader that loads meshes synchronously. The default mesh loader
+   * supports only SMF/B files.
+   *
+   * @return An asynchronous mesh loader
+   */
+
+  @Value.Default
+  default R2MeshLoaderType meshLoader()
+  {
+    return R2SMFMeshLoaderSynchronous.create(new SMFFormatBinary());
   }
 
   /**
@@ -207,7 +270,7 @@ public interface R2FacadeType extends R2DeletableType
   default JCGLTextureUnitAllocatorType textureUnitAllocator()
   {
     return JCGLTextureUnitAllocator.newAllocatorWithStack(
-      32, this.gl33().textures().textureGetUnits());
+      32, this.rendererGL33().textures().textureGetUnits());
   }
 
   /**
@@ -218,7 +281,7 @@ public interface R2FacadeType extends R2DeletableType
   default R2TextureDefaultsType textureDefaults()
   {
     return R2TextureDefaults.create(
-      this.gl33().textures(),
+      this.rendererGL33().textures(),
       this.textureUnitAllocator().rootContext());
   }
 
@@ -229,7 +292,7 @@ public interface R2FacadeType extends R2DeletableType
   @Value.Default
   default R2GeometryRendererType geometryRenderer()
   {
-    return R2GeometryRenderer.create(this.gl33());
+    return R2GeometryRenderer.create(this.rendererGL33());
   }
 
   /**
@@ -240,7 +303,7 @@ public interface R2FacadeType extends R2DeletableType
   default R2LightRendererType lightRenderer()
   {
     return R2LightRenderer.create(
-      this.gl33(), this.textureDefaults(),
+      this.rendererGL33(), this.textureDefaults(),
       this.shaderPreprocessingEnvironment(),
       this.idPool(),
       this.unitQuad());
@@ -253,7 +316,7 @@ public interface R2FacadeType extends R2DeletableType
   @Value.Default
   default R2UnitQuadType unitQuad()
   {
-    return R2UnitQuad.newUnitQuad(this.gl33());
+    return R2UnitQuad.newUnitQuad(this.rendererGL33());
   }
 
   /**
@@ -263,7 +326,7 @@ public interface R2FacadeType extends R2DeletableType
   @Value.Default
   default R2UnitCubeType unitCube()
   {
-    return R2UnitCube.newUnitCube(this.gl33());
+    return R2UnitCube.newUnitCube(this.meshLoader(), this.rendererGL33());
   }
 
   /**
@@ -273,7 +336,7 @@ public interface R2FacadeType extends R2DeletableType
   @Value.Default
   default R2UnitSphereType unitSphere8()
   {
-    return R2UnitSphere.newUnitSphere8(this.gl33());
+    return R2UnitSphere.newUnitSphere8(this.meshLoader(), this.rendererGL33());
   }
 
   /**
@@ -284,7 +347,7 @@ public interface R2FacadeType extends R2DeletableType
   default R2DebugVisualizerRendererType debugVisualizerRenderer()
   {
     return R2DebugVisualizerRenderer.create(
-      this.gl33(),
+      this.rendererGL33(),
       this.shaderPreprocessingEnvironment(),
       this.idPool());
   }
@@ -296,7 +359,7 @@ public interface R2FacadeType extends R2DeletableType
   @Value.Default
   default R2DepthRendererType depthRenderer()
   {
-    return R2DepthOnlyRenderer.create(this.gl33());
+    return R2DepthOnlyRenderer.create(this.rendererGL33());
   }
 
   /**
@@ -306,7 +369,7 @@ public interface R2FacadeType extends R2DeletableType
   @Value.Default
   default R2DepthVarianceRendererType depthVarianceRenderer()
   {
-    return R2DepthVarianceRenderer.create(this.gl33());
+    return R2DepthVarianceRenderer.create(this.rendererGL33());
   }
 
   /**
@@ -317,7 +380,7 @@ public interface R2FacadeType extends R2DeletableType
   default R2ShadowMapRendererType shadowMapRenderer()
   {
     return R2ShadowMapRenderer.newRenderer(
-      this.gl33(),
+      this.rendererGL33(),
       this.depthVarianceRenderer(),
       this.depthVarianceBufferPool());
   }
@@ -362,7 +425,7 @@ public interface R2FacadeType extends R2DeletableType
   depthVarianceBufferPool()
   {
     return R2DepthVarianceBufferPool.newPool(
-      this.gl33(),
+      this.rendererGL33(),
       this.depthVarianceBufferPoolSteadySize(),
       this.depthVarianceBufferPoolMaximumSize());
   }
@@ -374,7 +437,7 @@ public interface R2FacadeType extends R2DeletableType
   @Value.Default
   default JCGLProfilingType profiling()
   {
-    return JCGLProfiling.newProfiling(this.gl33().timers());
+    return JCGLProfiling.newProfiling(this.rendererGL33().timers());
   }
 
   /**
@@ -484,7 +547,7 @@ public interface R2FacadeType extends R2DeletableType
   @Value.Default
   default R2TranslucentRendererType translucentRenderer()
   {
-    return R2TranslucentRenderer.newRenderer(this.gl33());
+    return R2TranslucentRenderer.newRenderer(this.rendererGL33());
   }
 
   /**
@@ -495,7 +558,7 @@ public interface R2FacadeType extends R2DeletableType
   default R2MaskRendererType maskRenderer()
   {
     return R2MaskRenderer.create(
-      this.gl33(),
+      this.rendererGL33(),
       this.shaderPreprocessingEnvironment(),
       this.idPool());
   }

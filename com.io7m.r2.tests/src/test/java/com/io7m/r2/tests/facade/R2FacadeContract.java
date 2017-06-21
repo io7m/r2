@@ -16,6 +16,8 @@
 
 package com.io7m.r2.tests.facade;
 
+import com.io7m.jcanephora.async.JCGLAsyncInterfaceGL33;
+import com.io7m.jcanephora.async.JCGLAsyncInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.facade.R2FacadeType;
@@ -36,8 +38,12 @@ public abstract class R2FacadeContract extends R2JCGLContract
   @Test
   public final void testCreateDelete()
   {
-    final JCGLContextType c = this.newGL33Context("main", 24, 8);
-    final JCGLInterfaceGL33Type g = c.contextGetGL33();
+    final JCGLContextType c_render =
+      this.newGL33Context("main", 24, 8);
+
+    final JCGLInterfaceGL33Type g =
+      c_render.contextGetGL33();
+
     LOG.debug("creating");
     final R2FacadeType m = this.newMain(g);
     Assert.assertFalse(m.isDeleted());
@@ -46,5 +52,6 @@ public abstract class R2FacadeContract extends R2JCGLContract
     Assert.assertTrue(m.isDeleted());
   }
 
-  protected abstract R2FacadeType newMain(JCGLInterfaceGL33Type g);
+  protected abstract R2FacadeType newMain(
+    JCGLInterfaceGL33Type g_render);
 }

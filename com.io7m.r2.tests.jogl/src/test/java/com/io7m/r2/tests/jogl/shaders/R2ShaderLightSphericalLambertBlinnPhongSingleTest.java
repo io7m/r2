@@ -17,8 +17,11 @@
 package com.io7m.r2.tests.jogl.shaders;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
+import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderSynchronous;
 import com.io7m.r2.tests.core.shaders.R2ShaderLightSphericalLambertBlinnPhongSingleContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
+import com.io7m.smfj.format.binary.SMFFormatBinary;
 
 public final class R2ShaderLightSphericalLambertBlinnPhongSingleTest extends
   R2ShaderLightSphericalLambertBlinnPhongSingleContract
@@ -30,5 +33,11 @@ public final class R2ShaderLightSphericalLambertBlinnPhongSingleTest extends
     final int stencil_bits)
   {
     return R2TestContexts.newGL33Context(name, depth_bits, stencil_bits);
+  }
+
+  @Override
+  protected R2MeshLoaderType loader()
+  {
+    return R2SMFMeshLoaderSynchronous.create(new SMFFormatBinary());
   }
 }

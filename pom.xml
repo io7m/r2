@@ -27,14 +27,15 @@
     <module>com.io7m.r2.documentation</module>
     <module>com.io7m.r2.examples.jogl</module>
     <module>com.io7m.r2.examples</module>
-    <module>com.io7m.r2.filters</module>
     <module>com.io7m.r2.facade</module>
-    <module>com.io7m.r2.meshes.arrayobject</module>
-    <module>com.io7m.r2.meshes.binary</module>
+    <module>com.io7m.r2.filters</module>
+    <module>com.io7m.r2.meshes.api</module>
     <module>com.io7m.r2.meshes.defaults</module>
-    <module>com.io7m.r2.meshes.obj</module>
+    <module>com.io7m.r2.meshes.loading.api</module>
+    <module>com.io7m.r2.meshes.loading.smf</module>
+    <module>com.io7m.r2.meshes.processing.smf</module>
+    <module>com.io7m.r2.meshes.tangents</module>
     <module>com.io7m.r2.meshes.tools</module>
-    <module>com.io7m.r2.meshes</module>
     <module>com.io7m.r2.shaders.core</module>
     <module>com.io7m.r2.spaces</module>
     <module>com.io7m.r2.tests.jogl</module>
@@ -47,13 +48,15 @@
     <io7m.checkstyle.artifact>com.io7m.r2.checkstyle</io7m.checkstyle.artifact>
     <io7m.checkstyle.path>/com/io7m/r2/checkstyle/checkstyle.xml</io7m.checkstyle.path>
     <io7m.api.previousVersion>0.3.0-SNAPSHOT</io7m.api.previousVersion>
-    <com.io7m.r2.jcanephora.versionRange>0.60.0</com.io7m.r2.jcanephora.versionRange>
+    <com.io7m.r2.jcanephora.versionRange>0.61.0</com.io7m.r2.jcanephora.versionRange>
     <com.io7m.r2.jtensors.versionRange>[8.0.0, 9.0.0)</com.io7m.r2.jtensors.versionRange>
     <com.io7m.r2.sombrero.versionRange>0.3.1</com.io7m.r2.sombrero.versionRange>
     <com.io7m.r2.fastutil.versionRange>[7.1.0, 8.0.0)</com.io7m.r2.fastutil.versionRange>
     <com.io7m.r2.jdae.versionRange>0.1.2</com.io7m.r2.jdae.versionRange>
     <com.io7m.r2.jpra.versionRange>0.6.0</com.io7m.r2.jpra.versionRange>
     <com.io7m.r2.junsigned.versionRange>[1.0.0, 2.0.0)</com.io7m.r2.junsigned.versionRange>
+    <com.io7m.r2.smfj.versionRange>0.14.0</com.io7m.r2.smfj.versionRange>
+    <com.io7m.r2.jlexing.versionRange>[1.1.0, 2.0.0)</com.io7m.r2.jlexing.versionRange>
   </properties>
 
   <licenses>
@@ -139,6 +142,11 @@
         <groupId>com.io7m.jproperties</groupId>
         <artifactId>com.io7m.jproperties.core</artifactId>
         <version>[1.0.2, 2.0.0)</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.jcanephora</groupId>
+        <artifactId>com.io7m.jcanephora.async</artifactId>
+        <version>${com.io7m.r2.jcanephora.versionRange}</version>
       </dependency>
       <dependency>
         <groupId>com.io7m.jcanephora</groupId>
@@ -293,9 +301,74 @@
       <dependency>
         <groupId>com.io7m.jlexing</groupId>
         <artifactId>com.io7m.jlexing.core</artifactId>
-        <version>0.2.1</version>
+        <version>${com.io7m.r2.jlexing.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.core</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.bytebuffer</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.processing.api</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.processing.main</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.format.obj</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.format.text</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.format.binary</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.frontend</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.parser.api</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.probe.api</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.serializer.api</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.io7m.smfj</groupId>
+        <artifactId>com.io7m.smfj.validation.api</artifactId>
+        <version>${com.io7m.r2.smfj.versionRange}</version>
       </dependency>
 
+      <dependency>
+        <groupId>io.javaslang</groupId>
+        <artifactId>javaslang</artifactId>
+        <version>2.1.0-alpha</version>
+      </dependency>
       <dependency>
         <groupId>it.unimi.dsi</groupId>
         <artifactId>fastutil</artifactId>

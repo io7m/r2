@@ -16,6 +16,7 @@
 
 package com.io7m.r2.tests.jogl;
 
+import com.io7m.jcanephora.async.JCGLAsyncInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.facade.R2Facade;
@@ -27,9 +28,9 @@ public final class R2FacadeTest extends R2FacadeContract
 {
   @Override
   protected R2FacadeType newMain(
-    final JCGLInterfaceGL33Type g)
+    final JCGLInterfaceGL33Type g_render)
   {
-    return R2Facade.of(g, SoShaderResolverServiceLoader.create());
+    return R2Facade.of(g_render, SoShaderResolverServiceLoader.create());
   }
 
   @Override

@@ -1,0 +1,28 @@
+smf 1 0
+vertices 3
+schema com.io7m.r2.mesh.standard 1 0
+coordinates +x +y -z counter-clockwise
+attribute "R2_POSITION" float 3 32
+attribute "R2_NORMAL"   float 3 32
+attribute "R2_UV"       float 2 32
+attribute "R2_TANGENT4" float 4 32
+end
+
+vertices-noninterleaved
+attribute "R2_POSITION"
+0.0 0.0 0.0
+1.0 0.0 0.0
+0.0 1.0 0.0
+attribute "R2_NORMAL"
+0.0 0.0 1.0
+0.0 0.0 1.0
+0.0 0.0 1.0
+attribute "R2_UV"
+0.0 0.0
+1.0 0.0
+0.0 1.0
+attribute "R2_TANGENT4"
+1.0 0.0 0.0 1.0
+1.0 0.0 0.0 1.0
+1.0 0.0 0.0 1.0
+end

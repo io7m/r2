@@ -50,7 +50,7 @@ public interface R2FacadeLightShaderProviderType
   default R2LightShaderSphericalLambertBlinnPhongSingle createSphericalLambertBlinnPhongSingle()
   {
     return R2LightShaderSphericalLambertBlinnPhongSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -62,7 +62,7 @@ public interface R2FacadeLightShaderProviderType
   default R2LightShaderSphericalLambertPhongSingle createSphericalLambertPhongSingle()
   {
     return R2LightShaderSphericalLambertPhongSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -74,7 +74,7 @@ public interface R2FacadeLightShaderProviderType
   default R2LightShaderSphericalLambertSingle createSphericalLambertSingle()
   {
     return R2LightShaderSphericalLambertSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -86,7 +86,7 @@ public interface R2FacadeLightShaderProviderType
   default R2LightShaderAmbientSingle createAmbientSingle()
   {
     return R2LightShaderAmbientSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -98,7 +98,7 @@ public interface R2FacadeLightShaderProviderType
   default R2LightShaderProjectiveLambertShadowVarianceSingle createProjectiveLambertShadowVarianceSingle()
   {
     return R2LightShaderProjectiveLambertShadowVarianceSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -110,7 +110,7 @@ public interface R2FacadeLightShaderProviderType
   default R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle createProjectiveLambertBlinnPhongShadowVarianceSingle()
   {
     return R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -122,7 +122,7 @@ public interface R2FacadeLightShaderProviderType
   default R2LightShaderProjectiveLambertSingle createProjectiveLambertSingle()
   {
     return R2LightShaderProjectiveLambertSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -134,7 +134,7 @@ public interface R2FacadeLightShaderProviderType
   default R2LightShaderProjectiveLambertBlinnPhongSingle createProjectiveLambertBlinnPhongSingle()
   {
     return R2LightShaderProjectiveLambertBlinnPhongSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }

@@ -18,14 +18,17 @@ package com.io7m.r2.tests.meshes;
 
 import com.io7m.jtensors.core.parameterized.vectors.PVector2D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
-import com.io7m.r2.meshes.R2MeshBasic;
-import com.io7m.r2.meshes.R2MeshBasicBuilderType;
-import com.io7m.r2.meshes.R2MeshBasicType;
-import com.io7m.r2.meshes.R2MeshExceptionMalformedTriangle;
-import com.io7m.r2.meshes.R2MeshExceptionMissingNormal;
-import com.io7m.r2.meshes.R2MeshExceptionMissingPosition;
-import com.io7m.r2.meshes.R2MeshExceptionMissingUV;
-import com.io7m.r2.meshes.R2MeshExceptionMissingVertex;
+import com.io7m.r2.meshes.api.R2MeshBasic;
+import com.io7m.r2.meshes.api.R2MeshBasicVertex;
+import com.io7m.r2.meshes.api.R2MeshExceptionMalformedTriangle;
+import com.io7m.r2.meshes.api.R2MeshExceptionMissingNormal;
+import com.io7m.r2.meshes.api.R2MeshExceptionMissingPosition;
+import com.io7m.r2.meshes.api.R2MeshExceptionMissingUV;
+import com.io7m.r2.meshes.api.R2MeshExceptionMissingVertex;
+import com.io7m.r2.meshes.api.R2MeshTriangle;
+import com.io7m.r2.spaces.R2SpaceObjectType;
+import com.io7m.r2.spaces.R2SpaceTextureType;
+import it.unimi.dsi.fastutil.objects.ObjectBigArrayBigList;
 import org.hamcrest.core.StringContains;
 import org.hamcrest.core.StringStartsWith;
 import org.junit.Assert;
@@ -40,185 +43,193 @@ public final class R2MeshBasicTest
   @Test
   public void testBuildEmpty()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-    final R2MeshBasicType m = b.build();
+    final R2MeshBasic m = R2MeshBasic.of(
+      new ObjectBigArrayBigList<>(),
+      new ObjectBigArrayBigList<>(),
+      new ObjectBigArrayBigList<>(),
+      new ObjectBigArrayBigList<>(),
+      new ObjectBigArrayBigList<>());
 
-    Assert.assertEquals(0L, m.getPositions().size64());
-    Assert.assertEquals(0L, m.getNormals().size64());
-    Assert.assertEquals(0L, m.getUVs().size64());
-    Assert.assertEquals(0L, m.getVertices().size64());
-    Assert.assertEquals(0L, m.getTriangles().size64());
+    Assert.assertEquals(0L, m.positions().size64());
+    Assert.assertEquals(0L, m.normals().size64());
+    Assert.assertEquals(0L, m.uvs().size64());
+    Assert.assertEquals(0L, m.vertices().size64());
+    Assert.assertEquals(0L, m.triangles().size64());
   }
 
   @Test
   public void testBuildNoSuchPosition()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
+    final ObjectBigArrayBigList<R2MeshBasicVertex> vertices =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> positions =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> normals =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector2D<R2SpaceTextureType>> uvs =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<R2MeshTriangle> triangles =
+      new ObjectBigArrayBigList<>();
+
+    normals.add(PVector3D.of(1.0, 1.0, 1.0));
+    uvs.add(PVector2D.of(1.0, 1.0));
+
+    vertices.add(R2MeshBasicVertex.of(1L, 0L, 0L));
+
     this.expected.expect(R2MeshExceptionMissingPosition.class);
-    this.expected.expectMessage(new StringStartsWith("0"));
-    b.addVertex(0L, 0L, 0L);
+    this.expected.expectMessage(new StringStartsWith("1"));
+    R2MeshBasic.of(positions, normals, uvs, vertices, triangles);
   }
 
   @Test
   public void testBuildNoSuchNormal()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
+    final ObjectBigArrayBigList<R2MeshBasicVertex> vertices =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> positions =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> normals =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector2D<R2SpaceTextureType>> uvs =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<R2MeshTriangle> triangles =
+      new ObjectBigArrayBigList<>();
+
+    positions.add(PVector3D.of(1.0, 1.0, 1.0));
+    uvs.add(PVector2D.of(1.0, 1.0));
+
+    vertices.add(R2MeshBasicVertex.of(0L, 1L, 0L));
 
     this.expected.expect(R2MeshExceptionMissingNormal.class);
-    this.expected.expectMessage(new StringStartsWith("0"));
-    b.addVertex(0L, 0L, 0L);
+    this.expected.expectMessage(new StringStartsWith("1"));
+    R2MeshBasic.of(positions, normals, uvs, vertices, triangles);
   }
 
   @Test
   public void testBuildNoSuchUV()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
-    b.addNormal(PVector3D.of(0.0, 0.0, 1.0));
+    final ObjectBigArrayBigList<R2MeshBasicVertex> vertices =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> positions =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> normals =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector2D<R2SpaceTextureType>> uvs =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<R2MeshTriangle> triangles =
+      new ObjectBigArrayBigList<>();
+
+    positions.add(PVector3D.of(1.0, 1.0, 1.0));
+    normals.add(PVector3D.of(1.0, 1.0, 1.0));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 1L));
 
     this.expected.expect(R2MeshExceptionMissingUV.class);
-    this.expected.expectMessage(new StringStartsWith("0"));
-    b.addVertex(0L, 0L, 0L);
-  }
-
-  @Test
-  public void testBuildVertex0()
-  {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
-    b.addNormal(PVector3D.of(0.0, 0.0, 1.0));
-    b.addUV(PVector2D.of(1.0, 0.0));
-
-    final long v = b.addVertex(0L, 0L, 0L);
-    Assert.assertEquals(0L, v);
+    this.expected.expectMessage(new StringStartsWith("1"));
+    R2MeshBasic.of(positions, normals, uvs, vertices, triangles);
   }
 
   @Test
   public void testBuildTriangleNoSuchV0()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
+    final ObjectBigArrayBigList<R2MeshBasicVertex> vertices =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> positions =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> normals =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector2D<R2SpaceTextureType>> uvs =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<R2MeshTriangle> triangles =
+      new ObjectBigArrayBigList<>();
+
+    positions.add(PVector3D.of(1.0, 1.0, 1.0));
+    normals.add(PVector3D.of(1.0, 1.0, 1.0));
+    uvs.add(PVector2D.of(1.0, 1.0));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 0L));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 0L));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 0L));
+    triangles.add(R2MeshTriangle.of(3L, 1L, 2L));
+
     this.expected.expect(R2MeshExceptionMissingVertex.class);
-    this.expected.expectMessage(new StringStartsWith("Vertex 0: 0"));
-    b.addTriangle(0L, 0L, 0L);
+    this.expected.expectMessage(new StringStartsWith("Vertex 0: 3"));
+    R2MeshBasic.of(positions, normals, uvs, vertices, triangles);
   }
 
   @Test
   public void testBuildTriangleNoSuchV1()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
-    b.addNormal(PVector3D.of(0.0, 0.0, 1.0));
-    b.addUV(PVector2D.of(1.0, 0.0));
+    final ObjectBigArrayBigList<R2MeshBasicVertex> vertices =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> positions =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> normals =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector2D<R2SpaceTextureType>> uvs =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<R2MeshTriangle> triangles =
+      new ObjectBigArrayBigList<>();
 
-    final long v = b.addVertex(0L, 0L, 0L);
+    positions.add(PVector3D.of(1.0, 1.0, 1.0));
+    normals.add(PVector3D.of(1.0, 1.0, 1.0));
+    uvs.add(PVector2D.of(1.0, 1.0));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 0L));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 0L));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 0L));
+    triangles.add(R2MeshTriangle.of(0L, 3L, 2L));
+
     this.expected.expect(R2MeshExceptionMissingVertex.class);
-    this.expected.expectMessage(new StringStartsWith("Vertex 1: 1"));
-    b.addTriangle(v, v + 1L, v);
+    this.expected.expectMessage(new StringStartsWith("Vertex 1: 3"));
+    R2MeshBasic.of(positions, normals, uvs, vertices, triangles);
   }
 
   @Test
   public void testBuildTriangleNoSuchV2()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
-    b.addNormal(PVector3D.of(0.0, 0.0, 1.0));
-    b.addUV(PVector2D.of(1.0, 0.0));
+    final ObjectBigArrayBigList<R2MeshBasicVertex> vertices =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> positions =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector3D<R2SpaceObjectType>> normals =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<PVector2D<R2SpaceTextureType>> uvs =
+      new ObjectBigArrayBigList<>();
+    final ObjectBigArrayBigList<R2MeshTriangle> triangles =
+      new ObjectBigArrayBigList<>();
 
-    final long v = b.addVertex(0L, 0L, 0L);
+    positions.add(PVector3D.of(1.0, 1.0, 1.0));
+    normals.add(PVector3D.of(1.0, 1.0, 1.0));
+    uvs.add(PVector2D.of(1.0, 1.0));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 0L));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 0L));
+    vertices.add(R2MeshBasicVertex.of(0L, 0L, 0L));
+    triangles.add(R2MeshTriangle.of(0L, 1L, 3L));
+
     this.expected.expect(R2MeshExceptionMissingVertex.class);
-    this.expected.expectMessage(new StringStartsWith("Vertex 2: 1"));
-    b.addTriangle(v, v, v + 1L);
-  }
-
-  @Test
-  public void testBuildTriangle0()
-  {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
-    b.addNormal(PVector3D.of(0.0, 0.0, 1.0));
-    b.addUV(PVector2D.of(1.0, 0.0));
-
-    final long v0 = b.addVertex(0L, 0L, 0L);
-    final long v1 = b.addVertex(0L, 0L, 0L);
-    final long v2 = b.addVertex(0L, 0L, 0L);
-    final long t = b.addTriangle(v0, v1, v2);
-    Assert.assertEquals(0L, t);
+    this.expected.expectMessage(new StringStartsWith("Vertex 2: 3"));
+    R2MeshBasic.of(positions, normals, uvs, vertices, triangles);
   }
 
   @Test
   public void testBuildTriangleMalformed0()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
-    b.addNormal(PVector3D.of(0.0, 0.0, 1.0));
-    b.addUV(PVector2D.of(1.0, 0.0));
-
-    final long v0 = b.addVertex(0L, 0L, 0L);
-    final long v1 = b.addVertex(0L, 0L, 0L);
-
     this.expected.expect(R2MeshExceptionMalformedTriangle.class);
-    this.expected.expectMessage(new StringContains("Triangle: 0"));
-    b.addTriangle(v0, v0, v1);
+    this.expected.expectMessage(new StringContains("Indices: 0 0 1"));
+    R2MeshTriangle.of(0L, 0L, 1L);
   }
 
   @Test
   public void testBuildTriangleMalformed1()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
-    b.addNormal(PVector3D.of(0.0, 0.0, 1.0));
-    b.addUV(PVector2D.of(1.0, 0.0));
-
-    final long v0 = b.addVertex(0L, 0L, 0L);
-    final long v1 = b.addVertex(0L, 0L, 0L);
-
     this.expected.expect(R2MeshExceptionMalformedTriangle.class);
-    this.expected.expectMessage(new StringContains("Triangle: 0"));
-    b.addTriangle(v0, v1, v1);
+    this.expected.expectMessage(new StringContains("Indices: 0 1 0"));
+    R2MeshTriangle.of(0L, 1L, 0L);
   }
 
   @Test
   public void testBuildTriangleMalformed2()
   {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
-    b.addNormal(PVector3D.of(0.0, 0.0, 1.0));
-    b.addUV(PVector2D.of(1.0, 0.0));
-
-    final long v0 = b.addVertex(0L, 0L, 0L);
-    final long v1 = b.addVertex(0L, 0L, 0L);
-
     this.expected.expect(R2MeshExceptionMalformedTriangle.class);
-    this.expected.expectMessage(new StringContains("Triangle: 0"));
-    b.addTriangle(v0, v1, v0);
-  }
-
-  @Test
-  public void testBuildResetEmpty()
-  {
-    final R2MeshBasicBuilderType b = R2MeshBasic.newBuilder(0L, 0L);
-    b.addPosition(PVector3D.of(0.0, 0.0, 0.0));
-    b.addNormal(PVector3D.of(0.0, 0.0, 1.0));
-    b.addUV(PVector2D.of(1.0, 0.0));
-
-    final long v0 = b.addVertex(0L, 0L, 0L);
-    final long v1 = b.addVertex(0L, 0L, 0L);
-    final long v2 = b.addVertex(0L, 0L, 0L);
-    final long t = b.addTriangle(v0, v1, v2);
-    Assert.assertEquals(0L, t);
-
-    b.reset();
-
-    final R2MeshBasicType m = b.build();
-    Assert.assertEquals(0L, m.getPositions().size64());
-    Assert.assertEquals(0L, m.getNormals().size64());
-    Assert.assertEquals(0L, m.getUVs().size64());
-    Assert.assertEquals(0L, m.getVertices().size64());
-    Assert.assertEquals(0L, m.getTriangles().size64());
+    this.expected.expectMessage(new StringContains("Indices: 1 0 0"));
+    R2MeshTriangle.of(1L, 0L, 0L);
   }
 }

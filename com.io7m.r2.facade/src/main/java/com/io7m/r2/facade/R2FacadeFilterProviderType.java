@@ -64,7 +64,7 @@ public interface R2FacadeFilterProviderType
   default R2FilterFXAAType createFXAA()
   {
     return R2FilterFXAA.newFilter(
-      this.main().gl33(),
+      this.main().rendererGL33(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool(),
       this.main().unitQuad());
@@ -88,7 +88,7 @@ public interface R2FacadeFilterProviderType
   {
     return R2FilterBilateralBlurDepthAware.newFilter(
       this.main().shaderPreprocessingEnvironment(),
-      this.main().gl33(),
+      this.main().rendererGL33(),
       this.main().textureDefaults(),
       image_pool,
       this.main().idPool(),
@@ -150,7 +150,7 @@ public interface R2FacadeFilterProviderType
   {
     return R2FilterBoxBlur.newFilter(
       this.main().shaderPreprocessingEnvironment(),
-      this.main().gl33(),
+      this.main().rendererGL33(),
       this.main().textureDefaults(),
       image_pool,
       this.main().idPool(),
@@ -214,7 +214,7 @@ public interface R2FacadeFilterProviderType
         R2ImageBufferUsableType>> filter_blur)
   {
     return R2FilterEmission.newFilter(
-      this.main().gl33(),
+      this.main().rendererGL33(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool(),
       filter_blur,
@@ -230,7 +230,7 @@ public interface R2FacadeFilterProviderType
   {
     return R2FilterLightApplicator.newFilter(
       this.main().shaderPreprocessingEnvironment(),
-      this.main().gl33(),
+      this.main().rendererGL33(),
       this.main().idPool(),
       this.main().unitQuad());
   }
@@ -243,7 +243,7 @@ public interface R2FacadeFilterProviderType
   {
     return R2FilterSSAO.newFilter(
       this.main().shaderPreprocessingEnvironment(),
-      this.main().gl33(),
+      this.main().rendererGL33(),
       this.main().idPool(),
       this.main().unitQuad());
   }
@@ -257,7 +257,7 @@ public interface R2FacadeFilterProviderType
     return R2FilterOcclusionApplicator.newFilter(
       this.main().shaderPreprocessingEnvironment(),
       this.main().textureDefaults(),
-      this.main().gl33(),
+      this.main().rendererGL33(),
       this.main().idPool(),
       this.main().unitQuad());
   }
@@ -271,7 +271,7 @@ public interface R2FacadeFilterProviderType
     return R2FilterCompositor.newFilter(
       this.main().shaderPreprocessingEnvironment(),
       this.main().textureDefaults(),
-      this.main().gl33(),
+      this.main().rendererGL33(),
       this.main().idPool(),
       this.main().unitQuad());
   }
@@ -283,7 +283,7 @@ public interface R2FacadeFilterProviderType
   default R2FilterFogDepth createFogDepth()
   {
     return R2FilterFogDepth.newFilter(
-      this.main().gl33(),
+      this.main().rendererGL33(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool(),
       this.main().unitQuad());

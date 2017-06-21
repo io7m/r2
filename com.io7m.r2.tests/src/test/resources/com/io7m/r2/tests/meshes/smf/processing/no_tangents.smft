@@ -1,0 +1,28 @@
+smf 1 0
+vertices 3
+triangles 1 8
+schema com.io7m.r2.mesh.standard 1 0
+coordinates +x +y -z counter-clockwise
+attribute "POSITION" float 3 32
+attribute "NORMAL" float 3 32
+attribute "UV" float 2 32
+end
+
+vertices-noninterleaved
+attribute "POSITION"
+0.0 0.0 0.0
+1.0 0.0 0.0
+0.0 1.0 0.0
+attribute "NORMAL"
+0.0 0.0 1.0
+0.0 0.0 1.0
+0.0 0.0 1.0
+attribute "UV"
+0.0 0.0
+1.0 0.0
+0.0 1.0
+end
+
+triangles
+0 1 2
+end

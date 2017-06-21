@@ -35,7 +35,6 @@ import com.io7m.jpra.runtime.java.JPRACursor1DByteBufferedChecked;
 import com.io7m.jpra.runtime.java.JPRACursor1DType;
 import com.io7m.jtensors.storage.api.unparameterized.vectors.VectorStorageFloating3Type;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2AttributeConventions;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.cursors.R2VertexP16ByteBuffered;
 import com.io7m.r2.core.cursors.R2VertexP16Type;
@@ -44,6 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
+
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.POSITION_ATTRIBUTE_INDEX;
 
 /**
  * The default implementation of the {@link R2DebugCubeType} interface.
@@ -99,6 +100,8 @@ public final class R2DebugCube implements R2DebugCubeType
     final JCGLArrayBufferType a;
     final JCGLIndexBufferType i;
     final JCGLArrayObjectType ao;
+
+    g_ao.arrayObjectUnbind();
 
     /*
      * Allocate and populate array buffer.
@@ -214,7 +217,7 @@ public final class R2DebugCube implements R2DebugCubeType
       final JCGLArrayObjectBuilderType aob = g_ao.arrayObjectNewBuilder();
       aob.setIndexBuffer(i);
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
+        POSITION_ATTRIBUTE_INDEX,
         a,
         3,
         JCGLScalarType.TYPE_HALF_FLOAT,

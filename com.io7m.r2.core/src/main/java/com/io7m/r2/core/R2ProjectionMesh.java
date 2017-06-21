@@ -41,6 +41,11 @@ import com.io7m.r2.core.cursors.R2VertexP32UNT16Type;
 
 import java.nio.ByteBuffer;
 
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.NORMAL_ATTRIBUTE_INDEX;
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.POSITION_ATTRIBUTE_INDEX;
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.TANGENT4_ATTRIBUTE_INDEX;
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.UV_ATTRIBUTE_INDEX;
+
 /**
  * A mesh representing the convex hull for a given projection.
  */
@@ -113,8 +118,10 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
     final JCGLBufferUpdateType<JCGLArrayBufferType> array_update;
     final JPRACursor1DType<R2VertexP32UNT16Type> array_cursor;
 
+    go.arrayObjectUnbind();
+
     /*
-      Allocate array buffer.
+     * Allocate array buffer.
      */
 
     {
@@ -132,7 +139,7 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
     }
 
     /*
-      Allocate index buffer.
+     * Allocate index buffer.
      */
 
     {
@@ -202,7 +209,7 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
       final JCGLArrayObjectBuilderType aob = go.arrayObjectNewBuilder();
       aob.setIndexBuffer(ib);
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
+        POSITION_ATTRIBUTE_INDEX,
         ab,
         3,
         JCGLScalarType.TYPE_FLOAT,
@@ -210,7 +217,7 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
         (long) R2VertexP32UNT16ByteBuffered.metaPositionStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.UV_ATTRIBUTE_INDEX,
+        UV_ATTRIBUTE_INDEX,
         ab,
         2,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -218,7 +225,7 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
         (long) R2VertexP32UNT16ByteBuffered.metaUvStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.NORMAL_ATTRIBUTE_INDEX,
+        NORMAL_ATTRIBUTE_INDEX,
         ab,
         3,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -226,7 +233,7 @@ public final class R2ProjectionMesh implements R2ProjectionMeshType
         (long) R2VertexP32UNT16ByteBuffered.metaNormalStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.TANGENT4_ATTRIBUTE_INDEX,
+        TANGENT4_ATTRIBUTE_INDEX,
         ab,
         4,
         JCGLScalarType.TYPE_HALF_FLOAT,

@@ -47,7 +47,7 @@ public interface R2FacadeInstanceShaderProviderType
   default R2SurfaceShaderBasicReflectiveSingle createBasicReflectiveSingle()
   {
     return R2SurfaceShaderBasicReflectiveSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -59,7 +59,7 @@ public interface R2FacadeInstanceShaderProviderType
   default R2SurfaceShaderBasicSingle createBasicSingle()
   {
     return R2SurfaceShaderBasicSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -71,7 +71,7 @@ public interface R2FacadeInstanceShaderProviderType
   default R2SurfaceShaderBasicStippledSingle createBasicStippledSingle()
   {
     return R2SurfaceShaderBasicStippledSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -83,7 +83,7 @@ public interface R2FacadeInstanceShaderProviderType
   default R2SurfaceShaderBasicBillboarded createBasicBillboarded()
   {
     return R2SurfaceShaderBasicBillboarded.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -95,7 +95,7 @@ public interface R2FacadeInstanceShaderProviderType
   default R2SurfaceShaderBasicBatched createBasicBatched()
   {
     return R2SurfaceShaderBasicBatched.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }

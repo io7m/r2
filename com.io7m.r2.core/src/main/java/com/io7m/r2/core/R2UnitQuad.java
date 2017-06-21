@@ -45,6 +45,11 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.NORMAL_ATTRIBUTE_INDEX;
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.POSITION_ATTRIBUTE_INDEX;
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.TANGENT4_ATTRIBUTE_INDEX;
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.UV_ATTRIBUTE_INDEX;
+
 /**
  * The default implementation of the {@link R2UnitQuadType} interface.
  */
@@ -100,8 +105,10 @@ public final class R2UnitQuad implements R2UnitQuadType
     final JCGLIndexBufferType i;
     final JCGLArrayObjectType ao;
 
+    g_ao.arrayObjectUnbind();
+
     /*
-      Allocate and populate array buffer.
+     * Allocate and populate array buffer.
      */
 
     {
@@ -153,7 +160,7 @@ public final class R2UnitQuad implements R2UnitQuadType
     }
 
     /*
-      Allocate and populate index buffer.
+     * Allocate and populate index buffer.
      */
 
     {
@@ -185,7 +192,7 @@ public final class R2UnitQuad implements R2UnitQuadType
       final JCGLArrayObjectBuilderType aob = g_ao.arrayObjectNewBuilder();
       aob.setIndexBuffer(i);
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
+        POSITION_ATTRIBUTE_INDEX,
         a,
         3,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -193,7 +200,7 @@ public final class R2UnitQuad implements R2UnitQuadType
         (long) R2VertexPUNT16ByteBuffered.metaPositionStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.UV_ATTRIBUTE_INDEX,
+        UV_ATTRIBUTE_INDEX,
         a,
         2,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -201,7 +208,7 @@ public final class R2UnitQuad implements R2UnitQuadType
         (long) R2VertexPUNT16ByteBuffered.metaUvStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.NORMAL_ATTRIBUTE_INDEX,
+        NORMAL_ATTRIBUTE_INDEX,
         a,
         3,
         JCGLScalarType.TYPE_HALF_FLOAT,
@@ -209,7 +216,7 @@ public final class R2UnitQuad implements R2UnitQuadType
         (long) R2VertexPUNT16ByteBuffered.metaNormalStaticOffsetFromType(),
         false);
       aob.setAttributeFloatingPoint(
-        R2AttributeConventions.TANGENT4_ATTRIBUTE_INDEX,
+        TANGENT4_ATTRIBUTE_INDEX,
         a,
         4,
         JCGLScalarType.TYPE_HALF_FLOAT,

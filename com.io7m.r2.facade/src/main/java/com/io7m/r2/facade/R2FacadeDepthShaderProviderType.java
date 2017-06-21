@@ -45,7 +45,7 @@ public interface R2FacadeDepthShaderProviderType
   default R2DepthShaderBasicSingle createBasicSingle()
   {
     return R2DepthShaderBasicSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -57,7 +57,7 @@ public interface R2FacadeDepthShaderProviderType
   default R2DepthShaderBasicBatched createBasicBatched()
   {
     return R2DepthShaderBasicBatched.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }
@@ -69,7 +69,7 @@ public interface R2FacadeDepthShaderProviderType
   default R2DepthShaderBasicStippledSingle createBasicStippledSingle()
   {
     return R2DepthShaderBasicStippledSingle.create(
-      this.main().gl33().shaders(),
+      this.main().rendererGL33().shaders(),
       this.main().shaderPreprocessingEnvironment(),
       this.main().idPool());
   }

@@ -50,7 +50,7 @@ public interface R2FacadeTextureProviderType
     final JCGLTextureUnitContextParentType ctx)
   {
     return R2SSAONoiseTexture.create(
-      this.main().gl33().textures(),
+      this.main().rendererGL33().textures(),
       ctx);
   }
 

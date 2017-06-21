@@ -77,8 +77,8 @@ public interface R2FacadeBufferProviderType
     final R2LightBufferDescription description)
   {
     return R2LightBuffers.newLightBuffer(
-      this.main().gl33().framebuffers(),
-      this.main().gl33().textures(),
+      this.main().rendererGL33().framebuffers(),
+      this.main().rendererGL33().textures(),
       ctx,
       description);
   }
@@ -113,8 +113,8 @@ public interface R2FacadeBufferProviderType
     final R2GeometryBufferDescription description)
   {
     return R2GeometryBuffer.create(
-      this.main().gl33().framebuffers(),
-      this.main().gl33().textures(),
+      this.main().rendererGL33().framebuffers(),
+      this.main().rendererGL33().textures(),
       ctx, description);
   }
 
@@ -148,8 +148,8 @@ public interface R2FacadeBufferProviderType
     final R2ImageBufferDescription description)
   {
     return R2ImageBuffer.create(
-      this.main().gl33().framebuffers(),
-      this.main().gl33().textures(),
+      this.main().rendererGL33().framebuffers(),
+      this.main().rendererGL33().textures(),
       ctx,
       description);
   }
@@ -168,8 +168,8 @@ public interface R2FacadeBufferProviderType
     final R2AmbientOcclusionBufferDescription description)
   {
     return R2AmbientOcclusionBuffer.create(
-      this.main().gl33().framebuffers(),
-      this.main().gl33().textures(), ctx,
+      this.main().rendererGL33().framebuffers(),
+      this.main().rendererGL33().textures(), ctx,
       description);
   }
 
@@ -204,8 +204,8 @@ public interface R2FacadeBufferProviderType
     final R2MaskBufferDescription description)
   {
     return R2MaskBuffer.create(
-      this.main().gl33().framebuffers(),
-      this.main().gl33().textures(),
+      this.main().rendererGL33().framebuffers(),
+      this.main().rendererGL33().textures(),
       ctx,
       description);
   }

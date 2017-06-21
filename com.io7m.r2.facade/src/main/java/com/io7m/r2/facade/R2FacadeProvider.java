@@ -38,9 +38,9 @@ public final class R2FacadeProvider implements R2FacadeProviderType
 
   @Override
   public R2FacadeType create(
-    final JCGLInterfaceGL33Type g33,
+    final JCGLInterfaceGL33Type renderer_gl33,
     final SoShaderResolverType resolver)
   {
-    return R2Facade.of(g33, resolver);
+    return R2Facade.of(renderer_gl33, resolver);
   }
 }

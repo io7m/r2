@@ -32,6 +32,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.meshes.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.r2.spaces</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -194,6 +199,7 @@
         <configuration>
           <failOnWarning>true</failOnWarning>
           <ignoredUnusedDeclaredDependencies>
+            <ignoredUnusedDeclaredDependency>com.io7m.r2:com.io7m.r2.meshes.api:*</ignoredUnusedDeclaredDependency>
             <ignoredUnusedDeclaredDependency>com.io7m.r2:com.io7m.r2.shaders.core:*</ignoredUnusedDeclaredDependency>
           </ignoredUnusedDeclaredDependencies>
         </configuration>

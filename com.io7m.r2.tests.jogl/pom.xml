@@ -17,6 +17,10 @@
   <description>3D renderer (JOGL test suite frontend)</description>
   <url>http://io7m.github.io/r2/</url>
 
+  <properties>
+    <mdep.analyze.skip>true</mdep.analyze.skip>
+  </properties>
+
   <scm>
     <url>${project.parent.scm.url}</url>
     <connection>${project.parent.scm.connection}</connection>
@@ -58,12 +62,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes.binary</artifactId>
+      <artifactId>com.io7m.r2.meshes.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -73,12 +72,27 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes.obj</artifactId>
+      <artifactId>com.io7m.r2.meshes.processing.smf</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes.arrayobject</artifactId>
+      <artifactId>com.io7m.r2.meshes.tangents</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.meshes.tools</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.meshes.loading.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.meshes.loading.smf</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -174,6 +188,10 @@
       <groupId>com.io7m.jregions</groupId>
       <artifactId>com.io7m.jregions.core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.format.binary</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>it.unimi.dsi</groupId>
@@ -221,21 +239,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-
-      <!-- Ignore dependencies that bytecode analysis gets wrong. -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <configuration>
-          <failOnWarning>true</failOnWarning>
-          <ignoredUnusedDeclaredDependencies>
-            <ignoredUnusedDeclaredDependency>*</ignoredUnusedDeclaredDependency>
-          </ignoredUnusedDeclaredDependencies>
-          <ignoredUsedUndeclaredDependencies>
-            <ignoredUsedUndeclaredDependency>*</ignoredUsedUndeclaredDependency>
-          </ignoredUsedUndeclaredDependencies>
-        </configuration>
       </plugin>
     </plugins>
   </build>

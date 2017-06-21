@@ -24,10 +24,19 @@ import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.core.R2UnitQuadUsableType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
+import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderSynchronous;
 import com.io7m.r2.tests.core.R2LightRendererContract;
+import com.io7m.smfj.format.binary.SMFFormatBinary;
 
 public final class R2LightRendererTest extends R2LightRendererContract
 {
+  @Override
+  protected R2MeshLoaderType loader()
+  {
+    return R2SMFMeshLoaderSynchronous.create(new SMFFormatBinary());
+  }
+
   @Override
   protected R2LightRendererType getRenderer(
     final JCGLInterfaceGL33Type g,

@@ -42,12 +42,9 @@ import com.io7m.jcanephora.core.JCGLTextureUnitType;
 import com.io7m.jcanephora.core.JCGLTextureWrapR;
 import com.io7m.jcanephora.core.JCGLTextureWrapS;
 import com.io7m.jcanephora.core.JCGLTextureWrapT;
-import com.io7m.jcanephora.core.JCGLUnsignedType;
 import com.io7m.jcanephora.core.JCGLUsageHint;
-import com.io7m.jcanephora.core.api.JCGLArrayBuffersType;
 import com.io7m.jcanephora.core.api.JCGLArrayObjectsType;
 import com.io7m.jcanephora.core.api.JCGLContextType;
-import com.io7m.jcanephora.core.api.JCGLIndexBuffersType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLTexturesType;
 import com.io7m.jcanephora.jogl.JCGLImplementationJOGL;
@@ -66,19 +63,18 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureCubeStatic;
 import com.io7m.r2.core.R2TextureCubeType;
 import com.io7m.r2.core.R2TextureCubeUsableType;
-import com.io7m.r2.core.cursors.R2VertexCursorPUNT32;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.examples.R2ExampleType;
 import com.io7m.r2.facade.R2FacadeProvider;
 import com.io7m.r2.facade.R2FacadeType;
-import com.io7m.r2.meshes.arrayobject.R2MeshArrayObjectSynchronousAdapter;
-import com.io7m.r2.meshes.arrayobject.R2MeshArrayObjectSynchronousAdapterType;
-import com.io7m.r2.meshes.binary.R2MBReaderType;
-import com.io7m.r2.meshes.binary.R2MBUnmappedReader;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaded;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderRequest;
+import com.io7m.r2.meshes.loading.api.R2MeshLoadingExceptionIO;
+import com.io7m.r2.meshes.loading.api.R2MeshRequireTangents;
+import com.io7m.r2.meshes.loading.api.R2MeshRequireUV;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import com.io7m.sombrero.serviceloader.SoShaderResolverServiceLoader;
-import com.jogamp.nativewindow.WindowClosingProtocol;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.InputEvent;
 import com.jogamp.newt.event.KeyEvent;
@@ -101,11 +97,13 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.channels.Channels;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
+
+import static com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE;
 
 /**
  * JOGL example frontend.
@@ -143,6 +141,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       System.exit(1);
     }
 
+    LOG.debug("start {}", args[0]);
+
     @SuppressWarnings("unchecked") final Class<? extends R2ExampleType> ck =
       (Class<? extends R2ExampleType>) Class.forName(args[0]);
     new R2JOGLExampleSingleWindowMain(ck).run();
@@ -151,15 +151,17 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
   @Override
   public void run()
   {
+    LOG.debug("running");
+
     try {
       final R2ExampleType example = this.example_type.newInstance();
 
-      final GLProfile pro = GLProfile.get(GLProfile.GL3);
-      final GLCapabilities caps = new GLCapabilities(pro);
+      final GLProfile profile = GLProfile.get(GLProfile.GL3);
+      final GLCapabilities caps = new GLCapabilities(profile);
+
       final GLWindow win = GLWindow.create(caps);
       win.setSize(1024, 768);
-      win.setDefaultCloseOperation(
-        WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE);
+      win.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
       win.setTitle("R2");
 
       final ExampleListener el = new ExampleListener(win, example);
@@ -202,9 +204,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
   {
     private final R2ExampleType example;
     private final GLWindow window;
-    private JCGLContextType context;
+    private JCGLContextType rendering;
     private int frame;
-    private R2FacadeType r2_main;
+    private R2FacadeType r2_facade;
     private AreaSizeL area;
     private Services services;
     private boolean want_cursor_warp;
@@ -246,6 +248,9 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     @Override
     public void init(final GLAutoDrawable drawable)
     {
+      final Thread th = Thread.currentThread();
+      th.setName("com.io7m.r2.example-renderer:" + th.getId());
+
       this.resize(drawable);
     }
 
@@ -254,7 +259,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       final GLAutoDrawable drawable)
     {
       LOG.debug("finishing example");
-      this.example.onFinish(this.context.contextGetGL33(), this.r2_main);
+      this.example.onFinish(this.rendering.contextGetGL33(), this.r2_facade);
     }
 
     @Override
@@ -288,19 +293,27 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
           final JCGLImplementationJOGLType g =
             JCGLImplementationJOGL.getInstance();
 
-          this.context = g.newContextFromWithSupplier(
+          this.rendering = g.newContextFromWithSupplier(
             drawable.getContext(),
             (c) -> new DebugGL3(c.getGL().getGL3()),
             "main");
 
-          final JCGLInterfaceGL33Type g33 = this.context.contextGetGL33();
-          this.r2_main = new R2FacadeProvider().create(
-            g33, SoShaderResolverServiceLoader.create());
-          this.services = new Services(this.window, g33);
+          final JCGLInterfaceGL33Type render_g33 =
+            this.rendering.contextGetGL33();
+
+          this.r2_facade =
+            new R2FacadeProvider().create(
+              render_g33,
+              SoShaderResolverServiceLoader.create());
+          this.services =
+            new Services(
+              this.window,
+              this.r2_facade,
+              render_g33);
 
           LOG.debug("initializing example");
           this.example.onInitialize(
-            this.services, g33, this.area, this.r2_main);
+            this.services, render_g33, this.area, this.r2_facade);
           LOG.debug("initialized example");
           return;
         }
@@ -318,12 +331,12 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
          * Render the current example.
          */
 
-        final JCGLInterfaceGL33Type g33 = this.context.contextGetGL33();
+        final JCGLInterfaceGL33Type g33 = this.rendering.contextGetGL33();
         this.example.onRender(
           this.services,
           g33,
           this.area,
-          this.r2_main,
+          this.r2_facade,
           this.frame - 2);
 
         /*
@@ -551,8 +564,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private final JCameraFPSStyleIntegratorType camera_integrator;
     private final JCameraFPSStyleMouseRegion camera_mouse_region;
     private final JCGLArrayObjectsType array_objects;
-    private final JCGLArrayBuffersType array_buffers;
-    private final JCGLIndexBuffersType index_buffers;
+    private final R2FacadeType r2_facade;
     private JCameraRotationCoefficients camera_rotations;
     private long camera_time_then;
     private double camera_time_accum;
@@ -562,13 +574,14 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
     private PMatrix4x4D<R2SpaceWorldType, R2SpaceEyeType> camera_matrix;
 
     Services(
-      final GLWindow win,
-      final JCGLInterfaceGL33Type g33)
+      final GLWindow window,
+      final R2FacadeType in_r2_facade,
+      final JCGLInterfaceGL33Type render_g33)
     {
-      this.textures = g33.textures();
-      this.array_buffers = g33.arrayBuffers();
-      this.array_objects = g33.arrayObjects();
-      this.index_buffers = g33.indexBuffers();
+      this.r2_facade = NullCheck.notNull(in_r2_facade, "Facade");
+
+      this.textures = render_g33.textures();
+      this.array_objects = render_g33.arrayObjects();
 
       this.units = this.textures.textureGetUnits();
       this.data_prov = JCGLAWTTextureDataProvider.newProvider();
@@ -588,21 +601,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
       this.camera_mouse_region =
         JCameraFPSStyleMouseRegion.of(
           JCameraScreenOrigin.SCREEN_ORIGIN_TOP_LEFT,
-          (double) win.getWidth(),
-          (double) win.getHeight());
-      this.camera_rotations = JCameraRotationCoefficients.of(0.0, 0.0);
-    }
-
-    private static InputStream getMeshStream(
-      final String name,
-      final Class<R2ExampleServicesType> c)
-      throws IOException
-    {
-      if (name.endsWith(".r2z")) {
-        return new GZIPInputStream(c.getResourceAsStream(name));
-      }
-
-      return c.getResourceAsStream(name);
+          (double) window.getWidth(),
+          (double) window.getHeight());
+      this.camera_rotations =
+        JCameraRotationCoefficients.of(0.0, 0.0);
     }
 
     @Override
@@ -744,39 +746,27 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
 
       LOG.debug("loading mesh {}", name);
 
-      final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
-      try (final InputStream is = getMeshStream(name, c)) {
+      try {
+        final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
+        final URL url = c.getResource(name);
 
-        final R2MeshArrayObjectSynchronousAdapterType adapter =
-          R2MeshArrayObjectSynchronousAdapter.newAdapter(
-            this.array_objects,
-            this.array_buffers,
-            this.index_buffers,
-            JCGLUsageHint.USAGE_STATIC_DRAW,
-            JCGLUnsignedType.TYPE_UNSIGNED_SHORT,
-            JCGLUsageHint.USAGE_STATIC_DRAW,
-            R2VertexCursorPUNT32.getInstance(),
-            R2VertexCursorPUNT32.getInstance());
+        final R2MeshLoaded r =
+          this.r2_facade.meshLoader().loadSynchronously(
+            this.r2_facade.rendererGL33(),
+            R2MeshLoaderRequest.of(
+              url.toURI(),
+              R2MeshRequireTangents.R2_TANGENTS_OPTIONAL,
+              R2MeshRequireUV.R2_UV_OPTIONAL,
+              JCGLUsageHint.USAGE_STATIC_DRAW,
+              JCGLUsageHint.USAGE_STATIC_DRAW));
 
-        final R2MBReaderType r =
-          R2MBUnmappedReader.newReader(Channels.newChannel(is), adapter);
-
-        r.run();
-
-        if (adapter.hasFailed()) {
-          adapter.errorException().ifPresent(x -> {
-            throw new RuntimeException(
-              "Failed to load " + name + ": " + adapter.errorMessage(), x);
-          });
-          throw new RuntimeException(
-            "Failed to load " + name + ": " + adapter.errorMessage());
-        }
-
-        final JCGLArrayObjectType ao = adapter.arrayObject();
+        final JCGLArrayObjectType ao = r.newArrayObject(this.array_objects);
+        this.array_objects.arrayObjectUnbind();
         this.mesh_cache.put(name, ao);
         return ao;
-      } catch (final IOException e) {
-        throw new UncheckedIOException(e);
+      } catch (final URISyntaxException e) {
+        LOG.error("could not load mesh: {}: ", name, e);
+        throw new R2MeshLoadingExceptionIO(e);
       }
     }
 

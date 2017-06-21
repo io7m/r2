@@ -34,7 +34,6 @@ import com.io7m.jpra.runtime.java.JPRACursor1DType;
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector4D;
 import com.io7m.jtensors.storage.api.unparameterized.vectors.VectorStorageFloating3Type;
-import com.io7m.r2.core.R2AttributeConventions;
 import com.io7m.r2.core.R2DeletableType;
 import com.io7m.r2.core.R2Exception;
 import com.io7m.r2.core.cursors.R2RGBA8WritableType;
@@ -45,6 +44,8 @@ import com.io7m.r2.spaces.R2SpaceWorldType;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+
+import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.POSITION_ATTRIBUTE_INDEX;
 
 /**
  * A batcher for line segments.
@@ -121,7 +122,7 @@ public final class R2DebugLineSegmentsBatch implements R2DeletableType
         final JCGLArrayObjectBuilderType aob =
           this.g33_array_objects.arrayObjectNewBuilder();
         aob.setAttributeFloatingPoint(
-          R2AttributeConventions.POSITION_ATTRIBUTE_INDEX,
+          POSITION_ATTRIBUTE_INDEX,
           this.array,
           3,
           JCGLScalarType.TYPE_FLOAT,
@@ -129,7 +130,7 @@ public final class R2DebugLineSegmentsBatch implements R2DeletableType
           (long) R2VertexP32RGBA8ByteBuffered.metaPositionStaticOffsetFromType(),
           false);
         aob.setAttributeFloatingPoint(
-          R2AttributeConventions.POSITION_ATTRIBUTE_INDEX + 1,
+          POSITION_ATTRIBUTE_INDEX + 1,
           this.array,
           4,
           JCGLScalarType.TYPE_UNSIGNED_BYTE,

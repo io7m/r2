@@ -40,7 +40,10 @@ import com.io7m.r2.core.debug.R2DebugVisualizerRendererParameters;
 import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
+import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderSynchronous;
 import com.io7m.r2.tests.core.R2JCGLContract;
+import com.io7m.smfj.format.binary.SMFFormatBinary;
 import mockit.Expectations;
 import org.junit.Test;
 
@@ -64,6 +67,8 @@ public abstract class R2DebugVisualizerRendererContract extends R2JCGLContract
     final JCGLInterfaceGL33Type in_g,
     final R2ShaderPreprocessingEnvironmentReadableType in_shader_env,
     final R2IDPoolType in_pool);
+
+  protected abstract R2MeshLoaderType loader();
 
   @Test
   public void testLineSegmentCalls()
@@ -132,7 +137,7 @@ public abstract class R2DebugVisualizerRendererContract extends R2JCGLContract
           builder()
             .setLights(R2SceneLights.create())
             .setOpaqueInstances(R2SceneOpaques.create())
-            .setUnitSphere(newUnitSphere8(g))
+            .setUnitSphere(newUnitSphere8(this.loader(), g))
             .setDebugCube(create(g))
             .setDebugInstances(R2DebugInstances.builder().addAllLineSegments(
               segments).build())

@@ -26,22 +26,12 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes</artifactId>
+      <artifactId>com.io7m.r2.meshes.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes.binary</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes.obj</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.spaces</artifactId>
+      <artifactId>com.io7m.r2.meshes.processing.smf</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -54,20 +44,48 @@
       <artifactId>com.io7m.junreachable.core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.io7m.jtensors</groupId>
-      <artifactId>com.io7m.jtensors.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.jobj</groupId>
-      <artifactId>com.io7m.jobj.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.io7m.jlexing</groupId>
-      <artifactId>com.io7m.jlexing.core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.io7m.jfunctional</groupId>
       <artifactId>com.io7m.jfunctional.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.frontend</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.processing.main</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.format.text</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.format.binary</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.format.obj</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.processing.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.probe.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.parser.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.io7m.smfj</groupId>
+      <artifactId>com.io7m.smfj.serializer.api</artifactId>
     </dependency>
 
     <dependency>
@@ -83,8 +101,8 @@
       <artifactId>logback-classic</artifactId>
     </dependency>
     <dependency>
-      <groupId>it.unimi.dsi</groupId>
-      <artifactId>fastutil</artifactId>
+      <groupId>io.javaslang</groupId>
+      <artifactId>javaslang</artifactId>
     </dependency>
   </dependencies>
 
@@ -108,19 +126,37 @@
             </goals>
             <configuration>
               <createDependencyReducedPom>false</createDependencyReducedPom>
-              <minimizeJar>true</minimizeJar>
+              <minimizeJar>false</minimizeJar>
               <shadedClassifierName>main</shadedClassifierName>
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
-                    <Main-Class>com.io7m.r2.meshes.tools.R2MeshTool</Main-Class>
+                    <Main-Class>com.io7m.r2.meshes.tools.R2MeshToolMain</Main-Class>
                   </manifestEntries>
                 </transformer>
               </transformers>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Ignore dependencies that bytecode analysis gets wrong. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <failOnWarning>true</failOnWarning>
+          <ignoredUnusedDeclaredDependencies>
+            <ignoredUnusedDeclaredDependency>com.io7m.r2:com.io7m.r2.meshes.api:*</ignoredUnusedDeclaredDependency>
+            <ignoredUnusedDeclaredDependency>com.io7m.r2:com.io7m.r2.meshes.processing.smf:*</ignoredUnusedDeclaredDependency>
+            <ignoredUnusedDeclaredDependency>com.io7m.smfj:com.io7m.smfj.format.binary:*</ignoredUnusedDeclaredDependency>
+            <ignoredUnusedDeclaredDependency>com.io7m.smfj:com.io7m.smfj.format.text:*</ignoredUnusedDeclaredDependency>
+            <ignoredUnusedDeclaredDependency>com.io7m.smfj:com.io7m.smfj.format.obj:*</ignoredUnusedDeclaredDependency>
+            <ignoredUnusedDeclaredDependency>com.io7m.smfj:com.io7m.smfj.processing.main:*</ignoredUnusedDeclaredDependency>
+          </ignoredUnusedDeclaredDependencies>
+        </configuration>
       </plugin>
     </plugins>
   </build>

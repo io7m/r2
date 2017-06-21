@@ -56,6 +56,7 @@ import com.io7m.r2.core.R2UnitSphereUsableType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
 import com.io7m.r2.core.shaders.types.R2ShaderLightVolumeSingleType;
 import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -85,7 +86,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
     final R2IDPoolType id_pool)
   {
     final R2ShaderPreprocessingEnvironmentType sources =
-      ShaderPreprocessing.preprocessor();
+      preprocessor();
     final R2LightSphericalSingleType ls =
       R2LightSphericalSingle.newLight(sphere, id_pool);
 
@@ -98,6 +99,8 @@ public abstract class R2LightRendererContract extends R2JCGLContract
     lg.lightGroupAddSingle(ls, ds);
     return s;
   }
+
+  protected abstract R2MeshLoaderType loader();
 
   protected abstract R2LightRendererType getRenderer(
     final JCGLInterfaceGL33Type g,
@@ -115,25 +118,25 @@ public abstract class R2LightRendererContract extends R2JCGLContract
       c.contextGetGL33();
 
     final JCGLTextureUnitAllocatorType ta =
-      JCGLTextureUnitAllocator.newAllocatorWithStack(
+      newAllocatorWithStack(
         8, g.textures().textureGetUnits());
     final JCGLTextureUnitContextParentType tc =
       ta.rootContext();
     final R2TextureDefaultsType td =
-      R2TextureDefaults.create(g.textures(), tc);
+      create(g.textures(), tc);
 
     final R2UnitQuadType quad =
-      R2UnitQuad.newUnitQuad(g);
+      newUnitQuad(g);
     final R2ShaderPreprocessingEnvironmentType sources =
-      ShaderPreprocessing.preprocessor();
+      preprocessor();
     final R2IDPoolType id_pool =
-      R2IDPool.newPool();
+      newPool();
     final R2LightRendererType r =
       this.getRenderer(g, td, sources, id_pool, quad);
 
-    Assert.assertFalse(r.isDeleted());
+    assertFalse(r.isDeleted());
     r.delete(g);
-    Assert.assertTrue(r.isDeleted());
+    assertTrue(r.isDeleted());
   }
 
   @Test
@@ -158,7 +161,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
       create(g.textures(), tc);
 
     final R2UnitSphereType sphere =
-      newUnitSphere8(g);
+      newUnitSphere8(this.loader(), g);
     final R2UnitQuadType quad =
       newUnitQuad(g);
     final R2IDPoolType id_pool =
@@ -241,7 +244,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
       create(g.textures(), tc);
 
     final R2UnitSphereType sphere =
-      newUnitSphere8(g);
+      newUnitSphere8(this.loader(), g);
     final R2UnitQuadType quad =
       newUnitQuad(g);
     final R2IDPoolType id_pool =
@@ -328,7 +331,7 @@ public abstract class R2LightRendererContract extends R2JCGLContract
       create(g.textures(), tc);
 
     final R2UnitSphereType sphere =
-      newUnitSphere8(g);
+      newUnitSphere8(this.loader(), g);
     final R2UnitQuadType quad =
       newUnitQuad(g);
     final R2IDPoolType id_pool =

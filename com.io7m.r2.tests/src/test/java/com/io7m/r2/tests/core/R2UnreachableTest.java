@@ -17,7 +17,6 @@
 package com.io7m.r2.tests.core;
 
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.core.R2AttributeConventions;
 import com.io7m.r2.core.R2Bilinear;
 import com.io7m.r2.core.R2Core;
 import com.io7m.r2.core.R2IndexBuffers;
@@ -26,6 +25,7 @@ import com.io7m.r2.core.R2RenderTargetDescriptions;
 import com.io7m.r2.core.R2Stencils;
 import com.io7m.r2.core.debug.R2DebugVisualizerDefaults;
 import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.meshes.api.R2MeshAttributeConventions;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -54,62 +54,62 @@ public final class R2UnreachableTest
   public void testAttributeConventions()
     throws Throwable
   {
-    R2UnreachableTest.checkUnreachable(R2AttributeConventions.class);
+    checkUnreachable(R2MeshAttributeConventions.class);
   }
 
   @Test(expected = UnreachableCodeException.class)
   public void testIndexBuffers()
     throws Throwable
   {
-    R2UnreachableTest.checkUnreachable(R2IndexBuffers.class);
+    checkUnreachable(R2IndexBuffers.class);
   }
 
   @Test(expected = UnreachableCodeException.class)
   public void testRenderTargetDescriptions()
     throws Throwable
   {
-    R2UnreachableTest.checkUnreachable(R2RenderTargetDescriptions.class);
+    checkUnreachable(R2RenderTargetDescriptions.class);
   }
 
   @Test(expected = UnreachableCodeException.class)
   public void testDebugVisualizerDefaults()
     throws Throwable
   {
-    R2UnreachableTest.checkUnreachable(R2DebugVisualizerDefaults.class);
+    checkUnreachable(R2DebugVisualizerDefaults.class);
   }
 
   @Test(expected = UnreachableCodeException.class)
   public void testBilinear()
     throws Throwable
   {
-    R2UnreachableTest.checkUnreachable(R2Bilinear.class);
+    checkUnreachable(R2Bilinear.class);
   }
 
   @Test(expected = UnreachableCodeException.class)
   public void testCore()
     throws Throwable
   {
-    R2UnreachableTest.checkUnreachable(R2Core.class);
+    checkUnreachable(R2Core.class);
   }
 
   @Test(expected = UnreachableCodeException.class)
   public void testProjections()
     throws Throwable
   {
-    R2UnreachableTest.checkUnreachable(R2Projections.class);
+    checkUnreachable(R2Projections.class);
   }
 
   @Test(expected = UnreachableCodeException.class)
   public void testShaderParameters()
     throws Throwable
   {
-    R2UnreachableTest.checkUnreachable(R2ShaderParameters.class);
+    checkUnreachable(R2ShaderParameters.class);
   }
 
   @Test(expected = UnreachableCodeException.class)
   public void testStencils()
     throws Throwable
   {
-    R2UnreachableTest.checkUnreachable(R2Stencils.class);
+    checkUnreachable(R2Stencils.class);
   }
 }

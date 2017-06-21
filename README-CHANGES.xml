@@ -3,7 +3,7 @@
   <c:project>com.io7m.r2</c:project>
 
   <c:release c:ticket-system="com.github.io7m.r2">
-    <c:date>2017-04-24</c:date>
+    <c:date>2017-06-20</c:date>
     <c:version>0.3.0</c:version>
     <c:item>
       <c:date>2017-04-22</c:date>
@@ -36,6 +36,12 @@
       <c:type-code-new/>
       <c:ticket>62</c:ticket>
       <c:summary>Eliminate redundant batch/billboarded instance updates.</c:summary>
+    </c:item>
+    <c:item>
+      <c:date>2017-06-30</c:date>
+      <c:type-code-change/>
+      <c:ticket>71</c:ticket>
+      <c:summary>Redesign mesh API and replace all internal meshes with SMF/B files.</c:summary>
     </c:item>
   </c:release>
 

@@ -26,12 +26,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes.binary</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.meshes.arrayobject</artifactId>
+      <artifactId>com.io7m.r2.meshes.loading.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -40,6 +35,10 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.io7m.junreachable</groupId>
+      <artifactId>com.io7m.junreachable.core</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.io7m.jaffirm</groupId>
       <artifactId>com.io7m.jaffirm.core</artifactId>
@@ -55,10 +54,6 @@
     <dependency>
       <groupId>com.io7m.jnull</groupId>
       <artifactId>com.io7m.jnull.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
     </dependency>
   </dependencies>
 

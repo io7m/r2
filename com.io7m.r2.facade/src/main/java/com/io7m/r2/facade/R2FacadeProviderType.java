@@ -30,13 +30,14 @@ public interface R2FacadeProviderType
   /**
    * Construct and return a new facade.
    *
-   * @param g33      A GL33 interface
-   * @param resolver A shader resolver
+   * @param renderer_gl33 A GL33 interface that will be used for foreground
+   *                      rendering operations
+   * @param resolver      A shader resolver
    *
    * @return A new facade
    */
 
   R2FacadeType create(
-    JCGLInterfaceGL33Type g33,
+    JCGLInterfaceGL33Type renderer_gl33,
     SoShaderResolverType resolver);
 }
