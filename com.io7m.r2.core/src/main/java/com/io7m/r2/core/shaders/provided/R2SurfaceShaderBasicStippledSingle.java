@@ -55,7 +55,6 @@ import static com.io7m.r2.core.shaders.types.R2ShaderParameters.uniform;
 
 public final class R2SurfaceShaderBasicStippledSingle
   extends R2AbstractInstanceShaderSingle<R2SurfaceShaderBasicStippledParameters>
-  implements R2ShaderInstanceSingleType<R2SurfaceShaderBasicStippledParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_normal;

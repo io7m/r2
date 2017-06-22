@@ -43,7 +43,6 @@ import java.util.Optional;
 
 public final class R2DepthShaderBasicBatched extends
   R2AbstractDepthShaderBatched<R2DepthShaderBasicParameters>
-  implements R2ShaderDepthBatchedType<R2DepthShaderBasicParameters>
 {
   private final JCGLProgramUniformType u_depth_coefficient;
   private final JCGLProgramUniformType u_transform_view;
