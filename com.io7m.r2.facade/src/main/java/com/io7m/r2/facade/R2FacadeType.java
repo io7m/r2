@@ -34,7 +34,7 @@ import com.io7m.r2.core.R2GeometryRenderer;
 import com.io7m.r2.core.R2GeometryRendererType;
 import com.io7m.r2.core.R2IDPool;
 import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.R2LightRenderer;
 import com.io7m.r2.core.R2LightRendererType;
 import com.io7m.r2.core.R2MaskRenderer;

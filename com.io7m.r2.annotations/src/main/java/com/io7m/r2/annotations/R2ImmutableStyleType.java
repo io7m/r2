@@ -14,7 +14,7 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.core;
+package com.io7m.r2.annotations;
 
 import org.immutables.value.Value;
 
@@ -35,10 +35,7 @@ import java.lang.annotation.Target;
   typeAbstract = {"Abstract*", "*Type"},
   typeImmutable = "*",
   typeModifiable = "*Mutable",
-  builder = "builder",
-  build = "build",
-  visibility = Value.Style.ImplementationVisibility.PUBLIC,
-  defaults = @Value.Immutable(copy = true))
+  visibility = Value.Style.ImplementationVisibility.PUBLIC)
 public @interface R2ImmutableStyleType
 {
 

@@ -17,7 +17,7 @@
 package com.io7m.r2.filters;
 
 import com.io7m.jregions.core.unparameterized.sizes.AreaSizeL;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.R2RenderTargetDescriptionType;
 import com.io7m.r2.core.R2RenderTargetPoolUsableType;
 import com.io7m.r2.core.R2RenderTargetUsableType;

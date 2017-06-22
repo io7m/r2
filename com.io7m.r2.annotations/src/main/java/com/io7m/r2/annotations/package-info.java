@@ -14,31 +14,9 @@
  * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.io7m.r2.meshes.api;
-
-import org.immutables.value.Value;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
- * Style settings for generated immutable types.
+ * Annotation types.
  */
 
-@Target({ElementType.PACKAGE, ElementType.TYPE})
-@Retention(RetentionPolicy.CLASS)
-@Value.Style(
-  get = {"is*", "get*"},
-  init = "set*",
-  typeAbstract = {"Abstract*", "*Type"},
-  typeImmutable = "*",
-  builder = "builder",
-  build = "build",
-  visibility = Value.Style.ImplementationVisibility.PUBLIC,
-  defaults = @Value.Immutable(prehash = true, builder = true))
-public @interface R2MeshesImmutableStyleType
-{
-  // No methods
-}
+@com.io7m.jnull.NonNullByDefault
+package com.io7m.r2.annotations;

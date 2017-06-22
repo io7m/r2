@@ -18,7 +18,7 @@ package com.io7m.r2.core.debug;
 
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector4D;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.spaces.R2SpaceRGBAType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 import org.immutables.value.Value;

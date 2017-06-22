@@ -16,6 +16,7 @@
 
 package com.io7m.r2.core;
 
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
 import org.immutables.value.Value;
 

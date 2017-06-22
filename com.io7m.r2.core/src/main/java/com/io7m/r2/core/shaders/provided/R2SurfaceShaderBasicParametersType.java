@@ -18,7 +18,7 @@ package com.io7m.r2.core.shaders.provided;
 
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector4D;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import com.io7m.r2.spaces.R2SpaceRGBAType;

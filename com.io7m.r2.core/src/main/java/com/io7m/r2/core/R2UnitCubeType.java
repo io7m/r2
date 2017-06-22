@@ -20,7 +20,7 @@ package com.io7m.r2.core;
  * The type of unit cubes with edge length 1.
  */
 
-public interface R2UnitCubeType extends R2UnitSphereUsableType, R2DeletableType
+public interface R2UnitCubeType extends R2UnitCubeUsableType, R2DeletableType
 {
   // No extra methods
 }

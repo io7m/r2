@@ -19,13 +19,13 @@ package com.io7m.r2.meshes.tangents;
 import com.io7m.jtensors.core.parameterized.vectors.PVector2D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector4D;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.meshes.api.R2MeshExceptionMissingBitangent;
 import com.io7m.r2.meshes.api.R2MeshExceptionMissingNormal;
 import com.io7m.r2.meshes.api.R2MeshExceptionMissingPosition;
 import com.io7m.r2.meshes.api.R2MeshExceptionMissingTangent;
 import com.io7m.r2.meshes.api.R2MeshExceptionMissingUV;
 import com.io7m.r2.meshes.api.R2MeshTriangle;
-import com.io7m.r2.meshes.api.R2MeshesImmutableStyleType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.BigList;
@@ -37,7 +37,7 @@ import static com.io7m.r2.meshes.api.R2MeshBasicChecks.checkTriangle;
  * The type of meshes with tangents.
  */
 
-@R2MeshesImmutableStyleType
+@R2ImmutableStyleType
 @Value.Immutable
 public interface R2MeshTangentsType
 {

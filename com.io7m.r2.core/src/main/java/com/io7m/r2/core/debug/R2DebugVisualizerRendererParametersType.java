@@ -17,7 +17,7 @@
 package com.io7m.r2.core.debug;
 
 import com.io7m.jtensors.core.parameterized.vectors.PVector4D;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.R2SceneLightsType;
 import com.io7m.r2.core.R2SceneOpaquesReadableType;
 import com.io7m.r2.core.R2UnitSphereUsableType;

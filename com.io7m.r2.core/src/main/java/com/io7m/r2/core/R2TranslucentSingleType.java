@@ -19,6 +19,7 @@ package com.io7m.r2.core;
 import com.io7m.jcanephora.renderstate.JCGLBlendState;
 import com.io7m.jcanephora.renderstate.JCGLCullingState;
 import com.io7m.jfunctional.PartialBiFunctionType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
 import org.immutables.value.Value;
 

@@ -18,6 +18,7 @@ package com.io7m.r2.meshes.api;
 
 import com.io7m.jcanephora.core.JCGLScalarType;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import org.immutables.value.Value;
 
 import static com.io7m.r2.meshes.api.R2MeshAttributeSupportedSizes.checkFloatSupported;
@@ -28,7 +29,7 @@ import static com.io7m.r2.meshes.api.R2MeshAttributeSupportedSizes.checkIntegerU
  * The type of mesh attributes.
  */
 
-@R2MeshesImmutableStyleType
+@R2ImmutableStyleType
 @Value.Immutable
 public interface R2MeshAttributeType
 {

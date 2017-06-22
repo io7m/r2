@@ -17,7 +17,7 @@
 package com.io7m.r2.filters;
 
 import com.io7m.jcanephora.core.JCGLFramebufferBlitFilter;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import org.immutables.value.Value;
 
 /**

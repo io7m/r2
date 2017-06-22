@@ -16,7 +16,7 @@
 
 package com.io7m.r2.facade;
 
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.shaders.provided.R2LightShaderAmbientSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertBlinnPhongShadowVarianceSingle;
 import com.io7m.r2.core.shaders.provided.R2LightShaderProjectiveLambertBlinnPhongSingle;

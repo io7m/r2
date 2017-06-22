@@ -22,7 +22,7 @@ import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
 import com.io7m.r2.core.R2ImageBufferDescription;
 import com.io7m.r2.core.R2ImageBufferPool;
 import com.io7m.r2.core.R2ImageBufferUsableType;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.R2RenderTargetPoolType;
 import org.immutables.value.Value;
 

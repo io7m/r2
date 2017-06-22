@@ -17,7 +17,7 @@
 package com.io7m.r2.filters;
 
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.R2MatricesObserverValuesType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.spaces.R2SpaceRGBType;

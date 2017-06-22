@@ -18,7 +18,7 @@ package com.io7m.r2.filters;
 
 import com.io7m.jcanephora.core.JCGLFramebufferUsableType;
 import com.io7m.jregions.core.unparameterized.areas.AreaL;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.R2Texture2DUsableType;
 import com.io7m.r2.core.R2TextureDefaultsType;
 import org.immutables.value.Value;

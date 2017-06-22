@@ -23,7 +23,7 @@ import com.io7m.r2.core.R2GeometryBuffer;
 import com.io7m.r2.core.R2GeometryBufferDescription;
 import com.io7m.r2.core.R2ImageBuffer;
 import com.io7m.r2.core.R2ImageBufferDescription;
-import com.io7m.r2.core.R2ImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.core.R2LightBufferDescription;
 import com.io7m.r2.core.R2LightBufferType;
 import com.io7m.r2.core.R2LightBuffers;

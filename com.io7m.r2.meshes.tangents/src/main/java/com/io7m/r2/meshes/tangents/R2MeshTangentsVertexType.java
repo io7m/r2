@@ -16,14 +16,14 @@
 
 package com.io7m.r2.meshes.tangents;
 
-import com.io7m.r2.meshes.api.R2MeshesImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import org.immutables.value.Value;
 
 /**
  * The type of basic mesh vertices.
  */
 
-@R2MeshesImmutableStyleType
+@R2ImmutableStyleType
 @Value.Immutable
 public interface R2MeshTangentsVertexType
 {

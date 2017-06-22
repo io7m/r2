@@ -18,6 +18,7 @@ package com.io7m.r2.core;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix3x3D;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import org.immutables.value.Value;
 
