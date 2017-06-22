@@ -44,8 +44,8 @@ public abstract class R2SSAONoiseTextureContract extends R2JCGLContract
       R2SSAONoiseTexture.create(gt, tc.rootContext());
 
     final JCGLTexture2DUsableType t = tt.texture();
-    Assert.assertEquals(64L, t.sizeX());
-    Assert.assertEquals(64L, t.sizeX());
+    Assert.assertEquals(64L, t.width());
+    Assert.assertEquals(64L, t.height());
     Assert.assertEquals(
       JCGLTextureFormat.TEXTURE_FORMAT_RGB_8_3BPP, t.format());
   }

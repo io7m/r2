@@ -242,8 +242,8 @@ public final class R2SurfaceShaderBasicStippledSingle
       values.stippleNoiseTexture().texture();
 
     final Vector2D noise_uv_scale = Vector2D.of(
-      (double) (this.viewport_w / noise.sizeX()),
-      (double) (this.viewport_h / noise.sizeY()));
+      (double) (this.viewport_w / noise.width()),
+      (double) (this.viewport_h / noise.height()));
 
     g_sh.shaderUniformPutVector2f(
       this.u_stipple_noise_uv_scale, noise_uv_scale);

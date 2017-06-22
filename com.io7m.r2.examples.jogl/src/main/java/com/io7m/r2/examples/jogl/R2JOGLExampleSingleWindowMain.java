@@ -623,8 +623,8 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         final JCGLTexture2DType t =
           this.textures.texture2DAllocate(
             u0,
-            data.sizeX(),
-            data.sizeY(),
+            data.width(),
+            data.height(),
             TEXTURE_FORMAT_RGBA_8_4BPP,
             TEXTURE_WRAP_REPEAT,
             JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
@@ -667,7 +667,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         t =
           this.textures.textureCubeAllocate(
             u0,
-            data.sizeX(),
+            data.width(),
             TEXTURE_FORMAT_RGBA_8_4BPP,
             TEXTURE_WRAP_CLAMP_TO_EDGE,
             JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
