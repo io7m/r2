@@ -204,9 +204,7 @@ public final class R2FilterEmission implements R2FilterEmissionType
     final JCGLFramebuffersType g_fb = this.g.framebuffers();
     final Optional<JCGLFramebufferUsableType> fb_opt =
       parameters.outputFramebuffer();
-    if (fb_opt.isPresent()) {
-      g_fb.framebufferDrawBind(fb_opt.get());
-    }
+    fb_opt.ifPresent(g_fb::framebufferDrawBind);
 
     this.renderEmission(
       uc,

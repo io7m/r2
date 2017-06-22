@@ -168,10 +168,7 @@ public final class R2MaskRenderer implements R2MaskRendererType
       final JCGLFramebuffersType g_fb = this.g.framebuffers();
       final JCGLViewportsType g_v = this.g.viewports();
 
-      if (mbuffer.isPresent()) {
-        final R2MaskBufferUsableType gb = mbuffer.get();
-        g_fb.framebufferDrawBind(gb.primaryFramebuffer());
-      }
+      mbuffer.ifPresent(mbu -> g_fb.framebufferDrawBind(mbu.primaryFramebuffer()));
 
       g_v.viewportSet(area);
       this.viewport = area;

@@ -59,10 +59,7 @@ public interface R2GeometryBufferUsableType
     // Checkstyle doesn't understand the final keyword in interfaces.
     // CHECKSTYLE:OFF
     final Optional<R2Texture2DUsableType> s_opt = this.specularTexture();
-    if (s_opt.isPresent()) {
-      return s_opt.get();
-    }
-    return td.black2D();
+    return s_opt.orElseGet(td::black2D);
     // CHECKSTYLE:ON
   }
 

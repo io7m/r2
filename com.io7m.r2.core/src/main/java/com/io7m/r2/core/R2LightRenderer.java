@@ -208,11 +208,10 @@ public final class R2LightRenderer implements R2LightRendererType
 
     pc_copy_depth.startMeasuringIfEnabled();
     try {
-      if (lbuffer.isPresent()) {
-        final R2LightBufferUsableType lb = lbuffer.get();
+      lbuffer.ifPresent(lbu -> {
         final JCGLFramebuffersType g_fb = this.g.framebuffers();
-        g_fb.framebufferDrawBind(lb.primaryFramebuffer());
-      }
+        g_fb.framebufferDrawBind(lbu.primaryFramebuffer());
+      });
 
       this.renderCopyDepthStencil(gbuffer, area);
     } finally {
@@ -261,11 +260,10 @@ public final class R2LightRenderer implements R2LightRendererType
 
     pc_copy_depth.startMeasuringIfEnabled();
     try {
-      if (ibuffer.isPresent()) {
-        final R2ImageBufferUsableType lb = ibuffer.get();
+      ibuffer.ifPresent(ibu -> {
         final JCGLFramebuffersType g_fb = this.g.framebuffers();
-        g_fb.framebufferDrawBind(lb.primaryFramebuffer());
-      }
+        g_fb.framebufferDrawBind(ibu.primaryFramebuffer());
+      });
 
       this.renderCopyDepthStencil(gbuffer, area);
     } finally {

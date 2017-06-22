@@ -146,10 +146,7 @@ public final class R2GeometryRenderer implements R2GeometryRendererType
       final JCGLFramebuffersType g_fb = this.g.framebuffers();
       final JCGLViewportsType g_v = this.g.viewports();
 
-      if (gbuffer.isPresent()) {
-        final R2GeometryBufferUsableType gb = gbuffer.get();
-        g_fb.framebufferDrawBind(gb.primaryFramebuffer());
-      }
+      gbuffer.ifPresent(gb -> g_fb.framebufferDrawBind(gb.primaryFramebuffer()));
 
       if (s.opaquesCount() > 0L) {
         g_v.viewportSet(area);
