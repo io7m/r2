@@ -54,6 +54,12 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
+import static com.io7m.jcanephora.core.JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR;
+import static com.io7m.jcanephora.core.JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_R_8_1BPP;
+import static com.io7m.jcanephora.core.JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE;
+
 /**
  * Default implementation of the {@link R2MaskBufferType} interface.
  */
@@ -145,12 +151,12 @@ public final class R2MaskBuffer implements R2MaskBufferType
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
-          JCGLTextureFormat.TEXTURE_FORMAT_R_8_1BPP,
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          area.sizeX(),
+          area.sizeY(),
+          TEXTURE_FORMAT_R_8_1BPP,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       final JCGLFramebufferBuilderType fbb = g_fb.framebufferNewBuilder();
@@ -192,12 +198,12 @@ public final class R2MaskBuffer implements R2MaskBufferType
     final Pair<JCGLTextureUnitType, JCGLTexture2DType> pd =
       cc.unitContextAllocateTexture2D(
         g_t,
-        area.width(),
-        area.height(),
-        JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
-        JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+        area.sizeX(),
+        area.sizeY(),
+        TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
+        TEXTURE_WRAP_CLAMP_TO_EDGE,
         JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
+        TEXTURE_FILTER_NEAREST,
         JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
     final JCGLTexture2DType td = pd.getRight();
     fbb.attachDepthStencilTexture2D(td);
@@ -221,12 +227,12 @@ public final class R2MaskBuffer implements R2MaskBufferType
     final Pair<JCGLTextureUnitType, JCGLTexture2DType> pd =
       cc.unitContextAllocateTexture2D(
         g_t,
-        area.width(),
-        area.height(),
+        area.sizeX(),
+        area.sizeY(),
         format,
-        JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+        TEXTURE_WRAP_CLAMP_TO_EDGE,
         JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-        JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
+        TEXTURE_FILTER_NEAREST,
         JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
     final JCGLTexture2DType td = pd.getRight();
     fbb.attachDepthTexture2D(td);
@@ -252,14 +258,14 @@ public final class R2MaskBuffer implements R2MaskBufferType
         "The size of a shared depth attachment must match the size of the color attachment.");
       sb.append(System.lineSeparator());
       sb.append("Color size: ");
-      sb.append(area.width());
+      sb.append(area.sizeX());
       sb.append("x");
-      sb.append(area.height());
+      sb.append(area.sizeY());
       sb.append(System.lineSeparator());
       sb.append("Depth size: ");
-      sb.append(depth_area.width());
+      sb.append(depth_area.sizeX());
       sb.append("x");
-      sb.append(depth_area.height());
+      sb.append(depth_area.sizeY());
       sb.append(System.lineSeparator());
       throw new R2ExceptionBadTextureSize(sb.toString());
     }

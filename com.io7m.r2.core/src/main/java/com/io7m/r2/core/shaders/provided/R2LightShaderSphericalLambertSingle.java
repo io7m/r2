@@ -255,10 +255,10 @@ public final class R2LightShaderSphericalLambertSingle extends
 
     g_sh.shaderUniformPutFloat(
       this.u_viewport_inverse_width,
-      (float) (1.0 / (double) viewport.width()));
+      (float) (1.0 / (double) viewport.sizeX()));
     g_sh.shaderUniformPutFloat(
       this.u_viewport_inverse_height,
-      (float) (1.0 / (double) viewport.height()));
+      (float) (1.0 / (double) viewport.sizeY()));
 
     /*
      * Upload the scene's depth coefficient.

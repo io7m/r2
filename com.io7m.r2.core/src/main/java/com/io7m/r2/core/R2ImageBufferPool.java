@@ -130,7 +130,7 @@ public final class R2ImageBufferPool implements
       final JCGLTextureUnitContextParentType tc,
       final R2ImageBufferDescription key)
     {
-      return Math.multiplyExact(key.area().width(), key.area().height());
+      return Math.multiplyExact(key.area().sizeX(), key.area().sizeY());
     }
 
     @Override

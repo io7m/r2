@@ -53,6 +53,11 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
+import static com.io7m.jcanephora.core.JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP;
+import static com.io7m.jcanephora.core.JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE;
+
 /**
  * Default implementation of the {@link R2LightBufferType} interface.
  */
@@ -121,12 +126,12 @@ public final class R2LightBuffers
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
-          JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          area.sizeX(),
+          area.sizeY(),
+          TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       switch (desc.components()) {
@@ -134,12 +139,12 @@ public final class R2LightBuffers
           final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_diff =
             cc.unitContextAllocateTexture2D(
               g_t,
-              area.width(),
-              area.height(),
-              JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-              JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+              area.sizeX(),
+              area.sizeY(),
+              TEXTURE_FORMAT_RGBA_8_4BPP,
+              TEXTURE_WRAP_CLAMP_TO_EDGE,
               JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-              JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+              TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
           return newDiffuseOnly(
@@ -154,12 +159,12 @@ public final class R2LightBuffers
           final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_spec =
             cc.unitContextAllocateTexture2D(
               g_t,
-              area.width(),
-              area.height(),
-              JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-              JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+              area.sizeX(),
+              area.sizeY(),
+              TEXTURE_FORMAT_RGBA_8_4BPP,
+              TEXTURE_WRAP_CLAMP_TO_EDGE,
               JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-              JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+              TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
           return newSpecularOnly(
@@ -174,23 +179,23 @@ public final class R2LightBuffers
           final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_diff =
             cc.unitContextAllocateTexture2D(
               g_t,
-              area.width(),
-              area.height(),
-              JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-              JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+              area.sizeX(),
+              area.sizeY(),
+              TEXTURE_FORMAT_RGBA_8_4BPP,
+              TEXTURE_WRAP_CLAMP_TO_EDGE,
               JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-              JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+              TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
           final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_spec =
             cc.unitContextAllocateTexture2D(
               g_t,
-              area.width(),
-              area.height(),
-              JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-              JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+              area.sizeX(),
+              area.sizeY(),
+              TEXTURE_FORMAT_RGBA_8_4BPP,
+              TEXTURE_WRAP_CLAMP_TO_EDGE,
               JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-              JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+              TEXTURE_FILTER_LINEAR,
               JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
           return newDiffuseSpecular(

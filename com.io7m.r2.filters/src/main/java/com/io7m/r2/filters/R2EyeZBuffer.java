@@ -44,6 +44,11 @@ import com.io7m.r2.core.R2Texture2DUsableType;
 
 import java.util.List;
 
+import static com.io7m.jcanephora.core.JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_R_32F_4BPP;
+import static com.io7m.jcanephora.core.JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE;
+
 /**
  * Default implementation of the {@link R2EyeZBufferType} interface.
  */
@@ -102,23 +107,23 @@ public final class R2EyeZBuffer implements R2EyeZBufferType
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_eye =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
-          JCGLTextureFormat.TEXTURE_FORMAT_R_32F_4BPP,
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          area.sizeX(),
+          area.sizeY(),
+          TEXTURE_FORMAT_R_32F_4BPP,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
-          JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          area.sizeX(),
+          area.sizeY(),
+          TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       final R2Texture2DType rt_eye = R2Texture2DStatic.of(p_eye.getRight());

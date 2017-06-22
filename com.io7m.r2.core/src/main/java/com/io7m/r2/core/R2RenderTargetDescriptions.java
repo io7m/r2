@@ -91,7 +91,7 @@ public final class R2RenderTargetDescriptions
     }
 
     return AreaSizeL.of(
-      (long) ((double) ao.width() * scale),
-      (long) ((double) ao.height() * scale));
+      (long) ((double) ao.sizeX() * scale),
+      (long) ((double) ao.sizeY() * scale));
   }
 }

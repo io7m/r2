@@ -52,6 +52,10 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
+import static com.io7m.jcanephora.core.JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_R_8_1BPP;
+import static com.io7m.jcanephora.core.JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE;
+
 /**
  * Default implementation of the {@link R2AmbientOcclusionBufferType}
  * interface.
@@ -131,12 +135,12 @@ public final class R2AmbientOcclusionBuffer
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_occ =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
-          JCGLTextureFormat.TEXTURE_FORMAT_R_8_1BPP,
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          area.sizeX(),
+          area.sizeY(),
+          TEXTURE_FORMAT_R_8_1BPP,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       final R2Texture2DType rt_occ = R2Texture2DStatic.of(p_occ.getRight());

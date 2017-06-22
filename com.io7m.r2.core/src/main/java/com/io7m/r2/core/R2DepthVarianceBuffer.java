@@ -53,6 +53,9 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
+import static com.io7m.jcanephora.core.JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR;
+import static com.io7m.jcanephora.core.JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE;
+
 /**
  * Default implementation of the {@link R2DepthVarianceBufferType} interface.
  */
@@ -140,23 +143,23 @@ public final class R2DepthVarianceBuffer implements R2DepthVarianceBufferType
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
+          area.sizeX(),
+          area.sizeY(),
           formatDepthForPrecision(
             desc.depthPrecision()),
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_variance =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
+          area.sizeX(),
+          area.sizeY(),
           formatVarianceForPrecision(
             desc.depthVariancePrecision()),
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
           desc.minificationFilter(),
           desc.magnificationFilter());

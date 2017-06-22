@@ -49,6 +49,9 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
+import static com.io7m.jcanephora.core.JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST;
+import static com.io7m.jcanephora.core.JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE;
+
 /**
  * Default implementation of the {@link R2DepthOnlyBufferType} interface.
  */
@@ -126,12 +129,12 @@ public final class R2DepthOnlyBuffer implements R2DepthOnlyBufferType
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
+          area.sizeX(),
+          area.sizeY(),
           formatForPrecision(desc.depthPrecision()),
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_NEAREST,
+          TEXTURE_FILTER_NEAREST,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_NEAREST);
 
       final R2Texture2DType rt_depth = R2Texture2DStatic.of(p_depth.getRight());

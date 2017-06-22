@@ -55,6 +55,12 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
+import static com.io7m.jcanephora.core.JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_RG_16F_4BPP;
+import static com.io7m.jcanephora.core.JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE;
+
 /**
  * Default implementation of the {@link R2GeometryBufferType} interface.
  */
@@ -178,34 +184,34 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_rgba =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
-          JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          area.sizeX(),
+          area.sizeY(),
+          TEXTURE_FORMAT_RGBA_8_4BPP,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_depth =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
-          JCGLTextureFormat.TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          area.sizeX(),
+          area.sizeY(),
+          TEXTURE_FORMAT_DEPTH_24_STENCIL_8_4BPP,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> p_norm =
         cc.unitContextAllocateTexture2D(
           g_t,
-          area.width(),
-          area.height(),
-          JCGLTextureFormat.TEXTURE_FORMAT_RG_16F_4BPP,
-          JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+          area.sizeX(),
+          area.sizeY(),
+          TEXTURE_FORMAT_RG_16F_4BPP,
+          TEXTURE_WRAP_CLAMP_TO_EDGE,
           JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-          JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+          TEXTURE_FILTER_LINEAR,
           JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
 
       Pair<JCGLTextureUnitType, JCGLTexture2DType> p_spec = null;
@@ -213,12 +219,12 @@ public final class R2GeometryBuffer implements R2GeometryBufferType
         case R2_GEOMETRY_BUFFER_FULL:
           p_spec = cc.unitContextAllocateTexture2D(
             g_t,
-            area.width(),
-            area.height(),
-            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-            JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            area.sizeX(),
+            area.sizeY(),
+            TEXTURE_FORMAT_RGBA_8_4BPP,
+            TEXTURE_WRAP_CLAMP_TO_EDGE,
             JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR,
+            TEXTURE_FILTER_LINEAR,
             JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
           break;
         case R2_GEOMETRY_BUFFER_NO_SPECULAR:

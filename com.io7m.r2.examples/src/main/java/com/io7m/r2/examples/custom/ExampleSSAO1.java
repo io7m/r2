@@ -144,7 +144,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
     this.ssao_buffer =
       buffers.createAmbientOcclusionBuffer(
         R2AmbientOcclusionBufferDescription.of(
-          AreaSizeL.of(area.width() / 2L, area.height() / 2L)));
+          AreaSizeL.of(area.sizeX() / 2L, area.sizeY() / 2L)));
 
     this.ssao_kernel =
       R2SSAOKernel.newKernel(64);
@@ -157,7 +157,7 @@ public final class ExampleSSAO1 implements R2ExampleCustomType
 
     this.ssao_pool =
       m.pools().createAmbientOcclusionPool(
-        area.width() * area.height() * 2L, Long.MAX_VALUE);
+        area.sizeX() * area.sizeY() * 2L, Long.MAX_VALUE);
 
     this.ssao_filter_blur =
       R2FilterBilateralBlurDepthAware.newFilter(

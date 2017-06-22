@@ -135,7 +135,7 @@ public final class R2AmbientOcclusionBufferPool implements
       final JCGLTextureUnitContextParentType tc,
       final R2AmbientOcclusionBufferDescription key)
     {
-      return Math.multiplyExact(key.area().width(), key.area().height());
+      return Math.multiplyExact(key.area().sizeX(), key.area().sizeY());
     }
 
     @Override

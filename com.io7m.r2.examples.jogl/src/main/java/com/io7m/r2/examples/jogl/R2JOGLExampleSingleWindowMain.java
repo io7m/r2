@@ -103,6 +103,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.io7m.jcanephora.core.JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR;
+import static com.io7m.jcanephora.core.JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST;
+import static com.io7m.jcanephora.core.JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP;
+import static com.io7m.jcanephora.core.JCGLTextureWrapR.TEXTURE_WRAP_CLAMP_TO_EDGE;
+import static com.io7m.jcanephora.core.JCGLTextureWrapS.TEXTURE_WRAP_REPEAT;
 import static com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE;
 
 /**
@@ -622,13 +627,13 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         final JCGLTexture2DType t =
           this.textures.texture2DAllocate(
             u0,
-            data.width(),
-            data.height(),
-            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-            JCGLTextureWrapS.TEXTURE_WRAP_REPEAT,
+            data.sizeX(),
+            data.sizeY(),
+            TEXTURE_FORMAT_RGBA_8_4BPP,
+            TEXTURE_WRAP_REPEAT,
             JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
-            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
-            JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+            TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+            TEXTURE_FILTER_LINEAR);
         final JCGLTexture2DUpdateType update =
           this.update_prov.createTextureUpdate2D(t, data);
         this.textures.texture2DUpdate(u0, update);
@@ -666,13 +671,13 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         t =
           this.textures.textureCubeAllocate(
             u0,
-            data.width(),
-            JCGLTextureFormat.TEXTURE_FORMAT_RGBA_8_4BPP,
-            JCGLTextureWrapR.TEXTURE_WRAP_CLAMP_TO_EDGE,
+            data.sizeX(),
+            TEXTURE_FORMAT_RGBA_8_4BPP,
+            TEXTURE_WRAP_CLAMP_TO_EDGE,
             JCGLTextureWrapS.TEXTURE_WRAP_CLAMP_TO_EDGE,
             JCGLTextureWrapT.TEXTURE_WRAP_CLAMP_TO_EDGE,
-            JCGLTextureFilterMinification.TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
-            JCGLTextureFilterMagnification.TEXTURE_FILTER_LINEAR);
+            TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+            TEXTURE_FILTER_LINEAR);
 
         final JCGLTextureCubeUpdateType update =
           this.update_prov.createTextureUpdateCube(t, data);

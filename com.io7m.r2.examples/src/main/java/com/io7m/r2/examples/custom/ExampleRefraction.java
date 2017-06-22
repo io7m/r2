@@ -197,7 +197,7 @@ public final class ExampleRefraction implements R2ExampleCustomType
     this.ibuffer_low_res =
       buffers.createImageBuffer(
         R2ImageBufferDescription.of(
-          AreaSizeL.of(area.width() / 2L, area.height() / 2L),
+          AreaSizeL.of(area.sizeX() / 2L, area.sizeY() / 2L),
           Optional.empty()));
     this.refract_mask_buffer =
       buffers.createMaskBuffer(

@@ -171,8 +171,8 @@ public final class R2DepthShaderBasicStippledSingle
      * Upload the viewport.
      */
 
-    this.viewport_w = viewport.width();
-    this.viewport_h = viewport.height();
+    this.viewport_w = viewport.sizeX();
+    this.viewport_h = viewport.sizeY();
 
     g_sh.shaderUniformPutFloat(
       this.u_viewport_inverse_width,
@@ -200,8 +200,8 @@ public final class R2DepthShaderBasicStippledSingle
 
     final Vector2D noise_uv_scale =
       Vector2D.of(
-        (double) (this.viewport_w / noise.width()),
-        (double) (this.viewport_h / noise.height()));
+        (double) (this.viewport_w / noise.sizeX()),
+        (double) (this.viewport_h / noise.sizeY()));
 
     g_sh.shaderUniformPutVector2f(
       this.u_stipple_noise_uv_scale, noise_uv_scale);

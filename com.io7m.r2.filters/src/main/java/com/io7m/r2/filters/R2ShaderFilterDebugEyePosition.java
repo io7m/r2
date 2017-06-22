@@ -191,10 +191,10 @@ public final class R2ShaderFilterDebugEyePosition
     final AreaSizeL area = gbuffer.description().area();
     g_sh.shaderUniformPutFloat(
       this.u_viewport_inverse_width,
-      (float) (1.0 / (double) area.width()));
+      (float) (1.0 / (double) area.sizeX()));
     g_sh.shaderUniformPutFloat(
       this.u_viewport_inverse_height,
-      (float) (1.0 / (double) area.height()));
+      (float) (1.0 / (double) area.sizeY()));
 
     /*
      * Upload the scene's depth coefficient.

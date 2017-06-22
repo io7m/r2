@@ -191,8 +191,8 @@ public final class R2FilterBilateralBlurDepthAware<
       pb.setBlurFalloff(inv_sigma2);
     }
 
-    pb.setBlurOutputInverseWidth(1.0 / (double) source_area.width());
-    pb.setBlurOutputInverseHeight(1.0 / (double) source_area.height());
+    pb.setBlurOutputInverseWidth(1.0 / (double) source_area.sizeX());
+    pb.setBlurOutputInverseHeight(1.0 / (double) source_area.sizeY());
     pb.setBlurRadius(blur_params.blurSize());
     pb.setBlurSharpness(blur_params.blurSharpness());
     pb.setDepthCoefficient(

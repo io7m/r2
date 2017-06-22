@@ -172,8 +172,8 @@ public final class R2ShaderFilterFXAAA
 
     final Vector2D screen_inverse =
       Vector2D.of(
-        1.0 / (double) area.width(),
-        1.0 / (double) area.height());
+        1.0 / (double) area.sizeX(),
+        1.0 / (double) area.sizeY());
 
     g_sh.shaderUniformPutVector2f(this.u_screen_inverse, screen_inverse);
 

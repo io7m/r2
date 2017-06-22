@@ -446,7 +446,7 @@ public final class R2FilterBoxBlur<
         this.blur_values.setValues(
           R2ShaderFilterBoxBlurParameters.builder()
             .setTexture(source_texture)
-            .setBlurRadius((double) source_area.width() / parameters.blurSize())
+            .setBlurRadius((double) source_area.sizeX() / parameters.blurSize())
             .build());
 
         this.shader_blur_h.onReceiveFilterValues(this.g, this.blur_values);
@@ -495,7 +495,7 @@ public final class R2FilterBoxBlur<
         this.blur_values.setValues(
           R2ShaderFilterBoxBlurParameters.builder()
             .setTexture(source_texture)
-            .setBlurRadius((double) source_area.height() / parameters.blurSize())
+            .setBlurRadius((double) source_area.sizeY() / parameters.blurSize())
             .build());
 
         this.shader_blur_v.onReceiveFilterValues(this.g, this.blur_values);

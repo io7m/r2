@@ -251,8 +251,8 @@ public final class R2ShaderSSAO
     final AreaL viewport_area = values.viewport();
     final JCGLTexture2DUsableType noise = values.noiseTexture().texture();
     final Vector2D noise_uv_scale = Vector2D.of(
-      (double) viewport_area.width() / (double) noise.width(),
-      (double) viewport_area.height() / (double) noise.height());
+      (double) viewport_area.sizeX() / (double) noise.sizeX(),
+      (double) viewport_area.sizeY() / (double) noise.sizeY());
 
     g_sh.shaderUniformPutVector2f(
       this.u_ssao_noise_uv_scale, noise_uv_scale);

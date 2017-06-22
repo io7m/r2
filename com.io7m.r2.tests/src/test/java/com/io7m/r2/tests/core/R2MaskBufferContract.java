@@ -189,8 +189,8 @@ public abstract class R2MaskBufferContract extends R2JCGLContract
       final Pair<JCGLTextureUnitType, JCGLTexture2DType> t_depth =
         tcc.unitContextAllocateTexture2D(
           g.textures(),
-          area.width(),
-          area.height(),
+          area.sizeX(),
+          area.sizeY(),
           format,
           TEXTURE_WRAP_REPEAT,
           JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
@@ -266,8 +266,8 @@ public abstract class R2MaskBufferContract extends R2JCGLContract
     final Pair<JCGLTextureUnitType, JCGLTexture2DType> t_depth =
       tcc.unitContextAllocateTexture2D(
         g.textures(),
-        area_shared.width(),
-        area_shared.height(),
+        area_shared.sizeX(),
+        area_shared.sizeY(),
         TEXTURE_FORMAT_DEPTH_24_4BPP,
         TEXTURE_WRAP_REPEAT,
         JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
@@ -307,8 +307,8 @@ public abstract class R2MaskBufferContract extends R2JCGLContract
     final Pair<JCGLTextureUnitType, JCGLTexture2DType> t_depth =
       tcc.unitContextAllocateTexture2D(
         g.textures(),
-        area_shared.width(),
-        area_shared.height(),
+        area_shared.sizeX(),
+        area_shared.sizeY(),
         TEXTURE_FORMAT_R_8_1BPP,
         TEXTURE_WRAP_REPEAT,
         JCGLTextureWrapT.TEXTURE_WRAP_REPEAT,
