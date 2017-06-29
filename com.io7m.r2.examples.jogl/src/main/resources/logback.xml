@@ -11,16 +11,16 @@
   </appender>
 
   <logger
-    name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader.vertex"
+    name="com.io7m.r2.shaders.api.R2AbstractShader.vertex"
     level="INFO"/>
   <logger
-    name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader.fragment"
+    name="com.io7m.r2.shaders.api.R2AbstractShader.fragment"
     level="INFO"/>
   <logger
-    name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader.geometry"
+    name="com.io7m.r2.shaders.api.R2AbstractShader.geometry"
     level="INFO"/>
   <logger
-    name="com.io7m.r2.core.shaders.abstracts.R2AbstractShader"
+    name="com.io7m.r2.shaders.api.R2AbstractShader"
     level="INFO"/>
 
   <logger

@@ -19,13 +19,13 @@ package com.io7m.r2.tests.core;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrices4x4D;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
-import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2ProjectionReadableType;
-import com.io7m.r2.core.R2ViewRays;
-import com.io7m.r2.core.R2ViewRaysReadableType;
+import com.io7m.r2.matrices.R2MatricesObserverValuesType;
+import com.io7m.r2.projections.R2ProjectionReadableType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.r2.view_rays.R2ViewRays;
+import com.io7m.r2.view_rays.R2ViewRaysReadableType;
 
 public final class R2EmptyObserverValues implements
   R2MatricesObserverValuesType

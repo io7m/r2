@@ -38,50 +38,50 @@ import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector4D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vectors3D;
-import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
-import com.io7m.r2.core.R2AmbientOcclusionBufferType;
-import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
-import com.io7m.r2.core.R2FilterType;
-import com.io7m.r2.core.R2GeometryBufferDescription;
-import com.io7m.r2.core.R2GeometryBufferType;
-import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2InstanceBatchedDynamicType;
-import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2MaterialOpaqueBatched;
-import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
-import com.io7m.r2.core.R2MaterialOpaqueSingle;
-import com.io7m.r2.core.R2MaterialOpaqueSingleType;
-import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.R2ProjectionFOV;
-import com.io7m.r2.core.R2RenderTargetPoolType;
-import com.io7m.r2.core.R2SceneOpaques;
-import com.io7m.r2.core.R2SceneOpaquesType;
-import com.io7m.r2.core.R2SceneStencils;
-import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2Texture2DType;
-import com.io7m.r2.core.R2TransformSOT;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicBatched;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.api.ids.R2IDPoolType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.facade.R2FacadeBufferProviderType;
 import com.io7m.r2.facade.R2FacadeType;
-import com.io7m.r2.filters.R2BlurParameters;
-import com.io7m.r2.filters.R2FilterBoxBlurParameters;
-import com.io7m.r2.filters.R2FilterCompositorItem;
-import com.io7m.r2.filters.R2FilterCompositorParameters;
-import com.io7m.r2.filters.R2FilterSSAO;
-import com.io7m.r2.filters.R2FilterSSAOParameters;
-import com.io7m.r2.filters.R2SSAOKernel;
-import com.io7m.r2.filters.R2SSAOKernelType;
+import com.io7m.r2.filters.api.R2FilterType;
+import com.io7m.r2.filters.box_blur.api.R2BlurParameters;
+import com.io7m.r2.filters.box_blur.api.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.compositor.api.R2FilterCompositorItem;
+import com.io7m.r2.filters.compositor.api.R2FilterCompositorParameters;
+import com.io7m.r2.filters.ssao.R2FilterSSAO;
+import com.io7m.r2.filters.ssao.R2SSAOKernel;
+import com.io7m.r2.filters.ssao.api.R2AmbientOcclusionBufferDescription;
+import com.io7m.r2.filters.ssao.api.R2AmbientOcclusionBufferType;
+import com.io7m.r2.filters.ssao.api.R2AmbientOcclusionBufferUsableType;
+import com.io7m.r2.filters.ssao.api.R2FilterSSAOParameters;
+import com.io7m.r2.filters.ssao.api.R2SSAOKernelType;
+import com.io7m.r2.instances.R2InstanceBatchedDynamicType;
+import com.io7m.r2.instances.R2InstanceSingleType;
+import com.io7m.r2.matrices.R2MatricesType;
+import com.io7m.r2.projections.R2ProjectionFOV;
+import com.io7m.r2.rendering.geometry.R2SceneOpaques;
+import com.io7m.r2.rendering.geometry.api.R2GeometryBufferDescription;
+import com.io7m.r2.rendering.geometry.api.R2GeometryBufferType;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueBatched;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueBatchedType;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueSingle;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueSingleType;
+import com.io7m.r2.rendering.geometry.api.R2SceneOpaquesType;
+import com.io7m.r2.rendering.stencil.R2SceneStencils;
+import com.io7m.r2.rendering.stencil.api.R2SceneStencilsType;
+import com.io7m.r2.rendering.targets.R2RenderTargetPoolType;
+import com.io7m.r2.shaders.geometry.R2GeometryShaderBasicBatched;
+import com.io7m.r2.shaders.geometry.R2GeometryShaderBasicParameters;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometrySingleType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.r2.textures.R2Texture2DType;
+import com.io7m.r2.transforms.R2TransformSOT;
 
 import java.util.Optional;
 
-import static com.io7m.r2.core.R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
-import static com.io7m.r2.core.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
+import static com.io7m.r2.rendering.geometry.api.R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
+import static com.io7m.r2.rendering.stencil.api.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
 
 // CHECKSTYLE_JAVADOC:OFF
 
@@ -95,10 +95,10 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
   private R2InstanceSingleType instance;
   private JCGLClearSpecification screen_clear_spec;
   private R2GeometryBufferType geom_buffer;
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> geom_shader;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> geom_material;
+  private R2ShaderGeometrySingleType<R2GeometryShaderBasicParameters> geom_shader;
+  private R2MaterialOpaqueSingleType<R2GeometryShaderBasicParameters> geom_material;
   private R2InstanceBatchedDynamicType batched_instance;
-  private R2MaterialOpaqueBatchedType<R2SurfaceShaderBasicParameters> batched_geom_material;
+  private R2MaterialOpaqueBatchedType<R2GeometryShaderBasicParameters> batched_geom_material;
   private R2FilterType<R2FilterCompositorParameters> filter_compositor;
   private R2FilterCompositorParameters filter_comp_parameters;
   private R2AmbientOcclusionBufferType ssao_buffer;
@@ -249,9 +249,9 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
     }
 
     {
-      this.geom_shader = m.instanceShaders().createBasicSingle();
-      final R2SurfaceShaderBasicParameters gsp =
-        R2SurfaceShaderBasicParameters.builder()
+      this.geom_shader = m.geometryShaders().createBasicSingle();
+      final R2GeometryShaderBasicParameters gsp =
+        R2GeometryShaderBasicParameters.builder()
           .setTextureDefaults(m.textureDefaults())
           .setSpecularColor(PVector3D.of(1.0, 1.0, 1.0))
           .setSpecularExponent(64.0)
@@ -260,8 +260,8 @@ public final class ExampleSSAO0 implements R2ExampleCustomType
         R2MaterialOpaqueSingle.of(id_pool.freshID(), this.geom_shader, gsp);
     }
 
-    final R2SurfaceShaderBasicBatched batched_geom_shader =
-      m.instanceShaders().createBasicBatched();
+    final R2GeometryShaderBasicBatched batched_geom_shader =
+      m.geometryShaders().createBasicBatched();
     this.batched_geom_material = R2MaterialOpaqueBatched.of(
       id_pool.freshID(),
       batched_geom_shader,

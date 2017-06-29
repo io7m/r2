@@ -40,60 +40,60 @@ import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector4D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vectors3D;
-import com.io7m.r2.core.R2DepthAttachmentCreateWithStencil;
-import com.io7m.r2.core.R2FilterType;
-import com.io7m.r2.core.R2GeometryBufferDescription;
-import com.io7m.r2.core.R2GeometryBufferType;
-import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2ImageBuffer;
-import com.io7m.r2.core.R2ImageBufferDescription;
-import com.io7m.r2.core.R2ImageBufferUsableType;
-import com.io7m.r2.core.R2InstanceSingle;
-import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2LightAmbientScreenSingle;
-import com.io7m.r2.core.R2LightSphericalSingle;
-import com.io7m.r2.core.R2MaterialOpaqueSingle;
-import com.io7m.r2.core.R2MaterialOpaqueSingleType;
-import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.R2ProjectionFOV;
-import com.io7m.r2.core.R2RenderTargetPoolType;
-import com.io7m.r2.core.R2SceneLights;
-import com.io7m.r2.core.R2SceneLightsClipGroupType;
-import com.io7m.r2.core.R2SceneLightsGroupType;
-import com.io7m.r2.core.R2SceneLightsType;
-import com.io7m.r2.core.R2SceneOpaques;
-import com.io7m.r2.core.R2SceneOpaquesType;
-import com.io7m.r2.core.R2SceneStencils;
-import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2ShadowMapContextType;
-import com.io7m.r2.core.R2ShadowMapRendererExecutionType;
-import com.io7m.r2.core.R2TransformSOT;
-import com.io7m.r2.core.R2TransformSiOT;
-import com.io7m.r2.core.shaders.provided.R2LightShaderSphericalLambertBlinnPhongSingle;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicReflectiveParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightSingleType;
+import com.io7m.r2.core.api.ids.R2IDPoolType;
 import com.io7m.r2.examples.ExampleProfilingWindow;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.facade.R2FacadeBufferProviderType;
 import com.io7m.r2.facade.R2FacadeType;
-import com.io7m.r2.filters.R2BlurParameters;
-import com.io7m.r2.filters.R2FilterBoxBlurParameters;
-import com.io7m.r2.filters.R2FilterEmissionParameters;
-import com.io7m.r2.filters.R2FilterFXAAParameters;
-import com.io7m.r2.filters.R2FilterFXAAType;
+import com.io7m.r2.filters.api.R2FilterType;
+import com.io7m.r2.filters.box_blur.api.R2BlurParameters;
+import com.io7m.r2.filters.box_blur.api.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.emission.api.R2FilterEmissionParameters;
+import com.io7m.r2.filters.fxaa.api.R2FilterFXAAParameters;
+import com.io7m.r2.filters.fxaa.api.R2FilterFXAAType;
+import com.io7m.r2.images.R2ImageBuffer;
+import com.io7m.r2.images.api.R2DepthAttachmentCreateWithStencil;
+import com.io7m.r2.images.api.R2ImageBufferDescription;
+import com.io7m.r2.images.api.R2ImageBufferUsableType;
+import com.io7m.r2.instances.R2InstanceSingle;
+import com.io7m.r2.instances.R2InstanceSingleType;
+import com.io7m.r2.lights.R2LightAmbientScreenSingle;
+import com.io7m.r2.lights.R2LightSphericalSingle;
+import com.io7m.r2.matrices.R2MatricesType;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
-import com.io7m.r2.shaders.core.R2LightShaderDefines;
+import com.io7m.r2.projections.R2ProjectionFOV;
+import com.io7m.r2.rendering.geometry.R2SceneOpaques;
+import com.io7m.r2.rendering.geometry.api.R2GeometryBufferDescription;
+import com.io7m.r2.rendering.geometry.api.R2GeometryBufferType;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueSingle;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueSingleType;
+import com.io7m.r2.rendering.geometry.api.R2SceneOpaquesType;
+import com.io7m.r2.rendering.lights.R2SceneLights;
+import com.io7m.r2.rendering.lights.api.R2SceneLightsClipGroupType;
+import com.io7m.r2.rendering.lights.api.R2SceneLightsGroupType;
+import com.io7m.r2.rendering.lights.api.R2SceneLightsType;
+import com.io7m.r2.rendering.shadow.api.R2ShadowMapContextType;
+import com.io7m.r2.rendering.shadow.api.R2ShadowMapRendererExecutionType;
+import com.io7m.r2.rendering.stencil.R2SceneStencils;
+import com.io7m.r2.rendering.stencil.api.R2SceneStencilsType;
+import com.io7m.r2.rendering.targets.R2RenderTargetPoolType;
+import com.io7m.r2.shaders.geometry.R2GeometryShaderBasicReflectiveParameters;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometrySingleType;
+import com.io7m.r2.shaders.light.R2LightShaderSphericalLambertBlinnPhongSingle;
+import com.io7m.r2.shaders.light.api.R2LightShaderDefines;
+import com.io7m.r2.shaders.light.api.R2ShaderLightSingleType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.r2.transforms.R2TransformSOT;
+import com.io7m.r2.transforms.R2TransformSiOT;
 
 import java.util.Optional;
 
 import static com.io7m.jcanephora.core.JCGLFaceSelection.FACE_FRONT_AND_BACK;
-import static com.io7m.r2.core.R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
-import static com.io7m.r2.core.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
-import static com.io7m.r2.filters.R2FilterFXAAQuality.R2_FXAA_QUALITY_10;
+import static com.io7m.r2.filters.fxaa.api.R2FilterFXAAQuality.R2_FXAA_QUALITY_10;
+import static com.io7m.r2.rendering.geometry.api.R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
+import static com.io7m.r2.rendering.stencil.api.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
 
 // CHECKSTYLE:OFF
 
@@ -107,8 +107,8 @@ public final class ExampleMinimalNoLBuffer implements R2ExampleCustomType
   private R2GeometryBufferType gbuffer;
   private R2ImageBuffer ibuffer;
   private R2SceneOpaquesType opaques;
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_shader;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicReflectiveParameters> geom_material;
+  private R2ShaderGeometrySingleType<R2GeometryShaderBasicReflectiveParameters> geom_shader;
+  private R2MaterialOpaqueSingleType<R2GeometryShaderBasicReflectiveParameters> geom_material;
   private R2FilterFXAAParameters filter_fxaa_params;
   private R2FacadeType main;
   private R2LightAmbientScreenSingle light_ambient;
@@ -179,10 +179,10 @@ public final class ExampleMinimalNoLBuffer implements R2ExampleCustomType
 
     this.instance = m.instances().createSingle(mesh, transform);
 
-    final R2SurfaceShaderBasicReflectiveParameters geom_shader_params;
+    final R2GeometryShaderBasicReflectiveParameters geom_shader_params;
     {
-      final R2SurfaceShaderBasicReflectiveParameters.Builder spb =
-        R2SurfaceShaderBasicReflectiveParameters.builder();
+      final R2GeometryShaderBasicReflectiveParameters.Builder spb =
+        R2GeometryShaderBasicReflectiveParameters.builder();
       spb.setTextureDefaults(m.textureDefaults());
       spb.setNormalTexture(serv.getTexture2D("halls_complex_normal.png"));
       spb.setEnvironmentTexture(serv.getTextureCube("toronto"));
@@ -190,7 +190,7 @@ public final class ExampleMinimalNoLBuffer implements R2ExampleCustomType
       geom_shader_params = spb.build();
     }
 
-    this.geom_shader = m.instanceShaders().createBasicReflectiveSingle();
+    this.geom_shader = m.geometryShaders().createBasicReflectiveSingle();
     this.geom_material = R2MaterialOpaqueSingle.of(
       id_pool.freshID(), this.geom_shader, geom_shader_params);
 

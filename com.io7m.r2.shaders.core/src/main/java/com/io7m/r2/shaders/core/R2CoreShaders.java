@@ -18,12 +18,15 @@ package com.io7m.r2.shaders.core;
 
 import com.io7m.sombrero.core.SoShaderModule;
 import com.io7m.sombrero.core.SoShaderModuleProviderAbstract;
+import com.io7m.sombrero.core.SoShaderModuleProviderType;
 import com.io7m.sombrero.core.SoShaderStoreResource;
+import org.osgi.service.component.annotations.Component;
 
 /**
- * Core shaders module provider.
+ * Core shader module provider.
  */
 
+@Component(service = SoShaderModuleProviderType.class)
 public final class R2CoreShaders extends SoShaderModuleProviderAbstract
 {
   /**
@@ -32,9 +35,10 @@ public final class R2CoreShaders extends SoShaderModuleProviderAbstract
 
   public R2CoreShaders()
   {
-    super(SoShaderModule.of(
-      "com.io7m.r2.shaders.core",
-      SoShaderStoreResource.create(
-        "/com/io7m/r2/shaders/core", R2CoreShaders.class::getResource)));
+    super(
+      SoShaderModule.of(
+        "com.io7m.r2.shaders.core",
+        SoShaderStoreResource.create(
+          "/com/io7m/r2/shaders/core", R2CoreShaders.class::getResource)));
   }
 }

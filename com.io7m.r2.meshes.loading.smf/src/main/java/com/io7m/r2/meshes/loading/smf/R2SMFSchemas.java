@@ -18,6 +18,7 @@ package com.io7m.r2.meshes.loading.smf;
 
 import com.io7m.jnull.NullCheck;
 import com.io7m.junreachable.UnreachableCodeException;
+import com.io7m.r2.meshes.api.R2MeshAttributeConventions;
 import com.io7m.r2.meshes.api.R2MeshAttributeSemantic;
 import com.io7m.smfj.core.SMFAttributeName;
 import com.io7m.smfj.core.SMFComponentType;
@@ -29,10 +30,6 @@ import javaslang.collection.HashMap;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.NORMAL_ATTRIBUTE_INDEX;
-import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.POSITION_ATTRIBUTE_INDEX;
-import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.TANGENT4_ATTRIBUTE_INDEX;
-import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.UV_ATTRIBUTE_INDEX;
 import static com.io7m.r2.meshes.api.R2MeshAttributeSemantic.R2_MESH_ATTRIBUTE_NORMAL;
 import static com.io7m.r2.meshes.api.R2MeshAttributeSemantic.R2_MESH_ATTRIBUTE_POSITION;
 import static com.io7m.r2.meshes.api.R2MeshAttributeSemantic.R2_MESH_ATTRIBUTE_TANGENT4;
@@ -159,10 +156,14 @@ public final class R2SMFSchemas
 
     R2_ATTRIBUTE_INDICES =
       HashMap.of(
-        R2_POSITION_NAME, Integer.valueOf(POSITION_ATTRIBUTE_INDEX),
-        R2_NORMAL_NAME, Integer.valueOf(NORMAL_ATTRIBUTE_INDEX),
-        R2_UV_NAME, Integer.valueOf(UV_ATTRIBUTE_INDEX),
-        R2_TANGENT4_NAME, Integer.valueOf(TANGENT4_ATTRIBUTE_INDEX));
+        R2_POSITION_NAME,
+        Integer.valueOf(R2MeshAttributeConventions.positionAttributeIndex()),
+        R2_NORMAL_NAME,
+        Integer.valueOf(R2MeshAttributeConventions.normalAttributeIndex()),
+        R2_UV_NAME,
+        Integer.valueOf(R2MeshAttributeConventions.uvAttributeIndex()),
+        R2_TANGENT4_NAME,
+        Integer.valueOf(R2MeshAttributeConventions.tangent4AttributeIndex()));
   }
 
   private R2SMFSchemas()

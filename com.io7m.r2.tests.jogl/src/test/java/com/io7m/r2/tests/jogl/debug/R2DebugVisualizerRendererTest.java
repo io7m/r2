@@ -18,12 +18,12 @@ package com.io7m.r2.tests.jogl.debug;
 
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
-import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.debug.R2DebugVisualizerRenderer;
-import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
-import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.core.api.ids.R2IDPoolType;
+import com.io7m.r2.debug.R2DebugVisualizerRenderer;
+import com.io7m.r2.debug.api.R2DebugVisualizerRendererType;
 import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
 import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderSynchronous;
+import com.io7m.r2.shaders.api.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.r2.tests.debug.R2DebugVisualizerRendererContract;
 import com.io7m.r2.tests.jogl.R2TestContexts;
 import com.io7m.smfj.format.binary.SMFFormatBinary;

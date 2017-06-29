@@ -56,54 +56,54 @@ import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.parameterized.vectors.PVectors3D;
 import com.io7m.junreachable.UnimplementedCodeException;
-import com.io7m.r2.core.R2Exception;
-import com.io7m.r2.core.R2ExceptionShaderValidationFailed;
-import com.io7m.r2.core.R2GeometryBufferUsableType;
-import com.io7m.r2.core.R2InstanceBatchedType;
-import com.io7m.r2.core.R2InstanceBillboardedType;
-import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2LightScreenSingleType;
-import com.io7m.r2.core.R2LightSingleType;
-import com.io7m.r2.core.R2LightVolumeSingleType;
-import com.io7m.r2.core.R2MaterialDepthBatchedType;
-import com.io7m.r2.core.R2MaterialDepthSingleType;
-import com.io7m.r2.core.R2MaterialOpaqueBatchedType;
-import com.io7m.r2.core.R2MaterialOpaqueBillboardedType;
-import com.io7m.r2.core.R2MaterialOpaqueSingleType;
-import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
-import com.io7m.r2.core.R2MatricesObserverValuesType;
-import com.io7m.r2.core.R2ProjectionFOV;
-import com.io7m.r2.core.R2ProjectionReadableType;
-import com.io7m.r2.core.R2TransformIdentity;
-import com.io7m.r2.core.R2TransformReadableType;
-import com.io7m.r2.core.R2TransformSiOT;
-import com.io7m.r2.core.R2ViewRays;
-import com.io7m.r2.core.R2ViewRaysReadableType;
-import com.io7m.r2.core.R2ViewRaysType;
-import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderDepthBatchedUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderDepthSingleUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBatchedUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceBillboardedUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderLightSingleUsableType;
-import com.io7m.r2.core.shaders.types.R2ShaderParametersFilterType;
-import com.io7m.r2.core.shaders.types.R2ShaderParametersLightType;
-import com.io7m.r2.core.shaders.types.R2ShaderParametersMaterialType;
-import com.io7m.r2.core.shaders.types.R2ShaderParametersViewType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBatchedType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceBillboardedType;
-import com.io7m.r2.core.shaders.types.R2ShaderTranslucentInstanceSingleType;
+import com.io7m.r2.core.api.R2Exception;
+import com.io7m.r2.instances.R2InstanceBatchedType;
+import com.io7m.r2.instances.R2InstanceBillboardedType;
+import com.io7m.r2.instances.R2InstanceSingleType;
+import com.io7m.r2.lights.R2LightScreenSingleType;
+import com.io7m.r2.lights.R2LightSingleType;
+import com.io7m.r2.lights.R2LightVolumeSingleType;
+import com.io7m.r2.matrices.R2MatricesInstanceSingleValuesType;
+import com.io7m.r2.matrices.R2MatricesObserverValuesType;
+import com.io7m.r2.projections.R2ProjectionFOV;
+import com.io7m.r2.projections.R2ProjectionReadableType;
+import com.io7m.r2.rendering.depth.api.R2MaterialDepthBatchedType;
+import com.io7m.r2.rendering.depth.api.R2MaterialDepthSingleType;
+import com.io7m.r2.rendering.geometry.api.R2GeometryBufferUsableType;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueBatchedType;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueBillboardedType;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueSingleType;
+import com.io7m.r2.shaders.api.R2ExceptionShaderValidationFailed;
+import com.io7m.r2.shaders.api.R2ShaderParametersMaterialType;
+import com.io7m.r2.shaders.api.R2ShaderParametersViewType;
+import com.io7m.r2.shaders.depth.api.R2ShaderDepthBatchedType;
+import com.io7m.r2.shaders.depth.api.R2ShaderDepthBatchedUsableType;
+import com.io7m.r2.shaders.depth.api.R2ShaderDepthSingleType;
+import com.io7m.r2.shaders.depth.api.R2ShaderDepthSingleUsableType;
+import com.io7m.r2.shaders.filter.api.R2ShaderFilterType;
+import com.io7m.r2.shaders.filter.api.R2ShaderParametersFilterType;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometryBatchedType;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometryBatchedUsableType;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometryBillboardedType;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometryBillboardedUsableType;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometrySingleType;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometrySingleUsableType;
+import com.io7m.r2.shaders.light.api.R2ShaderLightSingleUsableType;
+import com.io7m.r2.shaders.light.api.R2ShaderParametersLightType;
+import com.io7m.r2.shaders.translucent.api.R2ShaderTranslucentInstanceBatchedType;
+import com.io7m.r2.shaders.translucent.api.R2ShaderTranslucentInstanceBillboardedType;
+import com.io7m.r2.shaders.translucent.api.R2ShaderTranslucentInstanceSingleType;
 import com.io7m.r2.spaces.R2SpaceClipType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceRGBType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.r2.transforms.R2TransformIdentity;
+import com.io7m.r2.transforms.R2TransformReadableType;
+import com.io7m.r2.transforms.R2TransformSiOT;
+import com.io7m.r2.view_rays.R2ViewRays;
+import com.io7m.r2.view_rays.R2ViewRaysReadableType;
+import com.io7m.r2.view_rays.R2ViewRaysType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,7 +118,7 @@ public final class R2TestUtilities
 
   }
 
-  static R2InstanceSingleType getInstanceSingle(
+  public static R2InstanceSingleType getInstanceSingle(
     final JCGLInterfaceGL33Type g,
     final JCGLArrayObjectType ao,
     final long id)
@@ -159,7 +159,7 @@ public final class R2TestUtilities
     };
   }
 
-  static JCGLArrayObjectType getArrayObject(
+  public static JCGLArrayObjectType getArrayObject(
     final JCGLInterfaceGL33Type g)
   {
     final JCGLArrayBuffersType g_ab = g.arrayBuffers();
@@ -184,16 +184,16 @@ public final class R2TestUtilities
     return ao;
   }
 
-  static R2MaterialOpaqueSingleType<Object> getMaterialSingle(
+  public static R2MaterialOpaqueSingleType<Object> getMaterialSingle(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderInstanceSingleUsableType<Object> sh,
+    final R2ShaderGeometrySingleUsableType<Object> sh,
     final Object p,
     final long id)
   {
     return new R2MaterialOpaqueSingleType<Object>()
     {
       @Override
-      public R2ShaderInstanceSingleUsableType<Object> shader()
+      public R2ShaderGeometrySingleUsableType<Object> shader()
       {
         return sh;
       }
@@ -218,7 +218,7 @@ public final class R2TestUtilities
     };
   }
 
-  static R2MaterialDepthSingleType<Object> getMaterialDepth(
+  public static R2MaterialDepthSingleType<Object> getMaterialDepth(
     final JCGLInterfaceGL33Type g,
     final R2ShaderDepthSingleUsableType<Object> sh,
     final Object p,
@@ -252,7 +252,7 @@ public final class R2TestUtilities
     };
   }
 
-  public static R2ShaderInstanceSingleType<Object>
+  public static R2ShaderGeometrySingleType<Object>
   getShaderInstanceSingle(
     final JCGLInterfaceGL33Type g,
     final long s_id)
@@ -277,7 +277,7 @@ public final class R2TestUtilities
     final JCGLProgramShaderType pr =
       g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
 
-    return new R2ShaderInstanceSingleType<Object>()
+    return new R2ShaderGeometrySingleType<Object>()
     {
       @Override
       public void delete(final JCGLInterfaceGL33Type g)
@@ -578,7 +578,7 @@ public final class R2TestUtilities
     };
   }
 
-  public static R2ShaderInstanceBatchedType<Object>
+  public static R2ShaderGeometryBatchedType<Object>
   getShaderInstanceBatched(
     final JCGLInterfaceGL33Type g,
     final long s_id)
@@ -603,7 +603,7 @@ public final class R2TestUtilities
     final JCGLProgramShaderType pr =
       g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
 
-    return new R2ShaderInstanceBatchedType<Object>()
+    return new R2ShaderGeometryBatchedType<Object>()
     {
       @Override
       public void delete(final JCGLInterfaceGL33Type g)
@@ -685,7 +685,7 @@ public final class R2TestUtilities
     };
   }
 
-  public static R2ShaderInstanceBillboardedType<Object>
+  public static R2ShaderGeometryBillboardedType<Object>
   getShaderInstanceBillboarded(
     final JCGLInterfaceGL33Type g,
     final long s_id)
@@ -710,7 +710,7 @@ public final class R2TestUtilities
     final JCGLProgramShaderType pr =
       g_sh.shaderLinkProgram("p_main", v, Optional.empty(), f);
 
-    return new R2ShaderInstanceBillboardedType<Object>()
+    return new R2ShaderGeometryBillboardedType<Object>()
     {
       @Override
       public void delete(final JCGLInterfaceGL33Type g)
@@ -935,14 +935,14 @@ public final class R2TestUtilities
 
   public static R2MaterialOpaqueBatchedType<Object> getMaterialBatched(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderInstanceBatchedUsableType<Object> sh,
+    final R2ShaderGeometryBatchedUsableType<Object> sh,
     final Object p,
     final long id)
   {
     return new R2MaterialOpaqueBatchedType<Object>()
     {
       @Override
-      public R2ShaderInstanceBatchedUsableType<Object> shader()
+      public R2ShaderGeometryBatchedUsableType<Object> shader()
       {
         return sh;
       }
@@ -1315,14 +1315,14 @@ public final class R2TestUtilities
 
   public static R2MaterialOpaqueBillboardedType<Object> getMaterialBillboarded(
     final JCGLInterfaceGL33Type g,
-    final R2ShaderInstanceBillboardedUsableType<Object> sh,
+    final R2ShaderGeometryBillboardedUsableType<Object> sh,
     final Object p,
     final long id)
   {
     return new R2MaterialOpaqueBillboardedType<Object>()
     {
       @Override
-      public R2ShaderInstanceBillboardedUsableType<Object> shader()
+      public R2ShaderGeometryBillboardedUsableType<Object> shader()
       {
         return sh;
       }

@@ -278,7 +278,7 @@ final class R2SMFMeshUploading
       final Int2ReferenceRBTreeMap<R2MeshAttributePacked> by_index =
         new Int2ReferenceRBTreeMap<>();
 
-      int user_attrib = R2MeshAttributeConventions.USER_ATTRIBUTES_INDEX;
+      int user_attrib = R2MeshAttributeConventions.userAttributesIndex();
       for (final SMFAttributeName name : by_name.keySet()) {
         final OptionalInt index_opt =
           R2SMFSchemas.attributeIndexForName(name);

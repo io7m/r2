@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.core</artifactId>
+      <artifactId>com.io7m.r2.core.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

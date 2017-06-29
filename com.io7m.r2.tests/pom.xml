@@ -35,17 +35,12 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.core</artifactId>
+      <artifactId>com.io7m.r2.filters.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.r2.shaders.core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.filters</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -73,6 +68,7 @@
       <artifactId>com.io7m.r2.meshes.processing.smf</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>com.io7m.smfj</groupId>
       <artifactId>com.io7m.smfj.format.text</artifactId>

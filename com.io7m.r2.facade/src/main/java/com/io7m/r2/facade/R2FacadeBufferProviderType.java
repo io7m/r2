@@ -17,18 +17,18 @@
 package com.io7m.r2.facade;
 
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.r2.core.R2AmbientOcclusionBuffer;
-import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
-import com.io7m.r2.core.R2GeometryBuffer;
-import com.io7m.r2.core.R2GeometryBufferDescription;
-import com.io7m.r2.core.R2ImageBuffer;
-import com.io7m.r2.core.R2ImageBufferDescription;
+import com.io7m.r2.filters.ssao.R2AmbientOcclusionBuffer;
+import com.io7m.r2.filters.ssao.api.R2AmbientOcclusionBufferDescription;
+import com.io7m.r2.images.R2ImageBuffer;
 import com.io7m.r2.annotations.R2ImmutableStyleType;
-import com.io7m.r2.core.R2LightBufferDescription;
-import com.io7m.r2.core.R2LightBufferType;
-import com.io7m.r2.core.R2LightBuffers;
-import com.io7m.r2.core.R2MaskBuffer;
-import com.io7m.r2.core.R2MaskBufferDescription;
+import com.io7m.r2.images.api.R2ImageBufferDescription;
+import com.io7m.r2.rendering.geometry.R2GeometryBuffer;
+import com.io7m.r2.rendering.geometry.api.R2GeometryBufferDescription;
+import com.io7m.r2.rendering.lights.R2LightBuffers;
+import com.io7m.r2.rendering.lights.api.R2LightBufferDescription;
+import com.io7m.r2.rendering.lights.api.R2LightBufferType;
+import com.io7m.r2.rendering.mask.R2MaskBuffer;
+import com.io7m.r2.rendering.mask.api.R2MaskBufferDescription;
 import org.immutables.value.Value;
 
 /**

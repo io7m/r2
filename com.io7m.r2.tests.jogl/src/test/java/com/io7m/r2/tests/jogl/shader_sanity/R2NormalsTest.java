@@ -90,7 +90,9 @@ public final class R2NormalsTest extends R2ShaderTest
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();
     final R2ShaderTestFunctionEvaluator eval =
       new R2ShaderTestFunctionEvaluator(
-        gg, "R2DebugPositionOnly", "R2DebugNormalCompression");
+        gg,
+        "com.io7m.r2.shaders.debug/R2DebugPositionOnly.vert",
+        "com.io7m.r2.shaders.debug/R2DebugNormalCompression.frag");
 
     final List<Vector3D> vectors = new ArrayList<>(16);
     vectors.add(Vector3D.of(-1.0, -1.0, 0.0));

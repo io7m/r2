@@ -18,8 +18,8 @@ package com.io7m.r2.examples;
 
 import com.io7m.jcanephora.core.JCGLArrayObjectType;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
-import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureCubeUsableType;
+import com.io7m.r2.textures.R2Texture2DUsableType;
+import com.io7m.r2.textures.R2TextureCubeUsableType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
 

@@ -17,12 +17,12 @@
 package com.io7m.r2.facade;
 
 import com.io7m.r2.annotations.R2ImmutableStyleType;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderBatched;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderBillboarded;
-import com.io7m.r2.core.shaders.provided.R2RefractionMaskedDeltaShaderSingle;
-import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicPremultipliedBatched;
-import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicPremultipliedBillboarded;
-import com.io7m.r2.core.shaders.provided.R2TranslucentShaderBasicPremultipliedSingle;
+import com.io7m.r2.shaders.refraction.R2RefractionMaskedDeltaShaderBatched;
+import com.io7m.r2.shaders.refraction.R2RefractionMaskedDeltaShaderBillboarded;
+import com.io7m.r2.shaders.refraction.R2RefractionMaskedDeltaShaderSingle;
+import com.io7m.r2.shaders.translucent.R2TranslucentShaderBasicPremultipliedBatched;
+import com.io7m.r2.shaders.translucent.R2TranslucentShaderBasicPremultipliedBillboarded;
+import com.io7m.r2.shaders.translucent.R2TranslucentShaderBasicPremultipliedSingle;
 import org.immutables.value.Value;
 
 /**

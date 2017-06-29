@@ -21,49 +21,49 @@ import com.io7m.jcanephora.profiler.JCGLProfiling;
 import com.io7m.jcanephora.profiler.JCGLProfilingType;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitAllocator;
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitAllocatorType;
-import com.io7m.r2.core.R2DeletableType;
-import com.io7m.r2.core.R2DepthOnlyRenderer;
-import com.io7m.r2.core.R2DepthRendererType;
-import com.io7m.r2.core.R2DepthVarianceBufferDescription;
-import com.io7m.r2.core.R2DepthVarianceBufferPool;
-import com.io7m.r2.core.R2DepthVarianceBufferUsableType;
-import com.io7m.r2.core.R2DepthVarianceRenderer;
-import com.io7m.r2.core.R2DepthVarianceRendererType;
-import com.io7m.r2.core.R2Exception;
-import com.io7m.r2.core.R2GeometryRenderer;
-import com.io7m.r2.core.R2GeometryRendererType;
-import com.io7m.r2.core.R2IDPool;
-import com.io7m.r2.core.R2IDPoolType;
 import com.io7m.r2.annotations.R2ImmutableStyleType;
-import com.io7m.r2.core.R2LightRenderer;
-import com.io7m.r2.core.R2LightRendererType;
-import com.io7m.r2.core.R2MaskRenderer;
-import com.io7m.r2.core.R2MaskRendererType;
-import com.io7m.r2.core.R2Matrices;
-import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.R2RenderTargetPoolType;
-import com.io7m.r2.core.R2ShadowMapRenderer;
-import com.io7m.r2.core.R2ShadowMapRendererType;
-import com.io7m.r2.core.R2StencilRenderer;
-import com.io7m.r2.core.R2StencilRendererType;
-import com.io7m.r2.core.R2TextureDefaults;
-import com.io7m.r2.core.R2TextureDefaultsType;
-import com.io7m.r2.core.R2TranslucentRenderer;
-import com.io7m.r2.core.R2TranslucentRendererType;
-import com.io7m.r2.core.R2UnitCubeType;
-import com.io7m.r2.core.R2UnitQuad;
-import com.io7m.r2.core.R2UnitQuadType;
-import com.io7m.r2.core.R2UnitSphereType;
-import com.io7m.r2.core.debug.R2DebugVisualizerRenderer;
-import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
-import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironment;
-import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.core.api.deletable.R2DeletableType;
+import com.io7m.r2.core.api.R2Exception;
+import com.io7m.r2.core.api.ids.R2IDPool;
+import com.io7m.r2.core.api.ids.R2IDPoolType;
+import com.io7m.r2.debug.R2DebugVisualizerRenderer;
+import com.io7m.r2.debug.api.R2DebugVisualizerRendererType;
+import com.io7m.r2.matrices.R2Matrices;
+import com.io7m.r2.matrices.R2MatricesType;
 import com.io7m.r2.meshes.defaults.R2UnitCube;
+import com.io7m.r2.meshes.defaults.R2UnitQuad;
 import com.io7m.r2.meshes.defaults.R2UnitSphere;
 import com.io7m.r2.meshes.loading.api.R2MeshLoaderAsynchronousType;
 import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
 import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderAsynchronous;
 import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderSynchronous;
+import com.io7m.r2.rendering.depth.R2DepthOnlyRenderer;
+import com.io7m.r2.rendering.depth.api.R2DepthRendererType;
+import com.io7m.r2.rendering.depth.variance.R2DepthVarianceBufferPool;
+import com.io7m.r2.rendering.depth.variance.R2DepthVarianceRenderer;
+import com.io7m.r2.rendering.depth.variance.api.R2DepthVarianceBufferDescription;
+import com.io7m.r2.rendering.depth.variance.api.R2DepthVarianceBufferUsableType;
+import com.io7m.r2.rendering.depth.variance.api.R2DepthVarianceRendererType;
+import com.io7m.r2.rendering.geometry.R2GeometryRenderer;
+import com.io7m.r2.rendering.geometry.api.R2GeometryRendererType;
+import com.io7m.r2.rendering.lights.R2LightRenderer;
+import com.io7m.r2.rendering.lights.api.R2LightRendererType;
+import com.io7m.r2.rendering.mask.R2MaskRenderer;
+import com.io7m.r2.rendering.mask.api.R2MaskRendererType;
+import com.io7m.r2.rendering.shadow.R2ShadowMapRenderer;
+import com.io7m.r2.rendering.shadow.api.R2ShadowMapRendererType;
+import com.io7m.r2.rendering.stencil.R2StencilRenderer;
+import com.io7m.r2.rendering.stencil.api.R2StencilRendererType;
+import com.io7m.r2.rendering.targets.R2RenderTargetPoolType;
+import com.io7m.r2.rendering.translucent.R2TranslucentRenderer;
+import com.io7m.r2.rendering.translucent.api.R2TranslucentRendererType;
+import com.io7m.r2.shaders.api.R2ShaderPreprocessingEnvironment;
+import com.io7m.r2.shaders.api.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.textures.R2TextureDefaults;
+import com.io7m.r2.textures.R2TextureDefaultsType;
+import com.io7m.r2.unit_cubes.R2UnitCubeType;
+import com.io7m.r2.unit_quads.R2UnitQuadType;
+import com.io7m.r2.unit_spheres.R2UnitSphereType;
 import com.io7m.smfj.format.binary.SMFFormatBinary;
 import com.io7m.sombrero.core.SoShaderPreprocessorConfig;
 import com.io7m.sombrero.core.SoShaderPreprocessorType;
@@ -501,13 +501,13 @@ public interface R2FacadeType extends R2DeletableType
   }
 
   /**
-   * @return An instance shader provider
+   * @return A geometry shader provider
    */
 
   @Value.Default
-  default R2FacadeInstanceShaderProviderType instanceShaders()
+  default R2FacadeGeometryShaderProviderType geometryShaders()
   {
-    return R2FacadeInstanceShaderProvider.of(this);
+    return R2FacadeGeometryShaderProvider.of(this);
   }
 
   /**

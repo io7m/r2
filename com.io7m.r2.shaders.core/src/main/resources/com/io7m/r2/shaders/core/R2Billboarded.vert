@@ -28,3 +28,4 @@ main (void)
   gl_Position            = position_eye;
   R2_billboard_scale_eye = scale;
 }
+

@@ -16,14 +16,14 @@
 
 package com.io7m.r2.facade;
 
-import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
-import com.io7m.r2.core.R2AmbientOcclusionBufferPool;
-import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
-import com.io7m.r2.core.R2ImageBufferDescription;
-import com.io7m.r2.core.R2ImageBufferPool;
-import com.io7m.r2.core.R2ImageBufferUsableType;
 import com.io7m.r2.annotations.R2ImmutableStyleType;
-import com.io7m.r2.core.R2RenderTargetPoolType;
+import com.io7m.r2.filters.ssao.R2AmbientOcclusionBufferPool;
+import com.io7m.r2.filters.ssao.api.R2AmbientOcclusionBufferDescription;
+import com.io7m.r2.filters.ssao.api.R2AmbientOcclusionBufferUsableType;
+import com.io7m.r2.images.R2ImageBufferPool;
+import com.io7m.r2.images.api.R2ImageBufferDescription;
+import com.io7m.r2.images.api.R2ImageBufferUsableType;
+import com.io7m.r2.rendering.targets.R2RenderTargetPoolType;
 import org.immutables.value.Value;
 
 /**

@@ -16,12 +16,10 @@
 
 package com.io7m.r2.tests.facade;
 
-import com.io7m.jcanephora.async.JCGLAsyncInterfaceGL33;
-import com.io7m.jcanephora.async.JCGLAsyncInterfaceGL33Type;
 import com.io7m.jcanephora.core.api.JCGLContextType;
 import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.r2.facade.R2FacadeType;
-import com.io7m.r2.tests.core.R2JCGLContract;
+import com.io7m.r2.tests.R2JCGLContract;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;

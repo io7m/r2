@@ -50,6 +50,32 @@ public final class R2MeshCommandGenerateTangentsTest
     LOG = LoggerFactory.getLogger(R2MeshCommandGenerateTangentsTest.class);
   }
 
+  private static void dumpResult(
+    final Validation<List<SMFProcessingError>, SMFMemoryMesh> result)
+  {
+    if (result.isInvalid()) {
+      result.getError().forEach(c -> LOG.error("{}", c));
+    } else {
+      LOG.debug("{}", result.get());
+    }
+  }
+
+  private static void runParser(
+    final SMFMemoryMeshProducerType producer,
+    final String name)
+    throws IOException
+  {
+    final SMFFormatText fmt = new SMFFormatText();
+    try (final InputStream stream = R2MeshCommandGenerateTangentsTest.class.getResourceAsStream(
+      "/com/io7m/r2/tests/meshes/smf/processing/" + name)) {
+      try (final SMFParserSequentialType parser =
+             fmt.parserCreateSequential(
+               producer, Paths.get(name).toUri(), stream)) {
+        parser.parse();
+      }
+    }
+  }
+
   @Test
   public void testParseTooFew0()
   {
@@ -228,32 +254,6 @@ public final class R2MeshCommandGenerateTangentsTest
 
       dumpResult(result);
       Assert.assertFalse(result.isValid());
-    }
-  }
-
-  private static void dumpResult(
-    final Validation<List<SMFProcessingError>, SMFMemoryMesh> result)
-  {
-    if (result.isInvalid()) {
-      result.getError().forEach(c -> LOG.error("{}", c));
-    } else {
-      LOG.debug("{}", result.get());
-    }
-  }
-
-  private static void runParser(
-    final SMFMemoryMeshProducerType producer,
-    final String name)
-    throws IOException
-  {
-    final SMFFormatText fmt = new SMFFormatText();
-    try (final InputStream stream = R2MeshCommandGenerateTangentsTest.class.getResourceAsStream(
-      "/com/io7m/r2/tests/meshes/smf/processing/" + name)) {
-      try (final SMFParserSequentialType parser =
-             fmt.parserCreateSequential(
-               producer, Paths.get(name).toUri(), stream)) {
-        parser.parse();
-      }
     }
   }
 }

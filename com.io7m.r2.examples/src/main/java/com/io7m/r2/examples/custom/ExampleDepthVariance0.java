@@ -26,37 +26,37 @@ import com.io7m.jregions.core.unparameterized.sizes.AreaSizeL;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vectors3D;
-import com.io7m.r2.core.R2DepthInstances;
-import com.io7m.r2.core.R2DepthInstancesType;
-import com.io7m.r2.core.R2DepthVarianceBuffer;
-import com.io7m.r2.core.R2DepthVarianceBufferDescription;
-import com.io7m.r2.core.R2DepthVarianceRendererType;
-import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2MaterialDepthSingle;
-import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.R2ProjectionFOV;
-import com.io7m.r2.core.R2TransformReadableType;
-import com.io7m.r2.core.R2TransformSOT;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicParameters;
-import com.io7m.r2.core.shaders.provided.R2DepthShaderBasicSingle;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.api.ids.R2IDPoolType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.facade.R2FacadeType;
+import com.io7m.r2.instances.R2InstanceSingleType;
+import com.io7m.r2.matrices.R2MatricesType;
+import com.io7m.r2.projections.R2ProjectionFOV;
+import com.io7m.r2.rendering.depth.R2DepthInstances;
+import com.io7m.r2.rendering.depth.api.R2DepthInstancesType;
+import com.io7m.r2.rendering.depth.api.R2MaterialDepthSingle;
+import com.io7m.r2.rendering.depth.variance.R2DepthVarianceBuffer;
+import com.io7m.r2.rendering.depth.variance.api.R2DepthVarianceBufferDescription;
+import com.io7m.r2.rendering.depth.variance.api.R2DepthVarianceRendererType;
+import com.io7m.r2.shaders.depth.R2DepthShaderBasicParameters;
+import com.io7m.r2.shaders.depth.R2DepthShaderBasicSingle;
+import com.io7m.r2.shaders.geometry.R2GeometryShaderBasicParameters;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometrySingleType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.r2.transforms.R2TransformReadableType;
+import com.io7m.r2.transforms.R2TransformSOT;
 
-import static com.io7m.r2.core.R2DepthPrecision.R2_DEPTH_PRECISION_24;
-import static com.io7m.r2.core.R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16;
+import static com.io7m.r2.rendering.depth.api.R2DepthPrecision.R2_DEPTH_PRECISION_24;
+import static com.io7m.r2.rendering.depth.variance.api.R2DepthVariancePrecision.R2_DEPTH_VARIANCE_PRECISION_16;
 
 // CHECKSTYLE_JAVADOC:OFF
 
 public final class ExampleDepthVariance0 implements R2ExampleCustomType
 {
   private R2ProjectionFOV projection;
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
+  private R2ShaderGeometrySingleType<R2GeometryShaderBasicParameters> shader;
   private R2InstanceSingleType instance;
   private R2DepthVarianceBuffer depth_buffer;
   private R2DepthVarianceRendererType depth_variance_renderer;
@@ -104,7 +104,7 @@ public final class ExampleDepthVariance0 implements R2ExampleCustomType
     final R2TransformReadableType tr = R2TransformSOT.create();
 
     this.instance = m.instances().createSphere8Single(tr);
-    this.shader = m.instanceShaders().createBasicSingle();
+    this.shader = m.geometryShaders().createBasicSingle();
 
     final R2DepthShaderBasicSingle depth_shader =
       m.depthShaders().createBasicSingle();
