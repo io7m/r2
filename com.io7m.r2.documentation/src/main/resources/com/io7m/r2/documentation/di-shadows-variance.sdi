@@ -128,11 +128,11 @@ influence of the sun over large outdoor scenes.
 [subsection [title Types] [id di.shadows.variance.types]]
 [paragraph]
 Variance mapped shadows are represented by the
-(link-ext (target "apidocs/com/io7m/r1/core/R2ShadowDepthVarianceType.html")
+(link-ext (target "apidocs/com/io7m/r2/lights/shadows/R2ShadowDepthVarianceType.html")
 R2ShadowDepthVarianceType) type, and can be associated with
 (link (target di.lighting.projective) projective lights).
 
 [paragraph]
 Rendering of depth-variance images is handled by implementations of the
-(link-ext (target "apidocs/com/io7m/r1/core/R2ShadowMapRendererType.html")
+(link-ext (target "apidocs/com/io7m/r2/rendering/shadow/api/R2ShadowMapRendererType.html")
 R2ShadowMapRendererType) type.

@@ -79,4 +79,4 @@ Typically a simple two-polygon [term [type term] unit quad].
 [subsection [title Types] [id di.instances.types]]
 [paragraph]
 In the [term [type package] r2] package, instances are instances of
-[link-ext [target "apidocs/com/io7m/r2/core/R2InstanceType.html"] R2InstanceType].
+[link-ext [target "apidocs/com/io7m/r2/instances/R2InstanceType.html"] R2InstanceType].

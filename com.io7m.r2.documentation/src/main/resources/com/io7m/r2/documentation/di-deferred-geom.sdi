@@ -12,7 +12,7 @@ effects such as [link [target di.ssao] screen-space ambient occlusion] and
 [paragraph]
 In the [term [type package] r2] package, the primary implementation of the
 deferred geometry rendering algorithm is the
-[link-ext [target "apidocs/com/io7m/r2/core/R2GeometryRenderer.html"] R2GeometryRenderer] type.
+[link-ext [target "apidocs/com/io7m/r2/rendering/geometry/R2GeometryRenderer.html"] R2GeometryRenderer] type.
 
 [subsection [title Groups] [id di.deferred.geom.group]]
 [paragraph]
@@ -86,7 +86,7 @@ specularity. Surfaces that will not receive specular highlights simply have
 
 [paragraph]
 In the [term [type package] r2] package, geometry buffers are instances of
-[link-ext [target "apidocs/com/io7m/r2/core/R2GeometryBufferType.html"] R2GeometryBufferType].
+[link-ext [target "apidocs/com/io7m/r2/rendering/geometry/api/R2GeometryBufferType.html"] R2GeometryBufferType].
 
 [subsection [title Algorithm]]
 [paragraph]
@@ -159,7 +159,7 @@ Therefore, it is beneficial to order rendering operations such that the most
 expensive state changes happen the least frequently.
 
 [paragraph]
-The [link-ext [target "apidocs/com/io7m/r2/core/R2SceneOpaquesType.html"] R2SceneOpaquesType]
+The [link-ext [target "apidocs/com/io7m/r2/rendering/geometry/api/R2SceneOpaquesType.html"] R2SceneOpaquesType]
 type provides a simple interface that allows the programmer to specify instances
 without worrying about ordering concerns. When all instances have been submitted,
 they will be delivered to a given consumer "(typically a geometry renderer)"

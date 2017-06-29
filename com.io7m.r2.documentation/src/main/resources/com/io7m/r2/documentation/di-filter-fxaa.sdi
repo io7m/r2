@@ -34,7 +34,7 @@ used, with quality presets [term [type expression] "(10, 15, 20, 25, 29, 39)"] .
 [subsection [title Types] [id di.fxaa.types]]
 [paragraph]
 In the [term [type package] r2] package, the FXAA effect is provided by the
-[link-ext [target "apidocs/com/io7m/r2/filters/R2FilterFXAA.html"] R2FilterFXAA] type.
+[link-ext [target "apidocs/com/io7m/r2/filters/fxaa/R2FilterFXAA.html"] R2FilterFXAA] type.
 
 [footnote [id di.fxaa.whitepaper]]
 (link-ext

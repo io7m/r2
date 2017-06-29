@@ -29,7 +29,7 @@ allocating an image for specular contributions if they will not be calculated.
 
 [paragraph]
 In the [term [type package] r2] package, light buffers are instances of
-[link-ext [target "apidocs/com/io7m/r2/core/R2LightBufferType.html"] R2LightBufferType].
+[link-ext [target "apidocs/com/io7m/r2/rendering/lights/api/R2LightBufferType.html"] R2LightBufferType].
 
 [subsection [title Light Clip Volumes] [id di.deferred.light.clip_volumes]]
 [paragraph]
@@ -181,9 +181,9 @@ is required. In order to achieve this, light shaders must be
 [link [target di.shaders.modules] preprocessed] such that the output of the
 generated code is a lit image rather than simply the light contribution. Doing
 this is simple: Simply set
-[link-ext [target "apidocs/com/io7m/r2/shaders/core/R2LightShaderDefines.html#R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE"] R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE]
+[link-ext [target "apidocs/com/io7m/r2/shaders/light/api/R2LightShaderDefines.html#R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE"] R2_LIGHT_SHADER_OUTPUT_TARGET_DEFINE]
 to
-[link-ext [target "apidocs/com/io7m/r2/shaders/core/R2LightShaderDefines.html#R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER"] R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER]
+[link-ext [target "apidocs/com/io7m/r2/shaders/light/api/R2LightShaderDefines.html#R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER"] R2_LIGHT_SHADER_OUTPUT_TARGET_IBUFFER]
 in the [link [target di.shaders.modules] shading environment] prior to compiling
 any light shaders. The [term [type package] r2] renderer implementations
 perform simple run-time checks to ensure that light shaders have been compiled
@@ -195,4 +195,4 @@ change.
 [paragraph]
 In the [term [type package] r2] package, the primary implementation of the
 deferred light rendering algorithm is the
-[link-ext [target "apidocs/com/io7m/r2/core/R2LightRenderer.html"] R2LightRenderer] type.
+[link-ext [target "apidocs/com/io7m/r2/rendering/lights/R2LightRenderer.html"] R2LightRenderer] type.

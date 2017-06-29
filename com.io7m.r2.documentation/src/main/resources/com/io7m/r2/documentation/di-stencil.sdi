@@ -39,7 +39,7 @@ allow bit in the stencil buffer is [term [type constant] true].
 
 [paragraph]
 The stencil buffer allow bits are populated via the use of a
-[link-ext [target "apidocs/com/io7m/r2/core/R2StencilRendererType.html"] stencil renderer].
+[link-ext [target "apidocs/com/io7m/r2/rendering/stencil/api/R2StencilRendererType.html"] stencil renderer].
 The user specifies a series of [link [target di.instances] instances] whose
 only purpose is to either enable or disable the allow bit for each rendered
 pixel. Users may specify whether instances are [term [type term] positive]

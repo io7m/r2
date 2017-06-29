@@ -22,4 +22,4 @@ the image scaled back up to the original size again with bilinear filtering:
 [subsection [title Types] [id di.blur.types]]
 [paragraph]
 In the [term [type package] r2] package, the blur effect is provided by the
-[link-ext [target "apidocs/com/io7m/r2/filters/R2FilterBoxBlur.html"] R2FilterBoxBlur] type.
+[link-ext [target "apidocs/com/io7m/r2/filters/box_blur/R2FilterBoxBlur.html"] R2FilterBoxBlur] type.

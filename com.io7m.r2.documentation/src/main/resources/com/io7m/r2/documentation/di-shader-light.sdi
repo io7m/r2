@@ -9,5 +9,5 @@ of a [link [target di.deferred.light] light source]. Light shaders in the
 [subsection [title Types] [id di.shaders.light.types]]
 [paragraph]
 Light shaders are instances of the
-[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderLightSingleType.html"] R2ShaderLightSingleType]
+[link-ext [target "apidocs/com/io7m/r2/shaders/light/api/R2ShaderLightSingleType.html"] R2ShaderLightSingleType]
 type.

@@ -41,4 +41,4 @@ fog. The definitions of the available mix functions are as follows:
 [subsection [title Types] [id di.fog.types]]
 [paragraph]
 In the [term [type package] r2] package, the fog effect is provided by the
-[link-ext [target "apidocs/com/io7m/r2/filters/R2FilterFogDepth.html"] R2FilterFogDepth] type.
+[link-ext [target "apidocs/com/io7m/r2/filters/fog/R2FilterFogDepth.html"] R2FilterFogDepth] type.

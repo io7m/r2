@@ -33,5 +33,5 @@ of the surface being lit. Note that the surface-to-light vector
 [subsection [title Types] [id di.lighting.directional.types]]
 [paragraph]
 Directional lights are represented in the [term [type package] r2] package
-by the [link-ext [target "apidocs/com/io7m/r2/core/R2LightDirectionalScreenSingle.html"] R2LightDirectionalScreenSingle]
+by the [link-ext [target "apidocs/com/io7m/r2/lights/R2LightDirectionalScreenSingle.html"] R2LightDirectionalScreenSingle]
 type.

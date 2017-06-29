@@ -54,4 +54,4 @@ are the same pixels from both objects discarded.
 [paragraph]
 In the [term [type package] r2] package, the stippling effect is provided by
 shaders such as
-[link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2SurfaceShaderBasicStippledSingle.html"] R2SurfaceShaderBasicStippledSingle].
+[link-ext [target "apidocs/com/io7m/r2/shaders/geometry/R2GeometryShaderBasicStippledSingle.html"] R2GeometryShaderBasicStippledSingle].

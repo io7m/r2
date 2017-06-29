@@ -19,7 +19,7 @@ by material and shaders for performance reasons as is done with
 [link [target di.deferred.geom.ordering] opaque instances]. The
 [term [type package] r2] package therefore simply has users submit a list of
 values of type
-[link-ext [target "apidocs/com/io7m/r2/core/R2TranslucentType.html"] R2TranslucentType]
+[link-ext [target "apidocs/com/io7m/r2/rendering/translucent/api/R2TranslucentType.html"] R2TranslucentType]
 in draw order. Each translucent value contains a
 [link [target di.forward.blending] blending] and
 [link [target di.forward.culling] culling] configuration, along with
@@ -56,7 +56,7 @@ via implementations of the
 
 [paragraph]
 Shaders for rendering translucent instances are of type
-[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderTranslucentType.html"] R2ShaderTranslucentType].
+[link-ext [target "apidocs/com/io7m/r2/shaders/translucent/api/R2ShaderTranslucentType.html"] R2ShaderTranslucentType].
 
 [subsection [title Provided Shaders] [id di.forward.provided]]
 [paragraph]
@@ -73,6 +73,6 @@ of shaders for translucent surfaces.
     [name Description]]
   [body
     [row
-      [cell [link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2TranslucentShaderBasicPremultipliedSingle.html"] R2TranslucentShaderBasicPremultipliedSingle]]
+      [cell [link-ext [target "apidocs/com/io7m/r2/shaders/translucent/R2TranslucentShaderBasicPremultipliedSingle.html"] R2TranslucentShaderBasicPremultipliedSingle]]
       [cell Basic textured surface without lighting, with distance fading, producing premultiplied alpha output.]]
   ]]

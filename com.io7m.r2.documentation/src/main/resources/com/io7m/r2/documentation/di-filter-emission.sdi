@@ -39,4 +39,4 @@ scene. Higher levels of blurring can give the impression of a dusty atmosphere.
 [subsection [title Types] [id di.emission.types]]
 [paragraph]
 In the [term [type package] r2] package, the emission effect is provided by the
-[link-ext [target "apidocs/com/io7m/r2/filters/R2FilterEmission.html"] R2FilterEmission] type.
+[link-ext [target "apidocs/com/io7m/r2/filters/emission/R2FilterEmission.html"] R2FilterEmission] type.

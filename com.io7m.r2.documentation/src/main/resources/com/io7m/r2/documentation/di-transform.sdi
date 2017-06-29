@@ -22,4 +22,4 @@ rendering.
 [subsection [title Types] [id di.transforms.types]]
 [paragraph]
 In the [term [type package] r2] package, transforms are instances of
-[link-ext [target "apidocs/com/io7m/r2/core/R2TransformType.html"] R2TransformType].
+[link-ext [target "apidocs/com/io7m/r2/transforms/R2TransformType.html"] R2TransformType].

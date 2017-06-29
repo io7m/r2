@@ -122,8 +122,8 @@ in the refracted image.
 [paragraph]
 In the [term [type package] r2] package, the refraction effect is provided by
 rendering a translucent instance with a refraction shader such as
-[link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2RefractionMaskedDeltaShaderSingle.html"] R2RefractionMaskedDeltaShaderSingle].
+[link-ext [target "apidocs/com/io7m/r2/shaders/refraction/R2RefractionMaskedDeltaShaderSingle.html"] R2RefractionMaskedDeltaShaderSingle].
 
 [paragraph]
 Masks can be produced via implementations of the
-[link-ext [target "apidocs/com/io7m/r2/core/R2MaskRendererType.html"] R2MaskRendererType] interface.
+[link-ext [target "apidocs/com/io7m/r2/rendering/mask/api/R2MaskRendererType.html"] R2MaskRendererType] interface.

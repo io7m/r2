@@ -7,7 +7,7 @@ implementation of [term [type term] lighting] in the
 [term [type term] dynamic] - there is no support for precomputed lighting and
 all contributions from lights are recalculated every time a scene is rendered.
 Lighting is configured by adding instances of
-(link-ext (target "apidocs/com/io7m/r2/core/R2LightType.html") R2LightType)
+(link-ext (target "apidocs/com/io7m/r2/lights/R2LightType.html") R2LightType)
 to a scene.
 
 [subsection [title Diffuse/Specular Terms] [id di.lighting.diffuse-specular]]

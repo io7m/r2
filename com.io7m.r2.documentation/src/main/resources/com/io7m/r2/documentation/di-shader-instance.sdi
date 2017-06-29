@@ -1,7 +1,10 @@
 [section [title Shaders: Instance] [id di.shaders.instance]]
 [subsection [title Overview] [id di.shaders.instance.overview]]
 [paragraph]
-An [term [type term] instance shader] is a shader used to render the surfaces
+An [term [type term] instance shader]
+"(also" referred to as a [term [type term] geometry shader] where this
+this usage would not conflict with OpenGL's [term [type term] geometry shaders] ")"
+is a shader used to render the surfaces
 of [link [target di.instances] instances]. Depending on the context, this may
 mean rendering the surface attributes of the instances into a
 [link [target di.deferred.geom.gbuffer] geometry buffer],
@@ -44,11 +47,14 @@ instance shaders provided by default are:
     [name Description]]
   [body
     [row
-      [cell [link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2SurfaceShaderBasicSingle.html"] R2SurfaceShaderBasicSingle]]
+      [cell [link-ext [target "apidocs/com/io7m/r2/shaders/geometry/R2GeometryShaderBasicSingle.html"] R2GeometryShaderBasicSingle]]
       [cell Basic textured surface with normal mapping, specular mapping, emission mapping, and conditional discarding based on alpha.]]
     [row
-      [cell [link-ext [target "apidocs/com/io7m/r2/core/shaders/provided/R2SurfaceShaderBasicReflectiveSingle.html"] R2SurfaceShaderBasicReflectiveSingle]]
+      [cell [link-ext [target "apidocs/com/io7m/r2/shaders/geometry/R2GeometryShaderBasicReflectiveSingle.html"] R2GeometryShaderBasicReflectiveSingle]]
       [cell Basic textured surface with pseudo reflections from a cube map, normal mapping, specular mapping, emission mapping, and conditional discarding based on alpha.]]
+    [row
+      [cell [link-ext [target "apidocs/com/io7m/r2/shaders/geometry/R2GeometryShaderBasicStippledSingle.html"] R2GeometryShaderBasicStippledSingle]]
+      [cell Basic textured surface with normal mapping, specular mapping, emission mapping, conditional discarding based on alpha, and stippling.]]
   ]]
 
 [subsection [title Types] [id di.shaders.instance.types]]
@@ -57,12 +63,12 @@ In the [term [type package] r2] package, materials are instances of
 [link-ext [target "apidocs/com/io7m/r2/core/R2MaterialType.html"] R2MaterialType].
 Geometry renderers primarily consume instances that are associated with values
 of the
-[link-ext [target "apidocs/com/io7m/r2/core/R2MaterialOpaqueSingleType.html"] R2MaterialOpaqueSingleType]
-and
-[link-ext [target "apidocs/com/io7m/r2/core/R2MaterialOpaqueBatchedType.html"] R2MaterialOpaqueBatchedType]
+[link-ext [target "apidocs/com/io7m/r2/core/R2MaterialOpaqueSingleType.html"] R2MaterialOpaqueSingleType],
+[link-ext [target "apidocs/com/io7m/r2/core/R2MaterialOpaqueBatchedType.html"] R2MaterialOpaqueBatchedType], and
+[link-ext [target "apidocs/com/io7m/r2/core/R2MaterialOpaqueBillboardedType.html"] R2MaterialOpaqueBillboardedType]
 types.
 Instance shaders are instances of the
-[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceSingle.html"] R2ShaderInstanceSingleType]
-and
-[link-ext [target "apidocs/com/io7m/r2/core/shaders/types/R2ShaderInstanceBatched.html"] R2ShaderInstanceBatchedType]
+[link-ext [target "apidocs/com/io7m/r2/shaders/geometry/api/R2ShaderGeometrySingleType.html"] R2ShaderGeometrySingleType],
+[link-ext [target "apidocs/com/io7m/r2/shaders/geometry/api/R2ShaderGeometryBatchedType.html"] R2ShaderGeometryBatchedType], and
+[link-ext [target "apidocs/com/io7m/r2/shaders/geometry/api/R2ShaderGeometryBillboardedType.html"] R2ShaderGeometryBillboardedType]
 types.

@@ -115,4 +115,4 @@ bizarre visual results.
 [paragraph]
 In the [term [type package] r2] package, the given attribute conventions are
 specified by the
-[link-ext [target "apidocs/com/io7m/r2/core/R2AttributeConventions.html"] R2AttributeConventions] type.
+[link-ext [target "apidocs/com/io7m/r2/meshes/api/R2MeshAttributeConventions.html"] R2MeshAttributeConventions] type.
