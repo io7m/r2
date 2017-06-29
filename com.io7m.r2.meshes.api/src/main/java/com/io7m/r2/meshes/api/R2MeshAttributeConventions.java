@@ -24,80 +24,136 @@ import com.io7m.junreachable.UnreachableCodeException;
 
 public final class R2MeshAttributeConventions
 {
-  /**
-   * The attribute index used to deliver position data to shaders.
-   */
+  private static final int POSITION_ATTRIBUTE_INDEX = 0;
 
-  public static final int POSITION_ATTRIBUTE_INDEX = 0;
+  private static final int UV_ATTRIBUTE_INDEX = 1;
 
-  /**
-   * The attribute index used to deliver UV data to shaders.
-   */
+  private static final int NORMAL_ATTRIBUTE_INDEX = 2;
 
-  public static final int UV_ATTRIBUTE_INDEX = 1;
+  private static final int TANGENT4_ATTRIBUTE_INDEX = 3;
 
-  /**
-   * The attribute index used to deliver surface normal data to shaders.
-   */
+  private static final int BATCHED_MODEL_MATRIX_COLUMN_0_ATTRIBUTE_INDEX = 4;
 
-  public static final int NORMAL_ATTRIBUTE_INDEX = 2;
+  private static final int BATCHED_MODEL_MATRIX_COLUMN_1_ATTRIBUTE_INDEX = 5;
 
-  /**
-   * The attribute index used to deliver surface tangent4 data to shaders.
-   */
+  private static final int BATCHED_MODEL_MATRIX_COLUMN_2_ATTRIBUTE_INDEX = 6;
 
-  public static final int TANGENT4_ATTRIBUTE_INDEX = 3;
+  private static final int BATCHED_MODEL_MATRIX_COLUMN_3_ATTRIBUTE_INDEX = 7;
 
-  /**
-   * The attribute index used to deliver column 0 of the model matrix for
-   * batched instances.
-   */
+  private static final int USER_ATTRIBUTES_INDEX = 8;
 
-  public static final int BATCHED_MODEL_MATRIX_COLUMN_0_ATTRIBUTE_INDEX = 4;
+  private static final int BILLBOARDED_ATTRIBUTE_SCALE_INDEX = 1;
 
-  /**
-   * The attribute index used to deliver column 1 of the model matrix for
-   * batched instances.
-   */
-
-  public static final int BATCHED_MODEL_MATRIX_COLUMN_1_ATTRIBUTE_INDEX = 5;
-
-  /**
-   * The attribute index used to deliver column 2 of the model matrix for
-   * batched instances.
-   */
-
-  public static final int BATCHED_MODEL_MATRIX_COLUMN_2_ATTRIBUTE_INDEX = 6;
-
-  /**
-   * The attribute index used to deliver column 3 of the model matrix for
-   * batched instances.
-   */
-
-  public static final int BATCHED_MODEL_MATRIX_COLUMN_3_ATTRIBUTE_INDEX = 7;
-
-  /**
-   * The index of the first available user attribute.
-   */
-
-  public static final int USER_ATTRIBUTES_INDEX = 8;
-
-  /**
-   * The attribute index used to deliver a scalar scale value to billboarded
-   * instances.
-   */
-
-  public static final int BILLBOARDED_ATTRIBUTE_SCALE_INDEX = 1;
-
-  /**
-   * The attribute index used to deliver a scalar rotation value to billboarded
-   * instances.
-   */
-
-  public static final int BILLBOARDED_ATTRIBUTE_ROTATION_INDEX = 2;
+  private static final int BILLBOARDED_ATTRIBUTE_ROTATION_INDEX = 2;
 
   private R2MeshAttributeConventions()
   {
     throw new UnreachableCodeException();
+  }
+
+  /**
+   * @return The attribute index used to deliver position data to shaders.
+   */
+
+  public static int positionAttributeIndex()
+  {
+    return POSITION_ATTRIBUTE_INDEX;
+  }
+
+  /**
+   * @return The attribute index used to deliver UV data to shaders.
+   */
+
+  public static int uvAttributeIndex()
+  {
+    return UV_ATTRIBUTE_INDEX;
+  }
+
+  /**
+   * @return The attribute index used to deliver surface normal data to shaders.
+   */
+
+  public static int normalAttributeIndex()
+  {
+    return NORMAL_ATTRIBUTE_INDEX;
+  }
+
+  /**
+   * @return The attribute index used to deliver surface tangent4 data to
+   * shaders.
+   */
+
+  public static int tangent4AttributeIndex()
+  {
+    return TANGENT4_ATTRIBUTE_INDEX;
+  }
+
+  /**
+   * @return The attribute index used to deliver column 0 of the model matrix
+   * for batched instances.
+   */
+
+  public static int batchedModelMatrixColumn0AttributeIndex()
+  {
+    return BATCHED_MODEL_MATRIX_COLUMN_0_ATTRIBUTE_INDEX;
+  }
+
+  /**
+   * @return The attribute index used to deliver column 1 of the model matrix
+   * for batched instances.
+   */
+
+  public static int batchedModelMatrixColumn1AttributeIndex()
+  {
+    return BATCHED_MODEL_MATRIX_COLUMN_1_ATTRIBUTE_INDEX;
+  }
+
+  /**
+   * @return The attribute index used to deliver column 2 of the model matrix
+   * for batched instances.
+   */
+
+  public static int batchedModelMatrixColumn2AttributeIndex()
+  {
+    return BATCHED_MODEL_MATRIX_COLUMN_2_ATTRIBUTE_INDEX;
+  }
+
+  /**
+   * @return The attribute index used to deliver column 3 of the model matrix
+   * for batched instances.
+   */
+
+  public static int batchedModelMatrixColumn3AttributeIndex()
+  {
+    return BATCHED_MODEL_MATRIX_COLUMN_3_ATTRIBUTE_INDEX;
+  }
+
+  /**
+   * @return The index of the first available user attribute.
+   */
+
+  public static int userAttributesIndex()
+  {
+    return USER_ATTRIBUTES_INDEX;
+  }
+
+  /**
+   * @return The attribute index used to deliver a scalar scale value to
+   * billboarded instances.
+   */
+
+  public static int billboardedAttributeScaleIndex()
+  {
+    return BILLBOARDED_ATTRIBUTE_SCALE_INDEX;
+  }
+
+  /**
+   * @return The attribute index used to deliver a scalar rotation value to
+   * billboarded instances.
+   */
+
+  public static int billboardedAttributeRotationIndex()
+  {
+    return BILLBOARDED_ATTRIBUTE_ROTATION_INDEX;
   }
 }

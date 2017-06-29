@@ -16,29 +16,30 @@
 
 package com.io7m.r2.facade;
 
-import com.io7m.r2.core.R2AmbientOcclusionBufferDescription;
-import com.io7m.r2.core.R2AmbientOcclusionBufferUsableType;
-import com.io7m.r2.core.R2FilterType;
-import com.io7m.r2.core.R2FilterUsableType;
-import com.io7m.r2.core.R2ImageBufferDescription;
-import com.io7m.r2.core.R2ImageBufferUsableType;
-import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2RenderTargetDescriptionType;
-import com.io7m.r2.core.R2RenderTargetPoolUsableType;
-import com.io7m.r2.core.R2RenderTargetUsableType;
-import com.io7m.r2.filters.R2FilterBilateralBlurDepthAware;
-import com.io7m.r2.filters.R2FilterBilateralBlurDepthAwareParameters;
-import com.io7m.r2.filters.R2FilterBoxBlur;
-import com.io7m.r2.filters.R2FilterBoxBlurParameters;
-import com.io7m.r2.filters.R2FilterCompositor;
-import com.io7m.r2.filters.R2FilterEmission;
-import com.io7m.r2.filters.R2FilterEmissionType;
-import com.io7m.r2.filters.R2FilterFXAA;
-import com.io7m.r2.filters.R2FilterFXAAType;
-import com.io7m.r2.filters.R2FilterFogDepth;
-import com.io7m.r2.filters.R2FilterLightApplicator;
-import com.io7m.r2.filters.R2FilterOcclusionApplicator;
-import com.io7m.r2.filters.R2FilterSSAO;
+
+import com.io7m.r2.annotations.R2ImmutableStyleType;
+import com.io7m.r2.filters.api.R2FilterType;
+import com.io7m.r2.filters.api.R2FilterUsableType;
+import com.io7m.r2.filters.bilateral_blur.R2FilterBilateralBlurDepthAware;
+import com.io7m.r2.filters.bilateral_blur.api.R2FilterBilateralBlurDepthAwareParameters;
+import com.io7m.r2.filters.box_blur.R2FilterBoxBlur;
+import com.io7m.r2.filters.box_blur.api.R2FilterBoxBlurParameters;
+import com.io7m.r2.filters.compositor.R2FilterCompositor;
+import com.io7m.r2.filters.fog.R2FilterFogDepth;
+import com.io7m.r2.filters.light_applicator.R2FilterLightApplicator;
+import com.io7m.r2.filters.occlusion_applicator.R2FilterOcclusionApplicator;
+import com.io7m.r2.filters.ssao.api.R2AmbientOcclusionBufferDescription;
+import com.io7m.r2.filters.ssao.api.R2AmbientOcclusionBufferUsableType;
+import com.io7m.r2.images.api.R2ImageBufferDescription;
+import com.io7m.r2.images.api.R2ImageBufferUsableType;
+import com.io7m.r2.rendering.targets.R2RenderTargetDescriptionType;
+import com.io7m.r2.rendering.targets.R2RenderTargetPoolUsableType;
+import com.io7m.r2.rendering.targets.R2RenderTargetUsableType;
+import com.io7m.r2.filters.emission.R2FilterEmission;
+import com.io7m.r2.filters.emission.api.R2FilterEmissionType;
+import com.io7m.r2.filters.fxaa.R2FilterFXAA;
+import com.io7m.r2.filters.fxaa.api.R2FilterFXAAType;
+import com.io7m.r2.filters.ssao.R2FilterSSAO;
 import org.immutables.value.Value;
 
 /**
@@ -207,11 +208,11 @@ public interface R2FacadeFilterProviderType
   default R2FilterEmissionType createEmission(
     final R2RenderTargetPoolUsableType<R2ImageBufferDescription, R2ImageBufferUsableType> image_pool,
     final R2FilterUsableType<
-      R2FilterBoxBlurParameters<
-        R2ImageBufferDescription,
-        R2ImageBufferUsableType,
-        R2ImageBufferDescription,
-        R2ImageBufferUsableType>> filter_blur)
+          R2FilterBoxBlurParameters<
+            R2ImageBufferDescription,
+            R2ImageBufferUsableType,
+            R2ImageBufferDescription,
+            R2ImageBufferUsableType>> filter_blur)
   {
     return R2FilterEmission.newFilter(
       this.main().rendererGL33(),

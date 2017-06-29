@@ -38,7 +38,9 @@ public final class R2SanityTest extends R2ShaderTest
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();
     final R2ShaderTestFunctionEvaluator eval =
       new R2ShaderTestFunctionEvaluator(
-        gg, "R2DebugPositionOnly", "R2DebugIdentity");
+        gg,
+        "com.io7m.r2.shaders.debug/R2DebugPositionOnly.vert",
+        "com.io7m.r2.shaders.debug/R2DebugIdentity.frag");
 
     for (int index = 0; index < 10; ++index) {
       final Vector4D in = Vector4D.of(

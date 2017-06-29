@@ -9,7 +9,7 @@
   <parent>
     <groupId>com.io7m.primogenitor</groupId>
     <artifactId>com.io7m.primogenitor</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
   </parent>
 
   <groupId>com.io7m.r2</groupId>
@@ -22,13 +22,44 @@
   <url>http://github.com/io7m/r2</url>
 
   <modules>
+    <module>com.io7m.r2.annotations</module>
     <module>com.io7m.r2.checkstyle</module>
-    <module>com.io7m.r2.core</module>
+    <module>com.io7m.r2.core.api</module>
+    <module>com.io7m.r2.cursors</module>
+    <module>com.io7m.r2.debug.api</module>
+    <module>com.io7m.r2.debug</module>
     <module>com.io7m.r2.documentation</module>
     <module>com.io7m.r2.examples.jogl</module>
     <module>com.io7m.r2.examples</module>
     <module>com.io7m.r2.facade</module>
-    <module>com.io7m.r2.filters</module>
+    <module>com.io7m.r2.filters.api</module>
+    <module>com.io7m.r2.filters.bilateral_blur.api</module>
+    <module>com.io7m.r2.filters.bilateral_blur</module>
+    <module>com.io7m.r2.filters.box_blur.api</module>
+    <module>com.io7m.r2.filters.box_blur</module>
+    <module>com.io7m.r2.filters.compositor.api</module>
+    <module>com.io7m.r2.filters.compositor</module>
+    <module>com.io7m.r2.filters.debug.eye_position.api</module>
+    <module>com.io7m.r2.filters.debug.eye_position</module>
+    <module>com.io7m.r2.filters.debug.eye_z.api</module>
+    <module>com.io7m.r2.filters.debug.eye_z</module>
+    <module>com.io7m.r2.filters.emission.api</module>
+    <module>com.io7m.r2.filters.emission</module>
+    <module>com.io7m.r2.filters.fog.api</module>
+    <module>com.io7m.r2.filters.fog</module>
+    <module>com.io7m.r2.filters.fxaa.api</module>
+    <module>com.io7m.r2.filters.fxaa</module>
+    <module>com.io7m.r2.filters.light_applicator.api</module>
+    <module>com.io7m.r2.filters.light_applicator</module>
+    <module>com.io7m.r2.filters.occlusion_applicator.api</module>
+    <module>com.io7m.r2.filters.occlusion_applicator</module>
+    <module>com.io7m.r2.filters.ssao.api</module>
+    <module>com.io7m.r2.filters.ssao</module>
+    <module>com.io7m.r2.images.api</module>
+    <module>com.io7m.r2.images</module>
+    <module>com.io7m.r2.instances</module>
+    <module>com.io7m.r2.lights</module>
+    <module>com.io7m.r2.matrices</module>
     <module>com.io7m.r2.meshes.api</module>
     <module>com.io7m.r2.meshes.defaults</module>
     <module>com.io7m.r2.meshes.loading.api</module>
@@ -36,10 +67,50 @@
     <module>com.io7m.r2.meshes.processing.smf</module>
     <module>com.io7m.r2.meshes.tangents</module>
     <module>com.io7m.r2.meshes.tools</module>
+    <module>com.io7m.r2.projections</module>
+    <module>com.io7m.r2.rendering.api</module>
+    <module>com.io7m.r2.rendering.depth.api</module>
+    <module>com.io7m.r2.rendering.depth.variance.api</module>
+    <module>com.io7m.r2.rendering.depth.variance</module>
+    <module>com.io7m.r2.rendering.depth</module>
+    <module>com.io7m.r2.rendering.geometry.api</module>
+    <module>com.io7m.r2.rendering.geometry</module>
+    <module>com.io7m.r2.rendering.lights.api</module>
+    <module>com.io7m.r2.rendering.lights</module>
+    <module>com.io7m.r2.rendering.mask.api</module>
+    <module>com.io7m.r2.rendering.mask</module>
+    <module>com.io7m.r2.rendering.shadow.api</module>
+    <module>com.io7m.r2.rendering.shadow</module>
+    <module>com.io7m.r2.rendering.stencil.api</module>
+    <module>com.io7m.r2.rendering.stencil</module>
+    <module>com.io7m.r2.rendering.translucent.api</module>
+    <module>com.io7m.r2.rendering.translucent</module>
+    <module>com.io7m.r2.shaders.api</module>
+    <module>com.io7m.r2.shaders.bilateral_blur</module>
+    <module>com.io7m.r2.shaders.box_blur</module>
     <module>com.io7m.r2.shaders.core</module>
+    <module>com.io7m.r2.shaders.debug</module>
+    <module>com.io7m.r2.shaders.depth.api</module>
+    <module>com.io7m.r2.shaders.depth</module>
+    <module>com.io7m.r2.shaders.filter.api</module>
+    <module>com.io7m.r2.shaders.fog</module>
+    <module>com.io7m.r2.shaders.fxaa</module>
+    <module>com.io7m.r2.shaders.geometry.api</module>
+    <module>com.io7m.r2.shaders.geometry</module>
+    <module>com.io7m.r2.shaders.light.api</module>
+    <module>com.io7m.r2.shaders.light</module>
+    <module>com.io7m.r2.shaders.mask</module>
+    <module>com.io7m.r2.shaders.refraction</module>
+    <module>com.io7m.r2.shaders.stencil</module>
+    <module>com.io7m.r2.shaders.translucent.api</module>
+    <module>com.io7m.r2.shaders.translucent</module>
+    <module>com.io7m.r2.shapes.api</module>
     <module>com.io7m.r2.spaces</module>
     <module>com.io7m.r2.tests.jogl</module>
     <module>com.io7m.r2.tests</module>
+    <module>com.io7m.r2.textures</module>
+    <module>com.io7m.r2.transforms</module>
+    <module>com.io7m.r2.view_rays</module>
   </modules>
 
   <properties>
@@ -49,7 +120,7 @@
     <io7m.checkstyle.path>/com/io7m/r2/checkstyle/checkstyle.xml</io7m.checkstyle.path>
     <io7m.api.previousVersion>0.3.0-SNAPSHOT</io7m.api.previousVersion>
     <com.io7m.r2.jcanephora.versionRange>0.61.0</com.io7m.r2.jcanephora.versionRange>
-    <com.io7m.r2.jtensors.versionRange>[8.0.0, 9.0.0)</com.io7m.r2.jtensors.versionRange>
+    <com.io7m.r2.jtensors.versionRange>[8.2.0, 9.0.0)</com.io7m.r2.jtensors.versionRange>
     <com.io7m.r2.sombrero.versionRange>0.3.1</com.io7m.r2.sombrero.versionRange>
     <com.io7m.r2.fastutil.versionRange>[7.1.0, 8.0.0)</com.io7m.r2.fastutil.versionRange>
     <com.io7m.r2.jdae.versionRange>0.1.2</com.io7m.r2.jdae.versionRange>

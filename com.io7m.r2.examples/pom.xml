@@ -17,6 +17,10 @@
   <description>3D renderer (Examples)</description>
   <url>http://io7m.github.io/r2/</url>
 
+  <properties>
+    <mdep.analyze.skip>true</mdep.analyze.skip>
+  </properties>
+
   <scm>
     <url>${project.parent.scm.url}</url>
     <connection>${project.parent.scm.connection}</connection>
@@ -26,17 +30,12 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.core</artifactId>
+      <artifactId>com.io7m.r2.filters.api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.r2.spaces</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>com.io7m.r2.filters</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -47,6 +46,16 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>com.io7m.r2.meshes.defaults</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.filters.debug.eye_position</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.io7m.r2.filters.debug.eye_z</artifactId>
       <version>${project.version}</version>
     </dependency>
 

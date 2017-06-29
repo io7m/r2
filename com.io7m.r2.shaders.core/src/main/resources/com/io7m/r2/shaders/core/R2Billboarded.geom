@@ -6,13 +6,14 @@ layout (triangle_strip)   out;
 layout (max_vertices = 4) out;
 
 #include "R2LogDepth.h"
-#include "R2SurfaceTypes.h"
+#include "R2MatricesInstance.h"
+#include "R2Vertex.h"
 #include "R2View.h"
 
 uniform R2_view_t R2_view;
 
-out R2_surface_matrices_instance_t R2_surface_matrices_instance;
-out R2_vertex_data_t               R2_vertex_data;
+out R2_matrices_instance_t R2_matrices_instance;
+out R2_vertex_data_t       R2_vertex_data;
 
 in vec4 R2_billboard_scale_eye[1];
 
@@ -48,7 +49,7 @@ main (void)
       vp_tangent,
       vp_bitangent);
 
-    R2_surface_matrices_instance = R2_surface_matrices_instance_t(
+    R2_matrices_instance = R2_matrices_instance_t(
       m_modelview,
       m_normal,
       m_uv);
@@ -73,7 +74,7 @@ main (void)
       vp_tangent,
       vp_bitangent);
 
-    R2_surface_matrices_instance = R2_surface_matrices_instance_t(
+    R2_matrices_instance = R2_matrices_instance_t(
       m_modelview,
       m_normal,
       m_uv);
@@ -98,7 +99,7 @@ main (void)
       vp_tangent,
       vp_bitangent);
 
-    R2_surface_matrices_instance = R2_surface_matrices_instance_t(
+    R2_matrices_instance = R2_matrices_instance_t(
       m_modelview,
       m_normal,
       m_uv);
@@ -123,7 +124,7 @@ main (void)
       vp_tangent,
       vp_bitangent);
 
-    R2_surface_matrices_instance = R2_surface_matrices_instance_t(
+    R2_matrices_instance = R2_matrices_instance_t(
       m_modelview,
       m_normal,
       m_uv);
@@ -134,3 +135,4 @@ main (void)
 
   EndPrimitive();
 }
+

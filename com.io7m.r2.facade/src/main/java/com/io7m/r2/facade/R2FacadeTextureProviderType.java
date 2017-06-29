@@ -17,9 +17,9 @@
 package com.io7m.r2.facade;
 
 import com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitContextParentType;
-import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2Texture2DStatic;
-import com.io7m.r2.filters.R2SSAONoiseTexture;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
+import com.io7m.r2.filters.ssao.R2SSAONoiseTexture;
+import com.io7m.r2.textures.R2Texture2DStatic;
 import org.immutables.value.Value;
 
 /**

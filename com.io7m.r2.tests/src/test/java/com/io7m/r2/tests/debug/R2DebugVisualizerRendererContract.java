@@ -28,22 +28,20 @@ import com.io7m.jregions.core.unparameterized.areas.AreasL;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrices4x4D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector4D;
-import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2Matrices;
-import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.R2ProjectionOrthographic;
-import com.io7m.r2.core.R2SceneLights;
-import com.io7m.r2.core.R2SceneOpaques;
-import com.io7m.r2.core.debug.R2DebugInstances;
-import com.io7m.r2.core.debug.R2DebugLineSegment;
-import com.io7m.r2.core.debug.R2DebugVisualizerRendererParameters;
-import com.io7m.r2.core.debug.R2DebugVisualizerRendererType;
-import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
-import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.core.api.ids.R2IDPoolType;
+import com.io7m.r2.debug.api.R2DebugInstances;
+import com.io7m.r2.debug.api.R2DebugLineSegment;
+import com.io7m.r2.debug.api.R2DebugVisualizerRendererParameters;
+import com.io7m.r2.debug.api.R2DebugVisualizerRendererType;
+import com.io7m.r2.matrices.R2Matrices;
+import com.io7m.r2.matrices.R2MatricesType;
 import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
-import com.io7m.r2.meshes.loading.smf.R2SMFMeshLoaderSynchronous;
-import com.io7m.r2.tests.core.R2JCGLContract;
-import com.io7m.smfj.format.binary.SMFFormatBinary;
+import com.io7m.r2.projections.R2ProjectionOrthographic;
+import com.io7m.r2.rendering.geometry.R2SceneOpaques;
+import com.io7m.r2.rendering.lights.R2SceneLights;
+import com.io7m.r2.shaders.api.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.shaders.api.R2ShaderPreprocessingEnvironmentType;
+import com.io7m.r2.tests.R2JCGLContract;
 import mockit.Expectations;
 import org.junit.Test;
 
@@ -54,12 +52,10 @@ import static com.io7m.jcanephora.core.JCGLPrimitives.PRIMITIVE_LINES;
 import static com.io7m.jcanephora.profiler.JCGLProfiling.newProfiling;
 import static com.io7m.jcanephora.texture.unit_allocator.JCGLTextureUnitAllocator.newAllocatorWithStack;
 import static com.io7m.jfunctional.Unit.unit;
-import static com.io7m.r2.core.R2IDPool.newPool;
-import static com.io7m.r2.core.debug.R2DebugCube.create;
-import static com.io7m.r2.core.debug.R2DebugLineSegment.of;
-import static com.io7m.r2.core.debug.R2DebugVisualizerRendererParameters.builder;
+import static com.io7m.r2.core.api.ids.R2IDPool.newPool;
+import static com.io7m.r2.debug.R2DebugCube.create;
 import static com.io7m.r2.meshes.defaults.R2UnitSphere.newUnitSphere8;
-import static com.io7m.r2.tests.core.ShaderPreprocessing.preprocessor;
+import static com.io7m.r2.tests.ShaderPreprocessing.preprocessor;
 
 public abstract class R2DebugVisualizerRendererContract extends R2JCGLContract
 {
@@ -71,7 +67,7 @@ public abstract class R2DebugVisualizerRendererContract extends R2JCGLContract
   protected abstract R2MeshLoaderType loader();
 
   @Test
-  public void testLineSegmentCalls()
+  public final void testLineSegmentCalls()
   {
     final JCGLContextType c = this.newGL33Context("main", 24, 8);
     final JCGLInterfaceGL33Type g = c.contextGetGL33();
@@ -103,19 +99,19 @@ public abstract class R2DebugVisualizerRendererContract extends R2JCGLContract
       this.newRenderer(g, sources, id_pool);
 
     final List<R2DebugLineSegment> segments = new ArrayList<>();
-    segments.add(of(
+    segments.add(R2DebugLineSegment.of(
       PVector3D.of(0.0, 0.0, 0.0),
       PVector4D.of(1.0, 1.0, 1.0, 1.0),
       PVector3D.of(1.0, 1.0, 1.0),
       PVector4D.of(1.0, 0.0, 0.0, 1.0)
     ));
-    segments.add(of(
+    segments.add(R2DebugLineSegment.of(
       PVector3D.of(0.0, 0.0, 0.0),
       PVector4D.of(1.0, 1.0, 1.0, 1.0),
       PVector3D.of(1.0, 1.0, 1.0),
       PVector4D.of(1.0, 0.0, 0.0, 1.0)
     ));
-    segments.add(of(
+    segments.add(R2DebugLineSegment.of(
       PVector3D.of(0.0, 0.0, 0.0),
       PVector4D.of(1.0, 1.0, 1.0, 1.0),
       PVector3D.of(1.0, 1.0, 1.0),
@@ -134,7 +130,7 @@ public abstract class R2DebugVisualizerRendererContract extends R2JCGLContract
       unit(),
       (mo, y) -> {
         final R2DebugVisualizerRendererParameters params =
-          builder()
+          R2DebugVisualizerRendererParameters.builder()
             .setLights(R2SceneLights.create())
             .setOpaqueInstances(R2SceneOpaques.create())
             .setUnitSphere(newUnitSphere8(this.loader(), g))

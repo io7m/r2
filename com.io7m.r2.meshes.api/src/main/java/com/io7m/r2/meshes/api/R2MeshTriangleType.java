@@ -16,13 +16,14 @@
 
 package com.io7m.r2.meshes.api;
 
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import org.immutables.value.Value;
 
 /**
  * The type of triangles.
  */
 
-@R2MeshesImmutableStyleType
+@R2ImmutableStyleType
 @Value.Immutable
 public interface R2MeshTriangleType
 {

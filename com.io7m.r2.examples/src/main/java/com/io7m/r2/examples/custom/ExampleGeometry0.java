@@ -28,32 +28,32 @@ import com.io7m.jregions.core.unparameterized.sizes.AreaSizeL;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vectors3D;
-import com.io7m.r2.core.R2GeometryBufferDescription;
-import com.io7m.r2.core.R2GeometryBufferType;
-import com.io7m.r2.core.R2IDPoolType;
-import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2MaterialOpaqueSingle;
-import com.io7m.r2.core.R2MaterialOpaqueSingleType;
-import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.R2ProjectionFOV;
-import com.io7m.r2.core.R2SceneOpaques;
-import com.io7m.r2.core.R2SceneOpaquesType;
-import com.io7m.r2.core.R2SceneStencils;
-import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2TransformSiOT;
-import com.io7m.r2.core.shaders.provided.R2SurfaceShaderBasicParameters;
-import com.io7m.r2.core.shaders.types.R2ShaderInstanceSingleType;
+import com.io7m.r2.core.api.ids.R2IDPoolType;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.facade.R2FacadeBufferProviderType;
 import com.io7m.r2.facade.R2FacadeType;
+import com.io7m.r2.instances.R2InstanceSingleType;
+import com.io7m.r2.matrices.R2MatricesType;
+import com.io7m.r2.projections.R2ProjectionFOV;
+import com.io7m.r2.rendering.geometry.R2SceneOpaques;
+import com.io7m.r2.rendering.geometry.api.R2GeometryBufferDescription;
+import com.io7m.r2.rendering.geometry.api.R2GeometryBufferType;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueSingle;
+import com.io7m.r2.rendering.geometry.api.R2MaterialOpaqueSingleType;
+import com.io7m.r2.rendering.geometry.api.R2SceneOpaquesType;
+import com.io7m.r2.rendering.stencil.R2SceneStencils;
+import com.io7m.r2.rendering.stencil.api.R2SceneStencilsType;
+import com.io7m.r2.shaders.geometry.R2GeometryShaderBasicParameters;
+import com.io7m.r2.shaders.geometry.api.R2ShaderGeometrySingleType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.r2.transforms.R2TransformSiOT;
 
 import java.util.Optional;
 
-import static com.io7m.r2.core.R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
-import static com.io7m.r2.core.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
+import static com.io7m.r2.rendering.geometry.api.R2GeometryBufferComponents.R2_GEOMETRY_BUFFER_FULL;
+import static com.io7m.r2.rendering.stencil.api.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
 
 // CHECKSTYLE_JAVADOC:OFF
 
@@ -64,8 +64,8 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
   private R2InstanceSingleType instance;
   private R2SceneOpaquesType opaques;
   private R2GeometryBufferType gbuffer;
-  private R2ShaderInstanceSingleType<R2SurfaceShaderBasicParameters> shader;
-  private R2MaterialOpaqueSingleType<R2SurfaceShaderBasicParameters> material;
+  private R2ShaderGeometrySingleType<R2GeometryShaderBasicParameters> shader;
+  private R2MaterialOpaqueSingleType<R2GeometryShaderBasicParameters> material;
   private R2FacadeType main;
 
   public ExampleGeometry0()
@@ -95,10 +95,10 @@ public final class ExampleGeometry0 implements R2ExampleCustomType
     final R2IDPoolType id_pool = m.idPool();
 
     this.instance = m.instances().createQuadSingle(transform);
-    this.shader = m.instanceShaders().createBasicSingle();
+    this.shader = m.geometryShaders().createBasicSingle();
 
-    final R2SurfaceShaderBasicParameters shader_params =
-      R2SurfaceShaderBasicParameters.builder()
+    final R2GeometryShaderBasicParameters shader_params =
+      R2GeometryShaderBasicParameters.builder()
         .setTextureDefaults(m.textureDefaults())
         .build();
     this.material = R2MaterialOpaqueSingle.of(

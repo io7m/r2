@@ -10,11 +10,15 @@
   <fileSets>
     <fileSet>
       <directory>${project.build.directory}/documentation</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory/>
+    </fileSet>
+    <fileSet>
+      <directory>${project.build.directory}/doxygen</directory>
+      <outputDirectory>doxygen</outputDirectory>
     </fileSet>
     <fileSet>
       <directory>${project.build.directory}/site/apidocs</directory>
-      <outputDirectory>/apidocs</outputDirectory>
+      <outputDirectory>apidocs</outputDirectory>
     </fileSet>
   </fileSets>
 </assembly>

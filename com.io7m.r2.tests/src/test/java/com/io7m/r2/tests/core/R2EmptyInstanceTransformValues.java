@@ -20,7 +20,7 @@ import com.io7m.jtensors.core.parameterized.matrices.PMatrices3x3D;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrices4x4D;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix3x3D;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
-import com.io7m.r2.core.R2MatricesInstanceSingleValuesType;
+import com.io7m.r2.matrices.R2MatricesInstanceSingleValuesType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceNormalEyeType;
 import com.io7m.r2.spaces.R2SpaceObjectType;

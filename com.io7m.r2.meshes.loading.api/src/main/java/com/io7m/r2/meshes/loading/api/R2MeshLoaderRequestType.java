@@ -17,7 +17,7 @@
 package com.io7m.r2.meshes.loading.api;
 
 import com.io7m.jcanephora.core.JCGLUsageHint;
-import com.io7m.r2.meshes.api.R2MeshesImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import org.immutables.value.Value;
 
 import java.net.URI;
@@ -26,7 +26,7 @@ import java.net.URI;
  * A request to load a mesh.
  */
 
-@R2MeshesImmutableStyleType
+@R2ImmutableStyleType
 @Value.Immutable
 public interface R2MeshLoaderRequestType
 {

@@ -26,7 +26,7 @@ public final class R2ShaderSourceTest
 
     final List<String> lines = p.preprocessFile(
       Collections.emptyMap(),
-      "com.io7m.r2.shaders.core/R2SurfaceSingle.vert");
+      "com.io7m.r2.shaders.geometry.api/R2GeometrySingle.vert");
 
     Assert.assertFalse(lines.isEmpty());
   }

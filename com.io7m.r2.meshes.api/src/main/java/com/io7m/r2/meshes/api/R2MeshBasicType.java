@@ -18,6 +18,7 @@ package com.io7m.r2.meshes.api;
 
 import com.io7m.jtensors.core.parameterized.vectors.PVector2D;
 import com.io7m.jtensors.core.parameterized.vectors.PVector3D;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import com.io7m.r2.spaces.R2SpaceObjectType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import it.unimi.dsi.fastutil.BigList;
@@ -27,7 +28,7 @@ import org.immutables.value.Value;
  * The type of basic meshes.
  */
 
-@R2MeshesImmutableStyleType
+@R2ImmutableStyleType
 @Value.Immutable
 public interface R2MeshBasicType
 {

@@ -52,9 +52,9 @@ import com.io7m.jpra.runtime.java.JPRACursor1DType;
 import com.io7m.jtensors.storage.api.unparameterized.vectors.VectorStorageFloating2Type;
 import com.io7m.jtensors.storage.api.unparameterized.vectors.VectorStorageFloating3Type;
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.core.cursors.R2VertexPU32ByteBuffered;
-import com.io7m.r2.core.cursors.R2VertexPU32Type;
-import com.io7m.r2.core.shaders.types.R2ShaderPreprocessingEnvironmentReadableType;
+import com.io7m.r2.cursors.vertex.R2VertexPU32ByteBuffered;
+import com.io7m.r2.cursors.vertex.R2VertexPU32Type;
+import com.io7m.r2.shaders.api.R2ShaderPreprocessingEnvironmentReadableType;
 import com.io7m.sombrero.core.SoShaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -218,24 +218,21 @@ public final class R2ShadersTestUtilities
   static JCGLProgramShaderType compilerShaderVF(
     final JCGLShadersType gs,
     final R2ShaderPreprocessingEnvironmentReadableType env,
-    final String v_name,
-    final String f_name)
+    final String v_path,
+    final String f_path)
     throws IOException
   {
     try {
-      final String v_path = "com.io7m.r2.shaders.core/" + v_name + ".vert";
-      final String f_path = "com.io7m.r2.shaders.core/" + f_name + ".frag";
-
       final List<String> v_lines =
         env.preprocessor().preprocessFile(Collections.emptyMap(), v_path);
       final List<String> f_lines =
         env.preprocessor().preprocessFile(Collections.emptyMap(), f_path);
       final JCGLVertexShaderType v =
-        gs.shaderCompileVertex(v_name, v_lines);
+        gs.shaderCompileVertex(v_path, v_lines);
       final JCGLFragmentShaderType f =
-        gs.shaderCompileFragment(f_name, f_lines);
+        gs.shaderCompileFragment(f_path, f_lines);
       return gs.shaderLinkProgram(
-        "(" + v_name + " + " + f_name + ")", v, Optional.empty(), f);
+        "(" + v_path + " + " + f_path + ")", v, Optional.empty(), f);
 
     } catch (final SoShaderException e) {
       throw new IOException(e);

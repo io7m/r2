@@ -29,20 +29,20 @@ import com.io7m.jregions.core.unparameterized.sizes.AreaSizesL;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vector3D;
 import com.io7m.jtensors.core.unparameterized.vectors.Vectors3D;
-import com.io7m.r2.core.R2InstanceSingleType;
-import com.io7m.r2.core.R2MatricesType;
-import com.io7m.r2.core.R2ProjectionFOV;
-import com.io7m.r2.core.R2SceneStencils;
-import com.io7m.r2.core.R2SceneStencilsType;
-import com.io7m.r2.core.R2TransformSiOT;
 import com.io7m.r2.examples.R2ExampleCustomType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.facade.R2FacadeType;
+import com.io7m.r2.instances.R2InstanceSingleType;
+import com.io7m.r2.matrices.R2MatricesType;
+import com.io7m.r2.projections.R2ProjectionFOV;
+import com.io7m.r2.rendering.stencil.R2SceneStencils;
+import com.io7m.r2.rendering.stencil.api.R2SceneStencilsType;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.r2.transforms.R2TransformSiOT;
 
 import static com.io7m.jcanephora.core.JCGLFaceSelection.FACE_FRONT_AND_BACK;
-import static com.io7m.r2.core.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
+import static com.io7m.r2.rendering.stencil.api.R2SceneStencilsMode.STENCIL_MODE_INSTANCES_ARE_NEGATIVE;
 
 // CHECKSTYLE_JAVADOC:OFF
 

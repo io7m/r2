@@ -51,7 +51,32 @@
       <dependencies>
         <dependency>
           <groupId>${project.groupId}</groupId>
-          <artifactId>com.io7m.r2.core</artifactId>
+          <artifactId>com.io7m.r2.annotations</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.checkstyle</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.core.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.cursors</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.debug</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.debug.api</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -61,7 +86,142 @@
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
-          <artifactId>com.io7m.r2.filters</artifactId>
+          <artifactId>com.io7m.r2.filters.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.bilateral_blur</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.bilateral_blur.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.box_blur</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.box_blur.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.compositor</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.compositor.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.debug.eye_position</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.debug.eye_position.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.debug.eye_z</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.debug.eye_z.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.emission</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.emission.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.fog</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.fog.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.fxaa</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.fxaa.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.light_applicator</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.light_applicator.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.occlusion_applicator</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.occlusion_applicator.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.ssao</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.filters.ssao.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.images</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.images.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.instances</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.lights</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.matrices</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -72,6 +232,16 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>com.io7m.r2.meshes.defaults</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.meshes.loading.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.meshes.loading.smf</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -91,7 +261,212 @@
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.projections</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.depth</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.depth.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.depth.variance</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.depth.variance.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.geometry</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.geometry.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.lights</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.lights.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.mask</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.mask.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.shadow</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.shadow.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.stencil</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.stencil.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.translucent</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.rendering.translucent.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.bilateral_blur</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.box_blur</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.core</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.debug</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.depth</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.depth.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.filter.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.fog</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.fxaa</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.geometry</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.geometry.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.light</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.light.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.mask</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.refraction</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.stencil</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.translucent</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shaders.translucent.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.shapes.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
           <artifactId>com.io7m.r2.spaces</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.textures</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.transforms</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>com.io7m.r2.view_rays</artifactId>
           <version>${project.version}</version>
         </dependency>
       </dependencies>
@@ -124,35 +499,39 @@
         </executions>
       </plugin>
 
-      <!-- Unpack core shader sources -->
+      <!-- Unpack shader sources -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>unpack-shaders.core-sources</id>
+            <id>unpack-shaders.sources</id>
             <phase>generate-resources</phase>
             <goals>
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
               <includeGroupIds>${project.groupId}</includeGroupIds>
-              <includeArtifactIds>com.io7m.r2.shaders.core</includeArtifactIds>
-              <outputDirectory>${project.build.directory}/documentation/glsl/</outputDirectory>
+              <includes>**/*.v,**/*.vert,**/*.f,**/*.frag,**/*.geom,**/*.h</includes>
+              <outputDirectory>${project.build.directory}/glsl/</outputDirectory>
             </configuration>
           </execution>
+        </executions>
+      </plugin>
+
+      <!-- Produce Doxygen -->
+      <plugin>
+        <groupId>com.soebes.maven.plugins</groupId>
+        <artifactId>doxygen-maven-plugin</artifactId>
+        <executions>
           <execution>
-            <id>unpack-shaders-doxygen</id>
-            <phase>generate-resources</phase>
+            <id>doxygen</id>
+            <phase>process-resources</phase>
             <goals>
-              <goal>unpack-dependencies</goal>
+              <goal>report</goal>
             </goals>
             <configuration>
-              <includeGroupIds>${project.groupId}</includeGroupIds>
-              <includeArtifactIds>com.io7m.r2.shaders.core</includeArtifactIds>
-              <classifier>doxygen</classifier>
-              <type>zip</type>
-              <outputDirectory>${project.build.directory}/documentation/doxygen/</outputDirectory>
+              <configurationFile>src/main/doxygen/glsl.conf</configurationFile>
             </configuration>
           </execution>
         </executions>

@@ -26,13 +26,13 @@ import com.io7m.jcanephora.core.api.JCGLInterfaceGL33Type;
 import com.io7m.jnull.NullCheck;
 import com.io7m.junreachable.UnreachableCodeException;
 import com.io7m.junsigned.ranges.UnsignedRangeInclusiveL;
-import com.io7m.r2.core.R2Exception;
-import com.io7m.r2.core.R2UnitSphereType;
+import com.io7m.r2.core.api.R2Exception;
 import com.io7m.r2.meshes.loading.api.R2MeshLoaded;
 import com.io7m.r2.meshes.loading.api.R2MeshLoaderRequest;
 import com.io7m.r2.meshes.loading.api.R2MeshLoaderType;
 import com.io7m.r2.meshes.loading.api.R2MeshRequireTangents;
 import com.io7m.r2.meshes.loading.api.R2MeshRequireUV;
+import com.io7m.r2.unit_spheres.R2UnitSphereType;
 
 import java.net.URI;
 import java.net.URISyntaxException;

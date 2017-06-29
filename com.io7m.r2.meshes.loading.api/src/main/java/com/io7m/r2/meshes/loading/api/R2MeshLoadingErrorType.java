@@ -16,7 +16,7 @@
 
 package com.io7m.r2.meshes.loading.api;
 
-import com.io7m.r2.meshes.api.R2MeshesImmutableStyleType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
 import org.immutables.value.Value;
 
 import java.util.Optional;
@@ -25,8 +25,8 @@ import java.util.Optional;
  * The type of mesh loading errors.
  */
 
+@R2ImmutableStyleType
 @Value.Immutable
-@R2MeshesImmutableStyleType
 public interface R2MeshLoadingErrorType
 {
   /**

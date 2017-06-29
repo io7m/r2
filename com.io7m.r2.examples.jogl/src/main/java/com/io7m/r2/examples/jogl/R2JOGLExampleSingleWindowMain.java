@@ -53,12 +53,6 @@ import com.io7m.jcanephora.texture.loader.core.JCGLTLTextureUpdateProviderType;
 import com.io7m.jnull.NullCheck;
 import com.io7m.jregions.core.unparameterized.sizes.AreaSizeL;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix4x4D;
-import com.io7m.r2.core.R2Texture2DStatic;
-import com.io7m.r2.core.R2Texture2DType;
-import com.io7m.r2.core.R2Texture2DUsableType;
-import com.io7m.r2.core.R2TextureCubeStatic;
-import com.io7m.r2.core.R2TextureCubeType;
-import com.io7m.r2.core.R2TextureCubeUsableType;
 import com.io7m.r2.examples.R2ExampleServicesType;
 import com.io7m.r2.examples.R2ExampleType;
 import com.io7m.r2.facade.R2FacadeProvider;
@@ -70,6 +64,12 @@ import com.io7m.r2.meshes.loading.api.R2MeshRequireTangents;
 import com.io7m.r2.meshes.loading.api.R2MeshRequireUV;
 import com.io7m.r2.spaces.R2SpaceEyeType;
 import com.io7m.r2.spaces.R2SpaceWorldType;
+import com.io7m.r2.textures.R2Texture2DStatic;
+import com.io7m.r2.textures.R2Texture2DType;
+import com.io7m.r2.textures.R2Texture2DUsableType;
+import com.io7m.r2.textures.R2TextureCubeStatic;
+import com.io7m.r2.textures.R2TextureCubeType;
+import com.io7m.r2.textures.R2TextureCubeUsableType;
 import com.io7m.sombrero.serviceloader.SoShaderResolverServiceLoader;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.InputEvent;
@@ -95,6 +95,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -751,6 +752,10 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         final Class<R2ExampleServicesType> c = R2ExampleServicesType.class;
         final URL url = c.getResource(name);
 
+        if (url == null) {
+          throw new NoSuchFileException(name);
+        }
+
         final R2MeshLoaded r =
           this.r2_facade.meshLoader().loadSynchronously(
             this.r2_facade.rendererGL33(),
@@ -765,7 +770,7 @@ public final class R2JOGLExampleSingleWindowMain implements Runnable
         this.array_objects.arrayObjectUnbind();
         this.mesh_cache.put(name, ao);
         return ao;
-      } catch (final URISyntaxException e) {
+      } catch (final URISyntaxException | NoSuchFileException e) {
         LOG.error("could not load mesh: {}: ", name, e);
         throw new R2MeshLoadingExceptionIO(e);
       }

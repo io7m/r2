@@ -17,15 +17,11 @@
 package com.io7m.r2.tests.core;
 
 import com.io7m.junreachable.UnreachableCodeException;
-import com.io7m.r2.core.R2Bilinear;
-import com.io7m.r2.core.R2Core;
-import com.io7m.r2.core.R2IndexBuffers;
-import com.io7m.r2.core.R2Projections;
-import com.io7m.r2.core.R2RenderTargetDescriptions;
-import com.io7m.r2.core.R2Stencils;
-import com.io7m.r2.core.debug.R2DebugVisualizerDefaults;
-import com.io7m.r2.core.shaders.types.R2ShaderParameters;
+import com.io7m.r2.debug.api.R2DebugVisualizerDefaults;
 import com.io7m.r2.meshes.api.R2MeshAttributeConventions;
+import com.io7m.r2.projections.R2Projections;
+import com.io7m.r2.rendering.targets.R2RenderTargetDescriptions;
+import com.io7m.r2.shaders.api.R2ShaderParameters;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -58,13 +54,6 @@ public final class R2UnreachableTest
   }
 
   @Test(expected = UnreachableCodeException.class)
-  public void testIndexBuffers()
-    throws Throwable
-  {
-    checkUnreachable(R2IndexBuffers.class);
-  }
-
-  @Test(expected = UnreachableCodeException.class)
   public void testRenderTargetDescriptions()
     throws Throwable
   {
@@ -79,20 +68,6 @@ public final class R2UnreachableTest
   }
 
   @Test(expected = UnreachableCodeException.class)
-  public void testBilinear()
-    throws Throwable
-  {
-    checkUnreachable(R2Bilinear.class);
-  }
-
-  @Test(expected = UnreachableCodeException.class)
-  public void testCore()
-    throws Throwable
-  {
-    checkUnreachable(R2Core.class);
-  }
-
-  @Test(expected = UnreachableCodeException.class)
   public void testProjections()
     throws Throwable
   {
@@ -104,12 +79,5 @@ public final class R2UnreachableTest
     throws Throwable
   {
     checkUnreachable(R2ShaderParameters.class);
-  }
-
-  @Test(expected = UnreachableCodeException.class)
-  public void testStencils()
-    throws Throwable
-  {
-    checkUnreachable(R2Stencils.class);
   }
 }

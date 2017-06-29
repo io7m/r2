@@ -53,7 +53,9 @@ public final class R2LogDepthTest extends R2ShaderTest
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();
     final R2ShaderTestFunctionEvaluator eval =
       new R2ShaderTestFunctionEvaluator(
-        gg, "R2DebugPositionOnly", "R2DebugLogDepth");
+        gg,
+        "com.io7m.r2.shaders.debug/R2DebugPositionOnly.vert",
+        "com.io7m.r2.shaders.debug/R2DebugLogDepth.frag");
 
     final List<Vector2D> vectors = new ArrayList<>(16);
     vectors.add(Vector2D.of(
@@ -87,7 +89,9 @@ public final class R2LogDepthTest extends R2ShaderTest
     final JCGLInterfaceGL33Type gg = R2ShadersTestUtilities.getGL();
     final R2ShaderTestFunctionEvaluator eval =
       new R2ShaderTestFunctionEvaluator(
-        gg, "R2DebugPositionOnly", "R2DebugLogDepthComposed");
+        gg,
+        "com.io7m.r2.shaders.debug/R2DebugPositionOnly.vert",
+        "com.io7m.r2.shaders.debug/R2DebugLogDepthComposed.frag");
 
     final List<Vector2D> vectors = new ArrayList<>(16);
     vectors.add(Vector2D.of(

@@ -16,13 +16,13 @@
 
 package com.io7m.r2.facade;
 
-import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2LightAmbientScreenSingle;
-import com.io7m.r2.core.R2LightProjectiveWithShadowVariance;
-import com.io7m.r2.core.R2LightSphericalSingle;
-import com.io7m.r2.core.R2ProjectionMeshType;
-import com.io7m.r2.core.R2ShadowDepthVariance;
-import com.io7m.r2.core.R2Texture2DUsableType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
+import com.io7m.r2.lights.R2LightAmbientScreenSingle;
+import com.io7m.r2.lights.R2LightProjectiveWithShadowVariance;
+import com.io7m.r2.lights.R2LightSphericalSingle;
+import com.io7m.r2.lights.shadows.R2ShadowDepthVariance;
+import com.io7m.r2.projections.R2ProjectionMeshType;
+import com.io7m.r2.textures.R2Texture2DUsableType;
 import org.immutables.value.Value;
 
 /**

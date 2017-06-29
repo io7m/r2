@@ -19,11 +19,11 @@ package com.io7m.r2.facade;
 import com.io7m.jcanephora.core.JCGLArrayObjectUsableType;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrices3x3D;
 import com.io7m.jtensors.core.parameterized.matrices.PMatrix3x3D;
-import com.io7m.r2.core.R2ImmutableStyleType;
-import com.io7m.r2.core.R2InstanceBatchedDynamic;
-import com.io7m.r2.core.R2InstanceBillboardedDynamic;
-import com.io7m.r2.core.R2InstanceSingle;
-import com.io7m.r2.core.R2TransformReadableType;
+import com.io7m.r2.annotations.R2ImmutableStyleType;
+import com.io7m.r2.instances.R2InstanceBatchedDynamic;
+import com.io7m.r2.instances.R2InstanceBillboardedDynamic;
+import com.io7m.r2.instances.R2InstanceSingle;
+import com.io7m.r2.transforms.R2TransformReadableType;
 import com.io7m.r2.spaces.R2SpaceTextureType;
 import org.immutables.value.Value;
 

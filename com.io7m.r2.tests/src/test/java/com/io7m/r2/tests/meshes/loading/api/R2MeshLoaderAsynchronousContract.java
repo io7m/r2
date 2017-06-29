@@ -18,6 +18,7 @@ package com.io7m.r2.tests.meshes.loading.api;
 
 import com.io7m.jcanephora.async.JCGLAsyncInterfaceUsableGL33Type;
 import com.io7m.jcanephora.core.JCGLUsageHint;
+import com.io7m.r2.meshes.api.R2MeshAttributeConventions;
 import com.io7m.r2.meshes.api.R2MeshAttributePacked;
 import com.io7m.r2.meshes.loading.api.R2MeshLoaded;
 import com.io7m.r2.meshes.loading.api.R2MeshLoaderAsynchronousType;
@@ -26,7 +27,7 @@ import com.io7m.r2.meshes.loading.api.R2MeshLoadingExceptionValidation;
 import com.io7m.r2.meshes.loading.api.R2MeshRequireTangents;
 import com.io7m.r2.meshes.loading.api.R2MeshRequireUV;
 import com.io7m.r2.tests.R2AsyncGLRule;
-import com.io7m.r2.tests.core.R2JCGLContract;
+import com.io7m.r2.tests.R2JCGLContract;
 import org.hamcrest.core.IsInstanceOf;
 import org.hamcrest.core.StringContains;
 import org.junit.Ignore;
@@ -40,10 +41,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static com.io7m.r2.meshes.api.R2MeshAttributeComponents.R2_COMPONENT_FLOATING;
-import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.NORMAL_ATTRIBUTE_INDEX;
-import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.POSITION_ATTRIBUTE_INDEX;
-import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.TANGENT4_ATTRIBUTE_INDEX;
-import static com.io7m.r2.meshes.api.R2MeshAttributeConventions.UV_ATTRIBUTE_INDEX;
 import static org.junit.Assert.assertEquals;
 
 public abstract class R2MeshLoaderAsynchronousContract extends R2JCGLContract
@@ -80,7 +77,7 @@ public abstract class R2MeshLoaderAsynchronousContract extends R2JCGLContract
 
     {
       final R2MeshAttributePacked a =
-        loaded.attributes().get(Integer.valueOf(POSITION_ATTRIBUTE_INDEX));
+        loaded.attributes().get(Integer.valueOf(R2MeshAttributeConventions.positionAttributeIndex()));
       assertEquals("R2_POSITION", a.attribute().name());
       assertEquals(0L, (long) a.offsetOctets());
       assertEquals(3L, (long) a.attribute().componentCount());
@@ -90,7 +87,7 @@ public abstract class R2MeshLoaderAsynchronousContract extends R2JCGLContract
 
     {
       final R2MeshAttributePacked a =
-        loaded.attributes().get(Integer.valueOf(NORMAL_ATTRIBUTE_INDEX));
+        loaded.attributes().get(Integer.valueOf(R2MeshAttributeConventions.normalAttributeIndex()));
       assertEquals("R2_NORMAL", a.attribute().name());
       assertEquals(12L, (long) a.offsetOctets());
       assertEquals(3L, (long) a.attribute().componentCount());
@@ -100,7 +97,7 @@ public abstract class R2MeshLoaderAsynchronousContract extends R2JCGLContract
 
     {
       final R2MeshAttributePacked a =
-        loaded.attributes().get(Integer.valueOf(UV_ATTRIBUTE_INDEX));
+        loaded.attributes().get(Integer.valueOf(R2MeshAttributeConventions.uvAttributeIndex()));
       assertEquals("R2_UV", a.attribute().name());
       assertEquals(24L, (long) a.offsetOctets());
       assertEquals(2L, (long) a.attribute().componentCount());
@@ -134,7 +131,7 @@ public abstract class R2MeshLoaderAsynchronousContract extends R2JCGLContract
 
     {
       final R2MeshAttributePacked a =
-        loaded.attributes().get(Integer.valueOf(POSITION_ATTRIBUTE_INDEX));
+        loaded.attributes().get(Integer.valueOf(R2MeshAttributeConventions.positionAttributeIndex()));
       assertEquals("R2_POSITION", a.attribute().name());
       assertEquals(0L, (long) a.offsetOctets());
       assertEquals(3L, (long) a.attribute().componentCount());
@@ -144,7 +141,7 @@ public abstract class R2MeshLoaderAsynchronousContract extends R2JCGLContract
 
     {
       final R2MeshAttributePacked a =
-        loaded.attributes().get(Integer.valueOf(NORMAL_ATTRIBUTE_INDEX));
+        loaded.attributes().get(Integer.valueOf(R2MeshAttributeConventions.normalAttributeIndex()));
       assertEquals("R2_NORMAL", a.attribute().name());
       assertEquals(12L, (long) a.offsetOctets());
       assertEquals(3L, (long) a.attribute().componentCount());
@@ -154,7 +151,7 @@ public abstract class R2MeshLoaderAsynchronousContract extends R2JCGLContract
 
     {
       final R2MeshAttributePacked a =
-        loaded.attributes().get(Integer.valueOf(UV_ATTRIBUTE_INDEX));
+        loaded.attributes().get(Integer.valueOf(R2MeshAttributeConventions.uvAttributeIndex()));
       assertEquals("R2_UV", a.attribute().name());
       assertEquals(24L, (long) a.offsetOctets());
       assertEquals(2L, (long) a.attribute().componentCount());
@@ -164,7 +161,7 @@ public abstract class R2MeshLoaderAsynchronousContract extends R2JCGLContract
 
     {
       final R2MeshAttributePacked a =
-        loaded.attributes().get(Integer.valueOf(TANGENT4_ATTRIBUTE_INDEX));
+        loaded.attributes().get(Integer.valueOf(R2MeshAttributeConventions.tangent4AttributeIndex()));
       assertEquals("R2_TANGENT4", a.attribute().name());
       assertEquals(32L, (long) a.offsetOctets());
       assertEquals(4L, (long) a.attribute().componentCount());

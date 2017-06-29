@@ -15,7 +15,7 @@ type and produces an output to a
 [paragraph]
 The renderers expose an interface of stateless functions from inputs
 to outputs. That is, the renderers should be considered to simply take input and
-produce return images as output. In reality, because the Java language is not
+produce images as output. In reality, because the Java language is not
 pure and because the code is required to perform I/O in order to speak to the
 GPU, the renderer functions are not [term [type emphasis] really] pure.
 Nevertheless, for the sake of ease of use, lack of surprising results, and
