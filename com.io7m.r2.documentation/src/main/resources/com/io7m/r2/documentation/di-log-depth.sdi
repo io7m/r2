@@ -86,11 +86,8 @@ depth value in this manner tends to cause issues with triangle clipping. The
 encoding function is also separated into two parts as a simple optimization: The
 encoding function contains a term [term [type expression] z + 1.0] , and this
 term can be calculated by a [term [type term] vertex shader] and interpolated.
-The actual functions as implemented are given by
-(link-ext (target "glsl/com/io7m/r2/shaders/core/R2LogDepth.h") R2LogDepth.h):
-
-[formal-item [title "Logarithmic Depth (GLSL)"]]
-[verbatim [include "glsl/com/io7m/r2/shaders/core/R2LogDepth.h"]]
+The actual functions as implemented are given in
+(link-ext (target "glsl/com/io7m/r2/shaders/core/R2LogDepth.h") R2LogDepth.h).
 
 [paragraph]
 A fragment shader can use [term [type function] encode_full] to compute a

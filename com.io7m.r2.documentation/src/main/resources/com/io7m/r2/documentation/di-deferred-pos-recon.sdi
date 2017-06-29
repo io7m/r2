@@ -392,17 +392,9 @@ The actual position reconstruction is performed in a
 [term [type package] GLSL] functions in
 (link-ext (target "glsl/com/io7m/r2/shaders/core/R2LogDepth.h") R2LogDepth.h)
 and the final position in
-(link-ext (target "glsl/com/io7m/r2/shaders/core/R2PositionReconstruction.h") R2PositionReconstruction.h):
-
-[formal-item [title "Position reconstruction (LogDepth)"]]
-[verbatim [include "glsl/com/io7m/r2/shaders/core/R2LogDepth.h"]]
-
-[formal-item [title "Position reconstruction (GLSL)"]]
-[verbatim [include "glsl/com/io7m/r2/shaders/core/R2PositionReconstruction.h"]]
+(link-ext (target "glsl/com/io7m/r2/shaders/core/R2PositionReconstruction.h") R2PositionReconstruction.h).
 
 [paragraph]
 The precalculated view ray vectors are passed to the fragment shader in a value
-of type [term [type type] R2_view_rays_t] :
-
-[formal-item [title "View Rays (GLSL)"]]
-[verbatim [include "glsl/com/io7m/r2/shaders/core/R2ViewRays.h"]]
+of type [term [type type] R2_view_rays_t], defined in
+(link-ext (target "glsl/com/io7m/r2/shaders/core/R2ViewRays.h") R2ViewRays.h).
