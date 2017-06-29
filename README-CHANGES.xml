@@ -43,6 +43,17 @@
       <c:ticket>71</c:ticket>
       <c:summary>Redesign mesh API and replace all internal meshes with SMF/B files.</c:summary>
     </c:item>
+    <c:item>
+      <c:date>2017-06-29</c:date>
+      <c:type-code-change/>
+      <c:ticket>98</c:ticket>
+      <c:summary>Massive reorganization of codebase: Modularization.</c:summary>
+    </c:item>
+    <c:item>
+      <c:date>2017-06-29</c:date>
+      <c:type-code-change/>
+      <c:summary>The default is now to compile light shaders such that they output to image buffers instead of light buffers.</c:summary>
+    </c:item>
   </c:release>
 
   <c:release c:ticket-system="com.github.io7m.r2">
