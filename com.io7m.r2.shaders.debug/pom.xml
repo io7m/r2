@@ -127,16 +127,19 @@
         <configuration>
           <instructions>
             <Require-Capability>
-              com.io7m.r2.shaders.module;
-                name:String=com.io7m.r2.shaders.core,
-              com.io7m.r2.shaders.module;
-                name:String=com.io7m.r2.shaders.geometry.api,
-              com.io7m.r2.shaders.module;
-                name:String=com.io7m.r2.shaders.light.api
+              <![CDATA[
+                com.io7m.r2.shaders.module;
+                  filter="(&(name=com.io7m.r2.shaders.core)(version=[${com.io7m.r2.majorVersion}.${com.io7m.r2.minorVersion},${com.io7m.r2.nextMajorVersion}))",
+                com.io7m.r2.shaders.module;
+                  filter="(&(name=com.io7m.r2.shaders.geometry.api)(version=[${com.io7m.r2.majorVersion}.${com.io7m.r2.minorVersion},${com.io7m.r2.nextMajorVersion}))",
+                com.io7m.r2.shaders.module;
+                  filter="(&(name=com.io7m.r2.shaders.light.api)(version=[${com.io7m.r2.majorVersion}.${com.io7m.r2.minorVersion},${com.io7m.r2.nextMajorVersion}))"
+              ]]>
             </Require-Capability>
             <Provide-Capability>
               com.io7m.r2.shaders.module;
-                name:String=com.io7m.r2.shaders.debug
+                name:String=com.io7m.r2.shaders.debug;
+                version:Version="${com.io7m.r2.majorVersion}.${com.io7m.r2.minorVersion}"
             </Provide-Capability>
             <Export-Package>
               com.io7m.r2.shaders.debug

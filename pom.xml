@@ -119,6 +119,7 @@
     <io7m.checkstyle.artifact>com.io7m.r2.checkstyle</io7m.checkstyle.artifact>
     <io7m.checkstyle.path>/com/io7m/r2/checkstyle/checkstyle.xml</io7m.checkstyle.path>
     <io7m.api.previousVersion>0.3.0-SNAPSHOT</io7m.api.previousVersion>
+
     <com.io7m.r2.jcanephora.versionRange>0.61.0</com.io7m.r2.jcanephora.versionRange>
     <com.io7m.r2.jtensors.versionRange>[8.2.0, 9.0.0)</com.io7m.r2.jtensors.versionRange>
     <com.io7m.r2.sombrero.versionRange>0.3.1</com.io7m.r2.sombrero.versionRange>
@@ -561,6 +562,26 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <!-- Make the parsed version number available to the build. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>insert-version</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+            <configuration>
+              <propertyPrefix>${project.groupId}</propertyPrefix>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
 </project>

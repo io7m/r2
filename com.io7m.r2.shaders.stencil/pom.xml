@@ -80,7 +80,9 @@
         <configuration>
           <instructions>
             <Provide-Capability>
-              com.io7m.r2.shaders.module;name:String=com.io7m.r2.shaders.stencil
+              com.io7m.r2.shaders.module;
+                name:String=com.io7m.r2.shaders.stencil;
+                version:Version="${com.io7m.r2.majorVersion}.${com.io7m.r2.minorVersion}"
             </Provide-Capability>
             <Export-Package>
               com.io7m.r2.shaders.stencil
