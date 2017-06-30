@@ -15,7 +15,7 @@ addons:
 install: true
 
 script:
-  - mvn -Dmaven.javadoc.skip=true -DskipTests=true clean verify
+  - mvn -DskipTests=true clean verify | grep -v 'checking for updates from'
 
 notifications:
   irc: "chat.freenode.net#io7m"
